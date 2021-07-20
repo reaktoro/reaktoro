@@ -58,6 +58,7 @@ auto EquilibriumConditions::temperature(real value, String unit) -> void
     value = units::convert(value, unit, "K");
     const auto idx = index(m_inputs, "T");
     m_inputs_values[idx] = value;
+    startWithTemperature(value);
 }
 
 auto EquilibriumConditions::pressure(real value, String unit) -> void
@@ -66,6 +67,7 @@ auto EquilibriumConditions::pressure(real value, String unit) -> void
     value = units::convert(value, unit, "Pa");
     const auto idx = index(m_inputs, "P");
     m_inputs_values[idx] = value;
+    startWithPressure(value);
 }
 
 auto EquilibriumConditions::volume(real value, String unit) -> void
@@ -116,6 +118,32 @@ auto EquilibriumConditions::entropy(real value, String unit) -> void
     m_inputs_values[idx] = value;
 }
 
+auto EquilibriumConditions::startWithTemperature(real value) -> void
+{
+    errorif(value <= 0.0, "EquilibriumConditions::startWithTemperature requires a positive temperature value in K, but the given value was ", value, " K.");
+    m_initial_temperature = value;
+}
+
+auto EquilibriumConditions::startWithTemperature(real value, String unit) -> void
+{
+    auto converted = units::convert(value, unit, "K");
+    errorif(converted <= 0.0, "EquilibriumConditions::startWithTemperature requires a positive temperature value in K, but the given value was ", value, " ", unit);
+    m_initial_temperature = converted;
+}
+
+auto EquilibriumConditions::startWithPressure(real value) -> void
+{
+    errorif(value <= 0.0, "EquilibriumConditions::startWithPressure requires a positive pressure value in Pa, but the given value was ", value, " Pa.");
+    m_initial_pressure = value;
+}
+
+auto EquilibriumConditions::startWithPressure(real value, String unit) -> void
+{
+    auto converted = units::convert(value, unit, "K");
+    errorif(converted <= 0.0, "EquilibriumConditions::startWithPressure requires a positive pressure value in Pa, but the given value was ", value, " ", unit);
+    m_initial_pressure = converted;
+}
+
 auto EquilibriumConditions::startWith(String species, real value, String unit) -> void
 {
     const auto ispecies = m_system.species().index(species);
@@ -125,27 +153,32 @@ auto EquilibriumConditions::startWith(String species, real value, String unit) -
 auto EquilibriumConditions::startWith(Index ispecies, real value, String unit) -> void
 {
     const auto size = m_system.species().size();
-    errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
+    errorif(ispecies >= size, "EquilibriumConditions::startWith requires a valid species index (got index ", ispecies, ", which is greater or equal than the number of species", size, ")");
     const auto amount = detail::computeSpeciesAmount(m_system, ispecies, value, unit);
     m_initial_species_amounts.resize(size);
     m_initial_species_amounts[ispecies] = amount;
     m_initial_component_amounts.resize(0);
 }
 
-auto EquilibriumConditions::startWith(const ChemicalState& state) -> void
+auto EquilibriumConditions::startWithSpeciesAmounts(ArrayXrConstRef n) -> void
 {
-    const auto n = state.speciesAmounts();
     const auto size = m_system.species().size();
-    errorif(n.size() != size, "Given chemical state does not have compatible number of species (", n.size(), ") with number of species in the system (", size, ")");
+    errorif(n.size() != size, "EquilibriumConditions::startWithSpeciesAmounts requires an array with as many entries as there are chemical species in the system (expected size is ", size, ", but given was", n.size(), ")");
     m_initial_species_amounts = n;
     m_initial_component_amounts.resize(0);
+}
+
+auto EquilibriumConditions::startWithState(const ChemicalState& state) -> void
+{
+    startWithTemperature(state.temperature());
+    startWithPressure(state.pressure());
+    startWithSpeciesAmounts(state.speciesAmounts());
 }
 
 auto EquilibriumConditions::startWithComponentAmounts(ArrayXrConstRef b) -> void
 {
     const auto Nb = m_system.elements().size() + 1;
-    errorif(b.size() != Nb, "The number of conservative components is ", Nb, " but only ", b.size(), " values have been given for their initial amounts.");
-    m_initial_species_amounts.resize(0);
+    errorif(b.size() != Nb, "EquilibriumConditions::startWithComponentAmounts requires an array with as many entries as there are convervative components in the equilibrium problem (expected size is ", Nb, ", but given was", b.size(), ")");
     m_initial_component_amounts = b;
 }
 
@@ -225,6 +258,16 @@ auto EquilibriumConditions::set(const String& input, const real& val) -> void
     const auto size = m_inputs.size();
     errorif(idx >= size, "There is no input variable with name `", input, "` in this EquilibriumConditions object.");
     m_inputs_values[idx] = val;
+}
+
+auto EquilibriumConditions::initialTemperature() const -> real
+{
+    return m_initial_temperature;
+}
+
+auto EquilibriumConditions::initialPressure() const -> real
+{
+    return m_initial_pressure;
 }
 
 auto EquilibriumConditions::initialSpeciesAmounts() const -> ArrayXrConstRef

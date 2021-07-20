@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
@@ -84,23 +85,45 @@ public:
     //
     //=================================================================================================
 
-    /// Specify an initial condition for the abundance of a chemical species.
+    /// Specify an initial temperature condition for the chemical system (in K).
+    /// @param value The initial temperature of the system.
+    auto startWithTemperature(real value) -> void;
+
+    /// Specify an initial temperature condition for the chemical system.
+    /// @param value The initial temperature of the system.
+    /// @param unit The temperature unit (must be convertible to K).
+    auto startWithTemperature(real value, String unit) -> void;
+
+    /// Specify an initial pressure condition for the chemical system.
+    /// @param value The initial pressure of the system.
+    auto startWithPressure(real value) -> void;
+
+    /// Specify an initial pressure condition for the chemical system.
+    /// @param value The initial pressure of the system.
+    /// @param unit The pressure unit (must be convertible to Pa).
+    auto startWithPressure(real value, String unit) -> void;
+
+    /// Specify an initial condition for the species amounts.
+    /// @param n The array with the initial amounts of the species (in mol).
+    auto startWithSpeciesAmounts(ArrayXrConstRef n) -> void;
+
     /// @param species The name of the species in the chemical system.
     /// @param value The amount or mass value of the species.
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
     /// @warning An error is thrown if the chemical system has no species with name @p species.
-    auto startWith(String species, real value, String unit="mol") -> void;
+    auto startWith(String species, real value, String unit) -> void;
 
     /// Specify an initial condition for the abundance of a chemical species.
     /// @param ispecies The index of the species in the chemical system.
     /// @param value The amount or mass value of the species.
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    auto startWith(Index ispecies, real value, String unit="mol") -> void;
+    auto startWith(Index ispecies, real value, String unit) -> void;
 
-    /// Specify an initial condition for the abundance of the chemical species with a given chemical state.
-    /// @param state The chemical state containing the initial condition for the amounts of all species in the system.
-    /// @note This method overwrites all previous `startWith` method calls.
-    auto startWith(const ChemicalState& state) -> void;
+    /// Specify an initial condition for temperature, pressure, and species amounts with a given chemical state.
+    /// @note This method overwrites all previous `startWith`, `startWithTemperature`,
+    /// @note `startWithPressure`, and `startWithSpeciesAmounts` method calls.
+    /// @param state The chemical state representing the initial conditions of the system.
+    auto startWithState(const ChemicalState& state) -> void;
 
     /// Specify the initial condition for the amounts of the conservative components.
     /// These component amounts are conserved at chemical equilibrium only if
@@ -110,14 +133,28 @@ public:
     /// titrant (i.e., the substance for which the system is open to) entered
     /// or leaved the system.
     ///
-    /// @note This method clears off all previous `startWith` method calls
-    /// since these component amounts are the most fundamental parameters for
-    /// the equilibrium calculation. When the `startWith` methods are used
-    /// instead, this vector is computed from the specified initial amounts of
-    /// the species. If a call to any `startWith` method is made, the given
-    /// component amounts here are then cleared off.
+    /// @note This method has higher priority than the other methods that
+    /// specify initial conditions for the abundance of chemical species:
     ///
-    /// @param b The initial amounts of the components (in mol)
+    ///    * @ref EquilibriumConditions::startWith
+    ///    * @ref EquilibriumConditions::startWithSpeciesAmounts
+    ///    * @ref EquilibriumConditions::startWithState
+    ///
+    /// By using this method, the chemical equilibrium calculation will use the
+    /// specified component amounts instead of computing them from the initial
+    /// condition for the species amounts. In this case, the provided
+    /// conditions for species amounts will be solely used as initial guess for
+    /// the equilibrium computation. The provided species amounts may not be
+    /// consistent with the given component amounts here (i.e., there is mass
+    /// imbalance between initial condition for species amounts and the amounts
+    /// of the components that constitute the species). At the end of a
+    /// successfull calculation, this imbalance is resolved, and the species
+    /// amounts are consistent with the component amounts in terms of mass
+    /// conservation. This is true provided the chemical system is not open to
+    /// other substances, in which case, mass conservation also considers
+    /// these substances as well.
+    ///
+    /// @param b The array with the initial amounts of the components (in mol)
     auto startWithComponentAmounts(ArrayXrConstRef b) -> void;
 
     //=================================================================================================
@@ -198,10 +235,16 @@ public:
     /// @warning An error is thrown if there are no input variables with name @p input.
     auto set(const String& input, const real& val) -> void;
 
-    /// Return the initial amounts of the species in the equilibrium calculation.
+    /// Return the initial temperature of the system in the equilibrium calculation (in K).
+    auto initialTemperature() const -> real;
+
+    /// Return the initial pressure of the system in the equilibrium calculation (in Pa).
+    auto initialPressure() const -> real;
+
+    /// Return the initial amounts of the species in the equilibrium calculation (in mol).
     auto initialSpeciesAmounts() const -> ArrayXrConstRef;
 
-    /// Return the initial amounts of the conservative components in the equilibrium calculation.
+    /// Return the initial amounts of the conservative components in the equilibrium calculation (in mol).
     auto initialComponentAmounts() const -> ArrayXr;
 
     /// Return the chemical system associated with the equilibrium conditions.
@@ -223,10 +266,16 @@ private:
     /// The current values of the input variables.
     VectorXr m_inputs_values;
 
-    /// The initial amounts of the species in the equilibrium calculation.
+    /// The initial temperature of the system in the equilibrium calculation (in K).
+    real m_initial_temperature = NaN;
+
+    /// The initial pressure of the system in the equilibrium calculation (in Pa).
+    real m_initial_pressure = NaN;
+
+    /// The initial amounts of the species in the equilibrium calculation (in mol).
     ArrayXr m_initial_species_amounts;
 
-    /// The initial amounts of the conservative components in the equilibrium calculation.
+    /// The initial amounts of the conservative components in the equilibrium calculation (in mol).
     ArrayXr m_initial_component_amounts;
 };
 
