@@ -28,56 +28,9 @@ using namespace tabulate;
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
-namespace detail {
-
-auto getElementIndexAux(const ChemicalSystem& system, const Index& index) -> Index
-{
-    return index;
-}
-
-auto getElementIndexAux(const ChemicalSystem& system, const String& symbol) -> Index
-{
-    return system.elements().index(symbol);
-}
-
-auto getElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index
-{
-    return std::visit([&](auto&& arg) { return getElementIndexAux(system, arg); }, element);
-}
-
-auto getSpeciesIndexAux(const ChemicalSystem& system, const Index& index) -> Index
-{
-    return index;
-}
-
-auto getSpeciesIndexAux(const ChemicalSystem& system, const String& name) -> Index
-{
-    return system.species().index(name);
-}
-
-auto getSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index
-{
-return std::visit([&](auto&& arg) { return getSpeciesIndexAux(system, arg); }, species);
-}
-
-auto getPhaseIndexAux(const ChemicalSystem& system, const Index& index) -> Index
-{
-    return index;
-}
-
-auto getPhaseIndexAux(const ChemicalSystem& system, const String& name) -> Index
-{
-    return system.phases().index(name);
-}
-
-auto getPhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index
-{
-    return std::visit([&](auto&& arg) { return getPhaseIndexAux(system, arg); }, phase);
-}
-
-} // namespace detail
 
 ChemicalProps::ChemicalProps(const ChemicalSystem& system)
 : msystem(system)
@@ -241,15 +194,15 @@ auto ChemicalProps::pressure() const -> real
 
 auto ChemicalProps::elementAmount(StringOrIndex element) const -> real
 {
-    const auto ielement = detail::getElementIndex(msystem, element);
+    const auto ielement = detail::resolveElementIndex(msystem, element);
     const auto A = msystem.formulaMatrixElements();
     return A.row(ielement) * n.matrix();
 }
 
 auto ChemicalProps::elementAmountInPhase(StringOrIndex element, StringOrIndex phase) const -> real
 {
-    const auto ielement = detail::getElementIndex(msystem, element);
-    const auto iphase = detail::getPhaseIndex(msystem, phase);
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
     const auto offset = msystem.phases().numSpeciesUntilPhase(iphase);
     const auto length = msystem.phase(iphase).species().size();
     const auto A = msystem.formulaMatrixElements();
@@ -260,7 +213,7 @@ auto ChemicalProps::elementAmountInPhase(StringOrIndex element, StringOrIndex ph
 
 auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real
 {
-    const auto ielement = detail::getElementIndex(msystem, element);
+    const auto ielement = detail::resolveElementIndex(msystem, element);
     const auto A = msystem.formulaMatrixElements();
     const auto Aei = A.row(ielement)(indices);
     const auto ni = n(indices).matrix();
@@ -269,109 +222,109 @@ auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, ArrayXlCons
 
 auto ChemicalProps::speciesAmount(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return n[ispecies];
 }
 
 auto ChemicalProps::speciesMass(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return n[ispecies] * msystem.species(ispecies).molarMass();
 }
 
 auto ChemicalProps::moleFraction(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return x[ispecies];
 }
 
 auto ChemicalProps::activityCoefficient(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return exp(ln_g[ispecies]);
 }
 
 auto ChemicalProps::lgActivityCoefficient(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return ln_g[ispecies]/ln10;
 }
 
 auto ChemicalProps::lnActivityCoefficient(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return ln_g[ispecies];
 }
 
 auto ChemicalProps::activity(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return exp(ln_a[ispecies]);
 }
 
 auto ChemicalProps::lgActivity(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return ln_a[ispecies]/ln10;
 }
 
 auto ChemicalProps::lnActivity(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return ln_a[ispecies];
 }
 
 auto ChemicalProps::chemicalPotential(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return u[ispecies];
 }
 
 auto ChemicalProps::standardVolume(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return V0[ispecies];
 }
 
 auto ChemicalProps::standardGibbsEnergy(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return G0[ispecies];
 }
 
 auto ChemicalProps::standardEnthalpy(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return H0[ispecies];
 }
 
 auto ChemicalProps::standardEntropy(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return (H0[ispecies] - G0[ispecies])/T; // from G0 = H0 - T*S0
 }
 
 auto ChemicalProps::standardInternalEnergy(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return H0[ispecies] - P*V0[ispecies]; // from H0 = U0 + P*V0
 }
 
 auto ChemicalProps::standardHelmholtzEnergy(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return G0[ispecies] - P*V0[ispecies]; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
 auto ChemicalProps::standardHeatCapacityConstP(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return Cp0[ispecies];
 }
 
 auto ChemicalProps::standardHeatCapacityConstV(StringOrIndex species) const -> real
 {
-    const auto ispecies = detail::getSpeciesIndex(msystem, species);
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return Cv0[ispecies];
 }
 
@@ -383,7 +336,7 @@ auto ChemicalProps::elementAmounts() const -> ArrayXr
 
 auto ChemicalProps::elementAmountsInPhase(StringOrIndex phase) const -> ArrayXr
 {
-    const auto iphase = detail::getPhaseIndex(msystem, phase);
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
     const auto offset = msystem.phases().numSpeciesUntilPhase(iphase);
     const auto length = msystem.phase(iphase).species().size();
     const auto A = msystem.formulaMatrixElements();
