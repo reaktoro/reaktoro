@@ -61,6 +61,10 @@ struct ChemicalState::Impl
     /// The amounts of the chemical species (in mol)
     ArrayXr n;
 
+    /// Construct a default uninitialized ChemicalState::Impl instance.
+    Impl()
+    {}
+
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
     : system(system), equilibrium(system), props(system)
@@ -250,6 +254,11 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto ChemicalState::initialized() const -> bool
+{
+    return system().initialized();
 }
 
 auto ChemicalState::temperature(real value) -> void

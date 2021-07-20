@@ -45,6 +45,9 @@ public:
     // Forward declarations
     class Equilibrium;
 
+    /// Construct a default uninitialized ChemicalState instance.
+    ChemicalState();
+
     /// Construct a ChemicalState instance with standard conditions.
     /// This constructor creates an instance of ChemicalState with temperature
     /// 25 °C, pressure 1 bar, and zero mole amounts for the species.
@@ -58,6 +61,9 @@ public:
 
     /// Assign a ChemicalState instance to this instance.
     auto operator=(ChemicalState other) -> ChemicalState&;
+
+    /// Return true if the chemical state has been initialized with a chemical system.
+    auto initialized() const -> bool;
 
     /// Set the temperature of the chemical state.
     /// @param value The temperature value (in K).
