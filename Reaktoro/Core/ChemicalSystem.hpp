@@ -49,9 +49,6 @@ public:
     ChemicalSystem(const Database& database, const GenericPhases&... genericPhases)
     : ChemicalSystem(Phases(database, genericPhases...)) {}
 
-    /// Return true if the chemical system has been initialized with a database and phases.
-    auto initialized() const -> bool;
-
     /// Return the database used to construct the chemical system.
     auto database() const -> const Database&;
 

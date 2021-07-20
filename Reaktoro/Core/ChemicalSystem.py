@@ -34,8 +34,6 @@ def testChemicalSystem():
 
     system = ChemicalSystem(phases)
 
-    assert system.initialized()
-
     assert system.database().elements().size() == db.elements().size()
     assert system.database().species().size() == db.species().size()
 
@@ -77,6 +75,3 @@ def testChemicalSystem():
     assert system.elements().size() == 8
     assert system.species().size() == 18
     assert system.phases().size() == 7
-
-    emptysystem = ChemicalSystem()
-    assert not emptysystem.initialized()

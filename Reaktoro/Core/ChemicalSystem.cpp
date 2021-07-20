@@ -113,11 +113,6 @@ ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phase
 : pimpl(new Impl(database, phases))
 {}
 
-auto ChemicalSystem::initialized() const -> bool
-{
-    return database().species().size() > 0;
-}
-
 auto ChemicalSystem::database() const -> const Database&
 {
     return pimpl->database;

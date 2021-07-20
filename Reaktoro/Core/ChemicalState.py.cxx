@@ -33,7 +33,6 @@ void exportChemicalState(py::module& m)
 
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
-        .def("initialized", &ChemicalState::initialized)
         .def("temperature", py::overload_cast<real>(&ChemicalState::temperature))
         .def("temperature", py::overload_cast<real, String>(&ChemicalState::temperature))
         .def("pressure", py::overload_cast<real>(&ChemicalState::pressure))
