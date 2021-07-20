@@ -15,32 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "EquilibriumProblem.hpp"
+// pybind11 includes
+#include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
+using namespace Reaktoro;
 
-namespace Reaktoro {
-namespace detail {
-
-/// Return an EquilibriumSpecs object that represent the specifications of a Gibbs energy minimization problem.
-inline auto createEquilibriumSpecs(const ChemicalSystem& system) -> EquilibriumSpecs
+void exportEquilibriumProblem(py::module& m)
 {
-    EquilibriumSpecs specs(system);
-    specs.temperature();
-    specs.pressure();
-    return specs;
+    py::class_<EquilibriumProblem, EquilibriumConditions, EquilibriumRestrictions>(m, "EquilibriumProblem")
+        .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const EquilibriumSpecs&>())
+        ;
 }
-
-} // namespace detail
-
-EquilibriumProblem::EquilibriumProblem(const ChemicalSystem& system)
-: EquilibriumProblem(detail::createEquilibriumSpecs(system))
-{}
-
-EquilibriumProblem::EquilibriumProblem(const EquilibriumSpecs& specs)
-: EquilibriumConditions(specs), EquilibriumRestrictions(specs.system())
-{}
-
-} // namespace Reaktoro
