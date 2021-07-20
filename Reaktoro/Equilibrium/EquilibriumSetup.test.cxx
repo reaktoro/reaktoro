@@ -192,7 +192,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
         {
             EquilibriumSetup setup(specs);
 
-            conditions.startWith(state);
+            conditions.startWithState(state);
 
             const auto n = state.speciesAmounts();
             const auto be_expected = Wn * n.matrix();
