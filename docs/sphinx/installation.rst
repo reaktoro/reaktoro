@@ -19,7 +19,7 @@ following command in your terminal:
 
 .. code::
 
-    conda install reaktoro
+    conda install reaktoro=1
 
 
 .. _Anaconda: https://www.anaconda.com/download
@@ -27,6 +27,14 @@ following command in your terminal:
 
 
 Follow the Conda installation steps shown next before you execute this command!
+
+
+.. note::
+
+    The reason for specifying a v1.x version of ``reaktoro`` in ``conda install reaktoro=1``
+    is because there are at the moment candidate releases for v2.0
+    of Reaktoro. This version has not been documented yet, but it will soon.
+
 
 Installing Conda
 ^^^^^^^^^^^^^^^^
