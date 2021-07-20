@@ -38,5 +38,50 @@ auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real val
     else return units::convert(value, unit, "mol"); // from some amount unit to mol
 }
 
+auto resolveElementIndexAux(const ChemicalSystem& system, const Index& index) -> Index
+{
+    return index;
+}
+
+auto resolveElementIndexAux(const ChemicalSystem& system, const String& symbol) -> Index
+{
+    return system.elements().index(symbol);
+}
+
+auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolveElementIndexAux(system, arg); }, element);
+}
+
+auto resolveSpeciesIndexAux(const ChemicalSystem& system, const Index& index) -> Index
+{
+    return index;
+}
+
+auto resolveSpeciesIndexAux(const ChemicalSystem& system, const String& name) -> Index
+{
+    return system.species().index(name);
+}
+
+auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index
+{
+return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(system, arg); }, species);
+}
+
+auto resolvePhaseIndexAux(const ChemicalSystem& system, const Index& index) -> Index
+{
+    return index;
+}
+
+auto resolvePhaseIndexAux(const ChemicalSystem& system, const String& name) -> Index
+{
+    return system.phases().index(name);
+}
+
+auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(system, arg); }, phase);
+}
+
 } // namespace detail
 } // namespace Reaktoro
