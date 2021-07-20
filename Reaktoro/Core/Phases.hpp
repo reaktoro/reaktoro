@@ -312,7 +312,7 @@ private:
     auto addAux(const Arg& arg, const Args&... args) -> void
     {
         add(arg);
-        if constexpr (sizeof...(Args))
+        if constexpr (sizeof...(Args) > 0)
             addAux(args...);
     }
 };
