@@ -300,7 +300,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs);
         conditions.temperature(state0.temperature());
         conditions.pressure(state0.pressure());
-        conditions.startWith(state0);
+        conditions.startWithState(state0);
         return solve(state0, conditions, restrictions);
     }
 
@@ -340,7 +340,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs);
         conditions.temperature(state0.temperature());
         conditions.pressure(state0.pressure());
-        conditions.startWith(state0);
+        conditions.startWithState(state0);
         return solve(state0, sensitivity, conditions, restrictions);
     }
 
