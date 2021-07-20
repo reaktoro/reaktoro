@@ -229,6 +229,15 @@ struct EquilibriumSolver::Impl
             optstate = Optima::State(optdims);
 
         optstate.x.head(dims.Nn) = state0.speciesAmounts();
+
+        if(specs.isTemperatureUnknown())
+        {
+            optstate.p[0] = state0.temperature();
+            if(specs.isPressureUnknown())
+                optstate.p[1] = state0.pressure();
+        }
+        else if(specs.isPressureUnknown())
+            optstate.p[0] = state0.pressure();
     }
 
     /// Update the chemical state object with computed optimization state.
