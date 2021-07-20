@@ -46,7 +46,7 @@ using String = std::string;
 using Strings = std::vector<std::string>;
 
 /// Convenient alias for `std::variant<String, Index>`.
-using StringOrIndex = std::variant<String, Index>;
+using StringOrIndex = std::variant<String, long>;
 
 /// Convenient alias for `std::vector<T>`.
 template<typename T>
