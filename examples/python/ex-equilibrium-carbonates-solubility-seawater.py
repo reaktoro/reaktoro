@@ -30,7 +30,7 @@ from reaktoro import *
 import numpy as np
 
 # Function to calculate equilibrium of the carbonates and seawater
-def carbonates_in_seawater(system, T, P):
+def carbonates_in_seawater(system, solver, T, P):
 
     # Initial values of the carbonates and mass of water
     n0Calcite = 10.0
@@ -51,7 +51,6 @@ def carbonates_in_seawater(system, T, P):
     state_sw.setSpeciesMass("SO4-2", 2712.0 * water_kg, "mg")
 
     # Calculate chemical state corresponding to the seawater
-    solver = EquilibriumSolver(system)
     res = solver.solve(state_sw)
 
     # Throw exception if the equilibrium couldn't be found
@@ -97,12 +96,15 @@ phases.add(dolomitephase)
 # Construct the chemical system
 system = ChemicalSystem(phases)
 
+# Create the equilibrium solver
+solver = EquilibriumSolver(system)
+
 # Define the range of temperatures and pressure for the equilibrium calculations
 T = np.arange(25.0, 91.0, 5.0)
 P = 1.0
 
 # Fetch specific species amounts
-species_amounts = [carbonates_in_seawater(system, x, P) for x in T]  # [0] is needed to get the value of autodiff.real
+species_amounts = [carbonates_in_seawater(system, solver, x, P) for x in T]  # [0] is needed to get the value of autodiff.real
 mCalcite = [molals[0] for molals in species_amounts]
 mDolomite = [molals[1] for molals in species_amounts]
 mCa2 = [molals[2] for molals in species_amounts]
@@ -111,9 +113,9 @@ mH = [molals[4] for molals in species_amounts]
 mHCO3 = [molals[5] for molals in species_amounts]
 
 # Output species amount after equilibration for a range of the
-print("# -----------------------------------------------------------------------------------------------------------------")
-print("# Final species amounts w.r.t. temperatures")
-print("# -----------------------------------------------------------------------------------------------------------------")
-print("# T      Calcite   Dolomite         Ca++         Mg++           H+        HCO3-")
+print(" --------------------------------------------------------------------------------")
+print("  Final species amounts w.r.t. temperatures")
+print(" --------------------------------------------------------------------------------")
+print("   T     Calcite   Dolomite         Ca++         Mg++           H+        HCO3-")
 for i in range(len(T)):
-    print(f"{T[i]:3.0f} : {mCalcite[i]:10.4f} {mDolomite[i]:10.4f} {mCa2[i]:12.4e} {mMg2[i]:12.4e} {mH[i]:12.4e} {mHCO3[i]:12.4e}")
+    print(f"{T[i]:4.0f}  {mCalcite[i]:10.4f} {mDolomite[i]:10.4f} {mCa2[i]:12.4e} {mMg2[i]:12.4e} {mH[i]:12.4e} {mHCO3[i]:12.4e}")

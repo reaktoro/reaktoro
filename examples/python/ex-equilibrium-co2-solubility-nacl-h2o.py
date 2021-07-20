@@ -30,7 +30,7 @@ from reaktoro import *
 import numpy as np
 
 # Function to calculate solubility of CO2 in the NaCl-brine
-def solubility_co2(system, T, P, mNaCl):
+def solubility_co2(system, solver, T, P, mNaCl):
 
     # Initial amount of CO2 gas
     n0CO2g = 10.0
@@ -45,7 +45,6 @@ def solubility_co2(system, T, P, mNaCl):
     state.setSpeciesAmount("Cl-", mNaCl, "mol")
 
     # Calculate equilibrium state
-    solver = EquilibriumSolver(system)
     res = solver.solve(state)
 
     # Throw exception if the equilibrium couldn't be found
@@ -80,19 +79,22 @@ phases.add(gaseousphase)
 # Construct the chemical system
 system = ChemicalSystem(phases)
 
+# Create the equilibrium solver
+solver = EquilibriumSolver(system)
+
 # Define the range of temperatures and pressure for the equilibrium calculations
 T = np.arange(25.0, 90.0, 5.0)
 P = 100.0
 
 # Calculate CO2 solubilities for the range of the temperatures and different brine concentrations
-mCO2_1 = [solubility_co2(system, x, P, mNaCl=1.0) for x in T]
-mCO2_2 = [solubility_co2(system, x, P, mNaCl=2.0) for x in T]
-mCO2_3 = [solubility_co2(system, x, P, mNaCl=4.0) for x in T]
+mCO2_1 = [solubility_co2(system, solver, x, P, mNaCl=1.0) for x in T]
+mCO2_2 = [solubility_co2(system, solver, x, P, mNaCl=2.0) for x in T]
+mCO2_3 = [solubility_co2(system, solver, x, P, mNaCl=4.0) for x in T]
 
 # Output the results
-print("# ---------------------------------------------------------------")
-print("# CO2 solubilities w.r.t. temperatures")
-print("# ---------------------------------------------------------------")
-print(" T      1 mol NaCl-brine   2 mol NaCl-brine   4 mol NaCl-brine")
+print(" ----------------------------------------------------------------")
+print("  CO2 solubilities w.r.t. temperatures")
+print(" ----------------------------------------------------------------")
+print("   T    1 mol NaCl-brine   2 mol NaCl-brine   4 mol NaCl-brine")
 for i in range(len(T)):
-    print(f"{T[i]:3.0f} : {mCO2_1[i]:18.4f} {mCO2_2[i]:18.4f} {mCO2_3[i]:18.4f}")
+    print(f"{T[i]:4.0f}  {mCO2_1[i]:18.4f} {mCO2_2[i]:18.4f} {mCO2_3[i]:18.4f}")
