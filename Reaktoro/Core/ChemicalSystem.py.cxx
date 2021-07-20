@@ -36,7 +36,7 @@ void exportChemicalSystem(py::module& m)
                 try { phases.add(phase.cast<const GenericPhasesGenerator&>()); }
                 catch(...)
                 {
-                    errorif(true, "Could not create ChemicalSystem with phase object:\n", phase);
+                    errorif(true, "Could not create ChemicalSystem with phase object:\n", py::str(phase));
                 }
             }
         }
