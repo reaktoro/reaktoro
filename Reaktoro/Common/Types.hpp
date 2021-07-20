@@ -45,8 +45,8 @@ using String = std::string;
 /// Convenient alias for `std::vector<String>`.
 using Strings = std::vector<std::string>;
 
-/// Convenient alias for `std::variant<String, Index>`.
-using StringOrIndex = std::variant<String, long>;
+/// Convenient alias for `std::variant<std::string, long>`.
+using StringOrIndex = std::variant<String, long>;  // Note: Index was used instead of long, but this caused compilation errors in AppleClang.
 
 /// Convenient alias for `std::vector<T>`.
 template<typename T>
