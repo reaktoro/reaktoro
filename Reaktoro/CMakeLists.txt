@@ -68,16 +68,24 @@ if(REAKTORO_BUILD_TESTS)
     find_package(Catch2 REQUIRED)
 
     # The global path to the databases directory (used below as a compile definition for the C++ tests)
-    set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/databases)
+    set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/databases/reaktoro/)
+    set(REAKTORO_DATABASES_THERMOFUN_DIR ${PROJECT_SOURCE_DIR}/databases/thermofun/)
+    set(REAKTORO_DATABASES_PHREEQC_DIR ${PROJECT_SOURCE_DIR}/databases/phreeqc/)
+
+    # Convert the global paths to their native form considering the underlying platform
     file(TO_NATIVE_PATH ${REAKTORO_DATABASES_DIR} REAKTORO_DATABASES_DIR)
+    file(TO_NATIVE_PATH ${REAKTORO_DATABASES_THERMOFUN_DIR} REAKTORO_DATABASES_THERMOFUN_DIR)
+    file(TO_NATIVE_PATH ${REAKTORO_DATABASES_PHREEQC_DIR} REAKTORO_DATABASES_PHREEQC_DIR)
 
     # Create a test executable target for Reaktoro
     add_executable(reaktoro-cpptests ${CXX_FILES_TEST})
     target_link_libraries(reaktoro-cpptests Reaktoro Catch2::Catch2)
     target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
     target_compile_definitions(reaktoro-cpptests
-        PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>  # This is needed (`EIGEN_STRONG_INLINE=inline` instead of `EIGEN_STRONG_INLINE=__forceinline`) with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile.
-        PRIVATE REAKTORO_DATABASES_DIR="${REAKTORO_DATABASES_DIR}"     # This permits the C++ tests to load database files using global paths so that the tests can be executed from anywhere without errors.
+        PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>                   # This is needed (`EIGEN_STRONG_INLINE=inline` instead of `EIGEN_STRONG_INLINE=__forceinline`) with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile.
+        PRIVATE REAKTORO_DATABASES_DIR="${REAKTORO_DATABASES_DIR}"                      # This permits the C++ tests to load database files from databases/reaktoro from anywhere without errors.
+        PRIVATE REAKTORO_DATABASES_THERMOFUN_DIR="${REAKTORO_DATABASES_THERMOFUN_DIR}"  # This permits the C++ tests to load database files from databases/thermofun from anywhere without errors.
+        PRIVATE REAKTORO_DATABASES_PHREEQC_DIR="${REAKTORO_DATABASES_PHREEQC_DIR}"      # This permits the C++ tests to load database files from databases/phreeqc from anywhere without errors.
     )
 
 endif()

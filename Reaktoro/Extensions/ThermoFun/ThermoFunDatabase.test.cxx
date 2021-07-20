@@ -47,7 +47,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     //-------------------------------------------------------------------
     // Testing constructor ThermoFunDatabase(ThermoFun::Database)
     //-------------------------------------------------------------------
-    ThermoFun::Database tdb(REAKTORO_DATABASES_DIR"/thermofun/aq17-thermofun.json");
+    ThermoFun::Database tdb(REAKTORO_DATABASES_THERMOFUN_DIR"aq17-thermofun.json");
 
     ThermoFunDatabase db(tdb);
 
