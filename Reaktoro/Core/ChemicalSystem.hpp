@@ -35,11 +35,11 @@ namespace Reaktoro {
 class ChemicalSystem
 {
 public:
-    /// Construct a default ChemicalSystem instance.
+    /// Construct a default uninitialized ChemicalSystem instance.
     ChemicalSystem();
 
     /// Construct a ChemicalSystem instance with given phases.
-    ChemicalSystem(const Phases& phases);
+    explicit ChemicalSystem(const Phases& phases);
 
     /// Construct a ChemicalSystem instance with given database and phases.
     ChemicalSystem(const Database& database, const Vec<Phase>& phases);
@@ -48,6 +48,9 @@ public:
     template<typename... GenericPhases>
     ChemicalSystem(const Database& database, const GenericPhases&... genericPhases)
     : ChemicalSystem(Phases(database, genericPhases...)) {}
+
+    /// Return true if the chemical system has been initialized with a database and phases.
+    auto initialized() const -> bool;
 
     /// Return the database used to construct the chemical system.
     auto database() const -> const Database&;
