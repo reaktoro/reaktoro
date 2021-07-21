@@ -93,10 +93,11 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     conditions0.pressure(1.0e5);
     conditions0.volume(2.0, "liter"); // H2O will be added as much as needed to fulfil this volume
     conditions0.pH(4.0); // H+ will be added as much as needed to achieve this pH
-    conditions0.startWith("H2O", 1.0, "kg");
-    conditions0.startWith("NaCl", 0.1, "mol");
 
     ChemicalState state0(system);
+    state0.set("H2O" , 1.00, "kg");
+    state0.set("NaCl", 0.10, "mol");
+
     EquilibriumSensitivity sensitivity0(specs);
 
     EquilibriumSolver solver(specs);
@@ -106,14 +107,17 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     EquilibriumPredictor predictor(state0, sensitivity0);
 
     ChemicalState state(system);
+    state.set("H2O" , 1.10, "kg");
+    state.set("NaCl", 0.15, "mol");
+
+    const VectorXd naux = state.speciesAmounts();
+    const VectorXd b = system.formulaMatrix() * naux;
 
     EquilibriumConditions conditions(specs);
     conditions.temperature(330.0);
     conditions.pressure(1.1e5);
     conditions.volume(2.1, "liter"); // H2O will be added as much as needed to fulfil this volume
     conditions.pH(4.2); // H+ will be added as much as needed to achieve this pH
-    conditions.startWith("H2O", 1.1, "kg");
-    conditions.startWith("NaCl", 0.15, "mol");
 
     predictor.predict(state, conditions);
 
@@ -131,11 +135,10 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
     const VectorXd q0 = state0.equilibrium().q();
     const VectorXd u0 = state0.props();
 
-    const VectorXd b = conditions.initialComponentAmounts();
-    const VectorXd w = conditions.inputValues();
-
-    const VectorXd b0 = conditions0.initialComponentAmounts();
     const VectorXd w0 = conditions0.inputValues();
+    const VectorXd b0 = state0.equilibrium().b();
+
+    const VectorXd w  = conditions.inputValues();
 
     const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
     const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);

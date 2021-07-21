@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 
@@ -47,6 +48,9 @@ public:
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
     auto predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void;
+
+    /// Perform a first-order Taylor prediction of the chemical state at given conditions.
+    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXrConstRef b) -> void;
 
 private:
     struct Impl;

@@ -29,6 +29,7 @@ void exportEquilibriumProjector(py::module& m)
 {
     py::class_<EquilibriumPredictor>(m, "EquilibriumPredictor")
         .def(py::init<const ChemicalState&, const EquilibriumSensitivity&>())
-        .def("predict", &EquilibriumPredictor::predict)
+        .def("predict", py::overload_cast<ChemicalState&, const EquilibriumConditions&>(&EquilibriumPredictor::predict))
+        .def("predict", py::overload_cast<ChemicalState&, const EquilibriumConditions&, VectorXrConstRef>(&EquilibriumPredictor::predict))
         ;
 }

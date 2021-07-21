@@ -91,6 +91,17 @@ struct EquilibriumPredictor::Impl
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
     auto predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void
     {
+        const auto& A = state.system().formulaMatrix();
+        const auto& ndis = state.speciesAmounts();
+        VectorXd b = A * ndis.matrix(); // TODO: The use of Array instead of Vector makes it a lot more verbose for matrix-vector multiplications. Consider using VectorXr instead of ArrayXr.
+        // TODO: Revise this when EquilibriumReactions are introduced, which should be responsible for computing the amounts of conservative components (using EquilibriumReactions::conservationMatrix instead of ChemicalSystem::formulaMatrix).
+
+        predict(state, conditions, b);
+    }
+
+    /// Perform a first-order Taylor prediction of the chemical state at given conditions.
+    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXdConstRef b) -> void
+    {
         const auto dndw0 = sensitivity0.dndw(); // The derivatives *dn/dw* at the reference equilibrium state.
         const auto dpdw0 = sensitivity0.dpdw(); // The derivatives *dp/dw* at the reference equilibrium state.
         const auto dqdw0 = sensitivity0.dqdw(); // The derivatives *dq/dw* at the reference equilibrium state.
@@ -101,7 +112,6 @@ struct EquilibriumPredictor::Impl
         const auto dudb0 = sensitivity0.dudb(); // The derivatives *du/db* at the reference equilibrium state.
 
         w = conditions.inputValues();
-        b = conditions.initialComponentAmounts();
 
         const auto dw = w - w0;
         const auto db = b - b0;
