@@ -35,3 +35,5 @@ PYBIND11_MAKE_OPAQUE(Reaktoro::ArrayXrConstRef);
 PYBIND11_MAKE_OPAQUE(Reaktoro::VectorXr);
 PYBIND11_MAKE_OPAQUE(Reaktoro::VectorXrRef);
 PYBIND11_MAKE_OPAQUE(Reaktoro::VectorXrConstRef);
+
+const auto return_internal_ref = py::return_value_policy::reference_internal;
