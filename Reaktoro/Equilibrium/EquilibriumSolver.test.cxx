@@ -334,10 +334,10 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         EquilibriumConditions conditions(specs);
         conditions.temperature(50.0, "celsius");
         conditions.pressure(80.0, "bar");
-        conditions.startWith("H2O", 55, "mol");
         conditions.pH(3.0);
 
         ChemicalState state(system);
+        state.set("H2O", 55, "mol");
 
         auto result = solver.solve(state, conditions);
 
@@ -416,15 +416,15 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         EquilibriumConditions conditions(specs);
         conditions.temperature(50.0, "celsius");
         conditions.pressure(80.0, "bar");
-        conditions.startWith("H2O"   , 55.0 , "mol");
-        conditions.startWith("NaCl"  , 0.01 , "mol");
-        conditions.startWith("CO2"   , 10.0 , "mol");
-        conditions.startWith("CaCO3" , 0.01 , "mol");
-        conditions.startWith("MgCO3" , 0.02 , "mol");
-        conditions.startWith("SiO2"  , 0.01 , "mol");
         conditions.pH(3.0);
 
         ChemicalState state(system);
+        state.set("H2O"  , 55.0, "mol");
+        state.set("NaCl" , 0.01, "mol");
+        state.set("CO2"  , 10.0, "mol");
+        state.set("CaCO3", 0.01, "mol");
+        state.set("MgCO3", 0.02, "mol");
+        state.set("SiO2" , 0.01, "mol");
 
         auto result = solver.solve(state, conditions);
 

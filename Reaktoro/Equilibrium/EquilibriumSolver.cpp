@@ -129,22 +129,8 @@ struct EquilibriumSolver::Impl
         optsolver.setOptions(options.optima);
     }
 
-    /// Update the initial chemical state before a new equilibrium calculation.
-    auto updateInitialState(ChemicalState& state0, const EquilibriumConditions& conditions)
-    {
-        const auto n0 = conditions.initialSpeciesAmounts();
-        const auto uninitialized = state0.speciesAmounts().maxCoeff() == 0.0;
-        const auto has_n0 = n0.size() > 0;
-
-        errorif(uninitialized && !has_n0, "Provide an initialized chemical state as initial guess for the calculation when initial component amounts are given.");
-
-        // Change species amounts only if all amounts are zero
-        if(uninitialized && has_n0)
-            state0.setSpeciesAmounts(n0);
-    }
-
     /// Update the optimization problem before a new equilibrium calculation.
-    auto updateOptProblem(const ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions)
+    auto updateOptProblem(const ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0)
     {
         // The input variables for the equilibrium calculation
         const VectorXr w = conditions.inputValues();
@@ -205,7 +191,7 @@ struct EquilibriumSolver::Impl
         optproblem.Aep = setup.assembleMatrixAep();
 
         /// Set the right-hand side vector be of the linear equality constraints.
-        optproblem.be = setup.assembleVectorBe(conditions);
+        optproblem.be = b0;
 
         // Set the lower bounds of the species amounts
         optproblem.xlower = setup.assembleLowerBoundsVector(restrictions, state0);
@@ -223,13 +209,20 @@ struct EquilibriumSolver::Impl
     /// Update the initial state variables before the new equilibrium calculation.
     auto updateOptState(const ChemicalState& state0)
     {
-        optstate = state0.equilibrium().optimaState();
-
+        // Allocate memory if needed
         if(optstate.dims.x != dims.Nx)
             optstate = Optima::State(optdims);
 
+        // Set species amounts in x = (n, q) to that from the chemical state
         optstate.x.head(dims.Nn) = state0.speciesAmounts();
 
+        // Set delta variables in q to zero (i.e., the amount of an implicit titrant to add/remove)
+        optstate.x.tail(dims.Nq).fill(0.0);
+
+        // Set delta variables in p to zero (i.e., the amount of an explicit titrant to add/remove, temperature and/or pressure increase/decrease)
+        optstate.p.fill(0.0);
+
+        // TODO: Instead of using T and P as unknown, use dT and dP, so this is block of code is not needed!
         if(specs.isTemperatureUnknown())
         {
             optstate.p[0] = state0.temperature();
@@ -287,85 +280,141 @@ struct EquilibriumSolver::Impl
         sensitivity.dudb(dudn*dndb + dudp*dpdb);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0) -> EquilibriumResult
+    auto solve(ChemicalState& state) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system);
-        return solve(state0, restrictions);
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, conditions, restrictions);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
     {
-        EquilibriumConditions conditions(specs);
-        conditions.temperature(state0.temperature());
-        conditions.pressure(state0.pressure());
-        conditions.startWithState(state0);
-        return solve(state0, conditions, restrictions);
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, conditions, restrictions);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, const EquilibriumConditions& conditions) -> EquilibriumResult
+    auto solve(ChemicalState& state, const EquilibriumConditions& conditions) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system);
-        return solve(state0, conditions, restrictions);
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        return solve(state, conditions, restrictions);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
     {
-        EquilibriumResult eqresult;
-
-        updateInitialState(state0, conditions);
-        updateOptProblem(state0, conditions, restrictions);
-        updateOptState(state0);
-
-        eqresult.optima = optsolver.solve(optproblem, optstate);
-
-        updateChemicalState(state0, conditions);
-
-        return eqresult;
+        const auto& A = system.formulaMatrix();
+        const auto& n = state.speciesAmounts();
+        ArrayXr b0 = A * n.matrix();
+        return solve(state, conditions, restrictions, b0);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system);
-        return solve(state0, sensitivity, restrictions);
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, sensitivity, conditions, restrictions);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
     {
-        EquilibriumConditions conditions(specs);
-        conditions.temperature(state0.temperature());
-        conditions.pressure(state0.pressure());
-        conditions.startWithState(state0);
-        return solve(state0, sensitivity, conditions, restrictions);
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, sensitivity, conditions, restrictions);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system);
-        return solve(state0, sensitivity, conditions, restrictions);
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        return solve(state, sensitivity, conditions, restrictions);
     }
 
-    /// Solve an equilibrium problem with given chemical state in disequilibrium.
-    auto solve(ChemicalState& state0, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
     {
-        EquilibriumResult eqresult;
+        const auto& A = system.formulaMatrix();
+        const auto& n = state.speciesAmounts();
+        ArrayXr b0 = A * n.matrix();
+        return solve(state, sensitivity, conditions, restrictions, b0);
+    }
 
-        updateInitialState(state0, conditions);
-        updateOptProblem(state0, conditions, restrictions);
-        updateOptState(state0);
+    auto solve(ChemicalState& state, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, conditions, restrictions, b0);
+    }
 
-        eqresult.optima = optsolver.solve(optproblem, optstate, optsensitivity);
+    auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, conditions, restrictions, b0);
+    }
 
-        updateChemicalState(state0, conditions);
+    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        return solve(state, conditions, restrictions, b0);
+    }
+
+    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumResult result;
+
+        updateOptProblem(state, conditions, restrictions, b0);
+        updateOptState(state);
+
+        result.optima = optsolver.solve(optproblem, optstate);
+
+        updateChemicalState(state, conditions);
+
+        return result;
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, sensitivity, conditions, restrictions, b0);
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        return solve(state, sensitivity, conditions, restrictions, b0);
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
+        return solve(state, sensitivity, conditions, restrictions, b0);
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+    {
+        EquilibriumResult result;
+
+        updateOptProblem(state, conditions, restrictions, b0);
+        updateOptState(state);
+
+        result.optima = optsolver.solve(optproblem, optstate, optsensitivity);
+
+        updateChemicalState(state, conditions);
         updateEquilibriumSensitivity(sensitivity);
 
-        return eqresult;
+        return result;
     }
 };
 
@@ -433,6 +482,46 @@ auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sens
 auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
 {
     return pimpl->solve(state, sensitivity, conditions, restrictions);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, restrictions, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumConditions& conditions, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, conditions, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, conditions, restrictions, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, restrictions, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, conditions, b0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, conditions, restrictions, b0);
 }
 
 } // namespace Reaktoro
