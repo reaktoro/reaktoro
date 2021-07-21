@@ -450,9 +450,9 @@ struct CubicEOS::Impl
         //=========================================================================================
         // Calculate the residual properties of the phase
         //=========================================================================================
-        Vres  = V - Vres;
-        VresT = VT - VresT;
-        VresP = VP - VresP;
+        Vres  = V - V0;
+        VresT = VT - V0T;
+        VresP = VP - V0P;
         Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
         Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
         Cpres = Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)
