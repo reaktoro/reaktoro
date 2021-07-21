@@ -178,12 +178,6 @@ struct EquilibriumSetup::Impl
         return Aep;
     }
 
-    /// Assemble the right-hand side vector `be` in the optimization problem.
-    auto assembleVectorBe(const EquilibriumConditions& conditions) -> VectorXr
-    {
-        return conditions.initialComponentAmounts();
-    }
-
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
     auto assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
     {
@@ -386,11 +380,6 @@ auto EquilibriumSetup::assembleMatrixAex() const -> MatrixXd
 auto EquilibriumSetup::assembleMatrixAep() const -> MatrixXd
 {
     return pimpl->assembleMatrixAep();
-}
-
-auto EquilibriumSetup::assembleVectorBe(const EquilibriumConditions& conditions) -> VectorXr
-{
-    return pimpl->assembleVectorBe(conditions);
 }
 
 auto EquilibriumSetup::assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd

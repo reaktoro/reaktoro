@@ -65,9 +65,6 @@ public:
     /// Assemble the coefficient matrix `Aep` in the optimization problem.
     auto assembleMatrixAep() const -> MatrixXd;
 
-    /// Assemble the right-hand side vector `be` in the optimization problem.
-    auto assembleVectorBe(const EquilibriumConditions& conditions) -> VectorXr;
-
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
     /// @param restrictions The lower and upper bounds information of the species.
     /// @param state0 The initial chemical state of the system.

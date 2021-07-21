@@ -175,50 +175,6 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
         }
     }
 
-    SECTION("Checking vector `be` of the optimization problem")
-    {
-        specs.temperature();
-        specs.pressure();
-        specs.volume();
-        specs.pH();
-        specs.openTo("CO2");
-
-        EquilibriumConditions conditions(specs);
-        conditions.temperature(50.0, "celsius");
-        conditions.pressure(100.0, "bar");
-        conditions.pH(3.0);
-
-        WHEN("initial species amounts are provided to EquilibriumConditions object")
-        {
-            EquilibriumSetup setup(specs);
-
-            conditions.startWithState(state);
-
-            const auto n = state.speciesAmounts();
-            const auto be_expected = Wn * n.matrix();
-            const auto be_actual = setup.assembleVectorBe(conditions);
-
-            INFO("be_expected = " << be_expected);
-            INFO("be_actual   = " << be_actual);
-            CHECK( be_expected.isApprox(be_actual) );
-        }
-
-        WHEN("initial component amounts are provided to EquilibriumConditions object")
-        {
-            EquilibriumSetup setup(specs);
-
-            const VectorXr be = VectorXr::Random(Ne);
-            conditions.startWithComponentAmounts(be);
-
-            const auto be_expected = be;
-            const auto be_actual = setup.assembleVectorBe(conditions);
-
-            INFO("be_expected = " << be_expected);
-            INFO("be_actual   = " << be_actual);
-            CHECK( be_expected.isApprox(be_actual) );
-        }
-    }
-
     SECTION("Checking functions to set/get options")
     {
         EquilibriumSpecs specs(system);
