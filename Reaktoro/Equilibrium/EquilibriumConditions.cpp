@@ -18,13 +18,10 @@
 #include "EquilibriumConditions.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -58,7 +55,6 @@ auto EquilibriumConditions::temperature(real value, String unit) -> void
     value = units::convert(value, unit, "K");
     const auto idx = index(m_inputs, "T");
     m_inputs_values[idx] = value;
-    startWithTemperature(value);
 }
 
 auto EquilibriumConditions::pressure(real value, String unit) -> void
@@ -67,7 +63,6 @@ auto EquilibriumConditions::pressure(real value, String unit) -> void
     value = units::convert(value, unit, "Pa");
     const auto idx = index(m_inputs, "P");
     m_inputs_values[idx] = value;
-    startWithPressure(value);
 }
 
 auto EquilibriumConditions::volume(real value, String unit) -> void
@@ -116,70 +111,6 @@ auto EquilibriumConditions::entropy(real value, String unit) -> void
     value = units::convert(value, unit, "J/K");
     const auto idx = index(m_inputs, "S");
     m_inputs_values[idx] = value;
-}
-
-auto EquilibriumConditions::startWithTemperature(real value) -> void
-{
-    errorif(value <= 0.0, "EquilibriumConditions::startWithTemperature requires a positive temperature value in K, but the given value was ", value, " K.");
-    m_initial_temperature = value;
-}
-
-auto EquilibriumConditions::startWithTemperature(real value, String unit) -> void
-{
-    auto converted = units::convert(value, unit, "K");
-    errorif(converted <= 0.0, "EquilibriumConditions::startWithTemperature requires a positive temperature value in K, but the given value was ", value, " ", unit);
-    m_initial_temperature = converted;
-}
-
-auto EquilibriumConditions::startWithPressure(real value) -> void
-{
-    errorif(value <= 0.0, "EquilibriumConditions::startWithPressure requires a positive pressure value in Pa, but the given value was ", value, " Pa.");
-    m_initial_pressure = value;
-}
-
-auto EquilibriumConditions::startWithPressure(real value, String unit) -> void
-{
-    auto converted = units::convert(value, unit, "K");
-    errorif(converted <= 0.0, "EquilibriumConditions::startWithPressure requires a positive pressure value in Pa, but the given value was ", value, " ", unit);
-    m_initial_pressure = converted;
-}
-
-auto EquilibriumConditions::startWith(String species, real value, String unit) -> void
-{
-    const auto ispecies = m_system.species().index(species);
-    startWith(ispecies, value, unit);
-}
-
-auto EquilibriumConditions::startWith(Index ispecies, real value, String unit) -> void
-{
-    const auto size = m_system.species().size();
-    errorif(ispecies >= size, "EquilibriumConditions::startWith requires a valid species index (got index ", ispecies, ", which is greater or equal than the number of species", size, ")");
-    const auto amount = detail::computeSpeciesAmount(m_system, ispecies, value, unit);
-    m_initial_species_amounts.resize(size);
-    m_initial_species_amounts[ispecies] = amount;
-    m_initial_component_amounts.resize(0);
-}
-
-auto EquilibriumConditions::startWithSpeciesAmounts(ArrayXrConstRef n) -> void
-{
-    const auto size = m_system.species().size();
-    errorif(n.size() != size, "EquilibriumConditions::startWithSpeciesAmounts requires an array with as many entries as there are chemical species in the system (expected size is ", size, ", but given was", n.size(), ")");
-    m_initial_species_amounts = n;
-    m_initial_component_amounts.resize(0);
-}
-
-auto EquilibriumConditions::startWithState(const ChemicalState& state) -> void
-{
-    startWithTemperature(state.temperature());
-    startWithPressure(state.pressure());
-    startWithSpeciesAmounts(state.speciesAmounts());
-}
-
-auto EquilibriumConditions::startWithComponentAmounts(ArrayXrConstRef b) -> void
-{
-    const auto Nb = m_system.elements().size() + 1;
-    errorif(b.size() != Nb, "EquilibriumConditions::startWithComponentAmounts requires an array with as many entries as there are convervative components in the equilibrium problem (expected size is ", Nb, ", but given was", b.size(), ")");
-    m_initial_component_amounts = b;
 }
 
 auto EquilibriumConditions::chemicalPotential(String substance, real value, String unit) -> void
@@ -260,39 +191,6 @@ auto EquilibriumConditions::set(const String& input, const real& val) -> void
     m_inputs_values[idx] = val;
 }
 
-auto EquilibriumConditions::initialTemperature() const -> real
-{
-    return m_initial_temperature;
-}
-
-auto EquilibriumConditions::initialPressure() const -> real
-{
-    return m_initial_pressure;
-}
-
-auto EquilibriumConditions::initialSpeciesAmounts() const -> ArrayXrConstRef
-{
-    return m_initial_species_amounts;
-}
-
-auto EquilibriumConditions::initialComponentAmounts() const -> ArrayXr
-{
-    if(m_initial_component_amounts.size())
-        return m_initial_component_amounts;
-
-    errorif(m_initial_species_amounts.size() == 0,
-        "While executing EquilibriumConditions::initialComponentAmounts, it was found "
-        "that initial conditions for species or component amounts have not been given. "
-        "You need to use one of the methods below (check their overloaded versions):\n"
-        " * EquilibriumConditions::startWith\n"
-        " * EquilibriumConditions::startWithComponentAmounts");
-
-    const auto Wn = m_system.formulaMatrix();
-    const auto n0 = m_initial_species_amounts.matrix();
-    const auto b = Wn * n0;
-    return b;
-}
-
 auto EquilibriumConditions::system() const -> const ChemicalSystem&
 {
     return m_system;
@@ -307,30 +205,5 @@ auto EquilibriumConditions::inputValues() const -> VectorXrConstRef
 {
     return m_inputs_values;
 }
-
-
-// auto EquilibriumConditions::conservationMatrix() const -> MatrixXd
-// {
-//     const auto Nn = msystem.species().size();
-//     const auto Ne = msystem.elements().size() + 1; // +1 = charge
-
-//     const auto& inert_reactions = _details.restrictions.reactions_cannot_react;
-
-//     const auto Nir = inert_reactions.size();
-
-//     MatrixXd res = zeros(Ne + Nir, Nn);
-
-//     auto fill_matrix_row = [=](const auto& pairs, auto row)
-//     {
-//         for(auto [ispecies, coeff] : pairs)
-//             row[ispecies] = coeff;
-//     };
-
-//     auto i = 0;
-//     for(const auto& pairs : inert_reactions)
-//         fill_matrix_row(pairs, res.row(i++));
-
-//     return res;
-// }
 
 } // namespace Reaktoro
