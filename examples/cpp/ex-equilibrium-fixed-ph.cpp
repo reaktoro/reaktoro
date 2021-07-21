@@ -63,12 +63,12 @@ int main()
     conditions.temperature(60.0, "celsius");
     conditions.pressure(100.0, "bar");
     conditions.pH(4.0);
-    conditions.startWith("H2O(aq)", 1.0, "kg");
-    conditions.startWith("Na+",     1.0, "mol");
-    conditions.startWith("Cl-",     1.0, "mol");
-    conditions.startWith("CO2(g)", 10.0, "mol");
 
     ChemicalState state(system);
+    state.set("H2O(aq)", 1.0, "kg");
+    state.set("Na+",     1.0, "mol");
+    state.set("Cl-",     1.0, "mol");
+    state.set("CO2(g)", 10.0, "mol");
 
     solver.solve(state, conditions);
 

@@ -67,14 +67,12 @@ int main()
     conditions.pressure(100.0, "bar");
     conditions.pH(4.0);
 
-    // Define initial species amounts
-    conditions.startWith("H2O(aq)", 1.0, "kg");
-    conditions.startWith("Na+",     1.0, "mol");
-    conditions.startWith("Cl-",     1.0, "mol");
-    conditions.startWith("CO2(g)", 10.0, "mol");
-
-    // Define initial equilibrium state
+    // Define initial chemical state
     ChemicalState state(system);
+    state.set("H2O(aq)", 1.0, "kg");
+    state.set("Na+",     1.0, "mol");
+    state.set("Cl-",     1.0, "mol");
+    state.set("CO2(g)", 10.0, "mol");
 
     // Equilibrate given initial state
     solver.solve(state, conditions);
