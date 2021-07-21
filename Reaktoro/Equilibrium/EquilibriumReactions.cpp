@@ -28,6 +28,34 @@
 // #include <Reaktoro/Math/LU.hpp>
 // #include <Reaktoro/Math/MathUtils.hpp>
 
+
+
+// auto EquilibriumConditions::conservationMatrix() const -> MatrixXd
+// {
+//     const auto Nn = msystem.species().size();
+//     const auto Ne = msystem.elements().size() + 1; // +1 = charge
+
+//     const auto& inert_reactions = _details.restrictions.reactions_cannot_react;
+
+//     const auto Nir = inert_reactions.size();
+
+//     MatrixXd res = zeros(Ne + Nir, Nn);
+
+//     auto fill_matrix_row = [=](const auto& pairs, auto row)
+//     {
+//         for(auto [ispecies, coeff] : pairs)
+//             row[ispecies] = coeff;
+//     };
+
+//     auto i = 0;
+//     for(const auto& pairs : inert_reactions)
+//         fill_matrix_row(pairs, res.row(i++));
+
+//     return res;
+// }
+
+
+
 // namespace Reaktoro {
 // namespace {
 
