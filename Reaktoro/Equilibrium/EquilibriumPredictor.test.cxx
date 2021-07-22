@@ -81,72 +81,209 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
     ChemicalSystem system(phases);
 
-    EquilibriumSpecs specs(system);
-    specs.temperature(); // specify temperature is constrained
-    specs.pressure();    // specify pressure is constrained
-    specs.volume();      // specify volume is constrained
-    specs.pH();          // specify pH is constrained (this creates a q control variable n[H+])
-    specs.openTo("H2O"); // specify the system is open to H2O (this creates a p control variable n[H2O])
+    SECTION("when the system is closed, temperature and pressure given")
+    {
+        EquilibriumSpecs specs(system);
+        specs.temperature(); // specify temperature is constrained
+        specs.pressure();    // specify pressure is constrained
 
-    EquilibriumConditions conditions0(specs);
-    conditions0.temperature(300.0);
-    conditions0.pressure(1.0e5);
-    conditions0.volume(2.0, "liter"); // H2O will be added as much as needed to fulfil this volume
-    conditions0.pH(4.0); // H+ will be added as much as needed to achieve this pH
+        EquilibriumConditions conditions0(specs);
+        conditions0.temperature(300.0);
+        conditions0.pressure(1.0e5);
 
-    ChemicalState state0(system);
-    state0.set("H2O" , 1.00, "kg");
-    state0.set("NaCl", 0.10, "mol");
+        ChemicalState state0(system);
+        state0.set("H2O" , 55.00, "mol");
+        state0.set("NaCl", 0.100, "mol");
+        state0.set("O2"  , 0.001, "mol");
 
-    EquilibriumSensitivity sensitivity0(specs);
+        EquilibriumSensitivity sensitivity0(specs);
 
-    EquilibriumSolver solver(specs);
-    solver.solve(state0, sensitivity0, conditions0);
+        EquilibriumSolver solver(specs);
+        solver.solve(state0, sensitivity0, conditions0);
 
-    state0.props().update(state0);
-    EquilibriumPredictor predictor(state0, sensitivity0);
+        state0.props().update(state0);
+        EquilibriumPredictor predictor(state0, sensitivity0);
 
-    ChemicalState state(system);
-    state.set("H2O" , 1.10, "kg");
-    state.set("NaCl", 0.15, "mol");
+        ChemicalState state(system);
+        state.set("H2O" , 55.50, "mol");
+        state.set("NaCl", 0.150, "mol");
+        state.set("O2"  , 0.002, "mol");
 
-    const VectorXd naux = state.speciesAmounts();
-    const VectorXd b = system.formulaMatrix() * naux;
+        const VectorXd naux = state.speciesAmounts();
+        const VectorXd b = system.formulaMatrix() * naux;
 
-    EquilibriumConditions conditions(specs);
-    conditions.temperature(330.0);
-    conditions.pressure(1.1e5);
-    conditions.volume(2.1, "liter"); // H2O will be added as much as needed to fulfil this volume
-    conditions.pH(4.2); // H+ will be added as much as needed to achieve this pH
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(330.0);
+        conditions.pressure(1.1e5);
 
-    predictor.predict(state, conditions);
+        predictor.predict(state, conditions);
 
-    const auto dndb0 = sensitivity0.dndb();
-    const auto dndw0 = sensitivity0.dndw();
-    const auto dpdw0 = sensitivity0.dpdw();
-    const auto dqdw0 = sensitivity0.dqdw();
-    const auto dpdb0 = sensitivity0.dpdb();
-    const auto dqdb0 = sensitivity0.dqdb();
-    const auto dudw0 = sensitivity0.dudw();
-    const auto dudb0 = sensitivity0.dudb();
+        const auto dndb0 = sensitivity0.dndb();
+        const auto dndw0 = sensitivity0.dndw();
+        const auto dpdw0 = sensitivity0.dpdw();
+        const auto dqdw0 = sensitivity0.dqdw();
+        const auto dpdb0 = sensitivity0.dpdb();
+        const auto dqdb0 = sensitivity0.dqdb();
+        const auto dudw0 = sensitivity0.dudw();
+        const auto dudb0 = sensitivity0.dudb();
 
-    const VectorXd n0 = state0.speciesAmounts();
-    const VectorXd p0 = state0.equilibrium().p();
-    const VectorXd q0 = state0.equilibrium().q();
-    const VectorXd u0 = state0.props();
+        const VectorXd n0 = state0.speciesAmounts();
+        const VectorXd p0 = state0.equilibrium().p();
+        const VectorXd q0 = state0.equilibrium().q();
+        const VectorXd u0 = state0.props();
 
-    const VectorXd w0 = conditions0.inputValues();
-    const VectorXd b0 = state0.equilibrium().b();
+        const VectorXd w0 = conditions0.inputValues();
+        const VectorXd b0 = state0.equilibrium().b();
 
-    const VectorXd w  = conditions.inputValues();
+        const VectorXd w  = conditions.inputValues();
 
-    const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
-    const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
-    const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
-    const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
+        const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
+        const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
+        const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
 
-    CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
-    CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
-    CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
-    CHECK( u.isApprox(VectorXd(state.props())) );
+        CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
+        CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
+        CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
+        CHECK( u.isApprox(VectorXd(state.props())) );
+    }
+
+    SECTION("when the system is closed, temperature and pressure given, O2 is a meta-stable basic species - sensitivity derivatives should be zero")
+    {
+        EquilibriumSpecs specs(system);
+        specs.temperature(); // specify temperature is constrained
+        specs.pressure();    // specify pressure is constrained
+
+        EquilibriumConditions conditions0(specs);
+        conditions0.temperature(300.0);
+        conditions0.pressure(1.0e5);
+
+        ChemicalState state0(system);
+        state0.set("H2O" , 55.00, "mol");
+        state0.set("NaCl", 0.100, "mol"); // no O2 given here!
+
+        EquilibriumSensitivity sensitivity0(specs);
+
+        EquilibriumSolver solver(specs);
+        solver.solve(state0, sensitivity0, conditions0);
+
+        state0.props().update(state0);
+        EquilibriumPredictor predictor(state0, sensitivity0);
+
+        ChemicalState state(system);
+        state.set("H2O" , 55.50, "mol");
+        state.set("NaCl", 0.150, "mol"); // no O2 given here!
+
+        const VectorXd naux = state.speciesAmounts();
+        const VectorXd b = system.formulaMatrix() * naux;
+
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(330.0);
+        conditions.pressure(1.1e5);
+
+        predictor.predict(state, conditions);
+
+        // TODO: Organize tests for EquilibriumPredictor in a way to avoid repeated codes.
+
+        const auto dndb0 = sensitivity0.dndb();
+        const auto dndw0 = sensitivity0.dndw();
+        const auto dpdw0 = sensitivity0.dpdw();
+        const auto dqdw0 = sensitivity0.dqdw();
+        const auto dpdb0 = sensitivity0.dpdb();
+        const auto dqdb0 = sensitivity0.dqdb();
+        const auto dudw0 = sensitivity0.dudw();
+        const auto dudb0 = sensitivity0.dudb();
+
+        const VectorXd n0 = state0.speciesAmounts();
+        const VectorXd p0 = state0.equilibrium().p();
+        const VectorXd q0 = state0.equilibrium().q();
+        const VectorXd u0 = state0.props();
+
+        const VectorXd w0 = conditions0.inputValues();
+        const VectorXd b0 = state0.equilibrium().b();
+
+        const VectorXd w  = conditions.inputValues();
+
+        const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
+        const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
+        const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
+        const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
+
+        CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
+        CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
+        CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
+        CHECK( u.isApprox(VectorXd(state.props())) );
+    }
+
+    SECTION("when the system is open to H2O and H+, temperature, pressure, volume and pH are given, and basic species O2 is meta-stable")
+    {
+        EquilibriumSpecs specs(system);
+        specs.temperature(); // specify temperature is constrained
+        specs.pressure();    // specify pressure is constrained
+        specs.volume();      // specify volume is constrained
+        specs.pH();          // specify pH is constrained (this creates a q control variable n[H+])
+        specs.openTo("H2O"); // specify the system is open to H2O (this creates a p control variable n[H2O])
+
+        EquilibriumConditions conditions0(specs);
+        conditions0.temperature(300.0);
+        conditions0.pressure(1.0e5);
+        conditions0.volume(2.0, "liter"); // H2O will be added as much as needed to fulfil this volume
+        conditions0.pH(4.0); // H+ will be added as much as needed to achieve this pH
+
+        ChemicalState state0(system);
+        state0.set("H2O" , 55.0, "mol");
+        state0.set("NaCl", 0.10, "mol");
+
+        EquilibriumSensitivity sensitivity0(specs);
+
+        EquilibriumSolver solver(specs);
+        solver.solve(state0, sensitivity0, conditions0);
+
+        state0.props().update(state0);
+        EquilibriumPredictor predictor(state0, sensitivity0);
+
+        ChemicalState state(system);
+        state.set("H2O" , 55.5, "mol");
+        state.set("NaCl", 0.15, "mol");
+
+        const VectorXd naux = state.speciesAmounts();
+        const VectorXd b = system.formulaMatrix() * naux;
+
+        EquilibriumConditions conditions(specs);
+        conditions.temperature(330.0);
+        conditions.pressure(1.1e5);
+        conditions.volume(2.1, "liter"); // H2O will be added as much as needed to fulfil this volume
+        conditions.pH(4.2); // H+ will be added as much as needed to achieve this pH
+
+        predictor.predict(state, conditions);
+
+        const auto dndb0 = sensitivity0.dndb();
+        const auto dndw0 = sensitivity0.dndw();
+        const auto dpdw0 = sensitivity0.dpdw();
+        const auto dqdw0 = sensitivity0.dqdw();
+        const auto dpdb0 = sensitivity0.dpdb();
+        const auto dqdb0 = sensitivity0.dqdb();
+        const auto dudw0 = sensitivity0.dudw();
+        const auto dudb0 = sensitivity0.dudb();
+
+        const VectorXd n0 = state0.speciesAmounts();
+        const VectorXd p0 = state0.equilibrium().p();
+        const VectorXd q0 = state0.equilibrium().q();
+        const VectorXd u0 = state0.props();
+
+        const VectorXd w0 = conditions0.inputValues();
+        const VectorXd b0 = state0.equilibrium().b();
+
+        const VectorXd w  = conditions.inputValues();
+
+        const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
+        const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
+        const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
+        const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
+
+        CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
+        CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
+        CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
+        CHECK( u.isApprox(VectorXd(state.props())) );
+    }
 }
