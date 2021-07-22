@@ -102,7 +102,10 @@ endif()
 
 # Build the examples
 if(REAKTORO_BUILD_EXAMPLES)
-    add_subdirectory(examples)
+    add_subdirectory(examples EXCLUDE_FROM_ALL)
+    add_custom_target(examples
+        COMMAND ${CMAKE_COMMAND} --build examples --parallel
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
 
 # Build the project documentation
