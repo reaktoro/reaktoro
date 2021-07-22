@@ -22,7 +22,7 @@
 //   • Allan Leal (16 July 2021)
 //
 // and since revised by:
-//   •
+//   • Allan Leal (22 July 2021)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -88,22 +88,18 @@ int main()
     EquilibriumConditions conditions(specs);
     conditions.set("V", Vx);
     conditions.set("U", Ux);
-    conditions.startWithState(statex);
-    // conditions.startWith("H2O(aq)"  , 1.00, "kg");
-    // conditions.startWith("Halite"   , 1.00, "mol");
-    // conditions.startWith("Calcite"  , 1.00, "mol");
-    // conditions.startWith("Magnesite", 1.00, "mol");
-    // conditions.startWith("Quartz"   , 1.00, "mol");
+    conditions.setLowerBoundPressure(1.0, "bar");
 
     ChemicalState state(system);
-    state.temperature(50.0, "celsius");
-    state.pressure(80.0, "bar");
-
-    EquilibriumOptions options;
-    options.optima.output.active = true;
+    state.temperature(25.0, "celsius");
+    state.pressure(1.0, "bar");
+    state.set("H2O(aq)"  , 1.00, "kg");
+    state.set("Halite"   , 1.00, "mol");
+    state.set("Calcite"  , 1.00, "mol");
+    state.set("Magnesite", 1.00, "mol");
+    state.set("Quartz"   , 1.00, "mol");
 
     EquilibriumSolver solver(specs);
-    solver.setOptions(options);
 
     solver.solve(state, conditions);
 
