@@ -501,6 +501,12 @@ public:
     /// Return true if pressure is unknown in the chemical equilibrium specifications.
     auto isPressureUnknown() const -> bool;
 
+    /// The index of temperature among the *p* control variables or `Index(-1)` if it is a given input.
+    auto indexControlVariableTemperature() const -> Index;
+
+    /// The index of pressure among the *p* control variables or `Index(-1)` if it is a given input.
+    auto indexControlVariablePressure() const -> Index;
+
     /// Return the chemical formulas of the explicit and implicit titrant substances.
     auto titrants() const -> Vec<ChemicalFormula>;
 

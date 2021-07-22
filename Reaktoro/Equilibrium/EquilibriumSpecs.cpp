@@ -504,6 +504,16 @@ auto EquilibriumSpecs::isPressureUnknown() const -> bool
     return unknownP;
 }
 
+auto EquilibriumSpecs::indexControlVariableTemperature() const -> Index
+{
+    return unknownT ? 0 : -1;
+}
+
+auto EquilibriumSpecs::indexControlVariablePressure() const -> Index
+{
+    return unknownP ? (unknownT ? 1 : 0) : -1;
+}
+
 auto EquilibriumSpecs::titrants() const -> Vec<ChemicalFormula>
 {
     return concatenate(titrants_explicit, titrants_implicit);
