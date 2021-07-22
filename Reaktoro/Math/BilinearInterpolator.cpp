@@ -122,8 +122,8 @@ auto BilinearInterpolator::operator()(real x, real y) const -> real
     const auto yA = m_ycoordinates.front();
     const auto yB = m_ycoordinates.back();
 
-    error(x < xA || x > xB, "Cannot interpolate with x = ", x, " when xmin = ", xA, " and xmax = ", xB, ".");
-    error(y < yA || y > yB, "Cannot interpolate with y = ", y, " when ymin = ", yA, " and ymax = ", yB, ".");
+    errorif(x < xA || x > xB, "Cannot interpolate with x = ", x, " when xmin = ", xA, " and xmax = ", xB, ".");
+    errorif(y < yA || y > yB, "Cannot interpolate with y = ", y, " when ymin = ", yA, " and ymax = ", yB, ".");
 
     const auto size_x = m_xcoordinates.size();
     const auto size_y = m_ycoordinates.size();
