@@ -92,6 +92,8 @@ struct EquilibriumSetup::Impl
     MatrixXd Vpx;  ///< The Jacobian of the residuals of the equation constraints with respect to x = (n, q).
     MatrixXd Vpp;  ///< The Jacobian of the residuals of the equation constraints with respect to p.
     MatrixXd Vpc;  ///< The Jacobian of the residuals of the equation constraints with respect to w (Optima uses `c` for these parameter variables).
+    Indices ipps;  ///< The indices of the pure phase species (i.e., species composing single-phase species, whose chemical potentials do not depend on composition)
+    ArrayXr npps;  ///< The auxiliary species amounts vector with non-zero amounts only for pure phase species.
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
@@ -118,6 +120,16 @@ struct EquilibriumSetup::Impl
         Vpx.resize(Np, Nx);
         Vpp.resize(Np, Np);
         Vpc.resize(Np, Nc);
+
+        auto offset = 0;
+        for(const auto& phase : system.phases())
+        {
+            const auto size = phase.species().size();
+            if(size == 1)
+                ipps.push_back(offset);
+            offset += size;
+        }
+        npps.resize(ipps.size());
     }
 
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
@@ -213,6 +225,7 @@ struct EquilibriumSetup::Impl
     {
         const auto n = x.head(dims.Nn);
         props.update(n, p, w);
+        npps = n(ipps);
     }
 
     auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> real
@@ -224,7 +237,7 @@ struct EquilibriumSetup::Impl
         const auto& u = cprops.chemicalPotentials();
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
-        const auto barrier = -tau * n.log().sum();
+        const auto barrier = -tau * npps.log().sum();
         return (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
     }
 
@@ -246,7 +259,8 @@ struct EquilibriumSetup::Impl
         auto gn = gx.head(Nn); // where we set the chemical potentials of the species
         auto gq = gx.tail(Nq); // where we set the desired chemical potentials of some substances
 
-        gn = u/RT - tau/n; // set the current chemical potentials of species (normalized by RT)
+        gn = u/RT; // set the current chemical potentials of species (normalized by RT)
+        gn(ipps).array() -= tau/npps; // add log barrier contribution to pure phase species
 
         const auto& uconstraints = specs.constraintsChemicalPotentialType();
 
