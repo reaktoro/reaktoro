@@ -108,5 +108,7 @@ int main()
     state.output("state.txt");
     props.output("props.txt");
 
+    // Check if props.txt and props-expected.txt are numerically equivalent.
+
     return 0;
 }
