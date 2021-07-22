@@ -60,6 +60,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesInputs()                           == Strings{"T", "P"} );
         CHECK( specs.isTemperatureUnknown()                  == false );
         CHECK( specs.isPressureUnknown()                     == false );
+        CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
+        CHECK( specs.indexControlVariablePressure()          == Index(-1) );
     }
 
     WHEN("temperature and volume are input variables - the Helmholtz energy minimization formulation")
@@ -84,6 +86,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesConstraintsEquationType()          == Strings{"volume"} );
         CHECK( specs.isTemperatureUnknown()                  == false );
         CHECK( specs.isPressureUnknown()                     == true );
+        CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
+        CHECK( specs.indexControlVariablePressure()          == 0 );
     }
 
     WHEN("volume and internal energy are input variables - the entropy maximization formulation")
@@ -108,6 +112,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesConstraintsEquationType()          == Strings{"volume", "internalEnergy"} );
         CHECK( specs.isTemperatureUnknown()                  == true );
         CHECK( specs.isPressureUnknown()                     == true );
+        CHECK( specs.indexControlVariableTemperature()       == 0 );
+        CHECK( specs.indexControlVariablePressure()          == 1 );
     }
 
     WHEN("temperature, pressure, and pH are input variables")
@@ -135,6 +141,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesConstraintsChemicalPotentialType() == Strings{"pH"} );
         CHECK( specs.isTemperatureUnknown()                  == false );
         CHECK( specs.isPressureUnknown()                     == false );
+        CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
+        CHECK( specs.indexControlVariablePressure()          == Index(-1) );
     }
 
     WHEN("volume, entropy, and activity[CO2(g)] are input variables")
@@ -163,6 +171,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesConstraintsChemicalPotentialType() == Strings{"lnActivity[CO2(g)]"} );
         CHECK( specs.isTemperatureUnknown()                  == true );
         CHECK( specs.isPressureUnknown()                     == true );
+        CHECK( specs.indexControlVariableTemperature()       == 0 );
+        CHECK( specs.indexControlVariablePressure()          == 1 );
     }
 
     WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables")
@@ -197,6 +207,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesConstraintsChemicalPotentialType() == Strings{"pH", "pE"} );
         CHECK( specs.isTemperatureUnknown()                  == false );
         CHECK( specs.isPressureUnknown()                     == false );
+        CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
+        CHECK( specs.indexControlVariablePressure()          == Index(-1) );
     }
 
     WHEN("model parameters are among the input variables")
@@ -229,6 +241,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.indicesParams()                         == Indices{3} ); // index of G0[H2O]
         CHECK( specs.isTemperatureUnknown()                  == false );
         CHECK( specs.isPressureUnknown()                     == false );
+        CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
+        CHECK( specs.indexControlVariablePressure()          == Index(-1) );
     }
 
     SECTION("Checking lambda functions in equation constraints")
