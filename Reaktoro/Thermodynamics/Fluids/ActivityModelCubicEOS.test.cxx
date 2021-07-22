@@ -26,6 +26,7 @@ using namespace Reaktoro;
 inline auto checkActivities(ArrayXrConstRef x, real P, ActivityPropsConstRef props)
 {
     const auto Pbar = P * 1e-5;
+
     // The concentrations of the species (partial pressures in bar)
     ArrayXr c = x * Pbar;
 
@@ -58,9 +59,9 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
         // Evaluate the activity props function
         fn(props, {T, P, x, extra});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.8352662917) ); // H2O
-        CHECK( exp(props.ln_g[1]) == Approx(0.9368618581) ); // CO2
-        CHECK( exp(props.ln_g[2]) == Approx(0.9821389164) ); // CH4
+        CHECK( exp(props.ln_g[0]) == Approx(0.84961190475435533) ); // H2O
+        CHECK( exp(props.ln_g[1]) == Approx(0.93520991341973592) ); // CO2
+        CHECK( exp(props.ln_g[2]) == Approx(0.98003282312005890) ); // CH4
 
         checkActivities(x, P, props);
     }
@@ -80,8 +81,8 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
         // Evaluate the activity props function
         fn(props, {T, P, x, extra});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.8237453481) ); // H2O
-        CHECK( exp(props.ln_g[1]) == Approx(0.9376470046) ); // CO2
+        CHECK( exp(props.ln_g[0]) == Approx(0.84135538513830999) ); // H2O
+        CHECK( exp(props.ln_g[1]) == Approx(0.93544583990584096) ); // CO2
 
         checkActivities(x, P, props);
     }
@@ -101,7 +102,7 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
         // Evaluate the activity props function
         fn(props, {T, P, x, extra});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.9738586814) ); // CH4
+        CHECK( exp(props.ln_g[0]) == Approx(0.97385868141252452) ); // CH4
 
         checkActivities(x, P, props);
     }
