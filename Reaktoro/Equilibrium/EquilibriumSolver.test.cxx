@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// C++ includes
+#include <iomanip>
+
 // Catch includes
 #include <catch2/catch.hpp>
 
@@ -32,6 +35,8 @@
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
+
+#define PRINT_INFO_IF_FAILS(x) INFO(#x " = \n" << std::scientific << std::setprecision(16) << x)
 
 TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 {
@@ -95,7 +100,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 15 );
+        CHECK( result.optima.iterations == 14 );
 
         result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -115,13 +120,15 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             const auto dndP = sensitivity.dndw("P");
             const auto dndb = sensitivity.dndb();
 
+            PRINT_INFO_IF_FAILS(dndT);
             CHECK( dndT == VectorXd({{
-                -2.3437508072278416e-08,
-                 2.3437508072278416e-08,
-                 2.3437508072278413e-08,
+                -2.3437508072185746e-08,
+                 2.3437508072185746e-08,
+                 2.3437508072185759e-08,
                  0.0000000000000000e+00,
-                -1.5530798350377789e-34 }}));
+                 3.6497224878582674e-35 }}));
 
+            PRINT_INFO_IF_FAILS(dndP);
             CHECK( dndP == VectorXd({{
                  0.0000000000000000e+00,
                  0.0000000000000000e+00,
@@ -129,12 +136,13 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                  0.0000000000000000e+00,
                  0.0000000000000000e+00 }}));
 
+            PRINT_INFO_IF_FAILS(dndb);
             CHECK( dndb == MatrixXd({
-                {4.9999999507732190e-01,  0.0000000000000000e+00, -1.1102230246251565e-16},
-                {4.9226781169203182e-09, -0.0000000000000000e+00,  5.0000000000000011e-01},
-                {4.9226781169203190e-09, -0.0000000000000000e+00, -5.0000000000000000e-01},
-                {0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00},
-                {4.5454545454545456e-19, -0.0000000000000000e+00, -8.6736173798840353e-35} }));
+                { 4.9999999384665239e-01,  0.0000000000000000e+00,  1.2306694552322028e-09 },
+                { 6.1533476097769288e-09, -0.0000000000000000e+00,  4.9999999876933054e-01 },
+                { 6.1533476097769296e-09, -0.0000000000000000e+00, -5.0000000123066946e-01 },
+                { 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00 },
+                {-2.5000000000000000e-01, -0.0000000000000000e+00,  2.5000000000000000e-01 }}));
         }
     }
 
@@ -186,7 +194,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 15 );
+        CHECK( result.optima.iterations == 14 );
 
         result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -217,7 +225,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 28 );
+        CHECK( result.optima.iterations == 27 );
 
         result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -249,7 +257,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         auto result = solver.solve(state);
 
         CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == 28 );
+        CHECK( result.optima.iterations == 27 );
 
         result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -285,7 +293,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             auto result = solver.solve(state);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 30 );
+            CHECK( result.optima.iterations == 29 );
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -303,7 +311,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             auto result = solver.solve(state, restrictions);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 28 );
+            CHECK( result.optima.iterations == 27 );
 
             result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
 
@@ -367,13 +375,15 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             const auto dndpH = sensitivity.dndw("pH");
             const auto dndb  = sensitivity.dndb();
 
+            PRINT_INFO_IF_FAILS(dndT);
             CHECK( dndT == VectorXd({{
-                -1.1153479332073403e-11,
-                -2.0093291929976317e-16,
-                 1.1153479332073403e-11,
+                -1.1153479332069776e-11,
+                -2.0093291929969796e-16,
+                 1.1153479332069776e-11,
                  0.0000000000000000e+00,
-                -6.7948459188748201e-35 }}));
+                -1.3589691178388140e-34 }}));
 
+            PRINT_INFO_IF_FAILS(dndP);
             CHECK( dndP == VectorXd({{
                  0.0000000000000000e+00,
                 -0.0000000000000000e+00,
@@ -381,19 +391,21 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                  0.0000000000000000e+00,
                 -0.0000000000000000e+00 }}));
 
+            PRINT_INFO_IF_FAILS(dndpH);
             CHECK( dndpH == VectorXd({{
-                -2.7913561385420755e-10,
-                -2.2814928148700941e-03,
-                 2.7913561385420755e-10,
+                -2.7913561385411666e-10,
+                -2.2814928148700963e-03,
+                 2.7913561385411666e-10,
                  0.0000000000000000e+00,
-                 0.0000000000000000e+00 }}));
+                 8.0779356694631607e-44 }}));
 
+            PRINT_INFO_IF_FAILS(dndb);
             CHECK( dndb == MatrixXd({
-                { 4.9999999999889794e-01,  0.0000000000000000e+00, -4.9999999999889794e-01 },
-                { 9.0076339999801367e-06, -0.0000000000000000e+00, -9.0076339999801367e-06 },
-                { 1.1020442994623832e-12, -0.0000000000000000e+00, -1.1020442994623832e-12 },
+                { 4.9999999999834693e-01,  0.0000000000000000e+00, -4.9999999999834693e-01 },
+                { 9.0076339999702179e-06, -0.0000000000000000e+00, -9.0076339999702179e-06 },
+                { 1.6530565225577372e-12, -0.0000000000000000e+00, -1.6530565225577372e-12 },
                 { 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00 },
-                { 4.5454545454545456e-19, -0.0000000000000000e+00, -4.5454545454545456e-19 }}));
+                {-2.5000000000000000e-01, -0.0000000000000000e+00,  2.5000000000000000e-01 }}));
         }
     }
 
