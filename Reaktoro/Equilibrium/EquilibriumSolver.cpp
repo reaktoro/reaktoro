@@ -193,9 +193,13 @@ struct EquilibriumSolver::Impl
         /// Set the right-hand side vector be of the linear equality constraints.
         optproblem.be = b0;
 
-        // Set the lower bounds of the species amounts
+        // Set the lower and upper bounds of the species amounts
         optproblem.xlower = setup.assembleLowerBoundsVector(restrictions, state0);
         optproblem.xupper = setup.assembleUpperBoundsVector(restrictions, state0);
+
+        // Set the lower and upper bounds of the *p* control variables
+        optproblem.plower = conditions.lowerBoundsControlVariablesP();
+        optproblem.pupper = conditions.upperBoundsControlVariablesP();
 
         // Set the values of the input variables for sensitivity derivatives (due to the use of Param, a wrapper to a shared pointer, the actual values of c here are not important, because the Param objects are embedded in the models)
         optproblem.c = zeros(optdims.c);
