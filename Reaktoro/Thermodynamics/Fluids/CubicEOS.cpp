@@ -58,7 +58,7 @@ using AlphaResult = std::tuple<real, real, real>;
 auto alpha(CubicEOSModel type) -> std::function<AlphaResult(real, real, real)>
 {
     // The alpha function for van der Waals EOS (see Table 3.1 of Smith et al. 2017)
-    auto alphaVDW = [](real T, real Tc, real omega) -> AlphaResult
+    auto alphaVDW = [](real Tr, real TrT, real omega) -> AlphaResult
     {
         const real alpha = 1.0;
         const real alphaT = 0.0;
@@ -70,8 +70,10 @@ auto alpha(CubicEOSModel type) -> std::function<AlphaResult(real, real, real)>
     auto alphaRK = [](real Tr, real TrT, real omega) -> AlphaResult
     {
         const real alpha = 1.0/sqrt(Tr);
-        const real alphaT = -0.5/Tr*alpha * TrT; // === -0.5/(Tr*sqrt(Tr)) * TrT === -0.5/Tr*alpha * TrT
-        const real alphaTT = 0.5/Tr*(alpha/Tr * TrT - alphaT) * TrT; // === (0.5/Tr*alpha/Tr * TrT - 0.5/Tr*alphaT) * TrT === 0.5/Tr*(alpha/Tr * TrT - alphaT) * TrT
+        const real alphaTr = -0.5/Tr * alpha;
+        const real alphaTrTr = -0.5/Tr * (alphaTr - alpha/Tr);
+        const real alphaT = alphaTr*TrT;
+        const real alphaTT = alphaTrTr*TrT*TrT;
         return { alpha, alphaT, alphaTT };
     };
 
@@ -80,14 +82,14 @@ auto alpha(CubicEOSModel type) -> std::function<AlphaResult(real, real, real)>
     {
         const real m = 0.480 + 1.574*omega - 0.176*omega*omega;
         const real sqrtTr = sqrt(Tr);
-        const real sqrtTrT = 0.5/sqrtTr * TrT; // === 0.5/sqrt(Tr) * TrT
-        const real sqrtTrTT = -0.5/Tr * sqrtTrT * TrT; // === -0.5/(sqrtTr*sqrtTr) * sqrtTrT * TrT
         const real aux = 1.0 + m*(1.0 - sqrtTr);
-        const real auxT = -m*sqrtTrT;
-        const real auxTT = -m*sqrtTrTT;
+        const real auxTr = -0.5*m/sqrtTr;
+        const real auxTrTr = 0.25*m/(Tr*sqrtTr);
         const real alpha = aux*aux;
-        const real alphaT = 2.0*aux*auxT;
-        const real alphaTT = 2.0*(auxT*auxT + aux*auxTT);
+        const real alphaTr = 2.0*aux*auxTr;
+        const real alphaTrTr = 2.0*(auxTr*auxTr + aux*auxTrTr);
+        const real alphaT = alphaTr * TrT;
+        const real alphaTT = alphaTrTr * TrT*TrT;
         return { alpha, alphaT, alphaTT };
     };
 
@@ -103,14 +105,14 @@ auto alpha(CubicEOSModel type) -> std::function<AlphaResult(real, real, real)>
             0.374640 + 1.54226*omega - 0.269920*omega*omega :
             0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;
         const real sqrtTr = sqrt(Tr);
-        const real sqrtTrT = 0.5/sqrtTr * TrT; // === 0.5/sqrt(Tr) * TrT
-        const real sqrtTrTT = -0.5/Tr * sqrtTrT * TrT; // === -0.5/(sqrtTr*sqrtTr) * sqrtTrT * TrT
         const real aux = 1.0 + m*(1.0 - sqrtTr);
-        const real auxT = -m*sqrtTrT;
-        const real auxTT = -m*sqrtTrTT;
+        const real auxTr = -0.5*m/sqrtTr;
+        const real auxTrTr = 0.25*m/(Tr*sqrtTr);
         const real alpha = aux*aux;
-        const real alphaT = 2.0*aux*auxT;
-        const real alphaTT = 2.0*(auxT*auxT + aux*auxTT);
+        const real alphaTr = 2.0*aux*auxTr;
+        const real alphaTrTr = 2.0*(auxTr*auxTr + aux*auxTrTr);
+        const real alphaT = alphaTr * TrT;
+        const real alphaTT = alphaTrTr * TrT*TrT;
         return { alpha, alphaT, alphaTT };
     };
 
@@ -463,7 +465,7 @@ struct CubicEOS::Impl
         //=========================================================================================
         for(auto k = 0; k < nspecies; ++k)
         {
-            const real betak = bbar[k]/b[k] * beta;
+            const real betak = P*bbar[k]/(R*T);
             const real qk    = (1 + abar[k]/amix - bbar[k]/bmix)*q;
             const real Ak    = (epsilon + sigma - 1.0)*betak - 1.0;
             const real Bk    = ((epsilon*sigma - epsilon - sigma)*(2*betak - beta) + qk - q)*beta - (epsilon + sigma - q)*betak;
