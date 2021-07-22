@@ -149,6 +149,30 @@ public:
 
     //=================================================================================================
     //
+    // METHODS TO SPECIFY LOWER AND UPPER BOUNDS FOR UNKNOWN VARIABLES
+    //
+    //=================================================================================================
+
+    /// Set the lower bound for temperature during the equilibrium calculation.
+    auto setLowerBoundTemperature(double value, String unit="K") -> void;
+
+    /// Set the upper bound for temperature during the equilibrium calculation.
+    auto setUpperBoundTemperature(double value, String unit="K") -> void;
+
+    /// Set the lower bound for pressure during the equilibrium calculation.
+    auto setLowerBoundPressure(double value, String unit="Pa") -> void;
+
+    /// Set the upper bound for pressure during the equilibrium calculation.
+    auto setUpperBoundPressure(double value, String unit="Pa") -> void;
+
+    /// Set the lower bound for the amount of a titrant during the equilibrium calculation.
+    auto setLowerBoundTitrant(String substance, double value, String unit="mol") -> void;
+
+    /// Set the upper bound for the amount of a titrant during the equilibrium calculation.
+    auto setUpperBoundTitrant(String substance, double value, String unit="mol") -> void;
+
+    //=================================================================================================
+    //
     // MISCELLANEOUS METHODS
     //
     //=================================================================================================
@@ -166,6 +190,12 @@ public:
     /// Return the values of the input variables associated with the equilibrium conditions.
     auto inputValues() const -> VectorXrConstRef;
 
+    /// Return the specified lower bounds for the *p* control variables.
+    auto lowerBoundsControlVariablesP() const -> VectorXdConstRef;
+
+    /// Return the specified upper bounds for the *p* control variables.
+    auto upperBoundsControlVariablesP() const -> VectorXdConstRef;
+
 private:
     /// The chemical system associated with the equilibrium problem specifications.
     const ChemicalSystem m_system;
@@ -173,8 +203,23 @@ private:
     /// The names of the input variables in the equilibrium problem specifications.
     const Strings m_inputs;
 
+    /// The names of the *p* control variables variables in the equilibrium problem specifications.
+    const Strings m_control_variables_p;
+
+    /// The index of temperature variable in *p* or -1 if not unknown.
+    const long m_idxT;
+
+    /// The index of pressure variable in *p* or -1 if not unknown.
+    const long m_idxP;
+
     /// The current values of the input variables.
     VectorXr m_inputs_values;
+
+    /// The lower bounds for the *p* control variables.
+    VectorXd m_plower;
+
+    /// The upper bounds for the *p* control variables.
+    VectorXd m_pupper;
 };
 
 } // namespace Reaktoro

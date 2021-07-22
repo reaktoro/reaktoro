@@ -18,6 +18,7 @@
 #include "EquilibriumConditions.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -40,13 +41,21 @@ auto throwErrorIfNotRegisteredInput(const Strings& inputs, const String& wid, co
 } // namespace
 
 EquilibriumConditions::EquilibriumConditions(const EquilibriumSpecs& specs)
-: m_system(specs.system()), m_inputs(specs.inputs())
+: m_system(specs.system()),
+  m_inputs(specs.inputs()),
+  m_control_variables_p(specs.namesControlVariablesP()),
+  m_idxT(specs.indexControlVariableTemperature()),
+  m_idxP(specs.indexControlVariablePressure())
 {
     // Initialize the values of the input variables to zero
     m_inputs_values = zeros(specs.numInputs());
 
     // Initialize the values of the input variables that are model parameters to their current values
     m_inputs_values(specs.indicesParams()) = VectorXr(specs.params());
+
+    // Initialize the default lower and upper bounds for the *p* control variables (-inf and inf respectively).
+    m_plower.setConstant(m_control_variables_p.size(), -inf);
+    m_pupper.setConstant(m_control_variables_p.size(),  inf);
 }
 
 auto EquilibriumConditions::temperature(real value, String unit) -> void
@@ -183,6 +192,46 @@ auto EquilibriumConditions::Eh(real value, String unit) -> void
     m_inputs_values[idx] = value;
 }
 
+auto EquilibriumConditions::setLowerBoundTemperature(double value, String unit) -> void
+{
+    if(m_idxT < m_plower.size())
+        m_plower[m_idxT] = units::convert(value, unit, "K");
+}
+
+auto EquilibriumConditions::setUpperBoundTemperature(double value, String unit) -> void
+{
+    if(m_idxT < m_pupper.size())
+        m_pupper[m_idxT] = units::convert(value, unit, "K");
+}
+
+auto EquilibriumConditions::setLowerBoundPressure(double value, String unit) -> void
+{
+    if(m_idxP < m_plower.size())
+        m_plower[m_idxP] = units::convert(value, unit, "Pa");
+}
+
+auto EquilibriumConditions::setUpperBoundPressure(double value, String unit) -> void
+{
+    if(m_idxP < m_pupper.size())
+        m_pupper[m_idxP] = units::convert(value, unit, "Pa");
+}
+
+auto EquilibriumConditions::setLowerBoundTitrant(String substance, double value, String unit) -> void
+{
+    const auto idx = index(m_control_variables_p, substance);
+    const auto size = m_control_variables_p.size();
+    errorif(idx >= size, "EquilibriumConditions::setLowerBoundTitrant requires a substance name that was specified in a call to EquilibriumSpecs::openTo.");
+    m_plower[idx] = units::convert(value, unit, "mol");
+}
+
+auto EquilibriumConditions::setUpperBoundTitrant(String substance, double value, String unit) -> void
+{
+    const auto idx = index(m_control_variables_p, substance);
+    const auto size = m_control_variables_p.size();
+    errorif(idx >= size, "EquilibriumConditions::setUpperBoundTitrant requires a substance name that was specified in a call to EquilibriumSpecs::openTo.");
+    m_pupper[idx] = units::convert(value, unit, "mol");
+}
+
 auto EquilibriumConditions::set(const String& input, const real& val) -> void
 {
     const auto idx = index(m_inputs, input);
@@ -204,6 +253,16 @@ auto EquilibriumConditions::inputNames() const -> const Strings&
 auto EquilibriumConditions::inputValues() const -> VectorXrConstRef
 {
     return m_inputs_values;
+}
+
+auto EquilibriumConditions::lowerBoundsControlVariablesP() const -> VectorXdConstRef
+{
+    return m_plower;
+}
+
+auto EquilibriumConditions::upperBoundsControlVariablesP() const -> VectorXdConstRef
+{
+    return m_pupper;
 }
 
 } // namespace Reaktoro
