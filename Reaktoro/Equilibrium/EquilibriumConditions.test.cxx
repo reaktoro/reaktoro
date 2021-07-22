@@ -48,6 +48,9 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         CHECK( w[1] == 100.0 * 1.0e+5 ); // P in Pa
 
         CHECK_THROWS( conditions.volume(1, "m3") );
+
+        CHECK( conditions.lowerBoundsControlVariablesP().size() == 0 ); // there are no p control variables
+        CHECK( conditions.upperBoundsControlVariablesP().size() == 0 ); // there are no p control variables
     }
 
     WHEN("temperature and volume are input variables - the Helmholtz energy minimization formulation")
@@ -67,6 +70,21 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         CHECK( w[1] == 2.0 ); // V in m3
 
         CHECK_THROWS( conditions.entropy(1, "J/K") );
+
+        const auto plower = conditions.lowerBoundsControlVariablesP();
+        const auto pupper = conditions.upperBoundsControlVariablesP();
+
+        REQUIRE( plower.size() == 1 ); // there is only one p control variable: P
+        REQUIRE( pupper.size() == 1 ); // there is only one p control variable: P
+
+        CHECK(( std::isinf(plower[0]) && plower[0] < 0.0 )); // default lower bound for P: -inf
+        CHECK(( std::isinf(pupper[0]) && pupper[0] > 0.0 )); // default upper bound for P: inf
+
+        conditions.setLowerBoundPressure(0.01, "bar");
+        conditions.setUpperBoundPressure(1.00, "GPa");
+
+        CHECK( plower[0] == 0.01e+5 ); // check new lower bound for P
+        CHECK( pupper[0] == 1.00e+9 ); // check new upper bound for P
     }
 
     WHEN("volume and internal energy are input variables - the entropy maximization formulation")
@@ -86,6 +104,30 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         CHECK( w[1] == Approx(1.0e+3) ); // U in J
 
         CHECK_THROWS( conditions.enthalpy(1, "J") );
+
+        const auto plower = conditions.lowerBoundsControlVariablesP();
+        const auto pupper = conditions.upperBoundsControlVariablesP();
+
+        REQUIRE( plower.size() == 2 ); // there are two p control variables: T and P
+        REQUIRE( pupper.size() == 2 ); // there are two p control variables: T and P
+
+        CHECK(( std::isinf(plower[0]) && plower[0] < 0.0 )); // default lower bound for T: -inf
+        CHECK(( std::isinf(plower[1]) && plower[1] < 0.0 )); // default lower bound for P: -inf
+
+        CHECK(( std::isinf(pupper[0]) && pupper[0] > 0.0 )); // default upper bound for T: inf
+        CHECK(( std::isinf(pupper[1]) && pupper[1] > 0.0 )); // default upper bound for P: inf
+
+        conditions.setLowerBoundTemperature(0.000, "celsius");
+        conditions.setUpperBoundTemperature(100.0, "celsius");
+
+        CHECK( plower[0] == Approx(0.000 + 273.15) ); // check new lower bound for T
+        CHECK( pupper[0] == Approx(100.0 + 273.15) ); // check new upper bound for T
+
+        conditions.setLowerBoundPressure(0.01, "bar");
+        conditions.setUpperBoundPressure(1.00, "GPa");
+
+        CHECK( plower[1] == Approx(0.01e+5) ); // check new lower bound for P
+        CHECK( pupper[1] == Approx(1.00e+9) ); // check new upper bound for P
     }
 
     WHEN("temperature, pressure, and pH are input variables")
