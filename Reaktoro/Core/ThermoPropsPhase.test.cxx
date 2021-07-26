@@ -39,11 +39,11 @@ inline auto createStandardThermoModel(double param)
 
 TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
 {
-    ActivityModel activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args) {};
 
     Phase phase;
     phase = phase.withName("SomeGas");
-    phase = phase.withActivityPropsFn(activity_props_fn);
+    phase = phase.withActivityModel(activity_model);
     phase = phase.withStateOfMatter(StateOfMatter::Gas);
     phase = phase.withSpecies({
         Species("H2O(g)").withStandardThermoModel(createStandardThermoModel(10.0)), // param = 10.0

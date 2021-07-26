@@ -28,7 +28,7 @@ namespace test {
 extern auto createDatabase() -> Database;
 
 /// Return mock activity properties for an aqueous solution.
-auto activityPropsAqueous(ActivityPropsRef props, ActivityArgs args)
+auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
 {
     const auto [T, P, x, extra] = args;
     props.Vex  = 0.1 * log(P/T);
@@ -43,7 +43,7 @@ auto activityPropsAqueous(ActivityPropsRef props, ActivityArgs args)
 };
 
 /// Return mock activity properties for a gaseous solution.
-auto activityPropsGaseous(ActivityPropsRef props, ActivityArgs args)
+auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
 {
     const auto [T, P, x, extra] = args;
     props.Vex  = 1.0 * log(P/T);
@@ -58,7 +58,7 @@ auto activityPropsGaseous(ActivityPropsRef props, ActivityArgs args)
 };
 
 /// Return mock activity properties for a solid solution.
-auto activityPropsSolid(ActivityPropsRef props, ActivityArgs args)
+auto activityModelSolid(ActivityPropsRef props, ActivityArgs args)
 {
     const auto [T, P, x, extra] = args;
     props.Vex  = 1.1 * log(P/T);
@@ -85,38 +85,38 @@ auto createChemicalSystem() -> ChemicalSystem
             .withName("AqueousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
             .withStateOfMatter(StateOfMatter::Liquid)
-            .withActivityPropsFn(activityPropsAqueous)
-            .withIdealActivityPropsFn(activityPropsAqueous),
+            .withActivityModel(activityModelAqueous)
+            .withIdealActivityModel(activityModelAqueous),
         Phase()
             .withName("GaseousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
             .withStateOfMatter(StateOfMatter::Gas)
-            .withActivityPropsFn(activityPropsGaseous)
-            .withIdealActivityPropsFn(activityPropsGaseous),
+            .withActivityModel(activityModelGaseous)
+            .withIdealActivityModel(activityModelGaseous),
         Phase()
             .withName("Halite")
             .withSpecies({ db.species().get("NaCl(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activityPropsSolid)
-            .withIdealActivityPropsFn(activityPropsSolid),
+            .withActivityModel(activityModelSolid)
+            .withIdealActivityModel(activityModelSolid),
         Phase()
             .withName("Calcite")
             .withSpecies({ db.species().get("CaCO3(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activityPropsSolid)
-            .withIdealActivityPropsFn(activityPropsSolid),
+            .withActivityModel(activityModelSolid)
+            .withIdealActivityModel(activityModelSolid),
         Phase()
             .withName("Magnesite")
             .withSpecies({ db.species().get("MgCO3(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activityPropsSolid)
-            .withIdealActivityPropsFn(activityPropsSolid),
+            .withActivityModel(activityModelSolid)
+            .withIdealActivityModel(activityModelSolid),
         Phase()
             .withName("Quartz")
             .withSpecies({ db.species().get("SiO2(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activityPropsSolid)
-            .withIdealActivityPropsFn(activityPropsSolid),
+            .withActivityModel(activityModelSolid)
+            .withIdealActivityModel(activityModelSolid),
     };
 
     return ChemicalSystem(db, phases);

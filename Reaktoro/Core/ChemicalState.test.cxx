@@ -48,7 +48,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     db.addSpecies( Species("SiO2(s)").withStandardGibbsEnergy(0.0) );
 
     // Create the ActivityModel of the Phase objects for the ChemicalSystem
-    ActivityModel activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args) {};
 
     // Create the Phase objects for the ChemicalSystem
     const Vec<Phase> phases =
@@ -57,27 +57,27 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
             .withName("AqueousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
             .withStateOfMatter(StateOfMatter::Liquid)
-            .withActivityPropsFn(activity_props_fn),
+            .withActivityModel(activity_model),
         Phase()
             .withName("GaseousPhase")
             .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
             .withStateOfMatter(StateOfMatter::Gas)
-            .withActivityPropsFn(activity_props_fn),
+            .withActivityModel(activity_model),
         Phase()
             .withName("Halite")
             .withSpecies({ db.species().get("NaCl(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activity_props_fn),
+            .withActivityModel(activity_model),
         Phase()
             .withName("CaCO3(s)")
             .withSpecies({ db.species().get("CaCO3(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activity_props_fn),
+            .withActivityModel(activity_model),
         Phase()
             .withName("Quartz")
             .withSpecies({ db.species().get("SiO2(s)") })
             .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityPropsFn(activity_props_fn)
+            .withActivityModel(activity_model)
     };
 
     // Create the ChemicalSystem object

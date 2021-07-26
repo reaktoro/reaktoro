@@ -28,7 +28,7 @@ namespace Reaktoro {
 
 using std::log;
 
-auto activityPropsFnCubicEOS(const SpeciesList& species, ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModel
+auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModel
 {
     // The number of gases
     const auto nspecies = species.size();
@@ -75,7 +75,7 @@ auto activityPropsFnCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPa
     res.ln_phi.resize(nspecies);
 
     // Define the activity model function of the gaseous phase
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel model = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;
@@ -95,14 +95,14 @@ auto activityPropsFnCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPa
         props.ln_a = res.ln_phi + log(x) + log(Pbar);
     };
 
-    return fn;
+    return model;
 }
 
 auto ActivityModelCubicEOS(ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModelGenerator
 {
     return [=](const SpeciesList& species)
     {
-        return activityPropsFnCubicEOS(species, params, type);
+        return activityModelCubicEOS(species, params, type);
     };
 }
 

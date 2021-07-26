@@ -92,8 +92,8 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.species(0).name() == "H2O(aq)" );
         CHECK( phase.species(1).name() == "H+"      );
         CHECK( phase.species(2).name() == "OH-"     );
-        CHECK( phase.activityPropsFn() );
-        CHECK( phase.idealActivityPropsFn() );
+        CHECK( phase.activityModel() );
+        CHECK( phase.idealActivityModel() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase(const Speciate&)")
@@ -115,8 +115,8 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.species(2).name() == "OH-"     );
         CHECK( phase.species(3).name() == "H2(aq)"  );
         CHECK( phase.species(4).name() == "O2(aq)"  );
-        CHECK( phase.activityPropsFn() );
-        CHECK( phase.idealActivityPropsFn() );
+        CHECK( phase.activityModel() );
+        CHECK( phase.idealActivityModel() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase() with all elements during phase conversion process")
@@ -153,8 +153,8 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.species(17).name() == "SiO2(aq)"      );
         CHECK( phase.species(18).name() == "1-Butanol(aq)" );
         CHECK( phase.species(19).name() == "1-Butene(aq)"  );
-        CHECK( phase.activityPropsFn() );
-        CHECK( phase.idealActivityPropsFn() );
+        CHECK( phase.activityModel() );
+        CHECK( phase.idealActivityModel() );
     }
 
     SECTION("Testing GenericPhase::GenericPhase() with H, O, and Cl elements during phase conversion process")
@@ -178,8 +178,8 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.species(4).name() == "O2(aq)"   );
         CHECK( phase.species(5).name() == "Cl-"      );
         CHECK( phase.species(6).name() == "HCl(aq)"  );
-        CHECK( phase.activityPropsFn() );
-        CHECK( phase.idealActivityPropsFn() );
+        CHECK( phase.activityModel() );
+        CHECK( phase.idealActivityModel() );
     }
 
     //=================================================================================================================
@@ -340,8 +340,8 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.name() == name );
         CHECK( phase.stateOfMatter() == stateofmatter );
         CHECK( phase.aggregateState() == aggregatestate );
-        CHECK( phase.activityPropsFn() );
-        CHECK( phase.idealActivityPropsFn() );
+        CHECK( phase.activityModel() );
+        CHECK( phase.idealActivityModel() );
         CHECK( phase.species().size() == species.size() );
         for(auto i = 0; i < species.size(); ++i)
         {

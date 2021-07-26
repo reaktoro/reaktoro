@@ -32,7 +32,9 @@ void exportModel(py::module& m, const char* modelname)
         .def(py::init<>())
         // .def(py::init<const Fn<void(ResultRef, Args...)>&>())  // At the moment, only one possibility of function call is possible.
         .def(py::init<const Fn<Result(Args...)>&>())
-        .def("params", &ModelType::params, py::return_value_policy::reference_internal)
-        .def("__call__", &ModelType::operator())
+        .def("params", &ModelType::params, return_internal_ref)
+        .def("apply", &ModelType::apply)
+        .def("__call__", py::overload_cast<const Args&...>(&ModelType::operator(), py::const_))
+        .def("__call__", py::overload_cast<ResultRef, const Args&...>(&ModelType::operator(), py::const_))
         ;
 }

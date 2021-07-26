@@ -81,7 +81,7 @@ auto volumeCO2(real T, real Pb, real sqrtT) -> real
 
 } // namespace
 
-auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityModel
+auto activityModelSpycherPruessEnnis(const SpeciesList& species) -> ActivityModel
 {
     // The indices of gases H2O(g) and CO2(g)
     const auto iH2O = species.findWithFormula("H2O");
@@ -160,7 +160,7 @@ auto ActivityModelSpycherPruessEnnis() -> ActivityModelGenerator
 {
     return [](const SpeciesList& species)
     {
-        return activityPropsFnSpycherPruessEnnis(species);
+        return activityModelSpycherPruessEnnis(species);
     };
 }
 

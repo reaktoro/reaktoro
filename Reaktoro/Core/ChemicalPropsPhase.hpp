@@ -528,11 +528,11 @@ private:
         Vec<Any> extra;
         ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
         ActivityArgs args{ T, P, x, extra };
-        ActivityModel activity_props_fn = use_ideal_activity_model ?
-            phase().idealActivityPropsFn() : phase().activityPropsFn();
+        ActivityModel activity_model = use_ideal_activity_model ?
+            phase().idealActivityModel() : phase().activityModel();
 
         if(nsum == 0.0) aprops = 0.0;
-        else activity_props_fn(aprops, args);
+        else activity_model(aprops, args);
 
         // Compute the chemical potentials of the species
         u = G0 + R*T*ln_a;

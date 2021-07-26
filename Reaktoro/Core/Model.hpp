@@ -102,7 +102,8 @@ public:
     /// @param f A model evaluator or a model calculator function.
     template<typename Fun, EnableIf<!isFunction<Fun>>...>
     Model(const Fun& f)
-    : Model(asFunction(f))
+    : Model(std::function(f))
+    // : Model(asFunction(f))
     {}
 
     /// Return a new Model function object with memoization for the model calculator.
@@ -125,6 +126,12 @@ public:
     {
         assert(m_calcfn);
         return m_calcfn(args..., m_params);
+    }
+
+    /// Evaluate the model with given arguments and return the result of the evaluation.
+    auto operator()(ResultRef res, const Args&... args) const -> void
+    {
+        apply(res, args...);
     }
 
     /// Return true if this Model function object has been initialized.

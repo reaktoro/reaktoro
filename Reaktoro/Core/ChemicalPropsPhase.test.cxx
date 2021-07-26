@@ -49,7 +49,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 {
     const auto R = universalGasConstant;
 
-    ActivityModel activity_props_fn = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x, extra] = args;
         props.Vex  = 1.0 * (T * P);
@@ -65,7 +65,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
     Phase phase;
     phase = phase.withName("SomeGas");
-    phase = phase.withActivityPropsFn(activity_props_fn);
+    phase = phase.withActivityModel(activity_model);
     phase = phase.withStateOfMatter(StateOfMatter::Gas);
     phase = phase.withSpecies({
         Species("H2O(g)").withStandardThermoModel(createStandardThermoModel(10.0)), // param = 10.0

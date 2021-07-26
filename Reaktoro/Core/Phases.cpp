@@ -169,8 +169,8 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
     phase = phase.withName(phasename);
     phase = phase.withStateOfMatter(stateofmatter);
     phase = phase.withSpecies(species);
-    phase = phase.withActivityPropsFn(activity_model(species));
-    phase = phase.withIdealActivityPropsFn(ideal_activity_model(species));
+    phase = phase.withActivityModel(activity_model(species));
+    phase = phase.withIdealActivityModel(ideal_activity_model(species));
 
     return phase;
 }

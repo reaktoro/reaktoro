@@ -53,7 +53,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         return props;
     };
 
-    ActivityModel activity_props_fn_gas = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x, extra] = args;
         props.Vex  = 1.0 * (T*P)*(T*P);
@@ -67,7 +67,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.ln_a = 9.0 * x;
     };
 
-    ActivityModel activity_props_fn_solid = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x, extra] = args;
         props.Vex  = 1.1 * (T*P)*(T*P);
@@ -91,7 +91,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
     {
         Phase()
             .withName("SomeGas")
-            .withActivityPropsFn(activity_props_fn_gas)
+            .withActivityModel(activity_model_gas)
             .withStateOfMatter(StateOfMatter::Gas)
             .withSpecies({
                 db.species().get("H2O(g)"),
@@ -99,7 +99,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         Phase()
             .withName("SomeSolid")
-            .withActivityPropsFn(activity_props_fn_solid)
+            .withActivityModel(activity_model_solid)
             .withStateOfMatter(StateOfMatter::Solid)
             .withSpecies({
                 db.species().get("CaCO3(s)") })

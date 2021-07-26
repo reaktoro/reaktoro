@@ -199,7 +199,7 @@ inline auto computeCTT(const real& T, int i, int j, int k) -> real
 
 } // namespace
 
-auto activityPropsFnSpycherReed(const SpeciesList& species) -> ActivityModel
+auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
 {
     // The names of the gases in the mixture, and the supported ones by this model
     Strings provided = vectorize(species, RKT_LAMBDA(x, x.formula().str()));
@@ -359,7 +359,7 @@ auto ActivityModelSpycherReed() -> ActivityModelGenerator
 {
     return [](const SpeciesList& species)
     {
-        return activityPropsFnSpycherReed(species);
+        return activityModelSpycherReed(species);
     };
 }
 

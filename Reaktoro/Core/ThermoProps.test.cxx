@@ -46,9 +46,9 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
         return props;
     };
 
-    ActivityModel activity_props_fn_gas = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityArgs args) {};
 
-    ActivityModel activity_props_fn_solid = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args) {};
 
     Database db;
 
@@ -60,7 +60,7 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     {
         Phase()
             .withName("SomeGas")
-            .withActivityPropsFn(activity_props_fn_gas)
+            .withActivityModel(activity_model_gas)
             .withStateOfMatter(StateOfMatter::Gas)
             .withSpecies({
                 db.species().get("H2O(g)"),
@@ -68,7 +68,7 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
 
         Phase()
             .withName("SomeSolid")
-            .withActivityPropsFn(activity_props_fn_solid)
+            .withActivityModel(activity_model_solid)
             .withStateOfMatter(StateOfMatter::Solid)
             .withSpecies({
                 db.species().get("CaCO3(s)") })

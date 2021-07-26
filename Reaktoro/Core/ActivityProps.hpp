@@ -133,7 +133,10 @@ struct ActivityArgs
     Vec<Any>& extra;
 };
 
+// Declare this so that Model undestand ActivityPropsRef as reference type for ActivityProps instead of ActivityProps&.
+REAKTORO_DEFINE_REFERENCE_TYPE_OF(ActivityProps, ActivityPropsRef);
+
 /// The function type for the calculation of activity and excess thermodynamic properties of a phase.
-using ActivityModel = Fn<void(ActivityPropsRef, ActivityArgs)>;
+using ActivityModel = Model<ActivityProps(ActivityArgs)>;
 
 } // namespace Reaktoro

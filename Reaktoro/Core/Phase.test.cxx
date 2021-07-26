@@ -24,12 +24,12 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Phase", "[Phase]")
 {
-    ActivityModel activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args) {};
 
     Phase phase;
-    phase = phase.withActivityPropsFn(activity_props_fn);
+    phase = phase.withActivityModel(activity_model);
 
-    REQUIRE( phase.activityPropsFn() );
+    REQUIRE( phase.activityModel() );
 
     SECTION("Testing PhasePhase::withSpecies with aqueous species")
     {
@@ -60,7 +60,7 @@ TEST_CASE("Testing Phase", "[Phase]")
         phase = phase.withName("GaseousPhase");
         phase = phase.withSpecies(SpeciesList("H2O(g) CO2(g) CH4(g) O2(g) H2(g)"));
         phase = phase.withStateOfMatter(StateOfMatter::Gas);
-        phase = phase.withActivityPropsFn(activity_props_fn);
+        phase = phase.withActivityModel(activity_model);
 
         REQUIRE( phase.name() == "GaseousPhase" );
         REQUIRE( phase.stateOfMatter() == StateOfMatter::Gas );
