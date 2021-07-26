@@ -27,14 +27,32 @@
 
 namespace Reaktoro {
 
+/// The arguments in an function for calculation of activity properties of a phase.
+/// @see ActivityModel, ActivityProps
+struct ActivityArgs
+{
+    /// The temperature for the calculation (in K).
+    const real& T;
+
+    /// The pressure for the calculation (in Pa).
+    const real& P;
+
+    /// The mole fractions of the species in the phase.
+    ArrayXrConstRef x;
+
+    /// The extra arguments for the activity model evaluation whose type is only known at runtime.
+    Vec<Any>& extra;
+};
+
+// Declare this so that Model undestand ActivityPropsRef as reference type for ActivityProps instead of ActivityProps&.
+REAKTORO_DEFINE_REFERENCE_TYPE_OF(ActivityProps, ActivityPropsRef);
+
+/// The function type for the calculation of activity and excess thermodynamic properties of a phase.
+using ActivityModel = Model<ActivityProps(ActivityArgs)>;
+
 /// The type for functions that construct an ActivityModel for a phase.
 /// @param species The species in the phase.
 using ActivityModelGenerator = Fn<ActivityModel(const SpeciesList& species)>;
-
-// TODO: Rename this ActivityModel type by ActivityModelGenerator
-// TODO: Use the name ActivityModel instead of ActivityModel.
-// TODO: Use Model type to define ActivityModel.
-// TODO: Define these chain methods for Model type.
 
 /// Return an activity model resulting from chaining other activity models.
 auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator;

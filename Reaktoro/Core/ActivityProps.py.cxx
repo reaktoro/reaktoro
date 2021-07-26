@@ -68,11 +68,4 @@ void exportActivityProps(py::module& m)
         .def_readonly("ln_g", &ActivityPropsConstRef::ln_g)
         .def_readonly("ln_a", &ActivityPropsConstRef::ln_a)
         ;
-
-    py::class_<ActivityArgs>(m, "ActivityArgs")
-        .def_property_readonly("T", [](const ActivityArgs& self) { return self.T; })
-        .def_property_readonly("P", [](const ActivityArgs& self) { return self.P; })
-        .def_property_readonly("x", [](const ActivityArgs& self) { return self.x; })
-        .def_property_readonly("extra", [](const ActivityArgs& self) { return self.extra; })
-        ;
 }
