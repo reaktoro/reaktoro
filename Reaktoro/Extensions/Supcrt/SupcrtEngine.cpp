@@ -110,10 +110,10 @@ struct SupcrtEngine::Impl
     auto props(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) const -> StandardThermoProps
     {
         const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
-        const auto wes = water_eletro_props_fn(T, P);
+        const auto wep = water_eletro_props_fn(T, P);
         const auto g = functionG(T, P, wts);
         const auto aes = speciesElectroPropsHKF(g, params);
-        const auto res = supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wes);
+        const auto res = supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wep);
         return convert(res);
     }
 

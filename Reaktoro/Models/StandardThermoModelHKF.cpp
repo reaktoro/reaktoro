@@ -99,7 +99,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, Tmax] = params;
 
         const auto wts = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
-        const auto wes = memoizedWaterElectroPropsJohnsonNorton(T, P);
+        const auto wep = memoizedWaterElectroPropsJohnsonNorton(T, P);
         const auto gstate = gHKF::compute(T, P, wts);
         const auto aes = speciesElectroPropsHKF(gstate, params);
 
@@ -107,10 +107,10 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         const auto& wT  = aes.wT;
         const auto& wP  = aes.wP;
         const auto& wTT = aes.wTT;
-        const auto& Z   = wes.bornZ;
-        const auto& Y   = wes.bornY;
-        const auto& Q   = wes.bornQ;
-        const auto& X   = wes.bornX;
+        const auto& Z   = wep.bornZ;
+        const auto& Y   = wep.bornY;
+        const auto& Q   = wep.bornQ;
+        const auto& X   = wep.bornX;
         const auto Tth  = T - theta;
         const auto Tth2 = Tth*Tth;
         const auto Tth3 = Tth*Tth2;

@@ -37,7 +37,7 @@ struct WaterThermoProps;
 auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoProps& wts) -> SpeciesThermoProps;
 
 /// Calculate the standard thermodynamic properties of a aqueous solutes using HKF model.
-auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps;
+auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wep) -> SpeciesThermoProps;
 
 /// Calculate the standard thermodynamic properties of a gas/liquid using Holland and Powell (2011) model.
 auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const SupcrtblParamsFluidHollandPowell& params) -> SpeciesThermoProps;

@@ -48,8 +48,8 @@ auto defaultWaterDielectricConstantFn() -> Fn<real(real,real)>
     const auto T = 298.15;
     const auto P = 1.0e5;
     const auto wts = waterThermoPropsHGK(T, P, StateOfMatter::Liquid);
-    const auto wes = waterElectroPropsJohnsonNorton(T, P, wts);
-    const auto epsilon = wes.epsilon;
+    const auto wep = waterElectroPropsJohnsonNorton(T, P, wts);
+    const auto epsilon = wep.epsilon;
     return [=](real T, real P) { return epsilon; };
 }
 

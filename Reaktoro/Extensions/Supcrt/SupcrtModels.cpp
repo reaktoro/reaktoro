@@ -132,7 +132,7 @@ auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueo
     return state;
 }
 
-auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps
+auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wep) -> SpeciesThermoProps
 {
     // Auxiliary variables
     const auto Pbar = P * 1.0e-05;
@@ -154,10 +154,10 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
     const auto wT   = aes.wT;
     const auto wP   = aes.wP;
     const auto wTT  = aes.wTT;
-    const auto Z    = wes.bornZ;
-    const auto Y    = wes.bornY;
-    const auto Q    = wes.bornQ;
-    const auto X    = wes.bornX;
+    const auto Z    = wep.bornZ;
+    const auto Y    = wep.bornY;
+    const auto Q    = wep.bornQ;
+    const auto X    = wep.bornX;
 
     // Calculate the standard molal thermodynamic properties of the aqueous species
     auto V = a1 + a2/(psi + Pbar) +
@@ -214,13 +214,13 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
 // {
 //     WaterThermoProps wt = waterThermoPropsWagnerPruss(T, P, StateOfMatter::Liquid);
 
-//     WaterElectroProps wes = waterElectroPropsJohnsonNorton(T, P, wt);
+//     WaterElectroProps wep = waterElectroPropsJohnsonNorton(T, P, wt);
 
 //     FunctionG g = functionG(T, P, wt);
 
 //     SpeciesElectroProps aes = speciesElectroPropsHKF(g, params);
 
-//     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wes);
+//     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wep);
 // }
 
 auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoProps
