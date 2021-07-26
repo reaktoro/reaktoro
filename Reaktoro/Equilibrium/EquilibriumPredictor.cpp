@@ -156,4 +156,9 @@ auto EquilibriumPredictor::predict(ChemicalState& state, const EquilibriumCondit
     pimpl->predict(state, conditions);
 }
 
+auto EquilibriumPredictor::predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXrConstRef b) -> void
+{
+    pimpl->predict(state, conditions, b);
+}
+
 } // namespace Reaktoro
