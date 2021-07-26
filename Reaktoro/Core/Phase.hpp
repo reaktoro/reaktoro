@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ActivityProps.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 
@@ -47,10 +48,10 @@ public:
     auto withStateOfMatter(StateOfMatter state) -> Phase;
 
     /// Return a copy of this Phase object with a new activity model function.
-    auto withActivityModel(ActivityModel fn) -> Phase;
+    auto withActivityModel(const ActivityModel& model) -> Phase;
 
     /// Return a copy of this Phase object with a new ideal activity model function.
-    auto withIdealActivityModel(ActivityModel fn) -> Phase;
+    auto withIdealActivityModel(const ActivityModel& model) -> Phase;
 
     /// Return the name of the phase.
     auto name() const -> String;

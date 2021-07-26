@@ -104,17 +104,19 @@ auto Phase::withStateOfMatter(StateOfMatter state) -> Phase
     return copy;
 }
 
-auto Phase::withActivityModel(ActivityModel fn) -> Phase
+auto Phase::withActivityModel(const ActivityModel& model) -> Phase
 {
     Phase copy = clone();
-    copy.pimpl->activity_model = std::move(fn);
+    // copy.pimpl->activity_model = model.withMemoization();
+    copy.pimpl->activity_model = model;
     return copy;
 }
 
-auto Phase::withIdealActivityModel(ActivityModel fn) -> Phase
+auto Phase::withIdealActivityModel(const ActivityModel& model) -> Phase
 {
     Phase copy = clone();
-    copy.pimpl->ideal_activity_model = std::move(fn);
+    // copy.pimpl->ideal_activity_model = model.withMemoization();
+    copy.pimpl->ideal_activity_model = model;
     return copy;
 }
 
