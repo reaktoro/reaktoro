@@ -132,7 +132,7 @@ auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueo
     return state;
 }
 
-auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wep) -> SpeciesThermoProps
+auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aep, const WaterElectroProps& wep) -> SpeciesThermoProps
 {
     // Auxiliary variables
     const auto Pbar = P * 1.0e-05;
@@ -150,10 +150,10 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
     const auto c1   = params.c1;
     const auto c2   = params.c2;
     const auto wr   = params.wref;
-    const auto w    = aes.w;
-    const auto wT   = aes.wT;
-    const auto wP   = aes.wP;
-    const auto wTT  = aes.wTT;
+    const auto w    = aep.w;
+    const auto wT   = aep.wT;
+    const auto wP   = aep.wP;
+    const auto wTT  = aep.wTT;
     const auto Z    = wep.bornZ;
     const auto Y    = wep.bornY;
     const auto Q    = wep.bornQ;
@@ -218,9 +218,9 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
 
 //     FunctionG g = functionG(T, P, wt);
 
-//     SpeciesElectroProps aes = speciesElectroPropsHKF(g, params);
+//     SpeciesElectroProps aep = speciesElectroPropsHKF(g, params);
 
-//     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wep);
+//     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aep, wep);
 // }
 
 auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoProps

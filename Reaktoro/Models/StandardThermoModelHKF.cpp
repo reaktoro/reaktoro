@@ -101,12 +101,12 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         const auto wep = memoizedWaterElectroPropsJohnsonNorton(T, P);
         const auto gstate = gHKF::compute(T, P, wtp);
-        const auto aes = speciesElectroPropsHKF(gstate, params);
+        const auto aep = speciesElectroPropsHKF(gstate, params);
 
-        const auto& w   = aes.w;
-        const auto& wT  = aes.wT;
-        const auto& wP  = aes.wP;
-        const auto& wTT = aes.wTT;
+        const auto& w   = aep.w;
+        const auto& wT  = aep.wT;
+        const auto& wP  = aep.wP;
+        const auto& wTT = aep.wTT;
         const auto& Z   = wep.bornZ;
         const auto& Y   = wep.bornY;
         const auto& Q   = wep.bornQ;

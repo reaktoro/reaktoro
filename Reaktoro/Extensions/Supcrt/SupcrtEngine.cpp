@@ -112,8 +112,8 @@ struct SupcrtEngine::Impl
         const auto wtp = water_thermo_props_wagner_pruss_fn(T, P);
         const auto wep = water_eletro_props_fn(T, P);
         const auto g = functionG(T, P, wtp);
-        const auto aes = speciesElectroPropsHKF(g, params);
-        const auto res = supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wep);
+        const auto aep = speciesElectroPropsHKF(g, params);
+        const auto res = supcrtStandardThermoPropsSoluteHKF(T, P, params, aep, wep);
         return convert(res);
     }
 
