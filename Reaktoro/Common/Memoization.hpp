@@ -23,62 +23,76 @@
 #include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
+
+/// Used to enable function arguments of a type `T` to be cached in a memoized version of the function.
+template<typename T>
+struct MemoizationTraits
+{
+    /// The type `T` without const, reference, and pointer specifiers.
+    using Type = Decay<T>;
+
+    /// The type of the object constructed with a given object of type `T`.
+    /// Consider three cases for type `T` and the respective default type for `CacheType` using `Type = Decay<T>`:
+    ///
+    /// **Case 1:** `T` is `const real&` and `CacheType` is `real`.
+    /// **Case 2:** `T` is `ArrayXrConstRef` and `CacheType` is also `ArrayXrConstRef`.
+    /// **Case 3:** `T` is `const Param&` and `CacheType` is `Param`.
+    ///
+    /// In Case 1, the default type for `CacheType` is suitable, since `real`
+    /// implements a default constructor, which will be used to construct a
+    /// cache object for arguments of this type.
+    ///
+    /// In Case 2, `CacheType` is not a suitable type for a cache object,
+    /// because `ArrayXrConstRef` does not implement a default constructor.
+    /// In this case, `CacheType` should be defined to be `ArrayXr` instead.
+    ///
+    /// In Case 3, `CacheType` is also not a suitable type for a cache object
+    /// because `Param` is a wrapper to a shared pointer to a `real` object. If
+    /// the cached `Param` object was changed somewhere in the application,
+    /// this change would reflect in the cache as well, and equality check of a
+    /// `Param` argument and the previously cached `Param` argument would
+    /// result to true always. In this case, `CacheType` should be defined to
+    /// be `real` instead.
+    using CacheType = Type;
+
+    /// Check if `a`, of type `CacheType`, is equal to `b`, of type `T`.
+    /// Redefine this function in a template specialization for type `T` if the
+    /// default implementation using `operator==(const CacheType&, const T&)` is not adequate.
+    /// For example, `operator==` for `Eigen::ArrayBase<Derived>` objects
+    /// return an expression that needs to be evaluated with methods `all()` or
+    /// `any()`. Thus, in order for memoization of functions with this array
+    /// type to compile, a template specialization is needed for `Eigen::ArrayBase<Derived>>`.
+    static auto equal(const CacheType& a, const Type& b)
+    {
+        return a == b;
+    }
+
+    /// Assign the value of `b`, of type `T`, into `a`, of type `CacheType`.
+    /// Redefine this function in a template specialization for type `T` if the
+    /// default implementation using `CacheType::operator=` is not adequate.
+    static auto assign(CacheType& a, const Type& b)
+    {
+        a = b;
+    }
+};
+
 namespace detail {
 
-/// Type trait used to check if @p a and @p b of type @p T have the same value.
-/// Define a template specialization for a different type `U` if `operator==`
-/// is not adequate. For example, `operator==` for `Eigen::ArrayBase<Derived>`
-/// objects return an expression that needs to be evaluated with methods
-/// `all()` or `any()`. Thus, in order for memoization of functions with this
-/// array type to compile, a template specialization for
-/// `SameValue<Eigen::ArrayBase<Derived>>` is needed.
-template<typename T>
-struct SameValue
+/// Return true if `a` and `b` have the same value using `MemoizationTraits::equal`.
+template<typename CacheType, typename T>
+constexpr auto sameValue(const CacheType& a, const T& b)
 {
-    static constexpr auto check(const T& a, const T& b) { return a == b; }
+    return MemoizationTraits<Decay<T>>::equal(a, b);
 };
 
-/// Type trait used to assing the value of @p b into @p a.
-/// Define a template specialization for a different type `U` if `operator=` is
-/// not adequate. For example, type `Param` has an underlying shared pointer,
-/// with `Param::operator=(Param)` defined in a way that the underlying
-/// pointers are assigned instead. However, what we need for memoization is
-/// that the value inside the pointers are updated. Otherwise it is not
-/// possible to determine if the last arguments in the memoized function call
-/// (containing `Param` objects) have changed values or not.
-template<typename T>
-struct AssignValue
+/// Assign the value of `b` into `a` using `MemoizationTraits::assign`.
+template<typename CacheType, typename T>
+constexpr auto assignValue(CacheType& a, const T& b)
 {
-    static constexpr auto apply(T& a, const T& b) { a = b; }
+    return MemoizationTraits<Decay<T>>::assign(a, b);
 };
 
-/// Type trait used to create a clone of value @p a of type @p T.
-/// Define a template specialization for a different type `U` if the default
-/// behavior is not adequate. For example, type `Param` has an underlying
-/// shared pointer and the default clone behavior below will simply perform a
-/// shallow copy of this pointer. Instead, the Param::clone method should be
-/// used and to achieve this, the specialization `CloneValue<Param>` is needed.
-template<typename T>
-struct CloneValue
-{
-    static constexpr auto apply(const T& a) -> T { return a; }
-};
-
-/// Return true if @p a and @p b have the same value in the sense of type trait `SameValue<T>` for type @p T.
-template<typename T>
-constexpr auto sameValue(const T& a, const T& b)
-{
-    return SameValue<T>::check(a, b);
-};
-
-/// Assign the value of @p b into @p a using the type trait `AssignValue<T>` for type @p T.
-template<typename T>
-constexpr auto assignValue(T& a, const T& b)
-{
-    return AssignValue<T>::apply(a, b);
-};
-
-/// Return true if corresponding items in each tuple have the same value in the sense of `SameValue`.
+/// Return true if corresponding items in each tuple have the same value.
 template<typename Tuple1, typename Tuple2>
 auto sameValues(const Tuple1& tuple1, const Tuple2& tuple2)
 {
@@ -94,7 +108,7 @@ auto sameValues(const Tuple1& tuple1, const Tuple2& tuple2)
     return res;
 }
 
-/// Assign the values of @p tuple2 into @p tuple1 in the sense of `AssignValue`.
+/// Assign the values of `tuple2` into `tuple1`.
 template<typename Tuple1, typename Tuple2>
 auto assignValues(Tuple1& tuple1, const Tuple2& tuple2)
 {
@@ -107,6 +121,10 @@ auto assignValues(Tuple1& tuple1, const Tuple2& tuple2)
         assignValue(get<i>(tuple1), get<i>(tuple2));
     });
 }
+
+/// Used to get the type used as cache type in memoization of functions.
+template<typename T>
+using CacheType = typename MemoizationTraits<Decay<T>>::CacheType;
 
 } // namespace detail
 
@@ -130,7 +148,7 @@ public:
     Memoization() = delete;
 };
 
-/// Return a memoized version of given function @p f.
+/// Return a memoized version of given function `f`.
 template<typename Ret, typename... Args>
 auto memoize(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
 {
@@ -146,18 +164,18 @@ auto memoize(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
     };
 }
 
-/// Return a memoized version of given function @p f.
+/// Return a memoized version of given function `f`.
 template<typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoize(Fun f)
 {
     return memoize(asFunction(f));
 }
 
-/// Return a memoized version of given function @p f that caches only the arguments used in the last call.
+/// Return a memoized version of given function `f` that caches only the arguments used in the last call.
 template<typename Ret, typename... Args>
 auto memoizeLast(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
 {
-    Tuple<Decay<Args>...> cache;
+    Tuple<detail::CacheType<Args>...> cache;
     Ret result = Ret();
     auto firsttime = true;
     return [=](Args... args) mutable -> Ret
@@ -172,18 +190,18 @@ auto memoizeLast(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
     };
 }
 
-/// Return a memoized version of given function @p f that caches only the arguments used in the last call.
+/// Return a memoized version of given function `f` that caches only the arguments used in the last call.
 template<typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoizeLast(Fun f)
 {
     return memoizeLast(asFunction(f));
 }
 
-/// Return a memoized version of given function @p f that caches only the arguments used in the last call.
+/// Return a memoized version of given function `f` that caches only the arguments used in the last call.
 template<typename Ret, typename RetRef, typename... Args>
 auto memoizeLastUsingRef(Fn<void(RetRef, Args...)> f) -> Fn<void(RetRef, Args...)>
 {
-    Tuple<Decay<Args>...> cache;
+    Tuple<detail::CacheType<Args>...> cache;
     Ret result = Ret();
     auto firsttime = true;
     return [=](RetRef res, Args... args) mutable -> void
@@ -202,8 +220,8 @@ auto memoizeLastUsingRef(Fn<void(RetRef, Args...)> f) -> Fn<void(RetRef, Args...
     };
 }
 
-/// Return a memoized version of given function @p f that caches only the arguments used in the last call./// Return a memoized version of given function @p f that caches only the arguments used in the last call.
-/// This overload is used when @p f is a lambda function or free function.
+/// Return a memoized version of given function `f` that caches only the arguments used in the last call./// Return a memoized version of given function `f` that caches only the arguments used in the last call.
+/// This overload is used when `f` is a lambda function or free function.
 /// Use `memoizeLastUsingRef<Ret>(f)` to explicitly specify the `Ret` type.
 template<typename Ret, typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoizeLastUsingRef(Fun f)
@@ -211,7 +229,7 @@ auto memoizeLastUsingRef(Fun f)
     return memoizeLastUsingRef<Ret>(asFunction(f));
 }
 
-/// Return a memoized version of given function @p f that caches only the arguments used in the last call.
+/// Return a memoized version of given function `f` that caches only the arguments used in the last call.
 /// This overload assumes that `RetRef = Ret&`.
 template<typename Ret, typename... Args>
 auto memoizeLastUsingRef(Fn<void(Ret&, Args...)> f) -> Fn<void(Ret&, Args...)>
@@ -219,8 +237,8 @@ auto memoizeLastUsingRef(Fn<void(Ret&, Args...)> f) -> Fn<void(Ret&, Args...)>
     return memoizeLastUsingRef<Ret, Ret&>(f);
 }
 
-/// Return a memoized version of given function @p f that caches only the arguments used in the last call.
-/// This overload is used when @p f is a lambda function or free function.
+/// Return a memoized version of given function `f` that caches only the arguments used in the last call.
+/// This overload is used when `f` is a lambda function or free function.
 /// Use `memoizeLastUsingRef(f)` to implicitly specify that `RetRef` is `Ret&`.
 template<typename Fun, EnableIf<!isFunction<Fun>>...>
 auto memoizeLastUsingRef(Fun f)
