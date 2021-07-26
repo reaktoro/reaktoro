@@ -441,6 +441,7 @@ template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxC
 struct MemoizationTraits<Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 {
     using Type = Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>;
+
     using CacheType = Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>;
 
     /// Return true if two arrays are equal.
@@ -455,6 +456,7 @@ template<typename EigenType>
 struct MemoizationTraits<Eigen::Ref<EigenType>>
 {
     using Type = Eigen::Ref<EigenType>;
+
     using CacheType = typename MemoizationTraits<Decay<EigenType>>::CacheType;
 
     /// Return true if the two Eigen objects are equal.
