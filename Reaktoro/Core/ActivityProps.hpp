@@ -79,6 +79,23 @@ struct ActivityPropsBase
 
     /// Convert this ActivityPropsBase object into another.
     template<typename RX, typename AX, typename EX>
+    auto operator=(const ActivityPropsBase<RX, AX, EX>& other) -> ActivityPropsBase&
+    {
+        Vex   = other.Vex;
+        VexT  = other.VexT;
+        VexP  = other.VexP;
+        Gex   = other.Gex;
+        Hex   = other.Hex;
+        Cpex  = other.Cpex;
+        Cvex  = other.Cvex;
+        ln_g  = other.ln_g;
+        ln_a  = other.ln_a;
+        extra = other.extra;
+        return *this;
+    }
+
+    /// Convert this ActivityPropsBase object into another.
+    template<typename RX, typename AX, typename EX>
     operator ActivityPropsBase<RX, AX, EX>()
     {
         return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
