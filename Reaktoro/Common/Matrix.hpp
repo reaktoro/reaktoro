@@ -26,6 +26,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/TraitsUtils.hpp>
 
 namespace Reaktoro {
 
@@ -428,24 +429,47 @@ auto log10(const Eigen::MatrixBase<Derived>& mat) -> decltype(mat.array().log10(
 } // namespace Reaktoro
 
 //=========================================================================
-// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING EIGEN::ARRAYBASE
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING EIGEN TYPES
 //=========================================================================
 namespace Reaktoro {
-namespace detail {
 
 template<typename T>
-struct SameValue;
+struct MemoizationTraits;
 
-template<typename Derived>
-struct SameValue<Eigen::ArrayBase<Derived>>
+/// Specialize MemoizationTraits for Eigen array types.
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+struct MemoizationTraits<Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 {
-    static auto check(const Eigen::ArrayBase<Derived>& a, const Eigen::ArrayBase<Derived>& b)
+    using Type = Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>;
+    using CacheType = Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>;
+
+    /// Return true if two arrays are equal.
+    static auto equal(const CacheType& a, const Type& b)
     {
-        return (a == b).all(); // for memoization sake, a and b are equal if all array elements are equal
+        return (a == b).all();
     }
 };
 
-} // namespace detail
+/// Specialize MemoizationTraits for Eigen ref types.
+template<typename EigenType>
+struct MemoizationTraits<Eigen::Ref<EigenType>>
+{
+    using Type = Eigen::Ref<EigenType>;
+    using CacheType = typename MemoizationTraits<Decay<EigenType>>::CacheType;
+
+    /// Return true if the two Eigen objects are equal.
+    static auto equal(const CacheType& a, const Type& b)
+    {
+        return MemoizationTraits<CacheType>::equal(a, b);
+    }
+
+    /// Assign an Eigen ref object to an Eigen object.
+    static auto assign(const CacheType& a, const Type& b)
+    {
+        return MemoizationTraits<CacheType>::assign(a, b);
+    }
+};
+
 } // namespace Reaktoro
 
 namespace Reaktoro {
