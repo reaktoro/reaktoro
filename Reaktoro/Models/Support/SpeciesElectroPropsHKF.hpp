@@ -49,7 +49,7 @@ struct gHKF
     real gPP = {};
 
     /// Compute the *g* function state at given temperature, pressure and water thermodynamic properties.
-    static auto compute(real T, real P, const WaterThermoProps& wts) -> gHKF;
+    static auto compute(real T, real P, const WaterThermoProps& wtp) -> gHKF;
 };
 
 /// Compute the electrostatic properties of an aqueous solute with given HKF *g* function state.

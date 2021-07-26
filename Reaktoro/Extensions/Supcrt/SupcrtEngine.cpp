@@ -91,8 +91,8 @@ struct SupcrtEngine::Impl
         // Initialize the Johnson and Norton equation of state for the electrostatic state of water
         water_eletro_props_fn = [=](real T, real P)
         {
-            const WaterThermoProps wts = water_thermo_props_wagner_pruss_fn(T, P);
-            return waterElectroPropsJohnsonNorton(T, P, wts);
+            const WaterThermoProps wtp = water_thermo_props_wagner_pruss_fn(T, P);
+            return waterElectroPropsJohnsonNorton(T, P, wtp);
         };
 
         water_eletro_props_fn = memoizeLast(water_eletro_props_fn);
@@ -101,17 +101,17 @@ struct SupcrtEngine::Impl
     /// Return the standard thermodynamic properties of the aqueous solvent water using HKF model.
     auto props(real T, real P, const SupcrtParamsAqueousSolventHKF& params) const -> StandardThermoProps
     {
-        const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
-        const auto res = supcrtStandardThermoPropsSolventHKF(T, P, params, wts);
+        const auto wtp = water_thermo_props_wagner_pruss_fn(T, P);
+        const auto res = supcrtStandardThermoPropsSolventHKF(T, P, params, wtp);
         return convert(res);
     }
 
     /// Return the standard thermodynamic properties of an aqueous solute using HKF model.
     auto props(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) const -> StandardThermoProps
     {
-        const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
+        const auto wtp = water_thermo_props_wagner_pruss_fn(T, P);
         const auto wep = water_eletro_props_fn(T, P);
-        const auto g = functionG(T, P, wts);
+        const auto g = functionG(T, P, wtp);
         const auto aes = speciesElectroPropsHKF(g, params);
         const auto res = supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wep);
         return convert(res);

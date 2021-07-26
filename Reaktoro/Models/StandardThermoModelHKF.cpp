@@ -58,8 +58,8 @@ auto createMemoizedWaterElectroPropsFnJohnsonNorton()
 {
     Fn<WaterElectroProps(const real&, const real&)> fn = [](const real& T, const real& P)
     {
-        const auto wts = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
-        return Reaktoro::waterElectroPropsJohnsonNorton(T, P, wts);
+        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
+        return Reaktoro::waterElectroPropsJohnsonNorton(T, P, wtp);
     };
     return memoizeLast(fn);
 }
@@ -98,9 +98,9 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         auto& [G0, H0, V0, Cp0, Cv0] = props;
         const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, Tmax] = params;
 
-        const auto wts = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
+        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         const auto wep = memoizedWaterElectroPropsJohnsonNorton(T, P);
-        const auto gstate = gHKF::compute(T, P, wts);
+        const auto gstate = gHKF::compute(T, P, wtp);
         const auto aes = speciesElectroPropsHKF(gstate, params);
 
         const auto& w   = aes.w;

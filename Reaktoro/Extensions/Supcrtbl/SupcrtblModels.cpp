@@ -59,7 +59,7 @@ const auto Tr05 = sqrt(Tr);
 } // namespace
 
 
-auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoProps& wts) -> SpeciesThermoProps
+auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoProps& wtp) -> SpeciesThermoProps
 {
     SupcrtParamsAqueousSolventHKF cparams;
     // cparams.Ttr = params.Ttr; // TODO: Revisit this because currently SupcrtParamsAqueousSolventHKF is empty (no data members)
@@ -68,7 +68,7 @@ auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsA
     // cparams.Htr = params.Htr;
     // cparams.Utr = params.Utr;
     // cparams.Atr = params.Atr;
-    return supcrtStandardThermoPropsSolventHKF(T, P, cparams, wts);
+    return supcrtStandardThermoPropsSolventHKF(T, P, cparams, wtp);
 }
 
 auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wep) -> SpeciesThermoProps

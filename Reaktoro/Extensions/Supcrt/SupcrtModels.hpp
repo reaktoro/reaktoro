@@ -29,7 +29,7 @@ struct WaterElectroProps;
 struct WaterThermoProps;
 
 /// Calculate the thermodynamic state of solvent water using the HKF model.
-auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoProps& wts) -> SpeciesThermoProps;
+auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoProps& wtp) -> SpeciesThermoProps;
 
 /// Calculate the thermodynamic state of an aqueous solute using the HKF model.
 auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wep) -> SpeciesThermoProps;

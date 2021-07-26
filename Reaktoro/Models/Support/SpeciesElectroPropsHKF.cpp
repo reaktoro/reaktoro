@@ -39,7 +39,7 @@ const double eta = 6.94656968e+05; // from HKF, 1.66027e+05 A*(cal/mol)
 
 } // namespace
 
-auto gHKF::compute(real T, real P, const WaterThermoProps& wts) -> gHKF
+auto gHKF::compute(real T, real P, const WaterThermoProps& wtp) -> gHKF
 {
     gHKF res;
 
@@ -51,7 +51,7 @@ auto gHKF::compute(real T, real P, const WaterThermoProps& wts) -> gHKF
 
     // Check if the point (T,P) is inside region III or the shaded region in Fig. 6 of
     // Shock and others (1992), on page 809. In this case, we assume the g function to be zero.
-    if(wts.density > 1000.0 || wts.density < 350.0)
+    if(wtp.density > 1000.0 || wtp.density < 350.0)
         return res;
 
     // Use equations (24)-(31) of Shock and others (1992) to compute `g` and its derivatives on region I
@@ -72,13 +72,13 @@ auto gHKF::compute(real T, real P, const WaterThermoProps& wts) -> gHKF
     const auto agTT = 2*ag3;
     const auto bgTT = 2*bg3;
 
-    const auto r =  wts.density/1000.0;
+    const auto r =  wtp.density/1000.0;
 
-    const auto alpha  = -wts.densityT/wts.density;
-    const auto beta   =  wts.densityP/wts.density;
-    const auto alphaT = -wts.densityTT/wts.density + alpha*alpha;
-    const auto alphaP = -wts.densityTP/wts.density - alpha*beta;
-    const auto betaP  =  wts.densityPP/wts.density - beta*beta;
+    const auto alpha  = -wtp.densityT/wtp.density;
+    const auto beta   =  wtp.densityP/wtp.density;
+    const auto alphaT = -wtp.densityTT/wtp.density + alpha*alpha;
+    const auto alphaP = -wtp.densityTP/wtp.density - alpha*beta;
+    const auto betaP  =  wtp.densityPP/wtp.density - beta*beta;
 
     g   =  ag * pow(1 - r, bg);
     gT  =   g * (agT/ag + bgT*log(1 - r) + r*alpha*bg/(1 - r));

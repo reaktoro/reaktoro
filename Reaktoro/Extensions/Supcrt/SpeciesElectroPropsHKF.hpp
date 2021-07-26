@@ -49,7 +49,7 @@ struct FunctionG
 };
 
 /// Calculate the function g of the HKF model.
-auto functionG(real T, real P, const WaterThermoProps& wts) -> FunctionG;
+auto functionG(real T, real P, const WaterThermoProps& wtp) -> FunctionG;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state.
 auto speciesElectroPropsHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroProps;
