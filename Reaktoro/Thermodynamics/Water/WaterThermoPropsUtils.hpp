@@ -65,9 +65,9 @@ auto waterThermoPropsWagnerPrussMemoized(real T, real P, StateOfMatter stateofma
 /// resolve its thermodynamic state.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @param whs The Helmholtz free energy state of water
+/// @param whp The Helmholtz free energy state of water
 /// @return The thermodynamic state of water
 /// @see WaterHelmholtzProps, WaterThermoProps
-auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whs) -> WaterThermoProps;
+auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whp) -> WaterThermoProps;
 
 } // namespace Reaktoro

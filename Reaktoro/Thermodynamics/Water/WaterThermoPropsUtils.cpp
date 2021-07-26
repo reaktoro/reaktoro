@@ -59,8 +59,8 @@ auto createMemoizedWaterThermoPropsFnWagnerPruss()
 auto waterThermoPropsHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
     const real D = waterDensityHGK(T, P, stateofmatter);
-    const WaterHelmholtzProps whs = waterHelmholtzPropsHGK(T, D);
-    return waterThermoProps(T, P, whs);
+    const WaterHelmholtzProps whp = waterHelmholtzPropsHGK(T, D);
+    return waterThermoProps(T, P, whp);
 }
 
 auto waterThermoPropsHGKMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps
@@ -72,8 +72,8 @@ auto waterThermoPropsHGKMemoized(real T, real P, StateOfMatter stateofmatter) ->
 auto waterThermoPropsWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
     const real D = waterDensityWagnerPruss(T, P, stateofmatter);
-    const WaterHelmholtzProps whs = waterHelmholtzPropsWagnerPruss(T, D);
-    return waterThermoProps(T, P, whs);
+    const WaterHelmholtzProps whp = waterHelmholtzPropsWagnerPruss(T, D);
+    return waterThermoProps(T, P, whp);
 }
 
 auto waterThermoPropsWagnerPrussMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps
@@ -82,24 +82,24 @@ auto waterThermoPropsWagnerPrussMemoized(real T, real P, StateOfMatter stateofma
     return fn(T, P, stateofmatter);
 }
 
-auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whs) -> WaterThermoProps
+auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whp) -> WaterThermoProps
 {
     WaterThermoProps wt;
 
     // Calculate water density using relation P = \rho^{2}\left(\frac{\partial f}{\partial\rho}\right)_{T}
-    auto D = sqrt(P/whs.helmholtzD);
+    auto D = sqrt(P/whp.helmholtzD);
 
     // Set the temperature of the thermodynamic state of water
     wt.temperature = T;
 
     // Set the pressure and its partial derivatives of the thermodynamic state of water
     // wt.pressure   = P;
-    wt.pressure   = D*D*whs.helmholtzD;
-    wt.pressureD  = 2*D*whs.helmholtzD + D*D*whs.helmholtzDD;
-    wt.pressureT  = D*D*whs.helmholtzTD;
-    wt.pressureDD = 2*whs.helmholtzD + 4*D*whs.helmholtzDD + D*D*whs.helmholtzDDD;
-    wt.pressureTD = 2*D*whs.helmholtzTD + D*D*whs.helmholtzTDD;
-    wt.pressureTT = D*D*whs.helmholtzTTD;
+    wt.pressure   = D*D*whp.helmholtzD;
+    wt.pressureD  = 2*D*whp.helmholtzD + D*D*whp.helmholtzDD;
+    wt.pressureT  = D*D*whp.helmholtzTD;
+    wt.pressureDD = 2*whp.helmholtzD + 4*D*whp.helmholtzDD + D*D*whp.helmholtzDDD;
+    wt.pressureTD = 2*D*whp.helmholtzTD + D*D*whp.helmholtzTDD;
+    wt.pressureTT = D*D*whp.helmholtzTTD;
 
     // Set the density and its partial derivatives of the thermodynamic state of water
     wt.density   = D;
@@ -113,10 +113,10 @@ auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whs) -> WaterTh
     wt.volume = 1/D;
 
     // Set the specific entropy of water
-    wt.entropy = -whs.helmholtzT;
+    wt.entropy = -whp.helmholtzT;
 
     // Set the specific Helmholtz free energy of water
-    wt.helmholtz = whs.helmholtz;
+    wt.helmholtz = whp.helmholtz;
 
     // Set the specific internal energy of water
     wt.internal_energy = wt.helmholtz + T * wt.entropy;
@@ -128,7 +128,7 @@ auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whs) -> WaterTh
     wt.gibbs = wt.enthalpy - T * wt.entropy;
 
     // Set the specific isochoric heat capacity of water
-    wt.cv = -T * whs.helmholtzTT;
+    wt.cv = -T * whp.helmholtzTT;
 
     // Set the specific isobaric heat capacity of water
     wt.cp = wt.cv + T/(D*D)*wt.pressureT*wt.pressureT/wt.pressureD;
