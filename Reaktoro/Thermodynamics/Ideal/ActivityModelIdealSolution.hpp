@@ -23,6 +23,6 @@
 namespace Reaktoro {
 
 /// Return the activity model for an ideal solution.
-auto ActivityModelIdealSolution() -> ActivityModel;
+auto ActivityModelIdealSolution() -> ActivityModelGenerator;
 
 } // namespace Reaktoro

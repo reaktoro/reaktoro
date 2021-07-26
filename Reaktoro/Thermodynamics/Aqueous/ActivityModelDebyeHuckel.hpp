@@ -68,27 +68,27 @@ struct ActivityModelDebyeHuckelParams
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model.
 /// @ingroup ActivityModels
-auto ActivityModelDebyeHuckel() -> ActivityModel;
+auto ActivityModelDebyeHuckel() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model with given custom parameters.
 /// @ingroup ActivityModels
-auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModel;
+auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel limiting law model.
 /// @ingroup ActivityModels
-auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModel;
+auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model with Kielland (1937) parameters.
 /// @ingroup ActivityModels
-auto ActivityModelDebyeHuckelKielland() -> ActivityModel;
+auto ActivityModelDebyeHuckelKielland() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model using PHREEQC parameters.
 /// @ingroup ActivityModels
-auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModel;
+auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model using WATEQ4F parameters.
 /// @ingroup ActivityModels
-auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
+auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModelGenerator;
 
 
 //=====================================================================================================================
@@ -166,20 +166,20 @@ auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
 
 
 //=====================================================================================================================
-/// @fn auto ActivityModelDebyeHuckel() -> ActivityModel;
+/// @fn auto ActivityModelDebyeHuckel() -> ActivityModelGenerator;
 /// The activity model for aqueous phases based on the Debye--Hückel model.
 /// @note This method is equivalent to ActivityModelDebyeHuckelPHREEQC().
 //=====================================================================================================================
 
 
 //=====================================================================================================================
-/// @fn auto ActivityModelDebyeHuckel(const ActivityModelDebyeHuckelParams& params) -> ActivityModel;
+/// @fn auto ActivityModelDebyeHuckel(const ActivityModelDebyeHuckelParams& params) -> ActivityModelGenerator;
 /// The activity model for aqueous phases based on the Debye--Hückel model with given custom parameters.
 //=====================================================================================================================
 
 
 //=====================================================================================================================
-/// @fn auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModel;
+/// @fn auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModelGenerator;
 /// The activity model for aqueous phases based on the Debye--Hückel limiting law model.
 /// Use this method to indicate that the activity coefficients of the ionic
 /// species are calculated using the Debye--Hückel limiting law equation. In
@@ -189,7 +189,7 @@ auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
 
 
 //=====================================================================================================================
-/// @fn auto ActivityModelDebyeHuckelKielland() -> ActivityModel;
+/// @fn auto ActivityModelDebyeHuckelKielland() -> ActivityModelGenerator;
 /// The activity model for aqueous phases based on the Debye--Hückel model with Kielland (1937) parameters.
 /// In this model, the ion-size parameters *å* are taken from Kielland
 /// (1937)\sup{\cite Kielland1937}:
@@ -217,7 +217,7 @@ auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
 
 
 //=====================================================================================================================
-/// @fn auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModel;
+/// @fn auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModelGenerator;
 /// The activity model for aqueous phases based on the Debye--Hückel model using PHREEQC parameters.
 /// This method sets the ion-size parameters *å* and the parameter *b* of
 /// the ionic species according to those used in PHREEQC v3. Their values
@@ -282,7 +282,7 @@ auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
 
 
 //=====================================================================================================================
-/// @fn auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
+/// @fn auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModelGenerator;
 /// The activity model for aqueous phases based on the Debye--Hückel model using WATEQ4F parameters.
 /// This method sets both *å* and *b* of ionic species according to the
 /// ones used in WATEQ4F (Ball and Nordstrom \cite Ball1991, Truesdell and

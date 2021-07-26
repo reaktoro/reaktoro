@@ -68,13 +68,13 @@ auto GenericPhase::setAdditionalAggregateStates(const Vec<AggregateState>& optio
     return *this;
 }
 
-auto GenericPhase::setActivityModel(const ActivityModel& model) -> GenericPhase&
+auto GenericPhase::setActivityModel(const ActivityModelGenerator& model) -> GenericPhase&
 {
     activity_model = model;
     return *this;
 }
 
-auto GenericPhase::setIdealActivityModel(const ActivityModel& model) -> GenericPhase&
+auto GenericPhase::setIdealActivityModel(const ActivityModelGenerator& model) -> GenericPhase&
 {
     ideal_activity_model = model;
     return *this;
@@ -95,7 +95,7 @@ auto GenericPhase::set(AggregateState option) -> GenericPhase&
     return setAggregateState(option);
 }
 
-auto GenericPhase::set(const ActivityModel& model) -> GenericPhase&
+auto GenericPhase::set(const ActivityModelGenerator& model) -> GenericPhase&
 {
     return setActivityModel(model);
 }
@@ -130,12 +130,12 @@ auto GenericPhase::elements() const -> const Strings&
     return symbols;
 }
 
-auto GenericPhase::activityModel() const -> const ActivityModel&
+auto GenericPhase::activityModel() const -> const ActivityModelGenerator&
 {
     return activity_model;
 }
 
-auto GenericPhase::idealActivityModel() const -> const ActivityModel&
+auto GenericPhase::idealActivityModel() const -> const ActivityModelGenerator&
 {
     return ideal_activity_model;
 }
@@ -216,13 +216,13 @@ auto GenericPhasesGenerator::setAdditionalAggregateStates(const Vec<AggregateSta
     return *this;
 }
 
-auto GenericPhasesGenerator::setActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&
+auto GenericPhasesGenerator::setActivityModel(const ActivityModelGenerator& model) -> GenericPhasesGenerator&
 {
     activity_model = model;
     return *this;
 }
 
-auto GenericPhasesGenerator::setIdealActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&
+auto GenericPhasesGenerator::setIdealActivityModel(const ActivityModelGenerator& model) -> GenericPhasesGenerator&
 {
     ideal_activity_model = model;
     return *this;
@@ -238,7 +238,7 @@ auto GenericPhasesGenerator::set(AggregateState option) -> GenericPhasesGenerato
     return setAggregateState(option);
 }
 
-auto GenericPhasesGenerator::set(const ActivityModel& model) -> GenericPhasesGenerator&
+auto GenericPhasesGenerator::set(const ActivityModelGenerator& model) -> GenericPhasesGenerator&
 {
     return setActivityModel(model);
 }
@@ -268,12 +268,12 @@ auto GenericPhasesGenerator::elements() const -> const Strings&
     return symbols;
 }
 
-auto GenericPhasesGenerator::activityModel() const -> const ActivityModel&
+auto GenericPhasesGenerator::activityModel() const -> const ActivityModelGenerator&
 {
     return activity_model;
 }
 
-auto GenericPhasesGenerator::idealActivityModel() const -> const ActivityModel&
+auto GenericPhasesGenerator::idealActivityModel() const -> const ActivityModelGenerator&
 {
     return ideal_activity_model;
 }

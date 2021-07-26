@@ -36,6 +36,6 @@ namespace Reaktoro {
 /// @param a2 The Redlich-Kister parameter a2
 /// @return The equation of state function for the mineral phase
 /// @see ActivityModel
-auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModel;
+auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModelGenerator;
 
 } // namespace Reaktoro

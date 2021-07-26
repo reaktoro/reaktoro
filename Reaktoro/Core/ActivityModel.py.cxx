@@ -26,10 +26,10 @@ void exportActivityModel(py::module& m)
 {
     auto chain4py = [](py::args args)
     {
-        Vec<ActivityModel> models;
+        Vec<ActivityModelGenerator> models;
         models.reserve(args.size());
         for(auto arg : args)
-            models.push_back(arg.cast<ActivityModel>());
+            models.push_back(arg.cast<ActivityModelGenerator>());
         return chain(models);
     };
 

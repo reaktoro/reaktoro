@@ -24,14 +24,14 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelDrummond(String gas) -> ActivityModel
+auto ActivityModelDrummond(String gas) -> ActivityModelGenerator
 {
     return ActivityModelDrummond(gas, {});
 }
 
-auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModel
+auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModelGenerator
 {
-    ActivityModel model = [=](const SpeciesList& species)
+    ActivityModelGenerator model = [=](const SpeciesList& species)
     {
         // The index of the dissolved gas in the aqueous phase.
         const auto igas = species.indexWithFormula(gas);

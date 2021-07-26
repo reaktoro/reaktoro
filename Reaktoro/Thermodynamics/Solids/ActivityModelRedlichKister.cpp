@@ -26,9 +26,9 @@ namespace Reaktoro {
 using std::log;
 using std::pow;
 
-auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModel
+auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModelGenerator
 {
-    ActivityModel model = [=](const SpeciesList& species)
+    ActivityModelGenerator model = [=](const SpeciesList& species)
     {
         error(species.size() != 2, "Cannot create the chemical model Redlich-Kister for the mineral phase. "
             "The Redlich-Kister model requires a solid solution phase with exactly two species.");

@@ -470,12 +470,12 @@ auto ActivityModelDebyeHuckelParams::setPHREEQC() -> void
     bneutraldefault = 0.1;
 }
 
-auto ActivityModelDebyeHuckel() -> ActivityModel
+auto ActivityModelDebyeHuckel() -> ActivityModelGenerator
 {
     return ActivityModelDebyeHuckelPHREEQC();
 }
 
-auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModel
+auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModelGenerator
 {
     return [=](const SpeciesList& species)
     {
@@ -483,28 +483,28 @@ auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> Activity
     };
 }
 
-auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModel
+auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModelGenerator
 {
     ActivityModelDebyeHuckelParams params;
     params.setLimitingLaw();
     return ActivityModelDebyeHuckel(params);
 }
 
-auto ActivityModelDebyeHuckelKielland() -> ActivityModel
+auto ActivityModelDebyeHuckelKielland() -> ActivityModelGenerator
 {
     ActivityModelDebyeHuckelParams params;
     params.setKielland();
     return ActivityModelDebyeHuckel(params);
 }
 
-auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModel
+auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModelGenerator
 {
     ActivityModelDebyeHuckelParams params;
     params.setPHREEQC();
     return ActivityModelDebyeHuckel(params);
 }
 
-auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel
+auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModelGenerator
 {
     ActivityModelDebyeHuckelParams params;
     params.setWATEQ4F();

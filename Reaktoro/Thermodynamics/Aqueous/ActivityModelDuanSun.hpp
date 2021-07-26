@@ -30,6 +30,6 @@ namespace Reaktoro {
 /// Construct a ActivityModelDuanSun object with given dissolved gas formula.
 /// @param gas The chemical formula of the dissolved gas.
 /// @ingroup ActivityModels
-auto ActivityModelDuanSun(String gas) -> ActivityModel;
+auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator;
 
 } // namespace Reaktoro

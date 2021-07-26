@@ -459,7 +459,7 @@ auto activityPropsFnHKF(const SpeciesList& species) -> ActivityPropsFn
     return fn;
 }
 
-auto ActivityModelHKF() -> ActivityModel
+auto ActivityModelHKF() -> ActivityModelGenerator
 {
     return [](const SpeciesList& species) { return activityPropsFnHKF(species); };
 }

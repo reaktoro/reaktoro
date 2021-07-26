@@ -98,7 +98,7 @@ auto activityPropsFnCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPa
     return fn;
 }
 
-auto ActivityModelCubicEOS(ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModel
+auto ActivityModelCubicEOS(ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModelGenerator
 {
     return [=](const SpeciesList& species)
     {
@@ -106,22 +106,22 @@ auto ActivityModelCubicEOS(ActivityModelCubicEOSParams params, CubicEOSModel typ
     };
 }
 
-auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params) -> ActivityModel
+auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
 {
     return ActivityModelCubicEOS(params, CubicEOSModel::VanDerWaals);
 }
 
-auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModel
+auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
 {
     return ActivityModelCubicEOS(params, CubicEOSModel::RedlichKwong);
 }
 
-auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModel
+auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
 {
     return ActivityModelCubicEOS(params, CubicEOSModel::SoaveRedlichKwong);
 }
 
-auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params) -> ActivityModel
+auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
 {
     return ActivityModelCubicEOS(params, CubicEOSModel::PengRobinson);
 }

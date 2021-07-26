@@ -1449,7 +1449,7 @@ auto activityPropsFnPitzerHMW(const SpeciesList& species) -> ActivityPropsFn
     return fn;
 }
 
-auto ActivityModelPitzerHMW() -> ActivityModel
+auto ActivityModelPitzerHMW() -> ActivityModelGenerator
 {
     return [](const SpeciesList& species) { return activityPropsFnPitzerHMW(species); };
 }

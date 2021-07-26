@@ -36,13 +36,13 @@ struct ActivityModelDrummondParams
 /// Return the activity model for a dissolved gas species in an aqueous phase based on Drummond (1981).
 /// @param gas The chemical formula of the dissolved gas in the aqueous phase.
 /// @ingroup ActivityModels
-auto ActivityModelDrummond(String gas) -> ActivityModel;
+auto ActivityModelDrummond(String gas) -> ActivityModelGenerator;
 
 /// Return the activity model for a dissolved gas species in an aqueous phase based on Drummond (1981).
 /// @param gas The chemical formula of the dissolved gas in the aqueous phase.
 /// @param params The custom parameters for the activity model.
 /// @ingroup ActivityModels
-auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModel;
+auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModelGenerator;
 
 
 //=====================================================================================================================

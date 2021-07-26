@@ -21,9 +21,9 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelIdealGas() -> ActivityModel
+auto ActivityModelIdealGas() -> ActivityModelGenerator
 {
-    ActivityModel model = [](const SpeciesList& species)
+    ActivityModelGenerator model = [](const SpeciesList& species)
     {
         ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args)
         {

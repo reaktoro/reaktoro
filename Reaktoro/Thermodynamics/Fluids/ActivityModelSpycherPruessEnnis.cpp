@@ -156,7 +156,7 @@ auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityPr
     return fn;
 }
 
-auto ActivityModelSpycherPruessEnnis() -> ActivityModel
+auto ActivityModelSpycherPruessEnnis() -> ActivityModelGenerator
 {
     return [](const SpeciesList& species)
     {

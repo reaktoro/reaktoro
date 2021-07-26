@@ -34,15 +34,15 @@ struct ActivityModelCubicEOSParams
 };
 
 /// Return the activity model for fluid phases based on the Van der Waals cubic equation of state.
-auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Redlich-Kwong cubic equation of state.
-auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Soave-Redlich-Kwong cubic equation of state.
-auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Peng-Robinson cubic equation of state.
-auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params = {}) -> ActivityModel;
+auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
 
 } // namespace Reaktoro

@@ -24,9 +24,9 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelIdealAqueous() -> ActivityModel
+auto ActivityModelIdealAqueous() -> ActivityModelGenerator
 {
-    ActivityModel model = [](const SpeciesList& species)
+    ActivityModelGenerator model = [](const SpeciesList& species)
     {
         const auto iH2O = species.indexWithFormula("H2O");
         const auto MH2O = waterMolarMass;

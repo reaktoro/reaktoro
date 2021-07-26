@@ -29,6 +29,6 @@ namespace Reaktoro {
 ///    results and correlation. Journal of Solution Chemistry, 23(3), 431–448*.
 /// @param gas The chemical formula of the dissolved gas.
 /// @ingroup ActivityModels
-auto ActivityModelRumpf(String gas) -> ActivityModel;
+auto ActivityModelRumpf(String gas) -> ActivityModelGenerator;
 
 } // namespace Reaktoro

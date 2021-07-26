@@ -29,7 +29,7 @@ namespace Reaktoro {
 
 /// The type for functions that construct an ActivityPropsFn for a phase.
 /// @param species The species in the phase.
-using ActivityModel = Fn<ActivityPropsFn(const SpeciesList& species)>;
+using ActivityModelGenerator = Fn<ActivityPropsFn(const SpeciesList& species)>;
 
 // TODO: Rename this ActivityModel type by ActivityModelGenerator
 // TODO: Use the name ActivityModel instead of ActivityPropsFn.
@@ -37,16 +37,16 @@ using ActivityModel = Fn<ActivityPropsFn(const SpeciesList& species)>;
 // TODO: Define these chain methods for Model type.
 
 /// Return an activity model resulting from chaining other activity models.
-auto chain(const Vec<ActivityModel>& models) -> ActivityModel;
+auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator;
 
 /// Return an activity model resulting from chaining other activity models.
-auto chain(const ActivityModel& model) -> ActivityModel;
+auto chain(const ActivityModelGenerator& model) -> ActivityModelGenerator;
 
 /// Return an activity model resulting from chaining other activity models.
 template<typename... Models>
-auto chain(const ActivityModel& model, const Models&... models) -> ActivityModel
+auto chain(const ActivityModelGenerator& model, const Models&... models) -> ActivityModelGenerator
 {
-    Vec<ActivityModel> vec = {model, models...};
+    Vec<ActivityModelGenerator> vec = {model, models...};
     return chain(vec);
 }
 

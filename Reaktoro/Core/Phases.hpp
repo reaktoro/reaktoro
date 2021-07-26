@@ -92,10 +92,10 @@ public:
     auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhase&;
 
     /// Set the activity model of the phase.
-    auto setActivityModel(const ActivityModel& model) -> GenericPhase&;
+    auto setActivityModel(const ActivityModelGenerator& model) -> GenericPhase&;
 
     /// Set the ideal activity model of the phase.
-    auto setIdealActivityModel(const ActivityModel& model) -> GenericPhase&;
+    auto setIdealActivityModel(const ActivityModelGenerator& model) -> GenericPhase&;
 
     /// Set a unique name of the phase (equivalent to GenericPhase::setName).
     auto named(String name) -> GenericPhase&;
@@ -107,7 +107,7 @@ public:
     auto set(AggregateState option) -> GenericPhase&;
 
     /// Set the activity model of the phase (equivalent to GenericPhase::setActivityModel).
-    auto set(const ActivityModel& model) -> GenericPhase&;
+    auto set(const ActivityModelGenerator& model) -> GenericPhase&;
 
     /// Return the name of the phase.
     auto name() const -> String;
@@ -128,10 +128,10 @@ public:
     auto elements() const -> const Strings&;
 
     /// Return the specified activity model of the phase.
-    auto activityModel() const -> const ActivityModel&;
+    auto activityModel() const -> const ActivityModelGenerator&;
 
     /// Return the specified ideal activity model of the phase.
-    auto idealActivityModel() const -> const ActivityModel&;
+    auto idealActivityModel() const -> const ActivityModelGenerator&;
 
     /// Convert this GenericPhase object into a Phase object.
     auto convert(const Database& db, const Strings& elements) const -> Phase;
@@ -159,10 +159,10 @@ private:
     Strings excludetags;
 
     /// The activity model of the phase.
-    ActivityModel activity_model;
+    ActivityModelGenerator activity_model;
 
     /// The ideal activity model of the phase.
-    ActivityModel ideal_activity_model;
+    ActivityModelGenerator ideal_activity_model;
 };
 
 /// The base type for a generator of generic phases with a single species.
@@ -198,10 +198,10 @@ public:
     auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GenericPhasesGenerator&;
 
     /// Set the common activity model of the generated phases.
-    auto setActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&;
+    auto setActivityModel(const ActivityModelGenerator& model) -> GenericPhasesGenerator&;
 
     /// Set the common ideal activity model of the generated phases.
-    auto setIdealActivityModel(const ActivityModel& model) -> GenericPhasesGenerator&;
+    auto setIdealActivityModel(const ActivityModelGenerator& model) -> GenericPhasesGenerator&;
 
     /// Set the common state of matter of the generated phases (equivalent to GenericPhasesGenerator::setStateOfMatter).
     auto set(StateOfMatter option) -> GenericPhasesGenerator&;
@@ -210,7 +210,7 @@ public:
     auto set(AggregateState option) -> GenericPhasesGenerator&;
 
     /// Set the common activity model of the generated phases (equivalent to GenericPhasesGenerator::setActivityModel).
-    auto set(const ActivityModel& model) -> GenericPhasesGenerator&;
+    auto set(const ActivityModelGenerator& model) -> GenericPhasesGenerator&;
 
     /// Return the common state of matter of the generated phases.
     auto stateOfMatter() const -> StateOfMatter;
@@ -228,10 +228,10 @@ public:
     auto elements() const -> const Strings&;
 
     /// Return the specified common activity model of the generated phases.
-    auto activityModel() const -> const ActivityModel&;
+    auto activityModel() const -> const ActivityModelGenerator&;
 
     /// Return the specified common ideal activity model of the generated phases.
-    auto idealActivityModel() const -> const ActivityModel&;
+    auto idealActivityModel() const -> const ActivityModelGenerator&;
 
     /// Convert this GenericPhasesGenerator object into a vector of GenericPhase objects.
     auto convert(const Database& db, const Strings& elements) const -> Vec<GenericPhase>;
@@ -256,10 +256,10 @@ private:
     Strings excludetags;
 
     /// The common activity model of the generated phases.
-    ActivityModel activity_model;
+    ActivityModelGenerator activity_model;
 
     /// The common ideal activity model of the generated phases.
-    ActivityModel ideal_activity_model;
+    ActivityModelGenerator ideal_activity_model;
 };
 
 /// The class used to define the phases that will constitute the chemical system of interest.

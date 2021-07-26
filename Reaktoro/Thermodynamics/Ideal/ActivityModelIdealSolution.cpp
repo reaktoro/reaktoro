@@ -19,9 +19,9 @@
 
 namespace Reaktoro {
 
-auto ActivityModelIdealSolution() -> ActivityModel
+auto ActivityModelIdealSolution() -> ActivityModelGenerator
 {
-    ActivityModel model = [](const SpeciesList& species)
+    ActivityModelGenerator model = [](const SpeciesList& species)
     {
         ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
         {

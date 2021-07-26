@@ -24,9 +24,9 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelRumpf(String gas) -> ActivityModel
+auto ActivityModelRumpf(String gas) -> ActivityModelGenerator
 {
-    ActivityModel model = [=](const SpeciesList& species)
+    ActivityModelGenerator model = [=](const SpeciesList& species)
     {
         // The index of the dissolved gas in the aqueous phase.
         const auto igas = species.indexWithFormula(gas);

@@ -355,7 +355,7 @@ auto activityPropsFnSpycherReed(const SpeciesList& species) -> ActivityPropsFn
     return fn;
 }
 
-auto ActivityModelSpycherReed() -> ActivityModel
+auto ActivityModelSpycherReed() -> ActivityModelGenerator
 {
     return [](const SpeciesList& species)
     {

@@ -31,6 +31,6 @@ namespace Reaktoro {
 ///   and of H2O--CO2--CH4 mixtures: A virial equation treatment for moderate
 ///   pressures and temperatures applicable to calculations of hydrothermal
 ///   boiling. Geochimica et Cosmochimica Acta, 52(3), 739-749.
-auto ActivityModelSpycherReed() ->  ActivityModel;
+auto ActivityModelSpycherReed() ->  ActivityModelGenerator;
 
 } // namespace Reaktoro

@@ -31,6 +31,6 @@ namespace Reaktoro {
 ///   geological sequestration of CO2. I. Assessment and calculation of mutual
 ///   solubilities from 12 to 100C and up to 600 bar. Geochimica et
 ///   Cosmochimica Acta, 67(16), 3015-3031.
-auto ActivityModelSpycherPruessEnnis() -> ActivityModel;
+auto ActivityModelSpycherPruessEnnis() -> ActivityModelGenerator;
 
 } // namespace Reaktoro

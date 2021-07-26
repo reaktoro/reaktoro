@@ -23,6 +23,6 @@
 namespace Reaktoro {
 
 /// Return the activity model for an ideal gaseous solution.
-auto ActivityModelIdealGas() -> ActivityModel;
+auto ActivityModelIdealGas() -> ActivityModelGenerator;
 
 } // namespace Reaktoro

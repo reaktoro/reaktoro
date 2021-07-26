@@ -25,9 +25,9 @@ namespace Reaktoro {
 
 using std::log;
 
-auto ActivityModelSetschenow(String neutral, real b) -> ActivityModel
+auto ActivityModelSetschenow(String neutral, real b) -> ActivityModelGenerator
 {
-    ActivityModel model = [=](const SpeciesList& species)
+    ActivityModelGenerator model = [=](const SpeciesList& species)
     {
         // The index of the neutral aqueous species in the aqueous phase.
         const auto ineutral = species.indexWithFormula(neutral);

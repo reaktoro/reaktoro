@@ -81,9 +81,9 @@ auto paramDuanSun(const real& T, const real& P, const real coeffs[]) -> real
 
 } // namespace
 
-auto ActivityModelDuanSun(String gas) -> ActivityModel
+auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator
 {
-    ActivityModel model = [=](const SpeciesList& species)
+    ActivityModelGenerator model = [=](const SpeciesList& species)
     {
         // The index of the dissolved gas in the aqueous phase.
         const auto igas = species.indexWithFormula(gas);
