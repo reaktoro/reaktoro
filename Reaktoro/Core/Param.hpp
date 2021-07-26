@@ -171,40 +171,17 @@ template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const T& x, cons
 //======================================================================
 
 namespace Reaktoro {
-namespace detail {
 
-template<typename T> struct SameValue;
-template<typename T> struct AssignValue;
-template<typename T> struct CloneValue;
+template<typename T>
+struct MemoizationTraits;
 
+/// Specialize MemoizationTraits for Param.
 template<>
-struct SameValue<Param>
+struct MemoizationTraits<Param>
 {
-    static auto check(const Param& a, const Param& b)
-    {
-        return a.value() == b.value(); // for memoization sake, a and b are equal if they have same values (and not same underlying pointer in Param!)
-    }
+    using CacheType = real;
 };
 
-template<>
-struct AssignValue<Param>
-{
-    static auto apply(Param& a, const Param& b)
-    {
-        a.value() = b.value(); // for memoization sake, assign the value of b to a (not the underlying pointer in Param!)
-    }
-};
-
-template<>
-struct CloneValue<Param>
-{
-    static auto apply(const Param& a) -> Param
-    {
-        return a.clone();
-    }
-};
-
-} // namespace detail
 } // namespace Reaktoro
 
 //======================================================================
