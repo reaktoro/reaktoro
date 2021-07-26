@@ -61,9 +61,14 @@ public:
     /// @param params The parameters of the underlying model function.
     /// @param serializerfn The function that serializes the underlying model function to yaml format.
     Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Params& params = {}, const ModelSerializer& serializerfn = {})
-    : m_params(params), m_evalfn(evalfn), m_serializerfn(serializerfn)
+    : m_params(params), m_serializerfn(serializerfn)
     {
         assert(evalfn);
+
+        m_evalfn = [evalfn](ResultRef res, const Args&... args, const Params& w)
+        {
+            evalfn(res, args...);
+        };
 
         m_calcfn = [evalfn](const Args&... args, const Params& w) -> Result
         {
@@ -82,7 +87,7 @@ public:
     {
         assert(calcfn);
 
-        m_evalfn = [calcfn](ResultRef res, const Args&... args)
+        m_evalfn = [calcfn](ResultRef res, const Args&... args, const Params& w)
         {
             res = calcfn(args...);
         };
@@ -111,6 +116,7 @@ public:
     auto withMemoization() const -> Model
     {
         Model copy = *this;
+        copy.m_evalfn = memoizeLastUsingRef<Result>(copy.m_evalfn); // Here, if `m_evalfn` did not consider `const Params&` as argument, memoization would not know when the parameters have been changed externally!
         copy.m_calcfn = memoizeLast(copy.m_calcfn); // Here, if `m_calcfn` did not consider `const Params&` as argument, memoization would not know when the parameters have been changed externally!
         return copy;
     }
@@ -119,7 +125,7 @@ public:
     auto apply(ResultRef res, const Args&... args) const -> void
     {
         assert(m_evalfn);
-        m_evalfn(res, args...);
+        m_evalfn(res, args..., m_params);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
@@ -148,7 +154,7 @@ public:
     }
 
     /// Return the model evaluator function of this Model function object.
-    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args...>&
+    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args..., const Params&>&
     {
         return m_evalfn;
     }
@@ -206,7 +212,7 @@ private:
     Params m_params;
 
     /// The underlying model function that performs property evaluations.
-    ModelEvaluator<ResultRef, Args...> m_evalfn;
+    ModelEvaluator<ResultRef, Args..., const Params&> m_evalfn;
 
     /// The underlying model function that performs property calculations.
     /// Note the added dependency on `const Params&`.
