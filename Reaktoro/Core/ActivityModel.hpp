@@ -66,3 +66,38 @@ auto chain(const ActivityModelGenerator& model, const Models&... models) -> Acti
 }
 
 } // namespace Reaktoro
+
+//=========================================================================
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING ACTIVITYARGS
+//=========================================================================
+
+namespace Reaktoro {
+
+template<typename T>
+struct MemoizationTraits;
+
+/// Specialize MemoizationTraits for ActivityArgs.
+template<>
+struct MemoizationTraits<ActivityArgs>
+{
+    using Type = ActivityArgs;
+
+    /// The type used instead to cache an ActivityArgs object.
+    using CacheType = Tuple<real, real, ArrayXr>;
+
+    static auto equal(const Tuple<real, real, ArrayXr>& a, const ActivityArgs& b)
+    {
+        const auto& [T, P, x] = a;
+        return T == b.T && P == b.P && (x == b.x).all();
+    }
+
+    static auto assign(Tuple<real, real, ArrayXr>& a, const ActivityArgs& b)
+    {
+        auto& [T, P, x] = a;
+        T = b.T;
+        P = b.P;
+        x = b.x;
+    }
+};
+
+} // namespace Reaktoro
