@@ -20,15 +20,15 @@
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 using namespace Reaktoro;
 
-void exportWaterThermoStateUtils(py::module& m)
+void exportWaterThermoPropsUtils(py::module& m)
 {
-    m.def("waterThermoStateHGK", waterThermoStateHGK);
-    m.def("waterThermoStateWagnerPruss", waterThermoStateWagnerPruss);
-    m.def("waterThermoStateHGKMemoized", waterThermoStateHGKMemoized);
-    m.def("waterThermoStateWagnerPrussMemoized", waterThermoStateWagnerPrussMemoized);
-    m.def("waterThermoState", waterThermoState);
+    m.def("waterThermoPropsHGK", waterThermoPropsHGK);
+    m.def("waterThermoPropsWagnerPruss", waterThermoPropsWagnerPruss);
+    m.def("waterThermoPropsHGKMemoized", waterThermoPropsHGKMemoized);
+    m.def("waterThermoPropsWagnerPrussMemoized", waterThermoPropsWagnerPrussMemoized);
+    m.def("waterThermoProps", waterThermoProps);
 }

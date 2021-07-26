@@ -22,27 +22,27 @@
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroPropsHKF.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesThermoProps.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 
 namespace Reaktoro {
 namespace {
 
 /// The signature of a function that calculates the thermodynamic properties of water
-using WaterThermoPropsFn = std::function<WaterThermoState(real, real)>;
+using WaterThermoPropsFn = std::function<WaterThermoProps(real, real)>;
 
 /// The signature of a function that calculates the electrostatic properties of water
 using WaterElectroPropsFn = std::function<WaterElectroProps(real, real)>;
 
 /// The signature of a function that calculates the standard thermodynamic properties of a species
-using SpeciesThermoPropsFn = std::function<SpeciesThermoState(real, real, std::string)>;
+using SpeciesThermoPropsFn = std::function<SpeciesThermoProps(real, real, std::string)>;
 
-/// Convert a SpeciesThermoState object into a StandardThermoProps one
-auto convert(const SpeciesThermoState& state) -> StandardThermoProps
+/// Convert a SpeciesThermoProps object into a StandardThermoProps one
+auto convert(const SpeciesThermoProps& state) -> StandardThermoProps
 {
     StandardThermoProps props;
     props.G0  = state.gibbs_energy;
@@ -75,7 +75,7 @@ struct SupcrtEngine::Impl
         // Initialize the Haar--Gallagher--Kell (1984) equation of state for water
         water_thermo_props_hgk_fn = [](real T, real P)
         {
-            return Reaktoro::waterThermoStateHGK(T, P, StateOfMatter::Liquid);
+            return Reaktoro::waterThermoPropsHGK(T, P, StateOfMatter::Liquid);
         };
 
         water_thermo_props_hgk_fn = memoizeLast(water_thermo_props_hgk_fn);
@@ -83,7 +83,7 @@ struct SupcrtEngine::Impl
         // Initialize the Wagner and Pruss (1995) equation of state for water
         water_thermo_props_wagner_pruss_fn = [](real T, real P)
         {
-            return Reaktoro::waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
+            return Reaktoro::waterThermoPropsWagnerPruss(T, P, StateOfMatter::Liquid);
         };
 
         water_thermo_props_wagner_pruss_fn = memoizeLast(water_thermo_props_wagner_pruss_fn);
@@ -91,7 +91,7 @@ struct SupcrtEngine::Impl
         // Initialize the Johnson and Norton equation of state for the electrostatic state of water
         water_eletro_props_fn = [=](real T, real P)
         {
-            const WaterThermoState wts = water_thermo_props_wagner_pruss_fn(T, P);
+            const WaterThermoProps wts = water_thermo_props_wagner_pruss_fn(T, P);
             return waterElectroPropsJohnsonNorton(T, P, wts);
         };
 

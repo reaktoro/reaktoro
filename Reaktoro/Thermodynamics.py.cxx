@@ -51,8 +51,8 @@ void exportWaterElectroPropsJohnsonNorton(py::module& m);
 void exportWaterHelmholtzState(py::module& m);
 void exportWaterHelmholtzStateHGK(py::module& m);
 void exportWaterHelmholtzStateWagnerPruss(py::module& m);
-void exportWaterThermoState(py::module& m);
-void exportWaterThermoStateUtils(py::module& m);
+void exportWaterThermoProps(py::module& m);
+void exportWaterThermoPropsUtils(py::module& m);
 void exportWaterUtils(py::module& m);
 
 void exportThermodynamics(py::module& m)
@@ -90,7 +90,7 @@ void exportThermodynamics(py::module& m)
     exportWaterHelmholtzState(m);
     exportWaterHelmholtzStateHGK(m);
     exportWaterHelmholtzStateWagnerPruss(m);
-    exportWaterThermoState(m);
-    exportWaterThermoStateUtils(m);
+    exportWaterThermoProps(m);
+    exportWaterThermoPropsUtils(m);
     exportWaterUtils(m);
 }

@@ -28,8 +28,8 @@ using std::pow;
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -39,7 +39,7 @@ const double eta = 6.94656968e+05; // from HKF, 1.66027e+05 A*(cal/mol)
 
 } // namespace
 
-auto gHKF::compute(real T, real P, const WaterThermoState& wts) -> gHKF
+auto gHKF::compute(real T, real P, const WaterThermoProps& wts) -> gHKF
 {
     gHKF res;
 

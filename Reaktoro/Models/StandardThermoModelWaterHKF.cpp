@@ -19,8 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {
@@ -49,7 +49,7 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
         auto& [G0, H0, V0, Cp0, Cv0] = props;
         const auto& [Ttr, Str, Gtr, Htr] = params;
 
-        const auto wtp = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
+        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
 
         // Convert from specific properties to molar properties
         const auto Sw = waterMolarMass * wtp.entropy;         // from J/(kg*K) to J/(mol*K)

@@ -23,7 +23,7 @@
 namespace Reaktoro {
 
 /// Describe the thermodynamic state of a species
-struct SpeciesThermoState
+struct SpeciesThermoProps
 {
     /// The apparent standard molar Gibbs free energy @f$\Delta G_{f}^{\circ}@f$ of the species (in units of J/mol)
     real gibbs_energy = {};

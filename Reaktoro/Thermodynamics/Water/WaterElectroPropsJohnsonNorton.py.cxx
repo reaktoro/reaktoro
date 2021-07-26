@@ -21,7 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
 using namespace Reaktoro;
 
 void exportWaterElectroPropsJohnsonNorton(py::module& m)

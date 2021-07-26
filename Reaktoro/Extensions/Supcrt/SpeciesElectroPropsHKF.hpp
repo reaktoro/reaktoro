@@ -24,7 +24,7 @@ namespace Reaktoro {
 
 // Forward declarations
 struct SpeciesElectroProps;
-struct WaterThermoState;
+struct WaterThermoProps;
 
 /// A type used to describe the function g of the HKF model and its partial temperature and pressure derivatives
 struct FunctionG
@@ -49,7 +49,7 @@ struct FunctionG
 };
 
 /// Calculate the function g of the HKF model.
-auto functionG(real T, real P, const WaterThermoState& wts) -> FunctionG;
+auto functionG(real T, real P, const WaterThermoProps& wts) -> FunctionG;
 
 /// Calculate the electrostatic state of the aqueous species using the g-function state.
 auto speciesElectroPropsHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroProps;

@@ -29,8 +29,8 @@ using std::log;
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -58,7 +58,7 @@ auto createMemoizedWaterElectroPropsFnJohnsonNorton()
 {
     Fn<WaterElectroProps(const real&, const real&)> fn = [](const real& T, const real& P)
     {
-        const auto wts = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
+        const auto wts = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         return Reaktoro::waterElectroPropsJohnsonNorton(T, P, wts);
     };
     return memoizeLast(fn);
@@ -98,7 +98,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         auto& [G0, H0, V0, Cp0, Cv0] = props;
         const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, Tmax] = params;
 
-        const auto wts = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
+        const auto wts = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
         const auto wes = memoizedWaterElectroPropsJohnsonNorton(T, P);
         const auto gstate = gHKF::compute(T, P, wts);
         const auto aes = speciesElectroPropsHKF(gstate, params);

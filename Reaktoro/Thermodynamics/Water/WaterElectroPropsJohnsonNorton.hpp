@@ -24,13 +24,13 @@ namespace Reaktoro {
 
 // Forward declarations
 struct WaterElectroProps;
-struct WaterThermoState;
+struct WaterThermoProps;
 
 /// Calculate the electrostatic state of water using the model of Johnson and Norton (1991).
 /// Reference:
 /// - Johnson, J. W., Norton, D. (1991). Critical phenomena in hydrothermal systems; state,
 ///   thermodynamic, electrostatic, and transport properties of H2O in the critical region.
 ///   American Journal of Science, 291(6), 541–648. [doi](http://doi.org/10.2475/ajs.291.6.541)
-auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoState& wts) -> WaterElectroProps;
+auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoProps& wts) -> WaterElectroProps;
 
 } // namespace Reaktoro

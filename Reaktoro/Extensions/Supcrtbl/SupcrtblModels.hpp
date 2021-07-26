@@ -24,28 +24,28 @@ namespace Reaktoro {
 
 // Forward declarations
 struct SpeciesElectroProps;
-struct SpeciesThermoState;
+struct SpeciesThermoProps;
 struct SupcrtblParamsAqueousSoluteHKF;
 struct SupcrtblParamsAqueousSolventHKF;
 struct SupcrtblParamsFluidHollandPowell;
 struct SupcrtblParamsMineralHollandPowell;
 struct SupcrtblParamsMineralHollandPowell;
 struct WaterElectroProps;
-struct WaterThermoState;
+struct WaterThermoProps;
 
 /// Calculate the standard thermodynamic properties of a aqueous solvent water using HKF model.
-auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoState& wts) -> SpeciesThermoState;
+auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoProps& wts) -> SpeciesThermoProps;
 
 /// Calculate the standard thermodynamic properties of a aqueous solutes using HKF model.
-auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState;
+auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps;
 
 /// Calculate the standard thermodynamic properties of a gas/liquid using Holland and Powell (2011) model.
-auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const SupcrtblParamsFluidHollandPowell& params) -> SpeciesThermoState;
+auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const SupcrtblParamsFluidHollandPowell& params) -> SpeciesThermoProps;
 
 /// Calculate the standard thermodynamic properties of a mineral without phase transition using Holland and Powell (2011) model.
-auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const SupcrtblParamsMineralHollandPowell& params) -> SpeciesThermoState;
+auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const SupcrtblParamsMineralHollandPowell& params) -> SpeciesThermoProps;
 
 // /// Calculate the standard thermodynamic properties of a mineral with phase transition using Holland and Powell (2011) model and Landau theory.
-// auto supcrtblStandardThermoPropsMineralHollandPowellLandau(real T, real P, const SupcrtblParamsMineralHollandPowellLandau& params) -> SpeciesThermoState;
+// auto supcrtblStandardThermoPropsMineralHollandPowellLandau(real T, real P, const SupcrtblParamsMineralHollandPowellLandau& params) -> SpeciesThermoProps;
 
 } // namespace Reaktoro

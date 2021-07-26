@@ -17,11 +17,11 @@
 
 #pragma once
 
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateWagnerPruss.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>

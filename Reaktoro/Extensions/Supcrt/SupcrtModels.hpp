@@ -24,20 +24,20 @@ namespace Reaktoro {
 
 // Forward declarations
 struct SpeciesElectroProps;
-struct SpeciesThermoState;
+struct SpeciesThermoProps;
 struct WaterElectroProps;
-struct WaterThermoState;
+struct WaterThermoProps;
 
 /// Calculate the thermodynamic state of solvent water using the HKF model.
-auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoState& wts) -> SpeciesThermoState;
+auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoProps& wts) -> SpeciesThermoProps;
 
 /// Calculate the thermodynamic state of an aqueous solute using the HKF model.
-auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState;
+auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps;
 
 /// Calculate the thermodynamic state of a fluid species using the Maier-Kelly model.
-auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoState;
+auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoProps;
 
 /// Calculate the thermodynamic state of a mineral species using the Maier-Kelly-HKF model.
-auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMaierKellyHKF& params) -> SpeciesThermoState;
+auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMaierKellyHKF& params) -> SpeciesThermoProps;
 
 } // namespace Reaktoro

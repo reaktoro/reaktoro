@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-struct WaterThermoState
+struct WaterThermoProps
 {
     /// The temperature of water (in units of K)
     real temperature = {};

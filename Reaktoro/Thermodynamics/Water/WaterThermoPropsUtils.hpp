@@ -24,7 +24,7 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct WaterThermoState;
+struct WaterThermoProps;
 struct WaterHelmholtzState;
 
 /// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
@@ -35,13 +35,13 @@ struct WaterHelmholtzState;
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
-/// @see WaterThermoState
-auto waterThermoStateHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
+/// @see WaterThermoProps
+auto waterThermoPropsHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps;
 
 /// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
-auto waterThermoStateHGKMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
+auto waterThermoPropsHGKMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps;
 
 /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
 /// **References:**
@@ -51,13 +51,13 @@ auto waterThermoStateHGKMemoized(real T, real P, StateOfMatter stateofmatter) ->
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @return The thermodynamic state of water
-/// @see WaterThermoState
-auto waterThermoStateWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
+/// @see WaterThermoProps
+auto waterThermoPropsWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps;
 
 /// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
-auto waterThermoStateWagnerPrussMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoState;
+auto waterThermoPropsWagnerPrussMemoized(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps;
 
 /// Calculate the thermodynamic state of water.
 /// This is a general method that uses the Helmholtz free energy state
@@ -67,7 +67,7 @@ auto waterThermoStateWagnerPrussMemoized(real T, real P, StateOfMatter stateofma
 /// @param P The pressure of water (in units of Pa)
 /// @param whs The Helmholtz free energy state of water
 /// @return The thermodynamic state of water
-/// @see WaterHelmholtzState, WaterThermoState
-auto waterThermoState(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoState;
+/// @see WaterHelmholtzState, WaterThermoProps
+auto waterThermoProps(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoProps;
 
 } // namespace Reaktoro

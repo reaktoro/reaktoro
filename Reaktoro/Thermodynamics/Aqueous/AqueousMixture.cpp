@@ -28,8 +28,8 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
@@ -47,7 +47,7 @@ auto defaultWaterDielectricConstantFn() -> Fn<real(real,real)>
 {
     const auto T = 298.15;
     const auto P = 1.0e5;
-    const auto wts = waterThermoStateHGK(T, P, StateOfMatter::Liquid);
+    const auto wts = waterThermoPropsHGK(T, P, StateOfMatter::Liquid);
     const auto wes = waterElectroPropsJohnsonNorton(T, P, wts);
     const auto epsilon = wes.epsilon;
     return [=](real T, real P) { return epsilon; };

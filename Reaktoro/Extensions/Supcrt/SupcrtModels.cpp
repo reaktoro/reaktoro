@@ -28,12 +28,12 @@
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroPropsHKF.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesThermoProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
@@ -95,7 +95,7 @@ auto checkTemperatureValidityHKF(real& T, const SupcrtParamsType& params) -> voi
 
 } // namespace
 
-auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoState& wt) -> SpeciesThermoState
+auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoProps& wt) -> SpeciesThermoProps
 {
     // Auxiliary data from Helgeson and Kirkham (1974), on page 1098
     const auto Ttr =  273.16;                   // unit: K
@@ -119,7 +119,7 @@ auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueo
     const auto Cp = wt.cp * waterMolarMass;
     const auto Cv = wt.cv * waterMolarMass;
 
-    SpeciesThermoState state;
+    SpeciesThermoProps state;
     state.entropy          = S;
     state.enthalpy         = H;
     state.internal_energy  = U;
@@ -132,7 +132,7 @@ auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueo
     return state;
 }
 
-auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState
+auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps
 {
     // Auxiliary variables
     const auto Pbar = P * 1.0e-05;
@@ -197,7 +197,7 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-    SpeciesThermoState state;
+    SpeciesThermoProps state;
     state.volume           = V;
     state.gibbs_energy     = G;
     state.enthalpy         = H;
@@ -210,9 +210,9 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
     return state;
 }
 
-// auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesThermoState
+// auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesThermoProps
 // {
-//     WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
+//     WaterThermoProps wt = waterThermoPropsWagnerPruss(T, P, StateOfMatter::Liquid);
 
 //     WaterElectroProps wes = waterElectroPropsJohnsonNorton(T, P, wt);
 
@@ -223,7 +223,7 @@ auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueou
 //     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wes);
 // }
 
-auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoState
+auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoProps
 {
     // Check temperature range validity
     checkTemperatureValidityHKF(T, params);
@@ -260,7 +260,7 @@ auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaier
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-    SpeciesThermoState state;
+    SpeciesThermoProps state;
     state.volume           = V;
     state.gibbs_energy     = G;
     state.enthalpy         = H;
@@ -273,7 +273,7 @@ auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaier
     return state;
 }
 
-auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMaierKellyHKF& params) -> SpeciesThermoState
+auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMaierKellyHKF& params) -> SpeciesThermoProps
 {
     // Check temperature range validity
     checkTemperatureValidityHKF(T, params);
@@ -372,7 +372,7 @@ auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMa
     A  *= calorieToJoule;
     Cp *= calorieToJoule;
 
-    SpeciesThermoState state;
+    SpeciesThermoProps state;
     state.volume           = V;
     state.gibbs_energy     = G;
     state.enthalpy         = H;

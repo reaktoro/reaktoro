@@ -27,8 +27,8 @@ using std::pow;
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -38,7 +38,7 @@ const double eta = 1.66027e+05;
 
 } // namespace
 
-auto functionG(real T, real P, const WaterThermoState& wts) -> FunctionG
+auto functionG(real T, real P, const WaterThermoProps& wts) -> FunctionG
 {
     // The function G
     FunctionG funcG;
@@ -169,7 +169,7 @@ auto speciesElectroPropsHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteH
 
 auto speciesElectroPropsHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroProps
 {
-    WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
+    WaterThermoProps wt = waterThermoPropsWagnerPruss(T, P, StateOfMatter::Liquid);
 
     FunctionG g = functionG(T, P, wt);
 

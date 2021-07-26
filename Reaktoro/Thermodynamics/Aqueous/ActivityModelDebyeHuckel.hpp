@@ -138,8 +138,8 @@ auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
 /// \eq{\mathrm{g/cm^{3}}}), calculated using either the equation of state of
 /// Haar--Gallagher--Kell (1984)\sup{\cite Haar1984} or the equation of state
 /// of Wagner and Pruss (2002)\sup{\cite Wagner2002} (see @ref
-/// waterThermoStateHGK and
-/// @ref waterThermoStateWagnerPruss).
+/// waterThermoPropsHGK and
+/// @ref waterThermoPropsWagnerPruss).
 ///
 /// The activity of water is calculated using the following equation:
 ///

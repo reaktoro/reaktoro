@@ -25,7 +25,7 @@ namespace Reaktoro {
 // Forward declarations
 struct SpeciesElectroProps;
 struct StandardThermoModelParamsHKF;
-struct WaterThermoState;
+struct WaterThermoProps;
 
 /// The *g* function state of in HKF model for computation of electrostatic properties of aqueous solutes.
 struct gHKF
@@ -49,7 +49,7 @@ struct gHKF
     real gPP = {};
 
     /// Compute the *g* function state at given temperature, pressure and water thermodynamic properties.
-    static auto compute(real T, real P, const WaterThermoState& wts) -> gHKF;
+    static auto compute(real T, real P, const WaterThermoProps& wts) -> gHKF;
 };
 
 /// Compute the electrostatic properties of an aqueous solute with given HKF *g* function state.

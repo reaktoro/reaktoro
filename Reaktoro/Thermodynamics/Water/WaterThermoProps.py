@@ -20,6 +20,6 @@ from reaktoro import *
 import pytest
 
 
-# TODO Implement tests for the python bindings of component WaterThermoState in WaterThermoState[test].py
-def testWaterThermoState():
+# TODO Implement tests for the python bindings of component WaterThermoProps in WaterThermoProps[test].py
+def testWaterThermoProps():
     pass

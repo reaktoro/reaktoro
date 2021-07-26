@@ -23,7 +23,7 @@ using std::pow;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -80,7 +80,7 @@ real (*k_tt[5])(real) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 } // namespace
 
-auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoState& wt) -> WaterElectroProps
+auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoProps& wt) -> WaterElectroProps
 {
     WaterElectroProps we;
 

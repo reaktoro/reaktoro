@@ -26,7 +26,7 @@
 namespace Reaktoro {
 namespace {
 
-/// Convert a SpeciesThermoState object into a StandardThermoProps one
+/// Convert a SpeciesThermoProps object into a StandardThermoProps one
 auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other) -> StandardThermoProps
 {
     StandardThermoProps converted;

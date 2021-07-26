@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesThermoProps.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
 #include <Reaktoro/Extensions/Supcrt/Supcrt.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>

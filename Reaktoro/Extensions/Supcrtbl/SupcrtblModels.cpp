@@ -28,14 +28,14 @@
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesElectroPropsHKF.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesThermoProps.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
 #include <Reaktoro/Extensions/Supcrtbl/SupcrtblParams.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
@@ -59,7 +59,7 @@ const auto Tr05 = sqrt(Tr);
 } // namespace
 
 
-auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoState& wts) -> SpeciesThermoState
+auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoProps& wts) -> SpeciesThermoProps
 {
     SupcrtParamsAqueousSolventHKF cparams;
     // cparams.Ttr = params.Ttr; // TODO: Revisit this because currently SupcrtParamsAqueousSolventHKF is empty (no data members)
@@ -71,7 +71,7 @@ auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsA
     return supcrtStandardThermoPropsSolventHKF(T, P, cparams, wts);
 }
 
-auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState
+auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps
 {
     SupcrtParamsAqueousSoluteHKF cparams;
     cparams.name = params.name;
@@ -89,7 +89,7 @@ auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAq
     return supcrtStandardThermoPropsSoluteHKF(T, P, cparams, aes, wes);
 }
 
-auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const SupcrtblParamsFluidHollandPowell& params) -> SpeciesThermoState
+auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const SupcrtblParamsFluidHollandPowell& params) -> SpeciesThermoProps
 {
     const auto& [Gf, Hf, Sr, Vr, a, b, c, d, Tmax] = params;
 
@@ -116,7 +116,7 @@ auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const Supcrtb
     U *= kJ_to_J;
     A *= kJ_to_J;
 
-    SpeciesThermoState props;
+    SpeciesThermoProps props;
     props.volume           = 0.0;
     props.gibbs_energy     = G;
     props.enthalpy         = H;
@@ -129,7 +129,7 @@ auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const Supcrtb
     return props;
 }
 
-auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const SupcrtblParamsMineralHollandPowell& params) -> SpeciesThermoState
+auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const SupcrtblParamsMineralHollandPowell& params) -> SpeciesThermoProps
 {
     const auto& [Gf, Hf, Sr, Vr, MKa, MKb, MKc, MKd, alpha0, kappa0, kappap0, kappapp0, numatoms, Tmax] = params;
 
@@ -178,7 +178,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
     const auto U = H - Pbar*V;
     const auto A = U - T*S;
 
-    SpeciesThermoState props;
+    SpeciesThermoProps props;
     props.volume           = V * 1e-5; // from J/(bar*mol) to m3/mol
     props.gibbs_energy     = G * kJ_to_J;
     props.enthalpy         = H * kJ_to_J;
@@ -191,7 +191,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
     return props;
 }
 
-// auto supcrtblStandardThermoPropsMineralHollandPowellLandau(real T, real P, const SupcrtblParamsMineralHollandPowellLandau& params) -> SpeciesThermoState
+// auto supcrtblStandardThermoPropsMineralHollandPowellLandau(real T, real P, const SupcrtblParamsMineralHollandPowellLandau& params) -> SpeciesThermoProps
 // {
 
 // }
@@ -255,7 +255,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 
 // } // namespace
 
-// auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoState& wt) -> SpeciesThermoState
+// auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoProps& wt) -> SpeciesThermoProps
 // {
 //     // Auxiliary data from Helgeson and Kirkham (1974), on page 1098
 //     const auto Ttr =  273.16;                   // unit: K
@@ -279,7 +279,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     const auto Cp = wt.cp * waterMolarMass;
 //     const auto Cv = wt.cv * waterMolarMass;
 
-//     SpeciesThermoState state;
+//     SpeciesThermoProps state;
 //     state.entropy          = S;
 //     state.enthalpy         = H;
 //     state.internal_energy  = U;
@@ -292,7 +292,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     return state;
 // }
 
-// auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState
+// auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoProps
 // {
 //     // Auxiliary variables
 //     const auto Pbar = P * 1.0e-05;
@@ -357,7 +357,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     A  *= calorieToJoule;
 //     Cp *= calorieToJoule;
 
-//     SpeciesThermoState state;
+//     SpeciesThermoProps state;
 //     state.volume           = V;
 //     state.gibbs_energy     = G;
 //     state.enthalpy         = H;
@@ -370,9 +370,9 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     return state;
 // }
 
-// // auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesThermoState
+// // auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesThermoProps
 // // {
-// //     WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
+// //     WaterThermoProps wt = waterThermoPropsWagnerPruss(T, P, StateOfMatter::Liquid);
 
 // //     WaterElectroProps wes = waterElectroPropsJohnsonNorton(T, P, wt);
 
@@ -383,7 +383,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 // //     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wes);
 // // }
 
-// auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoState
+// auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoProps
 // {
 //     // Check temperature range validity
 //     checkTemperatureValidityHKF(T, params);
@@ -420,7 +420,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     A  *= calorieToJoule;
 //     Cp *= calorieToJoule;
 
-//     SpeciesThermoState state;
+//     SpeciesThermoProps state;
 //     state.volume           = V;
 //     state.gibbs_energy     = G;
 //     state.enthalpy         = H;
@@ -433,7 +433,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     return state;
 // }
 
-// auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMaierKellyHKF& params) -> SpeciesThermoState
+// auto supcrtStandardThermoPropsMaierKellyHKF(real T, real P, const SupcrtParamsMaierKellyHKF& params) -> SpeciesThermoProps
 // {
 //     // Check temperature range validity
 //     checkTemperatureValidityHKF(T, params);
@@ -532,7 +532,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     A  *= calorieToJoule;
 //     Cp *= calorieToJoule;
 
-//     SpeciesThermoState state;
+//     SpeciesThermoProps state;
 //     state.volume           = V;
 //     state.gibbs_energy     = G;
 //     state.enthalpy         = H;
