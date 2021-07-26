@@ -64,8 +64,6 @@ TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
     const auto P = 12.3e5;
     const auto x = moleFractions(species);
 
-    Vec<Any> extra;
-
     // Construct the activity props function with the given aqueous species.
     ActivityModel debyehuckelfn = ActivityModelDebyeHuckel()(species);
 
@@ -73,12 +71,12 @@ TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
     ActivityProps props = ActivityProps::create(species.size());
 
     // Evaluate the activity props function
-    debyehuckelfn(props, {T, P, x, extra});
+    debyehuckelfn(props, {T, P, x});
 
     WHEN("Using ActivityModelSetschenow(CO2) constructor")
     {
         ActivityModel fn = ActivityModelSetschenow("CO2", 0.5)(species);
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -99,8 +97,8 @@ TEST_CASE("Testing ActivityModelSetschenow", "[ActivityModelSetschenow]")
     WHEN("A base activity model, such as Debye-Huckel, has not been used previously")
     {
         ActivityModel fn = ActivityModelSetschenow("NaCl", 0.8)(species);
-        extra = {}; // there is no AqueousMixture not AqueousMixtureState in the extra arguments
+        props.extra = {}; // there is no AqueousMixture not AqueousMixtureState in the `extra` data member of `props`
 
-        REQUIRE_THROWS( fn(props, {T, P, x, extra}) );
+        REQUIRE_THROWS( fn(props, {T, P, x}) );
     }
 }

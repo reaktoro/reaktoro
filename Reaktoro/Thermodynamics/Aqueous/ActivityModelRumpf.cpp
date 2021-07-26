@@ -34,11 +34,8 @@ auto ActivityModelRumpf(String gas) -> ActivityModelGenerator
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             // The aqueous mixture and its state exported by a base aqueous activity model.
-            const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));
-            const auto& state = std::any_cast<AqueousMixtureState>(args.extra.at(1));
-
-            // The number of species and charged species
-            const auto nions = mixture.charged().size();
+            const auto& mixture = std::any_cast<AqueousMixture>(props.extra.at(0));
+            const auto& state = std::any_cast<AqueousMixtureState>(props.extra.at(1));
 
             // The local indices of some charged species among all charged species
             static const auto iNa  = mixture.charged().findWithFormula("Na+");
@@ -46,6 +43,9 @@ auto ActivityModelRumpf(String gas) -> ActivityModelGenerator
             static const auto iCa  = mixture.charged().findWithFormula("Ca++");
             static const auto iMg  = mixture.charged().findWithFormula("Mg++");
             static const auto iCl  = mixture.charged().findWithFormula("Cl-");
+
+            // The number of charged species
+            const auto nions = mixture.charged().size();
 
             // Extract temperature from the parameters
             const auto T = state.T;

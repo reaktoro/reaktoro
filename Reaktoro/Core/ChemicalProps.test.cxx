@@ -55,7 +55,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
     ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityArgs args)
     {
-        const auto [T, P, x, extra] = args;
+        const auto [T, P, x] = args;
         props.Vex  = 1.0 * (T*P)*(T*P);
         props.VexT = 2.0 * (T*P)*(T*P);
         props.VexP = 3.0 * (T*P)*(T*P);
@@ -69,7 +69,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
     ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args)
     {
-        const auto [T, P, x, extra] = args;
+        const auto [T, P, x] = args;
         props.Vex  = 1.1 * (T*P)*(T*P);
         props.VexT = 2.1 * (T*P)*(T*P);
         props.VexP = 3.1 * (T*P)*(T*P);

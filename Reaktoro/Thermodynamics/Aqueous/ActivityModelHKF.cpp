@@ -341,13 +341,13 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
     ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
-        const auto& [T, P, x, extra] = args;
+        const auto& [T, P, x] = args;
 
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
 
-        // Export the aqueous mixture and its state via the extra argument
-        extra = { mixture, state };
+        // Export the aqueous mixture and its state via the `extra` data member
+        props.extra = { mixture, state };
 
         // Auxiliary references to state variables
         const auto& I = state.Is;  // the stoichiometric ionic strength

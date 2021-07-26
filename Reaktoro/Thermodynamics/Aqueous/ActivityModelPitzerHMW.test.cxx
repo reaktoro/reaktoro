@@ -63,8 +63,6 @@ TEST_CASE("Testing ActivityModelPitzerHMW", "[ActivityModelPitzerHMW]")
     const auto P = 12.3e5;
     const auto x = moleFractions(species);
 
-    Vec<Any> extra;
-
     // Construct the activity props function with the given aqueous species.
     ActivityModel fn = ActivityModelPitzerHMW()(species);
 
@@ -72,7 +70,7 @@ TEST_CASE("Testing ActivityModelPitzerHMW", "[ActivityModelPitzerHMW]")
     ActivityProps props = ActivityProps::create(species.size());
 
     // Evaluate the activity props function
-    fn(props, {T, P, x, extra});
+    fn(props, {T, P, x});
 
     CHECK( exp(props.ln_g[0])  == Approx(1.0024963429) ); // H2O
     CHECK( exp(props.ln_g[1])  == Approx(0.6153629865) ); // H+

@@ -78,7 +78,7 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
     ActivityModel model = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
-        const auto& [T, P, x, extra] = args;
+        const auto& [T, P, x] = args;
 
         const auto Pbar = P * 1.0e-5; // convert from Pa to bar
 

@@ -64,8 +64,6 @@ TEST_CASE("Testing ActivityModelDrummond", "[ActivityModelDrummond]")
     const auto P = 12.3e5;
     const auto x = moleFractions(species);
 
-    Vec<Any> extra;
-
     // Construct the activity props function with the given aqueous species.
     ActivityModel debyehuckelfn = ActivityModelDebyeHuckel()(species);
 
@@ -73,12 +71,12 @@ TEST_CASE("Testing ActivityModelDrummond", "[ActivityModelDrummond]")
     ActivityProps props = ActivityProps::create(species.size());
 
     // Evaluate the activity props function
-    debyehuckelfn(props, {T, P, x, extra});
+    debyehuckelfn(props, {T, P, x});
 
     WHEN("Using ActivityModelDrummond(CO2)")
     {
         ActivityModel fn = ActivityModelDrummond("CO2")(species);
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -99,7 +97,7 @@ TEST_CASE("Testing ActivityModelDrummond", "[ActivityModelDrummond]")
     WHEN("Using ActivityModelDrummond(NaCl)")
     {
         ActivityModel fn = ActivityModelDrummond("NaCl")(species);
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -120,8 +118,8 @@ TEST_CASE("Testing ActivityModelDrummond", "[ActivityModelDrummond]")
     WHEN("A base activity model, such as Debye-Huckel, has not been used previously")
     {
         ActivityModel fn = ActivityModelDrummond("CO2")(species);
-        extra = {}; // there is no AqueousMixture not AqueousMixtureState in the extra arguments
+        props.extra = {}; // there is no AqueousMixture not AqueousMixtureState in the `extra` data member of `props`
 
-        REQUIRE_THROWS( fn(props, {T, P, x, extra}) );
+        REQUIRE_THROWS( fn(props, {T, P, x}) );
     }
 }

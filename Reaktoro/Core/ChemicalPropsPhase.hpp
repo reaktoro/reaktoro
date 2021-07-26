@@ -526,8 +526,8 @@ private:
             phase().name(), " because it has one or more species with zero amounts.");
 
         Vec<Any> extra;
-        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
-        ActivityArgs args{ T, P, x, extra };
+        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
+        ActivityArgs args{ T, P, x };
         ActivityModel activity_model = use_ideal_activity_model ?
             phase().idealActivityModel() : phase().activityModel();
 

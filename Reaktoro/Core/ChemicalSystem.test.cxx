@@ -30,7 +30,7 @@ extern auto createDatabase() -> Database;
 /// Return mock activity properties for an aqueous solution.
 auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
 {
-    const auto [T, P, x, extra] = args;
+    const auto [T, P, x] = args;
     props.Vex  = 0.1 * log(P/T);
     props.VexT = 0.2 * log(P/T);
     props.VexP = 0.3 * log(P/T);
@@ -45,7 +45,7 @@ auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
 /// Return mock activity properties for a gaseous solution.
 auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
 {
-    const auto [T, P, x, extra] = args;
+    const auto [T, P, x] = args;
     props.Vex  = 1.0 * log(P/T);
     props.VexT = 2.0 * log(P/T);
     props.VexP = 3.0 * log(P/T);
@@ -60,7 +60,7 @@ auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
 /// Return mock activity properties for a solid solution.
 auto activityModelSolid(ActivityPropsRef props, ActivityArgs args)
 {
-    const auto [T, P, x, extra] = args;
+    const auto [T, P, x] = args;
     props.Vex  = 1.1 * log(P/T);
     props.VexT = 2.1 * log(P/T);
     props.VexP = 3.1 * log(P/T);

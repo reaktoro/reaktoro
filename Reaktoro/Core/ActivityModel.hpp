@@ -39,9 +39,6 @@ struct ActivityArgs
 
     /// The mole fractions of the species in the phase.
     ArrayXrConstRef x;
-
-    /// The extra arguments for the activity model evaluation whose type is only known at runtime.
-    Vec<Any>& extra;
 };
 
 // Declare this so that Model undestand ActivityPropsRef as reference type for ActivityProps instead of ActivityProps&.

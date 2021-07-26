@@ -29,7 +29,7 @@ namespace Reaktoro {
 
 /// The base type for the primary activity and excess thermodynamic properties of a phase.
 /// @see ActivityModel, ActivityArgs
-template<typename Real, typename Array>
+template<typename Real, typename Array, typename Extra>
 struct ActivityPropsBase
 {
     /// The excess molar volume of the phase (in m3/mol).
@@ -59,6 +59,9 @@ struct ActivityPropsBase
     /// The activities (natural log) of the species in the phase.
     Array ln_a;
 
+    /// The extra data produced by an activity model that may be reused by subsequent models within a chained activity model.
+    Extra extra;
+
     /// Assign a common value to all properties in this ActivityPropsBase object.
     auto operator=(real value) -> ActivityPropsBase&
     {
@@ -75,25 +78,25 @@ struct ActivityPropsBase
     }
 
     /// Convert this ActivityPropsBase object into another.
-    template<typename RX, typename AX>
-    operator ActivityPropsBase<RX, AX>()
+    template<typename RX, typename AX, typename EX>
+    operator ActivityPropsBase<RX, AX, EX>()
     {
-        return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+        return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
-    template<typename RX, typename AX>
-    operator ActivityPropsBase<RX, AX>() const
+    template<typename RX, typename AX, typename EX>
+    operator ActivityPropsBase<RX, AX, EX>() const
     {
-        return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
+        return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
     }
 
     /// Create a ActivityPropsBase object with given number of species.
     /// This static method is needed, instead of a constructor, which would
     /// prevent aggregate initialization of this struct.
-    static auto create(Index numspecies) -> ActivityPropsBase<Real, Array>
+    static auto create(Index numspecies) -> ActivityPropsBase<Real, Array, Extra>
     {
-        ActivityPropsBase<Real, Array> props = {};
+        ActivityPropsBase<Real, Array, Extra> props = {};
         props.Vex  = 0.0;
         props.VexT = 0.0;
         props.VexP = 0.0;
@@ -108,12 +111,12 @@ struct ActivityPropsBase
 };
 
 /// The activity and excess thermodynamic properties of a phase.
-using ActivityProps = ActivityPropsBase<real, ArrayXr>;
+using ActivityProps = ActivityPropsBase<real, ArrayXr, Vec<Any>>;
 
 /// The non-const view to the activity and excess thermodynamic properties of a phase.
-using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef>;
+using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef, Vec<Any>&>;
 
 /// The const view to the activity and excess thermodynamic properties of a phase.
-using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef>;
+using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef, const Vec<Any>&>;
 
 } // namespace Reaktoro

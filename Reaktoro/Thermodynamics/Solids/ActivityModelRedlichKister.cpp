@@ -37,7 +37,7 @@ auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModelGener
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             // The arguments for the activity model evaluation
-            const auto& [T, P, x, extra] = args;
+            const auto& [T, P, x] = args;
 
             const auto RT = universalGasConstant * T;
 

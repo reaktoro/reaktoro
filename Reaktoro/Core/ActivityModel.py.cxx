@@ -28,7 +28,6 @@ void exportActivityModel(py::module& m)
         .def_property_readonly("T", [](const ActivityArgs& self) { return self.T; })
         .def_property_readonly("P", [](const ActivityArgs& self) { return self.P; })
         .def_property_readonly("x", [](const ActivityArgs& self) { return self.x; })
-        .def_property_readonly("extra", [](const ActivityArgs& self) { return self.extra; })
         ;
 
     auto chain4py = [](py::args args)

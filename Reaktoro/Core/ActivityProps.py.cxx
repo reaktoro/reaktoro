@@ -35,10 +35,11 @@ void exportActivityProps(py::module& m)
         .def_readwrite("Cvex", &ActivityProps::Cvex)
         .def_readwrite("ln_g", &ActivityProps::ln_g)
         .def_readwrite("ln_a", &ActivityProps::ln_a)
+        .def_readwrite("extra", &ActivityProps::extra)
         ;
 
     #define get(field) [](const ActivityPropsRef& self) { return self.field; }
-    #define set(field) [](ActivityPropsRef& self, const real& val) { self.field = val; }
+    #define set(field) [](ActivityPropsRef& self, const decltype(ActivityPropsRef::field)& val) { self.field = val; }
 
     py::class_<ActivityPropsRef>(m, "ActivityPropsRef")
         .def_property("Vex", get(Vex), set(Vex))
@@ -50,6 +51,7 @@ void exportActivityProps(py::module& m)
         .def_property("Cvex", get(Cvex), set(Cvex))
         .def_readwrite("ln_g", &ActivityPropsRef::ln_g)
         .def_readwrite("ln_a", &ActivityPropsRef::ln_a)
+        .def_property("extra", get(extra), set(extra))
         ;
 
     #undef get
@@ -67,5 +69,6 @@ void exportActivityProps(py::module& m)
         .def_property_readonly("Cvex", get(Cvex))
         .def_readonly("ln_g", &ActivityPropsConstRef::ln_g)
         .def_readonly("ln_a", &ActivityPropsConstRef::ln_a)
+        .def_property_readonly("extra", get(extra))
         ;
 }

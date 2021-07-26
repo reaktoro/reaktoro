@@ -41,8 +41,6 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
     const auto T = 300.0;
     const auto P = 12.3e5;
 
-    Vec<Any> extra;
-
     WHEN("All supported gases, H2O(g) and CO2(g), are considered.")
     {
         const auto species = SpeciesList("H2O CO2");
@@ -55,7 +53,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0]) == Approx(0.8867779770) ); // H2O
         CHECK( exp(props.ln_g[1]) == Approx(0.9423386345) ); // CO2
@@ -75,7 +73,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0]) == Approx(0.9423386345) ); // CO2
 
@@ -94,7 +92,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0]) == Approx(0.8867779770) ); // H2O
 

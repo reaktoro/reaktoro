@@ -51,7 +51,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
     ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args)
     {
-        const auto [T, P, x, extra] = args;
+        const auto [T, P, x] = args;
         props.Vex  = 1.0 * (T * P);
         props.VexT = 2.0 * (T * P);
         props.VexP = 3.0 * (T * P);

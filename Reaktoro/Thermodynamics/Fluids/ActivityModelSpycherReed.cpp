@@ -226,7 +226,7 @@ auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
     ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
-        const auto& [T, P, x, extra] = args;
+        const auto& [T, P, x] = args;
 
         // The pressure in units of bar
         const auto Pbar = 1e-5 * P;

@@ -267,8 +267,6 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
     const auto P = 12.3e5;
     const auto x = moleFractions(species);
 
-    Vec<Any> extra;
-
     SECTION("Checking the activity coefficients")
     {
         // Construct the activity props function with the given aqueous species.
@@ -278,7 +276,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -305,7 +303,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -332,7 +330,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9265452628) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -359,7 +357,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.9209334298) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
@@ -386,7 +384,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
         ActivityProps props = ActivityProps::create(species.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x, extra});
+        fn(props, {T, P, x});
 
         CHECK( exp(props.ln_g[0])  == Approx(0.8469626739) ); // H2O
         CHECK( exp(props.ln_g[1])  == Approx(0.3025737114) ); // H+

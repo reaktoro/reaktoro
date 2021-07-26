@@ -94,7 +94,7 @@ auto activityModelSpycherPruessEnnis(const SpeciesList& species) -> ActivityMode
     ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
-        const auto& [T, P, x, extra] = args;
+        const auto& [T, P, x] = args;
 
         // Calculate the pressure in bar
         const auto Pb = convertPascalToBar(P);
