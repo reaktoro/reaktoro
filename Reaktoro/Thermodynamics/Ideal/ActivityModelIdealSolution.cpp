@@ -23,7 +23,7 @@ auto ActivityModelIdealSolution() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             props = 0.0;
             props.ln_a = args.x.log();

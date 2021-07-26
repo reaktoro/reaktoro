@@ -157,8 +157,8 @@
 //                 "This phase was construted without a thermodynamic model.");
 //         };
 
-//         // Create the ActivityPropsFn function for the phase
-//         ActivityPropsFn phase_chemical_model = [](ActivityPropsRef res, real T, real P, VectorXrConstRef n) -> void
+//         // Create the ActivityModel function for the phase
+//         ActivityModel phase_chemical_model = [](ActivityPropsRef res, real T, real P, VectorXrConstRef n) -> void
 //         {
 //             RuntimeError("Could not evaluate the chemical model of phase.",
 //                 "This phase was construted without a thermodynamic model.");

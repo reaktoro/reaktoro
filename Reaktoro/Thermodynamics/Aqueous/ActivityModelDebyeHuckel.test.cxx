@@ -272,7 +272,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
     SECTION("Checking the activity coefficients")
     {
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = ActivityModelDebyeHuckel()(species);
+        ActivityModel fn = ActivityModelDebyeHuckel()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -299,7 +299,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
     SECTION("Checking the activity coefficients when using PHREEQC mode")
     {
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = ActivityModelDebyeHuckel()(species);
+        ActivityModel fn = ActivityModelDebyeHuckel()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -326,7 +326,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
     SECTION("Checking the activity coefficients when using WATEQ4F mode")
     {
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = ActivityModelDebyeHuckelWATEQ4F()(species);
+        ActivityModel fn = ActivityModelDebyeHuckelWATEQ4F()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -353,7 +353,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
     SECTION("Checking the activity coefficients when using Kielland mode")
     {
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = ActivityModelDebyeHuckelKielland()(species);
+        ActivityModel fn = ActivityModelDebyeHuckelKielland()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -380,7 +380,7 @@ TEST_CASE("Testing ActivityModelDebyeHuckel", "[ActivityModelDebyeHuckel]")
     SECTION("Checking the activity coefficients when using limiting law mode")
     {
         // Construct the activity props function with the given aqueous species.
-        ActivityPropsFn fn = ActivityModelDebyeHuckelLimitingLaw()(species);
+        ActivityModel fn = ActivityModelDebyeHuckelLimitingLaw()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());

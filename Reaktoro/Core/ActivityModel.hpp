@@ -29,7 +29,7 @@ namespace Reaktoro {
 
 /// The type for functions that construct an ActivityPropsFn for a phase.
 /// @param species The species in the phase.
-using ActivityModelGenerator = Fn<ActivityPropsFn(const SpeciesList& species)>;
+using ActivityModelGenerator = Fn<ActivityModel(const SpeciesList& species)>;
 
 // TODO: Rename this ActivityModel type by ActivityModelGenerator
 // TODO: Use the name ActivityModel instead of ActivityPropsFn.

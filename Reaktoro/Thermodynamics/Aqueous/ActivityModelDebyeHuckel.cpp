@@ -280,8 +280,8 @@ auto get(const ChemicalFormula& formula, const Map<String, real>& params, real d
     return defaultvalue;
 };
 
-/// Return the ActivityPropsFn object based on the Debye-Huckel model.
-auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuckelParams params) -> ActivityPropsFn
+/// Return the ActivityModel object based on the Debye-Huckel model.
+auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuckelParams params) -> ActivityModel
 {
     // Create the aqueous mixture
     AqueousMixture mixture(species);
@@ -334,7 +334,7 @@ auto activityPropsFnDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHu
     AqueousMixtureState state;
 
     // Define the activity model function of the aqueous mixture
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;

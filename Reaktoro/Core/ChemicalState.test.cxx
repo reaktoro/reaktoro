@@ -47,8 +47,8 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     db.addSpecies( Species("CaCO3(s)").withStandardGibbsEnergy(0.0) );
     db.addSpecies( Species("SiO2(s)").withStandardGibbsEnergy(0.0) );
 
-    // Create the ActivityPropsFn of the Phase objects for the ChemicalSystem
-    ActivityPropsFn activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
+    // Create the ActivityModel of the Phase objects for the ChemicalSystem
+    ActivityModel activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
 
     // Create the Phase objects for the ChemicalSystem
     const Vec<Phase> phases =

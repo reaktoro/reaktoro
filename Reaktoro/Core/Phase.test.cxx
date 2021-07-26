@@ -24,7 +24,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Phase", "[Phase]")
 {
-    ActivityPropsFn activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_props_fn = [](ActivityPropsRef props, ActivityArgs args) {};
 
     Phase phase;
     phase = phase.withActivityPropsFn(activity_props_fn);

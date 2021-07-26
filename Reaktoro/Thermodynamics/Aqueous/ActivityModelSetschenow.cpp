@@ -32,7 +32,7 @@ auto ActivityModelSetschenow(String neutral, real b) -> ActivityModelGenerator
         // The index of the neutral aqueous species in the aqueous phase.
         const auto ineutral = species.indexWithFormula(neutral);
 
-        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             // The aqueous mixture and its state exported by a base aqueous activity model.
             const auto& mixture = std::any_cast<AqueousMixture>(args.extra.at(0));

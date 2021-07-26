@@ -292,7 +292,7 @@ auto effectiveIonicRadius(const Species& species) -> real
 
 } // namespace
 
-auto activityPropsFnHKF(const SpeciesList& species) -> ActivityPropsFn
+auto activityPropsFnHKF(const SpeciesList& species) -> ActivityModel
 {
     // Create the aqueous mixture
     AqueousMixture mixture(species);
@@ -338,7 +338,7 @@ auto activityPropsFnHKF(const SpeciesList& species) -> ActivityPropsFn
     }
 
     // Define the activity model function of the aqueous phase
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;

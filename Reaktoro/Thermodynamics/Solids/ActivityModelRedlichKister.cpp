@@ -34,7 +34,7 @@ auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModelGener
             "The Redlich-Kister model requires a solid solution phase with exactly two species.");
 
         // Define the activity model function of the mineral phase
-        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             // The arguments for the activity model evaluation
             const auto& [T, P, x, extra] = args;

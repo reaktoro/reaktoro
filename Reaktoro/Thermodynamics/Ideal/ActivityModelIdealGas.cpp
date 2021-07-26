@@ -25,7 +25,7 @@ auto ActivityModelIdealGas() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        ActivityPropsFn fn = [](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args)
         {
             const auto Pbar = args.P * 1.0e-5; // from Pa to bar
             props = 0.0;

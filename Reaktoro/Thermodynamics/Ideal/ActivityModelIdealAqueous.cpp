@@ -31,7 +31,7 @@ auto ActivityModelIdealAqueous() -> ActivityModelGenerator
         const auto iH2O = species.indexWithFormula("H2O");
         const auto MH2O = waterMolarMass;
 
-        ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             const auto x = args.x;
             const auto m = x/(MH2O * args.x[iH2O]); // molalities

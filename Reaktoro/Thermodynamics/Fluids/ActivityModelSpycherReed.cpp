@@ -199,7 +199,7 @@ inline auto computeCTT(const real& T, int i, int j, int k) -> real
 
 } // namespace
 
-auto activityPropsFnSpycherReed(const SpeciesList& species) -> ActivityPropsFn
+auto activityPropsFnSpycherReed(const SpeciesList& species) -> ActivityModel
 {
     // The names of the gases in the mixture, and the supported ones by this model
     Strings provided = vectorize(species, RKT_LAMBDA(x, x.formula().str()));
@@ -223,7 +223,7 @@ auto activityPropsFnSpycherReed(const SpeciesList& species) -> ActivityPropsFn
     const auto R = universalGasConstant;
 
     // Define the activity model function of the gaseous phase
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;

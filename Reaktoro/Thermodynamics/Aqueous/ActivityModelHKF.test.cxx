@@ -66,7 +66,7 @@ TEST_CASE("Testing ActivityModelHKF", "[ActivityModelHKF]")
     Vec<Any> extra;
 
     // Construct the activity props function with the given aqueous species.
-    ActivityPropsFn fn = ActivityModelHKF()(species);
+    ActivityModel fn = ActivityModelHKF()(species);
 
     // Create the ActivityProps object with the results.
     ActivityProps props = ActivityProps::create(species.size());

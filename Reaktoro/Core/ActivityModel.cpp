@@ -26,9 +26,9 @@ auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator
 {
     ActivityModelGenerator chained_model = [=](const SpeciesList& species)
     {
-        const Vec<ActivityPropsFn> activity_props_fns = vectorize(models, RKT_LAMBDA(model, model(species)));
+        const Vec<ActivityModel> activity_props_fns = vectorize(models, RKT_LAMBDA(model, model(species)));
 
-        ActivityPropsFn chained_activity_props_fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel chained_activity_props_fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             for(const auto& fn : activity_props_fns)
                 fn(props, args);

@@ -53,7 +53,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         return props;
     };
 
-    ActivityPropsFn activity_props_fn_gas = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_props_fn_gas = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x, extra] = args;
         props.Vex  = 1.0 * (T*P)*(T*P);
@@ -67,7 +67,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.ln_a = 9.0 * x;
     };
 
-    ActivityPropsFn activity_props_fn_solid = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_props_fn_solid = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x, extra] = args;
         props.Vex  = 1.1 * (T*P)*(T*P);

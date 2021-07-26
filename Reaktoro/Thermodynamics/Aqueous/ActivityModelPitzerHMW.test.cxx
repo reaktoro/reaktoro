@@ -66,7 +66,7 @@ TEST_CASE("Testing ActivityModelPitzerHMW", "[ActivityModelPitzerHMW]")
     Vec<Any> extra;
 
     // Construct the activity props function with the given aqueous species.
-    ActivityPropsFn fn = ActivityModelPitzerHMW()(species);
+    ActivityModel fn = ActivityModelPitzerHMW()(species);
 
     // Create the ActivityProps object with the results.
     ActivityProps props = ActivityProps::create(species.size());

@@ -47,10 +47,10 @@ public:
     auto withStateOfMatter(StateOfMatter state) -> Phase;
 
     /// Return a copy of this Phase object with a new activity model function.
-    auto withActivityPropsFn(ActivityPropsFn fn) -> Phase;
+    auto withActivityPropsFn(ActivityModel fn) -> Phase;
 
     /// Return a copy of this Phase object with a new ideal activity model function.
-    auto withIdealActivityPropsFn(ActivityPropsFn fn) -> Phase;
+    auto withIdealActivityPropsFn(ActivityModel fn) -> Phase;
 
     /// Return the name of the phase.
     auto name() const -> String;
@@ -74,10 +74,10 @@ public:
     auto species(Index idx) const -> const Species&;
 
     /// Return the function that computes activity properties of the phase.
-    auto activityPropsFn() const -> const ActivityPropsFn&;
+    auto activityPropsFn() const -> const ActivityModel&;
 
     /// Return the function that computes ideal activity properties of the phase.
-    auto idealActivityPropsFn() const -> const ActivityPropsFn&;
+    auto idealActivityPropsFn() const -> const ActivityModel&;
 
 private:
     struct Impl;

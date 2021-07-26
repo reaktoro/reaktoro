@@ -31,6 +31,6 @@ namespace Reaktoro {
 /// @param W The binary interaction parameters for the solid solution end-members
 /// @return The equation of state function for the mineral phase
 /// @see ActivityModel
-// auto mineralChemicalModelVanLaar(VectorXrConstRef a, MatrixXdConstRef W) -> ActivityPropsFn;
+// auto mineralChemicalModelVanLaar(VectorXrConstRef a, MatrixXdConstRef W) -> ActivityModel;
 
 } // namespace Reaktoro

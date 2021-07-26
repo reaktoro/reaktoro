@@ -49,7 +49,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         const ArrayXr x = ArrayXr{{0.1, 0.9}};
 
         // Construct the activity props function with the given gaseous species.
-        ActivityPropsFn fn = ActivityModelSpycherPruessEnnis()(species);
+        ActivityModel fn = ActivityModelSpycherPruessEnnis()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -69,7 +69,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         const ArrayXr x = ArrayXr{{1.0}};
 
         // Construct the activity props function with the given gaseous species.
-        ActivityPropsFn fn = ActivityModelSpycherPruessEnnis()(species);
+        ActivityModel fn = ActivityModelSpycherPruessEnnis()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -88,7 +88,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         const ArrayXr x = ArrayXr{{1.0}};
 
         // Construct the activity props function with the given gaseous species.
-        ActivityPropsFn fn = ActivityModelSpycherPruessEnnis()(species);
+        ActivityModel fn = ActivityModelSpycherPruessEnnis()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());

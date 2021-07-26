@@ -528,7 +528,7 @@ private:
         Vec<Any> extra;
         ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a };
         ActivityArgs args{ T, P, x, extra };
-        ActivityPropsFn activity_props_fn = use_ideal_activity_model ?
+        ActivityModel activity_props_fn = use_ideal_activity_model ?
             phase().idealActivityPropsFn() : phase().activityPropsFn();
 
         if(nsum == 0.0) aprops = 0.0;

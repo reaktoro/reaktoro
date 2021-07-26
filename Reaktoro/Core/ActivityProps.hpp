@@ -23,11 +23,12 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Core/Model.hpp>
 
 namespace Reaktoro {
 
 /// The base type for the primary activity and excess thermodynamic properties of a phase.
-/// @see ActivityPropsFn, ActivityArgs
+/// @see ActivityModel, ActivityArgs
 template<typename Real, typename Array>
 struct ActivityPropsBase
 {
@@ -116,7 +117,7 @@ using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef>;
 using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef>;
 
 /// The arguments in an function for calculation of activity properties of a phase.
-/// @see ActivityPropsFn, ActivityProps
+/// @see ActivityModel, ActivityProps
 struct ActivityArgs
 {
     /// The temperature for the calculation (in K).
@@ -133,6 +134,6 @@ struct ActivityArgs
 };
 
 /// The function type for the calculation of activity and excess thermodynamic properties of a phase.
-using ActivityPropsFn = Fn<void(ActivityPropsRef, ActivityArgs)>;
+using ActivityModel = Fn<void(ActivityPropsRef, ActivityArgs)>;
 
 } // namespace Reaktoro

@@ -1372,7 +1372,7 @@ auto lnActivityCoefficientNeutral(const AqueousMixtureState& state, const Pitzer
 
 } // namespace Pitzer
 
-auto activityPropsFnPitzerHMW(const SpeciesList& species) -> ActivityPropsFn
+auto activityPropsFnPitzerHMW(const SpeciesList& species) -> ActivityModel
 {
     // Inject the Pitzer namespace here
     using namespace Pitzer;
@@ -1389,7 +1389,7 @@ auto activityPropsFnPitzerHMW(const SpeciesList& species) -> ActivityPropsFn
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;

@@ -81,7 +81,7 @@ auto volumeCO2(real T, real Pb, real sqrtT) -> real
 
 } // namespace
 
-auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityPropsFn
+auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityModel
 {
     // The indices of gases H2O(g) and CO2(g)
     const auto iH2O = species.findWithFormula("H2O");
@@ -91,7 +91,7 @@ auto activityPropsFnSpycherPruessEnnis(const SpeciesList& species) -> ActivityPr
     const auto nspecies = species.size();
 
     // Define the activity model function of the gaseous phase
-    ActivityPropsFn fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x, extra] = args;
