@@ -126,46 +126,33 @@ public:
 //======================================================================
 
 namespace Reaktoro {
-namespace detail {
 
-template<typename T> struct SameValue;
-template<typename T> struct AssignValue;
-template<typename T> struct CloneValue;
+/// Specialize MemoizationTraits for Params.
+template<typename T>
+struct MemoizationTraits;
 
 template<>
-struct SameValue<Params>
+struct MemoizationTraits<Params>
 {
-    static auto check(const Params& a, const Params& b)
+    using CacheType = VectorXr;
+
+    static auto equal(const VectorXr& a, const Params& b)
     {
-        errorif(a.size() != b.size(), "Expecting same size for both Params objects");
+        if(a.size() != b.size()) return false;
         for(auto i = 0; i < a.size(); ++i)
-            if(a[i].value() != b[i].value()) // for memoization sake, a and b are equal if they Param objects with same real values (including seed numbers!)
+            if(a[i] != b[i].value())
                 return false;
         return true;
     }
-};
 
-template<>
-struct AssignValue<Params>
-{
-    static auto apply(Params& a, const Params& b)
+    static auto assign(VectorXr& a, const Params& b)
     {
         a.resize(b.size());
-        for(auto i = 0; i < b.size(); ++i)
-            a[i].value() = b[i].value();
+        for(auto i = 0; i < a.size(); ++i)
+            a[i] = b[i].value();
     }
 };
 
-template<>
-struct CloneValue<Params>
-{
-    static auto apply(const Params& params) -> Params
-    {
-        return params.clone();
-    }
-};
-
-} // namespace detail
 } // namespace Reaktoro
 
 //======================================================================
