@@ -27,9 +27,9 @@ using std::pow;
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateWagnerPruss.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsHGK.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsWagnerPruss.hpp>
 
 namespace Reaktoro {
 
@@ -66,7 +66,7 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
     // Apply the Newton's method to the pressure-density equation
     for(int i = 1; i <= max_iters; ++i)
     {
-        WaterHelmholtzState h = model(T, D);
+        WaterHelmholtzProps h = model(T, D);
 
         const auto f  = (D*D*h.helmholtzD - P)/waterCriticalPressure;
         const auto df = (2*D*h.helmholtzD + D*D*h.helmholtzDD)/waterCriticalPressure;
@@ -88,7 +88,7 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
 
 auto waterDensityHGK(real T, real P, StateOfMatter stateofmatter) -> real
 {
-    return waterDensity(T, P, waterHelmholtzStateHGK, stateofmatter);
+    return waterDensity(T, P, waterHelmholtzPropsHGK, stateofmatter);
 }
 
 auto waterLiquidDensityHGK(real T, real P) -> real
@@ -103,7 +103,7 @@ auto waterVaporDensityHGK(real T, real P) -> real
 
 auto waterDensityWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> real
 {
-    return waterDensity(T, P, waterHelmholtzStateWagnerPruss, stateofmatter);
+    return waterDensity(T, P, waterHelmholtzPropsWagnerPruss, stateofmatter);
 }
 
 auto waterLiquidDensityWagnerPruss(real T, real P) -> real
@@ -119,18 +119,18 @@ auto waterVaporDensityWagnerPruss(real T, real P) -> real
 template<typename HelmholtzModel>
 auto waterPressure(real T, real D, const HelmholtzModel& model) -> real
 {
-    WaterHelmholtzState h = model(T, D);
+    WaterHelmholtzProps h = model(T, D);
     return D*D*h.helmholtzD;
 }
 
 auto waterPressureHGK(real T, real D) -> real
 {
-    return waterPressure(T, D, waterHelmholtzStateHGK);
+    return waterPressure(T, D, waterHelmholtzPropsHGK);
 }
 
 auto waterPressureWagnerPruss(real T, real D) -> real
 {
-    return waterPressure(T, D, waterHelmholtzStateHGK);
+    return waterPressure(T, D, waterHelmholtzPropsHGK);
 }
 
 auto waterSaturatedPressureWagnerPruss(real T) -> real

@@ -19,22 +19,22 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
 using namespace Reaktoro;
 
-void exportWaterHelmholtzState(py::module& m)
+void exportWaterHelmholtzProps(py::module& m)
 {
-    py::class_<WaterHelmholtzState>(m, "WaterHelmholtzState")
+    py::class_<WaterHelmholtzProps>(m, "WaterHelmholtzProps")
         .def(py::init<>())
-        .def_readwrite("helmholtz", &WaterHelmholtzState::helmholtz)
-        .def_readwrite("helmholtzT", &WaterHelmholtzState::helmholtzT)
-        .def_readwrite("helmholtzD", &WaterHelmholtzState::helmholtzD)
-        .def_readwrite("helmholtzTT", &WaterHelmholtzState::helmholtzTT)
-        .def_readwrite("helmholtzTD", &WaterHelmholtzState::helmholtzTD)
-        .def_readwrite("helmholtzDD", &WaterHelmholtzState::helmholtzDD)
-        .def_readwrite("helmholtzTTT", &WaterHelmholtzState::helmholtzTTT)
-        .def_readwrite("helmholtzTTD", &WaterHelmholtzState::helmholtzTTD)
-        .def_readwrite("helmholtzTDD", &WaterHelmholtzState::helmholtzTDD)
-        .def_readwrite("helmholtzDDD", &WaterHelmholtzState::helmholtzDDD)
+        .def_readwrite("helmholtz", &WaterHelmholtzProps::helmholtz)
+        .def_readwrite("helmholtzT", &WaterHelmholtzProps::helmholtzT)
+        .def_readwrite("helmholtzD", &WaterHelmholtzProps::helmholtzD)
+        .def_readwrite("helmholtzTT", &WaterHelmholtzProps::helmholtzTT)
+        .def_readwrite("helmholtzTD", &WaterHelmholtzProps::helmholtzTD)
+        .def_readwrite("helmholtzDD", &WaterHelmholtzProps::helmholtzDD)
+        .def_readwrite("helmholtzTTT", &WaterHelmholtzProps::helmholtzTTT)
+        .def_readwrite("helmholtzTTD", &WaterHelmholtzProps::helmholtzTTD)
+        .def_readwrite("helmholtzTDD", &WaterHelmholtzProps::helmholtzTDD)
+        .def_readwrite("helmholtzDDD", &WaterHelmholtzProps::helmholtzDDD)
         ;
 }

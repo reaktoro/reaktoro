@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "WaterHelmholtzStateWagnerPruss.hpp"
+#include "WaterHelmholtzPropsWagnerPruss.hpp"
 
 // C++ includes
 #include <cmath>
@@ -23,7 +23,7 @@ using std::log;
 using std::pow;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -146,7 +146,7 @@ const double E[] = { 0.3, 0.3 };
 
 } // namespace
 
-auto waterHelmholtzStateWagnerPruss(real T, real D) -> WaterHelmholtzState
+auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
 {
     const auto tau   = waterCriticalTemperature/T;
     const auto delta = D/waterCriticalDensity;
@@ -370,7 +370,7 @@ auto waterHelmholtzStateWagnerPruss(real T, real D) -> WaterHelmholtzState
     // The specific gas constant in units of J/(kg*K)
     const auto R = 461.51805;
 
-    WaterHelmholtzState res;
+    WaterHelmholtzProps res;
 
     res.helmholtz    = R*T*phi;
     res.helmholtzT   = R*T*phiT + R*phi;

@@ -25,9 +25,9 @@ using std::sqrt;
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateWagnerPruss.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsHGK.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsWagnerPruss.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 
@@ -59,7 +59,7 @@ auto createMemoizedWaterThermoPropsFnWagnerPruss()
 auto waterThermoPropsHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
     const real D = waterDensityHGK(T, P, stateofmatter);
-    const WaterHelmholtzState whs = waterHelmholtzStateHGK(T, D);
+    const WaterHelmholtzProps whs = waterHelmholtzPropsHGK(T, D);
     return waterThermoProps(T, P, whs);
 }
 
@@ -72,7 +72,7 @@ auto waterThermoPropsHGKMemoized(real T, real P, StateOfMatter stateofmatter) ->
 auto waterThermoPropsWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
     const real D = waterDensityWagnerPruss(T, P, stateofmatter);
-    const WaterHelmholtzState whs = waterHelmholtzStateWagnerPruss(T, D);
+    const WaterHelmholtzProps whs = waterHelmholtzPropsWagnerPruss(T, D);
     return waterThermoProps(T, P, whs);
 }
 
@@ -82,7 +82,7 @@ auto waterThermoPropsWagnerPrussMemoized(real T, real P, StateOfMatter stateofma
     return fn(T, P, stateofmatter);
 }
 
-auto waterThermoProps(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoProps
+auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whs) -> WaterThermoProps
 {
     WaterThermoProps wt;
 

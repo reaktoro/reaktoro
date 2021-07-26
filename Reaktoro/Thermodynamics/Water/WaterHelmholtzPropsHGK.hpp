@@ -15,15 +15,21 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
-using namespace Reaktoro;
+#include <Reaktoro/Common/Real.hpp>
 
-void exportWaterHelmholtzStateHGK(py::module& m)
-{
-    m.def("waterHelmholtzStateHGK", waterHelmholtzStateHGK);
-}
+namespace Reaktoro {
+
+// Forward declarations
+struct WaterHelmholtzProps;
+
+/// Calculate the Helmholtz free energy state of water using the Haar--Gallagher--Kell (1984) equation of state
+/// @param T The temperature of water (in units of K)
+/// @param D The density of water (in units of kg/m3)
+/// @return The Helmholtz free energy state of water
+/// @see WaterHelmholtzProps
+auto waterHelmholtzPropsHGK(real T, real D) -> WaterHelmholtzProps;
+
+} // namespace Reaktoro

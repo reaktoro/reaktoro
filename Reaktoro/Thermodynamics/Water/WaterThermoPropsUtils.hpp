@@ -25,7 +25,7 @@ namespace Reaktoro {
 
 // Forward declarations
 struct WaterThermoProps;
-struct WaterHelmholtzState;
+struct WaterHelmholtzProps;
 
 /// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
 /// **References:**
@@ -61,13 +61,13 @@ auto waterThermoPropsWagnerPrussMemoized(real T, real P, StateOfMatter stateofma
 
 /// Calculate the thermodynamic state of water.
 /// This is a general method that uses the Helmholtz free energy state
-/// of water, as an instance of WaterHelmholtzState, to completely
+/// of water, as an instance of WaterHelmholtzProps, to completely
 /// resolve its thermodynamic state.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @param whs The Helmholtz free energy state of water
 /// @return The thermodynamic state of water
-/// @see WaterHelmholtzState, WaterThermoProps
-auto waterThermoProps(real T, real P, const WaterHelmholtzState& whs) -> WaterThermoProps;
+/// @see WaterHelmholtzProps, WaterThermoProps
+auto waterThermoProps(real T, real P, const WaterHelmholtzProps& whs) -> WaterThermoProps;
 
 } // namespace Reaktoro

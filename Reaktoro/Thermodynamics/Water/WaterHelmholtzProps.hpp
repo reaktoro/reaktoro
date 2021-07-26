@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-struct WaterHelmholtzState
+struct WaterHelmholtzProps
 {
     /// The specific Helmholtz free energy of water (in units of J/kg)
     real helmholtz = {};

@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "WaterHelmholtzStateHGK.hpp"
+#include "WaterHelmholtzPropsHGK.hpp"
 
 // C++ includes
 #include <cmath>
@@ -24,7 +24,7 @@ using std::pow;
 
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -192,9 +192,9 @@ const double A4[] =
     -0.13362857E+1
 };
 
-auto calculateWaterHelmholtzStateHGK0(real t, real d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzPropsHGK0(real t, real d) -> WaterHelmholtzProps
 {
-    WaterHelmholtzState s;
+    WaterHelmholtzProps s;
 
     const auto ln_t = log(t);
 
@@ -216,9 +216,9 @@ auto calculateWaterHelmholtzStateHGK0(real t, real d) -> WaterHelmholtzState
     return s;
 }
 
-auto calculateWaterHelmholtzStateHGK1(real t, real d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzPropsHGK1(real t, real d) -> WaterHelmholtzProps
 {
-    WaterHelmholtzState s;
+    WaterHelmholtzProps s;
 
     for(int i = 0; i <= 4; ++i)
     {
@@ -237,9 +237,9 @@ auto calculateWaterHelmholtzStateHGK1(real t, real d) -> WaterHelmholtzState
     return s;
 }
 
-auto calculateWaterHelmholtzStateHGK2(real t, real d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzPropsHGK2(real t, real d) -> WaterHelmholtzProps
 {
-    WaterHelmholtzState s;
+    WaterHelmholtzProps s;
 
     const auto t3   = pow(t, -3);
     const auto t5   = pow(t, -5);
@@ -297,9 +297,9 @@ auto calculateWaterHelmholtzStateHGK2(real t, real d) -> WaterHelmholtzState
     return s;
 }
 
-auto calculateWaterHelmholtzStateHGK3(real t, real d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzPropsHGK3(real t, real d) -> WaterHelmholtzProps
 {
-    WaterHelmholtzState s;
+    WaterHelmholtzProps s;
 
     const auto z     =  1 - exp(-z0 * d);
     const auto z_r   =  z0 * (1 - z);
@@ -334,9 +334,9 @@ auto calculateWaterHelmholtzStateHGK3(real t, real d) -> WaterHelmholtzState
     return s;
 }
 
-auto calculateWaterHelmholtzStateHGK4(real t, real d) -> WaterHelmholtzState
+auto calculateWaterHelmholtzPropsHGK4(real t, real d) -> WaterHelmholtzProps
 {
-    WaterHelmholtzState s;
+    WaterHelmholtzProps s;
 
     for(int i = 0; i <= 3; ++i)
     {
@@ -380,19 +380,19 @@ auto calculateWaterHelmholtzStateHGK4(real t, real d) -> WaterHelmholtzState
 
 } // namespace
 
-auto waterHelmholtzStateHGK(real T, real D) -> WaterHelmholtzState
+auto waterHelmholtzPropsHGK(real T, real D) -> WaterHelmholtzProps
 {
     // The dimensionless temperature and density
     const auto t = T/referenceTemperature;
     const auto r = D/referenceDensity;
 
     // Compute the contributions from each auxiliary Helmholtz state
-    WaterHelmholtzState aux0, aux1, aux2, aux3, aux4, res;
-    aux0 = calculateWaterHelmholtzStateHGK0(t, r);
-    aux1 = calculateWaterHelmholtzStateHGK1(t, r);
-    aux2 = calculateWaterHelmholtzStateHGK2(t, r);
-    aux3 = calculateWaterHelmholtzStateHGK3(t, r);
-    aux4 = calculateWaterHelmholtzStateHGK4(t, r);
+    WaterHelmholtzProps aux0, aux1, aux2, aux3, aux4, res;
+    aux0 = calculateWaterHelmholtzPropsHGK0(t, r);
+    aux1 = calculateWaterHelmholtzPropsHGK1(t, r);
+    aux2 = calculateWaterHelmholtzPropsHGK2(t, r);
+    aux3 = calculateWaterHelmholtzPropsHGK3(t, r);
+    aux4 = calculateWaterHelmholtzPropsHGK4(t, r);
 
     // Assemble the contributions from each auxiliary Helmholtz state
     res.helmholtz    = aux0.helmholtz    + aux1.helmholtz    + aux2.helmholtz    + aux3.helmholtz    + aux4.helmholtz;

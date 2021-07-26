@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
 using namespace Reaktoro;

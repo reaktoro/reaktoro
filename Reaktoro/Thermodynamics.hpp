@@ -22,10 +22,10 @@
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateWagnerPruss.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsWagnerPruss.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzStateHGK.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsHGK.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelRumpf.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDrummond.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>

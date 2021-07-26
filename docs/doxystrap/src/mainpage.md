@@ -104,7 +104,7 @@ want to read about.
 
 - @ref Reaktoro::WaterElectroProps
 - @ref Reaktoro::WaterThermoProps
-- @ref Reaktoro::WaterHelmholtzState (to be renamed `WaterHelmholtzProps` in a future release)
+- @ref Reaktoro::WaterHelmholtzProps
 - @ref Reaktoro::waterDensityHGK
 - @ref Reaktoro::waterDensityWagnerPruss
 - @ref Reaktoro::waterLiquidDensityHGK
@@ -119,8 +119,8 @@ want to read about.
 - @ref Reaktoro::waterElectroPropsJohnsonNorton
 - @ref Reaktoro::waterThermoPropsHGK
 - @ref Reaktoro::waterThermoPropsWagnerPruss
-- @ref Reaktoro::waterHelmholtzStateHGK (to be renamed `waterHelmholtzPropsHGK` in a future release)
-- @ref Reaktoro::waterHelmholtzStateWagnerPruss (to be renamed `waterHelmholtzPropsWagnerPruss` in a future release)
+- @ref Reaktoro::waterHelmholtzPropsHGK
+- @ref Reaktoro::waterHelmholtzPropsWagnerPruss
 
 ### Worth checking classes and methods
 
