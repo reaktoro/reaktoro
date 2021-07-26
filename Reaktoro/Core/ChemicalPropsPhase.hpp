@@ -528,7 +528,7 @@ private:
         Vec<Any> extra;
         ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
         ActivityArgs args{ T, P, x };
-        ActivityModel activity_model = use_ideal_activity_model ?
+        const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.
             phase().idealActivityModel() : phase().activityModel();
 
         if(nsum == 0.0) aprops = 0.0;
