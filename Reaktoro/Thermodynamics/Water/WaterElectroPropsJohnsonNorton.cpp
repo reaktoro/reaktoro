@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "WaterElectroStateJohnsonNorton.hpp"
+#include "WaterElectroPropsJohnsonNorton.hpp"
 
 // C++ includes
 #include <cmath>
 using std::pow;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 
 namespace Reaktoro {
@@ -80,9 +80,9 @@ real (*k_tt[5])(real) = {k0_tt, k1_tt, k2_tt, k3_tt, k4_tt};
 
 } // namespace
 
-auto waterElectroStateJohnsonNorton(real T, real P, const WaterThermoState& wt) -> WaterElectroState
+auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoState& wt) -> WaterElectroProps
 {
-    WaterElectroState we;
+    WaterElectroProps we;
 
     const auto alpha  = -wt.densityT/wt.density;
     const auto beta   =  wt.densityP/wt.density;

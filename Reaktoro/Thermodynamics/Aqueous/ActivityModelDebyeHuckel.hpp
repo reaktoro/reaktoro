@@ -133,7 +133,7 @@ auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModel;
 /// \eq{\mathrm{(mol/kg)^{-1/2}}/\mathrm{Å}}. In these equations, \eq{T} is
 /// temperature (in K); \eq{\epsilon_{\mathrm{H_{2}O}}} is the dielectric
 /// constant of pure water (dimensionless), calculated using the Johnson and
-/// Norton (1991) model (see @ref waterElectroStateJohnsonNorton); and
+/// Norton (1991) model (see @ref waterElectroPropsJohnsonNorton); and
 /// \eq{\rho_{\mathrm{H_{2}O}}} is the density of pure water (in
 /// \eq{\mathrm{g/cm^{3}}}), calculated using either the equation of state of
 /// Haar--Gallagher--Kell (1984)\sup{\cite Haar1984} or the equation of state

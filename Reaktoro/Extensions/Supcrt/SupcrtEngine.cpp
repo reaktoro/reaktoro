@@ -20,12 +20,12 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroStateHKF.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroPropsHKF.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
@@ -36,7 +36,7 @@ namespace {
 using WaterThermoPropsFn = std::function<WaterThermoState(real, real)>;
 
 /// The signature of a function that calculates the electrostatic properties of water
-using WaterElectroPropsFn = std::function<WaterElectroState(real, real)>;
+using WaterElectroPropsFn = std::function<WaterElectroProps(real, real)>;
 
 /// The signature of a function that calculates the standard thermodynamic properties of a species
 using SpeciesThermoPropsFn = std::function<SpeciesThermoState(real, real, std::string)>;
@@ -92,7 +92,7 @@ struct SupcrtEngine::Impl
         water_eletro_props_fn = [=](real T, real P)
         {
             const WaterThermoState wts = water_thermo_props_wagner_pruss_fn(T, P);
-            return waterElectroStateJohnsonNorton(T, P, wts);
+            return waterElectroPropsJohnsonNorton(T, P, wts);
         };
 
         water_eletro_props_fn = memoizeLast(water_eletro_props_fn);
@@ -112,7 +112,7 @@ struct SupcrtEngine::Impl
         const auto wts = water_thermo_props_wagner_pruss_fn(T, P);
         const auto wes = water_eletro_props_fn(T, P);
         const auto g = functionG(T, P, wts);
-        const auto aes = speciesElectroStateHKF(g, params);
+        const auto aes = speciesElectroPropsHKF(g, params);
         const auto res = supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wes);
         return convert(res);
     }

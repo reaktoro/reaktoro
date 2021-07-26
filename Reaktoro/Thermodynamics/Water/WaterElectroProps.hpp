@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-struct WaterElectroState
+struct WaterElectroProps
 {
     /// The dielectric constant of water
     real epsilon = {};

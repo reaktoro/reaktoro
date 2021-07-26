@@ -19,24 +19,24 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
 using namespace Reaktoro;
 
-void exportWaterElectroState(py::module& m)
+void exportWaterElectroProps(py::module& m)
 {
-    py::class_<WaterElectroState>(m, "WaterElectroState")
+    py::class_<WaterElectroProps>(m, "WaterElectroProps")
         .def(py::init<>())
-        .def_readwrite("epsilon", &WaterElectroState::epsilon)
-        .def_readwrite("epsilonT", &WaterElectroState::epsilonT)
-        .def_readwrite("epsilonP", &WaterElectroState::epsilonP)
-        .def_readwrite("epsilonTT", &WaterElectroState::epsilonTT)
-        .def_readwrite("epsilonTP", &WaterElectroState::epsilonTP)
-        .def_readwrite("epsilonPP", &WaterElectroState::epsilonPP)
-        .def_readwrite("bornZ", &WaterElectroState::bornZ)
-        .def_readwrite("bornY", &WaterElectroState::bornY)
-        .def_readwrite("bornQ", &WaterElectroState::bornQ)
-        .def_readwrite("bornN", &WaterElectroState::bornN)
-        .def_readwrite("bornU", &WaterElectroState::bornU)
-        .def_readwrite("bornX", &WaterElectroState::bornX)
+        .def_readwrite("epsilon", &WaterElectroProps::epsilon)
+        .def_readwrite("epsilonT", &WaterElectroProps::epsilonT)
+        .def_readwrite("epsilonP", &WaterElectroProps::epsilonP)
+        .def_readwrite("epsilonTT", &WaterElectroProps::epsilonTT)
+        .def_readwrite("epsilonTP", &WaterElectroProps::epsilonTP)
+        .def_readwrite("epsilonPP", &WaterElectroProps::epsilonPP)
+        .def_readwrite("bornZ", &WaterElectroProps::bornZ)
+        .def_readwrite("bornY", &WaterElectroProps::bornY)
+        .def_readwrite("bornQ", &WaterElectroProps::bornQ)
+        .def_readwrite("bornN", &WaterElectroProps::bornN)
+        .def_readwrite("bornU", &WaterElectroProps::bornU)
+        .def_readwrite("bornX", &WaterElectroProps::bornX)
         ;
 }

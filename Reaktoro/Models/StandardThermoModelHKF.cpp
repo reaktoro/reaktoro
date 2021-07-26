@@ -27,8 +27,8 @@ using std::log;
 #include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
 #include <Reaktoro/Models/Support/SpeciesElectroPropsHKF.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
@@ -56,16 +56,16 @@ const auto psi = 2600.0e+05;
 /// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
 auto createMemoizedWaterElectroPropsFnJohnsonNorton()
 {
-    Fn<WaterElectroState(const real&, const real&)> fn = [](const real& T, const real& P)
+    Fn<WaterElectroProps(const real&, const real&)> fn = [](const real& T, const real& P)
     {
         const auto wts = waterThermoStateWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
-        return Reaktoro::waterElectroStateJohnsonNorton(T, P, wts);
+        return Reaktoro::waterElectroPropsJohnsonNorton(T, P, wts);
     };
     return memoizeLast(fn);
 }
 
 /// Return the computed electrostatic properties of water at @p T and @p P using Johnson and Norton (1991) model.
-auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> WaterElectroState
+auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> WaterElectroProps
 {
     static thread_local auto fn = createMemoizedWaterElectroPropsFnJohnsonNorton();
     return fn(T, P);

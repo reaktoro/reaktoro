@@ -23,16 +23,16 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct SpeciesElectroState;
+struct SpeciesElectroProps;
 struct SpeciesThermoState;
-struct WaterElectroState;
+struct WaterElectroProps;
 struct WaterThermoState;
 
 /// Calculate the thermodynamic state of solvent water using the HKF model.
 auto supcrtStandardThermoPropsSolventHKF(real T, real P, const SupcrtParamsAqueousSolventHKF& params, const WaterThermoState& wts) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of an aqueous solute using the HKF model.
-auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState;
+auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState;
 
 /// Calculate the thermodynamic state of a fluid species using the Maier-Kelly model.
 auto supcrtStandardThermoPropsMaierKelly(real T, real P, const SupcrtParamsMaierKelly& params) -> SpeciesThermoState;

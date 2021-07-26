@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "SpeciesElectroStateHKF.hpp"
+#include "SpeciesElectroPropsHKF.hpp"
 
 // C++ includes
 #include <cmath>
@@ -26,7 +26,7 @@ using std::pow;
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 
@@ -128,10 +128,10 @@ auto functionG(real T, real P, const WaterThermoState& wts) -> FunctionG
     return funcG;
 }
 
-auto speciesElectroStateHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroState
+auto speciesElectroPropsHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroProps
 {
     // The species electro instance to be calculated
-    SpeciesElectroState se;
+    SpeciesElectroProps se;
 
     // Check if the aqueous species is neutral or H+, and set its electrostatic data accordingly
     if(params.charge == 0.0 || isAlternativeChargedSpeciesName(params.name, "H+"))
@@ -167,13 +167,13 @@ auto speciesElectroStateHKF(const FunctionG& g, const SupcrtParamsAqueousSoluteH
     return se;
 }
 
-auto speciesElectroStateHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroState
+auto speciesElectroPropsHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params) -> SpeciesElectroProps
 {
     WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
 
     FunctionG g = functionG(T, P, wt);
 
-    return speciesElectroStateHKF(g, params);
+    return speciesElectroPropsHKF(g, params);
 }
 
 } // namespace Reaktoro

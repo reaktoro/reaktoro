@@ -23,21 +23,21 @@
 namespace Reaktoro {
 
 // Forward declarations
-struct SpeciesElectroState;
+struct SpeciesElectroProps;
 struct SpeciesThermoState;
 struct SupcrtblParamsAqueousSoluteHKF;
 struct SupcrtblParamsAqueousSolventHKF;
 struct SupcrtblParamsFluidHollandPowell;
 struct SupcrtblParamsMineralHollandPowell;
 struct SupcrtblParamsMineralHollandPowell;
-struct WaterElectroState;
+struct WaterElectroProps;
 struct WaterThermoState;
 
 /// Calculate the standard thermodynamic properties of a aqueous solvent water using HKF model.
 auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsAqueousSolventHKF& params, const WaterThermoState& wts) -> SpeciesThermoState;
 
 /// Calculate the standard thermodynamic properties of a aqueous solutes using HKF model.
-auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState;
+auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState;
 
 /// Calculate the standard thermodynamic properties of a gas/liquid using Holland and Powell (2011) model.
 auto supcrtblStandardThermoPropsFluidHollandPowell(real T, real P, const SupcrtblParamsFluidHollandPowell& params) -> SpeciesThermoState;

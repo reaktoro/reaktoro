@@ -46,8 +46,8 @@ void exportActivityModelVanLaar(py::module& m);
 
 // Thermodynamics/Water
 void exportWaterConstants(py::module& m);
-void exportWaterElectroState(py::module& m);
-void exportWaterElectroStateJohnsonNorton(py::module& m);
+void exportWaterElectroProps(py::module& m);
+void exportWaterElectroPropsJohnsonNorton(py::module& m);
 void exportWaterHelmholtzState(py::module& m);
 void exportWaterHelmholtzStateHGK(py::module& m);
 void exportWaterHelmholtzStateWagnerPruss(py::module& m);
@@ -85,8 +85,8 @@ void exportThermodynamics(py::module& m)
 
     // Thermodynamics/Water
     exportWaterConstants(m);
-    exportWaterElectroState(m);
-    exportWaterElectroStateJohnsonNorton(m);
+    exportWaterElectroProps(m);
+    exportWaterElectroPropsJohnsonNorton(m);
     exportWaterHelmholtzState(m);
     exportWaterHelmholtzStateHGK(m);
     exportWaterHelmholtzStateWagnerPruss(m);

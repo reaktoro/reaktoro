@@ -26,14 +26,14 @@
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroState.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroStateHKF.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
+#include <Reaktoro/Extensions/Supcrt/SpeciesElectroPropsHKF.hpp>
 #include <Reaktoro/Extensions/Supcrt/SpeciesThermoState.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
 #include <Reaktoro/Extensions/Supcrtbl/SupcrtblParams.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroState.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroStateJohnsonNorton.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoState.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterThermoStateUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
@@ -71,7 +71,7 @@ auto supcrtblStandardThermoPropsSolventHKF(real T, real P, const SupcrtblParamsA
     return supcrtStandardThermoPropsSolventHKF(T, P, cparams, wts);
 }
 
-auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
+auto supcrtblStandardThermoPropsSoluteHKF(real T, real P, const SupcrtblParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState
 {
     SupcrtParamsAqueousSoluteHKF cparams;
     cparams.name = params.name;
@@ -292,7 +292,7 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 //     return state;
 // }
 
-// auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroState& aes, const WaterElectroState& wes) -> SpeciesThermoState
+// auto supcrtStandardThermoPropsSoluteHKF(real T, real P, const SupcrtParamsAqueousSoluteHKF& params, const SpeciesElectroProps& aes, const WaterElectroProps& wes) -> SpeciesThermoState
 // {
 //     // Auxiliary variables
 //     const auto Pbar = P * 1.0e-05;
@@ -374,11 +374,11 @@ auto supcrtblStandardThermoPropsMineralHollandPowell(real T, real P, const Supcr
 // // {
 // //     WaterThermoState wt = waterThermoStateWagnerPruss(T, P, StateOfMatter::Liquid);
 
-// //     WaterElectroState wes = waterElectroStateJohnsonNorton(T, P, wt);
+// //     WaterElectroProps wes = waterElectroPropsJohnsonNorton(T, P, wt);
 
 // //     FunctionG g = functionG(T, P, wt);
 
-// //     SpeciesElectroState aes = speciesElectroStateHKF(g, params);
+// //     SpeciesElectroProps aes = speciesElectroPropsHKF(g, params);
 
 // //     return supcrtStandardThermoPropsSoluteHKF(T, P, params, aes, wes);
 // // }

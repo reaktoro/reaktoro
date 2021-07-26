@@ -102,7 +102,7 @@ want to read about.
 
 ### Water thermodynamic and electrostatic properties
 
-- @ref Reaktoro::WaterElectroState (to be renamed `WaterElectroProps` in a future release)
+- @ref Reaktoro::WaterElectroProps
 - @ref Reaktoro::WaterThermoState (to be renamed `WaterThermoProps` in a future release)
 - @ref Reaktoro::WaterHelmholtzState (to be renamed `WaterHelmholtzProps` in a future release)
 - @ref Reaktoro::waterDensityHGK
@@ -116,7 +116,7 @@ want to read about.
 - @ref Reaktoro::waterSaturatedPressureWagnerPruss
 - @ref Reaktoro::waterSaturatedLiquidDensityWagnerPruss
 - @ref Reaktoro::waterSaturatedVapourDensityWagnerPruss
-- @ref Reaktoro::waterElectroStateJohnsonNorton (to be renamed `waterElectroPropsJohnsonNorton` in a future release)
+- @ref Reaktoro::waterElectroPropsJohnsonNorton
 - @ref Reaktoro::waterThermoStateHGK (to be renamed `waterThermoPropsHGK` in a future release)
 - @ref Reaktoro::waterThermoStateWagnerPruss (to be renamed `waterThermoPropsWagnerPruss` in a future release)
 - @ref Reaktoro::waterHelmholtzStateHGK (to be renamed `waterHelmholtzPropsHGK` in a future release)
