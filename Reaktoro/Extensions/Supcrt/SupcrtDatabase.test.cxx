@@ -24,16 +24,16 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
 {
-    SupcrtDatabase db = SupcrtDatabase::withName("supcrt98.xml");
+    SupcrtDatabase db("supcrt98");
 
-    CHECK( db.species().findWithName("H2O(l)") );
+    CHECK( db.species().findWithName("H2O(aq)") );
     CHECK( db.species().findWithName("H+") );
     CHECK( db.species().findWithName("OH-") );
     CHECK( db.species().findWithName("CO2(aq)") );
 
     // TODO: More tests are needed for SupcrtDatabase, at different T and P values,
     {
-        auto sp = db.species().getWithName("H2O(l)");
+        auto sp = db.species().getWithName("H2O(aq)");
 
         const auto T = 25.0 + 273.15;
         const auto P =  1.0 * 1e5;
@@ -57,7 +57,7 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
 
         CHECK( G0  == Approx(-586940)     );
         CHECK( H0  == Approx(-689934)     );
-        CHECK( V0  == Approx(2.77452e-05) );
+        CHECK( V0  == Approx(2.42086e-05) );
         CHECK( Cp0 == Approx(-34.9279)    );
         CHECK( Cv0 == Approx(-34.9279)    );
     }
@@ -72,7 +72,7 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
 
         CHECK( G0  == Approx(-394359)     );
         CHECK( H0  == Approx(-393509)     );
-        CHECK( V0  == Approx(0.0247893)   );
+        CHECK( V0  == Approx(0.0).scale(1.0)   );
         CHECK( Cp0 == Approx(37.1486)     );
         CHECK( Cv0 == Approx(28.8342)     );
     }

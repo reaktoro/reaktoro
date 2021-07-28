@@ -32,27 +32,33 @@ public:
     SupcrtDatabase();
 
     /// Construct a SupcrtDatabase object using an embedded database file.
-    /// If `name` does not correspond to one of the following names, an exception is thrown:
+    /// The currently supported database file names are:
     /// - `supcrt98`
     /// - `supcrt07`
-    /// - `supcrt98-organics`
-    /// - `supcrt07-organics`
-    /// @param name The name of the embedded SUPCRT database.
-    SupcrtDatabase(String name);
+    /// - `supcrt16`
+    /// - `supcrtbl`
+    /// @warning An exception is thrown if `name` is not one of the above names.
+    /// @param name The name of the embedded database.
+    SupcrtDatabase(const String& name);
+
+    /// Construct a SupcrtDatabase object from another given Database object.
+    /// @param other The Database object already containing chemical species data or empty.
+    SupcrtDatabase(const Database& other);
 
     /// Return a SupcrtDatabase object initialized using an embedded database file.
-    /// If `name` does not correspond to one of the following names, an exception is thrown:
+    /// The currently supported database file names are:
     /// - `supcrt98`
     /// - `supcrt07`
-    /// - `supcrt98-organics`
-    /// - `supcrt07-organics`
-    /// @param name The name of the embedded SUPCRT database.
-    static auto withName(String name) -> SupcrtDatabase;
+    /// - `supcrt16`
+    /// - `supcrtbl`
+    /// @warning An exception is thrown if `name` is not one of the above names.
+    /// @param name The name of the embedded database.
+    static auto withName(const String& name) -> SupcrtDatabase;
 
     /// Return a SupcrtDatabase object initialized using a given path to a database file.
-    /// If `path` does not point to a valid database file, an exception is thrown.
+    /// @warning An exception is thrown if `path` does not point to a valid database file.
     /// @param path The path, including file name, to the database file.
-    static auto fromFile(String path) -> SupcrtDatabase;
+    static auto fromFile(const String& path) -> SupcrtDatabase;
 };
 
 } // namespace Reaktoro

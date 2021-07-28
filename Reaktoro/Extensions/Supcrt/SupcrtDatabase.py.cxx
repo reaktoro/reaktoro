@@ -26,7 +26,8 @@ void exportSupcrtDatabase(py::module& m)
 {
     py::class_<SupcrtDatabase, Database>(m, "SupcrtDatabase")
         .def(py::init<>())
-        .def(py::init<String>())
+        .def(py::init<const String&>())
+        .def(py::init<const Database&>())
         .def_static("withName", &SupcrtDatabase::withName)
         .def_static("fromFile", &SupcrtDatabase::fromFile)
         ;
