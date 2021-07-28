@@ -128,4 +128,40 @@ auto lnMoleFractionsJacobian(ArrayConstRef&& n)
     return J;
 }
 
+/// Compute the diagonal only of the Jacobian matrix of the species mole fractions in natural log (@eq{J=\frac{\partial\ln x}{\partial n}}).
+/// @param n The vector with the species amounts.
+/// @param[out] D The output diagonal of the Jacobian matrix.
+template<typename ArrayConstRef, typename MatrixRef>
+auto lnMoleFractionsJacobianDiagonal(ArrayConstRef&& n, MatrixRef&& D) -> void
+{
+    //-----------------------------------------------------------------------------------------------------
+    // == LATEX ==
+    //-----------------------------------------------------------------------------------------------------
+    // \frac{\partial\ln x_{i}}{\partial n_{i}}=\frac{1}{n_{i}}-\frac{1}{n_{\Sigma}}
+    //-----------------------------------------------------------------------------------------------------
+    using T = Decay<decltype(D[0])>;
+    const auto N = n.size();
+    assert(D.rows() == N);
+    const auto nsum = n.sum();
+    if(nsum == 0.0) {
+        D.fill(0.0);
+        return;
+    }
+    const auto nsuminv = 1.0/nsum;
+    for(auto i = 0; i < N; ++i)
+        D[i] = static_cast<T>(1.0/n[i] - nsuminv);
+}
+
+/// Compute the diagonal only of the Jacobian matrix of the species mole fractions in natural log (@eq{J=\frac{\partial\ln x}{\partial n}}).
+/// @param n The vector with the species amounts.
+template<typename ArrayConstRef>
+auto lnMoleFractionsJacobianDiagonal(ArrayConstRef&& n)
+{
+    using T = Decay<decltype(n[0])>;
+    const auto N = n.size();
+    ArrayX<T> D(N);
+    lnMoleFractionsJacobianDiagonal(n, D);
+    return D;
+}
+
 } // namespace Reaktoro

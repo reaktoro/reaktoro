@@ -121,4 +121,18 @@ TEST_CASE("Testing MoleFractionUtils module", "[MoleFractionUtils]")
 
     INFO("dlnxdn = \n" << dlnxdn);
     CHECK( dlnxdn.isApprox(MatrixXd::Zero(1, 1)) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: lnMoleFractionsJacobianDiagonal
+    //-------------------------------------------------------------------------
+    ArrayXd diag(4);
+    ArrayXd diag_expected(4);
+
+    diag = lnMoleFractionsJacobianDiagonal(n);
+
+    diag_expected = 1/n - 1/n.sum();
+
+    INFO("diag = \n" << diag);
+    INFO("diag(expected) = \n" << diag_expected);
+    CHECK( diag.isApprox(diag_expected) );
 }
