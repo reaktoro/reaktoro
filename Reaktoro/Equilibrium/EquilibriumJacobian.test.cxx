@@ -31,6 +31,8 @@ TEST_CASE("Testing EquilibriumJacobian", "[EquilibriumJacobian]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
+    const auto Nn = system.species().size();
+
     ChemicalState state(system);
     state.temperature(3.0);
     state.pressure(5.0);
@@ -41,27 +43,28 @@ TEST_CASE("Testing EquilibriumJacobian", "[EquilibriumJacobian]")
     const auto T = state.temperature();
     const auto P = state.pressure();
     const auto n = state.speciesAmounts();
+    const auto RT = universalGasConstant * T;
 
     EquilibriumJacobian jac(system);
 
-    auto dudn_exact_expected_fn = [&](VectorXr n)
+    auto dudn_exact_expected_fn = [&](VectorXr n) -> MatrixXd
     {
         ChemicalProps props(system);
-        auto u = [&](VectorXrConstRef n)
+        auto u = [&](VectorXrConstRef n) -> VectorXr
         {
             props.update(T, P, n);
-            return props.chemicalPotentials();
+            return props.chemicalPotentials()/RT;
         };
         return jacobian(u, wrt(n), at(n));
     };
 
-    auto dudn_approx_expected_fn = [&](VectorXr n)
+    auto dudn_approx_expected_fn = [&](VectorXr n) -> MatrixXd
     {
         ChemicalProps props(system);
-        auto u = [&](VectorXrConstRef n)
+        auto u = [&](VectorXrConstRef n) -> VectorXr
         {
             props.updateIdeal(T, P, n);
-            return props.chemicalPotentials();
+            return props.chemicalPotentials()/RT;
         };
         return jacobian(u, wrt(n), at(n));
     };
@@ -69,30 +72,43 @@ TEST_CASE("Testing EquilibriumJacobian", "[EquilibriumJacobian]")
     MatrixXd dudn_exact = jac.dudnExact(T, P, n);
     MatrixXd dudn_exact_expected = dudn_exact_expected_fn(n);
 
-    INFO("dudn_exact = \n" << dudn_exact);
-    INFO("dudn_exact(expected) = \n" << dudn_exact_expected);
-    CHECK( dudn_exact.isApprox(dudn_exact_expected) );
-
     MatrixXd dudn_approx = jac.dudnApproximate(n);
     MatrixXd dudn_approx_expected = dudn_approx_expected_fn(n);
 
-    INFO("dudn_approx = \n" << dudn_approx);
-    INFO("dudn_approx(expected) = \n" << dudn_approx_expected);
-    CHECK( dudn_approx.isApprox(dudn_approx_expected) );
-
     MatrixXd dudn_diag = jac.dudnDiagonal(n);
     MatrixXd dudn_diag_expected = dudn_approx_expected.diagonal().asDiagonal();
-
-    INFO("dudn_diag = \n" << dudn_diag);
-    INFO("dudn_diag(expected) = \n" << dudn_diag_expected);
-    CHECK( dudn_diag.isApprox(dudn_diag_expected) );
 
     VectorXl idxs = VectorXl{{0, 2, 4, 7}};
     MatrixXd dudn_partially_exact = jac.dudnPartiallyExact(T, P, n, idxs);
     MatrixXd dudn_partially_exact_expected = dudn_approx_expected;
     dudn_partially_exact_expected(Eigen::all, idxs) = dudn_exact_expected(Eigen::all, idxs);
 
-    INFO("dudn_partially_exact = \n" << dudn_partially_exact);
-    INFO("dudn_partially_exact(expected) = \n" << dudn_partially_exact_expected);
-    CHECK( dudn_partially_exact.isApprox(dudn_partially_exact_expected) );
+    SECTION("testing EquilibriumJacobian::dudnExact")
+    {
+        INFO("dudn_exact = \n" << dudn_exact);
+        INFO("dudn_exact(expected) = \n" << dudn_exact_expected);
+        CHECK( dudn_exact.isApprox(dudn_exact_expected) );
+    }
+
+    SECTION("testing EquilibriumJacobian::dudnApproximate")
+    {
+
+        INFO("dudn_approx = \n" << dudn_approx);
+        INFO("dudn_approx(expected) = \n" << dudn_approx_expected);
+        CHECK( dudn_approx.isApprox(dudn_approx_expected) );
+    }
+
+    SECTION("testing EquilibriumJacobian::dudnDiagonal")
+    {
+        INFO("dudn_diag = \n" << dudn_diag);
+        INFO("dudn_diag(expected) = \n" << dudn_diag_expected);
+        CHECK( dudn_diag.isApprox(dudn_diag_expected) );
+    }
+
+    SECTION("testing EquilibriumJacobian::dudnPartiallyExact")
+    {
+        INFO("dudn_partially_exact = \n" << dudn_partially_exact);
+        INFO("dudn_partially_exact(expected) = \n" << dudn_partially_exact_expected);
+        CHECK( dudn_partially_exact.isApprox(dudn_partially_exact_expected) );
+    }
 }

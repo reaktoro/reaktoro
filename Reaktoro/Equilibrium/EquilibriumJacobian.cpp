@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
 #include "EquilibriumJacobian.hpp"
 
 // Reaktoro includes
@@ -26,6 +24,10 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
+
+using autodiff::jacobian;
+using autodiff::wrt;
+using autodiff::at;
 
 struct EquilibriumJacobian::Impl
 {
@@ -38,6 +40,12 @@ struct EquilibriumJacobian::Impl
     /// The auxiliary matrix for ∂(µ/RT)/∂n.
     MatrixXd dudn;
 
+    /// The auxiliary vector to compute the diagonal of ∂(µ/RT)/∂n.
+    VectorXd dudn_diag;
+
+    /// The auxiliary vector of species amounts.
+    VectorXr n;
+
     /// The functions for each phase that assemble the block of approximate derivatives in ∂(µ/RT)/∂n.
     Vec<Fn<void(VectorXrConstRef, MatrixXdRef)>> approxfuncs;
 
@@ -46,8 +54,13 @@ struct EquilibriumJacobian::Impl
 
     ///
     Impl(const ChemicalSystem& system)
+    : system(system), props(system)
     {
         const auto numphases = system.phases().size();
+        const auto numspecies = system.species().size();
+
+        dudn.resize(numspecies, numspecies);
+        dudn_diag.resize(numspecies);
 
         approxfuncs.resize(numphases);
         approxfuncsdiag.resize(numphases);
@@ -64,17 +77,10 @@ struct EquilibriumJacobian::Impl
                 approxfuncs[iphase] = [=](VectorXrConstRef np, MatrixXdRef block)
                 {
                     lnMolalitiesJacobian(np, iH2O, block);
-                    const auto sum = np.sum();
-                    if(sum == 0.0) return;
-                    block.row(iH2O).array() = -1.0/sum;
-                    block(iH2O, iH2O) += 1.0/np[iH2O];
                 };
                 approxfuncsdiag[iphase] = [=](VectorXrConstRef np, VectorXdRef segment)
                 {
                     lnMolalitiesJacobianDiagonal(np, iH2O, segment);
-                    const auto sum = np.sum();
-                    if(sum == 0.0) return;
-                    segment[iH2O] = 1.0/np[iH2O] - 1.0/sum;
                 };
             }
             else
@@ -99,11 +105,12 @@ struct EquilibriumJacobian::Impl
             props.update(T, P, n);
             return props.chemicalPotentials();
         };
-        dudn = jacobian(fn, wrt(n), at(n));
+        const double RT = universalGasConstant * T;
+        dudn.noalias() = jacobian(fn, wrt(n), at(n))/RT;
         return dudn;
     }
 
-    auto dudnPartiallyExact(const real& T, const real& P, VectorXrConstRef n, VectorXlConstRef idxs) -> MatrixXdConstRef
+    auto dudnPartiallyExact(const real& T, const real& P, VectorXrConstRef nconst, VectorXlConstRef idxs) -> MatrixXdConstRef
     {
         n = nconst;
         auto fn = [&](VectorXrConstRef n) -> VectorXr
@@ -111,8 +118,9 @@ struct EquilibriumJacobian::Impl
             props.update(T, P, n);
             return props.chemicalPotentials();
         };
-        dudn = dudnApproximate(T, P, n);
-        dudn(Eigen::all, idxs) = jacobian(fn, wrt(n(idxs)), at(n));
+        const double RT = universalGasConstant * T;
+        dudn = dudnApproximate(n);
+        dudn(Eigen::all, idxs) = jacobian(fn, wrt(n(idxs)), at(n))/RT;
         return dudn;
     }
 
@@ -132,7 +140,7 @@ struct EquilibriumJacobian::Impl
         return dudn;
     }
 
-    auto dudnDiagonal(const real& T, const real& P, VectorXrConstRef n) -> MatrixXdConstRef
+    auto dudnDiagonal(VectorXrConstRef n) -> MatrixXdConstRef
     {
         dudn.fill(0.0); // clear previous state of dudn
         const auto numphases = system.phases().size();
@@ -141,10 +149,11 @@ struct EquilibriumJacobian::Impl
         {
             const auto length = system.phase(i).species().size();
             const auto np = n.segment(offset, length);
-            auto dupdnp = dudn.diagonal().segment(offset, length);
-            approxfuncsdiag[i](np, dupdnp);
+            const auto dupdnp_diag = dudn_diag.segment(offset, length);
+            approxfuncsdiag[i](np, dupdnp_diag);
             offset += length;
         }
+        dudn.diagonal() = dudn_diag;
         return dudn;
     }
 };
@@ -159,7 +168,7 @@ EquilibriumJacobian::EquilibriumJacobian(const EquilibriumJacobian& other)
 {
 }
 
-~EquilibriumJacobian::EquilibriumJacobian()
+EquilibriumJacobian::~EquilibriumJacobian()
 {
 }
 
