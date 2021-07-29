@@ -72,6 +72,42 @@ auto activityModelSolid(ActivityPropsRef props, ActivityArgs args)
     props.ln_a = 9.1 * x;
 };
 
+/// Return a Phase object representing an aqueous phase using mock thermodynamic models.
+auto createAqueousPhase(const Database& db) -> Phase
+{
+    Phase phase;
+    phase = phase.withName("AqueousPhase");
+    phase = phase.withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous));
+    phase = phase.withStateOfMatter(StateOfMatter::Liquid);
+    phase = phase.withActivityModel(activityModelAqueous);
+    phase = phase.withIdealActivityModel(ActivityModelIdealAqueous()(phase.species()));
+    return phase;
+}
+
+/// Return a Phase object representing a gaseous phase using mock thermodynamic models.
+auto createGaseousPhase(const Database& db) -> Phase
+{
+    Phase phase;
+    phase = phase.withName("GaseousPhase");
+    phase = phase.withSpecies(db.speciesWithAggregateState(AggregateState::Gas));
+    phase = phase.withStateOfMatter(StateOfMatter::Gas);
+    phase = phase.withActivityModel(activityModelGaseous);
+    phase = phase.withIdealActivityModel(ActivityModelIdealGas()(phase.species()));
+    return phase;
+}
+
+/// Return a Phase object representing a mineral phase using mock thermodynamic models.
+auto createMineralPhase(const Database& db, String phasename, String mineral) -> Phase
+{
+    Phase phase;
+    phase = phase.withName(phasename);
+    phase = phase.withSpecies({ db.species().get(mineral) });
+    phase = phase.withStateOfMatter(StateOfMatter::Solid);
+    phase = phase.withActivityModel(activityModelSolid);
+    phase = phase.withIdealActivityModel(ActivityModelIdealSolution()(phase.species()));
+    return phase;
+}
+
 /// Return a mock ChemicalSystem object for test reasons.
 auto createChemicalSystem() -> ChemicalSystem
 {
@@ -81,42 +117,12 @@ auto createChemicalSystem() -> ChemicalSystem
     // Create the Phase objects for the ChemicalSystem
     const Vec<Phase> phases =
     {
-        Phase()
-            .withName("AqueousPhase")
-            .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
-            .withStateOfMatter(StateOfMatter::Liquid)
-            .withActivityModel(activityModelAqueous)
-            .withIdealActivityModel(activityModelAqueous),
-        Phase()
-            .withName("GaseousPhase")
-            .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
-            .withStateOfMatter(StateOfMatter::Gas)
-            .withActivityModel(activityModelGaseous)
-            .withIdealActivityModel(activityModelGaseous),
-        Phase()
-            .withName("Halite")
-            .withSpecies({ db.species().get("NaCl(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activityModelSolid)
-            .withIdealActivityModel(activityModelSolid),
-        Phase()
-            .withName("Calcite")
-            .withSpecies({ db.species().get("CaCO3(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activityModelSolid)
-            .withIdealActivityModel(activityModelSolid),
-        Phase()
-            .withName("Magnesite")
-            .withSpecies({ db.species().get("MgCO3(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activityModelSolid)
-            .withIdealActivityModel(activityModelSolid),
-        Phase()
-            .withName("Quartz")
-            .withSpecies({ db.species().get("SiO2(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activityModelSolid)
-            .withIdealActivityModel(activityModelSolid),
+        createAqueousPhase(db),
+        createGaseousPhase(db),
+        createMineralPhase(db, "Halite", "NaCl(s)"),
+        createMineralPhase(db, "Calcite", "CaCO3(s)"),
+        createMineralPhase(db, "Magnesite", "MgCO3(s)"),
+        createMineralPhase(db, "Quartz", "SiO2(s)"),
     };
 
     return ChemicalSystem(db, phases);
