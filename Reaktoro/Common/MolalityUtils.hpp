@@ -31,19 +31,21 @@ namespace Reaktoro {
 template<typename ArrayConstRef, typename ArrayRef>
 auto molalities(ArrayConstRef&& n, Index iH2O, ArrayRef&& m)
 {
+    const auto N = n.size();
+    assert(iH2O < N);
     const auto kgH2O = n[iH2O] * waterMolarMass;
-    const auto nspecies = n.size();
-    assert(iH2O < nspecies);
-    if(nspecies == 1) {
-        m[iH2O] = 1.0/waterMolarMass;
+    const auto nsum = n.sum();
+    if(N == 1) {
+        m[iH2O] = 1.0;
         return;
     }
-    if(kgH2O != 0.0) m = n/kgH2O;
-    else
-    {
+    if(kgH2O == 0.0 || nsum == 0.0) {
         m.fill(0.0);
-        m[iH2O] = 1.0/waterMolarMass;
+        m[iH2O] = 1.0;
+        return;
     }
+    m = n/kgH2O;
+    m[iH2O] = n[iH2O]/nsum;
 }
 
 /// Compute the molalities of the species with given species amounts.
@@ -70,23 +72,30 @@ auto molalitiesJacobian(ArrayConstRef&& n, Index iH2O, MatrixRef&& J)
     // == LATEX ==
     //-----------------------------------------------------------------------------------------------------
     // \frac{\partial m_{i}}{\partial n_{j}}=m_{i}\left(\frac{\delta_{ij}}{n_{i}}-\frac{\delta_{jw}}{n_{w}}\right)
+    // \frac{\partial x_{w}}{\partial n_{j}}=\frac{1}{n_{\Sigma}}\left(\delta_{wj}-x_{w}\right)
     //-----------------------------------------------------------------------------------------------------
+    using T = Decay<decltype(J(0, 0))>;
     const auto N = n.size();
+    assert(iH2O < N);
     assert(J.rows() == N);
     assert(J.cols() == N);
     J.fill(0.0);
-    const auto nH2O = n[iH2O];
-    if(nH2O == 0.0)
+    const T nH2O = n[iH2O];
+    const T nsum = n.sum();
+    if(nH2O == 0.0 || nsum == 0.0)
         return;
-    const auto kgH2O = nH2O * waterMolarMass;
-    const auto kgH2Oinv = 1.0/kgH2O;
+    const T kgH2O = nH2O * waterMolarMass;
+    const T xH2O = nH2O/nsum;
+    const T kgH2Oinv = 1.0/kgH2O;
     for(auto i = 0; i < N; ++i)
     {
-        const auto mi = n[i]/kgH2O;
+        const T ni = n[i];
+        const T mi = ni/kgH2O;
         J(i, i) = kgH2Oinv;
         J(i, iH2O) -= mi/nH2O;
     }
-    J(iH2O, iH2O) = 0.0; // ensure sharp zero here as the above computation could produce round-off errors for this entry
+    J.row(iH2O).array() = -xH2O/nsum;
+    J(iH2O, iH2O) += 1.0/nsum;
 }
 
 /// Compute the Jacobian matrix of the species molalities (@eq{J=\frac{\partial m}{\partial n}}).
@@ -113,22 +122,26 @@ auto lnMolalitiesJacobian(ArrayConstRef&& n, Index iH2O, MatrixRef&& J) -> void
     // == LATEX ==
     //-----------------------------------------------------------------------------------------------------
     // \frac{\partial\ln m_{i}}{\partial n_{j}}=\frac{1}{m_{i}}\frac{\partial m_{i}}{\partial n_{j}}=\left(\frac{\delta_{ij}}{n_{i}}-\frac{\delta_{jw}}{n_{w}}\right)
+    // \frac{\partial\ln x_{w}}{\partial n_{j}}=\frac{\delta_{wj}}{n_{w}}-\frac{1}{n_{\Sigma}}
     //-----------------------------------------------------------------------------------------------------
+    using T = Decay<decltype(J(0, 0))>;
     const auto N = n.size();
+    assert(iH2O < N);
     assert(J.rows() == N);
     assert(J.cols() == N);
     J.fill(0.0);
-    const auto nH2O = n[iH2O];
-    if(nH2O == 0.0)
+    const T nH2O = n[iH2O];
+    const T nsum = n.sum();
+    if(nH2O == 0.0 || nsum == 0.0)
         return;
-    const auto kgH2O = nH2O * waterMolarMass;
-    const auto kgH2Oinv = 1.0/kgH2O;
     for(auto i = 0; i < N; ++i)
     {
-        J(i, i) = 1.0/n[i];
+        const T ni = n[i];
+        J(i, i) = 1.0/ni;
         J(i, iH2O) -= 1.0/nH2O;
     }
-    J(iH2O, iH2O) = 0.0; // ensure sharp zero here as the above computation could produce round-off errors for this entry
+    J.row(iH2O).array() = -1.0/nsum;
+    J(iH2O, iH2O) += 1.0/nH2O;
 }
 
 /// Compute the Jacobian matrix of the species molalities in natural log (@eq{J=\frac{\partial\ln m}{\partial n}}).
@@ -156,11 +169,19 @@ auto lnMolalitiesJacobianDiagonal(ArrayConstRef&& n, Index iH2O, VectorRef&& D) 
     //-----------------------------------------------------------------------------------------------------
     // \frac{\partial\ln m_{i}}{\partial n_{i}}=\frac{1}{n_{i}}-\frac{\delta_{iw}}{n_{w}}
     //-----------------------------------------------------------------------------------------------------
+    using T = Decay<decltype(D[0])>;
     const auto N = n.size();
+    assert(iH2O < N);
     assert(D.rows() == N);
+    const T nH2O = n[iH2O];
+    const T nsum = n.sum();
+    if(nH2O == 0.0 || nsum == 0.0) {
+        D.fill(0.0);
+        return;
+    }
     for(auto i = 0; i < N; ++i)
         D[i] = 1.0/n[i];
-    D[iH2O] = 0.0;
+    D[iH2O] = 1.0/nH2O - 1.0/nsum;
 }
 
 /// Compute the diagonal only of the Jacobian matrix of the species molalities in natural log (@eq{J=\frac{\partial\ln m}{\partial n}}).

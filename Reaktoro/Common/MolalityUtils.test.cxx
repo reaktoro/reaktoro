@@ -40,7 +40,7 @@ TEST_CASE("Testing MolalityUtils module", "[MolalityUtils]")
 
     iH2O = 0; m = molalities(n, iH2O);
 
-    CHECK( m[0] == Approx(1.0 / (1.0 * waterMolarMass)) );
+    CHECK( m[0] == Approx(1.0 / 10.0) );
     CHECK( m[1] == Approx(2.0 / (1.0 * waterMolarMass)) );
     CHECK( m[2] == Approx(3.0 / (1.0 * waterMolarMass)) );
     CHECK( m[3] == Approx(4.0 / (1.0 * waterMolarMass)) );
@@ -49,7 +49,7 @@ TEST_CASE("Testing MolalityUtils module", "[MolalityUtils]")
 
     CHECK( m[0] == Approx(1.0 / (3.0 * waterMolarMass)) );
     CHECK( m[1] == Approx(2.0 / (3.0 * waterMolarMass)) );
-    CHECK( m[2] == Approx(3.0 / (3.0 * waterMolarMass)) );
+    CHECK( m[2] == Approx(3.0 / 10.0) );
     CHECK( m[3] == Approx(4.0 / (3.0 * waterMolarMass)) );
 
     iH2O = 3; m = molalities(nzero, iH2O);
@@ -57,15 +57,15 @@ TEST_CASE("Testing MolalityUtils module", "[MolalityUtils]")
     CHECK( m[0] == Approx(0.0) );
     CHECK( m[1] == Approx(0.0) );
     CHECK( m[2] == Approx(0.0) );
-    CHECK( m[3] == Approx(1.0 / waterMolarMass) );
+    CHECK( m[3] == Approx(1.0) );
 
     iH2O = 0; m = molalities(nsingle, iH2O);
 
-    CHECK( m[0] == Approx(1.0 / waterMolarMass) );
+    CHECK( m[0] == Approx(1.0) );
 
     iH2O = 0; m = molalities(nsinglezero, iH2O);
 
-    CHECK( m[0] == Approx(1.0 / waterMolarMass) );
+    CHECK( m[0] == Approx(1.0) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: molalitiesJacobian
@@ -75,10 +75,14 @@ TEST_CASE("Testing MolalityUtils module", "[MolalityUtils]")
 
     iH2O = 2; dmdn = molalitiesJacobian(n, iH2O);
 
+    const auto nsum = n.sum();
+    const auto xH2O = n[iH2O]/nsum;
+
     dmdn_expected.fill(0.0);
     dmdn_expected.diagonal().array() = 1.0 / (n[iH2O]*waterMolarMass);
     dmdn_expected.col(iH2O) = -n/(n[iH2O]*n[iH2O]*waterMolarMass);
-    dmdn_expected(iH2O, iH2O) = 0.0;
+    dmdn_expected.row(iH2O).array() = -xH2O/nsum;
+    dmdn_expected(iH2O, iH2O) += double(xH2O/n[iH2O]);
 
     INFO("dmdn = \n" << dmdn);
     INFO("dmdn(expected) = \n" << dmdn_expected);
@@ -110,7 +114,8 @@ TEST_CASE("Testing MolalityUtils module", "[MolalityUtils]")
     dlnmdn_expected.fill(0.0);
     dlnmdn_expected.diagonal().array() = 1.0 / n.array();
     dlnmdn_expected.col(iH2O).array() = -1.0/n[iH2O];
-    dlnmdn_expected(iH2O, iH2O) = 0.0;
+    dlnmdn_expected.row(iH2O).array() = -1.0/nsum;
+    dlnmdn_expected(iH2O, iH2O) += double(1.0/n[iH2O]);
 
     INFO("dlnmdn = \n" << dlnmdn);
     INFO("dlnmdn(expected) = \n" << dlnmdn_expected);
@@ -134,15 +139,15 @@ TEST_CASE("Testing MolalityUtils module", "[MolalityUtils]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: lnMolalitiesJacobianDiagonal
     //-------------------------------------------------------------------------
-    ArrayXd diag(4);
-    ArrayXd diag_expected(4);
+    ArrayXd dlnmdn_diag(4);
+    ArrayXd dlnmdn_diag_expected(4);
 
-    iH2O = 1; diag = lnMolalitiesJacobianDiagonal(n, iH2O);
+    iH2O = 1; dlnmdn_diag = lnMolalitiesJacobianDiagonal(n, iH2O);
 
-    diag_expected = 1/n;
-    diag_expected[iH2O] = 0.0;
+    dlnmdn_diag_expected = 1/n;
+    dlnmdn_diag_expected[iH2O] = 1.0/n[iH2O] - 1.0/nsum;
 
-    INFO("diag = " << diag.transpose());
-    INFO("diag(expected) = " << diag_expected.transpose());
-    CHECK( diag.isApprox(diag_expected) );
+    INFO("dlnmdn_diag = " << dlnmdn_diag.transpose());
+    INFO("dlnmdn_diag(expected) = " << dlnmdn_diag_expected.transpose());
+    CHECK( dlnmdn_diag.isApprox(dlnmdn_diag_expected) );
 }
