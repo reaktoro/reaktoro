@@ -25,17 +25,17 @@ namespace Reaktoro {
 /// The options for the description of the Hessian of the Gibbs energy function
 enum class GibbsHessian
 {
-    /// The Hessian of the Gibbs energy function is `H = H(exact)`.
+    /// The Hessian of the Gibbs energy function is fully exact.
     Exact,
 
-    /// The Hessian of the Gibbs energy function is `H = diag(H(exact))`.
-    ExactDiagonal,
+    /// The Hessian of the Gibbs energy function is partially exact, partially approximated.
+    PartiallyExact,
 
-    /// The Hessian of the Gibbs energy function is `H = d(ln(x))/dn`, where `x` is the mole fractions of the species.
-    Approximation,
+    /// The Hessian of the Gibbs energy function is approximated using ideal thermodynamic models.
+    Approx,
 
-    /// The Hessian of the Gibbs energy function is `H = diag(d(ln(x))/dn)`, where `x` is the mole fractions of the species.
-    ApproximationDiagonal,
+    /// The Hessian of the Gibbs energy function is a diagonal matrix approximation using ideal thermodynamic models.
+    ApproxDiagonal,
 };
 
 /// The options for the smart equilibrium calculations.
@@ -72,7 +72,7 @@ struct EquilibriumOptions
     bool warmstart = true;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
-    GibbsHessian hessian = GibbsHessian::ApproximationDiagonal;
+    GibbsHessian hessian = GibbsHessian::PartiallyExact;
 
     /// The options for the smart equilibrium calculation.
     SmartEquilibriumOptions smart;
