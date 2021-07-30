@@ -111,9 +111,9 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
 {
     this->T = T;
     this->P = P;
-    const auto numphases = msystem.phases().size();
+    const auto K = msystem.phases().size();
     auto offset = 0;
-    for(auto i = 0; i < numphases; ++i)
+    for(auto i = 0; i < K; ++i)
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
