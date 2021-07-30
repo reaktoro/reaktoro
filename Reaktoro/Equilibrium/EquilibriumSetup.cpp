@@ -215,6 +215,8 @@ struct EquilibriumSetup::Impl
             Hxx.col(i) = grad(F.head(Nx));
             Vpx.col(i) = grad(F.tail(Np));
         }
+        Hxx.rightCols(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
+        Vpx.rightCols(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
     }
 
     auto updateGradP() -> void
@@ -237,8 +239,8 @@ struct EquilibriumSetup::Impl
             Hxc.col(i) = grad(F.head(Nx));
             Vpc.col(i) = grad(F.tail(Np));
         }
-        Hxc.rightCols(Nb).fill(0.0); // these are derivatives wr.t. amounts of conservative components
-        Vpc.rightCols(Nb).fill(0.0); // these are derivatives wr.t. amounts of conservative components
+        Hxc.rightCols(Nb).fill(0.0); // these are derivatives w.r.t. amounts of conservative components
+        Vpc.rightCols(Nb).fill(0.0); // these are derivatives w.r.t. amounts of conservative components
     }
 
     auto updateF() -> void
