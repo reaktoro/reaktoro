@@ -128,6 +128,8 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
 
         EquilibriumProps eprops(specs);
 
+        bool useIdealModel = false;
+
         // Start recording derivatives of the chemical properties
         // with respect to seeded variables in n, p, w
         eprops.assembleFullJacobianBegin();
@@ -136,7 +138,7 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         for(auto i = 0; i < Nn; ++i)
         {
             autodiff::seed(n[i]);
-            eprops.update(n, p, w);
+            eprops.update(n, p, w, useIdealModel=false, i);
             autodiff::unseed(n[i]);
         }
 
@@ -144,7 +146,7 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         for(auto i = 0; i < Np; ++i)
         {
             autodiff::seed(p[i]);
-            eprops.update(n, p, w);
+            eprops.update(n, p, w, useIdealModel=false, i + Nn);
             autodiff::unseed(p[i]);
         }
 
@@ -152,7 +154,7 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         for(auto i = 0; i < Nw; ++i)
         {
             autodiff::seed(w[i]);
-            eprops.update(n, p, w);
+            eprops.update(n, p, w, useIdealModel=false, i + Nn + Np);
             autodiff::unseed(w[i]);
         }
 
@@ -227,6 +229,8 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
 
         EquilibriumProps eprops(specs);
 
+        bool useIdealModel = false;
+
         // Start recording derivatives of the chemical properties
         // with respect to seeded variables in n, p, w
         eprops.assembleFullJacobianBegin();
@@ -235,7 +239,7 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         for(auto i = 0; i < Nn; ++i)
         {
             autodiff::seed(n[i]);
-            eprops.update(n, p, w);
+            eprops.update(n, p, w, useIdealModel=true, i);
             autodiff::unseed(n[i]);
         }
 
@@ -243,7 +247,7 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         for(auto i = 0; i < Np; ++i)
         {
             autodiff::seed(p[i]);
-            eprops.update(n, p, w);
+            eprops.update(n, p, w, useIdealModel=true, i + Nn);
             autodiff::unseed(p[i]);
         }
 
@@ -251,7 +255,7 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         for(auto i = 0; i < Nw; ++i)
         {
             autodiff::seed(w[i]);
-            eprops.update(n, p, w);
+            eprops.update(n, p, w, useIdealModel=false, i + Nn + Np);
             autodiff::unseed(w[i]);
         }
 
@@ -268,14 +272,29 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
             return props;
         };
 
-        // Calculate the expected Jacobian matrices of chemical properties u wrt n, p, w
-        const auto dudn = jacobian(u, wrt(n), at(n, p, w));
-        const auto dudp = jacobian(u, wrt(p), at(n, p, w));
-        const auto dudw = jacobian(u, wrt(w), at(n, p, w));
+        // Construct the u = u(n, p, w) function that returns all chemical properties in a vector (using ideal thermo models)
+        auto uideal = [&](VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
+        {
+            const auto T = p[0]; // T is in p[0] because it is unknown - input variables w = (V, U)
+            const auto P = p[1]; // P is in p[1] because it is unknown - input variables w = (V, U)
+            ChemicalProps props(system);
+            props.updateIdeal(T, P, n);
+            return props;
+        };
+
+        // Calculate the expected Jacobian matrices of chemical properties u wrt n, p, w (using exact derivatives)
+        const auto dudn_exact = jacobian(u, wrt(n), at(n, p, w));
+        const auto dudp_exact = jacobian(u, wrt(p), at(n, p, w));
+        const auto dudw_exact = jacobian(u, wrt(w), at(n, p, w));
+
+        // Calculate the expected Jacobian matrices of chemical properties u wrt n, p, w (using approximate derivatives by adopting ideal models for chemical props)
+        const auto dudn_approx = jacobian(uideal, wrt(n), at(n, p, w));
+        const auto dudp_approx = jacobian(uideal, wrt(p), at(n, p, w));
+        const auto dudw_approx = jacobian(uideal, wrt(w), at(n, p, w));
 
         // Compare to those recorded inside the EquilibriumProps object
-        CHECK( eprops.dudn().isApprox(dudn) );
-        CHECK( eprops.dudp().isApprox(dudp) );
-        CHECK( eprops.dudw().isApprox(dudw) );
+        CHECK( eprops.dudn().isApprox(dudn_approx) );
+        CHECK( eprops.dudp().isApprox(dudp_approx) );
+        CHECK( eprops.dudw().isApprox(dudw_exact) );
     }
 }
