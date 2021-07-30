@@ -61,6 +61,8 @@ struct EquilibriumSetup::Impl
 
     VectorXr F;    ///< The auxiliary vector F = (gx, vp) containing first-order optimality conditions (gx) and residuals of equation constraints (vp)
 
+    real f;        ///< The objective function value (Gibbs energy of the system).
+
     VectorXd gx;   ///< The gradient of the objective function with respect to x = (n, q).
     VectorXd vp;   ///< The residual vector of the equilibrium equation constraints (of size p).
 
@@ -75,7 +77,6 @@ struct EquilibriumSetup::Impl
     VectorXl isbasicvar; /// The bitmap that indicates which variables in x = (n, q) are currently basic variables.
 
     Indices ipps;  ///< The indices of the pure phase species (i.e., species composing single-phase species, whose chemical potentials do not depend on composition)
-    ArrayXr npps;  ///< The auxiliary species amounts vector with non-zero amounts only for pure phase species.
 
     // -------------------------------------------- //
     // ------ CONVENIENT AUXILIARY VARIABLES ------ //
@@ -119,7 +120,6 @@ struct EquilibriumSetup::Impl
                 ipps.push_back(offset);
             offset += size;
         }
-        npps.resize(ipps.size());
     }
 
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
@@ -197,6 +197,7 @@ struct EquilibriumSetup::Impl
 
         props.update(n, p, w);
 
+        updateGibbsEnergy();
         updateF();
         gx = F.head(Nx);
         vp = F.tail(Np);
@@ -258,10 +259,8 @@ struct EquilibriumSetup::Impl
         auto sq = F.segment(Nn, Nq); // the segment in F where we set the desired chemical potentials of some substances
         auto sp = F.tail(Np);        // the segment in F where we set the residuals of the equation constraints
 
-        npps = n(ipps);
-
         sn = mu/RT; // set the current chemical potentials of species (normalized by RT)
-        sn(ipps).array() -= tau/npps; // add log barrier contribution to pure phase species
+        sn(ipps).array() -= tau/n(ipps); // add log barrier contribution to pure phase species
 
         for(auto i = 0; i < Nq; ++i)
             sq[i] = uconstraints[i].fn(cprops, w)/RT;
@@ -319,7 +318,7 @@ struct EquilibriumSetup::Impl
         else updateFq(i);
     }
 
-    auto getGibbsEnergy() -> real
+    auto updateGibbsEnergy() -> void
     {
         const auto& cprops = props.chemicalProps();
         const auto& T = cprops.temperature();
@@ -327,8 +326,13 @@ struct EquilibriumSetup::Impl
         const auto& u = cprops.chemicalPotentials();
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
-        const auto barrier = -tau * npps.log().sum();
-        return (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
+        const auto barrier = -tau * n(ipps).log().sum();
+        f = (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
+    }
+
+    auto getGibbsEnergy() -> real
+    {
+        return f;
     }
 
     auto getGibbsGradX() -> VectorXdConstRef

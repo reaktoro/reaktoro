@@ -29,6 +29,10 @@
 #include <Reaktoro/Equilibrium/EquilibriumSetup.hpp>
 using namespace Reaktoro;
 
+using autodiff::jacobian;
+using autodiff::wrt;
+using autodiff::at;
+
 namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
 TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
@@ -41,7 +45,12 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
     const auto Ne = Wn.rows();
     const auto Nn = Wn.cols();
 
+    /// Mock indices for variables in x = (n, q) that are currently basic
+    VectorXl ibasicvars = VectorXl{{0, 1, 2, 3}};
+
     EquilibriumSpecs specs(system);
+
+    EquilibriumOptions options;
 
     ChemicalState state(system);
     state.setTemperature(50.0, "celsius");
@@ -307,13 +316,17 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const auto tau = setup.options().epsilon * setup.options().logarithm_barrier_factor;
 
             const auto f  = G/RT - tau * n.log().sum();
-            const VectorXr fn = u/RT - tau/n;
+            const VectorXd fn = u/RT - tau/n;
 
-            CHECK( f  == Approx(setup.evalObjectiveValue(x, p, w)) );
-            CHECK( fn.isApprox(setup.evalObjectiveGradX(x, p, w)) );
+            setup.update(x, p, w);
+            setup.updateGradX(ibasicvars);
+            setup.updateGradP();
 
-            CHECK( setup.evalEquationConstraintsGradX(x, p, w).size() == 0 );
-            CHECK( setup.evalEquationConstraintsGradP(x, p, w).size() == 0 );
+            CHECK( f  == Approx(setup.getGibbsEnergy()) );
+            CHECK( fn.isApprox(setup.getGibbsGradX()) );
+
+            CHECK( setup.getConstraintResidualsGradX().size() == 0 );
+            CHECK( setup.getConstraintResidualsGradP().size() == 0 );
         }
 
         WHEN("temperature and pressure are not input variables")
@@ -362,16 +375,21 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             const auto tau = setup.options().epsilon * setup.options().logarithm_barrier_factor;
 
+            setup.update(x, p, w);
+            setup.updateGradX(ibasicvars);
+            setup.updateGradP();
+
             //-------------------------------------------------------------------------------
             // Check the value of the objective function at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------
+
             const real f = G/RT - tau * n.log().sum();
-            CHECK( f == Approx(setup.evalObjectiveValue(x, p, w)) );
+            CHECK( f == Approx(setup.getGibbsEnergy()) );
 
             //------------------------------------------------------------------------------------------------------------
             // Check the gradient of the objective function at current conditions of [n, p, q] with respect to x = (n, q)
             //------------------------------------------------------------------------------------------------------------
-            VectorXr fx(Nx);
+            VectorXd fx(Nx);
             auto fn = fx.head(Nn);
             auto fq = fx.tail(Nq);
 
@@ -380,18 +398,62 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, w)/RT; // the pH constraint
             fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, w)/RT; // the pE constraint
 
-            CHECK( fx.isApprox(setup.evalObjectiveGradX(x, p, w)) );
+            CHECK( fx.isApprox(setup.getGibbsGradX()) );
 
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the gradient of the objective function at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &w](ArrayXrConstRef x, ArrayXrConstRef p)
+
+            // Auxiliary function used to update a ChemicalProps object taking
+            // decision on whether to update using exact properties or
+            // approximated (using ideal thermo models). This exists so that we
+            // can test if EquilibriumSetup is correctly making the necessary
+            // requested simplifications in derivative calculations. For
+            // example, if GibbsHessian::Exact is set in
+            // EquilibriumOptions::hessian, then exact properties must be
+            // computed always. If GibbsHessian::PartiallyExact is set, then
+            // derivatives are exact only with respect to basic variables in n.
+            auto updatePropsSpecial = [ibasicvars](auto& props, auto T, auto P, auto n, auto options)
+            {
+                auto iseeded = 0;
+                for(; iseeded < n.size() && n[iseeded][1] != 1.0; ++iseeded);
+
+                if(iseeded < n.size()) // check there is a seeded variable in n
+                {
+                    auto is_nbasic_seeded = false;
+                    for(auto i : ibasicvars)  // determine if seeded variable in n is a basic variable
+                        if(n[i][1] == 1.0) {
+                            is_nbasic_seeded = true;
+                            break;
+                        }
+
+                    switch(options.hessian)
+                    {
+                    case GibbsHessian::Exact:
+                        props.update(T, P, n);
+                        break;
+                    case GibbsHessian::Approx:
+                    case GibbsHessian::ApproxDiagonal:
+                        props.updateIdeal(T, P, n);
+                        break;
+                    case GibbsHessian::PartiallyExact:
+                    default:
+                        if(is_nbasic_seeded)
+                            props.update(T, P, n); // compute exact properties if basic seeded variable
+                        else props.updateIdeal(T, P, n); // compute approx properties if seeded variable is non-basic
+                    }
+                }
+                else props.update(T, P, n); // in case there is no seeded variable in n
+            };
+
+            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &w, &options, &updatePropsSpecial](ArrayXrConstRef x, ArrayXrConstRef p)
             {
                 ChemicalProps auxprops(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
                 const auto P = p[1]; // in tested equilibrium specs, p[1] is pressure (this is not necessarily always true!)
                 const auto n = x.head(Nn);
-                auxprops.update(T, P, n);
+
+                updatePropsSpecial(auxprops, T, P, n, options);
 
                 const auto u = auxprops.chemicalPotentials();
                 const auto RT = universalGasConstant * T;
@@ -408,37 +470,54 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
                 return g;
             };
 
-            using autodiff::jacobian;
-            using autodiff::wrt;
-            using autodiff::at;
+            SECTION("checking Hxx and Hxp derivatives when using all possible GibbsHessian modes")
+            {
+                GibbsHessian modes[] = {
+                    GibbsHessian::Exact,
+                    GibbsHessian::PartiallyExact,
+                    GibbsHessian::Approx,
+                    GibbsHessian::ApproxDiagonal
+                };
 
-            const MatrixXd Hxx = jacobian(gfn, wrt(x), at(x, p));
-            const MatrixXd Hxp = jacobian(gfn, wrt(p), at(x, p));
+                for(auto mode : modes)
+                {
+                    options.hessian = mode;
 
-            CHECK( Hxx.isApprox(setup.evalObjectiveHessianX(x, p, w)) );
-            CHECK( Hxp.isApprox(setup.evalObjectiveHessianP(x, p, w)) );
+                    setup.setOptions(options);
+                    setup.update(x, p, w);
+                    setup.updateGradX(ibasicvars);
+                    setup.updateGradP();
+
+                    const auto Hxx = jacobian(gfn, wrt(x), at(x, p));
+                    const auto Hxp = jacobian(gfn, wrt(p), at(x, p));
+
+                    CHECK( Hxx.isApprox(setup.getGibbsHessianX()) );
+                    CHECK( Hxp.isApprox(setup.getGibbsHessianP()) );
+                }
+            }
 
             //-------------------------------------------------------------------------------------------------
             // Check the value of the constraint functions of equation type at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------------------------
-            VectorXr v(Np);
+            VectorXd v(Np);
 
             v[0] = specs.constraintsEquationType()[0].fn(props, w); // the volume constraint equation
             v[1] = specs.constraintsEquationType()[1].fn(props, w); // the internal energy constraint equation
             v[2] = specs.constraintsEquationType()[2].fn(props, w); // the enthalpy constraint equation
 
-            CHECK( v.isApprox(setup.evalEquationConstraints(x, p, w)) );
+            CHECK( v.isApprox(setup.getConstraintResiduals()) );
 
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the constraint functions of equation type at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto vfn = [&system, &Nn, &Np, &specs, &w](ArrayXrConstRef x, ArrayXrConstRef p)
+            auto vfn = [&system, &Nn, &Np, &specs, &w, &options, &updatePropsSpecial](ArrayXrConstRef x, ArrayXrConstRef p)
             {
                 ChemicalProps auxprops(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
                 const auto P = p[1]; // in tested equilibrium specs, p[1] is pressure (this is not necessarily always true!)
                 const auto n = x.head(Nn);
-                auxprops.update(T, P, n);
+
+                updatePropsSpecial(auxprops, T, P, n, options);
 
                 VectorXr v(Np);
                 v[0] = specs.constraintsEquationType()[0].fn(auxprops, w); // the volume constraint equation
@@ -448,15 +527,31 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
                 return v;
             };
 
-            using autodiff::jacobian;
-            using autodiff::wrt;
-            using autodiff::at;
+            SECTION("checking Vpx and Vpp derivatives when using all possible GibbsHessian modes")
+            {
+                GibbsHessian modes[] = {
+                    GibbsHessian::Exact,
+                    GibbsHessian::PartiallyExact,
+                    GibbsHessian::Approx,
+                    GibbsHessian::ApproxDiagonal
+                };
 
-            const MatrixXd Vpx = jacobian(vfn, wrt(x), at(x, p));
-            const MatrixXd Vpp = jacobian(vfn, wrt(p), at(x, p));
+                for(auto mode : modes)
+                {
+                    options.hessian = mode;
 
-            CHECK( Vpx.isApprox(setup.evalEquationConstraintsGradX(x, p, w)) );
-            CHECK( Vpp.isApprox(setup.evalEquationConstraintsGradP(x, p, w)) );
+                    setup.setOptions(options);
+                    setup.update(x, p, w);
+                    setup.updateGradX(ibasicvars);
+                    setup.updateGradP();
+
+                    const auto Vpx = jacobian(vfn, wrt(x), at(x, p));
+                    const auto Vpp = jacobian(vfn, wrt(p), at(x, p));
+
+                    CHECK( Vpx.isApprox(setup.getConstraintResidualsGradX()) );
+                    CHECK( Vpp.isApprox(setup.getConstraintResidualsGradP()) );
+                }
+            }
         }
     }
 }
