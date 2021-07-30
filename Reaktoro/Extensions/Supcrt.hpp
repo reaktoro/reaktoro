@@ -17,11 +17,4 @@
 
 #pragma once
 
-#include <Reaktoro/Extensions/Supcrt/SpeciesThermoProps.hpp>
-#include <Reaktoro/Extensions/Supcrt/SupcrtModels.hpp>
-#include <Reaktoro/Extensions/Supcrt/Supcrt.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroProps.hpp>
-#include <Reaktoro/Extensions/Supcrt/SupcrtParams.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
-#include <Reaktoro/Extensions/Supcrt/SupcrtEngine.hpp>
-#include <Reaktoro/Extensions/Supcrt/SpeciesElectroPropsHKF.hpp>
