@@ -148,7 +148,7 @@ struct EquilibriumSolver::Impl
         // Set the resources function in the Optima::Problem object
         optproblem.r = [=](VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ObjectiveOptions fopts, Optima::ConstraintOptions hopts, Optima::ConstraintOptions vopts) mutable
         {
-            setup.update(x, p, c);
+            setup.update(x, p, w);
 
             if(fopts.eval.fxc || vopts.eval.ddc)
                 setup.assembleChemicalPropsJacobianBegin();
