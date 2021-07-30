@@ -57,34 +57,6 @@ auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrCo
     return [iPp](VectorXrConstRef p, VectorXrConstRef w) { return p[iPp]; };
 }
 
-/// Determine the index of the variable in `(n, p, w)` that has been seeded by autodiff.
-auto indexOfSeededVariable(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w)
-{
-    using autodiff::grad;
-
-    // Check for a variable v in n so that grad(v) == 1 (v has been seeded!)
-    auto offset = 0;
-    for(auto j = 0; j < n.size(); ++j)
-        if(grad(n[j]) == 1.0)
-            return j;
-
-    // Check for a variable v in p so that grad(v) == 1 (v has been seeded!)
-    offset += n.size();
-    for(auto j = 0; j < p.size(); ++j)
-        if(grad(p[j]) == 1.0)
-            return offset + j;
-
-    // Check for a variable v in w so that grad(v) == 1 (v has been seeded!)
-    offset += p.size();
-    for(auto j = 0; j < w.size(); ++j)
-        if(grad(w[j]) == 1.0)
-            return offset + j;
-
-    // There was no seeded variable in (n, p, w)
-    offset += w.size();
-    return offset;
-}
-
 } // namespace
 
 struct EquilibriumProps::Impl
@@ -123,7 +95,7 @@ struct EquilibriumProps::Impl
     {}
 
     /// Update the chemical properties of the chemical system.
-    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> void
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void
     {
         const auto T = getT(p, w);
         const auto P = getP(p, w);
@@ -145,27 +117,26 @@ struct EquilibriumProps::Impl
         // Perform the update of the chemical properties of the system.
         // If there were model parameters changed above, the chemical
         // properties computed below will be affected.
-        props.update(T, P, n);
+        if(useIdealModel)
+            props.updateIdeal(T, P, n);
+        else props.update(T, P, n);
 
         // Recover here the original state of the model parameters changed above.
         for(auto i = 0; i < params0.size(); ++i)
             params[i].value() = params0[i];
 
         // Collect the derivatives of the chemical properties wrt some seeded variable in n, p, w.
-        if(assemblying_jacobian)
+        if(assemblying_jacobian && inpw != -1)  // inpw === -1 if seeded variable is some variable in q (the amounts of implicit titrants)
         {
-            props.serialize(stream);
             const auto Nnpw = dims.Nn + dims.Np + dims.Nw;
+            assert(inpw < Nnpw);
+            props.serialize(stream);
             const auto Nu = stream.data().rows();
-            const auto idx = indexOfSeededVariable(n, p, w);
-            if(idx < Nnpw) // check if there is any seeded var in n, p, w - maybe there isn't, e.g., the current seeded var is in q of x = (n, q), where q are the amounts of implicit titrants
-            {
-                dudnpw.resize(Nu, Nnpw);
-                auto col = dudnpw.col(idx);
-                const auto size = col.size();
-                for(auto i = 0; i < size; ++i)
-                    col[i] = grad(stream.data()[i]);
-            }
+            dudnpw.resize(Nu, Nnpw);
+            auto col = dudnpw.col(inpw);
+            const auto size = col.size();
+            for(auto i = 0; i < size; ++i)
+                col[i] = grad(stream.data()[i]);
         }
     }
 
@@ -205,9 +176,9 @@ auto EquilibriumProps::operator=(EquilibriumProps other) -> EquilibriumProps&
     return *this;
 }
 
-auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w) -> void
+auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void
 {
-    pimpl->update(n, p, w);
+    pimpl->update(n, p, w, useIdealModel, inpw);
 }
 
 auto EquilibriumProps::assembleFullJacobianBegin() -> void
