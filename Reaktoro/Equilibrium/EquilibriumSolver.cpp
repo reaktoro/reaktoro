@@ -145,26 +145,42 @@ struct EquilibriumSolver::Impl
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
 
+        // Set the resources function in the Optima::Problem object
+        optproblem.r = [=](VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ObjectiveOptions fopts, Optima::ConstraintOptions hopts, Optima::ConstraintOptions vopts) mutable
+        {
+            setup.update(x, p, c);
+
+            if(fopts.eval.fxc || vopts.eval.ddc)
+                setup.assembleChemicalPropsJacobianBegin();
+
+            if(fopts.eval.fxx || vopts.eval.ddx)
+                setup.updateGradX(fopts.ibasicvars);
+            if(fopts.eval.fxp || vopts.eval.ddp)
+                setup.updateGradP();
+            if(fopts.eval.fxc || vopts.eval.ddc)
+                setup.updateGradW();
+
+            if(fopts.eval.fxc || vopts.eval.ddc)
+                setup.assembleChemicalPropsJacobianEnd();
+        };
+
         // Set the objective function in the Optima::Problem object
         optproblem.f = [=](Optima::ObjectiveResultRef res, VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ObjectiveOptions opts) mutable
         {
-            res.f = setup.evalObjectiveValue(x, p, w);
-            res.fx = setup.evalObjectiveGradX(x, p, w);
-
-            if(opts.eval.fxc) // if true, this means we are now at the step of computing sensitivity derivatives
-                setup.assembleChemicalPropsJacobianBegin(); // start recording the derivatives of the chemical properties with respect to n, p, w
+            res.f = setup.getGibbsEnergy();
+            res.fx = setup.getGibbsGradX();
 
             if(opts.eval.fxx)
-                res.fxx = setup.evalObjectiveHessianX(x, p, w); // TODO: Implement diagonal approximation mode for Hessian matrix in EquilibriumSolver.
+                res.fxx = setup.getGibbsHessianX();
 
             if(opts.eval.fxp)
-                res.fxp = setup.evalObjectiveHessianP(x, p, w);
+                res.fxp = setup.getGibbsHessianP();
 
             if(opts.eval.fxc)
-                res.fxc = setup.evalObjectiveHessianW(x, p, w);
+                res.fxc = setup.getGibbsHessianC();
 
-            if(opts.eval.fxc)
-                setup.assembleChemicalPropsJacobianEnd(); // finalize recording of the derivatives of the chemical properties with respect to n, p, w
+            res.fxx4basicvars = setup.usingPartiallyExactDerivatives();
+            res.diagfxx = setup.usingDiagonalApproxDerivatives();
 
             res.succeeded = true;
         };
@@ -172,16 +188,16 @@ struct EquilibriumSolver::Impl
         // Set the external constraint function in the Optima::Problem object
         optproblem.v = [=](Optima::ConstraintResultRef res, VectorXdConstRef x, VectorXdConstRef p, VectorXdConstRef c, Optima::ConstraintOptions opts) mutable
         {
-            res.val = setup.evalEquationConstraints(x, p, w);
+            res.val = setup.getConstraintResiduals();
 
             if(opts.eval.ddx)
-                res.ddx = setup.evalEquationConstraintsGradX(x, p, w);
+                res.ddx = setup.getConstraintResidualsGradX();
 
             if(opts.eval.ddp)
-                res.ddp = setup.evalEquationConstraintsGradP(x, p, w);
+                res.ddp = setup.getConstraintResidualsGradP();
 
             if(opts.eval.ddc)
-                res.ddc = setup.evalEquationConstraintsGradW(x, p, w);
+                res.ddc = setup.getConstraintResidualsGradC();
 
             res.succeeded = true;
         };

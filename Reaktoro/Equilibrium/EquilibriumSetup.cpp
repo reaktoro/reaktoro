@@ -31,30 +31,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
-namespace {
-
-/// Return the number of control variables *p* in the equilibrium specifications.
-/// The control variables *p* are temperature, pressure and/or amounts of explicit titrants.
-auto numControlVariablesTypeP(const EquilibriumSpecs& specs) -> Index
-{
-    return specs.numControlVariables() - specs.numTitrantsImplicit();
-}
-
-/// Return the number of control variables *q* in the equilibrium specifications.
-/// The control variables *q* are the amounts of implicit titrants.
-auto numControlVariablesTypeQ(const EquilibriumSpecs& specs) -> Index
-{
-    return specs.numTitrantsImplicit();
-}
-
-/// Return the number of components in the equilibrium specifications.
-/// These are the independent primary species in the equilibrium problem.
-auto numComponents(const EquilibriumSpecs& specs) -> Index
-{
-    return specs.system().elements().size() + 1;
-}
-
-} // namespace
 
 using autodiff::jacobian;
 using autodiff::wrt;
@@ -77,49 +53,63 @@ struct EquilibriumSetup::Impl
     /// The options for the solution of the equilibrium problem.
     EquilibriumOptions options;
 
-    real T = 0.0;  ///< The current temperature of the chemical system (in K).
-    real P = 0.0;  ///< The current pressure of the chemical system (in Pa).
-    ArrayXr n;     ///< The current amounts of the species (in mol).
-    ArrayXr p;     ///< The current values of the introduced *p* control variables (temperature, pressure, amounts of explicit titrants).
-    ArrayXr q;     ///< The current values of the introduced *q* control variables (amounts of implicit titrants whose chemical potentials are constrained).
-    ArrayXr w;     ///< The current values of the input variables for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
     VectorXr x;    ///< The auxiliary vector x = (n, q).
-    VectorXr gx;   ///< The gradient of the objective function with respect to x = (n, q).
+    VectorXr n;    ///< The current amounts of the species (in mol).
+    VectorXr q;    ///< The current values of the introduced *q* control variables (amounts of implicit titrants whose chemical potentials are constrained).
+    VectorXr p;    ///< The current values of the introduced *p* control variables (temperature, pressure, amounts of explicit titrants).
+    VectorXr w;    ///< The current values of the input variables for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
+
+    VectorXr F;    ///< The auxiliary vector F = (gx, vp) containing first-order optimality conditions (gx) and residuals of equation constraints (vp)
+
+    VectorXd gx;   ///< The gradient of the objective function with respect to x = (n, q).
+    VectorXd vp;   ///< The residual vector of the equilibrium equation constraints (of size p).
+
     MatrixXd Hxx;  ///< The Jacobian of the objective gradient function with respect to x = (n, q).
     MatrixXd Hxp;  ///< The Jacobian of the objective gradient function with respect to p.
-    MatrixXd Hxc;  ///< The Jacobian of the objective gradient function with respect to w (Optima uses `c` for these parameter variables).
-    VectorXr vp;   ///< The residuals of the equation constraints.
-    MatrixXd Vpx;  ///< The Jacobian of the residuals of the equation constraints with respect to x = (n, q).
-    MatrixXd Vpp;  ///< The Jacobian of the residuals of the equation constraints with respect to p.
-    MatrixXd Vpc;  ///< The Jacobian of the residuals of the equation constraints with respect to w (Optima uses `c` for these parameter variables).
+    MatrixXd Hxc;  ///< The Jacobian of the objective gradient function with respect to c = (w, b).
+
+    MatrixXd Vpx;  ///< The Jacobian of vp with respect to x = (n, q).
+    MatrixXd Vpp;  ///< The Jacobian of vp with respect to p.
+    MatrixXd Vpc;  ///< The Jacobian of vp with respect to c = (w, b).
+
+    VectorXl isbasicvar; /// The bitmap that indicates which variables in x = (n, q) are currently basic variables.
+
     Indices ipps;  ///< The indices of the pure phase species (i.e., species composing single-phase species, whose chemical potentials do not depend on composition)
     ArrayXr npps;  ///< The auxiliary species amounts vector with non-zero amounts only for pure phase species.
 
+    // -------------------------------------------- //
+    // ------ CONVENIENT AUXILIARY VARIABLES ------ //
+    // -------------------------------------------- //
+
+    const Index Nb; ///< The number of conservative components
+    const Index Nn; ///< The number of chemical species
+    const Index Np; ///< The number of p control variables
+    const Index Nq; ///< The number of q control variables
+    const Index Nx; ///< The number of x variables with x = (n, q)
+    const Index Nw; ///< The number of input variables w in the chemical equilibrium problem
+    const Index Nc; ///< The number of input variables in c = (w, b)
+
     /// Construct an EquilibriumSetup::Impl object
     Impl(const EquilibriumSpecs& specs)
-    : system(specs.system()), specs(specs), dims(specs), props(specs)
+    : system(specs.system()), specs(specs), dims(specs), props(specs),
+      Nb(dims.Nb), Nn(dims.Nn), Np(dims.Np), Nq(dims.Nq), Nx(dims.Nx), Nw(dims.Nw), Nc(dims.Nw + dims.Nb)
     {
-        const auto Nn = system.species().size();
-        const auto Np = numControlVariablesTypeP(specs);
-        const auto Nq = numControlVariablesTypeQ(specs);
-        const auto Nx = Nn + Nq;
-        const auto Nb = numComponents(specs);
-        const auto Nw = dims.Nw;
-        const auto Nc = Nw + Nb;
-
-        n.resize(Nn);
-        p.resize(Np);
-        q.resize(Nq);
-        w.resize(Nw);
         x.resize(Nx);
+        n.resize(Nn);
+        q.resize(Nq);
+        p.resize(Np);
+        w.resize(Nw);
+        F.resize(Nx + Np);
         gx.resize(Nx);
+        vp.resize(Np);
         Hxx.resize(Nx, Nx);
         Hxp.resize(Nx, Np);
         Hxc.resize(Nx, Nc);
-        vp.resize(Np);
         Vpx.resize(Np, Nx);
         Vpp.resize(Np, Np);
         Vpc.resize(Np, Nc);
+
+        isbasicvar.resize(Nx);
 
         auto offset = 0;
         for(const auto& phase : system.phases())
@@ -135,10 +125,9 @@ struct EquilibriumSetup::Impl
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
     auto assembleFormulaVector(VectorXdRef vec, const ChemicalFormula& formula) const -> void
     {
-        const auto Ne = system.elements().size() + 1;
-        assert(vec.size() == Ne);
+        assert(vec.size() == Nb);
         vec.fill(0.0);
-        vec[Ne - 1] = formula.charge(); // last entry in the column vector is charge of substance
+        vec[Nb - 1] = formula.charge(); // last entry in the column vector is charge of substance
         for(const auto& [element, coeff] : formula.elements()) {
             const auto ielem = system.elements().index(element);
             vec[ielem] = coeff;
@@ -148,18 +137,10 @@ struct EquilibriumSetup::Impl
     /// Assemble the coefficient matrix `Aex` in optimization problem.
     auto assembleMatrixAex() const -> MatrixXd
     {
-        const auto Ne = system.elements().size() + 1;
-        const auto Nn = system.species().size();
-        const auto Nq = numControlVariablesTypeQ(specs);
-        const auto Nb = numComponents(specs);
-        const auto Nx = Nn + Nq;
-
-        assert(Nb == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
-
         MatrixXd Aex = zeros(Nb, Nx);
 
-        auto Wn = Aex.topLeftCorner(Ne, Nn);  // the formula matrix of the species
-        auto Wq = Aex.topRightCorner(Ne, Nq); // the formula matrix of the implicit titrants
+        auto Wn = Aex.topLeftCorner(Nb, Nn);  // the formula matrix of the species
+        auto Wq = Aex.topRightCorner(Nb, Nq); // the formula matrix of the implicit titrants
 
         Wn = system.formulaMatrix();
 
@@ -173,15 +154,9 @@ struct EquilibriumSetup::Impl
     /// Assemble the coefficient matrix `Aep` in optimization problem.
     auto assembleMatrixAep() const -> MatrixXd
     {
-        const auto Ne = system.elements().size() + 1;
-        const auto Np = numControlVariablesTypeP(specs);
-        const auto Nb = numComponents(specs);
-
-        assert(Nb == Ne); // TODO: Remove this when EquilibriumReactions is implemented and inert reactions can be set
-
         MatrixXd Aep = zeros(Nb, Np);
 
-        auto Wp = Aep.topRows(Ne); // the formula matrix of temperature, pressure and explicit titrants
+        auto Wp = Aep.topRows(Nb); // the formula matrix of temperature, pressure and explicit titrants
 
         auto j = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P in p (if applicable), since these are zeros
         for(const auto& formula : specs.titrantsExplicit())
@@ -190,12 +165,8 @@ struct EquilibriumSetup::Impl
         return Aep;
     }
 
-    /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
     auto assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
     {
-        const auto Nn = system.species().size();
-        const auto Nq = numControlVariablesTypeQ(specs);
-        const auto Nx = Nn + Nq;
         VectorXd xlower = constants(Nx, -inf);
         auto nlower = xlower.head(Nn);
         const auto n0 = state0.speciesAmounts();
@@ -205,12 +176,8 @@ struct EquilibriumSetup::Impl
         return xlower;
     }
 
-    /// Assemble the upper bound vector `xupper` in the optimization problem where *x = (n, q)*.
     auto assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
     {
-        const auto Nn = system.species().size();
-        const auto Nq = numControlVariablesTypeQ(specs);
-        const auto Nx = Nn + Nq;
         VectorXd xupper = constants(Nx, inf);
         auto nupper = xupper.head(Nn);
         const auto n0 = state0.speciesAmounts();
@@ -220,17 +187,140 @@ struct EquilibriumSetup::Impl
         return xupper;
     }
 
-    /// Update the chemical properties of the system.
-    auto updateChemicalProps(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> void
+    auto update(VectorXrConstRef xx, VectorXrConstRef pp, VectorXrConstRef ww) -> void
     {
-        const auto n = x.head(dims.Nn);
+        x = xx;
+        n = xx.head(Nn);
+        q = xx.tail(Nq);
+        p = pp;
+        w = ww;
+
         props.update(n, p, w);
-        npps = n(ipps);
+
+        updateF();
+        gx = F.head(Nx);
+        vp = F.tail(Np);
     }
 
-    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> real
+    auto updateGradX(VectorXlConstRef ibasicvars) -> void
     {
-        updateChemicalProps(x, p, w);
+        isbasicvar.fill(false);
+        isbasicvar(ibasicvars).fill(true);
+
+        // Update Hxx and Vpx
+        for(auto i = 0; i < Nn; ++i)
+        {
+            updateFx(i);
+            Hxx.col(i) = grad(F.head(Nx));
+            Vpx.col(i) = grad(F.tail(Np));
+        }
+    }
+
+    auto updateGradP() -> void
+    {
+        // Update Hxp and Vpp
+        for(auto i = 0; i < Np; ++i)
+        {
+            updateFp(i);
+            Hxp.col(i) = grad(F.head(Nx));
+            Vpp.col(i) = grad(F.tail(Np));
+        }
+    }
+
+    auto updateGradW() -> void
+    {
+        // Update Hxc and Vpc
+        for(auto i = 0; i < Nw; ++i)
+        {
+            updateFw(i);
+            Hxc.col(i) = grad(F.head(Nx));
+            Vpc.col(i) = grad(F.tail(Np));
+        }
+        Hxc.rightCols(Nb).fill(0.0); // these are derivatives wr.t. amounts of conservative components
+        Vpc.rightCols(Nb).fill(0.0); // these are derivatives wr.t. amounts of conservative components
+    }
+
+    auto updateF() -> void
+    {
+        const auto& uconstraints = specs.constraintsChemicalPotentialType();
+        const auto& econstraints = specs.constraintsEquationType();
+
+        const auto& cprops = props.chemicalProps();
+
+        const auto& T  = cprops.temperature();
+        const auto& n  = cprops.speciesAmounts();
+        const auto& mu = cprops.chemicalPotentials();
+
+        const auto RT  = universalGasConstant * T;
+        const auto tau = options.epsilon * options.logarithm_barrier_factor;
+
+        auto sn = F.head(Nn);        // the segment in F where we set the chemical potentials of the species
+        auto sq = F.segment(Nn, Nq); // the segment in F where we set the desired chemical potentials of some substances
+        auto sp = F.tail(Np);        // the segment in F where we set the residuals of the equation constraints
+
+        npps = n(ipps);
+
+        sn = mu/RT; // set the current chemical potentials of species (normalized by RT)
+        sn(ipps).array() -= tau/npps; // add log barrier contribution to pure phase species
+
+        for(auto i = 0; i < Nq; ++i)
+            sq[i] = uconstraints[i].fn(cprops, w)/RT;
+
+        for(auto i = 0; i < Np; ++i)
+            sp[i] = econstraints[i].fn(cprops, w);
+    }
+
+    auto updateFn(Index i) -> void
+    {
+        const auto useIdealModel = useIdealModelForGradWrtVariableN(i); // in case of little or no dependency of the thermochemical properties on n[i] (i.e., chemical props should have very little dependency in general on tiny species amounts)
+        const auto inpw = i; // the index of n[i] in the extended vector (n, p, w)
+        autodiff::seed(n[i]);
+        props.update(n, p, w, useIdealModel, inpw);
+        updateF();
+        autodiff::unseed(n[i]);
+    }
+
+    auto updateFq(Index i) -> void
+    {
+        const auto useIdealModel = useIdealModelForGradWrtVariableQ(i); // in case of little or no dependency of the thermochemical properties on q[i] (i.e., chemical props has no dependency on amounts of implicit titrants such as [H+] when fixing pH)
+        const auto inpw = -1; // the index of q[i] in the extended vector (n, p, w) is not defined
+        autodiff::seed(q[i]);
+        props.update(n, p, w, useIdealModel, inpw);
+        updateF();
+        autodiff::unseed(q[i]);
+    }
+
+    auto updateFp(Index i) -> void
+    {
+        assert(i < Np);
+        const auto useIdealModel = useIdealModelForGradWrtVariableP(i); // in case of little or no dependency of the thermochemical properties on p[i] (e.g., chemical props has no dependency on the amount of a titrant, but it has on temperature and pressure if one of these are unknown p variables)
+        const auto inpw = Nn + i; // the index of p[i] in the extended vector (n, p, w)
+        autodiff::seed(p[i]);
+        props.update(n, p, w, useIdealModel, inpw);
+        updateF();
+        autodiff::unseed(p[i]);
+    }
+
+    auto updateFw(Index i) -> void
+    {
+        assert(i < Nw);
+        const auto useIdealModel = useIdealModelForGradWrtVariableW(i); // in case of little or no dependency of the thermochemical properties on w[i] (e.g., chemical props has no dependency on the designated value of pH, but it has on given values of temperature and pressure)
+        const auto inpw = Nn + Np + i; // the index of w[i] in the extended vector (n, p, w)
+        autodiff::seed(w[i]);
+        props.update(n, p, w, useIdealModel, inpw);
+        updateF();
+        autodiff::unseed(w[i]);
+    }
+
+    auto updateFx(Index i) -> void
+    {
+        assert(i < Nx);
+        if(i < Nn) updateFn(i);
+        else updateFq(i);
+    }
+
+    auto getGibbsEnergy() -> real
+    {
         const auto& cprops = props.chemicalProps();
         const auto& T = cprops.temperature();
         const auto& n = cprops.speciesAmounts();
@@ -241,116 +331,91 @@ struct EquilibriumSetup::Impl
         return (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
     }
 
-    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
+    auto getGibbsGradX() -> VectorXdConstRef
     {
-        updateChemicalProps(x, p, w);
-
-        const auto Nn = system.species().size();
-        const auto Nq = numControlVariablesTypeQ(specs);
-
-        const auto& cprops = props.chemicalProps();
-        const auto& T = cprops.temperature();
-        const auto& n = cprops.speciesAmounts();
-        const auto& u = cprops.chemicalPotentials();
-
-        const auto RT = universalGasConstant * T;
-        const auto tau = options.epsilon * options.logarithm_barrier_factor;
-
-        auto gn = gx.head(Nn); // where we set the chemical potentials of the species
-        auto gq = gx.tail(Nq); // where we set the desired chemical potentials of some substances
-
-        gn = u/RT; // set the current chemical potentials of species (normalized by RT)
-        gn(ipps).array() -= tau/npps; // add log barrier contribution to pure phase species
-
-        const auto& uconstraints = specs.constraintsChemicalPotentialType();
-
-        for(auto i = 0; i < Nq; ++i)
-            gq[i] = uconstraints[i].fn(cprops, w)/RT;
-
         return gx;
     }
 
-    auto evalObjectiveHessianX(VectorXrConstRef xconst, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+    auto getGibbsHessianX() -> MatrixXdConstRef
     {
-        x = xconst;
-        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-        {
-            return evalObjectiveGradX(x, p, w);
-        };
-        Hxx = jacobian(fn, wrt(x), at(x, p, w));
         return Hxx;
     }
 
-    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef pconst, VectorXrConstRef w) -> MatrixXdConstRef
+    auto getGibbsHessianP() -> MatrixXdConstRef
     {
-        p = pconst;
-        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-        {
-            return evalObjectiveGradX(x, p, w);
-        };
-        Hxp = jacobian(fn, wrt(p), at(x, p, w));
         return Hxp;
     }
 
-    auto evalObjectiveHessianW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef wconst) -> MatrixXdConstRef
+    auto getGibbsHessianC() -> MatrixXdConstRef
     {
-        w = wconst;
-        auto fn = [this](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-        {
-            return evalObjectiveGradX(x, p, w);
-        };
-        Hxc.leftCols(w.size()) = jacobian(fn, wrt(w), at(x, p, w));
-        Hxc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components
         return Hxc;
     }
 
-    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
+    auto getConstraintResiduals() -> VectorXdConstRef
     {
-        updateChemicalProps(x, p, w);
-
-        const auto Np = numControlVariablesTypeP(specs);
-
-        const auto& econstraints = specs.constraintsEquationType();
-        const auto& cprops = props.chemicalProps();
-
-        for(auto i = 0; i < Np; ++i)
-            vp[i] = econstraints[i].fn(cprops, w);
-
         return vp;
     }
 
-    auto evalEquationConstraintsGradX(VectorXrConstRef xconst, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+    auto getConstraintResidualsGradX() -> MatrixXdConstRef
     {
-        x = xconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-        {
-            return evalEquationConstraints(x, p, w);
-        };
-        Vpx = jacobian(fn, wrt(x), at(x, p, w));
         return Vpx;
     }
 
-    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef pconst, VectorXrConstRef w) -> MatrixXdConstRef
+    auto getConstraintResidualsGradP() -> MatrixXdConstRef
     {
-        p = pconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-        {
-            return evalEquationConstraints(x, p, w);
-        };
-        Vpp = jacobian(fn, wrt(p), at(x, p, w));
         return Vpp;
     }
 
-    auto evalEquationConstraintsGradW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef wconst) -> MatrixXdConstRef
+    auto getConstraintResidualsGradC() -> MatrixXdConstRef
     {
-        w = wconst;
-        auto fn = [&](VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-        {
-            return evalEquationConstraints(x, p, w);
-        };
-        Vpc.leftCols(dims.Nw) = jacobian(fn, wrt(w), at(x, p, w));
-        Vpc.rightCols(dims.Nb).setZero(); // these are derivatives wrt amounts of components, which are zero
         return Vpc;
+    }
+
+    auto usingPartiallyExactDerivatives() -> bool
+    {
+        return options.hessian == GibbsHessian::PartiallyExact;
+    }
+
+    auto usingDiagonalApproxDerivatives() -> bool
+    {
+        return options.hessian == GibbsHessian::ApproxDiagonal;
+    }
+
+    auto useIdealModelForGradWrtVariableN(Index i) -> bool
+    {
+        switch(options.hessian)
+        {
+        case GibbsHessian::Exact:          return false;
+        case GibbsHessian::Approx:         return true;
+        case GibbsHessian::ApproxDiagonal: return true;
+        case GibbsHessian::PartiallyExact: return !isbasicvar[i];
+        default:                           return !isbasicvar[i];
+        }
+    }
+
+    auto useIdealModelForGradWrtVariableQ(Index i) -> bool
+    {
+        // Note: This should always be true because chemical properties do not
+        // depend on the q variables (amounts of implicit titrants).
+        return true;
+    }
+
+    auto useIdealModelForGradWrtVariableP(Index i) -> bool
+    {
+        // TODO: Improve efficiency by using ideal thermodynamic models when
+        // computing derivatives with respect to some variables in p that play
+        // no role in chemical properties of the system. For example, amounts
+        // of explicit titrants.
+        return false;
+    }
+
+    auto useIdealModelForGradWrtVariableW(Index i) -> bool
+    {
+        // TODO: Improve efficiency by using ideal thermodynamic models when
+        // computing derivatives with respect to some variables in w that play
+        // no role in chemical properties of the system. For example, pH input
+        // value.
+        return false;
     }
 };
 
@@ -406,49 +471,79 @@ auto EquilibriumSetup::assembleUpperBoundsVector(const EquilibriumRestrictions& 
     return pimpl->assembleUpperBoundsVector(restrictions, state0);
 }
 
-auto EquilibriumSetup::evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> real
+auto EquilibriumSetup::update(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> void
 {
-    return pimpl->evalObjectiveValue(x, p, w);
+    pimpl->update(x, p, w);
 }
 
-auto EquilibriumSetup::evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
+auto EquilibriumSetup::updateGradX(VectorXlConstRef ibasicvars) -> void
 {
-    return pimpl->evalObjectiveGradX(x, p, w);
+    pimpl->updateGradX(ibasicvars);
 }
 
-auto EquilibriumSetup::evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+auto EquilibriumSetup::updateGradP() -> void
 {
-    return pimpl->evalObjectiveHessianX(x, p, w);
+    pimpl->updateGradP();
 }
 
-auto EquilibriumSetup::evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+auto EquilibriumSetup::updateGradW() -> void
 {
-    return pimpl->evalObjectiveHessianP(x, p, w);
+    pimpl->updateGradW();
 }
 
-auto EquilibriumSetup::evalObjectiveHessianW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+auto EquilibriumSetup::getGibbsEnergy() -> real
 {
-    return pimpl->evalObjectiveHessianW(x, p, w);
+    return pimpl->getGibbsEnergy();
 }
 
-auto EquilibriumSetup::evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef
+auto EquilibriumSetup::getGibbsGradX() -> VectorXdConstRef
 {
-    return pimpl->evalEquationConstraints(x, p, w);
+    return pimpl->getGibbsGradX();
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+auto EquilibriumSetup::getGibbsHessianX() -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradX(x, p, w);
+    return pimpl->getGibbsHessianX();
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+auto EquilibriumSetup::getGibbsHessianP() -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradP(x, p, w);
+    return pimpl->getGibbsHessianP();
 }
 
-auto EquilibriumSetup::evalEquationConstraintsGradW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef
+auto EquilibriumSetup::getGibbsHessianC() -> MatrixXdConstRef
 {
-    return pimpl->evalEquationConstraintsGradW(x, p, w);
+    return pimpl->getGibbsHessianC();
+}
+
+auto EquilibriumSetup::getConstraintResiduals() -> MatrixXdConstRef
+{
+    return pimpl->getConstraintResiduals();
+}
+
+auto EquilibriumSetup::getConstraintResidualsGradX() -> MatrixXdConstRef
+{
+    return pimpl->getConstraintResidualsGradX();
+}
+
+auto EquilibriumSetup::getConstraintResidualsGradP() -> MatrixXdConstRef
+{
+    return pimpl->getConstraintResidualsGradP();
+}
+
+auto EquilibriumSetup::getConstraintResidualsGradC() -> MatrixXdConstRef
+{
+    return pimpl->getConstraintResidualsGradC();
+}
+
+auto EquilibriumSetup::usingPartiallyExactDerivatives() -> bool
+{
+    return pimpl->usingPartiallyExactDerivatives();
+}
+
+auto EquilibriumSetup::usingDiagonalApproxDerivatives() -> bool
+{
+    return pimpl->usingDiagonalApproxDerivatives();
 }
 
 auto EquilibriumSetup::assembleChemicalPropsJacobianBegin() -> void

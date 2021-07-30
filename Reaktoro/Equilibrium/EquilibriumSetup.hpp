@@ -34,7 +34,7 @@ class EquilibriumRestrictions;
 class EquilibriumSpecs;
 struct EquilibriumOptions;
 
-/// The class used to construct the optimization problem for a chemical equilibrium calculation.
+/// Used to construct the optimization problem for a chemical equilibrium calculation.
 class EquilibriumSetup
 {
 public:
@@ -75,59 +75,54 @@ public:
     /// @param state0 The initial chemical state of the system.
     auto assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd;
 
-    /// Evaluate the objective function of the chemical equilibrium problem.
+    /// Update the chemical potentials and residuals of the equilibrium constraints.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
     /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
     /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalObjectiveValue(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> real;
+    auto update(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> void;
 
-    /// Evaluate the gradient of the objective function of the chemical equilibrium problem.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalObjectiveGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef;
+    /// Update the derivatives of the chemical potentials and residuals of the equilibrium constraints with respect to *x*.
+    /// @param ibasicvars The indices of the current basic variables in *x*.
+    auto updateGradX(VectorXlConstRef ibasicvars) -> void;
 
-    /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p x.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalObjectiveHessianX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef;
+    /// Update the derivatives of the chemical potentials and residuals of the equilibrium constraints with respect to *p*.
+    auto updateGradP() -> void;
 
-    /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p p.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalObjectiveHessianP(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef;
+    /// Update the derivatives of the chemical potentials and residuals of the equilibrium constraints with respect to *w*.
+    auto updateGradW() -> void;
 
-    /// Evaluate the Hessian of the objective function of the chemical equilibrium problem with respect to @p x and @p w.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalObjectiveHessianW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef;
+    /// Get the updated Gibbs energy value.
+    auto getGibbsEnergy() -> real;
 
-    /// Evaluate the equation constraints of the chemical equilibrium problem.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalEquationConstraints(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> VectorXrConstRef;
+    /// Get the updated gradient vector of the Gibbs energy with respect to *x*.
+    auto getGibbsGradX() -> VectorXdConstRef;
 
-    /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p x.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalEquationConstraintsGradX(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef;
+    /// Get the updated Hessian matrix of the Gibbs energy with respect to *x*.
+    auto getGibbsHessianX() -> MatrixXdConstRef;
 
-    /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p p.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalEquationConstraintsGradP(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef;
+    /// Get the updated Hessian matrix of the Gibbs energy with respect to *p*.
+    auto getGibbsHessianP() -> MatrixXdConstRef;
 
-    /// Evaluate the Jacobian of the equation constraints of the chemical equilibrium problem with respect to @p w.
-    /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
-    /// @param p The values of the *p* control variables (e.g., temperature, pressure, and/or amounts of explicit titrants).
-    /// @param w The input variables *w* in the chemical equilibrium problem.
-    auto evalEquationConstraintsGradW(VectorXrConstRef x, VectorXrConstRef p, VectorXrConstRef w) -> MatrixXdConstRef;
+    /// Get the updated Hessian matrix of the Gibbs energy with respect to *c*.
+    auto getGibbsHessianC() -> MatrixXdConstRef;
+
+    /// Get the updated residuals of the equilibrium constraints.
+    auto getConstraintResiduals() -> MatrixXdConstRef;
+
+    /// Get the updated Jacobian of the equilibrium constraints with respec to *x*.
+    auto getConstraintResidualsGradX() -> MatrixXdConstRef;
+
+    /// Get the updated Jacobian of the equilibrium constraints with respec to *p*.
+    auto getConstraintResidualsGradP() -> MatrixXdConstRef;
+
+    /// Get the updated Jacobian of the equilibrium constraints with respec to *c*.
+    auto getConstraintResidualsGradC() -> MatrixXdConstRef;
+
+    /// Return true if partially exact derivatives are adopted for the Hessian matrix *Hxx*.
+    auto usingPartiallyExactDerivatives() -> bool;
+
+    /// Return true if a diagonal structure is adopted for the Hessian matrix *Hxx*.
+    auto usingDiagonalApproxDerivatives() -> bool;
 
     /// Enable recording of derivatives of the chemical properties with respect
     /// to *(n, p, w)* to contruct its full Jacobian matrix.
