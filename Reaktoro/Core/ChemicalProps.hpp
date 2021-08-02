@@ -123,6 +123,18 @@ public:
     /// @param species The name or index of the species in the system.
     auto moleFraction(StringOrIndex species) const -> real;
 
+    /// Return the concentration (activity divided by activity coefficient) of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto concentration(StringOrIndex species) const -> real;
+
+    /// Return the lg concentration (activity divided by activity coefficient) of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto lgConcentration(StringOrIndex species) const -> real;
+
+    /// Return the ln concentration (activity divided by activity coefficient) of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto lnConcentration(StringOrIndex species) const -> real;
+
     /// Return the activity coefficient of a species in the system.
     /// @param species The name or index of the species in the system.
     auto activityCoefficient(StringOrIndex species) const -> real;
@@ -202,6 +214,9 @@ public:
 
     /// Return the mole fractions of the species in the system.
     auto moleFractions() const -> ArrayXrConstRef;
+
+    /// Return the ln concentrations (activity divided by activity coefficient) of the species in the system.
+    auto lnConcentrations() const -> ArrayXr;
 
     /// Return the ln activity coefficients of the species in the system.
     auto lnActivityCoefficients() const -> ArrayXrConstRef;

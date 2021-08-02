@@ -238,6 +238,24 @@ auto ChemicalProps::moleFraction(StringOrIndex species) const -> real
     return x[ispecies];
 }
 
+auto ChemicalProps::concentration(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return exp(ln_a[ispecies] - ln_g[ispecies]);
+}
+
+auto ChemicalProps::lgConcentration(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return (ln_a[ispecies] - ln_g[ispecies])/ln10;
+}
+
+auto ChemicalProps::lnConcentration(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return ln_a[ispecies] - ln_g[ispecies];
+}
+
 auto ChemicalProps::activityCoefficient(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
@@ -369,6 +387,11 @@ auto ChemicalProps::speciesMasses() const -> ArrayXr
 auto ChemicalProps::moleFractions() const -> ArrayXrConstRef
 {
     return x;
+}
+
+auto ChemicalProps::lnConcentrations() const -> ArrayXr
+{
+    return ln_a - ln_g;
 }
 
 auto ChemicalProps::lnActivityCoefficients() const -> ArrayXrConstRef
