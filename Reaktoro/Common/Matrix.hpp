@@ -62,7 +62,7 @@ using VectorXrConstMap        = Eigen::Map<const VectorXr>;                     
 using VectorXrStridedRef      = Eigen::Ref<VectorXr, 0, Eigen::InnerStride<>>;       ///< Convenient alias to Eigen type.
 using VectorXrStridedConstRef = Eigen::Ref<const VectorXr, 0, Eigen::InnerStride<>>; ///< Convenient alias to Eigen type.
 
-using VectorXl                = VectorX<long>;                                       ///< Convenient alias to Eigen type.
+using VectorXl                = VectorX<Eigen::Index>;                               ///< Convenient alias to Eigen type.
 using VectorXlRef             = Eigen::Ref<VectorXl>;                                ///< Convenient alias to Eigen type.
 using VectorXlConstRef        = Eigen::Ref<const VectorXl>;                          ///< Convenient alias to Eigen type.
 using VectorXlMap             = Eigen::Map<VectorXl>;                                ///< Convenient alias to Eigen type.
@@ -91,7 +91,7 @@ using ArrayXrConstMap         = Eigen::Map<const ArrayXr>;                      
 using ArrayXrStridedRef       = Eigen::Ref<ArrayXr, 0, Eigen::InnerStride<>>;        ///< Convenient alias to Eigen type.
 using ArrayXrStridedConstRef  = Eigen::Ref<const ArrayXr, 0, Eigen::InnerStride<>>;  ///< Convenient alias to Eigen type.
 
-using ArrayXl                 = ArrayX<long>;                                        ///< Convenient alias to Eigen type.
+using ArrayXl                 = ArrayX<Eigen::Index>;                                ///< Convenient alias to Eigen type.
 using ArrayXlRef              = Eigen::Ref<ArrayXl>;                                 ///< Convenient alias to Eigen type.
 using ArrayXlConstRef         = Eigen::Ref<const ArrayXl>;                           ///< Convenient alias to Eigen type.
 using ArrayXlMap              = Eigen::Map<ArrayXl>;                                 ///< Convenient alias to Eigen type.
@@ -149,7 +149,7 @@ using RowVectorXrConstRef        = Eigen::Ref<const RowVectorXr>; ///< Convenien
 using RowVectorXrMap             = Eigen::Map<RowVectorXr>;       ///< Convenient alias to Eigen type.
 using RowVectorXrConstMap        = Eigen::Map<const RowVectorXr>; ///< Convenient alias to Eigen type.
 
-using RowVectorXl                = RowVectorX<long>;              ///< Convenient alias to Eigen type.
+using RowVectorXl                = RowVectorX<Eigen::Index>;      ///< Convenient alias to Eigen type.
 using RowVectorXlRef             = Eigen::Ref<RowVectorXl>;       ///< Convenient alias to Eigen type.
 using RowVectorXlConstRef        = Eigen::Ref<const RowVectorXl>; ///< Convenient alias to Eigen type.
 using RowVectorXlMap             = Eigen::Map<RowVectorXl>;       ///< Convenient alias to Eigen type.
