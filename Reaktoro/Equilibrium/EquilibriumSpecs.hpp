@@ -29,31 +29,74 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProps;
 
-/// The details of an equation constraint in a chemical equilibrium calculation.
-struct EquilibriumConstraintEquation
+/// Used to define a *q* control variable in a chemical equilibrium problem.
+/// *q* control variables are used to specify the chemical potential of a
+/// species at equilibrium. Its introduction in a chemical equilibrium problem
+/// implies that the system is open to a titrant with **same** formula of the
+/// species whose chemical potential needs to be prescribed. A *q* control
+/// variable can also be used to specify the activity of a species. It can also
+/// be used to precribe pH. This can be achieved by converting the given
+/// activity value (or pH value) to a chemical potential value of the species.
+struct ControlVariableQ
 {
-    /// The unique name of this equation constraint.
-    String name;
-
-    /// The function defining the equation to be satisfied at chemical equilibrium.
-    /// @param props The chemical properties of the system.
+    /// The signature of functions that evaluate the prescribed chemical potential of a substance.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
     /// @param w The input variables in the chemical equilibrium calculation.
-    Fn<real(const ChemicalProps& props, VectorXrConstRef w)> fn;
-};
+    using ChemicalPotentialFn = Fn<real(const ChemicalProps& props, VectorXrConstRef w)>;
 
-/// The details of a chemical potential constraint in a chemical equilibrium calculation.
-struct EquilibriumConstraintChemicalPotential
-{
-    /// The unique name of this chemical potential constraint.
+    /// The unique name for this *q* control variable (required).
     String name;
 
-    /// The chemical formula of the substance for which the chemical potential is constrained.
+    /// The chemical formula of the substance associated to this *q* control variable (required).
     ChemicalFormula substance;
 
-    /// The function that evaluates the constrained chemical potential value.
-    /// @param props The chemical properties of the system.
+    /// The unique identifier for the chemical potential constraint associated to this *q* control variable (required).
+    String id;
+
+    /// The chemical potential function associated to this *q* control variable (required).
+    ChemicalPotentialFn fn;
+};
+
+/// Used to define a *p* control variable in a chemical equilibrium problem.
+/// *p* control variables are more versatile than *q* control variables. They
+/// can be used to designate temperature and/or pressure as unknowns. They can
+/// be used to represent the amounts of substances (titrants) for which the
+/// chemical system is open to. And they can also be used to specify that the
+/// chemical potential of a species or a model parameter are unknowns to be
+/// resolved along with all others.
+struct ControlVariableP
+{
+    /// The signature of functions that evaluate the chemical potential of a species in terms of a *p* control variable.
+    /// @param props The current chemical properties of the system during the equilibrium calculation.
+    /// @param pk The current value of the corresponding *p* control variable during the equilibrium calculation.
+    using ChemicalPotentialFn = Fn<real(const ChemicalProps& props, const real& pk)>;
+
+    /// The unique name for this *p* control variable (required).
+    String name;
+
+    /// The chemical formula of the substance associated to this *p* control variable (optional).
+    ChemicalFormula substance;
+
+    /// The index of the species whose chemical potential is unknown and defined in terms of this *p* control variable (optional).
+    Index ispecies = Index(-1);
+
+    /// The function that introduces association between this *p* control variable and the chemical potential of a species (optional).
+    ChemicalPotentialFn fn;
+};
+
+/// Used to define equation constraints in a chemical equilibrium problem.
+struct ConstraintEquation
+{
+    /// The signature of functions that evaluate the residual of the equation constraint.
+    /// @param props The current chemical properties of the system during the equilibrium calculation.
     /// @param w The input variables in the chemical equilibrium calculation.
-    Fn<real(const ChemicalProps& props, VectorXrConstRef w)> fn;
+    using ConstraintFn = Fn<real(const ChemicalProps& props, VectorXrConstRef w)>;
+
+    /// The unique identifier for this equation constraint.
+    String id;
+
+    /// The function defining the equation to be satisfied at chemical equilibrium.
+    ConstraintFn fn;
 };
 
 /// The class used to define conditions to be satisfied at chemical equilibrium.
@@ -383,6 +426,27 @@ public:
 
     //=================================================================================================
     //
+    // METHODS TO SPECIFY ADDITIONAL UNKNOWNS
+    //
+    //=================================================================================================
+
+    /// Specify that the chemical system is open to a titrant substance and its amount is unknown.
+    auto addUnknownTitrantAmount(const ChemicalFormula& substance) -> void;
+
+    /// Specify that the chemical potential of a species is unknown at equilibrium and must be computed.
+    auto addUnknownChemicalPotential(const String& species) -> void;
+
+    /// Specify that the standard chemical potential of a species is unknown at equilibrium and must be computed.
+    auto addUnknownStandardChemicalPotential(const String& species) -> void;
+
+    /// Specify that the activity of a species is unknown at equilibrium and must be computed.
+    auto addUnknownActivity(const String& species) -> void;
+
+    /// Specify that the activity coefficient of a species is unknown at equilibrium and must be computed.
+    auto addUnknownActivityCoefficient(const String& species) -> void;
+
+    //=================================================================================================
+    //
     // METHODS TO GET THE NUMBER OF INTRODUCED CONSTRAINTS, INPUT VARIABLES, AND CONTROL VARIABLES
     //
     //=================================================================================================
@@ -413,12 +477,6 @@ public:
 
     /// Return the number of all introduced equation and chemical potential constraints.
     auto numConstraints() const -> Index;
-
-    /// Return the number of all introduced constraints of equation type.
-    auto numConstraintsEquationType() const -> Index;
-
-    /// Return the number of all introduced constraints of fixed chemical potential type.
-    auto numConstraintsChemicalPotentialType() const -> Index;
 
     //=================================================================================================
     //
@@ -453,23 +511,20 @@ public:
     /// Return the names of all introduced equation and chemical potential constraints.
     auto namesConstraints() const -> Strings;
 
-    /// Return the names of all introduced constraints of equation type.
-    auto namesConstraintsEquationType() const -> Strings;
-
-    /// Return the names of all introduced constraints of fixed chemical potential type.
-    auto namesConstraintsChemicalPotentialType() const -> Strings;
-
     //=================================================================================================
     //
-    // METHODS TO ADD CONSTRAINTS AND INPUT VARIABLES
+    // METHODS TO ADD CONTROL VARIABLES, CONSTRAINTS, AND INPUT VARIABLES
     //
     //=================================================================================================
+
+    /// Add a *q* control variable in the specification of the chemical equilibrium problem.
+    auto addControlVariableQ(const ControlVariableQ& qvar) -> void;
+
+    /// Add a *p* control variable in the specification of the chemical equilibrium problem.
+    auto addControlVariableP(const ControlVariableP& pvar) -> void;
 
     /// Add a new equation constraint to be satisfied at chemical equilibrium.
-    auto addConstraint(const EquilibriumConstraintEquation& constraint) -> void;
-
-    /// Add a new chemical potential constraint to be satisfied at chemical equilibrium.
-    auto addConstraint(const EquilibriumConstraintChemicalPotential& constraint) -> void;
+    auto addConstraint(const ConstraintEquation& constraint) -> void;
 
     /// Add a new input variable for the chemical equilibrium problem with name @p var.
     auto addInput(const String& var) -> Index;
@@ -493,7 +548,7 @@ public:
     auto params() const -> const Params&;
 
     /// Return the indices of the model parameters among the input variables.
-    auto indicesParams() const -> const Vec<Index>&;
+    auto indicesParams() const -> const Vec<Index>&; // TODO: Rename to indicesInputParams because there should be another method called indicesUnknownParams.
 
     /// Return true if temperature is unknown in the chemical equilibrium specifications.
     auto isTemperatureUnknown() const -> bool;
@@ -507,6 +562,12 @@ public:
     /// The index of pressure among the *p* control variables or `Index(-1)` if it is a given input.
     auto indexControlVariablePressure() const -> Index;
 
+    /// Return the *q* control variables in the chemical equilibrium specifications.
+    auto controlVariablesQ() const -> const Vec<ControlVariableQ>&;
+
+    /// Return the *q* control variables in the chemical equilibrium specifications.
+    auto controlVariablesP() const -> const Vec<ControlVariableP>&;
+
     /// Return the chemical formulas of the explicit and implicit titrant substances.
     auto titrants() const -> Vec<ChemicalFormula>;
 
@@ -517,10 +578,7 @@ public:
     auto titrantsImplicit() const -> Vec<ChemicalFormula>;
 
     /// Return the equation constraints to be satisfied at chemical equilibrium.
-    auto constraintsEquationType() const -> Vec<EquilibriumConstraintEquation> const&;
-
-    /// Return the chemical potential constraints to be satisfied at chemical equilibrium.
-    auto constraintsChemicalPotentialType() const -> Vec<EquilibriumConstraintChemicalPotential> const&;
+    auto constraintsEquationType() const -> Vec<ConstraintEquation> const&;
 
 private:
     /// The chemical system associated with the equilibrium conditions.
@@ -541,17 +599,25 @@ private:
     /// The boolean flag that indicates whether pressure is unknown.
     bool unknownP = true;
 
+    /// The *q* control variables in the chemical equilibrium problem.
+    Vec<ControlVariableQ> qvars;
+
+    /// The *p* control variables in the chemical equilibrium problem.
+    Vec<ControlVariableP> pvars;
+
+    /// The equation constraints to be satisfied at chemical equilibrium.
+    Vec<ConstraintEquation> econstraints;
+
+    // ----- AUXILIARY DATA MEMBERS ----- //
+
     /// The chemical formulas of the explicit titrants whose amounts are unknown.
     Vec<ChemicalFormula> titrants_explicit;
 
     /// The chemical formulas of the implicit titrants whose amounts are unknown.
     Vec<ChemicalFormula> titrants_implicit;
 
-    /// The equation constraints to be satisfied at chemical equilibrium.
-    Vec<EquilibriumConstraintEquation> econstraints;
-
-    /// The chemical potential constraints to be satisfied at chemical equilibrium.
-    Vec<EquilibriumConstraintChemicalPotential> uconstraints;
+    /// The names of the species whose chemical potentials are unknown.
+    Strings species_with_unknown_chemical_potentials;
 
 private:
     /// Throw an error if a given titrant has already been registered explicitly or implicitly.
