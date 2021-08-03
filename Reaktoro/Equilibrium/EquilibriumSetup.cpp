@@ -74,6 +74,8 @@ struct EquilibriumSetup::Impl
     MatrixXd Vpp;  ///< The Jacobian of vp with respect to p.
     MatrixXd Vpc;  ///< The Jacobian of vp with respect to c = (w, b).
 
+    ArrayXr mu;   ///< The auxiliary vector of chemical potentials of the species.
+
     VectorXl isbasicvar; /// The bitmap that indicates which variables in x = (n, q) are currently basic variables.
 
     Indices ipps;  ///< The indices of the pure phase species (i.e., species composing single-phase species, whose chemical potentials do not depend on composition)
@@ -109,6 +111,7 @@ struct EquilibriumSetup::Impl
         Vpx.resize(Np, Nx);
         Vpp.resize(Np, Np);
         Vpc.resize(Np, Nc);
+        mu.resize(Nn);
 
         isbasicvar.resize(Nx);
 
@@ -197,8 +200,8 @@ struct EquilibriumSetup::Impl
 
         props.update(n, p, w);
 
-        updateGibbsEnergy();
         updateF();
+        updateGibbsEnergy(); // let this after updateF because of update in mu performed by updateF
         gx = F.head(Nx);
         vp = F.tail(Np);
     }
@@ -245,30 +248,37 @@ struct EquilibriumSetup::Impl
 
     auto updateF() -> void
     {
-        const auto& uconstraints = specs.constraintsChemicalPotentialType();
+        const auto& qvars = specs.controlVariablesQ();
+        const auto& pvars = specs.controlVariablesP();
+
         const auto& econstraints = specs.constraintsEquationType();
 
         const auto& cprops = props.chemicalProps();
 
-        const auto& T  = cprops.temperature();
-        const auto& n  = cprops.speciesAmounts();
-        const auto& mu = cprops.chemicalPotentials();
+        const auto& T = cprops.temperature();
+        const auto& n = cprops.speciesAmounts();
+
+        // Update the vector of species chemical potentials in case there are p variables associated to them
+        mu = cprops.chemicalPotentials();
+        for(auto i = 0; i < Np; ++i)
+            if(pvars[i].ispecies != Index(-1))
+                mu[pvars[i].ispecies] = pvars[i].fn(cprops, p[i]);
 
         const auto RT  = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
 
-        auto sn = F.head(Nn);        // the segment in F where we set the chemical potentials of the species
-        auto sq = F.segment(Nn, Nq); // the segment in F where we set the desired chemical potentials of some substances
-        auto sp = F.tail(Np);        // the segment in F where we set the residuals of the equation constraints
+        auto gn = F.head(Nn);        // the segment in F where we set the chemical potentials of the species
+        auto gq = F.segment(Nn, Nq); // the segment in F where we set the desired chemical potentials of some substances
+        auto vp = F.tail(Np);        // the segment in F where we set the residuals of the equation constraints
 
-        sn = mu/RT; // set the current chemical potentials of species (normalized by RT)
-        sn(ipps).array() -= tau/n(ipps); // add log barrier contribution to pure phase species
+        gn = mu/RT; // set the current chemical potentials of species (normalized by RT)
+        gn(ipps).array() -= tau/n(ipps); // add log barrier contribution to pure phase species
 
         for(auto i = 0; i < Nq; ++i)
-            sq[i] = uconstraints[i].fn(cprops, w)/RT;
+            gq[i] = qvars[i].fn(cprops, w)/RT;
 
         for(auto i = 0; i < Np; ++i)
-            sp[i] = econstraints[i].fn(cprops, w);
+            vp[i] = econstraints[i].fn(cprops, w);
     }
 
     auto updateFn(Index i) -> void
@@ -325,11 +335,10 @@ struct EquilibriumSetup::Impl
         const auto& cprops = props.chemicalProps();
         const auto& T = cprops.temperature();
         const auto& n = cprops.speciesAmounts();
-        const auto& u = cprops.chemicalPotentials();
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
         const auto barrier = -tau * n(ipps).log().sum();
-        f = (n * u).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
+        f = (n * mu).sum()/RT + barrier; // the current Gibbs energy of the system (normalized by RT)
     }
 
     auto getGibbsEnergy() -> real

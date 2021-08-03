@@ -395,8 +395,10 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             fn = u/RT - tau/n;
 
-            fq[0] = specs.constraintsChemicalPotentialType()[0].fn(props, w)/RT; // the pH constraint
-            fq[1] = specs.constraintsChemicalPotentialType()[1].fn(props, w)/RT; // the pE constraint
+            auto qvars = specs.controlVariablesQ();
+
+            fq[0] = qvars[0].fn(props, w)/RT; // the pH constraint
+            fq[1] = qvars[1].fn(props, w)/RT; // the pE constraint
 
             CHECK( fx.isApprox(setup.getGibbsGradX()) );
 
@@ -464,8 +466,10 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 gn = u/RT - tau/n.array();
 
-                gq[0] = specs.constraintsChemicalPotentialType()[0].fn(auxprops, w)/RT; // the pH constraint
-                gq[1] = specs.constraintsChemicalPotentialType()[1].fn(auxprops, w)/RT; // the pE constraint
+                auto qvars = specs.controlVariablesQ();
+
+                gq[0] = qvars[0].fn(auxprops, w)/RT; // the pH constraint
+                gq[1] = qvars[1].fn(auxprops, w)/RT; // the pE constraint
 
                 return g;
             };
