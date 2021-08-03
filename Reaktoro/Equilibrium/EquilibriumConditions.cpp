@@ -133,7 +133,7 @@ auto EquilibriumConditions::chemicalPotential(String substance, real value, Stri
 
 auto EquilibriumConditions::lnActivity(String species, real value) -> void
 {
-    const auto pid = "lnActivity[" + species + "]";
+    const auto pid = "ln(a[" + species + "])";
     throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
     const auto idx = index(m_inputs, pid);
     m_inputs_values[idx] = value;
@@ -141,7 +141,7 @@ auto EquilibriumConditions::lnActivity(String species, real value) -> void
 
 auto EquilibriumConditions::lgActivity(String species, real value) -> void
 {
-    const auto pid = "lnActivity[" + species + "]";
+    const auto pid = "ln(a[" + species + "])";
     throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
     const auto idx = index(m_inputs, pid);
     m_inputs_values[idx] = value * ln10;
@@ -149,7 +149,7 @@ auto EquilibriumConditions::lgActivity(String species, real value) -> void
 
 auto EquilibriumConditions::activity(String species, real value) -> void
 {
-    const auto pid = "lnActivity[" + species + "]";
+    const auto pid = "ln(a[" + species + "])";
     throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
     const auto idx = index(m_inputs, pid);
     m_inputs_values[idx] = log(value);
