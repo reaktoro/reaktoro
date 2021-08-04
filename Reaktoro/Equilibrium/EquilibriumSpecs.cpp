@@ -25,6 +25,7 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -154,6 +155,112 @@ auto EquilibriumSpecs::entropy() -> void
         return props.entropy() - w[idx];
     };
     addConstraint(constraint);
+}
+
+auto charge() -> void
+{
+    ConstraintEquation constraint;
+    constraint.id = "charge";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.charge() - w[idx];
+    };
+}
+
+auto elementAmount(const StringOrIndex& element) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto elementsymbol = m_system.elements(ielement).symbol();
+    ConstraintEquation constraint;
+    constraint.id = "elementAmount[" + elementsymbol + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.elementAmount(ielement) - w[idx];
+    };
+}
+
+auto elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto elementsymbol = m_system.elements(ielement).symbol();
+    const auto phasename = m_system.phases(iphase).name();
+    ConstraintEquation constraint;
+    constraint.id = "elementAmountInPhase[" + elementsymbol + "][" + phasename + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.elementAmountInPhase(ielement, iphase) - w[idx];
+    };
+}
+
+auto elementMass(const StringOrIndex& element) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto elementsymbol = m_system.elements(ielement).symbol();
+    ConstraintEquation constraint;
+    constraint.id = "elementMass[" + elementsymbol + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.elementMass(ielement) - w[idx];
+    };
+}
+
+auto elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto elementsymbol = m_system.elements(ielement).symbol();
+    const auto phasename = m_system.phases(iphase).name();
+    ConstraintEquation constraint;
+    constraint.id = "elementMassInPhase[" + elementsymbol + "][" + phasename + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.elementMassInPhase(ielement, iphase) - w[idx];
+    };
+}
+
+auto phaseAmount(const StringOrIndex& phase) -> void
+{
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto phasename = m_system.phases(iphase).name();
+    ConstraintEquation constraint;
+    constraint.id = "phaseAmount[" + phasename + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.phaseAmount(iphase) - w[idx];
+    };
+}
+
+auto phaseMass(const StringOrIndex& phase) -> void
+{
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto phasename = m_system.phases(iphase).name();
+    ConstraintEquation constraint;
+    constraint.id = "phaseMass[" + phasename + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.phaseMass(iphase) - w[idx];
+    };
+}
+
+auto phaseVolume(const StringOrIndex& phase) -> void
+{
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto phasename = m_system.phases(iphase).name();
+    ConstraintEquation constraint;
+    constraint.id = "phaseVolume[" + phasename + "]";
+    const auto idx = addInput(constraint.id);
+    constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+    {
+        return props.phaseVolume(iphase) - w[idx];
+    };
 }
 
 //=================================================================================================

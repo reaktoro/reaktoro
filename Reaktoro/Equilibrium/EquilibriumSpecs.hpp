@@ -256,6 +256,39 @@ public:
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto entropy() -> void;
 
+    /// Specify that the **electric charge** at chemical equilibrium is given.
+    auto charge() -> void;
+
+    /// Specify that the **amount of an element** at chemical equilibrium is given.
+    /// @param element The name or index of the element in the chemical system.
+    auto elementAmount(const StringOrIndex& element) -> void;
+
+    /// Specify that the **amount of an element in a phase** at chemical equilibrium is given.
+    /// @param element The name or index of the element in the chemical system.
+    /// @param phase The name or index of the phase in the chemical system.
+    auto elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void;
+
+    /// Specify that the **mass of an element** at chemical equilibrium is given.
+    /// @param element The name or index of the element in the chemical system.
+    auto elementMass(const StringOrIndex& element) -> void;
+
+    /// Specify that the **mass of an element in a phase** at chemical equilibrium is given.
+    /// @param element The name or index of the element in the chemical system.
+    /// @param phase The name or index of the phase in the chemical system.
+    auto elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void;
+
+    /// Specify that the **amount of a phase** at chemical equilibrium is given.
+    /// @param phase The name or index of the phase in the chemical system.
+    auto phaseAmount(const StringOrIndex& phase) -> void;
+
+    /// Specify that the **mass of a phase** at chemical equilibrium is given.
+    /// @param phase The name or index of the phase in the chemical system.
+    auto phaseMass(const StringOrIndex& phase) -> void;
+
+    /// Specify that the **volume of a phase** at chemical equilibrium is given.
+    /// @param phase The name or index of the phase in the chemical system.
+    auto phaseVolume(const StringOrIndex& phase) -> void;
+
     //=================================================================================================
     //
     // METHODS TO SPECIFY CHEMICAL POTENTIAL CONSTRAINTS
