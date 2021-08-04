@@ -537,10 +537,11 @@ auto EquilibriumSpecs::addControlVariableQ(const ControlVariableQ& qvar) -> void
 
 auto EquilibriumSpecs::addControlVariableP(const ControlVariableP& pvar) -> void
 {
+    const auto Nn = m_system.species().size();
     errorif(pvar.name.empty(), "Could not add *p* control variable because its name is empty.");
     errorif(containsfn(pvars, RKT_LAMBDA(x, x.name == pvar.name)), "Could not add *p* control variable with name `", pvar.name, "` because another *p* control variable has already been added with same name.");
-    errorif(pvar.ispecies < pvars.size() && pvar.fn == nullptr, "Could not add *p* control variable with name `", pvar.name, "` because the chemical potential function is missing.");
-    errorif(pvar.ispecies >= pvars.size() && pvar.fn, "Could not add *p* control variable with name `", pvar.name, "` because the index of the species whose chemical potential is unknown is missing.");
+    errorif(pvar.ispecies < Nn && pvar.fn == nullptr, "Could not add *p* control variable with name `", pvar.name, "` because the chemical potential function is missing.");
+    errorif(pvar.ispecies >= Nn && pvar.fn, "Could not add *p* control variable with name `", pvar.name, "` because the index of the species whose chemical potential is unknown is missing (index value is ", pvar.ispecies, ", but number of species is ", Nn, ").");
     if(pvar.substance.str().size())
     {
         throwErrorIfTitrantHasBeenRegistered(pvar.substance);

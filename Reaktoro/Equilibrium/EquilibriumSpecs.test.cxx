@@ -282,4 +282,57 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( qvars[6].fn(props, w) == Approx(u0Mgpp + RT*w[6] * (-ln10)) );
         CHECK( qvars[7].fn(props, w) == Approx(constraintEh ? -F * w[7] : RT*w[7] * (-ln10)) );
     }
+
+    SECTION("Checking when chemical potential unknowns are introduced")
+    {
+        WHEN("temperature and pressure are given inputs")
+        {
+            specs.temperature();
+            specs.pressure();
+
+            specs.addUnknownActivity("Ca++(aq)");
+            specs.addUnknownActivityCoefficient("H+(aq)");
+            specs.addUnknownChemicalPotential("CaCO3(s)");
+            specs.addUnknownStandardChemicalPotential("SiO2(s)");
+
+            CHECK( specs.numControlVariablesP() == 4 ); // one for each addUnknown* call above
+
+            auto pvars = specs.controlVariablesP();
+
+            CHECK( pvars[0].ispecies == system.species().index("Ca++(aq)") );
+            CHECK( pvars[1].ispecies == system.species().index("H+(aq)") );
+            CHECK( pvars[2].ispecies == system.species().index("CaCO3(s)") );
+            CHECK( pvars[3].ispecies == system.species().index("SiO2(s)") );
+
+            CHECK( pvars[0].name == "a[Ca++(aq)]" );
+            CHECK( pvars[1].name == "g[H+(aq)]" );
+            CHECK( pvars[2].name == "u[CaCO3(s)]" );
+            CHECK( pvars[3].name == "u0[SiO2(s)]" );
+
+            const auto pk = 3.7;
+            const auto ln_pk = log(pk);
+
+            const auto T = props.temperature();
+            const auto P = props.pressure();
+            const auto RT = universalGasConstant * T;
+
+            const auto species0 = system.species(pvars[0].ispecies);
+            const auto species1 = system.species(pvars[1].ispecies);
+            const auto species2 = system.species(pvars[2].ispecies);
+            const auto species3 = system.species(pvars[3].ispecies);
+
+            const auto G0_0 = species0.props(T, P).G0;
+            const auto G0_1 = species1.props(T, P).G0;
+            const auto G0_2 = species2.props(T, P).G0;
+            const auto G0_3 = species3.props(T, P).G0;
+
+            const auto ln_c1 = props.lnConcentration(pvars[1].ispecies);
+            const auto ln_a3 = props.lnActivity(pvars[3].ispecies);
+
+            CHECK( pvars[0].fn(props, pk) == Approx(G0_0 + RT*log(pk)) );
+            CHECK( pvars[1].fn(props, pk) == Approx(G0_1 + RT*(log(pk) + ln_c1)) );
+            CHECK( pvars[2].fn(props, pk) == Approx(pk) );
+            CHECK( pvars[3].fn(props, pk) == Approx(pk + RT*ln_a3) );
+        }
+    }
 }
