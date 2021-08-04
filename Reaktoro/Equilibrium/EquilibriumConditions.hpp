@@ -79,6 +79,55 @@ public:
     /// @param unit The unit of the entropy value (must be convertible to J/K)
     auto entropy(real value, String unit="J/K") -> void;
 
+    /// Specify the **electric charge** at chemical equilibrium.
+    /// @param value The electric charge amount in the system
+    /// @param unit The unit of the electric charge value (must be convertible to mol)
+    auto charge(real value, String unit="mol") -> void;
+
+    /// Specify the **amount of an element** at chemical equilibrium.
+    /// @param element The name or index of the element in the system
+    /// @param value The amount of an element in the system
+    /// @param unit The unit of the element amount value (must be convertible to mol)
+    auto elementAmount(const StringOrIndex& element, real value, String unit="mol") -> void;
+
+    /// Specify the **amount of an element in a phase** at chemical equilibrium.
+    /// @param element The name or index of the element in the system
+    /// @param phase The name or index of the phase in the system
+    /// @param value The amount of an element in a phase
+    /// @param unit The unit of the element amount value (must be convertible to mol)
+    auto elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase, real value, String unit="mol") -> void;
+
+    /// Specify the **mass of an element** at chemical equilibrium.
+    /// @param element The name or index of the element in the system
+    /// @param value The mass of an element in the system
+    /// @param unit The unit of the element mass value (must be convertible to kg)
+    auto elementMass(const StringOrIndex& element, real value, String unit="kg") -> void;
+
+    /// Specify the **mass of an element in a phase** at chemical equilibrium.
+    /// @param element The name or index of the element in the system
+    /// @param phase The name or index of the phase in the system
+    /// @param value The mass of an element in a phase
+    /// @param unit The unit of the element mass value (must be convertible to kg)
+    auto elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase, real value, String unit="kg") -> void;
+
+    /// Specify the **amount of a phase** at chemical equilibrium.
+    /// @param phase The name or index of the phase in the system
+    /// @param value The amount of a phase in the system
+    /// @param unit The unit of the phase amount value (must be convertible to mol)
+    auto phaseAmount(const StringOrIndex& phase, real value, String unit="mol") -> void;
+
+    /// Specify the **mass of a phase** at chemical equilibrium.
+    /// @param phase The name or index of the phase in the system
+    /// @param value The mass of a phase in the system
+    /// @param unit The unit of the phase mass value (must be convertible to kg)
+    auto phaseMass(const StringOrIndex& phase, real value, String unit="kg") -> void;
+
+    /// Specify the **volume of a phase** at chemical equilibrium.
+    /// @param phase The name or index of the phase in the system
+    /// @param value The volume of a phase in the system
+    /// @param unit The unit of the phase volume value (must be convertible to m3)
+    auto phaseVolume(const StringOrIndex& phase, real value, String unit="m3") -> void;
+
     //=================================================================================================
     //
     // METHODS TO SPECIFY CHEMICAL POTENTIAL CONDITIONS

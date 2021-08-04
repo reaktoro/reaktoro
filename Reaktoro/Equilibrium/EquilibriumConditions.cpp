@@ -23,6 +23,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -119,6 +120,102 @@ auto EquilibriumConditions::entropy(real value, String unit) -> void
     throwErrorIfNotRegisteredInput(m_inputs, "S", "entropy");
     value = units::convert(value, unit, "J/K");
     const auto idx = index(m_inputs, "S");
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::charge(real value, String unit) -> void
+{
+    throwErrorIfNotRegisteredInput(m_inputs, "charge", "charge");
+    value = units::convert(value, unit, "mol");
+    const auto idx = index(m_inputs, "charge");
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::elementAmount(const StringOrIndex& element, real value, String unit) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto elementsymbol = m_system.element(ielement).symbol();
+    const auto id = "elementAmount[" + elementsymbol + "]";
+    const auto errormsg = "element amount of " + elementsymbol;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "mol");
+    const auto idx = index(m_inputs, id);
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase, real value, String unit) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto elementsymbol = m_system.element(ielement).symbol();
+    const auto phasename = m_system.phase(iphase).name();
+    const auto id = "elementAmountInPhase[" + elementsymbol + "][" + phasename + "]";
+    const auto errormsg = "element amount of " + elementsymbol + " in phase " + phasename;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "mol");
+    const auto idx = index(m_inputs, id);
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::elementMass(const StringOrIndex& element, real value, String unit) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto elementsymbol = m_system.element(ielement).symbol();
+    const auto id = "elementMass[" + elementsymbol + "]";
+    const auto errormsg = "element mass of " + elementsymbol;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "kg");
+    const auto idx = index(m_inputs, id);
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase, real value, String unit) -> void
+{
+    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto elementsymbol = m_system.element(ielement).symbol();
+    const auto phasename = m_system.phase(iphase).name();
+    const auto id = "elementMassInPhase[" + elementsymbol + "][" + phasename + "]";
+    const auto errormsg = "element mass of " + elementsymbol + " in phase " + phasename;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "kg");
+    const auto idx = index(m_inputs, id);
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::phaseAmount(const StringOrIndex& phase, real value, String unit) -> void
+{
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto phasename = m_system.phase(iphase).name();
+    const auto id = "phaseAmount[" + phasename + "]";
+    const auto errormsg = "phase amount of " + phasename;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "mol");
+    const auto idx = index(m_inputs, id);
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::phaseMass(const StringOrIndex& phase, real value, String unit) -> void
+{
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto phasename = m_system.phase(iphase).name();
+    const auto id = "phaseMass[" + phasename + "]";
+    const auto errormsg = "phase mass of " + phasename;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "kg");
+    const auto idx = index(m_inputs, id);
+    m_inputs_values[idx] = value;
+}
+
+auto EquilibriumConditions::phaseVolume(const StringOrIndex& phase, real value, String unit) -> void
+{
+    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto phasename = m_system.phase(iphase).name();
+    const auto id = "phaseVolume[" + phasename + "]";
+    const auto errormsg = "phase volume of " + phasename;
+    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
+    value = units::convert(value, unit, "m3");
+    const auto idx = index(m_inputs, id);
     m_inputs_values[idx] = value;
 }
 
