@@ -119,6 +119,15 @@ struct AqueousProps::Impl
 
         Aaq = A.middleCols(ifirst, size);
 
+        aqstate.T = NaN;
+        aqstate.P = NaN;
+        aqstate.rho = NaN;
+        aqstate.epsilon = NaN;
+        aqstate.Ie = NaN;
+        aqstate.Is = NaN;
+        aqstate.m.setConstant(size, NaN);
+        aqstate.ms.setConstant(size, NaN);
+
         echelonizer.compute(Aaq); // echelon form of Aaq (columns of A corresponding to aqueous species)
     }
 
