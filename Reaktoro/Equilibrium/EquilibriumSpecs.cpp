@@ -166,6 +166,7 @@ auto EquilibriumSpecs::charge() -> void
     {
         return props.charge() - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::elementAmount(const StringOrIndex& element) -> void
@@ -179,6 +180,7 @@ auto EquilibriumSpecs::elementAmount(const StringOrIndex& element) -> void
     {
         return props.elementAmount(ielement) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void
@@ -194,6 +196,7 @@ auto EquilibriumSpecs::elementAmountInPhase(const StringOrIndex& element, const 
     {
         return props.elementAmountInPhase(ielement, iphase) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::elementMass(const StringOrIndex& element) -> void
@@ -207,6 +210,7 @@ auto EquilibriumSpecs::elementMass(const StringOrIndex& element) -> void
     {
         return props.elementMass(ielement) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void
@@ -222,6 +226,7 @@ auto EquilibriumSpecs::elementMassInPhase(const StringOrIndex& element, const St
     {
         return props.elementMassInPhase(ielement, iphase) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::phaseAmount(const StringOrIndex& phase) -> void
@@ -235,6 +240,7 @@ auto EquilibriumSpecs::phaseAmount(const StringOrIndex& phase) -> void
     {
         return props.phaseAmount(iphase) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::phaseMass(const StringOrIndex& phase) -> void
@@ -248,6 +254,7 @@ auto EquilibriumSpecs::phaseMass(const StringOrIndex& phase) -> void
     {
         return props.phaseMass(iphase) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 auto EquilibriumSpecs::phaseVolume(const StringOrIndex& phase) -> void
@@ -261,6 +268,7 @@ auto EquilibriumSpecs::phaseVolume(const StringOrIndex& phase) -> void
     {
         return props.phaseVolume(iphase) - w[idx];
     };
+    addConstraint(constraint);
 }
 
 //=================================================================================================
