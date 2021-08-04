@@ -192,6 +192,12 @@ auto ChemicalProps::pressure() const -> real
     return P;
 }
 
+auto ChemicalProps::charge() const -> real
+{
+    const auto Acharge = msystem.formulaMatrixCharge();
+    return Acharge * n.matrix();
+}
+
 auto ChemicalProps::elementAmount(StringOrIndex element) const -> real
 {
     const auto ielement = detail::resolveElementIndex(msystem, element);
@@ -220,6 +226,31 @@ auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, ArrayXlCons
     return Aei * ni;
 }
 
+auto ChemicalProps::elementMass(StringOrIndex element) const -> real
+{
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto molarmass = msystem.element(ielement).molarMass();
+    const auto amount = elementAmount(ielement);
+    return amount * molarmass;
+}
+
+auto ChemicalProps::elementMassInPhase(StringOrIndex element, StringOrIndex phase) const -> real
+{
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto molarmass = msystem.element(ielement).molarMass();
+    const auto amount = elementAmountInPhase(ielement, iphase);
+    return amount * molarmass;
+}
+
+auto ChemicalProps::elementMassAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real
+{
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto molarmass = msystem.element(ielement).molarMass();
+    const auto amount = elementAmountAmongSpecies(ielement, indices);
+    return amount * molarmass;
+}
+
 auto ChemicalProps::speciesAmount(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
@@ -230,6 +261,24 @@ auto ChemicalProps::speciesMass(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
     return n[ispecies] * msystem.species(ispecies).molarMass();
+}
+
+auto ChemicalProps::phaseAmount(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    return phaseProps(iphase).amount();
+}
+
+auto ChemicalProps::phaseMass(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    return phaseProps(iphase).mass();
+}
+
+auto ChemicalProps::phaseVolume(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    return phaseProps(iphase).volume();
 }
 
 auto ChemicalProps::moleFraction(StringOrIndex species) const -> real

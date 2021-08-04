@@ -97,6 +97,9 @@ public:
     /// Return the pressure of the system (in Pa).
     auto pressure() const -> real;
 
+    /// Return the amount of electric charge in the system (in mol).
+    auto charge() const -> real;
+
     /// Return the amount of an element in the system (in mol).
     /// @param element The symbol or index of the element in the system.
     auto elementAmount(StringOrIndex element) const -> real;
@@ -111,6 +114,20 @@ public:
     /// @param indices The indices of the species in the system.
     auto elementAmountAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real;
 
+    /// Return the mass of an element in the system (in kg).
+    /// @param element The symbol or index of the element in the system.
+    auto elementMass(StringOrIndex element) const -> real;
+
+    /// Return the mass of an element in the system (in kg).
+    /// @param element The symbol or index of the element in the system.
+    /// @param phase The name or index of the phase in the system.
+    auto elementMassInPhase(StringOrIndex element, StringOrIndex phase) const -> real;
+
+    /// Return the mass of an element among a group of species in the system (in kg).
+    /// @param element The symbol or index of the element in the system.
+    /// @param indices The indices of the species in the system.
+    auto elementMassAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real;
+
     /// Return the amount of a species in the system (in mol).
     /// @param species The name or index of the species in the system.
     auto speciesAmount(StringOrIndex species) const -> real;
@@ -118,6 +135,18 @@ public:
     /// Return the mass of a species in the system.
     /// @param species The name or index of the species in the system.
     auto speciesMass(StringOrIndex species) const -> real;
+
+    /// Return the amount of a phase in the system (in mol).
+    /// @param phase The name or index of the phase in the system.
+    auto phaseAmount(StringOrIndex phase) const -> real;
+
+    /// Return the mass of a phase in the system (in kg).
+    /// @param phase The name or index of the phase in the system.
+    auto phaseMass(StringOrIndex phase) const -> real;
+
+    /// Return the volume of a phase in the system (in m3).
+    /// @param phase The name or index of the phase in the system.
+    auto phaseVolume(StringOrIndex phase) const -> real;
 
     /// Return the mole fraction of a species in the system.
     /// @param species The name or index of the species in the system.
