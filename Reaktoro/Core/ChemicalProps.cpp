@@ -195,7 +195,7 @@ auto ChemicalProps::pressure() const -> real
 auto ChemicalProps::charge() const -> real
 {
     const auto Acharge = msystem.formulaMatrixCharge();
-    return Acharge * n.matrix();
+    return (Acharge * n.matrix()).sum();
 }
 
 auto ChemicalProps::elementAmount(StringOrIndex element) const -> real
