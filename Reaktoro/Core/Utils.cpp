@@ -38,7 +38,12 @@ auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real val
     else return units::convert(value, unit, "mol"); // from some amount unit to mol
 }
 
-auto resolveElementIndexAux(const ChemicalSystem& system, const Index& index) -> Index
+auto resolveElementIndexAux(const ChemicalSystem& system, Index index) -> Index
+{
+    return index;
+}
+
+auto resolveElementIndexAux(const ChemicalSystem& system, int index) -> Index
 {
     return index;
 }
@@ -53,7 +58,12 @@ auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) ->
     return std::visit([&](auto&& arg) { return resolveElementIndexAux(system, arg); }, element);
 }
 
-auto resolveSpeciesIndexAux(const ChemicalSystem& system, const Index& index) -> Index
+auto resolveSpeciesIndexAux(const ChemicalSystem& system, Index index) -> Index
+{
+    return index;
+}
+
+auto resolveSpeciesIndexAux(const ChemicalSystem& system, int index) -> Index
 {
     return index;
 }
@@ -68,7 +78,12 @@ auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) ->
 return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(system, arg); }, species);
 }
 
-auto resolvePhaseIndexAux(const ChemicalSystem& system, const Index& index) -> Index
+auto resolvePhaseIndexAux(const ChemicalSystem& system, Index index) -> Index
+{
+    return index;
+}
+
+auto resolvePhaseIndexAux(const ChemicalSystem& system, int index) -> Index
 {
     return index;
 }
