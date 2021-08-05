@@ -43,7 +43,7 @@ equilibrium calculation:
     int main()
     {
         ChemicalEditor editor;
-        editor.addAqueousPhase("H2O NaCl CaCO3 CO2");
+        editor.addAqueousPhaseWithElements("H O Na Cl Ca C");
         editor.addGaseousPhase("CO2(g)");
         editor.addMineralPhase("Calcite");
 
@@ -68,7 +68,7 @@ This calculation could also be performed using Reaktoro's Python interface:
     from reaktoro import *
 
     editor = ChemicalEditor()
-    editor.addAqueousPhase("H2O NaCl CaCO3 CO2")
+    editor.addAqueousPhaseWithElements("H O Na Cl Ca C")
     editor.addGaseousPhase("CO2(g)")
     editor.addMineralPhase("Calcite")
 
