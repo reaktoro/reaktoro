@@ -9,7 +9,7 @@ dependencies:
   - autodiff
   - catch2
   - ccache  # [unix]
-  - clangxx_osx-64  # [osx]
+  - clangxx_osx-64=11.1.0  # [osx]
   - clcache  # [win]
   - cmake
   - cpp-tabulate
@@ -18,7 +18,7 @@ dependencies:
   - fire
   - git
   - graphviz  # [linux]
-  - gxx_linux-64  # [linux]
+  - gxx_linux-64=9.4.0  # [linux]
   - ninja
   - nlohmann_json
   - numpy
