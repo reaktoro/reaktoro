@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
+#include <Reaktoro/Core/Model.py.hxx>
 using namespace Reaktoro;
 
 void exportActivityModel(py::module& m)
@@ -29,6 +30,8 @@ void exportActivityModel(py::module& m)
         .def_property_readonly("P", [](const ActivityArgs& self) { return self.P; })
         .def_property_readonly("x", [](const ActivityArgs& self) { return self.x; })
         ;
+
+    exportModel<ActivityProps, ActivityArgs>(m, "ActivityModel");
 
     auto chain4py = [](py::args args)
     {
