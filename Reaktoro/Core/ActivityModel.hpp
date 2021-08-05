@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ActivityProps.hpp>
+#include <Reaktoro/Core/Model.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
