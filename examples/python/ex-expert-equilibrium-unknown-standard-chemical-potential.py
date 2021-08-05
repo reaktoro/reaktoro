@@ -26,6 +26,7 @@
 # -----------------------------------------------------------------------------
 
 from reaktoro import *
+from autodiff import abs
 
 
 T = 60.0 + 273.15 # temperature in K
@@ -94,5 +95,5 @@ print(f"G0(calcite) at 60 °C and 10 bar  ")
 print(f"=================================")
 print(f"expected: {G0_calcite_expected/1000.0} kJ/mol")
 print(f"computed: {G0_calcite_computed/1000.0} kJ/mol")
-print(f"   error: {abs((G0_calcite_computed - G0_calcite_expected[0])/G0_calcite_expected[0]) * 100.0} %")
+print(f"   error: {abs((G0_calcite_computed - G0_calcite_expected)/G0_calcite_expected) * 100.0} %")
 print(f"=================================")
