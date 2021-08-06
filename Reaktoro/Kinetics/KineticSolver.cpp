@@ -186,8 +186,8 @@ struct KineticSolver::Impl
         const Matrix Ie = rows(I, ies);
         const Matrix Ik = rows(I, iks);
 
-        // Initialise the coefficient matrix `B` of the source rates
-        B = zeros(Ee + Nk, system.numSpecies());
+        // Initialise the coefficient matrix `B` of the source rates (use Ne + Nk to disregard inert species)
+        B = zeros(Ee + Nk, Ne + Nk);
         B.topRows(Ee) = Ae * Ie;
         B.bottomRows(Nk) = Ik;
 
@@ -195,7 +195,7 @@ struct KineticSolver::Impl
         drdu.resize(reactions.numReactions(), Ee + Nk);
 
         // Allocate memory for the partial derivatives of the source rates `q` w.r.t. to `u = [be nk]`
-        dqdu.resize(system.numSpecies(), Ee + Nk);
+        dqdu.resize(Ne + Nk, Ee + Nk);
     }
 
     auto addSource(ChemicalState state, double volumerate, std::string units) -> void
