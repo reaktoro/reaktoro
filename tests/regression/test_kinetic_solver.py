@@ -9,7 +9,6 @@ from reaktoro import (
     Database,
     equilibrate,
     EquilibriumProblem,
-    EquilibriumSolver,
     KineticPath,
     KineticSolver,
     Partition,
@@ -215,7 +214,7 @@ def test_kinetic_path_solve_complete_path(
     (problem, reactions, partition) = setup
 
     state = equilibrate(problem)
- 
+
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
 
@@ -319,23 +318,11 @@ def test_kinetic_path_solve_final_state(
 
 
 @pytest.mark.parametrize(
-    "setup, time_span, minerals_to_add",
+    "time_span",
     [
-        (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
-            time_span(0, 24*60*60, "seconds"),
-            [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
-        ),
-        (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
-            time_span(0, 48*60*60, "seconds"),
-            [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
-        ),
-        (
-            pytest.lazy_fixture("kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite"),
-            time_span(0, 72*60*60, "seconds"),
-            [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")],
-        ),
+        (time_span(0, 24*60*60, "seconds")),
+        (time_span(0, 48*60*60, "seconds")),
+        (time_span(0, 72*60*60, "seconds")),
     ],
     ids=[
         "kinetic prob-calcite magnesite dolomite halite 0 to 24 h",
@@ -343,22 +330,20 @@ def test_kinetic_path_solve_final_state(
         "kinetic prob-calcite magnesite dolomite halite 0 to 72 h",
     ],
 )
-def test_kinetic_solver_with_inert_phase(setup, time_span, minerals_to_add):
+def test_kinetic_solver_with_inert_phase(kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite, time_span):
     """
         An integration test that checks whether a kinetic problem can
         be solved with inert species in its chemical system.
-        @param setup
+        @param kinetic_problem_*
             a tuple that has objetcs with (problem, reactions, partition)
         @param time_span
             time information about the kinetic problem.
             time_span.ti = initial time
             time_span.tf = final time
             time_span.unit = ti and tf units
-        @param minerals_to_add
-            a tuple with a mineral name and quantities for the kinetic problem.
     """
 
-    (problem, reactions, partition) = setup
+    (problem, reactions, partition) = kinetic_problem_with_h2o_nacl_caco3_mgco3_hcl_co2_calcite_magnesite_dolomite_halite
 
     # Set the kinetic phase
     partition.setInertPhases(["Gaseous"])
@@ -372,6 +357,7 @@ def test_kinetic_solver_with_inert_phase(setup, time_span, minerals_to_add):
 
     state = equilibrate(problem)
 
+    minerals_to_add = [mineral_to_add("Calcite", 100, "g"), mineral_to_add("Dolomite", 50, "g")]
     for mineral in minerals_to_add:
         state.setSpeciesMass(mineral.mineral_name, mineral.amount, mineral.unit)
 
