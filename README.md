@@ -1,9 +1,9 @@
 <img src='resources/icons/reaktoro.svg' width='100%'>
 
-[![Linux Build](https://github.com/reaktoro/reaktoro/workflows/linux/badge.svg?branch=master)](https://github.com/reaktoro/reaktoro/actions?query=workflow%3Alinux)
-[![OSX Build](https://github.com/reaktoro/reaktoro/workflows/osx/badge.svg?branch=master)](https://github.com/reaktoro/reaktoro/actions?query=workflow%3Aosx)
-[![Windows Build](https://github.com/reaktoro/reaktoro/workflows/windows/badge.svg?branch=master)](https://github.com/reaktoro/reaktoro/actions?query=workflow%3Awindows)
-[![image](https://anaconda.org/conda-forge/reaktoro/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
+<!-- [![Linux Build](https://github.com/reaktoro/reaktoro/workflows/linux/badge.svg?branch=master)](https://github.com/reaktoro/reaktoro/actions?query=workflow%3Alinux) -->
+<!-- [![OSX Build](https://github.com/reaktoro/reaktoro/workflows/osx/badge.svg?branch=master)](https://github.com/reaktoro/reaktoro/actions?query=workflow%3Aosx) -->
+<!-- [![Windows Build](https://github.com/reaktoro/reaktoro/workflows/windows/badge.svg?branch=master)](https://github.com/reaktoro/reaktoro/actions?query=workflow%3Awindows) -->
+<!-- [![image](https://anaconda.org/conda-forge/reaktoro/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge) -->
 <!-- [![image](https://badge.fury.io/py/reaktoro.svg)](https://badge.fury.io/py/reaktoro) -->
 
 # Introduction
