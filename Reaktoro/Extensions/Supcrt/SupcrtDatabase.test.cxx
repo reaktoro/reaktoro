@@ -22,6 +22,13 @@
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
 using namespace Reaktoro;
 
+TEST_CASE("Testing SupcrtDatabase object creation using embedded files", "[SupcrtDatabase]")
+{
+    CHECK_NOTHROW( SupcrtDatabase("supcrt07") );
+    CHECK_NOTHROW( SupcrtDatabase("supcrt16") );
+    CHECK_NOTHROW( SupcrtDatabase("supcrtbl") );
+}
+
 TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
 {
     SupcrtDatabase db("supcrt98");

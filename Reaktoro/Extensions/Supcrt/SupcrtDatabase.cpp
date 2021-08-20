@@ -80,4 +80,11 @@ auto SupcrtDatabase::fromFile(const String& path) -> SupcrtDatabase
     return Database(dbparser);
 }
 
+auto SupcrtDatabase::fromContents(const String& contents) -> SupcrtDatabase
+{
+    auto doc = yaml::parse(contents);
+    DatabaseParserYAML dbparser(doc);
+    return Database(dbparser);
+}
+
 } // namespace Reaktoro
