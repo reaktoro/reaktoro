@@ -130,10 +130,6 @@ Database::Database(const Vec<Species>& species)
         addSpecies(x);
 }
 
-Database::Database(const String& name)
-: Database(Database::withName(name))
-{}
-
 Database::~Database()
 {}
 
@@ -192,28 +188,6 @@ auto Database::attachedData() const -> const Any&
     return pimpl->attached_data;
 }
 
-auto Database::withName(const String& name) -> Database
-{
-    errorif(!oneof(name,
-        "supcrt98.yaml",
-        "supcrt07.yaml",
-        "supcrt16.yaml",
-        "supcrtbl.yaml"),
-        "Could not load embedded database file with name `", name, "`. ",
-        "The currently supported names are: \n"
-        "    - supcrt98.xml          \n",
-        "    - supcrt07.xml          \n",
-        "    - supcrt16.xml          \n",
-        "    - supcrtbl.xml          \n",
-        "");
-    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
-    auto file = fs.open("databases/reaktoro/" + name);
-    String text(file.begin(), file.end());
-    auto doc = yaml::parse(text);
-    DatabaseParserYAML dbparser(doc);
-    return dbparser;
-}
-
 auto Database::fromFile(const String& path) -> Database
 {
     std::ifstream file(path);
@@ -225,6 +199,13 @@ auto Database::fromFile(const String& path) -> Database
         "in Windows, `C:\\User\\username\\mydata\\mydatabase.yaml`, "
         "in Linux, `/home/username/mydata/mydatabase.yaml`).");
     auto doc = yaml::parse(file);
+    DatabaseParserYAML dbparser(doc);
+    return dbparser;
+}
+
+auto Database::fromContents(const String& contents) -> Database
+{
+    auto doc = yaml::parse(contents);
     DatabaseParserYAML dbparser(doc);
     return dbparser;
 }
