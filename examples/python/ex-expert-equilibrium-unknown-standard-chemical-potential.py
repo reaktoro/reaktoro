@@ -47,7 +47,7 @@ def computeSolubilityCaCO3(system):
     return aprops.elementMolality("Ca")
 
 
-db = Database("supcrtbl.yaml")
+db = SupcrtDatabase("supcrtbl")
 
 solution = AqueousPhase(speciate("C Ca"), exclude("organic"))
 solution.setActivityModel(chain(

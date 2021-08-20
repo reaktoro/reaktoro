@@ -27,7 +27,7 @@
 from reaktoro import *
 
 
-db = Database("supcrtbl.yaml")
+db = SupcrtDatabase("supcrtbl")
 
 solution = AqueousPhase(speciate("Na Cl C"), exclude("organic"))
 solution.setActivityModel(chain(

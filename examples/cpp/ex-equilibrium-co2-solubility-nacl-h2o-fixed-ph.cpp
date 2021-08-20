@@ -31,7 +31,7 @@ using namespace Reaktoro;
 int main()
 {
     // Initialize a thermodynamic database
-    Database db("supcrtbl.yaml");
+    SupcrtDatabase db("supcrtbl");
 
     // Define aqueous phase with selected species
     AqueousPhase aqueousphase("H2O(aq) CO2(aq) CO3-2 Cl- H+ H2(aq) HCO3- Na+ NaCl(aq) NaOH(aq) O2(aq) OH- HCl(aq)");

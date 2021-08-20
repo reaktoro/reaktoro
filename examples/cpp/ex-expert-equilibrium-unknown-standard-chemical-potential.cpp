@@ -48,7 +48,7 @@ auto computeSolubilityCaCO3(const ChemicalSystem& system) -> real
 
 int main()
 {
-    Database db("supcrtbl.yaml");
+    SupcrtDatabase db("supcrtbl");
 
     AqueousPhase solution(speciate("C Ca"), exclude("organic"));
     solution.setActivityModel(chain(

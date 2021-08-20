@@ -30,7 +30,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database db("supcrtbl.yaml");
+    SupcrtDatabase db("supcrtbl");
 
     AqueousPhase solution(speciate("Na Cl C Ca Mg Si"), exclude("organic"));
     solution.setActivityModel(chain(

@@ -3,7 +3,7 @@ using namespace Reaktoro;
 
 int main()
 {
-    Database db("supcrt98.yaml");
+    SupcrtDatabase db("supcrt98");
 
     AqueousPhase aqueousphase("H2O(aq) H+ OH- HCO3- CO3-2 CO2(aq)");
     aqueousphase.setActivityModel(chain(
