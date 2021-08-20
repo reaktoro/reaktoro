@@ -260,11 +260,11 @@ PhreeqcDatabase::PhreeqcDatabase()
 : Database()
 {}
 
-PhreeqcDatabase::PhreeqcDatabase(String name)
+PhreeqcDatabase::PhreeqcDatabase(const String& name)
 : PhreeqcDatabase(PhreeqcDatabase::withName(name))
 {}
 
-auto PhreeqcDatabase::withName(std::string name) -> PhreeqcDatabase
+auto PhreeqcDatabase::withName(const String& name) -> PhreeqcDatabase
 {
     // PhreeqcDatabase db;
     // const auto content = detail::getPhreeqcDatabaseContent(name);
@@ -279,13 +279,8 @@ auto PhreeqcDatabase::withName(std::string name) -> PhreeqcDatabase
     return db;
 }
 
-auto PhreeqcDatabase::fromFile(std::string path) -> PhreeqcDatabase
+auto PhreeqcDatabase::fromFile(const String& path) -> PhreeqcDatabase
 {
-    // PhreeqcDatabase db;
-    // const auto species = detail::createSpeciesWithDatabaseContentOrPath(path);
-    // db.addSpecies(species);
-    // return db;
-
     detail::PhreeqcDatabaseHelper helper(path);
     PhreeqcDatabase db;
     db.addSpecies(helper.species_list);
@@ -293,12 +288,13 @@ auto PhreeqcDatabase::fromFile(std::string path) -> PhreeqcDatabase
     return db;
 }
 
-auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
+auto PhreeqcDatabase::fromContents(const String& contents) -> PhreeqcDatabase
 {
-    // Database::clear();
-    // const auto species = detail::createSpeciesWithDatabaseContentOrPath(filename);
-    // Database::addSpecies(species);
-    // return *this;
+    return fromFile(contents); // PhreeqcDatabase::fromFile also works with contents string!
+}
+
+auto PhreeqcDatabase::load(const String& filename) -> PhreeqcDatabase&
+{
     detail::PhreeqcDatabaseHelper helper(filename);
     Database::clear();
     Database::addSpecies(helper.species_list);
@@ -306,7 +302,7 @@ auto PhreeqcDatabase::load(String filename) -> PhreeqcDatabase&
     return *this;
 }
 
-auto PhreeqcDatabase::contents(String database) -> String
+auto PhreeqcDatabase::contents(const String& database) -> String
 {
     return detail::getPhreeqcDatabaseContent(database);
 }
