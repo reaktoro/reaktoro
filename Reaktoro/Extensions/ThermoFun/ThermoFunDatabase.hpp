@@ -31,7 +31,7 @@ namespace Reaktoro {
 class ThermoFunDatabase : public Database
 {
 public:
-    /// Return a ThermoFunDatabase object initialized using an embedded database file.
+    /// Return a ThermoFunDatabase object constructed with an embedded database file.
     /// The currently supported database file names are:
     /// - `aq17`            (corresponding file: `aq17-thermofun.json`)
     /// - `cemdata18`       (corresponding file: `cemdata18-thermofun.json`)
@@ -40,16 +40,18 @@ public:
     /// - `psinagra-12-07`  (corresponding file: `psinagra-12-07-thermofun.json`)
     /// - `slop98-organic`  (corresponding file: `slop98-organic-thermofun.json`)
     /// - `slop98`          (corresponding file: `slop98-thermofun.json`)
-    /// @warning An exception is thrown if `name` is not one of the above names.
     /// @param name The name of the embedded ThermoFun database.
+    /// @warning An exception is thrown if `name` is not one of the above names.
     static auto withName(const String& name) -> ThermoFunDatabase;
 
-    /// Construct a ThermoFunDatabase object with given database file.
-    /// If the string argument `file` does not have the contents of the
-    /// database in JSON format or it is not a path to a valid local database
-    /// file, an exception is thrown.
-    /// @param file The contents or a path to a local file containing the database contents.
+    /// Return a ThermoFunDatabase object constructed with a given local file.
+    /// @param path The path, including file name, to the database file.
+    /// @warning An exception is thrown if `path` does not point to a valid database file.
     static auto fromFile(const String& file) ->  ThermoFunDatabase;
+
+    /// Return a ThermoFunDatabase object constructed with given database text contents.
+    /// @param contents The contents of the database as a string.
+    static auto fromContents(const String& contents) ->  ThermoFunDatabase;
 
     /// Construct a default ThermoFunDatabase object.
     ThermoFunDatabase();

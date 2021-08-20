@@ -158,4 +158,9 @@ auto ThermoFunDatabase::fromFile(const String& file) ->  ThermoFunDatabase
     return ThermoFunDatabase(db);
 }
 
+auto ThermoFunDatabase::fromContents(const String& contents) ->  ThermoFunDatabase
+{
+    return ThermoFunDatabase::fromFile(contents);
+}
+
 } // namespace Reaktoro

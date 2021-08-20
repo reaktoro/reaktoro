@@ -33,5 +33,6 @@ void exportThermoFunDatabase(py::module& m)
         .def(py::init<const ThermoFun::Database&>())
         .def_static("withName", &ThermoFunDatabase::withName)
         .def_static("fromFile", &ThermoFunDatabase::fromFile)
+        .def_static("fromContents", &ThermoFunDatabase::fromContents)
         ;
 }
