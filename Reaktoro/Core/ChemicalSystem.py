@@ -21,7 +21,7 @@ import pytest
 
 
 def testChemicalSystem():
-    db = Database("supcrtbl.yaml")
+    db = SupcrtDatabase("supcrtbl")
 
     phases = Phases(db)
     phases.add( AqueousPhase("H2O(aq) H+ OH- Na+ Cl- Ca+2 Mg+2 HCO3- CO3-2 CO2(aq) SiO2(aq)") )
