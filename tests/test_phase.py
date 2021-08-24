@@ -28,7 +28,10 @@ def test_phase():
     phase = system.phase(0)
 
     assert len(phase.elements()) == 4
-    assert "H" in phase.elements()
-    assert "O" in phase.elements()
-    assert "C" in phase.elements()
-    assert "Z" in phase.elements()
+
+    symbols = [element.name() for element in phase.elements()]
+
+    assert "H" in symbols
+    assert "O" in symbols
+    assert "C" in symbols
+    assert "Z" in symbols
