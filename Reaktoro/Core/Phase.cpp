@@ -25,6 +25,19 @@
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
+namespace {
+
+auto collectElements(const std::vector<Species>& species) -> std::vector<Element>
+{
+    std::set<Element> elements;
+    for(const Species& iter : species)
+        for(const auto& pair : iter.elements())
+            elements.insert(pair.first);
+    return std::vector<Element>(elements.begin(), elements.end());
+}
+
+} // namespace
+
 
 struct Phase::Impl
 {
@@ -75,6 +88,7 @@ auto Phase::setSpecies(const std::vector<Species>& species) -> void
 {
     pimpl->species = species;
     pimpl->molar_masses = molarMasses(species);
+    pimpl->elements = collectElements(species);
 }
 
 auto Phase::setThermoModel(const PhaseThermoModel& model) -> void
