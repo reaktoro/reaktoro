@@ -35,7 +35,7 @@ class ChemicalProps;
 /// implies that the system is open to a titrant with **same** formula of the
 /// species whose chemical potential needs to be prescribed. A *q* control
 /// variable can also be used to specify the activity of a species. It can also
-/// be used to precribe pH. This can be achieved by converting the given
+/// be used to prescribe pH. This can be achieved by converting the given
 /// activity value (or pH value) to a chemical potential value of the species.
 struct ControlVariableQ
 {
