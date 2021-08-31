@@ -20,17 +20,10 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace detail {
-
-/// Return the molar masses of the species
-auto molarMasses(const SpeciesList& species)
-{
-    ArrayXd molar_masses(species.size());
-    transform(species, molar_masses, [](auto&& s) { return s.molarMass(); });
-    return molar_masses;
-}
 
 /// Raise error if there is no common aggregate state for all species in the phase.
 auto ensureCommonAggregateState(const SpeciesList& species)

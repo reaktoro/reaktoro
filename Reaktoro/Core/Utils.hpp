@@ -19,13 +19,18 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/Matrix.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class SpeciesList;
 
 namespace detail {
+
+/// Return the molar masses of the species.
+auto molarMasses(const SpeciesList& species) -> ArrayXd;
 
 /// Compute the amount of a species given a value in mass or amount unit.
 /// @param system The chemical system in which the species is.

@@ -24,6 +24,13 @@
 namespace Reaktoro {
 namespace detail {
 
+auto molarMasses(const SpeciesList& species) -> ArrayXd
+{
+    ArrayXd molar_masses(species.size());
+    transform(species, molar_masses, [](auto&& s) { return s.molarMass(); });
+    return molar_masses;
+}
+
 auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, const String& unit) -> real
 {
     if(unit == "mol")
