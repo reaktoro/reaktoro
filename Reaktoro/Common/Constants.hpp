@@ -40,6 +40,9 @@ constexpr auto calorieToJoule = 4.184;
 /// The conversion factor from bar to pascal
 constexpr auto barToPascal = 1.0e+05;
 
+/// The conversion factor from atm to pascal
+constexpr auto atmToPascal = 101325;
+
 /// The conversion factor from cubic centimeters to cubic meters
 constexpr auto cubicCentimeterToCubicMeter = 1.0e-06;
 
