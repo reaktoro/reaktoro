@@ -22,55 +22,48 @@
 #include <Reaktoro/Core/Params.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing Vec<Param> class", "[Vec<Param>]")
+TEST_CASE("Testing Params class", "[Params]")
 {
-    // Vec<Param> params;
-    // params.append(Param().id("A").value(1.0));
-    // params.append("B", 2.0);
+    Params foo;
+    foo.set("A", 1.0);
+    foo.set("B", 2.0);
 
-    // CHECK( params.size() == 2 );
+    Params bar;
+    bar.set("C", 5.0);
+    bar.set("D", 6.0);
+    bar.set("E", 7.0);
 
-    // CHECK( params.find("A") == 0 );
-    // CHECK( params.find("B") == 1 );
-    // CHECK( params.find("C") == 2 );
-    // CHECK( params.find("D") == 2 );
+    Params params;
+    params.set("Foo", foo);
+    params.set("Bar", bar);
 
-    // CHECK( params.index("A") == 0 );
-    // CHECK( params.index("B") == 1 );
-    // CHECK_THROWS( params.index("C") );
-    // CHECK_THROWS( params.index("D") );
+    CHECK( foo.size() == 2 );
+    CHECK( foo.get("A").value() == 1.0 );
+    CHECK( foo.get("B").value() == 2.0 );
+    CHECK( foo.exists("A") == true );
+    CHECK( foo.exists("B") == true );
+    CHECK( foo.exists("C") == false );
 
-    // CHECK( params.get("A").value() == 1.0 );
-    // CHECK( params.get("B").value() == 2.0 );
-    // CHECK_THROWS( params.get("C") );
-    // CHECK_THROWS( params.get("D") );
+    CHECK( bar.size() == 3 );
+    CHECK( bar.get("C").value() == 5.0 );
+    CHECK( bar.get("D").value() == 6.0 );
+    CHECK( bar.get("E").value() == 7.0 );
+    CHECK( bar.exists("C") == true );
+    CHECK( bar.exists("D") == true );
+    CHECK( bar.exists("E") == true );
+    CHECK( bar.exists("F") == false );
 
-    // CHECK( params["A"].value() == 1.0 );
-    // CHECK( params["B"].value() == 2.0 );
-    // CHECK_THROWS( params["C"] );
-    // CHECK_THROWS( params["D"] );
-
-    // CHECK( params.exists("A") == true );
-    // CHECK( params.exists("B") == true );
-    // CHECK( params.exists("C") == false );
-    // CHECK( params.exists("D") == false );
-
-    // params = { Param("C", 4.0), 6.0 };
-
-    // CHECK( params.size() == 2 );
-    // CHECK( params[0].id() == "C" );
-    // CHECK( params[0].value() == 4.0 );
-    // CHECK( params[1].id() == "" );
-    // CHECK( params[1].value() == 6.0 );
-
-    // params.resize(3);
-    // CHECK( params.size() == 3 );
-    // CHECK( params[0].id() == "C" );
-    // CHECK( params[0].value() == 4.0 );
-    // CHECK( params[1].id() == "" );
-    // CHECK( params[1].value() == 6.0 );
-    // CHECK( params[2].id()    == ""  ); // the id of the newly added Param object!
-    // CHECK( params[2].value() == 0.0 ); // the value of the newly added Param object!
-
-    // CHECK( autodiff::detail::isVector<Vec<Param>> );
+    CHECK( params.size() == 5 );
+    CHECK( params.at("Foo").get("A").value() == 1.0 );
+    CHECK( params.at("Foo").get("B").value() == 2.0 );
+    CHECK( params.at("Bar").get("C").value() == 5.0 );
+    CHECK( params.at("Bar").get("D").value() == 6.0 );
+    CHECK( params.at("Bar").get("E").value() == 7.0 );
+    CHECK( params.exists("Foo") == true );
+    CHECK( params.exists("Bar") == true );
+    CHECK( params.exists("Joe") == false );
+    CHECK( params.at("Foo").exists("A") == true );
+    CHECK( params.at("Foo").exists("Z") == false );
+    CHECK( params.at("Bar").exists("C") == true );
+    CHECK( params.at("Bar").exists("Z") == false );
 }
