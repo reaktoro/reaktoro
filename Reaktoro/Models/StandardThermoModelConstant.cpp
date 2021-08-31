@@ -25,8 +25,8 @@ namespace Reaktoro {
 /// Return a Params object containing all Param objects in @p params.
 auto extractParams(const StandardThermoModelParamsConstant& params) -> Params
 {
-    const auto& [G0, H0, V0, Cp0, Cv0] = params;
-    return {G0, H0, V0, Cp0, Cv0};
+    const auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = params;
+    return {G0, H0, V0, Cp0, Cv0, VT0, VP0};
 }
 
 /// Return a ModelSerializer for given model parameters in @p params.
@@ -44,13 +44,15 @@ auto StandardThermoModelConstant(const StandardThermoModelParamsConstant& params
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        auto& [G0, H0, V0, Cp0, Cv0] = props;
+        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
 
         G0  = params.G0;
         H0  = params.H0;
         V0  = params.V0;
         Cp0 = params.Cp0;
         Cv0 = params.Cv0;
+        VT0 = params.VT0;
+        VP0 = params.VP0;
     };
 
     return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));

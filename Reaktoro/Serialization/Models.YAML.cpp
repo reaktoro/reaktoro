@@ -133,6 +133,8 @@ REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsConstant)
     node["V0"]  = obj.V0;
     node["Cp0"] = obj.Cp0;
     node["Cv0"] = obj.Cv0;
+    node["VT0"] = obj.VT0;
+    node["VP0"] = obj.VP0;
 }
 
 REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsConstant)
@@ -142,6 +144,8 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsConstant)
     node["V0"].to(obj.V0, 0.0);
     node["Cp0"].to(obj.Cp0, 0.0);
     node["Cv0"].to(obj.Cv0, 0.0);
+    node["VT0"].to(obj.VT0, 0.0);
+    node["VP0"].to(obj.VP0, 0.0);
 }
 
 //----------------------------------------------------------------------

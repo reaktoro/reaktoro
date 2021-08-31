@@ -31,7 +31,7 @@ struct StandardThermoModelParamsConstant
     /// The constant standard molar enthalpy @f$H^{\circ}@f$ of the species (in J/mol).
     Param H0 = Param("H0", 0.0);
 
-    /// The constant standard molar volume @f$V^{\circ}@f$ of the species (in m3/mol).
+    /// The constant standard molar volume @f$V^{\circ}@f$ of the species (in m³/mol).
     Param V0 = Param("V0", 0.0);
 
     /// The constant standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K)).
@@ -39,6 +39,12 @@ struct StandardThermoModelParamsConstant
 
     /// The constant standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in J/(mol·K)).
     Param Cv0 = Param("Cv0", 0.0);
+
+    /// The temperature derivative of the standard molar volume @f$@f$\partial V^{\circ}/\partial T@f$@f$ of the species (in m³/(mol·K)).
+    Param VT0 = Param("VT0", 0.0);
+
+    /// The pressure derivative of the standard molar volume @f$\partial V^{\circ}/\partial P@f$ of the species (in m³/(mol·K)).
+    Param VP0 = Param("VP0", 0.0);
 };
 
 /// Return a function that calculates thermodynamic properties of a species using a constant model for its standard properties.

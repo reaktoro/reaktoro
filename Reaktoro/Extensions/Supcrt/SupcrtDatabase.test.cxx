@@ -45,7 +45,7 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
         const auto T = 25.0 + 273.15;
         const auto P =  1.0 * 1e5;
 
-        auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
+        auto [G0, H0, V0, Cp0, Cv0, VT0, VP0] = sp.props(T, P);
 
         CHECK( G0  == Approx(-237182)     );
         CHECK( H0  == Approx(-285831)     );
@@ -60,7 +60,7 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
         const auto T = 25.0 + 273.15;
         const auto P =  1.0 * 1e5;
 
-        auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
+        auto [G0, H0, V0, Cp0, Cv0, VT0, VP0] = sp.props(T, P);
 
         CHECK( G0  == Approx(-586940)     );
         CHECK( H0  == Approx(-689934)     );
@@ -75,7 +75,7 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
         const auto T = 25.0 + 273.15;
         const auto P =  1.0 * 1e5;
 
-        auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
+        auto [G0, H0, V0, Cp0, Cv0, VT0, VP0] = sp.props(T, P);
 
         CHECK( G0  == Approx(-394359)     );
         CHECK( H0  == Approx(-393509)     );
@@ -90,7 +90,7 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
         const auto T = 25.0 + 273.15;
         const auto P =  1.0 * 1e5;
 
-        auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
+        auto [G0, H0, V0, Cp0, Cv0, VT0, VP0] = sp.props(T, P);
 
         CHECK( G0  == Approx(-1.12918e+06));
         CHECK( H0  == Approx(-1.2073e+06) );

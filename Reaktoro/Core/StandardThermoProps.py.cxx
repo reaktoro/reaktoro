@@ -32,6 +32,8 @@ void exportStandardThermoProps(py::module& m)
         .def_readwrite("V0", &StandardThermoProps::V0)
         .def_readwrite("Cp0", &StandardThermoProps::Cp0)
         .def_readwrite("Cv0", &StandardThermoProps::Cv0)
+        .def_readwrite("VT0", &StandardThermoProps::VT0)
+        .def_readwrite("VP0", &StandardThermoProps::VP0)
         ;
 
     exportModel<StandardThermoProps, real, real>(m, "StandardThermoModel");

@@ -95,7 +95,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        auto& [G0, H0, V0, Cp0, Cv0] = props;
+        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
         const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, Tmax] = params;
 
         const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
@@ -106,10 +106,14 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         const auto& w   = aep.w;
         const auto& wT  = aep.wT;
         const auto& wP  = aep.wP;
+        const auto& wTP = aep.wTP;
         const auto& wTT = aep.wTT;
+        const auto& wPP = aep.wPP;
         const auto& Z   = wep.bornZ;
         const auto& Y   = wep.bornY;
         const auto& Q   = wep.bornQ;
+        const auto& U   = wep.bornU;
+        const auto& N   = wep.bornN;
         const auto& X   = wep.bornX;
         const auto Tth  = T - theta;
         const auto Tth2 = Tth*Tth;
@@ -137,6 +141,12 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
             + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
 
         Cv0 = Cp0; // approximate Cp = Cv for an aqueous solution
+
+        V0 = a1 + a2/(psi + P) + (a3 + a4/(psi + P))/(T - theta) - w*Q - (Z + 1)*wP;
+
+        VT0 = -(a3 + a4/(psi + P))/((T - theta)*(T - theta)) - wT*Q - w*U - Y*wP - (Z + 1)*wTP;
+
+        VP0 = -a2/((psi + P)*(psi + P)) + (-a4/((psi + P)*(psi + P)))/(T - theta) - wP*Q - w*N - Q*wP - (Z + 1)*wPP;
 
         // S0 = Sr + c1*log(T/Tr)
         //     - c2/theta*(1.0/(T - theta)

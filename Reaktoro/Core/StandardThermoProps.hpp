@@ -32,7 +32,7 @@ struct StandardThermoProps
     /// The standard molar enthalpy @f$H^{\circ}@f$ of formation of the species (in J/mol).
     real H0;
 
-    /// The standard molar volume @f$V^{\circ}@f$ of the species (in m3/mol).
+    /// The standard molar volume @f$V^{\circ}@f$ of the species (in m³/mol).
     real V0;
 
     /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K)).
@@ -40,6 +40,12 @@ struct StandardThermoProps
 
     /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in J/(mol·K)).
     real Cv0;
+
+    /// The temperature derivative of the standard molar volume @f$@f$\partial V^{\circ}/\partial T@f$@f$ of the species (in m³/(mol·K)).
+    real VT0;
+
+    /// The pressure derivative of the standard molar volume @f$\partial V^{\circ}/\partial P@f$ of the species (in m³/(mol·K)).
+    real VP0;
 };
 
 /// The function type for calculation of standard thermodynamic properties of a species.

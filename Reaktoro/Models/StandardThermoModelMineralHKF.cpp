@@ -57,7 +57,7 @@ auto StandardThermoModelMineralHKF(const StandardThermoModelParamsMineralHKF& pa
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        auto& [G0, H0, V0, Cp0, Cv0] = props;
+        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
         const auto& [Gf, Hf, Sr, Vr, ntr, a, b, c, Ttr, Htr, Vtr, dPdTtr, Tmax] = params;
 
         // Auxiliary variables
@@ -128,6 +128,8 @@ auto StandardThermoModelMineralHKF(const StandardThermoModelParamsMineralHKF& pa
         H0 = Hf + CpdT + VdP + HdH;
         Cp0 = Cp;
         Cv0 = Cp; // approximate Cp = Cv for a solid
+        VT0 = 0.0;
+        VP0 = 0.0;
         // S0 = Sr + CpdlnT + SdH;
     };
 

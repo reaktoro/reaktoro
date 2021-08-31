@@ -30,6 +30,8 @@ void exportStandardThermoModelConstant(py::module& m)
         .def_readwrite("V0",  &StandardThermoModelParamsConstant::V0)
         .def_readwrite("Cp0", &StandardThermoModelParamsConstant::Cp0)
         .def_readwrite("Cv0", &StandardThermoModelParamsConstant::Cv0)
+        .def_readwrite("VT0", &StandardThermoModelParamsConstant::VT0)
+        .def_readwrite("VP0", &StandardThermoModelParamsConstant::VP0)
         ;
 
     m.def("StandardThermoModelConstant", StandardThermoModelConstant);
