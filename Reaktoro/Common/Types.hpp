@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <any>
+#include <array>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -47,6 +48,10 @@ using Strings = std::vector<std::string>;
 
 /// The type used to accept either a name or an index.
 using StringOrIndex = std::variant<Index, int, std::string>;
+
+/// Convenient alias for `std::array<T, N>`.
+template<typename T, std::size_t N>
+using Array = std::array<T, N>;
 
 /// Convenient alias for `std::vector<T>`.
 template<typename T>
