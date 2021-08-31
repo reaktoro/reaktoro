@@ -113,12 +113,12 @@ auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoProps& wt) 
 
     const auto epsilon2 = we.epsilon * we.epsilon;
 
-    we.bornZ = -1.0/we.epsilon;
-    we.bornY = we.epsilonT/epsilon2;
-    we.bornQ = we.epsilonP/epsilon2;
-    we.bornU = we.epsilonTP/epsilon2 - 2.0*we.bornY*we.bornQ*we.epsilon;
-    we.bornN = we.epsilonPP/epsilon2 - 2.0*we.bornQ*we.bornQ*we.epsilon;
-    we.bornX = we.epsilonTT/epsilon2 - 2.0*we.bornY*we.bornY*we.epsilon;
+    we.bornZ = -1.0/we.epsilon;      // Z
+    we.bornY = we.epsilonT/epsilon2; // Y = ∂Z/∂T
+    we.bornQ = we.epsilonP/epsilon2; // Q = ∂Z/∂P
+    we.bornU = we.epsilonTP/epsilon2 - 2.0*we.bornY*we.bornQ*we.epsilon; // U = ∂Q/∂T = ∂Y/∂P = ∂²Z/∂T∂P
+    we.bornN = we.epsilonPP/epsilon2 - 2.0*we.bornQ*we.bornQ*we.epsilon; // N = ∂Q/∂P = ∂²Z/∂P²
+    we.bornX = we.epsilonTT/epsilon2 - 2.0*we.bornY*we.bornY*we.epsilon; // X = ∂Y/∂T = ∂²Z/∂T²
 
     return we;
 }
