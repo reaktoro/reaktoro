@@ -445,7 +445,8 @@ public:
         setAggregateState(AggregateState::Solid);
         setAdditionalAggregateStates({
             AggregateState::CrystallineSolid,
-            AggregateState::AmorphousSolid});
+            AggregateState::AmorphousSolid
+        });
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
     }
@@ -477,7 +478,69 @@ public:
         setAggregateState(AggregateState::Solid);
         setAdditionalAggregateStates({
             AggregateState::CrystallineSolid,
-            AggregateState::AmorphousSolid});
+            AggregateState::AmorphousSolid
+        });
+        setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
+    }
+};
+
+/// The class used to configure a pure condensed phase.
+class CondensedPhase : public GenericPhase
+{
+public:
+    /// Construct a default CondensedPhase object.
+    explicit CondensedPhase(String species) : GenericPhase(species) { initialize(); }
+
+    /// Initialize the default attributes of this CondensedPhase object.
+    auto initialize() -> void
+    {
+        setName(species().front());
+        setStateOfMatter(StateOfMatter::Condensed);
+        setAggregateState(AggregateState::CondensedPhase);
+        setAdditionalAggregateStates({
+            AggregateState::Liquid,
+            AggregateState::LiquidCrystal,
+            AggregateState::Solid,
+            AggregateState::CrystallineSolid,
+            AggregateState::AmorphousSolid
+        });
+        setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
+    }
+};
+
+/// The class used to configure automatic selection of pure condensed phases.
+class CondensedPhases : public GenericPhasesGenerator
+{
+public:
+    /// Construct a default CondensedPhases object.
+    CondensedPhases() : GenericPhasesGenerator() { initialize(); }
+
+    /// Construct a CondensedPhases object with given species names.
+    explicit CondensedPhases(const StringList& species) : GenericPhasesGenerator(species) { initialize(); }
+
+    /// Construct a CondensedPhases object with given element symbols.
+    explicit CondensedPhases(const Speciate& elements) : GenericPhasesGenerator(elements) { initialize(); }
+
+    /// Construct a CondensedPhases object with given element symbols excluding the species with provided tags
+    explicit CondensedPhases(const Speciate& elements, const Exclude& withtags) : GenericPhasesGenerator(elements, withtags) { initialize(); };
+
+    /// Construct a CondensedPhases object excluding the species with provided tags
+    explicit CondensedPhases(const Exclude& withtags) : GenericPhasesGenerator(withtags) { initialize(); };
+
+    /// Initialize the default attributes of this CondensedPhases object.
+    auto initialize() -> void
+    {
+        setStateOfMatter(StateOfMatter::Condensed);
+        setAggregateState(AggregateState::CondensedPhase);
+        setAdditionalAggregateStates({
+            AggregateState::Liquid,
+            AggregateState::LiquidCrystal,
+            AggregateState::Solid,
+            AggregateState::CrystallineSolid,
+            AggregateState::AmorphousSolid
+        });
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
     }

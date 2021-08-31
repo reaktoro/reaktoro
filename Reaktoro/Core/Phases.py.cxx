@@ -136,4 +136,16 @@ void exportPhases(py::module& m)
         .def(py::init<const Speciate&, const Exclude&>())
         .def(py::init<const Exclude&>())
         ;
+
+    py::class_<CondensedPhase, GenericPhase>(m, "CondensedPhase")
+        .def(py::init<String>())
+        ;
+
+    py::class_<CondensedPhases, GenericPhasesGenerator>(m, "CondensedPhases")
+        .def(py::init<>())
+        .def(py::init<const StringList&>())
+        .def(py::init<const Speciate&>())
+        .def(py::init<const Speciate&, const Exclude&>())
+        .def(py::init<const Exclude&>())
+        ;
 }
