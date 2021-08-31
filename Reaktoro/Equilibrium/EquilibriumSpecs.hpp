@@ -578,7 +578,7 @@ public:
     auto inputs() const -> const Strings&;
 
     /// Return the model parameters among the input variables.
-    auto params() const -> const Params&;
+    auto params() const -> const Vec<Param>&;
 
     /// Return the indices of the model parameters among the input variables.
     auto indicesParams() const -> const Vec<Index>&; // TODO: Rename to indicesInputParams because there should be another method called indicesUnknownParams.
@@ -621,7 +621,7 @@ private:
     Strings m_inputs;
 
     /// The model parameters among the input variables in the chemical equilibrium calculation.
-    Params m_params;
+    Vec<Param> m_params;
 
     /// The indices of the model parameters among the input variables in the chemical equilibrium calculation.
     Vec<Index> m_params_idxs;

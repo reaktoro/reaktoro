@@ -24,155 +24,157 @@
 
 namespace Reaktoro {
 
-/// The class used to store and retrieve model parameters.
-/// @ingroup Core
-class Params
-{
-public:
-    /// Construct a default Params instance.
-    Params();
+// using Vec<Param> = Vec<Param>;
 
-    /// Construct a default Params instance.
-    Params(const std::initializer_list<Param>& params);
+// /// The class used to store and retrieve model parameters.
+// /// @ingroup Core
+// class Vec<Param>
+// {
+// public:
+//     /// Construct a default Vec<Param> instance.
+//     Vec<Param>();
 
-    /// Return a deep copy of this Params object.
-    auto clone() const -> Params;
+//     /// Construct a default Vec<Param> instance.
+//     Vec<Param>(const std::initializer_list<Param>& params);
 
-    /// Append a new parameter to the list of parameters.
-    auto append(const Param& param) -> Param&;
+//     /// Return a deep copy of this Vec<Param> object.
+//     auto clone() const -> Vec<Param>;
 
-    /// Append a new parameter to the list of parameters with given @p id and @p value.
-    auto append(const String& id, const real& value) -> Param&;
+//     /// Append a new parameter to the list of parameters.
+//     auto append(const Param& param) -> Param&;
 
-    /// Resize this container of parameters.
-    auto resize(Index size) -> void;
+//     /// Append a new parameter to the list of parameters with given @p id and @p value.
+//     auto append(const String& id, const real& value) -> Param&;
 
-    /// Return the number of parameters.
-    auto size() const -> Index;
+//     /// Resize this container of parameters.
+//     auto resize(Index size) -> void;
 
-    /// Return the parameter with given index.
-    auto operator[](Index i) -> Param&;
+//     /// Return the number of parameters.
+//     auto size() const -> Index;
 
-    /// Return the parameter with given index.
-    auto operator[](Index i) const -> const Param&;
+//     /// Return the parameter with given index.
+//     auto operator[](Index i) -> Param&;
 
-    /// Return the parameter with given identifier.
-    /// @warning A runtime error is thrown if there is no parameter with identifier @p id.
-    auto operator[](const String& id) -> Param&;
+//     /// Return the parameter with given index.
+//     auto operator[](Index i) const -> const Param&;
 
-    /// Return the parameter with given identifier.
-    /// @warning A runtime error is thrown if there is no parameter with identifier @p id.
-    auto operator[](const String& id) const -> const Param&;
+//     /// Return the parameter with given identifier.
+//     /// @warning A runtime error is thrown if there is no parameter with identifier @p id.
+//     auto operator[](const String& id) -> Param&;
 
-    /// Return the index of the first parameter with given identifier or the number of parameters if not found.
-    auto find(const String& id) const -> Index;
+//     /// Return the parameter with given identifier.
+//     /// @warning A runtime error is thrown if there is no parameter with identifier @p id.
+//     auto operator[](const String& id) const -> const Param&;
 
-    /// Return the index of the first parameter with given identifier or throw a runtime error if not found.
-    auto index(const String& id) const -> Index;
+//     /// Return the index of the first parameter with given identifier or the number of parameters if not found.
+//     auto find(const String& id) const -> Index;
 
-    /// Return the first parameter with given identifier or throw a runtime error if not found.
-    auto get(const String& id) -> Param&;
+//     /// Return the index of the first parameter with given identifier or throw a runtime error if not found.
+//     auto index(const String& id) const -> Index;
 
-    /// Return the first parameter with given identifier or throw a runtime error if not found.
-    auto get(const String& id) const -> const Param&;
+//     /// Return the first parameter with given identifier or throw a runtime error if not found.
+//     auto get(const String& id) -> Param&;
 
-    /// Return true if a parameter exists with given identifier.
-    auto exists(const String& id) const -> bool;
+//     /// Return the first parameter with given identifier or throw a runtime error if not found.
+//     auto get(const String& id) const -> const Param&;
 
-    /// Return the container of parameters.
-    auto data() const -> const Vec<Param>&;
+//     /// Return true if a parameter exists with given identifier.
+//     auto exists(const String& id) const -> bool;
 
-    /// Convert this Params object into a VectorXr object.
-    operator VectorXr() const;
+//     /// Return the container of parameters.
+//     auto data() const -> const Vec<Param>&;
 
-    /// Convert this Params object into a VectorXd object.
-    operator VectorXd() const;
+//     /// Convert this Vec<Param> object into a VectorXr object.
+//     operator VectorXr() const;
 
-private:
-    Vec<Param> m_data;
+//     /// Convert this Vec<Param> object into a VectorXd object.
+//     operator VectorXd() const;
 
-public:
-    /// Construct an Params object with given begin and end iterators.
-    template<typename InputIterator>
-    Params(InputIterator begin, InputIterator end) : m_data(begin, end) {}
+// private:
+//     Vec<Param> m_data;
 
-    /// Return begin const iterator of this Params instance (for STL compatibility reasons).
-    auto begin() const { return m_data.begin(); }
+// public:
+//     /// Construct an Vec<Param> object with given begin and end iterators.
+//     template<typename InputIterator>
+//     Vec<Param>(InputIterator begin, InputIterator end) : m_data(begin, end) {}
 
-    /// Return begin iterator of this Params instance (for STL compatibility reasons).
-    auto begin() { return m_data.begin(); }
+//     /// Return begin const iterator of this Vec<Param> instance (for STL compatibility reasons).
+//     auto begin() const { return m_data.begin(); }
 
-    /// Return end const iterator of this Params instance (for STL compatibility reasons).
-    auto end() const { return m_data.end(); }
+//     /// Return begin iterator of this Vec<Param> instance (for STL compatibility reasons).
+//     auto begin() { return m_data.begin(); }
 
-    /// Return end iterator of this Params instance (for STL compatibility reasons).
-    auto end() { return m_data.end(); }
+//     /// Return end const iterator of this Vec<Param> instance (for STL compatibility reasons).
+//     auto end() const { return m_data.end(); }
 
-    /// Append a new Param at the back of the container (for STL compatibility reasons).
-    auto push_back(const Param& param) -> void { append(param); }
+//     /// Return end iterator of this Vec<Param> instance (for STL compatibility reasons).
+//     auto end() { return m_data.end(); }
 
-    /// Insert a container of Param objects into this Params instance (for STL compatibility reasons).
-    template<typename Iterator, typename InputIterator>
-    auto insert(Iterator pos, InputIterator begin, InputIterator end) -> void { m_data.insert(pos, begin, end); }
+//     /// Append a new Param at the back of the container (for STL compatibility reasons).
+//     auto push_back(const Param& param) -> void { append(param); }
 
-    /// The type of the value stored in a Params (for STL compatibility reasons).
-    using value_type = Param;
-};
+//     /// Insert a container of Param objects into this Vec<Param> instance (for STL compatibility reasons).
+//     template<typename Iterator, typename InputIterator>
+//     auto insert(Iterator pos, InputIterator begin, InputIterator end) -> void { m_data.insert(pos, begin, end); }
 
-} // namespace Reaktoro
+//     /// The type of the value stored in a Vec<Param> (for STL compatibility reasons).
+//     using value_type = Param;
+// };
 
-//======================================================================
-// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING PARAMS
-//======================================================================
+// } // namespace Reaktoro
 
-namespace Reaktoro {
+// //======================================================================
+// // CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING PARAMS
+// //======================================================================
 
-/// Specialize MemoizationTraits for Params.
-template<typename T>
-struct MemoizationTraits;
+// namespace Reaktoro {
 
-template<>
-struct MemoizationTraits<Params>
-{
-    using CacheType = VectorXr;
+// /// Specialize MemoizationTraits for Vec<Param>.
+// template<typename T>
+// struct MemoizationTraits;
 
-    static auto equal(const VectorXr& a, const Params& b)
-    {
-        if(a.size() != b.size()) return false;
-        for(auto i = 0; i < a.size(); ++i)
-            if(a[i] != b[i].value())
-                return false;
-        return true;
-    }
+// template<>
+// struct MemoizationTraits<Vec<Param>>
+// {
+//     using CacheType = VectorXr;
 
-    static auto assign(VectorXr& a, const Params& b)
-    {
-        a.resize(b.size());
-        for(auto i = 0; i < a.size(); ++i)
-            a[i] = b[i].value();
-    }
-};
+//     static auto equal(const VectorXr& a, const Vec<Param>& b)
+//     {
+//         if(a.size() != b.size()) return false;
+//         for(auto i = 0; i < a.size(); ++i)
+//             if(a[i] != b[i].value())
+//                 return false;
+//         return true;
+//     }
 
-} // namespace Reaktoro
+//     static auto assign(VectorXr& a, const Vec<Param>& b)
+//     {
+//         a.resize(b.size());
+//         for(auto i = 0; i < a.size(); ++i)
+//             a[i] = b[i].value();
+//     }
+// };
 
-//======================================================================
-// CODE BELOW NEEDED FOR AUTOMATIC DIFFERENTIATION INVOLVING PARAMS
-//======================================================================
+// } // namespace Reaktoro
 
-namespace autodiff {
-namespace detail {
+// //======================================================================
+// // CODE BELOW NEEDED FOR AUTOMATIC DIFFERENTIATION INVOLVING PARAMS
+// //======================================================================
 
-/// Implementation of VectorTraits for Reaktoro::Params.
-template<>
-struct VectorTraits<Reaktoro::Params>
-{
-    using ValueType = Reaktoro::Param;
+// namespace autodiff {
+// namespace detail {
 
-    template<typename NewValueType>
-    using ReplaceValueType = std::vector<NewValueType>;
-};
+// /// Implementation of VectorTraits for Reaktoro::Vec<Param>.
+// template<>
+// struct VectorTraits<Reaktoro::Vec<Param>>
+// {
+//     using ValueType = Reaktoro::Param;
 
-} // namespace autodiff
+//     template<typename NewValueType>
+//     using ReplaceValueType = std::vector<NewValueType>;
+// };
+
+// } // namespace autodiff
 } // namespace detail
 
 

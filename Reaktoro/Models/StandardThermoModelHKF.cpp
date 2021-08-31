@@ -73,8 +73,8 @@ auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> Wat
 
 } // namespace
 
-/// Return a Params object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsHKF& params) -> Params
+/// Return a Vec<Param> object containing all Param objects in @p params.
+auto extractParams(const StandardThermoModelParamsHKF& params) -> Vec<Param>
 {
     const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref, charge, Tmax] = params;
     return {Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref};

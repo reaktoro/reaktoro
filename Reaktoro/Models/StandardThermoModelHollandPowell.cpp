@@ -30,8 +30,8 @@ using std::log;
 using std::pow;
 using std::sqrt;
 
-/// Return a Params object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsHollandPowell& params) -> Params
+/// Return a Vec<Param> object containing all Param objects in @p params.
+auto extractParams(const StandardThermoModelParamsHollandPowell& params) -> Vec<Param>
 {
     const auto& [Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tmax] = params;
     return {Gf, Hf, Sr, Vr, a, b, c, d, alpha0, kappa0, kappa0p, kappa0pp};

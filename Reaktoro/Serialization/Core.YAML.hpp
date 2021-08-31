@@ -34,7 +34,6 @@ class Element;
 class ElementalComposition;
 class FormationReaction;
 class Param;
-class Params;
 class Phase;
 class Species;
 template<typename Signature> class Model;
@@ -66,8 +65,8 @@ REAKTORO_YAML_DECODE_DECLARE(FormationReaction);
 REAKTORO_YAML_ENCODE_DECLARE(Param);
 REAKTORO_YAML_DECODE_DECLARE(Param);
 
-REAKTORO_YAML_ENCODE_DECLARE(Params);
-REAKTORO_YAML_DECODE_DECLARE(Params);
+// REAKTORO_YAML_ENCODE_DECLARE(Params);
+// REAKTORO_YAML_DECODE_DECLARE(Params);
 
 REAKTORO_YAML_ENCODE_DECLARE(Phase);
 REAKTORO_YAML_DECODE_DECLARE(Phase);

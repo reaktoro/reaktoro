@@ -60,17 +60,17 @@ public:
     /// @param evalfn The function that evaluates the model.
     /// @param params The parameters of the underlying model function.
     /// @param serializerfn The function that serializes the underlying model function to yaml format.
-    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Params& params = {}, const ModelSerializer& serializerfn = {})
+    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Vec<Param>& params = {}, const ModelSerializer& serializerfn = {})
     : m_params(params), m_serializerfn(serializerfn)
     {
         assert(evalfn);
 
-        m_evalfn = [evalfn](ResultRef res, const Args&... args, const Params& w)
+        m_evalfn = [evalfn](ResultRef res, const Args&... args, const Vec<Param>& w)
         {
             evalfn(res, args...);
         };
 
-        m_calcfn = [evalfn](const Args&... args, const Params& w) -> Result
+        m_calcfn = [evalfn](const Args&... args, const Vec<Param>& w) -> Result
         {
             Result res;
             evalfn(res, args...);
@@ -82,17 +82,17 @@ public:
     /// @param calcfn The function that calculates the model properties and return them.
     /// @param params The parameters of the underlying model function.
     /// @param serializerfn The function that serializes the underlying model function to yaml format.
-    Model(const ModelCalculator<Result, Args...>& calcfn, const Params& params = {}, const ModelSerializer& serializerfn = {})
+    Model(const ModelCalculator<Result, Args...>& calcfn, const Vec<Param>& params = {}, const ModelSerializer& serializerfn = {})
     : m_params(params), m_serializerfn(serializerfn)
     {
         assert(calcfn);
 
-        m_evalfn = [calcfn](ResultRef res, const Args&... args, const Params& w)
+        m_evalfn = [calcfn](ResultRef res, const Args&... args, const Vec<Param>& w)
         {
             res = calcfn(args...);
         };
 
-        m_calcfn = [calcfn](const Args&... args, const Params& w) -> Result
+        m_calcfn = [calcfn](const Args&... args, const Vec<Param>& w) -> Result
         {
             return calcfn(args...);
         };
@@ -116,8 +116,8 @@ public:
     auto withMemoization() const -> Model
     {
         Model copy = *this;
-        copy.m_evalfn = memoizeLastUsingRef<Result>(copy.m_evalfn); // Here, if `m_evalfn` did not consider `const Params&` as argument, memoization would not know when the parameters have been changed externally!
-        copy.m_calcfn = memoizeLast(copy.m_calcfn); // Here, if `m_calcfn` did not consider `const Params&` as argument, memoization would not know when the parameters have been changed externally!
+        copy.m_evalfn = memoizeLastUsingRef<Result>(copy.m_evalfn); // Here, if `m_evalfn` did not consider `const Vec<Param>&` as argument, memoization would not know when the parameters have been changed externally!
+        copy.m_calcfn = memoizeLast(copy.m_calcfn); // Here, if `m_calcfn` did not consider `const Vec<Param>&` as argument, memoization would not know when the parameters have been changed externally!
         return copy;
     }
 
@@ -154,13 +154,13 @@ public:
     }
 
     /// Return the model evaluator function of this Model function object.
-    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args..., const Params&>&
+    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args..., const Vec<Param>&>&
     {
         return m_evalfn;
     }
 
     /// Return the model calculator function of this Model function object.
-    auto calculatorFn() const -> const ModelCalculator<Result, Args..., const Params&>&
+    auto calculatorFn() const -> const ModelCalculator<Result, Args..., const Vec<Param>&>&
     {
         return m_calcfn;
     }
@@ -172,7 +172,7 @@ public:
     }
 
     /// Return the model parameters of this Model function object.
-    auto params() const -> const Params&
+    auto params() const -> const Vec<Param>&
     {
         return m_params;
     }
@@ -187,8 +187,8 @@ public:
     /// @param param The parameter with the constant value always returned by the Model function object.
     static auto Constant(const Param& param) -> Model
     {
-        auto calcfn = [param](const Args&... args) { return param; }; // no need to have `const Params&` in the lambda function here. This is added in the constructor call below!
-        Params params = { param };
+        auto calcfn = [param](const Args&... args) { return param; }; // no need to have `const Vec<Param>&` in the lambda function here. This is added in the constructor call below!
+        Vec<Param> params = { param };
         return Model(calcfn, params);
     }
 
@@ -205,19 +205,19 @@ private:
     /// time, but these captured Param objects have been changed externally,
     /// the memoized version of the Model object will return the cached result
     /// (from last calculation). To prevent this, #m_calcfn below have its
-    /// functional signature extended with `const Params&`. By doing this, and
+    /// functional signature extended with `const Vec<Param>&`. By doing this, and
     /// passing along #m_params to its call, its memoized version (@see
     /// withMemoization) will be able to detect if these Param objects have
     /// been changed externally.
-    Params m_params;
+    Vec<Param> m_params;
 
     /// The underlying model function that performs property evaluations.
-    ModelEvaluator<ResultRef, Args..., const Params&> m_evalfn;
+    ModelEvaluator<ResultRef, Args..., const Vec<Param>&> m_evalfn;
 
     /// The underlying model function that performs property calculations.
-    /// Note the added dependency on `const Params&`.
+    /// Note the added dependency on `const Vec<Param>&`.
     /// This is needed for proper memoization optimization!
-    ModelCalculator<Result, Args..., const Params&> m_calcfn;
+    ModelCalculator<Result, Args..., const Vec<Param>&> m_calcfn;
 
     /// The function that serializes the underlying model function to yaml format.
     /// This has to be a function because if we stored the serialization of the
@@ -251,10 +251,10 @@ auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
         return result;
     };
 
-    Params params;
+    Vec<Param> params;
     for(const auto& model : models)
         for(const auto& param : model.params())
-            params.append(param);
+            params.push_back(param);
 
     return Model<Result(Args...)>(evalfn, params);
 }

@@ -170,16 +170,15 @@ REAKTORO_YAML_DECODE_DEFINE(Param)
 
 //=====================================================================================================================
 
-REAKTORO_YAML_ENCODE_DEFINE(Params)
-{
-    node = obj.data();
-}
+// REAKTORO_YAML_ENCODE_DEFINE(Params)
+// {
 
-REAKTORO_YAML_DECODE_DEFINE(Params)
-{
-    auto values = node.as<Vec<double>>();
-    obj = Params(values.begin(), values.end());
-}
+// }
+
+// REAKTORO_YAML_DECODE_DEFINE(Params)
+// {
+
+// }
 
 //=====================================================================================================================
 

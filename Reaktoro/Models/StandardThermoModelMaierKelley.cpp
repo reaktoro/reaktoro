@@ -27,8 +27,8 @@ using std::log;
 
 namespace Reaktoro {
 
-/// Return a Params object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsMaierKelley& params) -> Params
+/// Return a Vec<Param> object containing all Param objects in @p params.
+auto extractParams(const StandardThermoModelParamsMaierKelley& params) -> Vec<Param>
 {
     const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
     return {Gf, Hf, Sr, Vr, a, b, c};

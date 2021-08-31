@@ -28,7 +28,7 @@ TEST_CASE("Testing Model class", "[Model]")
     Param K = 3.0;
     K.id("K");
 
-    Params params = { K };
+    Vec<Param> params = { K };
 
     SECTION("Using ModelEvaluator")
     {
@@ -44,7 +44,8 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model.calculatorFn() );
 
         CHECK( model.params().size() == 1 );
-        CHECK( model.params().get("K").value() == 3.0 );
+        CHECK( model.params().at(0).id() == "K" );
+        CHECK( model.params().at(0).value() == 3.0 );
 
         const auto x = 3.0;
         const auto y = 7.0;
@@ -70,7 +71,8 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model.calculatorFn() );
 
         CHECK( model.params().size() == 1 );
-        CHECK( model.params().get("K").value() == 3.0 );
+        CHECK( model.params().at(0).id() == "K" );
+        CHECK( model.params().at(0).value() == 3.0 );
 
         const auto x = 3.0;
         const auto y = 7.0;
@@ -82,22 +84,22 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model(x, y) == Approx(5.0 * x * y) );
     }
 
-    SECTION("Using ModelCalculator, Params, and ModelSerializer")
+    SECTION("Using ModelCalculator, Vec<Param>, and ModelSerializer")
     {
-        Params params = { Param("A", 1.0), Param("B", 2.0) };
+        Vec<Param> params = { Param("A", 1.0), Param("B", 2.0) };
 
         auto serializerfn = [=]()
         {
             yaml node;
-            node["A"] = params.get("A").value();
-            node["B"] = params.get("B").value();
+            node["A"] = params[0].value();
+            node["B"] = params[1].value();
             return node;
         };
 
         auto calcfn = [=](real x, real y)
         {
-            auto A = params["A"];
-            auto B = params["B"];
+            auto A = params[0];
+            auto B = params[1];
             return A*x + B*y;
         };
 
@@ -120,7 +122,8 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model.calculatorFn() );
 
         CHECK( model.params().size() == 1 );
-        CHECK( model.params().get("K").value() == 3.0 );
+        CHECK( model.params().at(0).id() == "K" );
+        CHECK( model.params().at(0).value() == 3.0 );
 
         const auto x = 3.0;
         const auto y = 7.0;

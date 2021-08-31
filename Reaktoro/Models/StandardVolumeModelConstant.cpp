@@ -22,8 +22,8 @@
 
 namespace Reaktoro {
 
-/// Return a Params object containing all Param objects in @p params.
-auto extractParams(const StandardVolumeModelParamsConstant& params) -> Params
+/// Return a Vec<Param> object containing all Param objects in @p params.
+auto extractParams(const StandardVolumeModelParamsConstant& params) -> Vec<Param>
 {
     const auto& [V0] = params;
     return {V0};

@@ -23,8 +23,8 @@
 
 namespace Reaktoro {
 
-/// Return a Params object containing all Param objects in @p params.
-auto extractParams(const ReactionThermoModelParamsVantHoff& params) -> Params
+/// Return a Vec<Param> object containing all Param objects in @p params.
+auto extractParams(const ReactionThermoModelParamsVantHoff& params) -> Vec<Param>
 {
     const auto& [lgKr, dHr, Tr, Pr] = params;
     return {lgKr, dHr};

@@ -34,7 +34,7 @@ auto ReactionThermoModelPressureCorrection(Param Pr) -> ReactionThermoModel
         props.dH0 += dE;
     };
 
-    Params params = { Pr };
+    Vec<Param> params = { Pr };
 
     return ReactionThermoModel(evalfn, params);
 }

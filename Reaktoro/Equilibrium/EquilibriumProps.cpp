@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/ArrayStream.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
@@ -30,7 +31,7 @@ namespace {
 /// Create the lambda function that extracts temperature from either `p` or `w`.
 /// When the specifications of the equilibrium solver (`specs`) indicates that
 /// temperature in unknown, then temperature should be extracted from vector `p`.
-/// Otherwise, temperature is known and available in the Params object `w`.
+/// Otherwise, temperature is known and available in `w`.
 /// @param specs The specifications of the equilibrium solver
 auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, VectorXrConstRef)>
 {
@@ -45,7 +46,7 @@ auto createTemperatureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorX
 /// Create the lambda function that extracts pressure from either `p` or `w`.
 /// When the specifications of the equilibrium solver (`specs`) indicates that
 /// pressure in unknown, then pressure should be extracted from vector `p`.
-/// Otherwise, pressure is known and available in the Params object `w`.
+/// Otherwise, pressure is known and available in `w`.
 /// @param specs The specifications of the equilibrium solver
 auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrConstRef, VectorXrConstRef)>
 {
@@ -107,7 +108,9 @@ struct EquilibriumProps::Impl
         const auto& iparams = specs.indicesParams();
 
         // Store the current values of the model parameters
-        params0 = params;
+        params0.resize(params.size());
+        for(const auto& [i, param] : enumerate(params))
+            params0[i] = param.value();
 
         // Before updating the chemical properties, change the model parameters
         // that are input in the chemical equilibrium calculation.

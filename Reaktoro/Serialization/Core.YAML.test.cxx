@@ -303,11 +303,11 @@ TEST_CASE("Testing YAML encoder/decoder for Param", "[Core.yaml]")
     CHECK( param.value() == 10.0 );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Params", "[Core.yaml]")
+TEST_CASE("Testing YAML encoder/decoder for Vec<Param>", "[Core.yaml]")
 {
     yaml node = Vec<double>{1.0, 2.0, 3.0};
 
-    Params params = node;
+    Vec<Param> params = node;
 
     CHECK( params[0].value() == 1.0 );
     CHECK( params[1].value() == 2.0 );

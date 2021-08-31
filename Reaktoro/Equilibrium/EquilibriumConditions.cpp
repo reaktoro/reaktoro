@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -52,7 +53,8 @@ EquilibriumConditions::EquilibriumConditions(const EquilibriumSpecs& specs)
     m_inputs_values = zeros(specs.numInputs());
 
     // Initialize the values of the input variables that are model parameters to their current values
-    m_inputs_values(specs.indicesParams()) = VectorXr(specs.params());
+    for(auto [i, idx] : enumerate(specs.indicesParams()))
+        m_inputs_values[idx] = specs.params()[i].value();
 
     // Initialize the default lower and upper bounds for the *p* control variables (-inf and inf respectively).
     m_plower.setConstant(m_control_variables_p.size(), -inf);

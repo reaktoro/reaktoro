@@ -686,7 +686,7 @@ auto EquilibriumSpecs::addInput(const String& var) -> Index
 auto EquilibriumSpecs::addInput(const Param& param) -> Index
 {
     const auto idx = addInput(param.id());
-    m_params.append(param);
+    m_params.push_back(param);
     m_params_idxs.push_back(idx);
     return idx;
 }
@@ -707,7 +707,7 @@ auto EquilibriumSpecs::inputs() const -> const Strings&
     return m_inputs;
 }
 
-auto EquilibriumSpecs::params() const -> const Params&
+auto EquilibriumSpecs::params() const -> const Vec<Param>&
 {
     return m_params;
 }
