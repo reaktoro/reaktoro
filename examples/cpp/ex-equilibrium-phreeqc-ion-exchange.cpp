@@ -34,9 +34,9 @@ const auto P = 1.0 * 1e5;    // pressure in Pa
 auto speciesListToStringList(const SpeciesList& specieslist) -> StringList
 {
     std::vector<std::string> speciesvector;
-    for (auto species : specieslist) {
+    for (auto species : specieslist)
         speciesvector.push_back(species.name());
-    }
+
     return StringList(speciesvector);
 }
 int main()
@@ -46,13 +46,13 @@ int main()
 
     // Fetch species for ion exchange modeling
     SpeciesList exchangespecies = db.species().withAggregateState(AggregateState::IonExchange);
+    // Collect species X-, Y-, ect
+    SpeciesList exchangers = filter(exchangespecies, [](const Species& s){ return std::abs(s.charge());});
+    // Collect species NaX, KX, NaY, NaY, ect
+    SpeciesList exchangesites = filter(exchangespecies, [](const Species& s){ return !s.charge();});
 
-    // Define generic phase called IonExchangePhase
-    GenericPhase exchangephase(speciesListToStringList(exchangespecies));
-    exchangephase.setName("IonExchangePhase");
-    //exchangephase.setStateOfMatter(StateOfMatter::Liquid);
-    exchangephase.setAggregateState(AggregateState::IonExchange);
-
+    // TODO: figure out the naming for NaX, KX, X-
+    //
     ActivityModelGenerator activitymodel = [](const SpeciesList& species)
     {
         ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args) {
@@ -60,9 +60,28 @@ int main()
         };
         return fn;
     };
+    // X- is a solid phase
+    GenericPhase exchangerphase(speciesListToStringList(exchangers));
+    exchangerphase.setName("IonExchangePhase");
+    exchangerphase.setAggregateState(AggregateState::IonExchange);
+    exchangerphase.setStateOfMatter(StateOfMatter::Solid);
+    exchangerphase.setActivityModel(activitymodel);
+    exchangerphase.setIdealActivityModel(activitymodel);
 
-    exchangephase.setActivityModel(activitymodel);
-    exchangephase.setIdealActivityModel(activitymodel);
+    // Similar to Solid phase, AdsorbedPhase is a solid phase, containing the species NaX, KX, CaX2
+    GenericPhase exchangesitesphase(speciesListToStringList(exchangesites));
+    exchangesitesphase.setName("AdsorbedPhase");
+    exchangesitesphase.setStateOfMatter(StateOfMatter::Solid);
+    exchangesitesphase.setAggregateState(AggregateState::IonExchange);
+    exchangesitesphase.setActivityModel(activitymodel);
+    exchangesitesphase.setIdealActivityModel(activitymodel);
+
+    // Similar to Minerals phase, each species NaX, KX, CaX2 is a solid phase
+    GenericPhasesGenerator exchangesitephases(speciesListToStringList(exchangesites));
+    exchangesitephases.setStateOfMatter(StateOfMatter::Solid);
+    exchangesitephases.setAggregateState(AggregateState::IonExchange);
+    exchangesitephases.setActivityModel(activitymodel);
+    exchangesitephases.setIdealActivityModel(activitymodel);
 
     // Define aqueous phase
     AqueousPhase aqueousphase(speciate("H O C Ca Na Mg"));
@@ -71,24 +90,26 @@ int main()
         ActivityModelDrummond("CO2")
     ));
 
-    // Initialize phases with aqueous and gaseous phase
-    Phases phases(db);
-    phases.add(aqueousphase);
-    phases.add(exchangephase);
-
     // Construct the chemical system
-    ChemicalSystem system(db, aqueousphase, exchangephase);
+    //ChemicalSystem system(db, aqueousphase, exchangerphase, exchangesitephases);
+    ChemicalSystem system(db, aqueousphase, exchangerphase, exchangesitesphase);
 
-    std::cout << "System:" << std::endl;
-    for (auto species : system.species()) {
-        std::cout << species.name() << std::endl;
+    std::cout << "System phases:" << std::endl;
+    for (auto phase : system.phases()) {
+        std::cout << "\t"<< phase.name() << ":" << std::endl;
+        for (auto species : phase.species()) {
+            std::cout << "\t\t"<< species.name() << std::endl;
+        }
     }
+//    std::cout << "System species:" << std::endl;
+//    for (auto species : system.species()) {
+//        std::cout << species.name() << std::endl;
+//    }
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
     specs.charge();
     specs.openTo("Cl-");
-
 
     EquilibriumConditions conditions(specs);
     conditions.temperature(60.0, "celsius");
