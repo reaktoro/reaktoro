@@ -126,7 +126,8 @@ struct DatabaseParserYAML::Impl
         errorif(!node["Name"], "Missing `Name` specification in:\n\n", node.repr());
         errorif(!node["Formula"], "Missing `Formula` specification in:\n\n", node.repr());
         errorif(!node["AggregateState"], "Missing `AggregateState` specification in:\n\n", node.repr());
-        errorif(!node["Elements"], "Missing `Elements` specification in:\n\n", node.repr());
+        errorif(!node["Elements"], "Missing `Elements` specification in:\n\n", node.repr(), "\n",
+            "Please assign `Elements: null` if this species does not have chemical elements (e.g., e-, which may be represented with only `Charge: -1`).");
         errorif(!node["FormationReaction"] && !node["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", node.repr());
         const String name = node["Name"];
         const auto idx = species_list.find(name);
@@ -154,7 +155,7 @@ struct DatabaseParserYAML::Impl
     auto createElementalComposition(const yaml& node) -> ElementalComposition
     {
         auto child = node["Elements"];
-        assert(!child.IsNull());
+        if(child.IsNull()) return {}; // for example, e- may be described with only Charge: -1 and Elements: null
         Pairs<Element, double> pairs;
         const auto symbols_and_coeffs = parseNumberStringPairs(child.as<String>());
         for(const auto& [symbol, coeff] : symbols_and_coeffs)

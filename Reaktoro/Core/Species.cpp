@@ -105,8 +105,8 @@ struct Species::Impl
             "Species::Attribs::name cannot be empty.");
         errorif(attribs.formula.empty(), "Could not construct Species object with constructor Species(Species::Attribs). "
             "Species::Attribs::formula cannot be empty.");
-        errorif(attribs.elements.size() == 0, "Could not construct Species object with constructor Species(Species::Attribs). "
-            "Species::Attribs::elements cannot be empty.");
+        errorif(attribs.elements.size() == 0 && attribs.charge == 0, "Could not construct Species object with constructor Species(Species::Attribs). "
+            "Species::Attribs::elements cannot be empty while Species::Attribs::charge is zero.");
         errorif(attribs.aggregate_state == AggregateState::Undefined, "Could not construct Species object with constructor Species(Species::Attribs). "
             "Species::Attribs::aggregate_state cannot be AggregateState::Undefined.");
         errorif(!attribs.std_thermo_model.initialized() && !attribs.formation_reaction.initialized(),
