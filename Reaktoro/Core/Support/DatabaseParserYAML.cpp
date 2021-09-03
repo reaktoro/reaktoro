@@ -49,6 +49,12 @@ struct DatabaseParserYAML::Impl
     Impl(const yaml& doc)
     : doc(doc)
     {
+        errorif(!doc.IsMap(), "Could not understand your YAML database file with content:\n", doc.repr(), "\n",
+            "Repeating the error message here in case the above printed content is too long.\n",
+            "Could not understand your YAML database file with the above content.\n",
+            "Are you forgetting to add the list of chemical species inside a Species YAML map?\n",
+            "Please check other Reaktoro's YAML databases to identify what is not conforming.");
+
         for(auto child : doc["Elements"])
             addElement(child);
 
