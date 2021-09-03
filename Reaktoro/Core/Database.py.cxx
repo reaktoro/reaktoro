@@ -49,5 +49,6 @@ void exportDatabase(py::module& m)
         .def("attachedData", &Database::attachedData)
         .def_static("fromFile", &Database::fromFile)
         .def_static("fromContents", &Database::fromContents)
+        .def_static("fromStream", &Database::fromStream)
         ;
 }

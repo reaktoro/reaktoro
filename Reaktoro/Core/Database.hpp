@@ -39,6 +39,10 @@ public:
     /// @param contents The contents of the database as a string.
     static auto fromContents(const String& contents) -> Database;
 
+    /// Return a Database object constructed with given input stream containing the database text contents.
+    /// @param stream The input stream containing the database file contents.
+    static auto fromStream(std::istream& stream) -> Database;
+
     /// Construct a default Database object.
     Database();
 

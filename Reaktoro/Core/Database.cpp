@@ -198,14 +198,19 @@ auto Database::fromFile(const String& path) -> Database
         "try a full path to the file (e.g., "
         "in Windows, `C:\\User\\username\\mydata\\mydatabase.yaml`, "
         "in Linux, `/home/username/mydata/mydatabase.yaml`).");
-    auto doc = yaml::parse(file);
-    DatabaseParserYAML dbparser(doc);
-    return dbparser;
+    return fromStream(file);
 }
 
 auto Database::fromContents(const String& contents) -> Database
 {
     auto doc = yaml::parse(contents);
+    DatabaseParserYAML dbparser(doc);
+    return dbparser;
+}
+
+auto Database::fromStream(std::istream& stream) -> Database
+{
+    auto doc = yaml::parse(stream);
     DatabaseParserYAML dbparser(doc);
     return dbparser;
 }
