@@ -59,7 +59,7 @@ struct AqueousMixtureState
 /// provide the necessary operations in the calculation of activities of aqueous
 /// species. It implements methods for the calculation of mole fractions, molalities,
 /// stoichiometric molalities, and effective and stoichiometric ionic strengths.
-/// In addition, it provides methods that retrives information about the ionic, neutral
+/// In addition, it provides methods that retrieves information about the ionic, neutral
 /// and complex species.
 /// @ingroup GeochemistryExtension
 class AqueousMixture
@@ -120,7 +120,7 @@ public:
     /// The dissociation matrix of the aqueous mixture is defined so that its
     /// entry (i, j) corresponds to the stoichiometric coefficient of the j-th
     /// charged species in the i-th neutral species. It is used to compute
-    /// stoichiometric molalies of the charged species as well as the
+    /// stoichiometric molalities of the charged species as well as the
     /// stoichiometric ionic strength of the mixture.
     auto dissociationMatrix() const -> MatrixXdConstRef;
 
