@@ -17,9 +17,6 @@
 
 #include "ActivityModel.hpp"
 
-// Reaktoro includes
-#include "ActivityModel.hpp"
-
 namespace Reaktoro {
 
 auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator
