@@ -44,77 +44,50 @@ int main()
     // Initialize Phreeqc database
     PhreeqcDatabase db("phreeqc.dat");
 
-    // Fetch species for ion exchange modeling
-    SpeciesList exchangespecies = db.species().withAggregateState(AggregateState::IonExchange);
-    // Collect species X-, Y-, ect
-    SpeciesList exchangers = filter(exchangespecies, [](const Species& s){ return std::abs(s.charge());});
-    // Collect species NaX, KX, NaY, NaY, ect
-    SpeciesList exchangesites = filter(exchangespecies, [](const Species& s){ return !s.charge();});
-
-    // TODO: figure out the naming for NaX, KX, X-
-    //
-    ActivityModelGenerator activitymodel = [](const SpeciesList& species)
-    {
-        ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args) {
-            // TODO: implement the activity model to compute the activity coefficients the ion exchange species
-        };
-        return fn;
-    };
-    // X- is a solid phase
-    GenericPhase exchangerphase(speciesListToStringList(exchangers));
-    exchangerphase.setName("IonExchangePhase");
-    exchangerphase.setAggregateState(AggregateState::IonExchange);
-    exchangerphase.setStateOfMatter(StateOfMatter::Solid);
-    exchangerphase.setActivityModel(activitymodel);
-    exchangerphase.setIdealActivityModel(activitymodel);
-
-    // Similar to Solid phase, AdsorbedPhase is a solid phase, containing the species NaX, KX, CaX2
-    GenericPhase exchangesitesphase(speciesListToStringList(exchangesites));
-    exchangesitesphase.setName("AdsorbedPhase");
-    exchangesitesphase.setStateOfMatter(StateOfMatter::Solid);
-    exchangesitesphase.setAggregateState(AggregateState::IonExchange);
-    exchangesitesphase.setActivityModel(activitymodel);
-    exchangesitesphase.setIdealActivityModel(activitymodel);
-
-    // Similar to Minerals phase, each species NaX, KX, CaX2 is a solid phase
-    GenericPhasesGenerator exchangesitephases(speciesListToStringList(exchangesites));
-    exchangesitephases.setStateOfMatter(StateOfMatter::Solid);
-    exchangesitephases.setAggregateState(AggregateState::IonExchange);
-    exchangesitephases.setActivityModel(activitymodel);
-    exchangesitephases.setIdealActivityModel(activitymodel);
-
     // Define aqueous phase
-    AqueousPhase aqueousphase(speciate("H O C Ca Na Mg"));
+    AqueousPhase aqueousphase(speciate("H O C Ca Na Mg Cl"));
     aqueousphase.setActivityModel(chain(
-        ActivityModelHKF(),
-        ActivityModelDrummond("CO2")
-    ));
+            ActivityModelHKF(),
+            ActivityModelDrummond("CO2")
+            ));
+
+    // Fetch species for ion-exchange modeling
+    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
+    // Separate exchangres (e.g., X-) from exchange species species (NaX, KX, NaY, NaY, ect)
+    SpeciesList exchanger_species = filter(exchange_species, [](const Species& s){ return std::abs(s.charge());});
+    SpeciesList ionexchange_species = filter(exchange_species, [](const Species& s){ return !s.charge();});
+
+    // The exchanger (exchanging site) phase X with exchange species X-
+    GenericPhase exchanger_phase(speciesListToStringList(exchanger_species));
+    exchanger_phase.setName("ExchangerPhase");
+    exchanger_phase.setStateOfMatter(StateOfMatter::Solid);
+    exchanger_phase.setAggregateState(AggregateState::IonExchange);
+    exchanger_phase.setActivityModel(ActivityModelIdealSolution());
+    exchanger_phase.setIdealActivityModel(ActivityModelIdealSolution());
+
+    // Ion exchange phase (the cation exchange complex), containing species NaX, KX, CaX2 etc
+    GenericPhase ionexchange_phase(speciesListToStringList(ionexchange_species));
+    ionexchange_phase.setName("IonExchangePhase");
+    ionexchange_phase.setStateOfMatter(StateOfMatter::Solid);
+    ionexchange_phase.setAggregateState(AggregateState::IonExchange);
+    ionexchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
+    ionexchange_phase.setIdealActivityModel(ActivityModelIdealSolution());
 
     // Construct the chemical system
-    //ChemicalSystem system(db, aqueousphase, exchangerphase, exchangesitephases);
-    ChemicalSystem system(db, aqueousphase, exchangerphase, exchangesitesphase);
+    ChemicalSystem system(db, aqueousphase, exchanger_phase, ionexchange_phase);
 
-    std::cout << "System phases:" << std::endl;
-    for (auto phase : system.phases()) {
-        std::cout << "\t"<< phase.name() << ":" << std::endl;
-        for (auto species : phase.species()) {
-            std::cout << "\t\t"<< species.name() << std::endl;
-        }
-    }
-//    std::cout << "System species:" << std::endl;
-//    for (auto species : system.species()) {
-//        std::cout << species.name() << std::endl;
-//    }
+    // Specify conditions to be satisfied at the chemical equilibrium
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
     specs.charge();
     specs.openTo("Cl-");
 
+    // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
     conditions.temperature(60.0, "celsius");
     conditions.pressure(100.0, "bar");
-    conditions.charge(1e-6, "mol");
+    conditions.charge(0, "mol");
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
@@ -124,11 +97,11 @@ int main()
     solutionstate.setSpeciesAmount("Na+"  , 1.10, "mol");
     solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mol");
     solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mol");
-    solutionstate.setSpeciesAmount("X-"    , 0.06, "mol");
+    solutionstate.setSpeciesAmount("X-"   , 0.06, "mol");
 
     // Define equilibrium solver and equilibrate given initial state
-    EquilibriumSolver solver(system);
-    //solver.solve(solutionstate, conditions);
+    EquilibriumSolver solver(specs);
+    solver.solve(solutionstate, conditions);
 
     // Output the chemical state to a text file
     solutionstate.output("state.txt");
