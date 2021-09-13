@@ -350,7 +350,7 @@ struct EquilibriumInverseProblem::Impl
     {
         EquilibriumConstraint f = [=](VectorConstRef x, const ChemicalState& state, const ChemicalProperties& properties) mutable
         {
-            return properties.internalEnergy() - value;
+            return ChemicalScalar(0.001*(properties.internalEnergy() - value));
         };
 
         constraints.push_back(f);
