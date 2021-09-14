@@ -36,6 +36,7 @@ void exportActivityProps(py::module& m)
         .def_readwrite("ln_g", &ActivityProps::ln_g)
         .def_readwrite("ln_a", &ActivityProps::ln_a)
         .def_readwrite("extra", &ActivityProps::extra)
+        .def("create", &ActivityProps::create)
         ;
 
     #define get(field) [](const ActivityPropsRef& self) { return self.field; }
