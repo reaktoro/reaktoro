@@ -37,6 +37,7 @@ using namespace Catch;
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
@@ -180,6 +181,13 @@ kappa0p: 4.07
 kappa0pp: -4.1e-11
 numatoms: 7.0
 Tmax: 0.0
+)";
+
+String params_stm_interpolation = R"(
+Temperatures: [100, 200, 300]
+Pressures: [400, 500]
+G0: [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+H0: [[4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
 )";
 
 //======================================================================
@@ -380,6 +388,20 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
         // CHECK( params.Tcr      == 1710.0        );
         // CHECK( params.Smax     == 10.03         );
         // CHECK( params.Vmax     == 5.0e-07       );
+    }
+
+    SECTION("Testing YAML serialization of StandardThermoModelParamsInterpolation")
+    {
+        StandardThermoModelParamsInterpolation params = yaml::parse(params_stm_interpolation);
+        CHECK( params.temperatures == Vec<double>{100, 200, 300} );
+        CHECK( params.pressures == Vec<double>{400, 500} );
+        CHECK( params.G0 == Vec<Vec<double>>{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}} );
+        CHECK( params.H0 == Vec<Vec<double>>{{4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}} );
+        CHECK( params.V0.empty() );
+        CHECK( params.Cp0.empty() );
+        CHECK( params.Cv0.empty() );
+        CHECK( params.VT0.empty() );
+        CHECK( params.VP0.empty() );
     }
 }
 
