@@ -84,7 +84,7 @@ public:
     /// @param x The x-coordinate of the point
     /// @param y The y-coordinate of the point
     /// @return The interpolation of the data at (x, y) point
-    auto operator()(const real& x, const real& y) const -> real;
+    auto operator()(real x, real y) const -> real;
 
 private:
     /// The coordinates of the x and y points

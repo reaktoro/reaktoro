@@ -135,7 +135,7 @@ auto BilinearInterpolator::empty() const -> bool
     return m_data.empty();
 }
 
-auto BilinearInterpolator::operator()(const real& x, const real& y) const -> real
+auto BilinearInterpolator::operator()(real x, real y) const -> real
 {
     // Check if the interpolation data contains only one point
     if(m_data.size() == 1) return m_data[0];
@@ -145,37 +145,74 @@ auto BilinearInterpolator::operator()(const real& x, const real& y) const -> rea
     const auto yA = m_ycoordinates.front();
     const auto yB = m_ycoordinates.back();
 
-    errorif(x < xA || x > xB, "Cannot interpolate with x = ", x, " when xmin = ", xA, " and xmax = ", xB, ".");
-    errorif(y < yA || y > yB, "Cannot interpolate with y = ", y, " when ymin = ", yA, " and ymax = ", yB, ".");
+    warningif(xA != xB && (x < xA || x > xB), "Interpolating with x = ", x, " when x(min) = ", xA, " and x(max) = ", xB, ".");
+    warningif(yA != yB && (y < yA || y > yB), "Interpolating with y = ", y, " when y(min) = ", yA, " and y(max) = ", yB, ".");
+
+    if(x < xA) x = xA;
+    if(x > xB) x = xB;
+    if(y < yA) y = yA;
+    if(y > yB) y = yB;
 
     const auto size_x = m_xcoordinates.size();
     const auto size_y = m_ycoordinates.size();
 
     const auto index_x = binarySearch(x, m_xcoordinates);
-    const auto i = index_x == size_x - 1 ? index_x - 1 : index_x;
-
     const auto index_y = binarySearch(y, m_ycoordinates);
-    const auto j = index_y == size_y - 1 ? index_y - 1 : index_y;
+
+    const auto i1 = (size_x == 1) ? 0 : (index_x == size_x - 1) ? index_x - 1 : index_x;
+    const auto i2 = (size_x == 1) ? 0 : i1 + 1;
+
+    const auto j1 = (size_y == 1) ? 0 : (index_y == size_y - 1) ? index_y - 1 : index_y;
+    const auto j2 = (size_y == 1) ? 0 : j1 + 1;
 
     const auto k = [=](Index i, Index j) { return i + j*size_x; };
 
-    const auto x1 = m_xcoordinates[i];
-    const auto x2 = m_xcoordinates[i + 1];
+    const auto x1 = m_xcoordinates[i1];
+    const auto x2 = m_xcoordinates[i2];
 
-    const auto y1 = m_ycoordinates[j];
-    const auto y2 = m_ycoordinates[j + 1];
+    const auto y1 = m_ycoordinates[j1];
+    const auto y2 = m_ycoordinates[j2];
 
-    const auto z11 = m_data[k(i  , j  )]; // z at (x1, y1)
-    const auto z21 = m_data[k(i+1, j  )]; // z at (x2, y1)
-    const auto z12 = m_data[k(i  , j+1)]; // z at (x1, y2)
-    const auto z22 = m_data[k(i+1, j+1)]; // z at (x2, y2)
+    if(x1 != x2 && y1 != y2)
+    {
+        const auto z11 = m_data[k(i1, j1)]; // z at (x1, y1)
+        const auto z21 = m_data[k(i2, j1)]; // z at (x2, y1)
+        const auto z12 = m_data[k(i1, j2)]; // z at (x1, y2)
+        const auto z22 = m_data[k(i2, j2)]; // z at (x2, y2)
 
-    const auto f11 =  z11*(x2 - x)*(y2 - y);
-    const auto f12 = -z12*(x2 - x)*(y1 - y);
-    const auto f21 = -z21*(x1 - x)*(y2 - y);
-    const auto f22 =  z22*(x1 - x)*(y1 - y);
+        const auto f11 =  z11*(x2 - x)*(y2 - y);
+        const auto f12 = -z12*(x2 - x)*(y1 - y);
+        const auto f21 = -z21*(x1 - x)*(y2 - y);
+        const auto f22 =  z22*(x1 - x)*(y1 - y);
 
-    return (f11 + f12 + f21 + f22)/((x2 - x1)*(y2 - y1));
+        return (f11 + f12 + f21 + f22)/((x2 - x1)*(y2 - y1));
+    }
+
+    if(x1 == x2 && y1 != y2)
+    {
+        const auto z11 = m_data[k(i1, j1)]; // z at (x1, y1)
+        const auto z12 = m_data[k(i1, j2)]; // z at (x1, y2)
+
+        const auto f11 =  z11*(y2 - y);
+        const auto f12 = -z12*(y1 - y);
+
+        return (f11 + f12)/(y2 - y1);
+    }
+
+    if(x1 != x2 && y1 == y2)
+    {
+        const auto z11 = m_data[k(i1, j1)]; // z at (x1, y1)
+        const auto z21 = m_data[k(i2, j1)]; // z at (x2, y1)
+
+        const auto f11 =  z11*(x2 - x);
+        const auto f21 = -z21*(x1 - x);
+
+        return (f11 + f21)/(x2 - x1);
+    }
+
+    assert(m_data.size() == 1);
+
+    return m_data[0];
 }
 
 auto operator<<(std::ostream& out, const BilinearInterpolator& interpolator) -> std::ostream&
