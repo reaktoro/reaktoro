@@ -55,6 +55,9 @@ void exportWaterThermoProps(py::module& m);
 void exportWaterThermoPropsUtils(py::module& m);
 void exportWaterUtils(py::module& m);
 
+// Thermodynamics/Aqueous
+void exportActivityModelIonExchange(py::module& m);
+
 void exportThermodynamics(py::module& m)
 {
     // Thermodynamics/Aqueous
@@ -93,4 +96,7 @@ void exportThermodynamics(py::module& m)
     exportWaterThermoProps(m);
     exportWaterThermoPropsUtils(m);
     exportWaterUtils(m);
+
+    // Thermodynamics/Surface
+    exportActivityModelIonExchange(m);
 }
