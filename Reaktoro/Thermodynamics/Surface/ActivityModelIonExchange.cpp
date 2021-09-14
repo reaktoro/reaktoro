@@ -30,9 +30,15 @@ namespace detail {
 // Return the number of exchanger's equivalents (the charge of cations) in the ion exchange species.
 auto exchangerEquivalentsNumber(const Species& species) -> real
 {
+    // Run through the elements of the current species and return the coefficient of the exchanger
     for(auto [element, coeff] : species.elements())
         if(!Elements::withSymbol(element.symbol()))
             return coeff;
+    // If all the elements are part of the periodic table then the exchanger is missing
+    warning(1, "Could not get information about the exchanger equivalents number. "
+             "Ensure the ion exchange phase contains correct species");
+    return 0;
+
 }
 /// Return the InoExchangeActivityModel object based on the Gaines--Thomas model.
 auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> ActivityModel
@@ -55,6 +61,9 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         // Auxiliary references
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
+
+        // Export the aqueous mixture and its state via the `extra` data member
+        props.extra = { ze };
 
         // Calculate the ln of equivalence fractions
         ArrayXr ln_beta = (x * ze / (x * ze).sum()).log();
