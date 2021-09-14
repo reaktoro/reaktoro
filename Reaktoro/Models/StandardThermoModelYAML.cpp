@@ -21,6 +21,7 @@
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
@@ -43,6 +44,8 @@ auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
         return StandardThermoModelHKF(params);
     if(model == "HollandPowell")
         return StandardThermoModelHollandPowell(params);
+    if(model == "Interpolation")
+        return StandardThermoModelInterpolation(params);
     if(model == "MaierKelley")
         return StandardThermoModelMaierKelley(params);
     if(model == "MineralHKF")
