@@ -25,6 +25,7 @@
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
@@ -223,6 +224,34 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
         node.at("numatoms").to(obj.numatoms);
     }
     node.at("Tmax").to(obj.Tmax);
+}
+
+//----------------------------------------------------------------------
+
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsInterpolation)
+{
+    node["Temperatures"] = obj.temperatures;
+    node["Pressures"]    = obj.pressures;
+    node["G0"]           = obj.G0;
+    node["H0"]           = obj.H0;
+    node["V0"]           = obj.V0;
+    node["Cp0"]          = obj.Cp0;
+    node["Cv0"]          = obj.Cv0;
+    node["VT0"]          = obj.VT0;
+    node["VP0"]          = obj.VP0;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsInterpolation)
+{
+    node.at("Temperatures").to(obj.temperatures);
+    node.at("Pressures").to(obj.pressures);
+    if(node["G0"]) obj.G0 = node["G0"].as<Vec<Vec<double>>>();
+    if(node["H0"]) obj.H0 = node["H0"].as<Vec<Vec<double>>>();
+    if(node["V0"]) obj.V0 = node["V0"].as<Vec<Vec<double>>>();
+    if(node["Cp0"]) obj.Cp0 = node["Cp0"].as<Vec<Vec<double>>>();
+    if(node["Cv0"]) obj.Cv0 = node["Cv0"].as<Vec<Vec<double>>>();
+    if(node["VT0"]) obj.VT0 = node["VT0"].as<Vec<Vec<double>>>();
+    if(node["VP0"]) obj.VP0 = node["VP0"].as<Vec<Vec<double>>>();
 }
 
 //----------------------------------------------------------------------
