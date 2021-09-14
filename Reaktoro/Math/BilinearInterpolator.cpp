@@ -25,13 +25,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Index.hpp>
-#include <Reaktoro/Math/BilinearInterpolator.hpp>
 
 namespace Reaktoro {
 namespace {
 
-auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index begin, Index end) -> Index
+auto binarySearchHelper(double p, const Vec<double>& coordinates, Index begin, Index end) -> Index
 {
     if(end - begin == 1)
         return begin;
@@ -44,9 +42,20 @@ auto binarySearchHelper(double p, const std::vector<double>& coordinates, Index 
         return binarySearchHelper(p, coordinates, mid, end);
 }
 
-auto binarySearch(double p, const std::vector<double>& coordinates) -> Index
+auto binarySearch(double p, const Vec<double>& coordinates) -> Index
 {
     return binarySearchHelper(p, coordinates, 0, coordinates.size());
+}
+
+auto linearize(const Vec<Vec<double>>& data) -> Vec<double>
+{
+    if(data.empty())
+        return {};
+    Vec<double> result;
+    result.reserve(data.size() * data.front().size());
+    for(const auto& row : data)
+        result.insert(result.end(), row.begin(), row.end());
+    return result;
 }
 
 } // namespace
@@ -55,17 +64,26 @@ BilinearInterpolator::BilinearInterpolator()
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-    const std::vector<double>& xcoordinates,
-    const std::vector<double>& ycoordinates,
-    const std::vector<double>& data)
+    const Vec<double>& xcoordinates,
+    const Vec<double>& ycoordinates,
+    const Vec<double>& data)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
   m_data(data)
 {}
 
 BilinearInterpolator::BilinearInterpolator(
-    const std::vector<double>& xcoordinates,
-    const std::vector<double>& ycoordinates,
+    const Vec<double>& xcoordinates,
+    const Vec<double>& ycoordinates,
+    const Vec<Vec<double>>& data)
+: m_xcoordinates(xcoordinates),
+  m_ycoordinates(ycoordinates),
+  m_data(linearize(data))
+{}
+
+BilinearInterpolator::BilinearInterpolator(
+    const Vec<double>& xcoordinates,
+    const Vec<double>& ycoordinates,
     const std::function<double(double, double)>& function)
 : m_xcoordinates(xcoordinates),
   m_ycoordinates(ycoordinates),
@@ -77,32 +95,37 @@ BilinearInterpolator::BilinearInterpolator(
             m_data[k] = function(xcoordinates[i], ycoordinates[j]);
 }
 
-auto BilinearInterpolator::setCoordinatesX(const std::vector<double>& xcoordinates) -> void
+auto BilinearInterpolator::setCoordinatesX(const Vec<double>& xcoordinates) -> void
 {
     m_xcoordinates = xcoordinates;
 }
 
-auto BilinearInterpolator::setCoordinatesY(const std::vector<double>& ycoordinates) -> void
+auto BilinearInterpolator::setCoordinatesY(const Vec<double>& ycoordinates) -> void
 {
     m_ycoordinates = ycoordinates;
 }
 
-auto BilinearInterpolator::setData(const std::vector<double>& data) -> void
+auto BilinearInterpolator::setData(const Vec<double>& data) -> void
 {
     m_data = data;
 }
 
-auto BilinearInterpolator::xCoordinates() const -> const std::vector<double>&
+auto BilinearInterpolator::setData(const Vec<Vec<double>>& data) -> void
+{
+    m_data = linearize(data);
+}
+
+auto BilinearInterpolator::xCoordinates() const -> const Vec<double>&
 {
     return m_xcoordinates;
 }
 
-auto BilinearInterpolator::yCoordinates() const -> const std::vector<double>&
+auto BilinearInterpolator::yCoordinates() const -> const Vec<double>&
 {
     return m_ycoordinates;
 }
 
-auto BilinearInterpolator::data() const -> const std::vector<double>&
+auto BilinearInterpolator::data() const -> const Vec<double>&
 {
     return m_data;
 }
@@ -112,7 +135,7 @@ auto BilinearInterpolator::empty() const -> bool
     return m_data.empty();
 }
 
-auto BilinearInterpolator::operator()(real x, real y) const -> real
+auto BilinearInterpolator::operator()(const real& x, const real& y) const -> real
 {
     // Check if the interpolation data contains only one point
     if(m_data.size() == 1) return m_data[0];
