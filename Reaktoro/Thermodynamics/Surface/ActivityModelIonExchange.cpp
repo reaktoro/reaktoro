@@ -35,8 +35,8 @@ auto exchangerEquivalentsNumber(const Species& species) -> real
         if(!Elements::withSymbol(element.symbol()))
             return coeff;
     // If all the elements are part of the periodic table then the exchanger is missing
-    warning(1, "Could not get information about the exchanger equivalents number. "
-             "Ensure the ion exchange phase contains correct species");
+    errorif(true, "Could not get information about the exchanger equivalents number. "
+                  "Ensure the ion exchange phase contains correct species");
     return 0;
 
 }
