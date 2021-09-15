@@ -181,7 +181,7 @@ struct CubicEOS::Impl
     /// The number of species in the phase.
     unsigned nspecies;
 
-    /// The fluid type for which the equation of state should be confifured.
+    /// The fluid type for which the equation of state should be configured.
     CubicEOSFluidType fluidtype = CubicEOSFluidType::Vapor;
 
     /// The type of the cubic equation of state.
@@ -261,7 +261,7 @@ struct CubicEOS::Impl
             aT[k]  = factor*alphaT;
             aTT[k] = factor*alphaTT;
             b[k]   = Omega*R*Tcr[k]/Pcr[k]; // Eq. (3.44)
-        };
+        }
 
         // Calculate the binary interaction parameters and its temperature derivatives
         CubicEOSInteractionParams ip;
@@ -361,7 +361,7 @@ struct CubicEOS::Impl
                 Exception exception;
                 exception.error << "Could not calculate the cubic equation of state.";
                 exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();
-                RaiseError(exception);
+                RaiseError(exception)
             }
             Zs.push_back(cubicEOS_roots[0]);  // Z_max
             Zs.push_back(cubicEOS_roots[2]);  // Z_min
