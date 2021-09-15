@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Singletons/CriticalProps.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>
 
@@ -33,7 +32,7 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
     // The number of gases
     const auto nspecies = species.size();
 
-    // Get the the critical temperatures, pressures and acentric factors of the gases
+    // Get the critical temperatures, pressures and acentric factors of the gases
     ArrayXr Tcr(nspecies), Pcr(nspecies), omega(nspecies);
     for(auto i = 0; i < nspecies; ++i)
     {

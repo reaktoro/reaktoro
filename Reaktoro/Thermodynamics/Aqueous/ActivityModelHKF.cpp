@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <map>
-#include <string>
 #include <vector>
 
 // Reaktoro includes
