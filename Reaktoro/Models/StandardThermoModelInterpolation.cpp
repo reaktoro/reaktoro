@@ -53,6 +53,8 @@ auto StandardThermoModelInterpolation(const StandardThermoModelParamsInterpolati
     BilinearInterpolator iVT0(temperatures, pressures, params.VT0);
     BilinearInterpolator iVP0(temperatures, pressures, params.VP0);
 
+    const auto Pref = 1e5; // 1 bar reference pressure
+
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         if(!iG0.empty()) props.G0 = iG0(T, P);
@@ -62,6 +64,8 @@ auto StandardThermoModelInterpolation(const StandardThermoModelParamsInterpolati
         if(!iCv0.empty()) props.Cv0 = iCv0(T, P);
         if(!iVT0.empty()) props.VT0 = iVT0(T, P);
         if(!iVP0.empty()) props.VP0 = iVP0(T, P);
+
+        props.G0 += props.V0 * (P - Pref);
     };
 
     return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
