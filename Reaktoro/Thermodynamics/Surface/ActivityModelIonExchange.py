@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+
 from reaktoro import *
 import numpy as np
 import pytest
+
 
 def initializeMoleFractions(species):
 
@@ -30,6 +32,7 @@ def initializeMoleFractions(species):
     n[idx("NaX")]  = 0.3
 
     return n / n.sum()
+
 
 def testActivityModelIonExchage():
 
@@ -58,8 +61,8 @@ def testActivityModelIonExchage():
     assert species[15].name() == "ZnX2"
 
     # Initialize input data for the ActivityProps
-    T = 300.0
-    P = 12.3e5
+    T = autodiff.real(300.0)
+    P = autodiff.real(12.3e5)
     x = initializeMoleFractions(species)
 
     # Construct the activity model function with the given ion exchange species.
@@ -68,12 +71,8 @@ def testActivityModelIonExchage():
     # Create the ActivityProps object with the results.
     props = ActivityProps.create(species.size())
 
-    # Creat the ActivityArgs object with the input data
-    #args = ActivityArgs("T": T, "P": P, "x": x)
-
     # Evaluate the activity props function
-    #fn(props, {"T":T, "P":P, "x":x})
-    #fn(props, {T, P, x})
+    # fn(props, T, P, x)
 
     # Fetch exchanger equivalents in the ion exchange species
     #ze = props.extra.at(0)

@@ -34,20 +34,23 @@ auto exchangerEquivalentsNumber(const Species& species) -> real
     for(auto [element, coeff] : species.elements())
         if(!Elements::withSymbol(element.symbol()))
             return coeff;
+
     // If all the elements are part of the periodic table then the exchanger is missing
     errorif(true, "Could not get information about the exchanger equivalents number. "
-                  "Ensure the ion exchange phase contains correct species");
+        "Ensure the ion exchange phase contains correct species");
 }
-/// Return the InoExchangeActivityModel object based on the Gaines--Thomas model.
+
+/// Return the IonExchangeActivityModel object based on the Gaines--Thomas model.
 auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> ActivityModel
 {
-    // The number of species
-    auto num_species = species.size();
+    // The number of species in the ion exchange phase only
+    const auto num_species = species.size();
 
     // The numbers of exchanger's equivalents for exchange species
     ArrayXd ze = ArrayXr::Zero(num_species);
+
     // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
-    for(Index i = 0; i < num_species; ++i)
+    for(auto i = 0; i < num_species; ++i)
         ze[i] = detail::exchangerEquivalentsNumber(species[i]);
 
     // Define the activity model function of the ion exchange phase
@@ -64,7 +67,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         props.extra = { ze };
 
         // Calculate the ln of equivalence fractions
-        ArrayXr ln_beta = (x * ze / (x * ze).sum()).log();
+        const auto ln_beta = (x*ze/(x*ze).sum()).log();
 
         // Calculate the ln of activity coefficients
         ln_g = ArrayXr::Zero(num_species);
