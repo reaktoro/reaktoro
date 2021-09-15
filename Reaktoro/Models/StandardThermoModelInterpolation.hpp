@@ -52,6 +52,9 @@ struct StandardThermoModelParamsInterpolation
 
     /// The pressure derivative of the standard molar volumes @f$\partial V^{\circ}/\partial P@f$ of the species (in m³/(mol·K)).
     Vec<Vec<double>> VP0;
+
+    /// The reference pressure used for volume correction of @f$G^{\circ}@f$ (in Pa).
+    double Pref = 1e5;
 };
 
 /// Return a function that calculates thermodynamic properties of a species using the Maier-Kelley model.

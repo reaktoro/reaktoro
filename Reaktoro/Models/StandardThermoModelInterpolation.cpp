@@ -44,6 +44,7 @@ auto StandardThermoModelInterpolation(const StandardThermoModelParamsInterpolati
 {
     const auto& temperatures = params.temperatures;
     const auto& pressures = params.pressures;
+    const auto& Pref = params.Pref;
 
     BilinearInterpolator iG0(temperatures, pressures, params.G0);
     BilinearInterpolator iH0(temperatures, pressures, params.H0);
@@ -53,7 +54,6 @@ auto StandardThermoModelInterpolation(const StandardThermoModelParamsInterpolati
     BilinearInterpolator iVT0(temperatures, pressures, params.VT0);
     BilinearInterpolator iVP0(temperatures, pressures, params.VP0);
 
-    const auto Pref = 1e5; // 1 bar reference pressure
 
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
