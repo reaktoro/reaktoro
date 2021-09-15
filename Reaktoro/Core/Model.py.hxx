@@ -23,12 +23,12 @@
 using namespace Reaktoro;
 
 template<typename Result, typename... Args>
-void exportModel(py::module& m, const char* modelname)
+auto exportModel(py::module& m, const char* modelname)
 {
     using ResultRef = Ref<Result>;
     using ModelType = Model<Result(Args...)>;
 
-    py::class_<ModelType>(m, modelname)
+    return py::class_<ModelType>(m, modelname)
         .def(py::init<>())
         // .def(py::init<const Fn<void(ResultRef, Args...)>&>())  // At the moment, only one possibility of function call is possible.
         .def(py::init<const Fn<Result(Args...)>&>())
