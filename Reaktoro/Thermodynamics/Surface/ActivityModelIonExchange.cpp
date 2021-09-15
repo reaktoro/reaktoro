@@ -37,8 +37,6 @@ auto exchangerEquivalentsNumber(const Species& species) -> real
     // If all the elements are part of the periodic table then the exchanger is missing
     errorif(true, "Could not get information about the exchanger equivalents number. "
                   "Ensure the ion exchange phase contains correct species");
-    return 0;
-
 }
 /// Return the InoExchangeActivityModel object based on the Gaines--Thomas model.
 auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> ActivityModel
