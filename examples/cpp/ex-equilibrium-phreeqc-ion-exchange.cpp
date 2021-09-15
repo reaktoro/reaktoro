@@ -41,18 +41,19 @@ auto speciesListToStringList(const SpeciesList& specieslist) -> StringList
 }
 int main()
 {
-    // Initialize Phreeqc database
+    // Initialize the Phreeqc database
     PhreeqcDatabase db("phreeqc.dat");
 
-    // Define aqueous phase
+    // Define an aqueous phase
     AqueousPhase aqueousphase(speciate("H O C Ca Na Mg Cl"));
     aqueousphase.setActivityModel(chain(
-            ActivityModelHKF(),
-            ActivityModelDrummond("CO2")
-            ));
+        ActivityModelHKF(),
+        ActivityModelDrummond("CO2")
+    ));
 
     // Fetch species for ion-exchange modeling
     SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
+
     // Separate exchangres (e.g., X-) from exchange species species (NaX, KX, NaY, NaY, ect)
     SpeciesList exchanger_species = filter(exchange_species, [](const Species& s){ return std::abs(s.charge());});
     SpeciesList ionexchange_species = filter(exchange_species, [](const Species& s){ return !s.charge();});
