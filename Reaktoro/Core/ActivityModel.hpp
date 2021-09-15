@@ -42,7 +42,7 @@ struct ActivityArgs
     ArrayXrConstRef x;
 };
 
-// Declare this so that Model undestand ActivityPropsRef as reference type for ActivityProps instead of ActivityProps&.
+// Declare this so that Model understands ActivityPropsRef as reference type for ActivityProps instead of ActivityProps&.
 REAKTORO_DEFINE_REFERENCE_TYPE_OF(ActivityProps, ActivityPropsRef);
 
 /// The function type for the calculation of activity and excess thermodynamic properties of a phase.
