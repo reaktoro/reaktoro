@@ -342,7 +342,8 @@ auto activityModelDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuck
         state = mixture.state(T, P, x);
 
         // Export the aqueous mixture and its state via the `extra` data member
-        props.extra = { mixture, state };
+        props.extra["AqueousMixtureState"] = state;
+        props.extra["AqueousMixture"] = mixture;
 
         // Auxiliary constant references
         const auto& m = state.m;             // the molalities of all species
