@@ -84,7 +84,7 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
-        phaseProps(i).update(T, P, np);
+        phaseProps(i).update(T, P, np, m_extra);
         offset += size;
     }
 }

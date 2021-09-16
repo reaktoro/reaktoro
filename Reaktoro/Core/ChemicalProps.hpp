@@ -385,6 +385,9 @@ private:
 
     /// The chemical potentials of the species in the system.
     ArrayXr u;
+
+    /// The extra data mapped to activity model of particular phase that may be reused by subsequent phases.
+    Map<String, Any> m_extra;
 };
 
 /// Output a ChemicalProps object to an output stream.
