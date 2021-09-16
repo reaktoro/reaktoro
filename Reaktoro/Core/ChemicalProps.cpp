@@ -29,6 +29,8 @@ using namespace tabulate;
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
@@ -84,6 +86,12 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
+        if(msystem.phase(i).name() == "AqueousPhase")
+        {
+            // TODO: leave the evaluation of only one extra data entrance
+            m_extra["AqueousProps"] = AqueousProps(*this);
+            m_extra["AqueousMixtureState"] = AqueousMixture(msystem.phase(i).species()).state(T, P, np/np.sum());
+        }
         phaseProps(i).update(T, P, np, m_extra);
         offset += size;
     }
