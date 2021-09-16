@@ -1398,7 +1398,8 @@ auto activityModelPitzerHMW(const SpeciesList& species) -> ActivityModel
         state = mixture.state(T, P, x);
 
         // Export the aqueous mixture and its state via the `extra` data member
-        props.extra = { mixture, state };
+        props.extra["AqueousMixtureState"] = state;
+        props.extra["AqueousMixture"] = mixture;
 
         // Calculate the activity coefficients of the cations
         for(auto M = 0; M < pitzer.idx_cations.size(); ++M)

@@ -128,12 +128,12 @@ struct ActivityPropsBase
 };
 
 /// The activity and excess thermodynamic properties of a phase.
-using ActivityProps = ActivityPropsBase<real, ArrayXr, Vec<Any>>;
+using ActivityProps = ActivityPropsBase<real, ArrayXr, Map<String, Any>>;
 
 /// The non-const view to the activity and excess thermodynamic properties of a phase.
-using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef, Vec<Any>&>;
+using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef, Map<String, Any>&>;
 
 /// The const view to the activity and excess thermodynamic properties of a phase.
-using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef, const Vec<Any>&>;
+using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef, const Map<String, Any>&>;
 
 } // namespace Reaktoro

@@ -83,7 +83,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         fn(props, {T, P, x});
 
         // Fetch exchanger equivalents in the ion exchange species
-        const auto& ze = std::any_cast<ArrayXd>(props.extra.at(0));
+        const auto& ze = std::any_cast<ArrayXd>(props.extra["ExchangerEquivalents"]);
 
         CHECK( ze[0]  == 2 ); // AlOHX2
         CHECK( ze[1]  == 3 ); // AlX3
