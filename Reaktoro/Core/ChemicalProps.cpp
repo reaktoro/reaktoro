@@ -88,8 +88,6 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
         const auto np = n.segment(offset, size);
         if(msystem.phase(i).name() == "AqueousPhase")
         {
-            // TODO: leave the evaluation of only one extra data entrance
-            m_extra["AqueousProps"] = AqueousProps(*this);
             m_extra["AqueousMixtureState"] = AqueousMixture(msystem.phase(i).species()).state(T, P, np/np.sum());
         }
         phaseProps(i).update(T, P, np, m_extra);
