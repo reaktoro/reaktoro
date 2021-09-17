@@ -120,7 +120,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
             ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3 * I);
         }
 
-
         // Calculate the ln of activities
         ln_a = ln_g + ln_beta;
     };
