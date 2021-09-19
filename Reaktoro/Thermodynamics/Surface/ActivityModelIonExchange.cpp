@@ -30,6 +30,26 @@ using std::log;
 
 namespace detail {
 
+Map<String, std::vector<real>> gammas_phreeqc =
+{
+    { "NaX"   , {4.08, 0.082}  },
+    { "KX"    , {3.50, 0.015}  },
+    { "LiX"   , {6.00, 0.000}  },
+    { "NH4X"  , {2.50, 0.000}  },
+    { "CaX2"  , {5.00, 0.165}  },
+    { "MgX2"  , {5.50, 0.200}  },
+    { "SrX2"  , {5.26, 0.121}  },
+    { "BaX2"  , {4.00, 0.153}  },
+    { "MnX2"  , {6.00, 0.000}  },
+    { "FeX2"  , {6.00, 0.000}  },
+    { "CuX2"  , {6.00, 0.000}  },
+    { "ZnX2"  , {5.00, 0.000}  },
+    { "CdX2"  , {0.00, 0.000}  },
+    { "PbX2"  , {0.00, 0.165}  },
+    { "AlX3"  , {9.00, 0.200}  },
+    { "AlOHX2", {0.00, 0.000}  },
+};
+
 // Return the number of exchanger's equivalents (the charge of cations) in the ion exchange species.
 auto exchangerEquivalentsNumber(const Species& species) -> real
 {
@@ -108,22 +128,24 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                 // TODO: obtained from each species if it have parameter -gamma provided
                 //            const auto a = phreeqc_species->dha;
                 //            const auto b = phreeqc_species->dhb;
-                const auto a = 1.0;
-                const auto b = 1.0;
+                const auto a = gammas_phreeqc[species[i].name()].at(0);
+                const auto b = gammas_phreeqc[species[i].name()].at(1);
 
                 // Calculate the ln activity coefficient of the exchange species
                 ln_g[i] = ln10*(-A*ze[i]*ze[i]*sqrtI/(1.0 + a*B*sqrtI) + b*I);
 
-                // ---------------------------------------------------------------------------//
-                // Calculate activity coefficients according top the Davies model
-
-                // Calculate the ln activity coefficient of the echange species
-                // Debye-Huckel parameter
-                const auto Agamma = 0.5095;
-                ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3 * I);
+//                // ---------------------------------------------------------------------------//
+//                // Calculate activity coefficients according top the Davies model
+//
+//                // Calculate the ln activity coefficient of the echange species
+//                // Debye-Huckel parameter
+//                const auto Agamma = 0.5095;
+//                ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3 * I);
             }
         }
 
+        std::cout << "ln_g = " << ln_g << std::endl;
+        getchar();
         // Calculate the ln of activities
         ln_a = ln_g + ln_beta;
     };
