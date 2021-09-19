@@ -27,6 +27,7 @@
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
 
 namespace Reaktoro {
 
@@ -541,6 +542,48 @@ public:
             AggregateState::CrystallineSolid,
             AggregateState::AmorphousSolid
         });
+        setActivityModel(ActivityModelIdealSolution());
+        setIdealActivityModel(ActivityModelIdealSolution());
+    }
+};
+
+/// The class used to configure an ion exchange phase.
+class IonExchangePhase : public GenericPhase
+{
+public:
+    /// Construct a default IonExchangePhase object.
+    IonExchangePhase() : GenericPhase() { initialize(); }
+
+    /// Construct an IonExchangePhase object with given species names.
+    explicit IonExchangePhase(const StringList& species) : GenericPhase(species) { initialize(); }
+
+    /// Initialize the default attributes of this LiquidPhase object.
+    auto initialize() -> void
+    {
+        setName("IonExchangePhase");
+        setStateOfMatter(StateOfMatter::Solid);
+        setAggregateState(AggregateState::IonExchange);
+        setActivityModel(ActivityModelIonExchangeGainesThomas());
+        setIdealActivityModel(ActivityModelIdealSolution());
+    }
+};
+
+/// The class used to configure an exchanger phase.
+class IonExchangerPhase : public GenericPhase
+{
+public:
+    /// Construct a default IonExchangePhase object.
+    IonExchangerPhase() : GenericPhase() { initialize(); }
+
+    /// Construct an IonExchangePhase object with given species names.
+    explicit IonExchangerPhase(const StringList& species) : GenericPhase(species) { initialize(); }
+
+    /// Initialize the default attributes of this LiquidPhase object.
+    auto initialize() -> void
+    {
+        setName("IonExchangerPhase");
+        setStateOfMatter(StateOfMatter::Solid);
+        setAggregateState(AggregateState::IonExchange);
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
     }
