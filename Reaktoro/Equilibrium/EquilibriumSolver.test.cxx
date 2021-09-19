@@ -80,7 +80,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     EquilibriumOptions options;
     // options.optima.output.active = true;
     options.hessian = GibbsHessian::Exact;
-    options.optima.maxiterations = 100;
+    options.optima.maxiters = 100;
     options.optima.convergence.tolerance = 1e-10;
 
     EquilibriumResult result;
