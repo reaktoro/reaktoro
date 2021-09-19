@@ -19,8 +19,10 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 using namespace Reaktoro;
 
@@ -37,14 +39,32 @@ inline auto initializeMoleFractions(const SpeciesList& species) -> ArrayXr
     return n / n.sum();
 }
 
+/// Return mole fractions for the aqueous species.
+inline auto initializeAqueousMoleFractions(const SpeciesList& species) -> ArrayXr
+{
+    auto idx = [&](auto formula) { return species.indexWithFormula(formula); };
+
+    ArrayXr n(species.size());
+    n = 0.1;
+    n[idx("H2O")] = 55.508;
+    n[idx("H+" )] = 1e-7;
+    n[idx("OH-")] = 1e-7;
+    n[idx("Na+")] = 0.3;
+    n[idx("Cl-")] = 0.3;
+
+    return n / n.sum();
+}
+
 TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
 {
     // Load phreeqc database
     PhreeqcDatabase db("phreeqc.dat");
 
+    // Define ion exchange species list and corresponding fractions
     // Expected species: AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
     SpeciesList species = filter(db.species().withAggregateState(AggregateState::IonExchange),
                                  [](const Species& s){ return !s.charge();});
+    const auto x = initializeMoleFractions(species);
 
     SECTION("Checking the species")
     {
@@ -69,7 +89,6 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
     // Initialize input data for the ActivityProps
     const auto T = 300.0;
     const auto P = 12.3e5;
-    const auto x = initializeMoleFractions(species);
 
     SECTION("Checking the charges")
     {
@@ -130,5 +149,46 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[13] == Approx(-13.017)   ); // PbX2
         CHECK( props.ln_a[14] == Approx(-13.017)   ); // SrX2
         CHECK( props.ln_a[15] == Approx(-13.017)   ); // ZnX2
+    }
+
+    // Define aqueous species list and corresponding fractions
+    const auto species_aq = SpeciesList("H2O H+ OH- Na+ Cl- NaCl");
+    const auto x_aq = initializeAqueousMoleFractions(species_aq);
+
+    SECTION("Checking the activities coefficients (calculated based on the parameters fetched from phreeqc.dat)")
+    {
+        // Create the aqueous mixture
+        AqueousMixture mixture(species_aq);
+
+        // The state of the aqueous mixture
+        AqueousMixtureState aqstate = mixture.state(T, P, x_aq);
+
+        // Construct the activity model function with the given ion exchange species.
+        ActivityModel fn = ActivityModelIonExchange()(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        props.extra["AqueousMixtureState"] = aqstate;
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x});
+
+        CHECK( props.ln_g[0]  == Approx(-2.95134)  ); // AlOHX2
+        CHECK( props.ln_g[1]  == Approx(-2.13305)  ); // AlX3
+        CHECK( props.ln_g[2]  == Approx(-1.47255)  ); // BaX2
+        CHECK( props.ln_g[3]  == Approx(-1.29726)  ); // CaX2
+        CHECK( props.ln_g[4]  == Approx(-2.95134)  ); // CdX2
+        CHECK( props.ln_g[5]  == Approx(-1.31534)  ); // CuX2
+        CHECK( props.ln_g[6]  == Approx(-1.31534)  ); // FeX2
+        CHECK( props.ln_g[7]  == Approx(-0.41378)  ); // KX
+        CHECK( props.ln_g[8]  == Approx(-0.328835) ); // LiX
+        CHECK( props.ln_g[9]  == Approx(-1.19483)  ); // MgX2
+        CHECK( props.ln_g[10] == Approx(-1.31534)  ); // MnX2
+        CHECK( props.ln_g[11] == Approx(-0.485979) ); // NH4X
+        CHECK( props.ln_g[12] == Approx(-0.324217) ); // NaX
+        CHECK( props.ln_g[13] == Approx(-2.79937)  ); // PbX2
+        CHECK( props.ln_g[14] == Approx(-1.30042)  ); // SrX2
+        CHECK( props.ln_g[15] == Approx(-1.44923)  ); // ZnX2
     }
 }

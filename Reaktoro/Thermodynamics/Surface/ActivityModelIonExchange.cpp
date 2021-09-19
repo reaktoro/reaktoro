@@ -123,7 +123,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                 //            std::cout << phreeqc_species->dha << std::endl;
                 //            std::cout << phreeqc_species->dhb << std::endl;
                 //            std::cout << phreeqc_species->a_f << std::endl;
-                //            getchar();
                 // Calculate activity coefficients according to the Debye--Huckel model
                 // TODO: obtained from each species if it have parameter -gamma provided
                 //            const auto a = phreeqc_species->dha;
@@ -143,9 +142,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
 //                ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3 * I);
             }
         }
-
-        std::cout << "ln_g = " << ln_g << std::endl;
-        getchar();
         // Calculate the ln of activities
         ln_a = ln_g + ln_beta;
     };
