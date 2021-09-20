@@ -29,7 +29,6 @@
 #include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 using namespace Reaktoro;
@@ -65,9 +64,6 @@ void exportSerializationModelsYAML(py::module& m)
 
     py::implicitly_convertible<yaml, StandardThermoModelParamsMineralHKF>();
     py::implicitly_convertible<StandardThermoModelParamsMineralHKF, yaml>();
-
-    py::implicitly_convertible<yaml, StandardThermoModelParamsNasa>();
-    py::implicitly_convertible<StandardThermoModelParamsNasa, yaml>();
 
     py::implicitly_convertible<yaml, StandardThermoModelParamsWaterHKF>();
     py::implicitly_convertible<StandardThermoModelParamsWaterHKF, yaml>();
