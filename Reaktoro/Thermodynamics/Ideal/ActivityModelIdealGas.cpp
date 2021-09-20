@@ -17,6 +17,9 @@
 
 #include "ActivityModelIdealGas.hpp"
 
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+
 namespace Reaktoro {
 
 using std::log;
@@ -25,11 +28,15 @@ auto ActivityModelIdealGas() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args)
+        const auto R = universalGasConstant;
+
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
-            const auto Pbar = args.P * 1.0e-5; // from Pa to bar
+            const auto& [T, P, x] = args;
+            const auto Pbar = P * 1.0e-5; // from Pa to bar
             props = 0.0;
-            props.ln_a = args.x.log() + log(Pbar);
+            props.Vex = R*T/P;
+            props.ln_a = x.log() + log(Pbar);
         };
 
         return fn;
