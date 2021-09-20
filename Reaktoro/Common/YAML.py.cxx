@@ -18,19 +18,19 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportConstants(py::module& m);
-void exportInterpolationUtils(py::module& m);
-void exportMemoization(py::module& m);
-void exportParseUtils(py::module& m);
-void exportStringList(py::module& m);
-void exportYAML(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Common/YAML.hpp>
+using namespace Reaktoro;
 
-void exportCommon(py::module& m)
+void exportYAML(py::module& m)
 {
-    exportConstants(m);
-    exportInterpolationUtils(m);
-    exportMemoization(m);
-    exportParseUtils(m);
-    exportStringList(m);
-    exportYAML(m);
+    py::class_<yaml>(m, "yaml")
+        .def(py::init<>())
+        .def_static("parse", py::overload_cast<const char*>(&yaml::parse))
+        .def_static("parse", py::overload_cast<const std::string&>(&yaml::parse))
+        .def_static("parse", py::overload_cast<std::istream&>(&yaml::parse))
+        .def("__getitem__", [](const yaml& self, const std::string& key) { return self[key]; } )
+        .def("__getitem__", [](yaml& self, const std::string& key) { return self[key]; } )
+        .def("__repr__", &yaml::repr)
+        ;
 }
