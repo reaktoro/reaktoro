@@ -28,6 +28,7 @@ void exportReactionThermoModelYAML(py::module& m);
 void exportStandardThermoModelConstant(py::module& m);
 void exportStandardThermoModelHKF(py::module& m);
 void exportStandardThermoModelHollandPowell(py::module& m);
+void exportStandardThermoModelInterpolation(py::module& m);
 void exportStandardThermoModelMaierKelley(py::module& m);
 void exportStandardThermoModelMineralHKF(py::module& m);
 void exportStandardThermoModelWaterHKF(py::module& m);
@@ -45,6 +46,7 @@ void exportModels(py::module& m)
     exportStandardThermoModelConstant(m);
     exportStandardThermoModelHKF(m);
     exportStandardThermoModelHollandPowell(m);
+    exportStandardThermoModelInterpolation(m);
     exportStandardThermoModelMaierKelley(m);
     exportStandardThermoModelMineralHKF(m);
     exportStandardThermoModelWaterHKF(m);
