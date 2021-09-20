@@ -165,6 +165,18 @@ auto Database::attachData(const Any& data) -> void
     pimpl->attached_data = data;
 }
 
+auto Database::extend(const Database& other) -> void
+{
+    for(const auto& element : other.elements())
+        addElement(element);
+
+    for(const auto& species : other.species())
+        addSpecies(species);
+
+    // TODO: Replace Any by Map<String, Any> so that it becomes easier/more intuitive to unify different attached data to Database objects.
+    // pimpl->attached_data = ???;
+}
+
 auto Database::elements() const -> const ElementList&
 {
     return pimpl->elements;

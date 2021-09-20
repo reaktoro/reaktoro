@@ -81,7 +81,7 @@ auto createSolidSpecies(String name)
         .withStandardThermoModel(standardThermoModelSolid);
 }
 
-/// Return a mock ChemicalSystem object for test reasons.
+/// Return a mock Database object for test reasons.
 auto createDatabase() -> Database
 {
     Database db;
@@ -166,6 +166,33 @@ TEST_CASE("Testing Database class", "[Database]")
     db.attachData( String("SomeData") );
 
     REQUIRE( std::any_cast<String>(db.attachedData()) == "SomeData" );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: Database::extends
+    //-------------------------------------------------------------------------
+    Database dbx;
+
+    dbx.addSpecies( Species("H2O(aq)"  ) ); // check repeated species
+    dbx.addSpecies( Species("CaCO3(aq)") );
+    dbx.addSpecies( Species("MgCO3(aq)") );
+    dbx.addSpecies( Species("Al+2(aq)" ) );
+    dbx.addSpecies( Species("Al+3(aq)" ) );
+    dbx.addSpecies( Species("Fe+2(aq)" ) );
+    dbx.addSpecies( Species("Fe+3(aq)" ) );
+    dbx.addSpecies( Species("Mg(s)") );
+    dbx.addSpecies( Species("Al(s)") );
+
+    db.extend(dbx);
+
+    CHECK_NOTHROW( db.species().index("H2O(aq)!") ); // repeated species get ! added to name
+    CHECK_NOTHROW( db.species().index("CaCO3(aq)") );
+    CHECK_NOTHROW( db.species().index("MgCO3(aq)") );
+    CHECK_NOTHROW( db.species().index("Al+2(aq)") );
+    CHECK_NOTHROW( db.species().index("Al+3(aq)") );
+    CHECK_NOTHROW( db.species().index("Fe+2(aq)") );
+    CHECK_NOTHROW( db.species().index("Fe+3(aq)") );
+    CHECK_NOTHROW( db.species().index("Mg(s)") );
+    CHECK_NOTHROW( db.species().index("Al(s)") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Database::clear

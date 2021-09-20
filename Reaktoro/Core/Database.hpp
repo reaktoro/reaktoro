@@ -80,6 +80,9 @@ public:
     /// Attach data to this database whose type is known at runtime only.
     auto attachData(const Any& data) -> void;
 
+    /// Extend this database with the elements, species and other contents from another database.
+    auto extend(const Database& other) -> void;
+
     /// Return all elements in the database.
     auto elements() const -> const ElementList&;
 
