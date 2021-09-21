@@ -443,12 +443,6 @@ public:
         return molarHelmholtzEnergy() * amount();
     }
 
-//    /// Return the extra data mapped to activity model of particular phase that may be reused by subsequent phases.
-//    auto extra() const -> Map<String, Any>
-//    {
-//        return m_extra;
-//    }
-
     /// Assign the given array data to this ChemicalPropsPhaseBase object.
     auto operator=(const ArrayStream<Real>& array)
     {
@@ -469,9 +463,6 @@ public:
 private:
     /// The phase associated with these primary chemical properties.
     Phase mphase;
-
-//    /// The extra data mapped to activity model of particular phase that may be reused by subsequent phases.
-//    Map<String, Any> m_extra;
 
     /// The primary chemical property data of the phase from which others are calculated.
     ChemicalPropsPhaseBaseData<Real, Array> mdata;
