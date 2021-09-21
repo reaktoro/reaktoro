@@ -30,7 +30,7 @@ using std::log;
 
 namespace detail {
 
-Map<String, std::vector<real>> gammas_phreeqc =
+Map<String, Vec<real>> gammas_phreeqc =
 {
     { "NaX"   , {4.08, 0.082}  },
     { "KX"    , {3.50, 0.015}  },
