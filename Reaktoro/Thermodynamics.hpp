@@ -38,6 +38,7 @@
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
+#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealIonExchange.hpp>
 #include <Reaktoro/Thermodynamics/Solids/ActivityModelVanLaar.hpp>
 #include <Reaktoro/Thermodynamics/Solids/ActivityModelRedlichKister.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>

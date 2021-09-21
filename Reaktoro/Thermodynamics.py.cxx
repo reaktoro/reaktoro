@@ -39,6 +39,7 @@ void exportActivityModelSpycherReed(py::module& m);
 void exportActivityModelIdealAqueous(py::module& m);
 void exportActivityModelIdealGas(py::module& m);
 void exportActivityModelIdealSolution(py::module& m);
+void exportActivityModelIdealIonExchange(py::module& m);
 
 // Thermodynamics/Solids
 void exportActivityModelRedlichKister(py::module& m);
@@ -81,6 +82,7 @@ void exportThermodynamics(py::module& m)
     exportActivityModelIdealAqueous(m);
     exportActivityModelIdealGas(m);
     exportActivityModelIdealSolution(m);
+    exportActivityModelIdealIonExchange(m);
 
     // Thermodynamics/Solids
     exportActivityModelRedlichKister(m);
