@@ -90,38 +90,6 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
     const auto T = 300.0;
     const auto P = 12.3e5;
 
-    SECTION("Checking the charges")
-    {
-        // Construct the activity model function with the given ion exchange species.
-        ActivityModel fn = ActivityModelIonExchangeGainesThomas()(species);
-
-        // Create the ActivityProps object with the results.
-        ActivityProps props = ActivityProps::create(species.size());
-
-        // Evaluate the activity props function
-        fn(props, {T, P, x});
-
-        // Fetch exchanger equivalents in the ion exchange species
-        const auto& ze = std::any_cast<ArrayXd>(props.extra["ExchangerEquivalents"]);
-
-        CHECK( ze[0]  == 2 ); // AlOHX2
-        CHECK( ze[1]  == 3 ); // AlX3
-        CHECK( ze[2]  == 2 ); // BaX2
-        CHECK( ze[3]  == 2 ); // CaX2
-        CHECK( ze[4]  == 2 ); // CdX2
-        CHECK( ze[5]  == 2 ); // CuX2
-        CHECK( ze[6]  == 2 ); // FeX2
-        CHECK( ze[7]  == 1 ); // KX
-        CHECK( ze[8]  == 1 ); // LiX
-        CHECK( ze[9]  == 2 ); // MgX2
-        CHECK( ze[10] == 2 ); // MnX2
-        CHECK( ze[11] == 1 ); // NH4X
-        CHECK( ze[12] == 1 ); // NaX
-        CHECK( ze[13] == 2 ); // PbX2
-        CHECK( ze[14] == 2 ); // SrX2
-        CHECK( ze[15] == 2 ); // ZnX2
-    }
-
     SECTION("Checking the activities")
     {
         // Construct the activity model function with the given ion exchange species.
