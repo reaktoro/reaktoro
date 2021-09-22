@@ -568,25 +568,4 @@ public:
     }
 };
 
-/// The class used to configure an exchanger phase.
-class IonExchangerPhase : public GenericPhase
-{
-public:
-    /// Construct a default IonExchangePhase object.
-    IonExchangerPhase() : GenericPhase() { initialize(); }
-
-    /// Construct an IonExchangePhase object with given species names.
-    explicit IonExchangerPhase(const StringList& species) : GenericPhase(species) { initialize(); }
-
-    /// Initialize the default attributes of this IonExchangePhase object.
-    auto initialize() -> void
-    {
-        setName("IonExchangerPhase");
-        setStateOfMatter(StateOfMatter::Solid);
-        setAggregateState(AggregateState::IonExchange);
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
-    }
-};
-
 } // namespace Reaktoro
