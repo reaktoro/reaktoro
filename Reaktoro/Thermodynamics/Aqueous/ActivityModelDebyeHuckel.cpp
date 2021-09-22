@@ -291,9 +291,6 @@ auto activityModelDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuck
     // The number of moles of water per kg
     const auto nwo = 1.0/Mw;
 
-    // The number of species in the aqueous mixture
-    const auto num_species = species.size();
-
     // The number of charged and neutral species in the aqueous mixture
     const auto num_charged_species = mixture.charged().size();
     const auto num_neutral_species = mixture.neutral().size();
