@@ -133,7 +133,9 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const real Utot = U * nsum;
         const real Atot = A * nsum;
 
-        CHECK_NOTHROW( props.update(T, P, n) );
+        Map<String, Any> extra;
+
+        CHECK_NOTHROW( props.update(T, P, n, extra) );
 
         CHECK( props.temperature() == T );
         CHECK( props.pressure()    == P );
@@ -216,7 +218,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double Atot_T = A_T * nsum;
 
         autodiff::seed(T);
-        props.update(T, P, n);
+        props.update(T, P, n, extra);
         autodiff::unseed(T);
 
         CHECK( grad(props.temperature()) == 1.0 );
@@ -300,7 +302,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double Atot_P = A_P * nsum;
 
         autodiff::seed(P);
-        props.update(T, P, n);
+        props.update(T, P, n, extra);
         autodiff::unseed(P);
 
         CHECK( grad(props.temperature()) == 0.0 );
@@ -395,7 +397,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         {
             INFO("i = " << i);
             autodiff::seed(n[i]);
-            props.update(T, P, n);
+            props.update(T, P, n, extra);
             autodiff::unseed(n[i]);
 
             CHECK( grad(props.temperature()) == 0.0 );
@@ -442,6 +444,8 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
         const ArrayXr n = ArrayXr{{ 0.0, 0.0, 0.0, 0.0 }};
 
-        CHECK_THROWS( props.update(T, P, n) );
+        Map<String, Any> extra;
+
+        CHECK_THROWS( props.update(T, P, n, extra) );
     }
 }

@@ -105,7 +105,7 @@ auto pressureComparison(
     });
     real_roots.resize(new_end - real_roots.begin());
 
-    if (real_roots.size() == 0)
+    if (real_roots.empty())
     {
         return CubicEOSFluidType::Vapor;
     }
@@ -125,7 +125,7 @@ auto pressureComparison(
     Exception exception;
     exception.error << "Could not define phase type.";
     exception.reason << "gibbsEnergyAndEquationOfStateMethod has received one Z but the pressure is between Pmin and Pmax.";
-    RaiseError(exception);
+    RaiseError(exception)
 }
 
 
@@ -188,7 +188,7 @@ auto identifyPhaseUsingGibbsEnergyAndEos(
         exception.error << "identifyPhaseUsingGibbsEnergyAndEos received invalid input";
         exception.reason << "Zs should have size 1 or 2 in identifyPhaseUsingGibbsEnergyAndEos, "
             << "but has a size of " << Zs.size();
-        RaiseError(exception);
+        RaiseError(exception)
     }
 
     const real& Z_min = Zs[0] < Zs[1] ? Zs[0] : Zs[1];

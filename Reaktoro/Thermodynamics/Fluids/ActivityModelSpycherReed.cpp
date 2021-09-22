@@ -17,10 +17,6 @@
 
 #include "ActivityModelSpycherReed.hpp"
 
-// C++ includes
-#include <string>
-#include <vector>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>

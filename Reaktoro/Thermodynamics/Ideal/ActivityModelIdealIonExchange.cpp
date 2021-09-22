@@ -15,31 +15,35 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ActivityModelSetschenow.hpp"
+#include "ActivityModelIdealIonExchange.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 
 namespace Reaktoro {
 
-using std::log;
-
-auto ActivityModelSetschenow(String neutral, real b) -> ActivityModelGenerator
+namespace detail
 {
-    ActivityModelGenerator model = [=](const SpeciesList& species)
+extern auto exchangerEquivalentsNumber(const Species& species) -> real;
+}
+
+auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
+{
+    ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        // The index of the neutral aqueous species in the aqueous phase.
-        const auto ineutral = species.indexWithFormula(neutral);
+        // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
+        const auto num_species = species.size();
+        ArrayXd ze = ArrayXr::Zero(num_species);
+        for(auto i = 0; i < num_species; ++i)
+            ze[i] = detail::exchangerEquivalentsNumber(species[i]);
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
-            // The aqueous mixture and its state exported by a base aqueous activity model.
-            const auto& state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+            // Fetch species fractions for the activity model evaluation
+            const auto x = args.x;
 
-            const auto& I = state.Is;
-            props.ln_g[ineutral] = ln10 * b * I;
-            props.ln_a[ineutral] = props.ln_g[ineutral] + log(state.m[ineutral]);
+            // Calculate the ln of activities as lon of equivalence fractions
+            props.ln_a = (x*ze/(x*ze).sum()).log();
         };
 
         return fn;

@@ -27,6 +27,7 @@
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
+#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealIonExchange.hpp>
 
 namespace Reaktoro {
 
@@ -41,7 +42,7 @@ struct Speciate
 };
 
 /// The auxiliary function used to specify phase species to be determined from element symbols.
-inline auto speciate(const StringList& symbols) { return Speciate{symbols}; };
+inline auto speciate(const StringList& symbols) { return Speciate{symbols}; }
 
 /// The auxiliary type used to specify species that should be filtered out when contructing a phase.
 struct Exclude
@@ -54,7 +55,7 @@ struct Exclude
 };
 
 /// The auxiliary function used to specify species that should be filtered out when contructing a phase.
-inline auto exclude(const StringList& tags) { return Exclude{tags}; };
+inline auto exclude(const StringList& tags) { return Exclude{tags}; }
 
 /// The base type for all other classes defining more specific phases.
 /// @ingroup Core
@@ -543,6 +544,27 @@ public:
         });
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
+    }
+};
+
+/// The class used to configure an ion exchange phase.
+class IonExchangePhase : public GenericPhase
+{
+public:
+    /// Construct a default IonExchangePhase object.
+    IonExchangePhase() : GenericPhase() { initialize(); }
+
+    /// Construct an IonExchangePhase object with given species names.
+    explicit IonExchangePhase(const StringList& species) : GenericPhase(species) { initialize(); }
+
+    /// Initialize the default attributes of this IonExchangePhase object.
+    auto initialize() -> void
+    {
+        setName("IonExchangePhase");
+        setStateOfMatter(StateOfMatter::Solid);
+        setAggregateState(AggregateState::IonExchange);
+        setActivityModel(ActivityModelIdealIonExchange());
+        setIdealActivityModel(ActivityModelIdealIonExchange());
     }
 };
 

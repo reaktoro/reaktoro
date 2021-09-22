@@ -20,12 +20,35 @@
 // Reaktoro includes
 #include <Reaktoro/Singletons/Elements.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
 
 namespace Reaktoro {
 
 using std::sqrt;
+using std::log;
 
 namespace detail {
+
+Map<String, Vec<real>> gammas_phreeqc =
+{
+    { "NaX"   , {4.08, 0.082}  },
+    { "KX"    , {3.50, 0.015}  },
+    { "LiX"   , {6.00, 0.000}  },
+    { "NH4X"  , {2.50, 0.000}  },
+    { "CaX2"  , {5.00, 0.165}  },
+    { "MgX2"  , {5.50, 0.200}  },
+    { "SrX2"  , {5.26, 0.121}  },
+    { "BaX2"  , {4.00, 0.153}  },
+    { "MnX2"  , {6.00, 0.000}  },
+    { "FeX2"  , {6.00, 0.000}  },
+    { "CuX2"  , {6.00, 0.000}  },
+    { "ZnX2"  , {5.00, 0.000}  },
+    { "CdX2"  , {0.00, 0.000}  },
+    { "PbX2"  , {0.00, 0.165}  },
+    { "AlX3"  , {9.00, 0.200}  },
+    { "AlOHX2", {0.00, 0.000}  },
+};
 
 // Return the number of exchanger's equivalents (the charge of cations) in the ion exchange species.
 auto exchangerEquivalentsNumber(const Species& species) -> real
@@ -63,15 +86,59 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
 
-        // Export the aqueous mixture and its state via the `extra` data member
-        props.extra = { ze };
-
         // Calculate the ln of equivalence fractions
         const auto ln_beta = (x*ze/(x*ze).sum()).log();
 
         // Calculate the ln of activity coefficients
         ln_g = ArrayXr::Zero(num_species);
 
+        // Calculate Davies and Debye--Huckel parameters only if the AqueousPhase has been already evaluated
+        if (props.extra["AqueousMixtureState"].has_value())
+        {
+            // Export aqueous mixture state via `extra` data member
+            const auto& state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+
+            // Auxiliary constant references properties
+            const auto& I = state.Is;            // the stoichiometric ionic strength
+            const auto& rho = state.rho/1000;    // the density of water (in g/cm3)
+            const auto& epsilon = state.epsilon; // the dielectric constant of water
+
+            // Auxiliary variables
+            const auto sqrtI = sqrt(I);
+            const auto sqrt_rho = sqrt(rho);
+            const auto T_epsilon = T * epsilon;
+            const auto sqrt_T_epsilon = sqrt(T_epsilon);
+            const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
+            const auto B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
+            const auto ln10 = log(10);
+
+            // Loop over all species in the composition
+            for(Index i = 0; i < num_species; ++i)
+            {
+                //            const auto phreeqc_species = std::any_cast<PhreeqcSpecies*>(species[i].attachedData());
+                //            std::cout << phreeqc_species->name << "" << phreeqc_species->dw << std::endl;
+                //            std::cout << phreeqc_species->dha << std::endl;
+                //            std::cout << phreeqc_species->dhb << std::endl;
+                //            std::cout << phreeqc_species->a_f << std::endl;
+                // Calculate activity coefficients according to the Debye--Huckel model
+                // TODO: obtained from each species if it have parameter -gamma provided
+                //            const auto a = phreeqc_species->dha;
+                //            const auto b = phreeqc_species->dhb;
+                const auto a = gammas_phreeqc[species[i].name()].at(0);
+                const auto b = gammas_phreeqc[species[i].name()].at(1);
+
+                // Calculate the ln activity coefficient of the exchange species
+                ln_g[i] = ln10*(-A*ze[i]*ze[i]*sqrtI/(1.0 + a*B*sqrtI) + b*I);
+
+//                // ---------------------------------------------------------------------------//
+//                // Calculate activity coefficients according top the Davies model
+//
+//                // Calculate the ln activity coefficient of the echange species
+//                // Debye-Huckel parameter
+//                const auto Agamma = 0.5095;
+//                ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3 * I);
+            }
+        }
         // Calculate the ln of activities
         ln_a = ln_g + ln_beta;
     };

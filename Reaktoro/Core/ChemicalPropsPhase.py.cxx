@@ -24,14 +24,14 @@ using namespace Reaktoro;
 
 void exportChemicalPropsPhase(py::module& m)
 {
-    auto update1 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n)
+    auto update1 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n, Map<String, Any>& extra)
     {
-        self.update(T, P, n);
+        self.update(T, P, n, extra);
     };
 
-    auto updateIdeal1 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n)
+    auto updateIdeal1 = [](ChemicalPropsPhase& self, const real& T, const real& P, ArrayXrConstRef n, Map<String, Any>& extra)
     {
-        self.updateIdeal(T, P, n);
+        self.updateIdeal(T, P, n, extra);
     };
 
     py::class_<ChemicalPropsPhase>(m, "ChemicalPropsPhase")

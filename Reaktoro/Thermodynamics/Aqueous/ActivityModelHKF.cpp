@@ -19,7 +19,6 @@
 
 // C++ includes
 #include <map>
-#include <string>
 #include <vector>
 
 // Reaktoro includes
@@ -347,7 +346,8 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
         state = mixture.state(T, P, x);
 
         // Export the aqueous mixture and its state via the `extra` data member
-        props.extra = { mixture, state };
+        props.extra["AqueousMixtureState"] = state;
+        props.extra["AqueousMixture"] = mixture;
 
         // Auxiliary references to state variables
         const auto& I = state.Is;  // the stoichiometric ionic strength

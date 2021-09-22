@@ -29,6 +29,7 @@ using namespace tabulate;
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
 
@@ -84,7 +85,7 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
-        phaseProps(i).update(T, P, np);
+        phaseProps(i).update(T, P, np, m_extra);
         offset += size;
     }
 }
@@ -117,7 +118,7 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
-        phaseProps(i).updateIdeal(T, P, np);
+        phaseProps(i).updateIdeal(T, P, np, m_extra);
         offset += size;
     }
 }
