@@ -92,6 +92,9 @@ struct AqueousProps::Impl
     /// The echelon form of the formula matrix of the aqueous species.
     Optima::Echelonizer echelonizer;
 
+    /// The extra data mapped to activity model of particular phase that may be reused by subsequent phases.
+    Map<String, Any> m_extra;
+
     Impl(const ChemicalSystem& system)
     : system(system),
       iphase(indexAqueousPhase(system)),
@@ -149,7 +152,7 @@ struct AqueousProps::Impl
         const auto n = state.speciesAmounts();
         const auto ifirst = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = phase.species().size();
-        props.update(T, P, n.segment(ifirst, size));
+        props.update(T, P, n.segment(ifirst, size), m_extra);
         update(props);
     }
 
