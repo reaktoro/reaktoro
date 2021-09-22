@@ -34,10 +34,10 @@ const auto P = 1.0 * 1e5;    // pressure in Pa
 auto speciesListToStringList(const SpeciesList& specieslist) -> StringList
 {
     std::vector<std::string> speciesvector;
-    for (auto species : specieslist)
+    for (const auto& species : specieslist)
         speciesvector.push_back(species.name());
 
-    return StringList(speciesvector);
+    return StringList{speciesvector};
 }
 int main()
 {
@@ -52,27 +52,17 @@ int main()
     ));
 
     // Fetch species for ion-exchange modeling
-    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
+    SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange);
 
-    // Separate exchangres (e.g., X-) from exchange species species (NaX, KX, NaY, NaY, ect)
-    SpeciesList exchanger_species = filter(exchange_species, [](const Species& s){ return std::abs(s.charge());});
-    SpeciesList ionexchange_species = filter(exchange_species, [](const Species& s){ return !s.charge();});
+    // Separate exchangers (e.g., X-) from exchange species (NaX, KX, NaY, NaY, ect)
+    SpeciesList exchanger_species = filter(species, [](const Species& s){ return std::abs(s.charge());});
+    SpeciesList exchange_species = filter(species, [](const Species& s){ return !s.charge();});
 
     // The exchanger (exchanging site) phase X with exchange species X-
-    GenericPhase exchanger_phase(speciesListToStringList(exchanger_species));
-    exchanger_phase.setName("ExchangerPhase");
-    exchanger_phase.setStateOfMatter(StateOfMatter::Solid);
-    exchanger_phase.setAggregateState(AggregateState::IonExchange);
-    exchanger_phase.setActivityModel(ActivityModelIdealSolution());
-    exchanger_phase.setIdealActivityModel(ActivityModelIdealSolution());
+    IonExchangePhase exchanger_phase(speciesListToStringList(exchanger_species));
 
     // Ion exchange phase (the cation exchange complex), containing species NaX, KX, CaX2 etc
-    GenericPhase ionexchange_phase(speciesListToStringList(ionexchange_species));
-    ionexchange_phase.setName("IonExchangePhase");
-    ionexchange_phase.setStateOfMatter(StateOfMatter::Solid);
-    ionexchange_phase.setAggregateState(AggregateState::IonExchange);
-    ionexchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
-    ionexchange_phase.setIdealActivityModel(ActivityModelIdealSolution());
+    IonExchangerPhase ionexchange_phase(speciesListToStringList(exchange_species));
 
     // Construct the chemical system
     ChemicalSystem system(db, aqueousphase, exchanger_phase, ionexchange_phase);
