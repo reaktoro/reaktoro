@@ -35,17 +35,12 @@ auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
         const auto num_species = species.size();
         ArrayXd ze = ArrayXr::Zero(num_species);
         for(auto i = 0; i < num_species; ++i)
-            for(auto [element, coeff] : species[i].elements())
-                if(!Elements::withSymbol(element.symbol()))
-                    ze[i] = coeff;
+            ze[i] = detail::exchangerEquivalentsNumber(species[i]);
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             // Fetch species fractions for the activity model evaluation
             const auto x = args.x;
-
-            // Export the exchanger equivalents of ion exchange composition via `extra` data member
-            props.extra["ExchangerEquivalents"] = ze;
 
             // Calculate the ln of activities as lon of equivalence fractions
             props.ln_a = (x*ze/(x*ze).sum()).log();

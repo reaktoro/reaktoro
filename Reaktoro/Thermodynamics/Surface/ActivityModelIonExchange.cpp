@@ -86,9 +86,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
 
-        // Export the exchanger equivalents of ion exchange composition via `extra` data member
-        props.extra["ExchangerEquivalents"] = ze;
-
         // Calculate the ln of equivalence fractions
         const auto ln_beta = (x*ze/(x*ze).sum()).log();
 
