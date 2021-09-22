@@ -40,7 +40,7 @@ void exportActivityProps(py::module& m)
         ;
 
     #define get(field) [](const ActivityPropsRef& self) { return self.field; }
-    #define set(field) [](ActivityPropsRef& self, const decltype(ActivityPropsRef::field)& val) { self.field = val; }
+    #define set(field) [](ActivityPropsRef& self, decltype(ActivityPropsRef::field)& val) { self.field = val; }
 
     py::class_<ActivityPropsRef>(m, "ActivityPropsRef")
         .def_property("Vex", get(Vex), set(Vex))
