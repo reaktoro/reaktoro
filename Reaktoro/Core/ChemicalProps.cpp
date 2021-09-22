@@ -85,10 +85,6 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
-        if(msystem.phase(i).name() == "AqueousPhase")
-        {
-            m_extra["AqueousMixtureState"] = AqueousMixture(msystem.phase(i).species()).state(T, P, np/np.sum());
-        }
         phaseProps(i).update(T, P, np, m_extra);
         offset += size;
     }
@@ -122,7 +118,7 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
     {
         const auto size = msystem.phase(i).species().size();
         const auto np = n.segment(offset, size);
-        phaseProps(i).updateIdeal(T, P, np);
+        phaseProps(i).updateIdeal(T, P, np, m_extra);
         offset += size;
     }
 }
