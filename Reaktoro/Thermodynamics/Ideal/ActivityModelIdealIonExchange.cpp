@@ -22,6 +22,11 @@
 
 namespace Reaktoro {
 
+namespace detail
+{
+extern auto exchangerEquivalentsNumber(const Species& species) -> real;
+}
+
 auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
@@ -29,7 +34,6 @@ auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
         // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
         const auto num_species = species.size();
         ArrayXd ze = ArrayXr::Zero(num_species);
-        // TODO: replace it with the unified function similar to `detail::exchangerEquivalentsNumber` in `ActivityModelIonExchange.cpp` file
         for(auto i = 0; i < num_species; ++i)
             for(auto [element, coeff] : species[i].elements())
                 if(!Elements::withSymbol(element.symbol()))
