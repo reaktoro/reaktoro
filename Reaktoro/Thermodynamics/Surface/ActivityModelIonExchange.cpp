@@ -30,39 +30,6 @@ using std::log;
 
 namespace detail {
 
-Map<String, Vec<real>> gammas_phreeqc =
-{
-    { "NaX"   , {4.08, 0.082}  },
-    { "KX"    , {3.50, 0.015}  },
-    { "LiX"   , {6.00, 0.000}  },
-    { "NH4X"  , {2.50, 0.000}  },
-    { "CaX2"  , {5.00, 0.165}  },
-    { "MgX2"  , {5.50, 0.200}  },
-    { "SrX2"  , {5.26, 0.121}  },
-    { "BaX2"  , {4.00, 0.153}  },
-    { "MnX2"  , {6.00, 0.000}  },
-    { "FeX2"  , {6.00, 0.000}  },
-    { "CuX2"  , {6.00, 0.000}  },
-    { "ZnX2"  , {5.00, 0.000}  },
-    { "CdX2"  , {0.00, 0.000}  },
-    { "PbX2"  , {0.00, 0.165}  },
-    { "AlX3"  , {9.00, 0.200}  },
-    { "AlOHX2", {0.00, 0.000}  },
-};
-
-// Return the number of exchanger's equivalents (the charge of cations) in the ion exchange species.
-auto exchangerEquivalentsNumber(const Species& species) -> real
-{
-    // Run through the elements of the current species and return the coefficient of the exchanger
-    for(auto [element, coeff] : species.elements())
-        if(!Elements::withSymbol(element.symbol()))
-            return coeff;
-
-    // If all the elements are part of the periodic table then the exchanger is missing
-    errorif(true, "Could not get information about the exchanger equivalents number. "
-        "Ensure the ion exchange phase contains correct species");
-}
-
 /// Return the IonExchangeActivityModel object based on the Gaines--Thomas model.
 auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> ActivityModel
 {
@@ -115,28 +82,24 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
             // Loop over all species in the composition
             for(Index i = 0; i < num_species; ++i)
             {
-                //            const auto phreeqc_species = std::any_cast<PhreeqcSpecies*>(species[i].attachedData());
-                //            std::cout << phreeqc_species->name << "" << phreeqc_species->dw << std::endl;
-                //            std::cout << phreeqc_species->dha << std::endl;
-                //            std::cout << phreeqc_species->dhb << std::endl;
-                //            std::cout << phreeqc_species->a_f << std::endl;
-                // Calculate activity coefficients according to the Debye--Huckel model
-                // TODO: obtained from each species if it have parameter -gamma provided
-                //            const auto a = phreeqc_species->dha;
-                //            const auto b = phreeqc_species->dhb;
-                const auto a = gammas_phreeqc[species[i].name()].at(0);
-                const auto b = gammas_phreeqc[species[i].name()].at(1);
+                // Fetch phreeqc species from the `attacheddata` field of the species
+                const auto phreeqc_species = std::any_cast<const PhreeqcSpecies*>(species[i].attachedData());
 
-                // Calculate the ln activity coefficient of the exchange species
-                ln_g[i] = ln10*(-A*ze[i]*ze[i]*sqrtI/(1.0 + a*B*sqrtI) + b*I);
+                // Fetch Debye--Huckel activity model parameters a and b
+                const auto a = phreeqc_species->dha;
+                const auto b = phreeqc_species->dhb;
 
-//                // ---------------------------------------------------------------------------//
-//                // Calculate activity coefficients according top the Davies model
-//
-//                // Calculate the ln activity coefficient of the echange species
-//                // Debye-Huckel parameter
-//                const auto Agamma = 0.5095;
-//                ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3 * I);
+                if(b == 99.9) // the Phreeqc huck used while reading the dat-file, which indicate to use Davies activity model
+                {
+                    // Calculate the ln activity coefficient of the exchange species using the Davies activity model
+                    ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3*I);
+
+                }
+                else // otherwise, the Debye--Huckel activity model is preferred
+                {
+                    // Calculate the ln activity coefficient of the exchange species using the Debye--Huckel model
+                    ln_g[i] = ln10*(-A*ze[i]*ze[i]*sqrtI/(1.0 + a*B*sqrtI) + b*I);
+                }
             }
         }
         // Calculate the ln of activities
