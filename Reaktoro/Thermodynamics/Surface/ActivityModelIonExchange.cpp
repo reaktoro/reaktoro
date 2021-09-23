@@ -21,6 +21,7 @@
 #include <Reaktoro/Singletons/Elements.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
 
 namespace Reaktoro {
@@ -33,15 +34,18 @@ namespace detail {
 /// Return the IonExchangeActivityModel object based on the Gaines--Thomas model.
 auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> ActivityModel
 {
-    // The number of species in the ion exchange phase only
+    // Create the ion exchange surface
+    IonExchangeSurface surface(species);
+
+    // The number of all species and ion exchange species in the current exchange phase only
     const auto num_species = species.size();
 
-    // The numbers of exchanger's equivalents for exchange species
-    ArrayXd ze = ArrayXr::Zero(num_species);
+    // The index of the exchanger and indices of the ion exchange species
+    const auto iexchanger = surface.indexExchanger();
+    const auto iexchange = surface.indicesExchange();
 
-    // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
-    for(auto i = 0; i < num_species; ++i)
-        ze[i] = detail::exchangerEquivalentsNumber(species[i]);
+    // The numbers of exchanger's equivalents for exchange species
+    ArrayXd ze = surface.ze();
 
     // Define the activity model function of the ion exchange phase
     ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
@@ -53,22 +57,25 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
 
-        // Calculate the ln of equivalence fractions
-        const auto ln_beta = (x*ze/(x*ze).sum()).log();
+        // Set the contribution of the exchanger activity
+        ln_a[iexchanger] = 0.0;
 
-        // Calculate the ln of activity coefficients
+        // Set the contribution of ion exchange species as the ln of equivalence fractions
+        ln_a(iexchange) = (x(iexchange)*ze(iexchange)/(x(iexchange)*ze(iexchange)).sum()).log();
+
+        // Initialized the ln of activity coefficients of the ion exchange species on the surface
         ln_g = ArrayXr::Zero(num_species);
 
         // Calculate Davies and Debye--Huckel parameters only if the AqueousPhase has been already evaluated
         if (props.extra["AqueousMixtureState"].has_value())
         {
             // Export aqueous mixture state via `extra` data member
-            const auto& state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+            const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
 
             // Auxiliary constant references properties
-            const auto& I = state.Is;            // the stoichiometric ionic strength
-            const auto& rho = state.rho/1000;    // the density of water (in g/cm3)
-            const auto& epsilon = state.epsilon; // the dielectric constant of water
+            const auto& I = aqstate.Is;            // the stoichiometric ionic strength
+            const auto& rho = aqstate.rho/1000;    // the density of water (in g/cm3)
+            const auto& epsilon = aqstate.epsilon; // the dielectric constant of water
 
             // Auxiliary variables
             const auto sqrtI = sqrt(I);
@@ -78,9 +85,10 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
             const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
             const auto B = 50.29158649 * sqrt_rho/sqrt_T_epsilon;
             const auto ln10 = log(10);
+            const auto Agamma = 0.5095; // the Debye-Huckel parameter
 
-            // Loop over all species in the composition
-            for(Index i = 0; i < num_species; ++i)
+            // Loop over all ion exchange species in composition
+            for(Index i : iexchange)
             {
                 // Fetch phreeqc species from the `attacheddata` field of the species
                 const auto phreeqc_species = std::any_cast<const PhreeqcSpecies*>(species[i].attachedData());
@@ -102,8 +110,8 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                 }
             }
         }
-        // Calculate the ln of activities
-        ln_a = ln_g + ln_beta;
+        // Add the correction introduced by the activity coefficients
+        ln_a += ln_g;
     };
 
     return fn;

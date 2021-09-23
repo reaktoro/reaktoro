@@ -47,3 +47,4 @@
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherPruessEnnis.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
