@@ -18,32 +18,34 @@
 #include "ActivityModelIdealIonExchange.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Singletons/Elements.hpp>
+#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
 
 namespace Reaktoro {
-
-namespace detail
-{
-extern auto exchangerEquivalentsNumber(const Species& species) -> real;
-}
 
 auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
-        const auto num_species = species.size();
-        ArrayXd ze = ArrayXr::Zero(num_species);
-        for(auto i = 0; i < num_species; ++i)
-            ze[i] = detail::exchangerEquivalentsNumber(species[i]);
+        // Create the ion exchange surface
+        IonExchangeSurface surface(species);
+
+        // Indices of the exchanger and ion exchange species
+        const auto iexchanger = surface.indexExchanger();
+        const auto iexchange = surface.indicesExchange();
+
+        // The numbers of exchanger's equivalents for exchange species
+        ArrayXd ze = surface.ze();
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             // Fetch species fractions for the activity model evaluation
             const auto x = args.x;
 
-            // Calculate the ln of activities as lon of equivalence fractions
-            props.ln_a = (x*ze/(x*ze).sum()).log();
+            // Set the contribution of the exchanger activity
+            props.ln_a[iexchanger] = 0.0;
+
+            // Set the contribution of ion exchange species as the ln of equivalence fractions
+            props.ln_a(iexchange) = (x(iexchange)*ze(iexchange)/(x(iexchange)*ze(iexchange)).sum()).log();
         };
 
         return fn;

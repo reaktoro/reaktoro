@@ -45,27 +45,21 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueousphase(speciate("H O C Ca Na Mg Cl"));
-    aqueousphase.setActivityModel(chain(
+    AqueousPhase aqueous_phase(speciate("H O C Ca Na Mg Cl"));
+    aqueous_phase.setActivityModel(chain(
         ActivityModelHKF(),
         ActivityModelDrummond("CO2")
     ));
 
     // Fetch species for ion-exchange modeling
-    SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange);
-
-    // Separate exchangers (e.g., X-) from exchange species (NaX, KX, NaY, NaY, ect)
-    SpeciesList exchanger_species = filter(species, [](const Species& s){ return std::abs(s.charge());});
-    SpeciesList exchange_species = filter(species, [](const Species& s){ return !s.charge();});
+    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
 
     // The exchanger (exchanging site) phase X with exchange species X-
-    IonExchangePhase exchanger_phase(speciesListToStringList(exchanger_species));
-
-    // Ion exchange phase (the cation exchange complex), containing species NaX, KX, CaX2 etc
-    IonExchangerPhase ionexchange_phase(speciesListToStringList(exchange_species));
+    IonExchangePhase exchange_phase(speciesListToStringList(exchange_species));
+    exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
 
     // Construct the chemical system
-    ChemicalSystem system(db, aqueousphase, exchanger_phase, ionexchange_phase);
+    ChemicalSystem system(db, aqueous_phase, exchange_phase);
 
     // Specify conditions to be satisfied at the chemical equilibrium
     EquilibriumSpecs specs(system);
