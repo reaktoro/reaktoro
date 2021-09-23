@@ -27,6 +27,7 @@ def initializeMoleFractions(species):
 
     n = 1e-6 * np.ones(species.size())
 
+    n[idx("X-")]   = 0.1
     n[idx("MgX2")] = 0.1
     n[idx("CaX2")] = 0.2
     n[idx("NaX")]  = 0.3
@@ -39,26 +40,26 @@ def testActivityModelIonExchage():
     db = PhreeqcDatabase("phreeqc.dat")
 
     # Expected species: AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
-    exchange_species = db.species().withAggregateState(AggregateState.IonExchange)
-    species = SpeciesList([s for s in exchange_species if not(s.charge())])
+    species = db.species().withAggregateState(AggregateState.IonExchange)
 
     # Check the names of the species
-    assert species[0].name() == "AlOHX2"
-    assert species[1].name()  == "AlX3"
-    assert species[2].name()  == "BaX2"
-    assert species[3].name()  == "CaX2"
-    assert species[4].name()  == "CdX2"
-    assert species[5].name()  == "CuX2"
-    assert species[6].name()  == "FeX2"
-    assert species[7].name()  == "KX"
-    assert species[8].name()  == "LiX"
-    assert species[9].name()  == "MgX2"
-    assert species[10].name() == "MnX2"
-    assert species[11].name() == "NH4X"
-    assert species[12].name() == "NaX"
-    assert species[13].name() == "PbX2"
-    assert species[14].name() == "SrX2"
-    assert species[15].name() == "ZnX2"
+    assert species[0].name()  == "X-"
+    assert species[1].name()  == "AlOHX2"
+    assert species[2].name()  == "AlX3"
+    assert species[3].name()  == "BaX2"
+    assert species[4].name()  == "CaX2"
+    assert species[5].name()  == "CdX2"
+    assert species[6].name()  == "CuX2"
+    assert species[7].name()  == "FeX2"
+    assert species[8].name()  == "KX"
+    assert species[9].name()  == "LiX"
+    assert species[10].name() == "MgX2"
+    assert species[11].name() == "MnX2"
+    assert species[12].name() == "NH4X"
+    assert species[13].name() == "NaX"
+    assert species[14].name() == "PbX2"
+    assert species[15].name() == "SrX2"
+    assert species[16].name() == "ZnX2"
 
     # Initialize input data for the ActivityProps
     T = autodiff.real(300.0)
