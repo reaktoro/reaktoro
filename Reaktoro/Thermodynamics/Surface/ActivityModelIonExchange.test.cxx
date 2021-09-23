@@ -81,7 +81,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK(species[7].name()  == "FeX2"   ); // FeX2
         CHECK(species[8].name()  == "KX"     ); // KX
         CHECK(species[9].name()  == "LiX"    ); // LiX
-        CHECK(species[10].name()  == "MgX2"   ); // MgX2
+        CHECK(species[10].name() == "MgX2"   ); // MgX2
         CHECK(species[11].name() == "MnX2"   ); // MnX2
         CHECK(species[12].name() == "NH4X"   ); // NH4X
         CHECK(species[13].name() == "NaX"    ); // NaX
@@ -142,7 +142,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[7]  == Approx(-13.017)   ); // FeX2
         CHECK( props.ln_a[8]  == Approx(-13.7102)  ); // KX
         CHECK( props.ln_a[9]  == Approx(-13.7102)  ); // LiX
-        CHECK( props.ln_a[10]  == Approx(-1.5041)   ); // MgX2
+        CHECK( props.ln_a[10] == Approx(-1.5041)   ); // MgX2
         CHECK( props.ln_a[11] == Approx(-13.017)   ); // MnX2
         CHECK( props.ln_a[12] == Approx(-13.7102)  ); // NH4X
         CHECK( props.ln_a[13] == Approx(-1.09864)  ); // NaX
@@ -184,7 +184,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_g[7]  == Approx(-1.31534)  ); // FeX2
         CHECK( props.ln_g[8]  == Approx(-0.41378)  ); // KX
         CHECK( props.ln_g[9]  == Approx(-0.328835) ); // LiX
-        CHECK( props.ln_g[10]  == Approx(-1.19483)  ); // MgX2
+        CHECK( props.ln_g[10] == Approx(-1.19483)  ); // MgX2
         CHECK( props.ln_g[11] == Approx(-1.31534)  ); // MnX2
         CHECK( props.ln_g[12] == Approx(-0.485979) ); // NH4X
         CHECK( props.ln_g[13] == Approx(-0.324217) ); // NaX
@@ -202,7 +202,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[7]  == Approx(-14.3324)  ); // FeX2
         CHECK( props.ln_a[8]  == Approx(-14.1240)  ); // KX
         CHECK( props.ln_a[9]  == Approx(-14.039)   ); // LiX
-        CHECK( props.ln_a[10]  == Approx( -2.69894) ); // MgX2
+        CHECK( props.ln_a[10] == Approx( -2.69894) ); // MgX2
         CHECK( props.ln_a[11] == Approx(-14.3324)  ); // MnX2
         CHECK( props.ln_a[12] == Approx(-14.1962)  ); // NH4X
         CHECK( props.ln_a[13] == Approx(-1.42286)  ); // NaX
