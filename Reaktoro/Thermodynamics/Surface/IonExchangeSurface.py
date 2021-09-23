@@ -50,3 +50,14 @@ def testActivityModelIonExchage():
     assert ze[14] == 2 # PbX2
     assert ze[15] == 2 # SrX2
     assert ze[16] == 2 # ZnX2
+
+    # The numbers of exchanger's equivalents for exchange species
+    idx_exchager = surface.indexExchanger()
+    idx_exchange = surface.indicesExchange()
+
+    expected_exchanger_index = 0 # exchanger is assumed to be on the first place
+    expected_exchange_indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+
+    assert idx_exchager == expected_exchanger_index
+    assert idx_exchange == expected_exchange_indices
+
