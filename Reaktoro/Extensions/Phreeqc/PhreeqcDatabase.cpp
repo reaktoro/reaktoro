@@ -25,12 +25,9 @@ CMRC_DECLARE(ReaktoroDatabases);
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
-#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -163,7 +160,7 @@ struct PhreeqcDatabaseHelper
             errorif(idx >= elements.size(), "Unknown PHREEQC element "
                 "with symbol `", PhreeqcUtils::symbol(element), "` in PHREEQC species "
                 "with name `", PhreeqcUtils::name(s), "`. "
-                "The element may also be invalid (e.g., without molar mass information).");
+                "The element may also be invalid (e.g., without molar mass information).")
             pairs.emplace_back(elements[idx], coeff);
         }
 
@@ -244,7 +241,7 @@ auto getPhreeqcDatabaseContent(String name) -> String
         "");
     auto fs = cmrc::ReaktoroDatabases::get_filesystem();
     auto contents = fs.open("databases/phreeqc/" + name);
-    return String(contents.begin(), contents.end());
+    return String{contents.begin(), contents.end()};
 }
 
 /// Create the Species objects from given PHREEQC database.
