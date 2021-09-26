@@ -97,7 +97,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                 const auto a = phreeqc_species->dha;
                 const auto b = phreeqc_species->dhb;
 
-                if(b == 99.9) // the Phreeqc huck used while reading the dat-file, which indicate to use Davies activity model
+                if(b == 99.9) // the Phreeqc hack used while reading the dat-file, which indicate to use Davies activity model
                 {
                     // Calculate the ln activity coefficient of the exchange species using the Davies activity model
                     ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3*I);

@@ -92,7 +92,7 @@ struct AqueousProps::Impl
     /// The echelon form of the formula matrix of the aqueous species.
     Optima::Echelonizer echelonizer;
 
-    /// The extra data mapped to activity model of particular phase that may be reused by subsequent phases.
+    /// The extra properties and data produced during the evaluation of the aqueous phase activity model.
     Map<String, Any> m_extra;
 
     Impl(const ChemicalSystem& system)

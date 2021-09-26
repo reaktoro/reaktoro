@@ -195,20 +195,11 @@ public:
     : mphase(other.mphase), mdata(other.mdata)
     {}
 
-//    /// Update the chemical properties of the phase.
-//    /// @param T The temperature condition (in K)
-//    /// @param P The pressure condition (in Pa)
-//    /// @param n The amounts of the species in the phase (in mol)
-//    auto update(const real& T, const real& P, ArrayXrConstRef n)
-//    {
-//        _update<false>(T, P, n);
-//    }
-
     /// Update the chemical properties of the phase.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the phase (in mol)
-    /// @param extra The extra data mapped to activity mode
+    /// @param extra The extra properties evaluated in the activity models
     auto update(const real& T, const real& P, ArrayXrConstRef n, Map<String, Any>& extra)
     {
         _update<false>(T, P, n, extra);
@@ -224,7 +215,7 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the phase (in mol)
-    /// @param extra The extra data mapped to activity mode
+    /// @param extra The extra properties evaluated in the activity models
     auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Map<String, Any>& extra)
     {
         _update<true>(T, P, n, extra);
@@ -469,85 +460,6 @@ private:
     ChemicalPropsPhaseBaseData<Real, Array> mdata;
 
 private:
-//    /// Update the chemical properties of the phase.
-//    /// @param T The temperature condition (in K)
-//    /// @param P The pressure condition (in Pa)
-//    /// @param n The amounts of the species in the phase (in mol)
-//    template<bool use_ideal_activity_model>
-//    auto _update(const real& T, const real& P, ArrayXrConstRef n)
-//    {
-//        mdata.T = T;
-//        mdata.P = P;
-//        mdata.n = n;
-//
-//        const auto R = universalGasConstant;
-//
-//        auto& nsum = mdata.nsum;
-//        auto& x    = mdata.x;
-//        auto& G0   = mdata.G0;
-//        auto& H0   = mdata.H0;
-//        auto& V0   = mdata.V0;
-//        auto& Cp0  = mdata.Cp0;
-//        auto& Cv0  = mdata.Cv0;
-//        auto& Vex  = mdata.Vex;
-//        auto& VexT = mdata.VexT;
-//        auto& VexP = mdata.VexP;
-//        auto& Gex  = mdata.Gex;
-//        auto& Hex  = mdata.Hex;
-//        auto& Cpex = mdata.Cpex;
-//        auto& Cvex = mdata.Cvex;
-//        auto& ln_g = mdata.ln_g;
-//        auto& ln_a = mdata.ln_a;
-//        auto& u    = mdata.u;
-//
-//        const auto& species = phase().species();
-//        const auto N = species.size();
-//
-//        assert(    n.size() == N );
-//        assert(   G0.size() == N );
-//        assert(   H0.size() == N );
-//        assert(   V0.size() == N );
-//        assert(  Cp0.size() == N );
-//        assert(  Cv0.size() == N );
-//        assert( ln_g.size() == N );
-//        assert( ln_a.size() == N );
-//        assert(    u.size() == N );
-//
-//        // Compute the standard thermodynamic properties of the species in the phase.
-//        StandardThermoProps aux;
-//        for(auto i = 0; i < N; ++i)
-//        {
-//            aux = species[i].props(T, P);
-//            G0[i]  = aux.G0;
-//            H0[i]  = aux.H0;
-//            V0[i]  = aux.V0;
-//            Cp0[i] = aux.Cp0;
-//            Cv0[i] = aux.Cv0;
-//        }
-//
-//        // Compute the activity properties of the phase.
-//        nsum = n.sum();
-//
-//        if(nsum == 0.0)
-//            x = (N == 1) ? 1.0 : 0.0;
-//        else x = n / nsum;
-//
-//        // Ensure there are no zero mole fractions
-//        error(x.minCoeff() == 0.0, "Could not compute the chemical properties of phase ",
-//            phase().name(), " because it has one or more species with zero amounts.");
-//
-//        Map<String, Any> extra;
-//        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra};
-//        ActivityArgs args{ T, P, x };
-//        const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.
-//            phase().idealActivityModel() : phase().activityModel();
-//
-//        if(nsum == 0.0) aprops = 0.0;
-//        else activity_model(aprops, args);
-//
-//        // Compute the chemical potentials of the species
-//        u = G0 + R*T*ln_a;
-//    }
 
     /// Update the chemical properties of the phase.
     /// @param T The temperature condition (in K)
@@ -560,7 +472,6 @@ private:
         mdata.T = T;
         mdata.P = P;
         mdata.n = n;
-        //m_extra = extra;
 
         const auto R = universalGasConstant;
 
