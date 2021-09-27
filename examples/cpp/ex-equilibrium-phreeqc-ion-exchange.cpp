@@ -91,5 +91,14 @@ int main()
     // Output the chemical state to a text file
     solutionstate.output("state.txt");
 
+    // Compute chemical and thermodynamic properties at equilibrium state
+    ChemicalProps props(solutionstate);
+
+    // Compute chemical properties for the aqueous phase at equilibrium state
+    AqueousProps aqprops(props);
+
+    // Output these properties
+    aqprops.output("aqprops.txt");
+
     return 0;
 }
