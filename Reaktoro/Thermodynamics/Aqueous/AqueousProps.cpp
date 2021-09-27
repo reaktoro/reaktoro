@@ -191,7 +191,7 @@ struct AqueousProps::Impl
 
     auto elementMolalities() const -> VectorXr
     {
-        const auto E = system.phase(0).elements().size();
+        const auto E = system.phase(indexAqueousPhase(system)).elements().size();
         const auto& m = aqstate.m.matrix();
         return Aaq.topRows(E) * m;
     }
