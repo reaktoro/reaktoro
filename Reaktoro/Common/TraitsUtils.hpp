@@ -73,7 +73,7 @@ constexpr auto isFunction = detail::isFunction<Decay<T>>::value;
 
 /// Convert lambda/function pointers/member functions to `std::function`.
 /// This exists in Reaktoro because AppleClang 9.0/10.0/11.0 do not perform
-/// template type deduction for `std::function`. Instead of just writting
+/// template type deduction for `std::function`. Instead of just writing
 /// `std::function(f)`, we need to use instead `asFunction(f)`.
 template<typename Fun>
 constexpr auto asFunction(const Fun& f) { return typename detail::asFunction<Fun>::type{f}; } // Reference: https://stackoverflow.com/a/39182901/418875
