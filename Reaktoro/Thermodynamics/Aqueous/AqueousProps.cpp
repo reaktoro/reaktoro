@@ -191,7 +191,7 @@ struct AqueousProps::Impl
 
     auto elementMolalities() const -> VectorXr
     {
-        const auto E = system.phase(indexAqueousPhase(system)).elements().size();
+        const auto E = system.elements().size();
         const auto& m = aqstate.m.matrix();
         return Aaq.topRows(E) * m;
     }
@@ -388,11 +388,11 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     table.add_row({ "pE", str(props.pE()), "" });
     table.add_row({ "Eh", str(props.Eh()), "V" });
     table.add_row({ "Element Molality:" });
-    for(auto i = 0; i < me.size(); ++i)
+    for(auto i = 0; i < elements.size(); ++i)
         if(elements[i].symbol() != "H" && elements[i].symbol() != "O")
             table.add_row({ ":: " + elements[i].symbol(), str(me[i]), "molal" });
     table.add_row({ "Species Molality:" });
-    for(auto i = 0; i < ms.size(); ++i)
+    for(auto i = 0; i < species.size(); ++i)
         if(species[i].formula().str() != "H2O")
             table.add_row({ ":: " + species[i].name(), str(ms[i]), "molal" });
 
