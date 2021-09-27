@@ -9,6 +9,105 @@
   "date": "11.12.2019 09:13:08",
   "substances": [
     {
+      "name": "SO2,aq",
+      "symbol": "SO2@",
+      "formula": "S|4|O2@",
+      "formula_charge": 0,
+      "aggregate_state": {
+        "4": "AS_AQUEOUS"
+      },
+      "class_": {
+        "2": "SC_AQSOLUTE"
+      },
+      "Tst": 298.15,
+      "Pst": 100000,
+      "TPMethods": [
+        {
+          "method": {
+            "3": "solute_hkf88_reaktoro"
+          },
+          "eos_hkf_coeffs": {
+            "values": [
+              0.69502002000809,
+              918.90002441406,
+              2.1382999420166,
+              -31589,
+              31.21010017395,
+              64578,
+              -24610,
+              0
+            ],
+            "units": [
+              "cal/(mol*bar)",
+              "cal/mol",
+              "(cal*K)/mol",
+              "cal/(mol*K)",
+              "(cal*K)/mol",
+              "cal/mol"
+            ],
+            "names": [
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "c1",
+              "c2",
+              "wref"
+            ]
+          }
+        }
+      ],
+      "sm_heat_capacity_p": {
+        "values": [
+          194.8698425293
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_gibbs_energy": {
+        "values": [
+          -301164
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_enthalpy": {
+        "values": [
+          -322980
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_entropy_abs": {
+        "values": [
+          161.91999816894
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_volume": {
+        "values": [
+          3.8575992584228
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/bar"
+        ]
+      },
+      "datasources": [
+        "[1998SHO/EA]"
+      ]
+    },
+    {
       "name": "H2O  l",
       "symbol": "H2O@",
       "formula": "H2O@",
