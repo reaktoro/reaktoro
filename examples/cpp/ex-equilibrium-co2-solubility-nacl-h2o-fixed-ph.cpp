@@ -58,7 +58,7 @@ int main()
     specs.pressure();
     specs.pH();
 
-    // Define equilibrium solver and equilibrate given initial state
+    // Define equilibrium solver
     EquilibriumSolver solver(specs);
 
     // Define conditions to be satisfied at chemical equilibrium
@@ -74,7 +74,7 @@ int main()
     state.set("Cl-",     1.0, "mol");
     state.set("CO2(g)", 10.0, "mol");
 
-    // Equilibrate given initial state
+    // Equilibrate the initial state with given conditions
     solver.solve(state, conditions);
 
     // Output temperature, pressure, and species amounts of the chemical state

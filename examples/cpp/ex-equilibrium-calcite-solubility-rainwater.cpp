@@ -77,7 +77,7 @@ int main()
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
-    solver.solve(state);
+    EquilibriumResult result = solver.solve(state);
 
     // Compute aqueous properties at the calculated equilibrium state
     AqueousProps aprops(state);
@@ -86,6 +86,10 @@ int main()
     std::cout << "Solubility of calcite in rainwater: " << (10.0 - state.speciesAmount("Calcite"))/state.speciesMass("H2O(aq)") << " molal" << std::endl;
     std::cout << "pH after equilibration:             " << aprops.pH() << std::endl;
     std::cout << "Ionic strength after equilibration: " << aprops.ionicStrength() << std::endl;
+
+    std::cout << "Equilibrium calculation characteristics: " << std::endl;
+    std::cout << " - iterations = " << result.optima.iterations << std::endl;
+    std::cout << " - succeeded  = " << result.optima.succeeded << std::endl;
 
     return 0;
 }
