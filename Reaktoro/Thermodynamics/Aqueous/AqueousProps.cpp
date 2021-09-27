@@ -191,7 +191,7 @@ struct AqueousProps::Impl
 
     auto elementMolalities() const -> VectorXr
     {
-        const auto E = system.elements().size();
+        const auto E = system.phase(0).elements().size();
         const auto& m = aqstate.m.matrix();
         return Aaq.topRows(E) * m;
     }
@@ -229,12 +229,14 @@ struct AqueousProps::Impl
         const auto u = props.chemicalPotentials();
         const auto ib = echelonizer.indicesBasicVariables();
         const auto R = echelonizer.R();
+        const auto Rb = R.topRows(ib.size());
         const VectorXr ub = u(ib);
-        const auto lambda = -R.transpose() * ub;
+        const auto lambda = -Rb.transpose() * ub;
         const auto E = system.elements().size();
         const auto lambda_Z = lambda[E];
         const auto RT = universalGasConstant * T;
         const auto res = lambda_Z/(RT*ln10);
+
         return res;
     }
 
