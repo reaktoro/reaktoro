@@ -33,14 +33,6 @@ int main()
     // Define Thermofun database
     ThermoFunDatabase db("cemdata18");
 
-//    for (auto dbi : db.species()) {
-//        if (dbi.name() == "ettringite" or dbi.name() == "Tob-II" or dbi.name() == "C3AFS0.84H4.32")
-//        {
-//            std::cout << dbi.name() << std::endl;
-//            getchar();
-//        }
-//    }
-
     // Define aqueous phase
     AqueousPhase solution(speciate("H O K Na S Si Ca Mg Al C Cl"));
 
@@ -56,9 +48,7 @@ int main()
                            "monocarbonate hemicarbonate hydrotalcite "
                            "Fe-monosulph05 Fe-monosulphate");
     // Note: C4AsH14, C4Ac0.5H12, C4AcH11 are not found
-
-    //SolidPhase solidphase_caldol("Calcite Dolomite");
-
+    
     // Define solid phases
     SolidPhase solidphase_C3AFS084H("C3FS0.84H4.32 C3AFS0.84H4.32");
     SolidPhase solidphase_ettringite_Al("ettringite Fe-ettringite");

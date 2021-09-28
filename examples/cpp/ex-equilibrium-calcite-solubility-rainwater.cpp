@@ -87,7 +87,7 @@ int main()
     std::cout << "pH after equilibration:             " << aprops.pH() << std::endl;
     std::cout << "Ionic strength after equilibration: " << aprops.ionicStrength() << std::endl;
 
-    std::cout << "Equilibrium calculation characteristics: " << std::endl;
+    std::cout << "Equilibrium calculation statistics: " << std::endl;
     std::cout << " - iterations = " << result.optima.iterations << std::endl;
     std::cout << " - succeeded  = " << result.optima.succeeded << std::endl;
 
