@@ -26,6 +26,7 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -48,21 +49,6 @@ auto fixDuplicateSpeciesNames(SpeciesList& specieslist)
     for(auto i = 0; i < specieslist.size(); ++i)
         if(specieslist[i].name() != speciesnames[i])
             specieslist[i] = specieslist[i].withName(speciesnames[i]);
-}
-
-/// Return the formula matrix of the species with respect to given elements.
-auto formulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd
-{
-    const auto num_elements = elements.size();
-    const auto num_components = num_elements + 1;
-    const auto num_species = species.size();
-    MatrixXd A(num_components, num_species);
-    for(auto i = 0; i < num_species; ++i)
-        for(auto j = 0; j < num_elements; ++j)
-            A(j, i) = species[i].elements().coefficient(elements[j].symbol());
-    for(auto i = 0; i < num_species; ++i)
-        A(num_elements, i) = species[i].charge();
-    return A;
 }
 
 } // namespace detail
@@ -94,7 +80,7 @@ struct ChemicalSystem::Impl
     {
         species = phases.species();
         elements = species.elements();
-        formula_matrix = detail::formulaMatrix(species, elements);
+        formula_matrix = detail::assembleFormulaMatrix(species, elements);
 
         detail::fixDuplicatePhaseNames(phases);
         detail::fixDuplicateSpeciesNames(species);
