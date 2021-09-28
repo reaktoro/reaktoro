@@ -61,9 +61,8 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
         G0  = Hw - T*(Sw + Str) + Ttr*Str + Gtr;
         V0  = waterMolarMass/wtp.density;
         Cp0 = wtp.cp * waterMolarMass;
-        Cv0 = wtp.cv * waterMolarMass;
-        VT0 = waterMolarMass/wtp.densityT;
-        VP0 = waterMolarMass/wtp.densityP;
+        VT0 = -V0*V0*wtp.densityT/waterMolarMass; // from VT0 = -waterMolarMass/(rho*rho)*densityT = -V0*V0*densityT/waterMolarMass
+        VP0 = -V0*V0*wtp.densityP/waterMolarMass; // from VP0 = -waterMolarMass/(rho*rho)*densityP = -V0*V0*densityP/waterMolarMass
         // S0  = Sw + Str;
         // U0  = Uw + Utr;
         // A0  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
