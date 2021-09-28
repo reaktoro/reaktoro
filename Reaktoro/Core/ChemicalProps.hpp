@@ -144,7 +144,7 @@ public:
     /// @param phase The name or index of the phase in the system.
     auto phaseMass(StringOrIndex phase) const -> real;
 
-    /// Return the volume of a phase in the system (in m3).
+    /// Return the volume of a phase in the system (in m³).
     /// @param phase The name or index of the phase in the system.
     auto phaseVolume(StringOrIndex phase) const -> real;
 
@@ -192,9 +192,17 @@ public:
     /// @param species The name or index of the species in the system.
     auto chemicalPotential(StringOrIndex species) const -> real;
 
-    /// Return the standard partial molar volume of a species in the system (in m3/mol).
+    /// Return the standard partial molar volume of a species in the system (in m³/mol).
     /// @param species The name or index of the species in the system.
     auto standardVolume(StringOrIndex species) const -> real;
+
+    /// Return the temperature derivative of the standard partial molar volume of a species in the system (in m³/(mol·K)).
+    /// @param species The name or index of the species in the system.
+    auto standardVolumeT(StringOrIndex species) const -> real;
+
+    /// Return the pressure derivative of the standard partial molar volume of a species in the system (in m³/(mol·Pa)).
+    /// @param species The name or index of the species in the system.
+    auto standardVolumeP(StringOrIndex species) const -> real;
 
     /// Return the standard partial molar Gibbs energy of formation of a species in the system (in J/mol).
     /// @param species The name or index of the species in the system.
@@ -204,7 +212,7 @@ public:
     /// @param species The name or index of the species in the system.
     auto standardEnthalpy(StringOrIndex species) const -> real;
 
-    /// Return the standard partial molar entropy of formation of the species a the system (in J/(mol*K)).
+    /// Return the standard partial molar entropy of formation of the species a the system (in J/(mol·K)).
     /// @param species The name or index of the species in the system.
     auto standardEntropy(StringOrIndex species) const -> real;
 
@@ -216,11 +224,11 @@ public:
     /// @param species The name or index of the species in the system.
     auto standardHelmholtzEnergy(StringOrIndex species) const -> real;
 
-    /// Return the standard partial molar isobaric heat capacity of the species a the system (in J/(mol*K)).
+    /// Return the standard partial molar isobaric heat capacity of the species a the system (in J/(mol·K)).
     /// @param species The name or index of the species in the system.
     auto standardHeatCapacityConstP(StringOrIndex species) const -> real;
 
-    /// Return the standard partial molar isochoric heat capacity of the species a the system (in J/(mol*K)).
+    /// Return the standard partial molar isochoric heat capacity of the species a the system (in J/(mol·K)).
     /// @param species The name or index of the species in the system.
     auto standardHeatCapacityConstV(StringOrIndex species) const -> real;
 
@@ -256,8 +264,14 @@ public:
     /// Return the chemical potentials of the species in the system (in J/mol).
     auto chemicalPotentials() const -> ArrayXrConstRef;
 
-    /// Return the standard partial molar volumes of the species in the system (in m3/mol).
+    /// Return the standard partial molar volumes of the species in the system (in m³/mol).
     auto standardVolumes() const -> ArrayXrConstRef;
+
+    /// Return the temperature derivative of the standard molar volumes of the species in the system (in m³/(mol·K)).
+    auto standardVolumesT() const -> ArrayXrConstRef;
+
+    /// Return the pressure derivative of the standard molar volumes of the species in the system (in m³/(mol·Pa)).
+    auto standardVolumesP() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
     auto standardGibbsEnergies() const -> ArrayXrConstRef;
@@ -265,7 +279,7 @@ public:
     /// Return the standard partial molar enthalpies of formation of the species in the system (in J/mol).
     auto standardEnthalpies() const -> ArrayXrConstRef;
 
-    /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol*K)).
+    /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol·K)).
     auto standardEntropies() const -> ArrayXr;
 
     /// Return the standard partial molar internal energies of formation of the species in the system (in J/mol).
@@ -274,10 +288,10 @@ public:
     /// Return the standard partial molar Helmholtz energies of formation of the species in the system (in J/mol).
     auto standardHelmholtzEnergies() const -> ArrayXr;
 
-    /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol*K)).
+    /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol·K)).
     auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef;
 
-    /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol*K)).
+    /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
 
     /// Return the sum of species amounts in the system (in mol).
@@ -286,8 +300,14 @@ public:
     /// Return the sum of species masses in the system (in kg).
     auto mass() const -> real;
 
-    /// Return the volume of the system (in m3).
+    /// Return the volume of the system (in m³).
     auto volume() const -> real;
+
+    /// Return the temperature derivative of the volume of the system (in m³/K).
+    auto volumeT() const -> real;
+
+    /// Return the pressure derivative of the volume of the system (in m³/Pa).
+    auto volumeP() const -> real;
 
     /// Return the Gibbs energy of formation of the system (in J).
     auto gibbsEnergy() const -> real;
@@ -347,8 +367,14 @@ private:
     /// The standard molar enthalpies of formation of the species in the system (in J/mol).
     ArrayXr H0;
 
-    /// The standard molar volumes of the species in the system (in m3/mol).
+    /// The standard molar volumes of the species in the system (in m³/mol).
     ArrayXr V0;
+
+    /// The temperature derivative of the standard molar volumes of the species in the system (in m³/(mol·K)).
+    ArrayXr VT0;
+
+    /// The pressure derivative of the standard molar volumes of the species in the system (in m³/(mol·Pa)).
+    ArrayXr VP0;
 
     /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
     ArrayXr Cp0;
@@ -356,13 +382,13 @@ private:
     /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
     ArrayXr Cv0;
 
-    /// The excess molar volume of each phase in the system (in m3/mol).
+    /// The excess molar volume of each phase in the system (in m³/mol).
     ArrayXr Vex;
 
-    /// The temperature derivative at constant pressure of the excess molar volume of each phase in the system (in m3/(mol*K)).
+    /// The temperature derivative at constant pressure of the excess molar volume of each phase in the system (in m³/(mol·K)).
     ArrayXr VexT;
 
-    /// The pressure derivative at constant temperature of the excess molar volume of each phase in the system (in m3/(mol*Pa)).
+    /// The pressure derivative at constant temperature of the excess molar volume of each phase in the system (in m³/(mol·Pa)).
     ArrayXr VexP;
 
     /// The excess molar Gibbs energy of each phase in the system (in J/mol).
@@ -371,10 +397,10 @@ private:
     /// The excess molar enthalpy of each phase in the system (in J/mol).
     ArrayXr Hex;
 
-    /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol*K)).
+    /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol·K)).
     ArrayXr Cpex;
 
-    /// The excess molar isochoric heat capacity of each phase in the system (in J/(mol*K)).
+    /// The excess molar isochoric heat capacity of each phase in the system (in J/(mol·K)).
     ArrayXr Cvex;
 
     /// The activity coefficients (natural log) of the species in the system.

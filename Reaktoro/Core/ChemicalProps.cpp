@@ -46,6 +46,8 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     G0   = ArrayXr::Zero(N);
     H0   = ArrayXr::Zero(N);
     V0   = ArrayXr::Zero(N);
+    VT0  = ArrayXr::Zero(N);
+    VP0  = ArrayXr::Zero(N);
     Cp0  = ArrayXr::Zero(N);
     Cv0  = ArrayXr::Zero(N);
     Vex  = ArrayXr::Zero(K);
@@ -91,12 +93,12 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
 
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::update(ArrayXdConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
@@ -124,22 +126,22 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::serialize(ArrayStream<double>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<double>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&
@@ -167,6 +169,8 @@ auto ChemicalProps::phaseProps(Index iphase) -> ChemicalPropsPhaseRef
         G0.segment(begin, size),
         H0.segment(begin, size),
         V0.segment(begin, size),
+        VT0.segment(begin, size),
+        VP0.segment(begin, size),
         Cp0.segment(begin, size),
         Cv0.segment(begin, size),
         Vex[iphase],
@@ -353,6 +357,18 @@ auto ChemicalProps::standardVolume(StringOrIndex species) const -> real
     return V0[ispecies];
 }
 
+auto ChemicalProps::standardVolumeT(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return VT0[ispecies];
+}
+
+auto ChemicalProps::standardVolumeP(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return VP0[ispecies];
+}
+
 auto ChemicalProps::standardGibbsEnergy(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
@@ -463,6 +479,16 @@ auto ChemicalProps::standardVolumes() const -> ArrayXrConstRef
     return V0;
 }
 
+auto ChemicalProps::standardVolumesT() const -> ArrayXrConstRef
+{
+    return VT0;
+}
+
+auto ChemicalProps::standardVolumesP() const -> ArrayXrConstRef
+{
+    return VP0;
+}
+
 auto ChemicalProps::standardGibbsEnergies() const -> ArrayXrConstRef
 {
     return G0;
@@ -514,6 +540,18 @@ auto ChemicalProps::volume() const -> real
 {
     const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volume(); });
+}
+
+auto ChemicalProps::volumeT() const -> real
+{
+    const auto iend = system().phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volumeT(); });
+}
+
+auto ChemicalProps::volumeP() const -> real
+{
+    const auto iend = system().phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volumeP(); });
 }
 
 auto ChemicalProps::gibbsEnergy() const -> real

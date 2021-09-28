@@ -35,8 +35,10 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.G0  = 0.1 * (T*P)*(T*P);
         props.H0  = 0.2 * (T*P)*(T*P);
         props.V0  = 0.3 * (T*P)*(T*P);
-        props.Cp0 = 0.4 * (T*P)*(T*P);
-        props.Cv0 = 0.5 * (T*P)*(T*P);
+        props.VT0 = 0.4 * (T*P)*(T*P);
+        props.VP0 = 0.5 * (T*P)*(T*P);
+        props.Cp0 = 0.6 * (T*P)*(T*P);
+        props.Cv0 = 0.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -46,8 +48,10 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.G0  = 1.1 * (T*P)*(T*P);
         props.H0  = 1.2 * (T*P)*(T*P);
         props.V0  = 1.3 * (T*P)*(T*P);
-        props.Cp0 = 1.4 * (T*P)*(T*P);
-        props.Cv0 = 1.5 * (T*P)*(T*P);
+        props.VT0 = 1.4 * (T*P)*(T*P);
+        props.VP0 = 1.5 * (T*P)*(T*P);
+        props.Cp0 = 1.6 * (T*P)*(T*P);
+        props.Cv0 = 1.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -123,14 +127,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         const ArrayXr nsumphases = ArrayXr{{ 10.0, 5.0 }}; // the total amount of each phase
 
-        const ArrayXr G0  = ArrayXr{{ 0.1, 0.1, 1.1 }} * (T*P)*(T*P);
-        const ArrayXr H0  = ArrayXr{{ 0.2, 0.2, 1.2 }} * (T*P)*(T*P);
-        const ArrayXr V0  = ArrayXr{{ 0.3, 0.3, 1.3 }} * (T*P)*(T*P);
-        const ArrayXr Cp0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
-        const ArrayXr Cv0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
-        const ArrayXr S0  = (H0 - G0)/T;
-        const ArrayXr U0  = H0 - P*V0;
-        const ArrayXr A0  = G0 - P*V0;
+        const ArrayXr  G0 = ArrayXr{{ 0.1, 0.1, 1.1 }} * (T*P)*(T*P);
+        const ArrayXr  H0 = ArrayXr{{ 0.2, 0.2, 1.2 }} * (T*P)*(T*P);
+        const ArrayXr  V0 = ArrayXr{{ 0.3, 0.3, 1.3 }} * (T*P)*(T*P);
+        const ArrayXr VT0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
+        const ArrayXr VP0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
+        const ArrayXr Cp0 = ArrayXr{{ 0.6, 0.6, 1.6 }} * (T*P)*(T*P);
+        const ArrayXr Cv0 = ArrayXr{{ 0.7, 0.7, 1.7 }} * (T*P)*(T*P);
+        const ArrayXr  S0 = (H0 - G0)/T;
+        const ArrayXr  U0 = H0 - P*V0;
+        const ArrayXr  A0 = G0 - P*V0;
 
         const ArrayXr Vex  = ArrayXr{{ 1.0, 1.1 }} * (T*P)*(T*P);
         const ArrayXr VexT = ArrayXr{{ 2.0, 2.1 }} * (T*P)*(T*P);
@@ -144,14 +150,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXr ln_a = ArrayXr{{ 9.0*x[0], 9.0*x[1], 9.1*x[2] }};
         const ArrayXr u    = G0 + R*T*ln_a;
 
-        const real Ntot = n.sum();
-        const real Mtot = (n * molar_masses).sum();
-        const real Gtot = (G0 * n).sum() + (nsumphases * Gex).sum();
-        const real Htot = (H0 * n).sum() + (nsumphases * Hex).sum();
-        const real Vtot = (V0 * n).sum() + (nsumphases * Vex).sum();
-        const real Stot = (Htot - Gtot)/T;
-        const real Utot = Htot - P*Vtot;
-        const real Atot = Gtot - P*Vtot;
+        const real Ntot  = n.sum();
+        const real Mtot  = (n * molar_masses).sum();
+        const real Gtot  = (G0 * n).sum() + (nsumphases * Gex).sum();
+        const real Htot  = (H0 * n).sum() + (nsumphases * Hex).sum();
+        const real Vtot  = (V0 * n).sum() + (nsumphases * Vex).sum();
+        const real VtotT = (VT0 * n).sum() + (nsumphases * VexT).sum();
+        const real VtotP = (VP0 * n).sum() + (nsumphases * VexP).sum();
+        const real Stot  = (Htot - Gtot)/T;
+        const real Utot  = Htot - P*Vtot;
+        const real Atot  = Gtot - P*Vtot;
 
         CHECK_NOTHROW( props.update(T, P, n) );
 
@@ -164,6 +172,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( props.lnActivities()                .isApprox(ln_a) );
         CHECK( props.chemicalPotentials()          .isApprox(u)    );
         CHECK( props.standardVolumes()             .isApprox(V0)   );
+        CHECK( props.standardVolumesT()            .isApprox(VT0)  );
+        CHECK( props.standardVolumesP()            .isApprox(VP0)  );
         CHECK( props.standardGibbsEnergies()       .isApprox(G0)   );
         CHECK( props.standardEnthalpies()          .isApprox(H0)   );
         CHECK( props.standardEntropies()           .isApprox(S0)   );
@@ -192,8 +202,10 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd  G0_T = ArrayXd{{ 0.1, 0.1, 1.1 }} * 2*P*(T*P);
         const ArrayXd  H0_T = ArrayXd{{ 0.2, 0.2, 1.2 }} * 2*P*(T*P);
         const ArrayXd  V0_T = ArrayXd{{ 0.3, 0.3, 1.3 }} * 2*P*(T*P);
-        const ArrayXd Cp0_T = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*P*(T*P);
-        const ArrayXd Cv0_T = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*P*(T*P);
+        const ArrayXd VT0_T = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*P*(T*P);
+        const ArrayXd VP0_T = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*P*(T*P);
+        const ArrayXd Cp0_T = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*P*(T*P);
+        const ArrayXd Cv0_T = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*P*(T*P);
         const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
         const ArrayXd  U0_T = H0_T - P*V0_T;
         const ArrayXd  A0_T = G0_T - P*V0_T;
@@ -210,14 +222,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd ln_a_T = ArrayXd{{ 0.0, 0.0, 0.0 }};
         const ArrayXd    u_T = G0_T + R*ln_a;
 
-        const double Ntot_T = 0.0;
-        const double Mtot_T = 0.0;
-        const double Gtot_T = (G0_T * n).sum() + (nsumphases * Gex_T).sum();
-        const double Htot_T = (H0_T * n).sum() + (nsumphases * Hex_T).sum();
-        const double Vtot_T = (V0_T * n).sum() + (nsumphases * Vex_T).sum();
-        const double Stot_T = (Htot_T - Gtot_T)/T - (Htot - Gtot)/(T*T);
-        const double Utot_T = Htot_T - P*Vtot_T;
-        const double Atot_T = Gtot_T - P*Vtot_T;
+        const double Ntot_T  = 0.0;
+        const double Mtot_T  = 0.0;
+        const double Gtot_T  = (G0_T * n).sum() + (nsumphases * Gex_T).sum();
+        const double Htot_T  = (H0_T * n).sum() + (nsumphases * Hex_T).sum();
+        const double Vtot_T  = (V0_T * n).sum() + (nsumphases * Vex_T).sum();
+        const double VtotT_T = (VT0_T * n).sum() + (nsumphases * VexT_T).sum();
+        const double VtotP_T = (VP0_T * n).sum() + (nsumphases * VexP_T).sum();
+        const double Stot_T  = (Htot_T - Gtot_T)/T - (Htot - Gtot)/(T*T);
+        const double Utot_T  = Htot_T - P*Vtot_T;
+        const double Atot_T  = Gtot_T - P*Vtot_T;
 
         autodiff::seed(T);
         props.update(T, P, n);
@@ -232,6 +246,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( grad(props.lnActivities())                 .isApprox(ln_a_T) );
         CHECK( grad(props.chemicalPotentials())           .isApprox(u_T)    );
         CHECK( grad(props.standardVolumes())              .isApprox(V0_T)   );
+        CHECK( grad(props.standardVolumesT())             .isApprox(VT0_T)  );
+        CHECK( grad(props.standardVolumesP())             .isApprox(VP0_T)  );
         CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
         CHECK( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
         CHECK( grad(props.standardEntropies())            .isApprox(S0_T)   );
@@ -240,14 +256,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
         CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
 
-        CHECK( grad(props.amount())          == Approx(Ntot_T) );
-        CHECK( grad(props.mass())            == Approx(Mtot_T) );
-        CHECK( grad(props.volume())          == Approx(Vtot_T) );
-        CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_T) );
-        CHECK( grad(props.enthalpy())        == Approx(Htot_T) );
-        CHECK( grad(props.entropy())         == Approx(Stot_T) );
-        CHECK( grad(props.internalEnergy())  == Approx(Utot_T) );
-        CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_T) );
+        CHECK( grad(props.amount())          == Approx(Ntot_T)  );
+        CHECK( grad(props.mass())            == Approx(Mtot_T)  );
+        CHECK( grad(props.volume())          == Approx(Vtot_T)  );
+        CHECK( grad(props.volumeT())         == Approx(VtotT_T) );
+        CHECK( grad(props.volumeP())         == Approx(VtotP_T) );
+        CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_T)  );
+        CHECK( grad(props.enthalpy())        == Approx(Htot_T)  );
+        CHECK( grad(props.entropy())         == Approx(Stot_T)  );
+        CHECK( grad(props.internalEnergy())  == Approx(Utot_T)  );
+        CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_T)  );
 
         //---------------------------------------------------------------------
         // Testing pressure derivatives of the properties
@@ -260,8 +278,10 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd  G0_P = ArrayXd{{ 0.1, 0.1, 1.1 }} * 2*T*(T*P);
         const ArrayXd  H0_P = ArrayXd{{ 0.2, 0.2, 1.2 }} * 2*T*(T*P);
         const ArrayXd  V0_P = ArrayXd{{ 0.3, 0.3, 1.3 }} * 2*T*(T*P);
-        const ArrayXd Cp0_P = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*T*(T*P);
-        const ArrayXd Cv0_P = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*T*(T*P);
+        const ArrayXd VT0_P = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*T*(T*P);
+        const ArrayXd VP0_P = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*T*(T*P);
+        const ArrayXd Cp0_P = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*T*(T*P);
+        const ArrayXd Cv0_P = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*T*(T*P);
         const ArrayXd  S0_P = (H0_P - G0_P)/T;
         const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
         const ArrayXd  A0_P = G0_P - V0 - P*V0_P;
@@ -278,14 +298,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd ln_a_P = ArrayXd{{ 0.0, 0.0, 0.0 }};
         const ArrayXd    u_P = G0_P;
 
-        const double Ntot_P = 0.0;
-        const double Mtot_P = 0.0;
-        const double Gtot_P = (G0_P * n).sum() + (nsumphases * Gex_P).sum();
-        const double Htot_P = (H0_P * n).sum() + (nsumphases * Hex_P).sum();
-        const double Vtot_P = (V0_P * n).sum() + (nsumphases * Vex_P).sum();
-        const double Stot_P = (Htot_P - Gtot_P)/T;
-        const double Utot_P = Htot_P - Vtot - P*Vtot_P;
-        const double Atot_P = Gtot_P - Vtot - P*Vtot_P;
+        const double Ntot_P  = 0.0;
+        const double Mtot_P  = 0.0;
+        const double Gtot_P  = (G0_P * n).sum() + (nsumphases * Gex_P).sum();
+        const double Htot_P  = (H0_P * n).sum() + (nsumphases * Hex_P).sum();
+        const double Vtot_P  = (V0_P * n).sum() + (nsumphases * Vex_P).sum();
+        const double VtotT_P = (VT0_P * n).sum() + (nsumphases * VexT_P).sum();
+        const double VtotP_P = (VP0_P * n).sum() + (nsumphases * VexP_P).sum();
+        const double Stot_P  = (Htot_P - Gtot_P)/T;
+        const double Utot_P  = Htot_P - Vtot - P*Vtot_P;
+        const double Atot_P  = Gtot_P - Vtot - P*Vtot_P;
 
         autodiff::seed(P);
         props.update(T, P, n);
@@ -299,6 +321,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( grad(props.lnActivityCoefficients())       .isApprox(ln_g_P) );
         CHECK( grad(props.lnActivities())                 .isApprox(ln_a_P) );
         CHECK( grad(props.standardVolumes())              .isApprox(V0_P)   );
+        CHECK( grad(props.standardVolumesT())             .isApprox(VT0_P)  );
+        CHECK( grad(props.standardVolumesP())             .isApprox(VP0_P)  );
         CHECK( grad(props.chemicalPotentials())           .isApprox(u_P)    );
         CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
         CHECK( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
@@ -308,14 +332,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
         CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
 
-        CHECK( grad(props.amount())          == Approx(Ntot_P) );
-        CHECK( grad(props.mass())            == Approx(Mtot_P) );
-        CHECK( grad(props.volume())          == Approx(Vtot_P) );
-        CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_P) );
-        CHECK( grad(props.enthalpy())        == Approx(Htot_P) );
-        CHECK( grad(props.entropy())         == Approx(Stot_P) );
-        CHECK( grad(props.internalEnergy())  == Approx(Utot_P) );
-        CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_P) );
+        CHECK( grad(props.amount())          == Approx(Ntot_P)  );
+        CHECK( grad(props.mass())            == Approx(Mtot_P)  );
+        CHECK( grad(props.volume())          == Approx(Vtot_P)  );
+        CHECK( grad(props.volumeT())         == Approx(VtotT_P) );
+        CHECK( grad(props.volumeP())         == Approx(VtotP_P) );
+        CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_P)  );
+        CHECK( grad(props.enthalpy())        == Approx(Htot_P)  );
+        CHECK( grad(props.entropy())         == Approx(Stot_P)  );
+        CHECK( grad(props.internalEnergy())  == Approx(Utot_P)  );
+        CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_P)  );
 
         //---------------------------------------------------------------------
         // Testing compositional derivatives of the properties
@@ -336,6 +362,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXXd  G0_n = ArrayXXd::Zero(3, 3);
         const ArrayXXd  H0_n = ArrayXXd::Zero(3, 3);
         const ArrayXXd  V0_n = ArrayXXd::Zero(3, 3);
+        const ArrayXXd VT0_n = ArrayXXd::Zero(3, 3);
+        const ArrayXXd VP0_n = ArrayXXd::Zero(3, 3);
         const ArrayXXd Cp0_n = ArrayXXd::Zero(3, 3);
         const ArrayXXd Cv0_n = ArrayXXd::Zero(3, 3);
         const ArrayXXd  S0_n = ArrayXXd::Zero(3, 3);
@@ -371,14 +399,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             return ((A.matrix().transpose() * x.matrix()).array()).eval();
         };
 
-        const ArrayXd Ntot_n = ArrayXd::Ones(3);
-        const ArrayXd Mtot_n = molar_masses;
-        const ArrayXd Gtot_n = dot(n_n, G0) + dot(nsumphases_n, Gex);
-        const ArrayXd Htot_n = dot(n_n, H0) + dot(nsumphases_n, Hex);
-        const ArrayXd Vtot_n = dot(n_n, V0) + dot(nsumphases_n, Vex);
-        const ArrayXd Stot_n = (Htot_n - Gtot_n)/T;
-        const ArrayXd Utot_n = Htot_n - P*Vtot_n;
-        const ArrayXd Atot_n = Gtot_n - P*Vtot_n;
+        const ArrayXd Ntot_n  = ArrayXd::Ones(3);
+        const ArrayXd Mtot_n  = molar_masses;
+        const ArrayXd Gtot_n  = dot(n_n, G0) + dot(nsumphases_n, Gex);
+        const ArrayXd Htot_n  = dot(n_n, H0) + dot(nsumphases_n, Hex);
+        const ArrayXd Vtot_n  = dot(n_n, V0) + dot(nsumphases_n, Vex);
+        const ArrayXd VtotT_n = dot(n_n, VT0) + dot(nsumphases_n, VexT);
+        const ArrayXd VtotP_n = dot(n_n, VP0) + dot(nsumphases_n, VexP);
+        const ArrayXd Stot_n  = (Htot_n - Gtot_n)/T;
+        const ArrayXd Utot_n  = Htot_n - P*Vtot_n;
+        const ArrayXd Atot_n  = Gtot_n - P*Vtot_n;
 
         for(auto i = 0; i < 3; ++i)
         {
@@ -395,6 +425,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             CHECK( grad(props.lnActivities())                 .isApprox( ln_a_n.col(i)) );
             CHECK( grad(props.chemicalPotentials())           .isApprox(    u_n.col(i)) );
             CHECK( grad(props.standardVolumes())              .isApprox(   V0_n.col(i)) );
+            CHECK( grad(props.standardVolumesT())             .isApprox(  VT0_n.col(i)) );
+            CHECK( grad(props.standardVolumesP())             .isApprox(  VP0_n.col(i)) );
             CHECK( grad(props.standardGibbsEnergies())        .isApprox(   G0_n.col(i)) );
             CHECK( grad(props.standardEnthalpies())           .isApprox(   H0_n.col(i)) );
             CHECK( grad(props.standardEntropies())            .isApprox(   S0_n.col(i)) );
@@ -403,14 +435,16 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(  Cp0_n.col(i)) );
             CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(  Cv0_n.col(i)) );
 
-            CHECK( grad(props.amount())          == Approx(Ntot_n[i]) );
-            CHECK( grad(props.mass())            == Approx(Mtot_n[i]) );
-            CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_n[i]) );
-            CHECK( grad(props.enthalpy())        == Approx(Htot_n[i]) );
-            CHECK( grad(props.volume())          == Approx(Vtot_n[i]) );
-            CHECK( grad(props.entropy())         == Approx(Stot_n[i]) );
-            CHECK( grad(props.internalEnergy())  == Approx(Utot_n[i]) );
-            CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_n[i]) );
+            CHECK( grad(props.amount())          == Approx(Ntot_n[i])  );
+            CHECK( grad(props.mass())            == Approx(Mtot_n[i])  );
+            CHECK( grad(props.gibbsEnergy())     == Approx(Gtot_n[i])  );
+            CHECK( grad(props.enthalpy())        == Approx(Htot_n[i])  );
+            CHECK( grad(props.volume())          == Approx(Vtot_n[i])  );
+            CHECK( grad(props.volumeT())         == Approx(VtotT_n[i]) );
+            CHECK( grad(props.volumeP())         == Approx(VtotP_n[i]) );
+            CHECK( grad(props.entropy())         == Approx(Stot_n[i])  );
+            CHECK( grad(props.internalEnergy())  == Approx(Utot_n[i])  );
+            CHECK( grad(props.helmholtzEnergy()) == Approx(Atot_n[i])  );
         }
     }
 
@@ -501,6 +535,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             CHECK( props.lnActivity(name)                 == Approx(props.lnActivities()[idx])                 );
             CHECK( props.chemicalPotential(name)          == Approx(props.chemicalPotentials()[idx])           );
             CHECK( props.standardVolume(name)             == Approx(props.standardVolumes()[idx])              );
+            CHECK( props.standardVolumeT(name)            == Approx(props.standardVolumesT()[idx])             );
+            CHECK( props.standardVolumeP(name)            == Approx(props.standardVolumesP()[idx])             );
             CHECK( props.standardGibbsEnergy(name)        == Approx(props.standardGibbsEnergies()[idx])        );
             CHECK( props.standardEnthalpy(name)           == Approx(props.standardEnthalpies()[idx])           );
             CHECK( props.standardEntropy(name)            == Approx(props.standardEntropies()[idx])            );
@@ -520,6 +556,8 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
             CHECK( props.lnActivity(i)                 == Approx(props.lnActivities()[idx])                 );
             CHECK( props.chemicalPotential(i)          == Approx(props.chemicalPotentials()[idx])           );
             CHECK( props.standardVolume(i)             == Approx(props.standardVolumes()[idx])              );
+            CHECK( props.standardVolumeT(i)            == Approx(props.standardVolumesT()[idx])             );
+            CHECK( props.standardVolumeP(i)            == Approx(props.standardVolumesP()[idx])             );
             CHECK( props.standardGibbsEnergy(i)        == Approx(props.standardGibbsEnergies()[idx])        );
             CHECK( props.standardEnthalpy(i)           == Approx(props.standardEnthalpies()[idx])           );
             CHECK( props.standardEntropy(i)            == Approx(props.standardEntropies()[idx])            );
