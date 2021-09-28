@@ -40,8 +40,14 @@ struct ThermoPropsPhaseBaseData
     /// The standard molar enthalpies of formation of the species in the phase (in J/mol)
     Array H0;
 
-    /// The standard molar volumes of the species in the phase (in m3/mol)
+    /// The standard molar volumes of the species in the phase (in m³/mol)
     Array V0;
+
+    /// The temperature derivative of the standard molar volumes of the species in the phase (in m³/(mol·K)).
+    Array VT0;
+
+    /// The pressure derivative of the standard molar volumes of the species in the phase (in m³/(mol·Pa)).
+    Array VP0;
 
     /// The standard molar isobaric heat capacities of the species in the phase (in J/(mol·K))
     Array Cp0;
@@ -58,6 +64,8 @@ struct ThermoPropsPhaseBaseData
         G0  = other.G0;
         H0  = other.H0;
         V0  = other.V0;
+        VT0 = other.VT0;
+        VP0 = other.VP0;
         Cp0 = other.Cp0;
         Cv0 = other.Cv0;
         return *this;
@@ -67,27 +75,27 @@ struct ThermoPropsPhaseBaseData
     template<typename RX, typename AX>
     operator ThermoPropsPhaseBaseData<RX, AX>()
     {
-        return { T, P, G0, H0, V0, Cp0, Cv0 };
+        return { T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0 };
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into another.
     template<typename RX, typename AX>
     operator ThermoPropsPhaseBaseData<RX, AX>() const
     {
-        return { T, P, G0, H0, V0, Cp0, Cv0 };
+        return { T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0 };
     }
 
     /// Assign the given array data to this ThermoPropsPhaseBaseData object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        array.to(T, P, G0, H0, V0, Cp0, Cv0);
+        array.to(T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0);
         return *this;
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into an array.
     operator ArrayStream<Real>() const
     {
-        return {T, P, G0, H0, V0, Cp0, Cv0};
+        return {T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0};
     }
 };
 
@@ -117,6 +125,8 @@ public:
         mdata.G0   = ArrayXr::Zero(numspecies);
         mdata.H0   = ArrayXr::Zero(numspecies);
         mdata.V0   = ArrayXr::Zero(numspecies);
+        mdata.VT0  = ArrayXr::Zero(numspecies);
+        mdata.VP0  = ArrayXr::Zero(numspecies);
         mdata.Cp0  = ArrayXr::Zero(numspecies);
         mdata.Cv0  = ArrayXr::Zero(numspecies);
     }
@@ -153,6 +163,8 @@ public:
         auto& G0   = mdata.G0;
         auto& H0   = mdata.H0;
         auto& V0   = mdata.V0;
+        auto& VT0  = mdata.VT0;
+        auto& VP0  = mdata.VP0;
         auto& Cp0  = mdata.Cp0;
         auto& Cv0  = mdata.Cv0;
 
@@ -174,6 +186,8 @@ public:
             G0[i]  = aux.G0;
             H0[i]  = aux.H0;
             V0[i]  = aux.V0;
+            VT0[i] = aux.VT0;
+            VP0[i] = aux.VP0;
             Cp0[i] = aux.Cp0;
             Cv0[i] = aux.Cv0;
         }
@@ -214,49 +228,61 @@ public:
         return mdata.P;
     }
 
-    /// Return the standard partial molar volumes of the species (in m3/mol).
+    /// Return the standard partial molar volumes of the species in the phase (in m³/mol).
     auto standardVolumes() const -> ArrayXrConstRef
     {
         return mdata.V0;
     }
 
-    /// Return the standard partial molar Gibbs energies of formation of the species (in J/mol).
+    /// Return the temperature derivative of the standard partial molar volumes of the species in the phase (in m³/(mol·K)).
+    auto standardVolumesT() const -> ArrayXrConstRef
+    {
+        return mdata.VT0;
+    }
+
+    /// Return the pressure derivative of the standard partial molar volumes of the species in the phase (in m³/(mol·Pa)).
+    auto standardVolumesP() const -> ArrayXrConstRef
+    {
+        return mdata.VP0;
+    }
+
+    /// Return the standard partial molar Gibbs energies of formation of the species in the phase (in J/mol).
     auto standardGibbsEnergies() const -> ArrayXrConstRef
     {
         return mdata.G0;
     }
 
-    /// Return the standard partial molar enthalpies of formation of the species (in J/mol).
+    /// Return the standard partial molar enthalpies of formation of the species in the phase (in J/mol).
     auto standardEnthalpies() const -> ArrayXrConstRef
     {
         return mdata.H0;
     }
 
-    /// Return the standard partial molar entropies of formation of the species (in J/(mol*K)).
+    /// Return the standard partial molar entropies of formation of the species in the phase (in J/(mol·K)).
     auto standardEntropies() const -> ArrayXr
     {
         return (mdata.H0 - mdata.G0)/mdata.T; // from G0 = H0 - T*S0
     }
 
-    /// Return the standard partial molar internal energies of formation of the species (in J/mol).
+    /// Return the standard partial molar internal energies of formation of the species in the phase (in J/mol).
     auto standardInternalEnergies() const -> ArrayXr
     {
         return mdata.H0 - mdata.P * mdata.V0; // from H0 = U0 + P*V0
     }
 
-    /// Return the standard partial molar Helmholtz energies of formation of the species (in J/mol).
+    /// Return the standard partial molar Helmholtz energies of formation of the species in the phase (in J/mol).
     auto standardHelmholtzEnergies() const -> ArrayXr
     {
         return mdata.G0 - mdata.P * mdata.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
     }
 
-    /// Return the standard partial molar isobaric heat capacities of the species (in J/(mol*K)).
+    /// Return the standard partial molar isobaric heat capacities of the species in the phase (in J/(mol·K)).
     auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef
     {
         return mdata.Cp0;
     }
 
-    /// Return the standard partial molar isochoric heat capacities of the species (in J/(mol*K)).
+    /// Return the standard partial molar isochoric heat capacities of the species in the phase (in J/(mol·K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     {
         return mdata.Cv0;
