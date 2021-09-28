@@ -31,7 +31,7 @@ using namespace Reaktoro;
 int main()
 {
     // Initialize a thermodynamic database
-    Database db("supcrtbl.yaml");
+    SupcrtDatabase db("supcrtbl");
 
     // Create an aqueous phase automatically selecting all species with given elements, excluding species with tag `organic`
     AqueousPhase aqueousphase("Ca(HCO3)+ CO3-2 CO2(aq) CaCO3(aq) Ca+2 CaSO4(aq) CaOH+ Cl- "
