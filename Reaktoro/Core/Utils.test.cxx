@@ -53,4 +53,103 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
     actual = detail::computeSpeciesAmount(system, iH2O, 1.0, "g");
     expected = 0.001 / mmH2O;
     CHECK( actual == Approx(expected) );
+
+
+    //======================================================================
+    // Testing assembleFormulaMatrix for the full system
+    //======================================================================
+
+    auto species = system.species();
+    auto elements = system.elements();
+
+    auto components_num = elements.size() + 1;
+
+    auto A = detail::assembleFormulaMatrix(species, elements);
+
+    CHECK( A.cols() == species.size() );
+    CHECK( A.rows() == components_num );
+
+    MatrixXd A_system = system.formulaMatrix();
+
+    for(Index i = 0; i < A.rows(); i++)
+        CHECK(A.row(i) == A_system.row(i));
+
+    //======================================================================
+    // Testing assembleFormulaMatrix for the aqueous phase
+    //======================================================================
+
+    SpeciesList species_aqueous = species.withAggregateState(AggregateState::Aqueous);
+
+    auto A_aq = detail::assembleFormulaMatrix(species_aqueous, elements);
+
+    CHECK( A_aq.cols() == species_aqueous.size() );
+    CHECK( A_aq.rows() == components_num         );
+
+    MatrixXd A_aq_expected {
+        {2,  1,  1,  2,  0,  0,  0,  0,  1,  1,  0,  0,  0,  1,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  0,  0},
+        {1,  0,  1,  0,  2,  0,  0,  0,  0,  1,  0,  0,  2,  3,  3,  0,  0,  2,  0},
+        {0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0},
+        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0},
+        {0,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  0,  0,  0,  0,  2,  2,  0,  0},
+        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0},
+        {0,  1, -1,  0,  0,  1, -1,  0,  0,  0,  2,  2,  0, -1, -2,  0,  0,  0, -1}
+    };
+
+    for(Index i = 0; i < A.rows(); i++)
+        CHECK(A_aq.row(i) == A_aq_expected.row(i));
+
+     //======================================================================
+    // Testing assembleFormulaMatrix for the gaseous phase
+    //======================================================================
+
+    SpeciesList species_gaseous = species.withAggregateState(AggregateState::Gas);
+
+    auto A_gas = detail::assembleFormulaMatrix(species_gaseous, elements);
+
+    CHECK( A_gas.cols() == species_gaseous.size() );
+    CHECK( A_gas.rows() == components_num         );
+
+    MatrixXd A_gas_expected {
+        {0,  0,  2,  2,  4,  0},
+        {1,  0,  0,  0,  1,  1},
+        {2,  2,  0,  1,  0,  1},
+        {0,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0},
+        {0,  0,  0,  0,  0,  0},
+    };
+
+    for(Index i = 0; i < A.rows(); i++)
+        CHECK(A_gas.row(i) == A_gas_expected.row(i));
+
+    //======================================================================
+    // Testing assembleFormulaMatrix for the mineral phase
+    //======================================================================
+
+    SpeciesList species_minerals = species.withAggregateState(AggregateState::Solid);
+
+    auto A_min = detail::assembleFormulaMatrix(species_minerals, elements);
+
+    CHECK( A_min.cols() == species_minerals.size() );
+    CHECK( A_min.rows() == components_num          );
+
+    MatrixXd A_min_expected {
+        {0,  0,  0,  0},
+        {0,  1,  1,  0},
+        {0,  3,  3,  2},
+        {1,  0,  0,  0},
+        {0,  0,  1,  0},
+        {0,  0,  0,  1},
+        {1,  0,  0,  0},
+        {0,  1,  0,  0},
+        {0,  0,  0,  0},
+    };
+
+    for(Index i = 0; i < A.rows(); i++)
+        CHECK(A_min.row(i) == A_min_expected.row(i));
+
 }
