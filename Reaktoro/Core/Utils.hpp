@@ -25,6 +25,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class ElementList;
 class SpeciesList;
 
 namespace detail {
@@ -47,6 +48,9 @@ auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) ->
 
 /// Resolve the index of a phase in a chemical system with given either a phase name or its index itself.
 auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index;
+
+/// Assemble the formula matrix of the list of `species` with respect to given `elements`.
+auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
 
 } // namespace detail
 } // namespace Reaktoro

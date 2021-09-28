@@ -105,5 +105,19 @@ auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Ind
     return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(system, arg); }, phase);
 }
 
+auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd
+{
+    const auto num_elements = elements.size();
+    const auto num_components = num_elements + 1;
+    const auto num_species = species.size();
+    MatrixXd A(num_components, num_species);
+    for(auto i = 0; i < num_species; ++i)
+        for(auto j = 0; j < num_elements; ++j)
+            A(j, i) = species[i].elements().coefficient(elements[j].symbol());
+    for(auto i = 0; i < num_species; ++i)
+        A(num_elements, i) = species[i].charge();
+    return A;
+}
+
 } // namespace detail
 } // namespace Reaktoro
