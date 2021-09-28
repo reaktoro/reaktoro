@@ -66,19 +66,18 @@ int main()
     conditions.temperature(T, "celsius");
     conditions.pressure(P, "bar");
 
-    // Define initial solution amount
-    conditions.startWith("H2O@", 55.51, "mol");
-    conditions.startWith("NaCl@", 0.27, "mol");
-    conditions.startWith("KCl@", 0.03, "mol");
-
-    // Define initial granite composition
-    conditions.startWith("Quartz"    , 168.126, "mol"); //
-    conditions.startWith("Microcline", 17.8099, "mol"); // K-Feldspar, K(AlSi3)O8 + 8 * H2O = K+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
-    conditions.startWith("Albite"    , 19.937 , "mol"); // Na(AlSi3)O8 + 8 * H2O = Na+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
-    conditions.startWith("Muscovite" , 2.15255, "mol"); // KAl2(AlSi3)O10(OH)2 = 1K+ + 3 * Al+++ - 10 * H+ + 6 * H2O + 3 * SiO2(aq)
-
     // Define initial equilibrium state
     ChemicalState state(system);
+    // Define initial solution amount
+    state.setSpeciesAmount("H2O@", 55.51, "mol");
+    state.setSpeciesAmount("NaCl@", 0.27, "mol");
+    state.setSpeciesAmount("KCl@", 0.03, "mol");
+
+    // Define initial granite composition
+    state.setSpeciesAmount("Quartz"    , 168.126, "mol"); //
+    state.setSpeciesAmount("Microcline", 17.8099, "mol"); // K-Feldspar, K(AlSi3)O8 + 8 * H2O = K+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
+    state.setSpeciesAmount("Albite"    , 19.937 , "mol"); // Na(AlSi3)O8 + 8 * H2O = Na+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
+    state.setSpeciesAmount("Muscovite" , 2.15255, "mol"); // KAl2(AlSi3)O10(OH)2 = 1K+ + 3 * Al+++ - 10 * H+ + 6 * H2O + 3 * SiO2(aq)
 
     // Equilibrate the initial state with given conditions
     solver.solve(state, conditions);

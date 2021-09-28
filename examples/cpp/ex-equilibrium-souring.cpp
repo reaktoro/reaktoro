@@ -72,24 +72,23 @@ int main()
     conditions.pH(5.726);
     conditions.pE(8.220);
 
-    // Specify chemical composition to start from
-    conditions.startWith("H2O(aq)" , 58.0     , "kg");
-    conditions.startWith("Cl-"     , 1122.3e-3, "kg");
-    conditions.startWith("Na+"     , 624.08e-3, "kg");
-    conditions.startWith("SO4-2"   , 157.18e-3, "kg");
-    conditions.startWith("Mg+2"    , 74.820e-3, "kg");
-    conditions.startWith("Ca+2"    , 23.838e-3, "kg");
-    conditions.startWith("K+"      , 23.142e-3, "kg");
-    conditions.startWith("HCO3-"   , 8.236e-3 , "kg");
-    conditions.startWith("O2(aq)"  , 58e-12   , "kg");
-    conditions.startWith("Siderite", 0.0      , "mol");
-    conditions.startWith("Pyrite"  , 0.0      , "mol");
-    conditions.startWith("Hematite", 0.0      , "mol");
-    conditions.startWith("HS-"     , 0.0196504, "mol");
-    conditions.startWith("H2S(aq)" , 0.167794 , "mol");
-
     // Create chemical state
     ChemicalState state(system);
+    // Specify chemical composition to start from
+    state.setSpeciesMass("H2O(aq)" , 58.0     , "kg");
+    state.setSpeciesMass("Cl-"     , 1122.3e-3, "kg");
+    state.setSpeciesMass("Na+"     , 624.08e-3, "kg");
+    state.setSpeciesMass("SO4-2"   , 157.18e-3, "kg");
+    state.setSpeciesMass("Mg+2"    , 74.820e-3, "kg");
+    state.setSpeciesMass("Ca+2"    , 23.838e-3, "kg");
+    state.setSpeciesMass("K+"      , 23.142e-3, "kg");
+    state.setSpeciesMass("HCO3-"   , 8.236e-3 , "kg");
+    state.setSpeciesMass("O2(aq)"  , 58e-12   , "kg");
+    state.setSpeciesAmount("Siderite", 0.0      , "mol");
+    state.setSpeciesAmount("Pyrite"  , 0.0      , "mol");
+    state.setSpeciesAmount("Hematite", 0.0      , "mol");
+    state.setSpeciesAmount("HS-"     , 0.0196504, "mol");
+    state.setSpeciesAmount("H2S(aq)" , 0.167794 , "mol");
 
     // Equilibrate the initial state with equilibrium condition
     EquilibriumResult result = solver.solve(state, conditions);
