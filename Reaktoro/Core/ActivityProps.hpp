@@ -50,9 +50,6 @@ struct ActivityPropsBase
     /// The excess molar isobaric heat capacity of the phase (in units of J/(mol*K)).
     Real Cpex;
 
-    /// The excess molar isochoric heat capacity of the phase (in units of J/(mol*K)).
-    Real Cvex;
-
     /// The activity coefficients (natural log) of the species in the phase.
     Array ln_g;
 
@@ -71,7 +68,6 @@ struct ActivityPropsBase
         Gex  = value;
         Hex  = value;
         Cpex = value;
-        Cvex = value;
         ln_g = value;
         ln_a = value;
         return *this;
@@ -87,7 +83,6 @@ struct ActivityPropsBase
         Gex   = other.Gex;
         Hex   = other.Hex;
         Cpex  = other.Cpex;
-        Cvex  = other.Cvex;
         ln_g  = other.ln_g;
         ln_a  = other.ln_a;
         extra = other.extra;
@@ -98,14 +93,14 @@ struct ActivityPropsBase
     template<typename RX, typename AX, typename EX>
     operator ActivityPropsBase<RX, AX, EX>()
     {
-        return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
+        return { Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
     template<typename RX, typename AX, typename EX>
     operator ActivityPropsBase<RX, AX, EX>() const
     {
-        return { Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, extra };
+        return { Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, extra };
     }
 
     /// Create a ActivityPropsBase object with given number of species.
@@ -120,7 +115,6 @@ struct ActivityPropsBase
         props.Gex  = 0.0;
         props.Hex  = 0.0;
         props.Cpex = 0.0;
-        props.Cvex = 0.0;
         props.ln_g = Array::Zero(numspecies);
         props.ln_a = Array::Zero(numspecies);
         return props;

@@ -53,8 +53,9 @@ TEST_CASE("Testing StandardThermoModelMaierKelley class", "[StandardThermoModelM
         CHECK( props.G0  == Approx(-405198.0) ); // converted to J/mol from -96.84 kcal/mol as in table
         CHECK( props.H0  == Approx(-391571.0) );
         CHECK( props.V0  == Approx(0.0)       );
+        CHECK( props.VT0 == Approx(0.0)       );
+        CHECK( props.VP0 == Approx(0.0)       );
         CHECK( props.Cp0 == Approx(40.1729)   );
-        CHECK( props.Cv0 == Approx(31.8585)   );
 
         //======================================================================
         // Test method Model::params()
@@ -111,8 +112,9 @@ TEST_CASE("Testing StandardThermoModelMaierKelley class", "[StandardThermoModelM
 
         CHECK( props.G0  == Approx(-26218.1) ); // converted to J/mol from -6.27 kcal/mol as in table
         CHECK( props.H0  == Approx(-44293.4) );
-        CHECK( props.Cp0 == Approx(37.211)   );
-        CHECK( props.Cv0 == Approx(28.8965)  );
         CHECK( props.V0  == Approx(0.0)      );
+        CHECK( props.VT0 == Approx(0.0)      );
+        CHECK( props.VP0 == Approx(0.0)      );
+        CHECK( props.Cp0 == Approx(37.211)   );
     }
 }

@@ -49,14 +49,12 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     VT0  = ArrayXr::Zero(N);
     VP0  = ArrayXr::Zero(N);
     Cp0  = ArrayXr::Zero(N);
-    Cv0  = ArrayXr::Zero(N);
     Vex  = ArrayXr::Zero(K);
     VexT = ArrayXr::Zero(K);
     VexP = ArrayXr::Zero(K);
     Gex  = ArrayXr::Zero(K);
     Hex  = ArrayXr::Zero(K);
     Cpex = ArrayXr::Zero(K);
-    Cvex = ArrayXr::Zero(K);
     ln_g = ArrayXr::Zero(N);
     ln_a = ArrayXr::Zero(N);
     u    = ArrayXr::Zero(N);
@@ -93,12 +91,12 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
 
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::update(ArrayXdConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
@@ -126,22 +124,22 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::serialize(ArrayStream<double>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.from(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<double>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Cv0, Vex, VexT, VexP, Gex, Hex, Cpex, Cvex, ln_g, ln_a, u);
+    stream.to(T, P, Ts, Ps, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&
@@ -172,14 +170,12 @@ auto ChemicalProps::phaseProps(Index iphase) -> ChemicalPropsPhaseRef
         VT0.segment(begin, size),
         VP0.segment(begin, size),
         Cp0.segment(begin, size),
-        Cv0.segment(begin, size),
         Vex[iphase],
         VexT[iphase],
         VexP[iphase],
         Gex[iphase],
         Hex[iphase],
         Cpex[iphase],
-        Cvex[iphase],
         ln_g.segment(begin, size),
         ln_a.segment(begin, size),
         u.segment(begin, size)
@@ -408,7 +404,7 @@ auto ChemicalProps::standardHeatCapacityConstP(StringOrIndex species) const -> r
 auto ChemicalProps::standardHeatCapacityConstV(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return Cv0[ispecies];
+    return Cp0[ispecies] + T*VT0[ispecies]*VT0[ispecies]/VP0[ispecies]; // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
 auto ChemicalProps::elementAmounts() const -> ArrayXr
@@ -519,9 +515,9 @@ auto ChemicalProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
     return Cp0;
 }
 
-auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
+auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXr
 {
-    return Cv0;
+    return Cp0 + T*VT0*VT0/VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
 auto ChemicalProps::amount() const -> real

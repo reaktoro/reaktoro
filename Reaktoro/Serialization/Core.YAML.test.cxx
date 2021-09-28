@@ -156,10 +156,10 @@ Species:
     CHECK( species[3].name() == "C(aq)"      );
     CHECK( species[4].name() == "A3B5C3(aq)" );
 
-    CHECK( species[0].standardThermoModel().params().size() == 7 ); // G0, H0, V0, Cp0, Cv0, VT0, VP0
-    CHECK( species[1].standardThermoModel().params().size() == 7 ); // G0, H0, V0, Cp0, Cv0, VT0, VP0
+    CHECK( species[0].standardThermoModel().params().size() == 6 ); // G0, H0, V0, Cp0, VT0, VP0
+    CHECK( species[1].standardThermoModel().params().size() == 6 ); // G0, H0, V0, Cp0, VT0, VP0
     CHECK( species[2].standardThermoModel().params().size() == 1 ); // lgKr
-    CHECK( species[3].standardThermoModel().params().size() == 7 ); // G0, H0, V0, Cp0, Cv0, VT0, VP0
+    CHECK( species[3].standardThermoModel().params().size() == 6 ); // G0, H0, V0, Cp0, VT0, VP0
     CHECK( species[4].standardThermoModel().params().size() == 1 ); // lgKr
 
     CHECK( species[0].standardThermoModel().params()[0].value() == 1.0 );
@@ -379,10 +379,9 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
                 G0: 10
                 H0: 0
                 V0: 0
-                Cp0: 0
-                Cv0: 0
                 VT0: 0
                 VP0: 0
+                Cp0: 0
         )");
 
         CHECK( node.repr() == expected.repr() );
@@ -495,10 +494,9 @@ TEST_CASE("Testing YAML encoder/decoder for SpeciesList", "[Core.yaml]")
               G0: 0
               H0: 0
               V0: 0
-              Cp0: 0
-              Cv0: 0
               VT0: 0
               VP0: 0
+              Cp0: 0
         - Name: CO3--(aq)
           Formula: CO3--
           Substance: CO3--
@@ -510,10 +508,9 @@ TEST_CASE("Testing YAML encoder/decoder for SpeciesList", "[Core.yaml]")
               G0: 0
               H0: 0
               V0: 0
-              Cp0: 0
-              Cv0: 0
               VT0: 0
               VP0: 0
+              Cp0: 0
         - Name: CaCO3(aq)
           Formula: CaCO3
           Substance: CaCO3
@@ -524,10 +521,9 @@ TEST_CASE("Testing YAML encoder/decoder for SpeciesList", "[Core.yaml]")
               G0: 0
               H0: 0
               V0: 0
-              Cp0: 0
-              Cv0: 0
               VT0: 0
               VP0: 0
+              Cp0: 0
     )");
 
     CHECK( node.repr() == expected.repr() );

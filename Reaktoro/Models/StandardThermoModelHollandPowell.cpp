@@ -53,7 +53,7 @@ auto StandardThermoModelHollandPowell(const StandardThermoModelParamsHollandPowe
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         // Unpack the properties to be computed by this model
-        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
+        auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
 
         // Unpack the model parameters
         const auto& [Gf, Hf, Sr, Vr, MKa, MKb, MKc, MKd, alpha0, kappa0, kappa0p, kappa0pp, numatoms, Tmax] = params;
@@ -144,7 +144,6 @@ auto StandardThermoModelHollandPowell(const StandardThermoModelParamsHollandPowe
         H0 = Hf + CpdT + VdP; // similar to Maier-Kelley
         V0 = V;
         Cp0 = Cp;
-        Cv0 = Cp;
         VT0 = 0.0;
         VP0 = 0.0; // TODO: StandardThermoModelHollandPowell needs proper computation of VP0.
         // S0 = STrPr + CpdlnT;

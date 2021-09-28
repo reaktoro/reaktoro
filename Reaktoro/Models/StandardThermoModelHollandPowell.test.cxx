@@ -61,7 +61,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.H0  == Approx(-907269) );
             CHECK( props.V0  == Approx(2.26745e-05) );
             CHECK( props.Cp0 == Approx(48.3997) );
-            CHECK( props.Cv0 == Approx(48.3997) );
         }
 
         WHEN("temperature is 1000 C and pressure is 5000 bar")
@@ -77,7 +76,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.H0  == Approx(-837517) );
             CHECK( props.V0  == Approx(2.25382e-05) );
             CHECK( props.Cp0 == Approx(71.5722) );
-            CHECK( props.Cv0 == Approx(71.5722) );
         }
 
         //======================================================================
@@ -157,7 +155,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.H0  == Approx(-3.91969e+06) );
             CHECK( props.V0  == Approx(0.000100699) );
             CHECK( props.Cp0 == Approx(224.931) );
-            CHECK( props.Cv0 == Approx(224.931) );
         }
 
         WHEN("temperature is 1000 C and pressure is 5000 bar")
@@ -172,7 +169,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.H0  == Approx(-3.60235e+06) );
             CHECK( props.V0  == Approx(0.000102574) );
             CHECK( props.Cp0 == Approx(323.395) );
-            CHECK( props.Cv0 == Approx(323.395) );
         }
     }
 
@@ -204,7 +200,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.H0  == Approx(-391603) );
             CHECK( props.V0  == Approx(0.0)     );
             CHECK( props.Cp0 == Approx(39.1723) );
-            CHECK( props.Cv0 == Approx(39.1723) );
         }
 
         WHEN("temperature is 1000 C and pressure is 5000 bar")
@@ -219,7 +214,6 @@ TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoMode
             CHECK( props.H0  == Approx(-344904) );
             CHECK( props.V0  == Approx(0.0)     );
             CHECK( props.Cp0 == Approx(56.8745) );
-            CHECK( props.Cv0 == Approx(56.8745) );
         }
     }
 }

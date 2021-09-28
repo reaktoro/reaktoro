@@ -65,8 +65,9 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( props.G0  == Approx(-2.371817e+05) );
     CHECK( props.H0  == Approx(-2.858310e+05) );
     CHECK( props.V0  == Approx( 1.806862e-05) );
+    CHECK( props.VT0 == Approx(0.00000000000) );
+    CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx( 7.532758e+01) );
-    CHECK( props.Cv0 == Approx( 7.453942e+01) );
 
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of CO3-2
@@ -82,8 +83,9 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( props.G0  == Approx(-5.279830e+05) );
     CHECK( props.H0  == Approx(-6.752359e+05) );
     CHECK( props.V0  == Approx(-6.063738e-06) );
+    CHECK( props.VT0 == Approx(0.00000000000) );
+    CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx(-3.228612e+02) );
-    CHECK( props.Cv0 == Approx(-3.228612e+02) );
 
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of Ca+2
@@ -99,8 +101,9 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( props.G0  == Approx(-5.528210e+05) );
     CHECK( props.H0  == Approx(-5.431003e+05) );
     CHECK( props.V0  == Approx(-1.844093e-05) );
+    CHECK( props.VT0 == Approx(0.00000000000) );
+    CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx(-3.099935e+01) );
-    CHECK( props.Cv0 == Approx(-3.099935e+01) );
 
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of CO2
@@ -116,8 +119,9 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( props.G0  == Approx(-3.943510e+05) );
     CHECK( props.H0  == Approx(-3.935472e+05) );
     CHECK( props.V0  == Approx( 2.466434e-02) );
+    CHECK( props.VT0 == Approx(0.00000000000) );
+    CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx( 3.710812e+01) );
-    CHECK( props.Cv0 == Approx( 0.000000e+00) );
 
     //-------------------------------------------------------------------
     // Testing attributes and thermodynamic properties of Calcite
@@ -133,8 +137,9 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( props.G0  == Approx(-1.129195e+06) );
     CHECK( props.H0  == Approx(-1.207470e+06) );
     CHECK( props.V0  == Approx( 3.689000e-05) );
+    CHECK( props.VT0 == Approx(0.00000000000) );
+    CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx( 8.337073e+01) );
-    CHECK( props.Cv0 == Approx( 0.000000e+00) );
 
     CHECK_THROWS( ThermoFunDatabase("not-a-valid-file-name") );
     CHECK_THROWS( ThermoFunDatabase::withName("not-a-valid-file-name") );

@@ -308,7 +308,6 @@ auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
         auto& Gres  = props.Gex;
         auto& Hres  = props.Hex;
         auto& Cpres = props.Cpex;
-        auto& Cvres = props.Cvex;
         auto& ln_g  = props.ln_g;
         auto& ln_a  = props.ln_a;
 
@@ -335,9 +334,6 @@ auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
 
         // Calculate the residual molar isobaric heat capacity of the phase
         Cpres = 2 * Hres / T - R * T*T*(BmixTT + 0.5*CmixTT*Pbar)*Pbar;
-
-        // Calculate the residual molar isochoric heat capacity of the phase
-        Cvres = Cpres + R + T*VT*VT/VP;
 
         // Set the ln activity coefficients
         if(iH2O < nspecies) ln_g[iH2O] = ln_phi[0];

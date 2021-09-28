@@ -51,7 +51,7 @@ auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& 
 
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
+        auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
         const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
 
         const auto Tr = 298.15; // the reference temperature of 25 C (in K)
@@ -66,7 +66,6 @@ auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& 
         G0  = Gf - Sr*(T - Tr) + CpdT - T*CpdlnT + VdP;
         H0  = Hf + CpdT + VdP;
         Cp0 = a + b*T + c/(T*T);
-        Cv0 = isgas ? Cp0 - R : Cp0;
         VT0 = 0.0;
         VP0 = 0.0;
         // S0  = Sr + CpdlnT;

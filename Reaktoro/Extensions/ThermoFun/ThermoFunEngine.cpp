@@ -34,7 +34,6 @@ auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other) -> Standard
     converted.H0  = other.enthalpy.val;
     converted.V0  = other.volume.val * 1.0e-05; // from J/bar to m3/mol
     converted.Cp0 = other.heat_capacity_cp.val;
-    converted.Cv0 = other.heat_capacity_cv.val;
     return converted;
 }
 

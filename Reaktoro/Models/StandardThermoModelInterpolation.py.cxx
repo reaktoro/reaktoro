@@ -30,10 +30,9 @@ void exportStandardThermoModelInterpolation(py::module& m)
         .def_readwrite("G0",           &StandardThermoModelParamsInterpolation::G0)
         .def_readwrite("H0",           &StandardThermoModelParamsInterpolation::H0)
         .def_readwrite("V0",           &StandardThermoModelParamsInterpolation::V0)
-        .def_readwrite("Cp0",          &StandardThermoModelParamsInterpolation::Cp0)
-        .def_readwrite("Cv0",          &StandardThermoModelParamsInterpolation::Cv0)
         .def_readwrite("VT0",          &StandardThermoModelParamsInterpolation::VT0)
         .def_readwrite("VP0",          &StandardThermoModelParamsInterpolation::VP0)
+        .def_readwrite("Cp0",          &StandardThermoModelParamsInterpolation::Cp0)
         ;
 
     m.def("StandardThermoModelInterpolation", StandardThermoModelInterpolation);

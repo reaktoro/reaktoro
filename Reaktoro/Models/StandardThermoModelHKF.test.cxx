@@ -68,6 +68,8 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         CHECK( props.G0/4184 == Approx(-93.055927342) ); // converted to J/mol from -93.06 kcal/mol as in table
         CHECK( props.H0  == Approx(-400560.0)   );
         CHECK( props.V0  == Approx(3.28667e-05) );
+        CHECK( props.VT0 == Approx(1.71031e-08) );
+        CHECK( props.VP0 == Approx(-1.5980e-14) );
         CHECK( props.Cp0 == Approx(205.903)     );
 
         //======================================================================
@@ -133,9 +135,11 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         props = model(T, P);
 
         CHECK( props.G0/4184 == Approx(-125.475621415) ); // converted to J/mol from -125.48 kcal/mol as in table
-        CHECK( props.H0  == Approx(-685294.0)   );
-        CHECK( props.V0  == Approx(-2.3192e-06) );
-        CHECK( props.Cp0 == Approx(-189.733)    );
+        CHECK( props.H0  == Approx(-685294.0)    );
+        CHECK( props.V0  == Approx(-2.3192e-06)  );
+        CHECK( props.VT0 == Approx(-6.49517e-08) );
+        CHECK( props.VP0 == Approx(4.65877e-14)  );
+        CHECK( props.Cp0 == Approx(-189.733)     );
     }
 
     // Check Oelkers et al. (1995), page 1463, table for H+.
@@ -169,6 +173,8 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
             CHECK( props.G0  == Approx(0.0).scale(1.0) ); // converted to J/mol from 0.0 kcal/mol as in table
             CHECK( props.H0  == Approx(0.0).scale(1.0) );
             CHECK( props.V0  == Approx(0.0).scale(1.0) );
+            CHECK( props.VT0 == Approx(0.0).scale(1.0) );
+            CHECK( props.VP0 == Approx(0.0).scale(1.0) );
             CHECK( props.Cp0 == Approx(0.0).scale(1.0) );
         }
     }
@@ -198,6 +204,8 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         CHECK( props.G0/4184 == Approx(-107.320028681) ); // converted to J/mol from -107.32 kcal/mol as in table
         CHECK( props.H0  == Approx(-466977.0)    );
         CHECK( props.V0  == Approx(-1.70501e-05) );
+        CHECK( props.VT0 == Approx(-3.56292e-08) );
+        CHECK( props.VP0 == Approx(4.6285e-14)   );
         CHECK( props.Cp0 == Approx(10.2122)      );
     }
 }

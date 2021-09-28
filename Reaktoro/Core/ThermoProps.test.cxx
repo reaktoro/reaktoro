@@ -33,7 +33,6 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
         props.VT0 = 0.4 * (T*P)*(T*P);
         props.VP0 = 0.5 * (T*P)*(T*P);
         props.Cp0 = 0.6 * (T*P)*(T*P);
-        props.Cv0 = 0.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -46,7 +45,6 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
         props.VT0 = 1.4 * (T*P)*(T*P);
         props.VP0 = 1.5 * (T*P)*(T*P);
         props.Cp0 = 1.6 * (T*P)*(T*P);
-        props.Cv0 = 1.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -91,7 +89,7 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     const ArrayXr VT0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
     const ArrayXr VP0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
     const ArrayXr Cp0 = ArrayXr{{ 0.6, 0.6, 1.6 }} * (T*P)*(T*P);
-    const ArrayXr Cv0 = ArrayXr{{ 0.7, 0.7, 1.7 }} * (T*P)*(T*P);
+    const ArrayXr Cv0 = Cp0 + T*VT0*VT0/VP0;
     const ArrayXr S0  = (H0 - G0)/T;
     const ArrayXr U0  = H0 - P*V0;
     const ArrayXr A0  = G0 - P*V0;
@@ -121,7 +119,7 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     const ArrayXd VT0_T = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*P*(T*P);
     const ArrayXd VP0_T = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*P*(T*P);
     const ArrayXd Cp0_T = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*P*(T*P);
-    const ArrayXd Cv0_T = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*P*(T*P);
+    const ArrayXd Cv0_T = Cp0_T + VT0*VT0/VP0 + 2*T*VT0*VT0_T/VP0 - T*VT0*VT0/VP0/VP0*VP0_T;
     const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
     const ArrayXd  U0_T = H0_T - P*V0_T;
     const ArrayXd  A0_T = G0_T - P*V0_T;
@@ -151,7 +149,7 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     const ArrayXd VT0_P = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*T*(T*P);
     const ArrayXd VP0_P = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*T*(T*P);
     const ArrayXd Cp0_P = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*T*(T*P);
-    const ArrayXd Cv0_P = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*T*(T*P);
+    const ArrayXd Cv0_P = Cp0_P + 2*T*VT0*VT0_P/VP0 - T*VT0*VT0/VP0/VP0*VP0_P;
     const ArrayXd  S0_P = (H0_P - G0_P)/T;
     const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
     const ArrayXd  A0_P = G0_P - V0 - P*V0_P;

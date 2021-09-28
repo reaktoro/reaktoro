@@ -37,7 +37,6 @@ auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
     props.Gex  = 0.4 * log(P/T);
     props.Hex  = 0.5 * log(P/T);
     props.Cpex = 0.6 * log(P/T);
-    props.Cvex = 0.7 * log(P/T);
     props.ln_g = 0.8 * x;
     props.ln_a = 0.9 * x;
 };
@@ -52,7 +51,6 @@ auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
     props.Gex  = 4.0 * log(P/T);
     props.Hex  = 5.0 * log(P/T);
     props.Cpex = 6.0 * log(P/T);
-    props.Cvex = 7.0 * log(P/T);
     props.ln_g = 8.0 * x;
     props.ln_a = 9.0 * x;
 };
@@ -67,7 +65,6 @@ auto activityModelSolid(ActivityPropsRef props, ActivityArgs args)
     props.Gex  = 4.1 * log(P/T);
     props.Hex  = 5.1 * log(P/T);
     props.Cpex = 6.1 * log(P/T);
-    props.Cvex = 7.1 * log(P/T);
     props.ln_g = 8.1 * x;
     props.ln_a = 9.1 * x;
 };

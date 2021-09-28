@@ -41,7 +41,6 @@ inline auto createStandardThermoModel(double param)
         props.VT0 = 0.4 * param * T * P;
         props.VP0 = 0.5 * param * T * P;
         props.Cp0 = 0.6 * param * T * P;
-        props.Cv0 = 0.7 * param * T * P;
         return props;
     };
     return model;
@@ -60,7 +59,6 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         props.Gex  = 4.0 * (T * P);
         props.Hex  = 5.0 * (T * P);
         props.Cpex = 6.0 * (T * P);
-        props.Cvex = 7.0 * (T * P);
         props.ln_g = 8.0 * x;
         props.ln_a = 9.0 * x;
     };
@@ -99,7 +97,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXr VT0 = 0.4 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
         const ArrayXr VP0 = 0.5 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
         const ArrayXr Cp0 = 0.6 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
-        const ArrayXr Cv0 = 0.7 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
+        const ArrayXr Cv0 = Cp0 + T*VT0*VT0/VP0;
         const ArrayXr S0  = (H0 - G0)/T;
         const ArrayXr U0  = H0 - P*V0;
         const ArrayXr A0  = G0 - P*V0;
@@ -110,7 +108,6 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const real Gex  = 4.0 * (T * P);
         const real Hex  = 5.0 * (T * P);
         const real Cpex = 6.0 * (T * P);
-        const real Cvex = 7.0 * (T * P);
 
         const ArrayXr ln_g = 8.0 * x;
         const ArrayXr ln_a = 9.0 * x;
@@ -122,7 +119,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const real VT = (VT0 * x).sum() + VexT;
         const real VP = (VP0 * x).sum() + VexP;
         const real Cp = (Cp0 * x).sum() + Cpex;
-        const real Cv = (Cv0 * x).sum() + Cvex;
+        const real Cv = Cp + T*VT*VT/VP;
         const real S  = (H - G)/T;
         const real U  = H - P*V;
         const real A  = G - P*V;
@@ -198,7 +195,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXd VT0_T = 0.4 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
         const ArrayXd VP0_T = 0.5 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
         const ArrayXd Cp0_T = 0.6 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
-        const ArrayXd Cv0_T = 0.7 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+        const ArrayXd Cv0_T = Cp0_T + VT0*VT0/VP0 + 2*T*VT0*VT0_T/VP0 - T*VT0*VT0/VP0/VP0*VP0_T;
         const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
         const ArrayXd  U0_T = H0_T - P*V0_T;
         const ArrayXd  A0_T = G0_T - P*V0_T;
@@ -209,7 +206,6 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double  Gex_T = 4.0 * P;
         const double  Hex_T = 5.0 * P;
         const double Cpex_T = 6.0 * P;
-        const double Cvex_T = 7.0 * P;
 
         const ArrayXd ln_g_T = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
         const ArrayXd ln_a_T = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
@@ -221,7 +217,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double VT_T = (VT0_T * x).sum() + VexT_T;
         const double VP_T = (VP0_T * x).sum() + VexP_T;
         const double Cp_T = (Cp0_T * x).sum() + Cpex_T;
-        const double Cv_T = (Cv0_T * x).sum() + Cvex_T;
+        const double Cv_T = Cp_T + VT*VT/VP + 2*T*VT*VT_T/VP - T*VT*VT/VP/VP*VP_T;
         const double  S_T = (H_T - G_T)/T - (H - G)/(T*T);
         const double  U_T = H_T - P*V_T;
         const double  A_T = G_T - P*V_T;
@@ -292,7 +288,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXd VT0_P = 0.4 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
         const ArrayXd VP0_P = 0.5 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
         const ArrayXd Cp0_P = 0.6 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
-        const ArrayXd Cv0_P = 0.7 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+        const ArrayXd Cv0_P = Cp0_P + 2*T*VT0*VT0_P/VP0 - T*VT0*VT0/VP0/VP0*VP0_P;
         const ArrayXd  S0_P = (H0_P - G0_P)/T;
         const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
         const ArrayXd  A0_P = G0_P - V0 - P*V0_P;
@@ -303,7 +299,6 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double  Gex_P = 4.0 * T;
         const double  Hex_P = 5.0 * T;
         const double Cpex_P = 6.0 * T;
-        const double Cvex_P = 7.0 * T;
 
         const ArrayXd ln_g_P = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
         const ArrayXd ln_a_P = ArrayXd{{0.0, 0.0, 0.0, 0.0}};
@@ -315,7 +310,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double VT_P = (VT0_P * x).sum() + VexT_P;
         const double VP_P = (VP0_P * x).sum() + VexP_P;
         const double Cp_P = (Cp0_P * x).sum() + Cpex_P;
-        const double Cv_P = (Cv0_P * x).sum() + Cvex_P;
+        const double Cv_P = Cp_P + 2*T*VT*VT_P/VP - T*VT*VT/VP/VP*VP_P;
         const double  S_P = (H_P - G_P)/T;
         const double  U_P = H_P - V - P*V_P;
         const double  A_P = G_P - V - P*V_P;
@@ -397,7 +392,6 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXd  Gex_n = ArrayXd::Zero(4);
         const ArrayXd  Hex_n = ArrayXd::Zero(4);
         const ArrayXd Cpex_n = ArrayXd::Zero(4);
-        const ArrayXd Cvex_n = ArrayXd::Zero(4);
 
         const ArrayXXd ln_g_n = 8.0 * x_n;
         const ArrayXXd ln_a_n = 9.0 * x_n;
@@ -414,7 +408,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXd VT_n = dot(x_n, VT0) + VexT_n;
         const ArrayXd VP_n = dot(x_n, VP0) + VexP_n;
         const ArrayXd Cp_n = dot(x_n, Cp0) + Cpex_n;
-        const ArrayXd Cv_n = dot(x_n, Cv0) + Cvex_n;
+        const ArrayXd Cv_n = Cp_n + 2*T*VT*VT_n/VP - T*VT*VT/VP/VP*VP_n;
         const ArrayXd  S_n = (H_n - G_n)/T;
         const ArrayXd  U_n = H_n - P*V_n;
         const ArrayXd  A_n = G_n - P*V_n;

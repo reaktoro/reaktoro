@@ -425,25 +425,21 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         CHECK(propsT0P0.H0  == Approx(0.0)         );
         CHECK(propsT0P0.V0  == Approx(1.80694e-05) );
         CHECK(propsT0P0.Cp0 == Approx(0.0)         );
-        CHECK(propsT0P0.Cv0 == Approx(0.0)         );
 
         CHECK(propsT1P0.G0  == Approx(0.0)         );
         CHECK(propsT1P0.H0  == Approx(0.0)         );
         CHECK(propsT1P0.V0  == Approx(1.85999e-05) );
         CHECK(propsT1P0.Cp0 == Approx(0.0)         );
-        CHECK(propsT1P0.Cv0 == Approx(0.0)         );
 
         CHECK(propsT0P1.G0  == Approx(0.0)         );
         CHECK(propsT0P1.H0  == Approx(0.0)         );
         CHECK(propsT0P1.V0  == Approx(1.80621e-05) );
         CHECK(propsT0P1.Cp0 == Approx(0.0)         );
-        CHECK(propsT0P1.Cv0 == Approx(0.0)         );
 
         CHECK(propsT1P1.G0  == Approx(0.0)         );
         CHECK(propsT1P1.H0  == Approx(0.0)         );
         CHECK(propsT1P1.V0  == Approx(1.85919e-05) );
         CHECK(propsT1P1.Cp0 == Approx(0.0)         );
-        CHECK(propsT1P1.Cv0 == Approx(0.0)         );
     }
 
     {
@@ -460,25 +456,21 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         CHECK(propsT0P0.H0  == Approx(0.0) );
         CHECK(propsT0P0.V0  == Approx(0.0) );
         CHECK(propsT0P0.Cp0 == Approx(0.0) );
-        CHECK(propsT0P0.Cv0 == Approx(0.0) );
 
         CHECK(propsT1P0.G0  == Approx(0.0) );
         CHECK(propsT1P0.H0  == Approx(0.0) );
         CHECK(propsT1P0.V0  == Approx(0.0) );
         CHECK(propsT1P0.Cp0 == Approx(0.0) );
-        CHECK(propsT1P0.Cv0 == Approx(0.0) );
 
         CHECK(propsT0P1.G0  == Approx(0.0) );
         CHECK(propsT0P1.H0  == Approx(0.0) );
         CHECK(propsT0P1.V0  == Approx(0.0) );
         CHECK(propsT0P1.Cp0 == Approx(0.0) );
-        CHECK(propsT0P1.Cv0 == Approx(0.0) );
 
         CHECK(propsT1P1.G0  == Approx(0.0) );
         CHECK(propsT1P1.H0  == Approx(0.0) );
         CHECK(propsT1P1.V0  == Approx(0.0) );
         CHECK(propsT1P1.Cp0 == Approx(0.0) );
-        CHECK(propsT1P1.Cv0 == Approx(0.0) );
     }
 
     {
@@ -495,25 +487,21 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         CHECK(propsT0P0.H0  == Approx(-24010.3)    );
         CHECK(propsT0P0.V0  == Approx(3.44329e-05) );
         CHECK(propsT0P0.Cp0 == Approx(0.0)         );
-        CHECK(propsT0P0.Cv0 == Approx(0.0)         );
 
         CHECK(propsT1P0.G0  == Approx(-113039)     );
         CHECK(propsT1P0.H0  == Approx(12124.6)     );
         CHECK(propsT1P0.V0  == Approx(3.77425e-05) );
         CHECK(propsT1P0.Cp0 == Approx(0.0)         );
-        CHECK(propsT1P0.Cv0 == Approx(0.0)         );
 
         CHECK(propsT0P1.G0  == Approx(-95161)    );
         CHECK(propsT0P1.H0  == Approx(-23957.6)    );
         CHECK(propsT0P1.V0  == Approx(3.44286e-05) );
         CHECK(propsT0P1.Cp0 == Approx(0.0)         );
-        CHECK(propsT0P1.Cv0 == Approx(0.0)         );
 
         CHECK(propsT1P1.G0  == Approx(-112978)     );
         CHECK(propsT1P1.H0  == Approx(12185.4)     );
         CHECK(propsT1P1.V0  == Approx(3.77222e-05) );
         CHECK(propsT1P1.Cp0 == Approx(0.0)         );
-        CHECK(propsT1P1.Cv0 == Approx(0.0)         );
     }
 
     {
@@ -530,25 +518,21 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         CHECK(propsT0P0.H0  == Approx(9608.99)  );
         CHECK(propsT0P0.V0  == Approx(3.69e-05) );
         CHECK(propsT0P0.Cp0 == Approx(0.0)      );
-        CHECK(propsT0P0.Cv0 == Approx(0.0)      );
 
         CHECK(propsT1P0.G0  == Approx(-62078.3) );
         CHECK(propsT1P0.H0  == Approx(32690.1)  );
         CHECK(propsT1P0.V0  == Approx(3.69e-05) );
         CHECK(propsT1P0.Cp0 == Approx(0.0)      );
-        CHECK(propsT1P0.Cv0 == Approx(0.0)      );
 
         CHECK(propsT0P1.G0  == Approx(-48347.9) );
         CHECK(propsT0P1.H0  == Approx(9664.07)  );
         CHECK(propsT0P1.V0  == Approx(3.69e-05) );
         CHECK(propsT0P1.Cp0 == Approx(0.0)      );
-        CHECK(propsT0P1.Cv0 == Approx(0.0)      );
 
         CHECK(propsT1P1.G0  == Approx(-62017.7) );
         CHECK(propsT1P1.H0  == Approx(32750.7)  );
         CHECK(propsT1P1.V0  == Approx(3.69e-05) );
         CHECK(propsT1P1.Cp0 == Approx(0.0)      );
-        CHECK(propsT1P1.Cv0 == Approx(0.0)      );
     }
 }
 

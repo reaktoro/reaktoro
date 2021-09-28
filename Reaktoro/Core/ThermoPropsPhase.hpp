@@ -52,9 +52,6 @@ struct ThermoPropsPhaseBaseData
     /// The standard molar isobaric heat capacities of the species in the phase (in J/(mol·K))
     Array Cp0;
 
-    /// The standard molar isochoric heat capacities of the species in the phase (in J/(mol·K))
-    Array Cv0;
-
     /// Assign a ThermoPropsPhaseBaseData object to this.
     template<typename RX, typename AX>
     auto operator=(const ThermoPropsPhaseBaseData<RX, AX>& other)
@@ -67,7 +64,6 @@ struct ThermoPropsPhaseBaseData
         VT0 = other.VT0;
         VP0 = other.VP0;
         Cp0 = other.Cp0;
-        Cv0 = other.Cv0;
         return *this;
     }
 
@@ -75,27 +71,27 @@ struct ThermoPropsPhaseBaseData
     template<typename RX, typename AX>
     operator ThermoPropsPhaseBaseData<RX, AX>()
     {
-        return { T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0 };
+        return { T, P, G0, H0, V0, VT0, VP0, Cp0 };
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into another.
     template<typename RX, typename AX>
     operator ThermoPropsPhaseBaseData<RX, AX>() const
     {
-        return { T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0 };
+        return { T, P, G0, H0, V0, VT0, VP0, Cp0 };
     }
 
     /// Assign the given array data to this ThermoPropsPhaseBaseData object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        array.to(T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0);
+        array.to(T, P, G0, H0, V0, VT0, VP0, Cp0);
         return *this;
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into an array.
     operator ArrayStream<Real>() const
     {
-        return {T, P, G0, H0, V0, VT0, VP0, Cp0, Cv0};
+        return {T, P, G0, H0, V0, VT0, VP0, Cp0};
     }
 };
 
@@ -128,7 +124,6 @@ public:
         mdata.VT0  = ArrayXr::Zero(numspecies);
         mdata.VP0  = ArrayXr::Zero(numspecies);
         mdata.Cp0  = ArrayXr::Zero(numspecies);
-        mdata.Cv0  = ArrayXr::Zero(numspecies);
     }
 
     /// Construct a ThermoPropsPhaseBase instance.
@@ -166,7 +161,6 @@ public:
         auto& VT0  = mdata.VT0;
         auto& VP0  = mdata.VP0;
         auto& Cp0  = mdata.Cp0;
-        auto& Cv0  = mdata.Cv0;
 
         const auto& species = mphase.species();
         const auto size = species.size();
@@ -175,7 +169,6 @@ public:
         assert(H0.size()   == size);
         assert(V0.size()   == size);
         assert(Cp0.size()  == size);
-        assert(Cv0.size()  == size);
 
         // Compute the standard thermodynamic properties of the species in the phase.
         StandardThermoProps aux;
@@ -189,7 +182,6 @@ public:
             VT0[i] = aux.VT0;
             VP0[i] = aux.VP0;
             Cp0[i] = aux.Cp0;
-            Cv0[i] = aux.Cv0;
         }
     }
 
@@ -285,7 +277,7 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the phase (in J/(mol·K)).
     auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef
     {
-        return mdata.Cv0;
+        return mdata.Cp0 + mdata.T * mdata.VT0 * mdata.VT0 / mdata.VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
     }
 
     /// Assign the given array data to this ThermoPropsPhaseBase object.

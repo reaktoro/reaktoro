@@ -38,7 +38,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.VT0 = 0.4 * (T*P)*(T*P);
         props.VP0 = 0.5 * (T*P)*(T*P);
         props.Cp0 = 0.6 * (T*P)*(T*P);
-        props.Cv0 = 0.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -51,7 +50,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.VT0 = 1.4 * (T*P)*(T*P);
         props.VP0 = 1.5 * (T*P)*(T*P);
         props.Cp0 = 1.6 * (T*P)*(T*P);
-        props.Cv0 = 1.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -64,7 +62,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.Gex  = 4.0 * (T*P)*(T*P);
         props.Hex  = 5.0 * (T*P)*(T*P);
         props.Cpex = 6.0 * (T*P)*(T*P);
-        props.Cvex = 7.0 * (T*P)*(T*P);
         props.ln_g = 8.0 * x;
         props.ln_a = 9.0 * x;
     };
@@ -78,7 +75,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.Gex  = 4.1 * (T*P)*(T*P);
         props.Hex  = 5.1 * (T*P)*(T*P);
         props.Cpex = 6.1 * (T*P)*(T*P);
-        props.Cvex = 7.1 * (T*P)*(T*P);
         props.ln_g = 8.1 * x;
         props.ln_a = 9.1 * x;
     };
@@ -133,7 +129,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXr VT0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
         const ArrayXr VP0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
         const ArrayXr Cp0 = ArrayXr{{ 0.6, 0.6, 1.6 }} * (T*P)*(T*P);
-        const ArrayXr Cv0 = ArrayXr{{ 0.7, 0.7, 1.7 }} * (T*P)*(T*P);
+        const ArrayXr Cv0 = Cp0 + T*VT0*VT0/VP0;
         const ArrayXr  S0 = (H0 - G0)/T;
         const ArrayXr  U0 = H0 - P*V0;
         const ArrayXr  A0 = G0 - P*V0;
@@ -144,7 +140,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXr Gex  = ArrayXr{{ 4.0, 4.1 }} * (T*P)*(T*P);
         const ArrayXr Hex  = ArrayXr{{ 5.0, 5.1 }} * (T*P)*(T*P);
         const ArrayXr Cpex = ArrayXr{{ 6.0, 6.1 }} * (T*P)*(T*P);
-        const ArrayXr Cvex = ArrayXr{{ 7.0, 7.1 }} * (T*P)*(T*P);
 
         const ArrayXr ln_g = ArrayXr{{ 8.0*x[0], 8.0*x[1], 8.1*x[2] }};
         const ArrayXr ln_a = ArrayXr{{ 9.0*x[0], 9.0*x[1], 9.1*x[2] }};
@@ -205,7 +200,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd VT0_T = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*P*(T*P);
         const ArrayXd VP0_T = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*P*(T*P);
         const ArrayXd Cp0_T = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*P*(T*P);
-        const ArrayXd Cv0_T = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*P*(T*P);
+        const ArrayXd Cv0_T = Cp0_T + VT0*VT0/VP0 + 2*T*VT0*VT0_T/VP0 - T*VT0*VT0/VP0/VP0*VP0_T;
         const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
         const ArrayXd  U0_T = H0_T - P*V0_T;
         const ArrayXd  A0_T = G0_T - P*V0_T;
@@ -216,7 +211,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd  Gex_T = ArrayXd{{ 4.0, 4.1 }} * 2*P*(T*P);
         const ArrayXd  Hex_T = ArrayXd{{ 5.0, 5.1 }} * 2*P*(T*P);
         const ArrayXd Cpex_T = ArrayXd{{ 6.0, 6.1 }} * 2*P*(T*P);
-        const ArrayXd Cvex_T = ArrayXd{{ 7.0, 7.1 }} * 2*P*(T*P);
 
         const ArrayXd ln_g_T = ArrayXd{{ 0.0, 0.0, 0.0 }};
         const ArrayXd ln_a_T = ArrayXd{{ 0.0, 0.0, 0.0 }};
@@ -281,7 +275,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd VT0_P = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*T*(T*P);
         const ArrayXd VP0_P = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*T*(T*P);
         const ArrayXd Cp0_P = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*T*(T*P);
-        const ArrayXd Cv0_P = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*T*(T*P);
+        const ArrayXd Cv0_P = Cp0_P + 2*T*VT0*VT0_P/VP0 - T*VT0*VT0/VP0/VP0*VP0_P;
         const ArrayXd  S0_P = (H0_P - G0_P)/T;
         const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
         const ArrayXd  A0_P = G0_P - V0 - P*V0_P;
@@ -292,7 +286,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXd  Gex_P = ArrayXd{{ 4.0, 4.1 }} * 2*T*(T*P);
         const ArrayXd  Hex_P = ArrayXd{{ 5.0, 5.1 }} * 2*T*(T*P);
         const ArrayXd Cpex_P = ArrayXd{{ 6.0, 6.1 }} * 2*T*(T*P);
-        const ArrayXd Cvex_P = ArrayXd{{ 7.0, 7.1 }} * 2*T*(T*P);
 
         const ArrayXd ln_g_P = ArrayXd{{ 0.0, 0.0, 0.0 }};
         const ArrayXd ln_a_P = ArrayXd{{ 0.0, 0.0, 0.0 }};
@@ -376,7 +369,6 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXXd  Gex_n = ArrayXXd::Zero(2, 3);
         const ArrayXXd  Hex_n = ArrayXXd::Zero(2, 3);
         const ArrayXXd Cpex_n = ArrayXXd::Zero(2, 3);
-        const ArrayXXd Cvex_n = ArrayXXd::Zero(2, 3);
 
         const ArrayXXd ln_g_n = ArrayXXd{{
             // ln_g = { 8.0*x[0], 8.0*x[1], 8.1*x[2] }

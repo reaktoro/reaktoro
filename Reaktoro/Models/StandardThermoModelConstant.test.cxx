@@ -28,8 +28,9 @@ TEST_CASE("Testing StandardThermoModelConstant class", "[StandardThermoModelCons
     params.G0 = 1.0;
     params.H0 = 2.0;
     params.V0 = 3.0;
-    params.Cp0 = 4.0;
-    params.Cv0 = 5.0;
+    params.VT0 = 4.0;
+    params.VP0 = 5.0;
+    params.Cp0 = 6.0;
 
     auto model = StandardThermoModelConstant(params);
 
@@ -41,6 +42,7 @@ TEST_CASE("Testing StandardThermoModelConstant class", "[StandardThermoModelCons
     CHECK( props.G0  == params.G0  );
     CHECK( props.H0  == params.H0  );
     CHECK( props.V0  == params.V0  );
+    CHECK( props.VT0 == params.VT0 );
+    CHECK( props.VP0 == params.VP0 );
     CHECK( props.Cp0 == params.Cp0 );
-    CHECK( props.Cv0 == params.Cv0 );
 }

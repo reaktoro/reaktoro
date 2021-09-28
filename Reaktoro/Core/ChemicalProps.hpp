@@ -292,7 +292,7 @@ public:
     auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
-    auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
+    auto standardHeatCapacitiesConstV() const -> ArrayXr;
 
     /// Return the sum of species amounts in the system (in mol).
     auto amount() const -> real;
@@ -379,9 +379,6 @@ private:
     /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
     ArrayXr Cp0;
 
-    /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
-    ArrayXr Cv0;
-
     /// The excess molar volume of each phase in the system (in m³/mol).
     ArrayXr Vex;
 
@@ -399,9 +396,6 @@ private:
 
     /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol·K)).
     ArrayXr Cpex;
-
-    /// The excess molar isochoric heat capacity of each phase in the system (in J/(mol·K)).
-    ArrayXr Cvex;
 
     /// The activity coefficients (natural log) of the species in the system.
     ArrayXr ln_g;

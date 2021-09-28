@@ -58,9 +58,6 @@ struct ThermoProps::Impl
     /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
     ArrayXr Cp0;
 
-    /// The standard molar isochoric heat capacities of the species in the system (in J/(mol·K)).
-    ArrayXr Cv0;
-
     /// Construct a ThermoProps::Impl object.
     Impl(const ChemicalSystem& system)
     : system(system)
@@ -76,7 +73,6 @@ struct ThermoProps::Impl
         VT0  = ArrayXr::Zero(numspecies);
         VP0  = ArrayXr::Zero(numspecies);
         Cp0  = ArrayXr::Zero(numspecies);
-        Cv0  = ArrayXr::Zero(numspecies);
     }
 
     /// Update the standard thermodynamic properties of the chemical system.
@@ -113,7 +109,6 @@ struct ThermoProps::Impl
             VT0.segment(begin, size),
             VP0.segment(begin, size),
             Cp0.segment(begin, size),
-            Cv0.segment(begin, size),
         });
     }
 };
@@ -212,7 +207,7 @@ auto ThermoProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
 
 auto ThermoProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
 {
-    return pimpl->Cv0;
+    return pimpl->Cp0 + pimpl->T * pimpl->VT0 * pimpl->VT0 / pimpl->VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
 } // namespace Reaktoro

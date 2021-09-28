@@ -46,11 +46,12 @@ TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWate
         StandardThermoProps props;
         props = model(T, P);
 
-        CHECK( props.G0  == Approx(-239169.0)   ); // converted to J/mol from -57.16 kcal/mol as in table
-        CHECK( props.H0  == Approx(-280617.0)   );
-        CHECK( props.V0  == Approx(1.77559e-05) );
-        CHECK( props.Cp0 == Approx(72.4980)     );
-        CHECK( props.Cv0 == Approx(67.2659)     );
+        CHECK( props.G0  == Approx(-239169.0)    ); // converted to J/mol from -57.16 kcal/mol as in table
+        CHECK( props.H0  == Approx(-280617.0)    );
+        CHECK( props.V0  == Approx(1.77559e-05)  );
+        CHECK( props.VT0 == Approx(9.71534e-09)  );
+        CHECK( props.VP0 == Approx(-6.28063e-15) );
+        CHECK( props.Cp0 == Approx(72.4980)      );
 
         //======================================================================
         // Test method Model::params()

@@ -52,8 +52,9 @@ String params_stm_const = R"(
 G0: 1.0
 H0: 2.0
 V0: 3.0
-Cp0: 4.0
-Cv0: 5.0
+VT0: 4.0
+VP0: 5.0
+Cp0: 6.0
 )";
 
 String params_stm_mk = R"(
@@ -215,8 +216,9 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
         CHECK( params.G0  == 1.0 );
         CHECK( params.H0  == 2.0 );
         CHECK( params.V0  == 3.0 );
-        CHECK( params.Cp0 == 4.0 );
-        CHECK( params.Cv0 == 5.0 );
+        CHECK( params.VT0 == 4.0 );
+        CHECK( params.VP0 == 5.0 );
+        CHECK( params.Cp0 == 6.0 );
     }
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsMaierKelley")
@@ -398,10 +400,9 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
         CHECK( params.G0 == Vec<Vec<double>>{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}} );
         CHECK( params.H0 == Vec<Vec<double>>{{4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}} );
         CHECK( params.V0.empty() );
-        CHECK( params.Cp0.empty() );
-        CHECK( params.Cv0.empty() );
         CHECK( params.VT0.empty() );
         CHECK( params.VP0.empty() );
+        CHECK( params.Cp0.empty() );
     }
 }
 

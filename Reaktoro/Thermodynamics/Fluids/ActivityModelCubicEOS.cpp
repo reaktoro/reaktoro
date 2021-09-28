@@ -89,7 +89,6 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
         props.Gex  = res.Gres;
         props.Hex  = res.Hres;
         props.Cpex = res.Cpres;
-        props.Cvex = res.Cvres;
         props.ln_g = res.ln_phi;
         props.ln_a = res.ln_phi + log(x) + log(Pbar);
     };

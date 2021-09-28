@@ -38,9 +38,6 @@ struct StandardThermoProps
     /// The standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K)).
     real Cp0;
 
-    /// The standard molar isochoric heat capacity @f$C_{V}^{\circ}@f$ of the species (in J/(mol·K)).
-    real Cv0;
-
     /// The temperature derivative of the standard molar volume @f$@f$\partial V^{\circ}/\partial T@f$@f$ of the species (in m³/(mol·K)).
     real VT0;
 

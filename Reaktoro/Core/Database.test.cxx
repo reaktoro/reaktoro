@@ -32,7 +32,6 @@ auto standardThermoModelAqueous(real T, real P) -> StandardThermoProps
     props.H0  = 2.2 * log(P/T);
     props.V0  = 2.3 * log(P/T);
     props.Cp0 = 2.4 * log(P/T);
-    props.Cv0 = 2.5 * log(P/T);
     return props;
 };
 
@@ -44,7 +43,6 @@ auto standardThermoModelGaseous(real T, real P) -> StandardThermoProps
     props.H0  = 0.2 * log(P/T);
     props.V0  = 0.3 * log(P/T);
     props.Cp0 = 0.4 * log(P/T);
-    props.Cv0 = 0.5 * log(P/T);
     return props;
 };
 
@@ -56,7 +54,6 @@ auto standardThermoModelSolid(real T, real P) -> StandardThermoProps
     props.H0  = 1.2 * log(P/T);
     props.V0  = 1.3 * log(P/T);
     props.Cp0 = 1.4 * log(P/T);
-    props.Cv0 = 1.5 * log(P/T);
     return props;
 };
 

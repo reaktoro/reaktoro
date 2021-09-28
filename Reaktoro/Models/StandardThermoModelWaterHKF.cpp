@@ -46,7 +46,7 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
+        auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
         const auto& [Ttr, Str, Gtr, Htr] = params;
 
         const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);

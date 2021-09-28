@@ -95,7 +95,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        auto& [G0, H0, V0, Cp0, Cv0, VT0, VP0] = props;
+        auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
         const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, Tmax] = params;
 
         const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
@@ -119,9 +119,11 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         const auto Tth2 = Tth*Tth;
         const auto Tth3 = Tth*Tth2;
 
-        V0 = a1 + a2/(psi + P)
-            + (a3 + a4/(psi + P))/(T - theta)
-            - w*Q - (Z + 1)*wP;
+        V0 = a1 + a2/(psi + P) + (a3 + a4/(psi + P))/(T - theta) - w*Q - (Z + 1)*wP;
+
+        VT0 = -(a3 + a4/(psi + P))/((T - theta)*(T - theta)) - wT*Q - w*U - Y*wP - (Z + 1)*wTP;
+
+        VP0 = -a2/((psi + P)*(psi + P)) + (-a4/((psi + P)*(psi + P)))/(T - theta) - wP*Q - w*N - Q*wP - (Z + 1)*wPP;
 
         G0 = Gf - Sr*(T - Tr) - c1*(T*log(T/Tr) - T + Tr)
             + a1*(P - Pr) + a2*log((psi + P)/(psi + Pr))
@@ -136,17 +138,7 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
             + a4*log((psi + P)/(psi + Pr)))
             - w*(Z + 1) + w*T*Y + T*(Z + 1)*wT + wr*(Zr + 1) - wr*Tr*Yr;
 
-        Cp0 = c1 + c2/Tth2
-            - 2.0*T/Tth3*(a3*(P - Pr) + a4*log((psi + P)/(psi + Pr)))
-            + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
-
-        Cv0 = Cp0; // approximate Cp = Cv for an aqueous solution
-
-        V0 = a1 + a2/(psi + P) + (a3 + a4/(psi + P))/(T - theta) - w*Q - (Z + 1)*wP;
-
-        VT0 = -(a3 + a4/(psi + P))/((T - theta)*(T - theta)) - wT*Q - w*U - Y*wP - (Z + 1)*wTP;
-
-        VP0 = -a2/((psi + P)*(psi + P)) + (-a4/((psi + P)*(psi + P)))/(T - theta) - wP*Q - w*N - Q*wP - (Z + 1)*wPP;
+        Cp0 = c1 + c2/Tth2 - 2.0*T/Tth3*(a3*(P - Pr) + a4*log((psi + P)/(psi + Pr))) + w*T*X + 2.0*T*Y*wT + T*(Z + 1.0)*wTT;
 
         // S0 = Sr + c1*log(T/Tr)
         //     - c2/theta*(1.0/(T - theta)

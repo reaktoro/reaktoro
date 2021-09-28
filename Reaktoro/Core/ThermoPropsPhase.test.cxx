@@ -33,7 +33,6 @@ inline auto createStandardThermoModel(double param)
         props.VT0 = 0.4 * param * T * P;
         props.VP0 = 0.5 * param * T * P;
         props.Cp0 = 0.6 * param * T * P;
-        props.Cv0 = 0.7 * param * T * P;
         return props;
     };
     return model;
@@ -65,7 +64,7 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     const ArrayXr VT0 = 0.4 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
     const ArrayXr VP0 = 0.5 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
     const ArrayXr Cp0 = 0.6 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
-    const ArrayXr Cv0 = 0.7 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
+    const ArrayXr Cv0 = Cp0 + T*VT0*VT0/VP0;
     const ArrayXr S0  = (H0 - G0)/T;
     const ArrayXr U0  = H0 - P*V0;
     const ArrayXr A0  = G0 - P*V0;
@@ -93,7 +92,7 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     const ArrayXd VT0_T = 0.4 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
     const ArrayXd VP0_T = 0.5 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
     const ArrayXd Cp0_T = 0.6 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
-    const ArrayXd Cv0_T = 0.7 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * P;
+    const ArrayXd Cv0_T = Cp0_T + VT0*VT0/VP0 + 2*T*VT0*VT0_T/VP0 - T*VT0*VT0/VP0/VP0*VP0_T;
     const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
     const ArrayXd  U0_T = H0_T - P*V0_T;
     const ArrayXd  A0_T = G0_T - P*V0_T;
@@ -123,7 +122,7 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     const ArrayXd VT0_P = 0.4 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
     const ArrayXd VP0_P = 0.5 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
     const ArrayXd Cp0_P = 0.6 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
-    const ArrayXd Cv0_P = 0.7 * ArrayXd{{ 10.0, 20.0, 30.0, 40.0 }} * T;
+    const ArrayXd Cv0_P = Cp0_P + 2*T*VT0*VT0_P/VP0 - T*VT0*VT0/VP0/VP0*VP0_P;
     const ArrayXd  S0_P = (H0_P - G0_P)/T;
     const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
     const ArrayXd  A0_P = G0_P - V0 - P*V0_P;

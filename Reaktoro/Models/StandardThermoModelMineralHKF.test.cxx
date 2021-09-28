@@ -58,8 +58,9 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         CHECK( props.G0  == Approx(-3.71452e+06) ); // converted to J/mol from -890.42 kcal/mol as in table (there are some 0.3%-0.5% difference)
         CHECK( props.H0  == Approx(-3.91581e+06) );
         CHECK( props.V0  == Approx(0.00010007)   );
+        CHECK( props.VT0 == Approx(0.00000000)   );
+        CHECK( props.VP0 == Approx(0.00000000)   );
         CHECK( props.Cp0 == Approx(226.587)      );
-        CHECK( props.Cv0 == Approx(226.587)      );
 
         T = 1000.0 + 273.15; // 1000 degC (in K)
         P = 5000.0 * 1e5;  // 5kbar (in Pa)
@@ -68,8 +69,9 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         CHECK( props.G0  == Approx(-4.08694e+06) ); // converted to J/mol from -979.43 kcal/mol as in table (there are some 0.3%-0.5% difference)
         CHECK( props.H0  == Approx(-3.60148e+06) );
         CHECK( props.V0  == Approx(0.00010007)   );
+        CHECK( props.VT0 == Approx(0.00000000)   );
+        CHECK( props.VP0 == Approx(0.00000000)   );
         CHECK( props.Cp0 == Approx(328.322)      );
-        CHECK( props.Cv0 == Approx(328.322)      );
 
         //======================================================================
         // Test method Model::params()
@@ -138,8 +140,9 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         CHECK( props.G0  == Approx(-3.71451e+06) ); // converted to J/mol from -890.42 kcal/mol as in table (there are some 0.3%-0.5% difference)
         CHECK( props.H0  == Approx(-3.9158e+06)  );
         CHECK( props.V0  == Approx(0.00010025)   );
+        CHECK( props.VT0 == Approx(0.00000000)   );
+        CHECK( props.VP0 == Approx(0.00000000)   );
         CHECK( props.Cp0 == Approx(226.587)      );
-        CHECK( props.Cv0 == Approx(226.587)      );
 
         T = 1000.0 + 273.15; // 1000 degC (in K)
         P = 5000.0 * 1e5;  // 5kbar (in Pa)
@@ -148,8 +151,9 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         CHECK( props.G0  == Approx(-4.09534e+06) ); // converted to J/mol from -979.43 kcal/mol as in table (there are some 0.3%-0.5% difference)
         CHECK( props.H0  == Approx(-3.58361e+06) );
         CHECK( props.V0  == Approx(0.00010025)   );
+        CHECK( props.VT0 == Approx(0.00000000)   );
+        CHECK( props.VP0 == Approx(0.00000000)   );
         CHECK( props.Cp0 == Approx(348.572)      );
-        CHECK( props.Cv0 == Approx(348.572)      );
 
         //======================================================================
         // Test method Model::params()

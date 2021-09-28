@@ -34,7 +34,6 @@ TEST_CASE("Testing StandardThermoModelInterpolation class", "[StandardThermoMode
     params.V0 = {{31.0, 32.0, 33.0},
                  {34.0, 35.0, 36.0}};
     params.Cp0 = {};
-    params.Cv0 = {};
     params.VT0 = {};
     params.VP0 = {};
     params.Pref = 1.0;
@@ -48,10 +47,9 @@ TEST_CASE("Testing StandardThermoModelInterpolation class", "[StandardThermoMode
     CHECK( props.G0 == Approx(11.0 + props.V0*(4.0 - 1.0)) );
     CHECK( props.H0 == Approx(21.0) );
     CHECK( props.V0 == Approx(31.0) );
-    CHECK( props.Cp0 == 0.0 );
-    CHECK( props.Cv0 == 0.0 );
     CHECK( props.VT0 == 0.0 );
     CHECK( props.VP0 == 0.0 );
+    CHECK( props.Cp0 == 0.0 );
 
     // CHECK WHEN (T, P) IS ON THE BOTTOM-RIGHT CORNER
     props = model(3.0, 5.0);
@@ -59,10 +57,9 @@ TEST_CASE("Testing StandardThermoModelInterpolation class", "[StandardThermoMode
     CHECK( props.G0 == Approx(16.0 + props.V0*(5.0 - 1.0)) );
     CHECK( props.H0 == Approx(26.0) );
     CHECK( props.V0 == Approx(36.0) );
-    CHECK( props.Cp0 == 0.0 );
-    CHECK( props.Cv0 == 0.0 );
     CHECK( props.VT0 == 0.0 );
     CHECK( props.VP0 == 0.0 );
+    CHECK( props.Cp0 == 0.0 );
 
     // CHECK WHEN (T, P) IS IN THE BOTTOM-RIGHT CELL (IN THE MIDDLE)
     props = model(2.5, 4.5);
@@ -70,8 +67,7 @@ TEST_CASE("Testing StandardThermoModelInterpolation class", "[StandardThermoMode
     CHECK( props.G0 == Approx((12.0 + 13.0 + 15.0 + 16.0)/4 + props.V0*(4.5 - 1.0)) );
     CHECK( props.H0 == Approx((22.0 + 23.0 + 25.0 + 26.0)/4) );
     CHECK( props.V0 == Approx((32.0 + 33.0 + 35.0 + 36.0)/4) );
-    CHECK( props.Cp0 == 0.0 );
-    CHECK( props.Cv0 == 0.0 );
     CHECK( props.VT0 == 0.0 );
     CHECK( props.VP0 == 0.0 );
+    CHECK( props.Cp0 == 0.0 );
 }

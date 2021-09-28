@@ -49,21 +49,18 @@ auto StandardThermoModelInterpolation(const StandardThermoModelParamsInterpolati
     BilinearInterpolator iG0(temperatures, pressures, params.G0);
     BilinearInterpolator iH0(temperatures, pressures, params.H0);
     BilinearInterpolator iV0(temperatures, pressures, params.V0);
-    BilinearInterpolator iCp0(temperatures, pressures, params.Cp0);
-    BilinearInterpolator iCv0(temperatures, pressures, params.Cv0);
     BilinearInterpolator iVT0(temperatures, pressures, params.VT0);
     BilinearInterpolator iVP0(temperatures, pressures, params.VP0);
-
+    BilinearInterpolator iCp0(temperatures, pressures, params.Cp0);
 
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         if(!iG0.empty()) props.G0 = iG0(T, P);
         if(!iH0.empty()) props.H0 = iH0(T, P);
         if(!iV0.empty()) props.V0 = iV0(T, P);
-        if(!iCp0.empty()) props.Cp0 = iCp0(T, P);
-        if(!iCv0.empty()) props.Cv0 = iCv0(T, P);
         if(!iVT0.empty()) props.VT0 = iVT0(T, P);
         if(!iVP0.empty()) props.VP0 = iVP0(T, P);
+        if(!iCp0.empty()) props.Cp0 = iCp0(T, P);
 
         props.G0 += props.V0 * (P - Pref);
     };

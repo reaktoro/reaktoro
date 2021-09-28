@@ -79,7 +79,6 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK( species.props(T, P).H0  == 0.0    );
         CHECK( species.props(T, P).V0  == 0.0    );
         CHECK( species.props(T, P).Cp0 == 0.0    );
-        CHECK( species.props(T, P).Cv0 == 0.0    );
 
         species = species.withStandardThermoModel([](real T, real P) {
             return StandardThermoProps{
@@ -95,7 +94,6 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK( species.props(T, P).H0  == Approx(2.0*T*P) );
         CHECK( species.props(T, P).V0  == Approx(3.0*T*P) );
         CHECK( species.props(T, P).Cp0 == Approx(4.0*T*P) );
-        CHECK( species.props(T, P).Cv0 == Approx(5.0*T*P) );
 
         const auto R1 = Species().withName("R1").withStandardGibbsEnergy(0.0);
         const auto R2 = Species().withName("R2").withStandardGibbsEnergy(0.0);

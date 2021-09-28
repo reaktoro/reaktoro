@@ -132,10 +132,9 @@ REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsConstant)
     node["G0"]  = obj.G0;
     node["H0"]  = obj.H0;
     node["V0"]  = obj.V0;
-    node["Cp0"] = obj.Cp0;
-    node["Cv0"] = obj.Cv0;
     node["VT0"] = obj.VT0;
     node["VP0"] = obj.VP0;
+    node["Cp0"] = obj.Cp0;
 }
 
 REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsConstant)
@@ -143,10 +142,9 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsConstant)
     node.at("G0").to(obj.G0);
     node["H0"].to(obj.H0, 0.0);
     node["V0"].to(obj.V0, 0.0);
-    node["Cp0"].to(obj.Cp0, 0.0);
-    node["Cv0"].to(obj.Cv0, 0.0);
     node["VT0"].to(obj.VT0, 0.0);
     node["VP0"].to(obj.VP0, 0.0);
+    node["Cp0"].to(obj.Cp0, 0.0);
 }
 
 //----------------------------------------------------------------------
@@ -235,10 +233,9 @@ REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsInterpolation)
     node["G0"]           = obj.G0;
     node["H0"]           = obj.H0;
     node["V0"]           = obj.V0;
-    node["Cp0"]          = obj.Cp0;
-    node["Cv0"]          = obj.Cv0;
     node["VT0"]          = obj.VT0;
     node["VP0"]          = obj.VP0;
+    node["Cp0"]          = obj.Cp0;
 }
 
 REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsInterpolation)
@@ -248,10 +245,9 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsInterpolation)
     if(node["G0"]) obj.G0 = node["G0"].as<Vec<Vec<double>>>();
     if(node["H0"]) obj.H0 = node["H0"].as<Vec<Vec<double>>>();
     if(node["V0"]) obj.V0 = node["V0"].as<Vec<Vec<double>>>();
-    if(node["Cp0"]) obj.Cp0 = node["Cp0"].as<Vec<Vec<double>>>();
-    if(node["Cv0"]) obj.Cv0 = node["Cv0"].as<Vec<Vec<double>>>();
     if(node["VT0"]) obj.VT0 = node["VT0"].as<Vec<Vec<double>>>();
     if(node["VP0"]) obj.VP0 = node["VP0"].as<Vec<Vec<double>>>();
+    if(node["Cp0"]) obj.Cp0 = node["Cp0"].as<Vec<Vec<double>>>();
 }
 
 //----------------------------------------------------------------------
