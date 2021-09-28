@@ -35,10 +35,11 @@ using namespace tabulate;
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
-namespace  {
+namespace {
 
 /// Return the index of the first aqueous phase in the system.
 auto indexAqueousPhase(const ChemicalSystem& system) -> Index
@@ -116,10 +117,7 @@ struct AqueousProps::Impl
         error(iH >= size, "Cannot create AqueousProps object for phase ", phase.name(), " "
             "because it does not contain a species with formula H+.");
 
-        const auto ifirst = system.phases().numSpeciesUntilPhase(iphase);
-        const auto A = system.formulaMatrix();
-
-        Aaq = A.middleCols(ifirst, size);
+        Aaq = detail::assembleFormulaMatrix(phase.species(), phase.elements());
 
         aqstate.T = NaN;
         aqstate.P = NaN;
@@ -184,14 +182,14 @@ struct AqueousProps::Impl
 
     auto elementMolality(const String& symbol) const -> real
     {
-        const auto idx = system.elements().indexWithSymbol(symbol);
+        const auto idx = phase.elements().indexWithSymbol(symbol);
         const auto& m = aqstate.m.matrix();
         return Aaq.row(idx) * m;
     }
 
     auto elementMolalities() const -> VectorXr
     {
-        const auto E = system.elements().size();
+        const auto E = phase.elements().size();
         const auto& m = aqstate.m.matrix();
         return Aaq.topRows(E) * m;
     }
@@ -232,7 +230,7 @@ struct AqueousProps::Impl
         const auto Rb = R.topRows(ib.size());
         const VectorXr ub = u(ib);
         const auto lambda = -Rb.transpose() * ub;
-        const auto E = system.elements().size();
+        const auto E = phase.elements().size();
         const auto lambda_Z = lambda[E];
         const auto RT = universalGasConstant * T;
         const auto res = lambda_Z/(RT*ln10);
@@ -378,6 +376,8 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     const auto species = props.phase().species();
     const auto ms = props.speciesMolalities();
     const auto me = props.elementMolalities();
+    assert(species.size() == ms.size());
+    assert(elements.size() == me.size());
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", str(props.temperature()), "K" });
