@@ -426,7 +426,7 @@ public:
         setName("SolidPhase");
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
-        setAdditionalAggregateStates({AggregateState::CrystallineSolid}); // to make sure that ThermoFun solids are included
+        setAdditionalAggregateStates({AggregateState::CrystallineSolid});
         setActivityModel(ActivityModelIdealSolution());
         setIdealActivityModel(ActivityModelIdealSolution());
     }
