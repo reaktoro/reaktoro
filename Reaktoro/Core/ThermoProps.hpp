@@ -66,6 +66,12 @@ public:
     /// Return the standard partial molar volumes of the species in the system (in m3/mol).
     auto standardVolumes() const -> ArrayXrConstRef;
 
+    /// Return the temperature derivative of the standard partial molar volumes of the species in the system (in m³/(mol·K)).
+    auto standardVolumesT() const -> ArrayXrConstRef;
+
+    /// Return the pressure derivative of the standard partial molar volumes of the species in the system (in m³/(mol·Pa)).
+    auto standardVolumesP() const -> ArrayXrConstRef;
+
     /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
     auto standardGibbsEnergies() const -> ArrayXrConstRef;
 

@@ -30,8 +30,10 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
         props.G0  = 0.1 * (T*P)*(T*P);
         props.H0  = 0.2 * (T*P)*(T*P);
         props.V0  = 0.3 * (T*P)*(T*P);
-        props.Cp0 = 0.4 * (T*P)*(T*P);
-        props.Cv0 = 0.5 * (T*P)*(T*P);
+        props.VT0 = 0.4 * (T*P)*(T*P);
+        props.VP0 = 0.5 * (T*P)*(T*P);
+        props.Cp0 = 0.6 * (T*P)*(T*P);
+        props.Cv0 = 0.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -41,8 +43,10 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
         props.G0  = 1.1 * (T*P)*(T*P);
         props.H0  = 1.2 * (T*P)*(T*P);
         props.V0  = 1.3 * (T*P)*(T*P);
-        props.Cp0 = 1.4 * (T*P)*(T*P);
-        props.Cv0 = 1.5 * (T*P)*(T*P);
+        props.VT0 = 1.4 * (T*P)*(T*P);
+        props.VP0 = 1.5 * (T*P)*(T*P);
+        props.Cp0 = 1.6 * (T*P)*(T*P);
+        props.Cv0 = 1.7 * (T*P)*(T*P);
         return props;
     };
 
@@ -84,8 +88,10 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     const ArrayXr G0  = ArrayXr{{ 0.1, 0.1, 1.1 }} * (T*P)*(T*P);
     const ArrayXr H0  = ArrayXr{{ 0.2, 0.2, 1.2 }} * (T*P)*(T*P);
     const ArrayXr V0  = ArrayXr{{ 0.3, 0.3, 1.3 }} * (T*P)*(T*P);
-    const ArrayXr Cp0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
-    const ArrayXr Cv0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
+    const ArrayXr VT0 = ArrayXr{{ 0.4, 0.4, 1.4 }} * (T*P)*(T*P);
+    const ArrayXr VP0 = ArrayXr{{ 0.5, 0.5, 1.5 }} * (T*P)*(T*P);
+    const ArrayXr Cp0 = ArrayXr{{ 0.6, 0.6, 1.6 }} * (T*P)*(T*P);
+    const ArrayXr Cv0 = ArrayXr{{ 0.7, 0.7, 1.7 }} * (T*P)*(T*P);
     const ArrayXr S0  = (H0 - G0)/T;
     const ArrayXr U0  = H0 - P*V0;
     const ArrayXr A0  = G0 - P*V0;
@@ -98,6 +104,8 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     CHECK( props.standardGibbsEnergies()       .isApprox(G0)   );
     CHECK( props.standardEnthalpies()          .isApprox(H0)   );
     CHECK( props.standardVolumes()             .isApprox(V0)   );
+    CHECK( props.standardVolumesT()            .isApprox(VT0)  );
+    CHECK( props.standardVolumesP()            .isApprox(VP0)  );
     CHECK( props.standardEntropies()           .isApprox(S0)   );
     CHECK( props.standardInternalEnergies()    .isApprox(U0)   );
     CHECK( props.standardHelmholtzEnergies()   .isApprox(A0)   );
@@ -110,8 +118,10 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     const ArrayXd  G0_T = ArrayXd{{ 0.1, 0.1, 1.1 }} * 2*P*(T*P);
     const ArrayXd  H0_T = ArrayXd{{ 0.2, 0.2, 1.2 }} * 2*P*(T*P);
     const ArrayXd  V0_T = ArrayXd{{ 0.3, 0.3, 1.3 }} * 2*P*(T*P);
-    const ArrayXd Cp0_T = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*P*(T*P);
-    const ArrayXd Cv0_T = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*P*(T*P);
+    const ArrayXd VT0_T = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*P*(T*P);
+    const ArrayXd VP0_T = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*P*(T*P);
+    const ArrayXd Cp0_T = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*P*(T*P);
+    const ArrayXd Cv0_T = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*P*(T*P);
     const ArrayXd  S0_T = (H0_T - G0_T)/T - (H0 - G0)/(T*T);
     const ArrayXd  U0_T = H0_T - P*V0_T;
     const ArrayXd  A0_T = G0_T - P*V0_T;
@@ -124,6 +134,8 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
     CHECK( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
     CHECK( grad(props.standardVolumes())              .isApprox(V0_T)   );
+    CHECK( grad(props.standardVolumesT())             .isApprox(VT0_T)  );
+    CHECK( grad(props.standardVolumesP())             .isApprox(VP0_T)  );
     CHECK( grad(props.standardEntropies())            .isApprox(S0_T)   );
     CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
     CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
@@ -136,8 +148,10 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     const ArrayXd  G0_P = ArrayXd{{ 0.1, 0.1, 1.1 }} * 2*T*(T*P);
     const ArrayXd  H0_P = ArrayXd{{ 0.2, 0.2, 1.2 }} * 2*T*(T*P);
     const ArrayXd  V0_P = ArrayXd{{ 0.3, 0.3, 1.3 }} * 2*T*(T*P);
-    const ArrayXd Cp0_P = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*T*(T*P);
-    const ArrayXd Cv0_P = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*T*(T*P);
+    const ArrayXd VT0_P = ArrayXd{{ 0.4, 0.4, 1.4 }} * 2*T*(T*P);
+    const ArrayXd VP0_P = ArrayXd{{ 0.5, 0.5, 1.5 }} * 2*T*(T*P);
+    const ArrayXd Cp0_P = ArrayXd{{ 0.6, 0.6, 1.6 }} * 2*T*(T*P);
+    const ArrayXd Cv0_P = ArrayXd{{ 0.7, 0.7, 1.7 }} * 2*T*(T*P);
     const ArrayXd  S0_P = (H0_P - G0_P)/T;
     const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
     const ArrayXd  A0_P = G0_P - V0 - P*V0_P;
@@ -150,6 +164,8 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
     CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
     CHECK( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
     CHECK( grad(props.standardVolumes())              .isApprox(V0_P)   );
+    CHECK( grad(props.standardVolumesT())             .isApprox(VT0_P)  );
+    CHECK( grad(props.standardVolumesP())             .isApprox(VP0_P)  );
     CHECK( grad(props.standardEntropies())            .isApprox(S0_P)   );
     CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
     CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );

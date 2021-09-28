@@ -49,6 +49,12 @@ struct ThermoProps::Impl
     /// The standard molar volumes of the species in the system (in m3/mol).
     ArrayXr V0;
 
+    /// The temperature derivative of the standard molar volumes of the species in the system (in m³/(mol·K)).
+    ArrayXr VT0;
+
+    /// The pressure derivative of the standard molar volumes of the species in the system (in m³/(mol·Pa)).
+    ArrayXr VP0;
+
     /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
     ArrayXr Cp0;
 
@@ -67,6 +73,8 @@ struct ThermoProps::Impl
         G0   = ArrayXr::Zero(numspecies);
         H0   = ArrayXr::Zero(numspecies);
         V0   = ArrayXr::Zero(numspecies);
+        VT0  = ArrayXr::Zero(numspecies);
+        VP0  = ArrayXr::Zero(numspecies);
         Cp0  = ArrayXr::Zero(numspecies);
         Cv0  = ArrayXr::Zero(numspecies);
     }
@@ -102,6 +110,8 @@ struct ThermoProps::Impl
             G0.segment(begin, size),
             H0.segment(begin, size),
             V0.segment(begin, size),
+            VT0.segment(begin, size),
+            VP0.segment(begin, size),
             Cp0.segment(begin, size),
             Cv0.segment(begin, size),
         });
@@ -158,6 +168,16 @@ auto ThermoProps::pressure() const -> const real&
 auto ThermoProps::standardVolumes() const -> ArrayXrConstRef
 {
     return pimpl->V0;
+}
+
+auto ThermoProps::standardVolumesT() const -> ArrayXrConstRef
+{
+    return pimpl->VT0;
+}
+
+auto ThermoProps::standardVolumesP() const -> ArrayXrConstRef
+{
+    return pimpl->VP0;
 }
 
 auto ThermoProps::standardGibbsEnergies() const -> ArrayXrConstRef
