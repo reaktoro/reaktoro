@@ -19,10 +19,10 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 
 using namespace Reaktoro;
@@ -108,7 +108,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.ionicStrengthStoichiometric() == Approx(999.152)      );
 
         // Check molalities of all species
-        for (Index i = 0; i < aqspecies.size() ; i++)
+        for(auto i = 0; i < aqspecies.size(); i++)
             CHECK( aqprops.speciesMolalities()[i] == Approx(55.5085) );
 
         // Check molalities of all elements
@@ -184,6 +184,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
             const auto idx = aqspecies.index(name);
             CHECK( aqprops.speciesMolality(name)     == Approx(aqprops.speciesMolalities()[idx]) );
         }
+
         for(const auto& e : aqelements)
         {
             const auto symbol = e.symbol();
