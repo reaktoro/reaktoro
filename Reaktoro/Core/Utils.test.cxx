@@ -116,7 +116,7 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
             {0,  0,  0,  0,  0,  0},
             {0,  0,  0,  0,  0,  0},
             {0,  0,  0,  0,  0,  0},
-            };
+        };
 
         for(Index i = 0; i < A_gas.rows(); i++)
             CHECK(A_gas.row(i) == A_gas_expected.row(i));
@@ -141,7 +141,7 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
             {1,  0,  0,  0},
             {0,  1,  0,  0},
             {0,  0,  0,  0},
-            };
+        };
 
         for(Index i = 0; i < A_min.rows(); i++)
             CHECK(A_min.row(i) == A_min_expected.row(i));
