@@ -482,6 +482,17 @@ public:
         return molarHelmholtzEnergy() * amount();
     }
 
+    /// Return the speed of sound in the phase (in m/s).
+    auto soundSpeed() const -> real
+    {
+        const auto rho = density();
+        const auto Cp = molarHeatCapacityConstP();
+        const auto Cv = molarHeatCapacityConstV();
+        const auto VP = molarVolumeP();
+        const auto MM = molarMass();
+        return sqrt(-MM * Cp/Cv / VP) / rho;
+    }
+
     /// Assign the given array data to this ChemicalPropsPhaseBase object.
     auto operator=(const ArrayStream<Real>& array)
     {
