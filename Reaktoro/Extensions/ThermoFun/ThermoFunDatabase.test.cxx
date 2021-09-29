@@ -61,7 +61,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( species.charge() == 0 );
     CHECK( species.molarMass() == Approx(0.0180153) );
 
-    props = species.props(T, P);
+    props = species.standardThermoProps(T, P);
     CHECK( props.G0  == Approx(-2.371817e+05) );
     CHECK( props.H0  == Approx(-2.858310e+05) );
     CHECK( props.V0  == Approx( 1.806862e-05) );
@@ -79,7 +79,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( species.charge() == -2 );
     CHECK( species.molarMass() == Approx(0.0600100979) );
 
-    props = species.props(T, P);
+    props = species.standardThermoProps(T, P);
     CHECK( props.G0  == Approx(-5.279830e+05) );
     CHECK( props.H0  == Approx(-6.752359e+05) );
     CHECK( props.V0  == Approx(-6.063738e-06) );
@@ -97,7 +97,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( species.charge() == +2 );
     CHECK( species.molarMass() == Approx(0.040076902) );
 
-    props = species.props(T, P);
+    props = species.standardThermoProps(T, P);
     CHECK( props.G0  == Approx(-5.528210e+05) );
     CHECK( props.H0  == Approx(-5.431003e+05) );
     CHECK( props.V0  == Approx(-1.844093e-05) );
@@ -115,7 +115,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( species.charge() == 0 );
     CHECK( species.molarMass() == Approx(0.0440096006) );
 
-    props = species.props(T, P);
+    props = species.standardThermoProps(T, P);
     CHECK( props.G0  == Approx(-3.943510e+05) );
     CHECK( props.H0  == Approx(-3.935472e+05) );
     CHECK( props.V0  == Approx( 2.466434e-02) );
@@ -133,7 +133,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( species.charge() == 0 );
     CHECK( species.molarMass() == Approx(0.1000869999) );
 
-    props = species.props(T, P);
+    props = species.standardThermoProps(T, P);
     CHECK( props.G0  == Approx(-1.129195e+06) );
     CHECK( props.H0  == Approx(-1.207470e+06) );
     CHECK( props.V0  == Approx( 3.689000e-05) );

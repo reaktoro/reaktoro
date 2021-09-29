@@ -22,9 +22,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/ElementalComposition.hpp>
-#include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 
 namespace Reaktoro {
@@ -294,9 +291,14 @@ auto Species::molarMass() const -> double
     return elements().molarMass() - charge() * molarMassElectron; // for charged species, consider the electrons in it when computing molar mass.
 }
 
-auto Species::props(real T, real P) const -> StandardThermoProps
+auto Species::standardThermoProps(real T, real P) const -> StandardThermoProps
 {
     return pimpl->propsfn(T, P);
+}
+
+auto Species::props(real T, real P) const -> SpeciesThermoProps
+{
+    return SpeciesThermoProps(T, P, standardThermoProps(T, P));
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool

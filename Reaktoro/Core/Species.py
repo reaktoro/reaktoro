@@ -73,7 +73,6 @@ def testSpecies():
     assert species.props(T, P).H0[0]  == 0.0
     assert species.props(T, P).V0[0]  == 0.0
     assert species.props(T, P).Cp0[0] == 0.0
-    assert species.props(T, P).Cv0[0] == 0.0
 
     # Testing method Species::props(T, P) with custom standard thermodynamic model
     def model(T, P):
@@ -82,7 +81,6 @@ def testSpecies():
         props.H0 = 2.0*T*P
         props.V0 = 3.0*T*P
         props.Cp0 = 4.0*T*P
-        props.Cv0 = 5.0*T*P
         return props
 
     species = species.withStandardThermoModel(StandardThermoModel(model))
@@ -91,7 +89,6 @@ def testSpecies():
     assert species.props(T, P).H0[0]  == pytest.approx(2.0*T*P)
     assert species.props(T, P).V0[0]  == pytest.approx(3.0*T*P)
     assert species.props(T, P).Cp0[0] == pytest.approx(4.0*T*P)
-    assert species.props(T, P).Cv0[0] == pytest.approx(5.0*T*P)
 
     # Testing method Species::props(T, P) with thermodynamic model of a formation reaction
     R1 = Species().withName("R1").withStandardGibbsEnergy(0.0)

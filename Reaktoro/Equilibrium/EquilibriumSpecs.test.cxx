@@ -264,12 +264,12 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const auto RT = universalGasConstant * T;
         const auto F  = faradayConstant;
 
-        const auto u0CH4  = system.species().get("CH4(g)").props(T, P).G0;
-        const auto u0CO2  = system.species().get("CO2(g)").props(T, P).G0;
-        const auto u0Capp = system.species().get("Ca++(aq)").props(T, P).G0;
-        const auto u0O2   = system.species().get("O2(g)").props(T, P).G0;
-        const auto u0Hp   = system.species().get("H+(aq)").props(T, P).G0;
-        const auto u0Mgpp = system.species().get("Mg++(aq)").props(T, P).G0;
+        const auto u0CH4  = system.species().get("CH4(g)").standardThermoProps(T, P).G0;
+        const auto u0CO2  = system.species().get("CO2(g)").standardThermoProps(T, P).G0;
+        const auto u0Capp = system.species().get("Ca++(aq)").standardThermoProps(T, P).G0;
+        const auto u0O2   = system.species().get("O2(g)").standardThermoProps(T, P).G0;
+        const auto u0Hp   = system.species().get("H+(aq)").standardThermoProps(T, P).G0;
+        const auto u0Mgpp = system.species().get("Mg++(aq)").standardThermoProps(T, P).G0;
 
         const auto& qvars = specs.controlVariablesQ();
 
@@ -321,10 +321,10 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
             const auto species2 = system.species(pvars[2].ispecies);
             const auto species3 = system.species(pvars[3].ispecies);
 
-            const auto G0_0 = species0.props(T, P).G0;
-            const auto G0_1 = species1.props(T, P).G0;
-            const auto G0_2 = species2.props(T, P).G0;
-            const auto G0_3 = species3.props(T, P).G0;
+            const auto G0_0 = species0.standardThermoProps(T, P).G0;
+            const auto G0_1 = species1.standardThermoProps(T, P).G0;
+            const auto G0_2 = species2.standardThermoProps(T, P).G0;
+            const auto G0_3 = species3.standardThermoProps(T, P).G0;
 
             const auto ln_c1 = props.lnConcentration(pvars[1].ispecies);
             const auto ln_a3 = props.lnActivity(pvars[3].ispecies);

@@ -24,6 +24,7 @@
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
+#include <Reaktoro/Core/SpeciesThermoProps.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
@@ -171,8 +172,17 @@ public:
     /// Return the molar mass of the species (in kg/mol).
     auto molarMass() const -> double;
 
-    /// Return the standard thermodynamic properties of the species at given temperature (in K) and pressure (in Pa).
-    auto props(real T, real P) const -> StandardThermoProps;
+    /// Calculate the primary standard thermodynamic properties of the species.
+    /// @param T The temperature for the calculation (in K)
+    /// @param P The pressure for the calculation (in Pa)
+    /// @return The primary set of standard thermodynamic properties of the species.
+    auto standardThermoProps(real T, real P) const -> StandardThermoProps;
+
+    /// Calculate the complete set of standard thermodynamic properties of the species.
+    /// @param T The temperature for the calculation (in K)
+    /// @param P The pressure for the calculation (in Pa)
+    /// @return The complete set of standard thermodynamic properties of the species.
+    auto props(real T, real P) const -> SpeciesThermoProps;
 
 private:
     struct Impl;

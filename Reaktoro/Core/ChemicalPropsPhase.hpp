@@ -552,7 +552,7 @@ private:
         StandardThermoProps aux;
         for(auto i = 0; i < N; ++i)
         {
-            aux = species[i].props(T, P);
+            aux = species[i].standardThermoProps(T, P);
             G0[i]  = aux.G0;
             H0[i]  = aux.H0;
             V0[i]  = aux.V0;

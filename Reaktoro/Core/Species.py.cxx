@@ -50,6 +50,7 @@ void exportSpecies(py::module& m)
         .def("tags", &Species::tags, py::return_value_policy::reference_internal)
         .def("attachedData", &Species::attachedData)
         .def("molarMass", &Species::molarMass)
+        .def("standardThermoProps", &Species::standardThermoProps)
         .def("props", &Species::props)
         ;
 }

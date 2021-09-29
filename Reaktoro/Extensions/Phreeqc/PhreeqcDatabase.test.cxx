@@ -565,7 +565,7 @@ auto dH0(const PhreeqcDatabase& db, real T, real P, String name) -> real
 auto G0(const PhreeqcDatabase& db, real T, real P, String name) -> real
 {
     const auto species = db.species().get(name);
-    return species.props(T, P).G0;
+    return species.standardThermoProps(T, P).G0;
 }
 
 auto lgK_vantHoff(real T, real log_k0, real delta_h0) -> real

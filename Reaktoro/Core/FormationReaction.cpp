@@ -68,7 +68,7 @@ struct FormationReaction::Impl
             for(auto i = 0; i < num_reactants; ++i)
             {
                 const auto& reactant = reactants[i].first;
-                reactants_props[i] = reactant.props(T, P);
+                reactants_props[i] = reactant.standardThermoProps(T, P);
             }
 
             // Compute the standard molar volume of the product species

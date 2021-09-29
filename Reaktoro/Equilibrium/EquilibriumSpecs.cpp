@@ -305,7 +305,7 @@ auto EquilibriumSpecs::lnActivity(const Species& species) -> void
         const auto& T = props.temperature();
         const auto& P = props.pressure();
         const auto& R = universalGasConstant;
-        const auto u0 = species.props(T, P).G0;
+        const auto u0 = species.standardThermoProps(T, P).G0;
         return u0 + R*T*w[idx];
     };
     addControlVariableQ(qvar);
@@ -349,7 +349,7 @@ auto EquilibriumSpecs::fugacity(String gas) -> void
         const auto& T = props.temperature();
         const auto& P = props.pressure();
         const auto& R = universalGasConstant;
-        const auto u0 = species.props(T, P).G0;
+        const auto u0 = species.standardThermoProps(T, P).G0;
         return u0 + R*T*log(w[idx]);
     };
     addControlVariableQ(qvar);
@@ -372,7 +372,7 @@ auto EquilibriumSpecs::pH() -> void
         const auto& T = props.temperature();
         const auto& P = props.pressure();
         const auto& R = universalGasConstant;
-        const auto u0 = species.props(T, P).G0;
+        const auto u0 = species.standardThermoProps(T, P).G0;
         const auto pH = w[idx];
         return u0 + R*T*(-pH*ln10);
     };
@@ -396,7 +396,7 @@ auto EquilibriumSpecs::pMg() -> void
         const auto& T  = props.temperature();
         const auto& P  = props.pressure();
         const auto& R  = universalGasConstant;
-        const auto u0  = species.props(T, P).G0;
+        const auto u0  = species.standardThermoProps(T, P).G0;
         const auto pMg = w[idx];
         return u0 + R*T*(-pMg*ln10);
     };

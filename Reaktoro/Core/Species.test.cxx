@@ -71,14 +71,14 @@ TEST_CASE("Testing Species class", "[Species]")
         const auto T = 300.0;
         const auto P = 1.0e+5;
 
-        CHECK_THROWS( species.props(T, P) );
+        CHECK_THROWS( species.standardThermoProps(T, P) );
 
         species = species.withStandardGibbsEnergy(1234.0);
 
-        CHECK( species.props(T, P).G0  == 1234.0 );
-        CHECK( species.props(T, P).H0  == 0.0    );
-        CHECK( species.props(T, P).V0  == 0.0    );
-        CHECK( species.props(T, P).Cp0 == 0.0    );
+        CHECK( species.standardThermoProps(T, P).G0  == 1234.0 );
+        CHECK( species.standardThermoProps(T, P).H0  == 0.0    );
+        CHECK( species.standardThermoProps(T, P).V0  == 0.0    );
+        CHECK( species.standardThermoProps(T, P).Cp0 == 0.0    );
 
         species = species.withStandardThermoModel([](real T, real P) {
             return StandardThermoProps{
@@ -90,10 +90,10 @@ TEST_CASE("Testing Species class", "[Species]")
             };
         });
 
-        CHECK( species.props(T, P).G0  == Approx(1.0*T*P) );
-        CHECK( species.props(T, P).H0  == Approx(2.0*T*P) );
-        CHECK( species.props(T, P).V0  == Approx(3.0*T*P) );
-        CHECK( species.props(T, P).Cp0 == Approx(4.0*T*P) );
+        CHECK( species.standardThermoProps(T, P).G0  == Approx(1.0*T*P) );
+        CHECK( species.standardThermoProps(T, P).H0  == Approx(2.0*T*P) );
+        CHECK( species.standardThermoProps(T, P).V0  == Approx(3.0*T*P) );
+        CHECK( species.standardThermoProps(T, P).Cp0 == Approx(4.0*T*P) );
 
         const auto R1 = Species().withName("R1").withStandardGibbsEnergy(0.0);
         const auto R2 = Species().withName("R2").withStandardGibbsEnergy(0.0);
@@ -111,8 +111,8 @@ TEST_CASE("Testing Species class", "[Species]")
                     })
             );
 
-        CHECK( species.props(T, P).G0 == species.reaction().createStandardThermoModel()(T, P).G0 );
-        CHECK( species.props(T, P).H0 == species.reaction().createStandardThermoModel()(T, P).H0 );
+        CHECK( species.standardThermoProps(T, P).G0 == species.reaction().createStandardThermoModel()(T, P).G0 );
+        CHECK( species.standardThermoProps(T, P).H0 == species.reaction().createStandardThermoModel()(T, P).H0 );
     }
 
     SECTION("Testing automatic construction of chemical species with given chemical formula")
@@ -280,8 +280,8 @@ TEST_CASE("Testing Species class", "[Species]")
             CHECK(species.charge() == -2);
             CHECK(species.aggregateState() == AggregateState::Aqueous);
             CHECK(species.tags() == attribs.tags);
-            CHECK(species.props(T, P).G0 == 1.234);
-            CHECK(species.props(T, P).H0 == 2.345);
+            CHECK(species.standardThermoProps(T, P).G0 == 1.234);
+            CHECK(species.standardThermoProps(T, P).H0 == 2.345);
         }
 
         WHEN("all required attributes are given and a FormationReaction object is provided for the species")
@@ -319,8 +319,8 @@ TEST_CASE("Testing Species class", "[Species]")
             CHECK(species.reaction().reactants().at(0).second == 1.0);
             CHECK(species.reaction().reactants().at(1).first.name() == "OH-");
             CHECK(species.reaction().reactants().at(1).second == 1.0);
-            CHECK(species.props(T, P).G0 == Approx(-RT*ln10 * 14.0));
-            CHECK(species.props(T, P).H0 == 0.0);
+            CHECK(species.standardThermoProps(T, P).G0 == Approx(-RT*ln10 * 14.0));
+            CHECK(species.standardThermoProps(T, P).H0 == 0.0);
         }
 
         WHEN("not all required attributes are given or conflicting attributes are specified")

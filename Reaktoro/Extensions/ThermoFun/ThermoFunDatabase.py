@@ -36,12 +36,11 @@ def testThermoFunDatabase():
     assert species.charge() == 0
     assert species.molarMass() == pytest.approx(0.0180153)
 
-    props = species.props(T, P)
+    props = species.standardThermoProps(T, P)
     assert props.G0[0]  == pytest.approx(-2.371817e+05)
     assert props.H0[0]  == pytest.approx(-2.858310e+05)
     assert props.V0[0]  == pytest.approx( 1.806862e-05)
     assert props.Cp0[0] == pytest.approx( 7.532758e+01)
-    assert props.Cv0[0] == pytest.approx( 7.453942e+01)
 
     #-------------------------------------------------------------------
     # Testing attributes and thermodynamic properties of CO3-2
@@ -53,12 +52,11 @@ def testThermoFunDatabase():
     assert species.charge() == -2
     assert species.molarMass() == pytest.approx(0.0600100979)
 
-    props = species.props(T, P)
+    props = species.standardThermoProps(T, P)
     assert props.G0[0]  == pytest.approx(-5.279830e+05)
     assert props.H0[0]  == pytest.approx(-6.752359e+05)
     assert props.V0[0]  == pytest.approx(-6.063738e-06)
     assert props.Cp0[0] == pytest.approx(-3.228612e+02)
-    assert props.Cv0[0] == pytest.approx(-3.228612e+02)
 
     #-------------------------------------------------------------------
     # Testing attributes and thermodynamic properties of Ca+2
@@ -70,12 +68,11 @@ def testThermoFunDatabase():
     assert species.charge() == +2
     assert species.molarMass() == pytest.approx(0.040076902)
 
-    props = species.props(T, P)
+    props = species.standardThermoProps(T, P)
     assert props.G0[0]  == pytest.approx(-5.528210e+05)
     assert props.H0[0]  == pytest.approx(-5.431003e+05)
     assert props.V0[0]  == pytest.approx(-1.844093e-05)
     assert props.Cp0[0] == pytest.approx(-3.099935e+01)
-    assert props.Cv0[0] == pytest.approx(-3.099935e+01)
 
     #-------------------------------------------------------------------
     # Testing attributes and thermodynamic properties of CO2
@@ -87,12 +84,11 @@ def testThermoFunDatabase():
     assert species.charge() == 0
     assert species.molarMass() == pytest.approx(0.0440096006)
 
-    props = species.props(T, P)
+    props = species.standardThermoProps(T, P)
     assert props.G0[0]  == pytest.approx(-3.943510e+05)
     assert props.H0[0]  == pytest.approx(-3.935472e+05)
     assert props.V0[0]  == pytest.approx( 2.466434e-02)
     assert props.Cp0[0] == pytest.approx( 3.710812e+01)
-    assert props.Cv0[0] == pytest.approx( 0.000000e+00)
 
     #-------------------------------------------------------------------
     # Testing attributes and thermodynamic properties of Calcite
@@ -104,12 +100,11 @@ def testThermoFunDatabase():
     assert species.charge() == 0
     assert species.molarMass() == pytest.approx(0.1000869999)
 
-    props = species.props(T, P)
+    props = species.standardThermoProps(T, P)
     assert props.G0[0]  == pytest.approx(-1.129195e+06)
     assert props.H0[0]  == pytest.approx(-1.207470e+06)
     assert props.V0[0]  == pytest.approx( 3.689000e-05)
     assert props.Cp0[0] == pytest.approx( 8.337073e+01)
-    assert props.Cv0[0] == pytest.approx( 0.000000e+00)
 
     with pytest.raises(RuntimeError):
         assert ThermoFunDatabase("not-a-valid-file-name")
