@@ -39,6 +39,7 @@ void exportPhase(py::module& m)
         .def("element", &Phase::element, py::return_value_policy::reference_internal)
         .def("species", py::overload_cast<>(&Phase::species, py::const_), py::return_value_policy::reference_internal)
         .def("species", py::overload_cast<Index>(&Phase::species, py::const_), py::return_value_policy::reference_internal)
+        .def("speciesMolarMasses", &Phase::speciesMolarMasses, py::return_value_policy::reference_internal)
         .def("activityModel", &Phase::activityModel, py::return_value_policy::reference_internal)
         .def("idealActivityModel", &Phase::idealActivityModel, py::return_value_policy::reference_internal)
         ;

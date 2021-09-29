@@ -74,6 +74,9 @@ public:
     /// Return the species in the phase with given index.
     auto species(Index idx) const -> const Species&;
 
+    /// Return the molar masses of the species in the phase (in kg/mol).
+    auto speciesMolarMasses() const -> ArrayXdConstRef;
+
     /// Return the function that computes activity properties of the phase.
     auto activityModel() const -> const ActivityModel&;
 

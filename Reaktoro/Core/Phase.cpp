@@ -146,6 +146,11 @@ auto Phase::species(Index idx) const -> const Species&
     return pimpl->species[idx];
 }
 
+auto Phase::speciesMolarMasses() const -> ArrayXdConstRef
+{
+    return pimpl->species_molar_masses;
+}
+
 auto Phase::activityModel() const -> const ActivityModel&
 {
     return pimpl->activity_model;

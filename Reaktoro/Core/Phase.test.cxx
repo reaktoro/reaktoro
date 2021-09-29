@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Phase", "[Phase]")
@@ -52,6 +53,7 @@ TEST_CASE("Testing Phase", "[Phase]")
         REQUIRE( phase.species(5).name() == "CO2(aq)" );
         REQUIRE( phase.species(6).name() == "HCO3-"   );
         REQUIRE( phase.species(7).name() == "CO3--"   );
+        REQUIRE( phase.speciesMolarMasses().isApprox(detail::molarMasses(phase.species())) );
     }
 
     SECTION("Testing PhasePhase::withSpecies with gaseous species")
@@ -74,6 +76,7 @@ TEST_CASE("Testing Phase", "[Phase]")
         REQUIRE( phase.species(2).name() == "CH4(g)" );
         REQUIRE( phase.species(3).name() == "O2(g)"  );
         REQUIRE( phase.species(4).name() == "H2(g)"  );
+        REQUIRE( phase.speciesMolarMasses().isApprox(detail::molarMasses(phase.species())) );
     }
 
     SECTION("Testing PhasePhase::withSpecies with a single mineral species")
@@ -91,6 +94,7 @@ TEST_CASE("Testing Phase", "[Phase]")
         REQUIRE( phase.element(2).symbol() == "Ca" );
         REQUIRE( phase.species().size() == 1 );
         REQUIRE( phase.species(0).name() == "Calcite" );
+        REQUIRE( phase.speciesMolarMasses().isApprox(detail::molarMasses(phase.species())) );
     }
 
     SECTION("Testing PhasePhase::withSpecies with species having uncommon aggregate states")
