@@ -336,6 +336,14 @@ public:
         return mdata.Cp0 + mdata.T * mdata.VT0 * mdata.VT0 / mdata.VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
     }
 
+    /// Return the molar mass of the phase (in kg/mol).
+    auto molarMass() const -> real
+    {
+        const auto& M = mphase.speciesMolarMasses(); // in kg/mol
+        const auto& x = mdata.x;
+        return (M * x).sum();
+    }
+
     /// Return the molar volume of the phase (in m³/mol).
     auto molarVolume() const -> real
     {
@@ -407,10 +415,9 @@ public:
     }
 
     /// Return the density of the phase (in kg/m³).
-    auto molarDensity() const -> real
+    auto density() const -> real
     {
-        const auto V = molarVolume();
-        return V ? 1.0/V : real(0.0);
+        return molarMass() / molarVolume();
     }
 
     /// Return the sum of species amounts in the phase (in mol).
@@ -422,10 +429,9 @@ public:
     /// Return the sum of species masses in the phase (in kg).
     auto mass() const -> real
     {
-        real sum = 0.0;
-        auto i = 0; for(const auto& species : phase().species())
-            sum += mdata.n[i++] * species.molarMass();
-        return sum;
+        const auto& M = mphase.speciesMolarMasses(); // in kg/mol
+        const auto& n = mdata.n;
+        return (M * n).sum();
     }
 
     /// Return the volume of the phase (in m³).

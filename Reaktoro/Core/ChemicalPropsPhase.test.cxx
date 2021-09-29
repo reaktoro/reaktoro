@@ -127,7 +127,8 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const real nsum = n.sum();
         const real mass = (n * molar_masses).sum();
 
-        const real rho = 1.0 / V;
+        const real MM = mass/nsum;
+        const real rho = MM/V;
 
         const real Gtot  = nsum * G;
         const real Htot  = nsum * H;
@@ -161,9 +162,12 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         CHECK( props.standardHeatCapacitiesConstP() .isApprox(Cp0)  );
         CHECK( props.standardHeatCapacitiesConstV() .isApprox(Cv0)  );
 
+        CHECK( props.molarMass()               == approx(MM)    );
+        CHECK( props.molarVolume()             == approx(V)     );
+        CHECK( props.molarVolumeT()            == approx(VT)    );
+        CHECK( props.molarVolumeP()            == approx(VP)    );
         CHECK( props.molarGibbsEnergy()        == approx(G)     );
         CHECK( props.molarEnthalpy()           == approx(H)     );
-        CHECK( props.molarVolume()             == approx(V)     );
         CHECK( props.molarVolumeT()            == approx(VT)    );
         CHECK( props.molarVolumeP()            == approx(VP)    );
         CHECK( props.molarEntropy()            == approx(S)     );
@@ -171,7 +175,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         CHECK( props.molarHelmholtzEnergy()    == approx(A)     );
         CHECK( props.molarHeatCapacityConstP() == approx(Cp)    );
         CHECK( props.molarHeatCapacityConstV() == approx(Cv)    );
-        CHECK( props.molarDensity()            == approx(rho)   );
+        CHECK( props.density()                 == approx(rho)   );
         CHECK( props.amount()                  == approx(nsum)  );
         CHECK( props.mass()                    == approx(mass)  );
         CHECK( props.gibbsEnergy()             == approx(Gtot)  );
@@ -222,7 +226,8 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double  U_T = H_T - P*V_T;
         const double  A_T = G_T - P*V_T;
 
-        const double rho_T = -V_T/(V*V);
+        const double MM_T = 0.0;
+        const double rho_T = -rho*V_T/V;
 
         const double Gtot_T  = nsum * G_T;
         const double Htot_T  = nsum * H_T;
@@ -256,15 +261,18 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
         CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
 
+        CHECK( grad(props.molarMass())               == approx(MM_T)    );
+        CHECK( grad(props.molarVolume())             == approx(V_T)     );
+        CHECK( grad(props.molarVolumeT())            == approx(VT_T)    );
+        CHECK( grad(props.molarVolumeP())            == approx(VP_T)    );
         CHECK( grad(props.molarGibbsEnergy())        == approx(G_T)     );
         CHECK( grad(props.molarEnthalpy())           == approx(H_T)     );
-        CHECK( grad(props.molarVolume())             == approx(V_T)     );
         CHECK( grad(props.molarEntropy())            == approx(S_T)     );
         CHECK( grad(props.molarInternalEnergy())     == approx(U_T)     );
         CHECK( grad(props.molarHelmholtzEnergy())    == approx(A_T)     );
         CHECK( grad(props.molarHeatCapacityConstP()) == approx(Cp_T)    );
         CHECK( grad(props.molarHeatCapacityConstV()) == approx(Cv_T)    );
-        CHECK( grad(props.molarDensity())            == approx(rho_T)   );
+        CHECK( grad(props.density())                 == approx(rho_T)   );
         CHECK( grad(props.amount())                  == approx(0.0)     );
         CHECK( grad(props.mass())                    == approx(0.0)     );
         CHECK( grad(props.gibbsEnergy())             == approx(Gtot_T)  );
@@ -315,7 +323,8 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const double  U_P = H_P - V - P*V_P;
         const double  A_P = G_P - V - P*V_P;
 
-        const double rho_P = -V_P/(V*V);
+        const double MM_P = 0.0;
+        const double rho_P = -rho*V_P/V;
 
         const double  Gtot_P = nsum * G_P;
         const double  Htot_P = nsum * H_P;
@@ -349,15 +358,18 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
         CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
 
+        CHECK( grad(props.molarMass())               == approx(MM_P)    );
+        CHECK( grad(props.molarVolume())             == approx(V_P)     );
+        CHECK( grad(props.molarVolumeT())            == approx(VT_P)    );
+        CHECK( grad(props.molarVolumeP())            == approx(VP_P)    );
         CHECK( grad(props.molarGibbsEnergy())        == approx(G_P)     );
         CHECK( grad(props.molarEnthalpy())           == approx(H_P)     );
-        CHECK( grad(props.molarVolume())             == approx(V_P)     );
         CHECK( grad(props.molarEntropy())            == approx(S_P)     );
         CHECK( grad(props.molarInternalEnergy())     == approx(U_P)     );
         CHECK( grad(props.molarHelmholtzEnergy())    == approx(A_P)     );
         CHECK( grad(props.molarHeatCapacityConstP()) == approx(Cp_P)    );
         CHECK( grad(props.molarHeatCapacityConstV()) == approx(Cv_P)    );
-        CHECK( grad(props.molarDensity())            == approx(rho_P)   );
+        CHECK( grad(props.density())                 == approx(rho_P)   );
         CHECK( grad(props.amount())                  == approx(0.0)     );
         CHECK( grad(props.mass())                    == approx(0.0)     );
         CHECK( grad(props.gibbsEnergy())             == approx(Gtot_P)  );
@@ -416,7 +428,8 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXd nsum_n = ArrayXd::Ones(4);
         const ArrayXd mass_n = molar_masses;
 
-        const ArrayXd rho_n = -V_n / (V*V);
+        const ArrayXd MM_n = mass_n/nsum - mass/(nsum*nsum)*nsum_n;
+        const ArrayXd rho_n = -rho*V_n/V;
 
         const ArrayXd  Gtot_n = nsum * G_n  + nsum_n * G;
         const ArrayXd  Htot_n = nsum * H_n  + nsum_n * H;
@@ -453,15 +466,18 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
             CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox( Cp0_n.col(i)) );
             CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox( Cv0_n.col(i)) );
 
+            CHECK( grad(props.molarMass())               == approx(  MM_n[i])  );
+            CHECK( grad(props.molarVolume())             == approx(   V_n[i])  );
+            CHECK( grad(props.molarVolumeT())            == approx(  VT_n[i])  );
+            CHECK( grad(props.molarVolumeP())            == approx(  VP_n[i])  );
             CHECK( grad(props.molarGibbsEnergy())        == approx(   G_n[i])  );
             CHECK( grad(props.molarEnthalpy())           == approx(   H_n[i])  );
-            CHECK( grad(props.molarVolume())             == approx(   V_n[i])  );
             CHECK( grad(props.molarEntropy())            == approx(   S_n[i])  );
             CHECK( grad(props.molarInternalEnergy())     == approx(   U_n[i])  );
             CHECK( grad(props.molarHelmholtzEnergy())    == approx(   A_n[i])  );
             CHECK( grad(props.molarHeatCapacityConstP()) == approx(  Cp_n[i])  );
             CHECK( grad(props.molarHeatCapacityConstV()) == approx(  Cv_n[i])  );
-            CHECK( grad(props.molarDensity())            == approx( rho_n[i])  );
+            CHECK( grad(props.density())                 == approx( rho_n[i])  );
             CHECK( grad(props.amount())                  == approx(nsum_n[i])  );
             CHECK( grad(props.mass())                    == approx(mass_n[i])  );
             CHECK( grad(props.gibbsEnergy())             == approx(Gtot_n[i])  );
