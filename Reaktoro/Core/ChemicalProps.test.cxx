@@ -25,8 +25,6 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 using namespace Reaktoro;
 
-namespace test { extern auto createDatabase() -> Database; }
-
 TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 {
     const auto R = universalGasConstant;
@@ -488,7 +486,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( props.elementAmountInPhase(3, 1) == Approx(b1[3]) );
 
         auto i = 0;
-        for(auto species : system.species())
+        for(const auto& species : system.species())
         {
             const auto name = species.name();
             const auto idx = system.species().index(name);
