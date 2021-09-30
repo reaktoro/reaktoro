@@ -22,7 +22,9 @@
 #include <Reaktoro/Core/ThermoPropsPhase.hpp>
 using namespace Reaktoro;
 
-inline auto createStandardThermoModel(double param)
+namespace {
+
+auto createStandardThermoModel(double param)
 {
     StandardThermoModel model = [=](real T, real P)
     {
@@ -37,6 +39,8 @@ inline auto createStandardThermoModel(double param)
     };
     return model;
 }
+
+} // namespace
 
 TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
 {
@@ -55,8 +59,8 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
 
     ThermoPropsPhase props(phase);
 
-    real T = 300.0;
-    real P = 123.0e5;
+    real T = 5.0;
+    real P = 7.0;
 
     const ArrayXr G0  = 0.1 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
     const ArrayXr H0  = 0.2 * ArrayXr{{ 10.0, 20.0, 30.0, 40.0 }} * T * P;
@@ -69,19 +73,19 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     const ArrayXr U0  = H0 - P*V0;
     const ArrayXr A0  = G0 - P*V0;
 
-    REQUIRE_NOTHROW( props.update(T, P) );
+    CHECK_NOTHROW( props.update(T, P) );
 
-    REQUIRE( props.temperature() == T );
-    REQUIRE( props.pressure()    == P );
+    CHECK( props.temperature() == T );
+    CHECK( props.pressure()    == P );
 
-    REQUIRE( props.standardGibbsEnergies()        .isApprox(G0)   );
-    REQUIRE( props.standardEnthalpies()           .isApprox(H0)   );
-    REQUIRE( props.standardVolumes()              .isApprox(V0)   );
-    REQUIRE( props.standardEntropies()            .isApprox(S0)   );
-    REQUIRE( props.standardInternalEnergies()     .isApprox(U0)   );
-    REQUIRE( props.standardHelmholtzEnergies()    .isApprox(A0)   );
-    REQUIRE( props.standardHeatCapacitiesConstP() .isApprox(Cp0)  );
-    REQUIRE( props.standardHeatCapacitiesConstV() .isApprox(Cv0)  );
+    CHECK( props.standardGibbsEnergies()        .isApprox(G0)   );
+    CHECK( props.standardEnthalpies()           .isApprox(H0)   );
+    CHECK( props.standardVolumes()              .isApprox(V0)   );
+    CHECK( props.standardEntropies()            .isApprox(S0)   );
+    CHECK( props.standardInternalEnergies()     .isApprox(U0)   );
+    CHECK( props.standardHelmholtzEnergies()    .isApprox(A0)   );
+    CHECK( props.standardHeatCapacitiesConstP() .isApprox(Cp0)  );
+    CHECK( props.standardHeatCapacitiesConstV() .isApprox(Cv0)  );
 
     //---------------------------------------------------------------------
     // Testing temperature derivatives of the properties
@@ -97,21 +101,21 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     const ArrayXd  U0_T = H0_T - P*V0_T;
     const ArrayXd  A0_T = G0_T - P*V0_T;
 
-    REQUIRE_NOTHROW( props.update(T, P, wrt(T)) );
+    CHECK_NOTHROW( props.update(T, P, wrt(T)) );
 
-    REQUIRE( grad(props.temperature()) == 1.0 );
-    REQUIRE( grad(props.pressure())    == 0.0 );
+    CHECK( grad(props.temperature()) == 1.0 );
+    CHECK( grad(props.pressure())    == 0.0 );
 
-    REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
-    REQUIRE( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
-    REQUIRE( grad(props.standardVolumes())              .isApprox(V0_T)   );
-    REQUIRE( grad(props.standardVolumesT())             .isApprox(VT0_T)  );
-    REQUIRE( grad(props.standardVolumesP())             .isApprox(VP0_T)  );
-    REQUIRE( grad(props.standardEntropies())            .isApprox(S0_T)   );
-    REQUIRE( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
-    REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
-    REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
-    REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
+    CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
+    CHECK( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
+    CHECK( grad(props.standardVolumes())              .isApprox(V0_T)   );
+    CHECK( grad(props.standardVolumesT())             .isApprox(VT0_T)  );
+    CHECK( grad(props.standardVolumesP())             .isApprox(VP0_T)  );
+    CHECK( grad(props.standardEntropies())            .isApprox(S0_T)   );
+    CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
+    CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
+    CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
+    CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
 
     //---------------------------------------------------------------------
     // Testing pressure derivatives of the properties
@@ -127,19 +131,19 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     const ArrayXd  U0_P = H0_P - V0 - P*V0_P;
     const ArrayXd  A0_P = G0_P - V0 - P*V0_P;
 
-    REQUIRE_NOTHROW( props.update(T, P, wrt(P)) );
+    CHECK_NOTHROW( props.update(T, P, wrt(P)) );
 
-    REQUIRE( grad(props.temperature()) == 0.0 );
-    REQUIRE( grad(props.pressure())    == 1.0 );
+    CHECK( grad(props.temperature()) == 0.0 );
+    CHECK( grad(props.pressure())    == 1.0 );
 
-    REQUIRE( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
-    REQUIRE( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
-    REQUIRE( grad(props.standardVolumes())              .isApprox(V0_P)   );
-    REQUIRE( grad(props.standardVolumesT())             .isApprox(VT0_P)  );
-    REQUIRE( grad(props.standardVolumesP())             .isApprox(VP0_P)  );
-    REQUIRE( grad(props.standardEntropies())            .isApprox(S0_P)   );
-    REQUIRE( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
-    REQUIRE( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );
-    REQUIRE( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
-    REQUIRE( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
+    CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
+    CHECK( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
+    CHECK( grad(props.standardVolumes())              .isApprox(V0_P)   );
+    CHECK( grad(props.standardVolumesT())             .isApprox(VT0_P)  );
+    CHECK( grad(props.standardVolumesP())             .isApprox(VP0_P)  );
+    CHECK( grad(props.standardEntropies())            .isApprox(S0_P)   );
+    CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
+    CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );
+    CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
+    CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
 }

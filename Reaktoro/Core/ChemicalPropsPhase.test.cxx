@@ -24,13 +24,15 @@
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 using namespace Reaktoro;
 
+namespace {
+
 template<typename T>
 auto approx(const T& val)
 {
     return Approx(val).scale(1.0);
 }
 
-inline auto createStandardThermoModel(double param)
+auto createStandardThermoModel(double param)
 {
     StandardThermoModel model = [=](real T, real P)
     {
@@ -45,6 +47,8 @@ inline auto createStandardThermoModel(double param)
     };
     return model;
 }
+
+} // namespace
 
 TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 {
