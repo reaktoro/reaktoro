@@ -482,6 +482,18 @@ public:
         return molarHelmholtzEnergy() * amount();
     }
 
+    /// Return the isobaric heat capacity of the phase (in J/K).
+    auto heatCapacityConstP() const -> real
+    {
+        return molarHeatCapacityConstP() * amount();
+    }
+
+    /// Return the isochoric heat capacity of the phase (in J/K).
+    auto heatCapacityConstV() const -> real
+    {
+        return molarHeatCapacityConstV() * amount();
+    }
+
     /// Return the speed of sound in the phase (in m/s).
     auto soundSpeed() const -> real
     {

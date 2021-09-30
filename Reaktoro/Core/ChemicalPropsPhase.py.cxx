@@ -79,6 +79,8 @@ void exportChemicalPropsPhase(py::module& m)
         .def("entropy", &ChemicalPropsPhase::entropy, "Return the entropy of the phase (in J/K).")
         .def("internalEnergy", &ChemicalPropsPhase::internalEnergy, "Return the internal energy of the phase (in J).")
         .def("helmholtzEnergy", &ChemicalPropsPhase::helmholtzEnergy, "Return the Helmholtz energy of the phase (in J).")
+        .def("heatCapacityConstP", &ChemicalPropsPhase::heatCapacityConstP, "Return the isobaric heat capacity of the phase (in J/K).")
+        .def("heatCapacityConstV", &ChemicalPropsPhase::heatCapacityConstV, "Return the isochoric heat capacity of the phase (in J/K).")
         .def("soundSpeed", &ChemicalPropsPhase::soundSpeed, "Return the speed of sound in the phase (in m/s).")
         ;
 }
