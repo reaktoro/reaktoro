@@ -37,8 +37,11 @@ struct ChemicalPropsPhaseBaseData
     /// The amounts of each species in the phase (in mol).
     Array n;
 
-    /// The sum of species amounts in the phase (in mol).
+    /// The amount of the phase as the sum of species amounts (in mol).
     Real nsum;
+
+    /// The mass of the phase as the sum of species masses (in kg).
+    Real msum;
 
     /// The mole fractions of the species in the phase (in mol/mol).
     Array x;
@@ -96,6 +99,7 @@ struct ChemicalPropsPhaseBaseData
         P    = other.P;
         n    = other.n;
         nsum = other.nsum;
+        msum = other.msum;
         x    = other.x;
         G0   = other.G0;
         H0   = other.H0;
@@ -119,27 +123,27 @@ struct ChemicalPropsPhaseBaseData
     template<typename RX, typename AX>
     operator ChemicalPropsPhaseBaseData<RX, AX>()
     {
-        return { T, P, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into another.
     template<typename RX, typename AX>
     operator ChemicalPropsPhaseBaseData<RX, AX>() const
     {
-        return { T, P, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
     }
 
     /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        array.to(T, P, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
+        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
         return *this;
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into an array.
     operator ArrayStream<Real>() const
     {
-        return { T, P, n, nsum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
     }
 };
 
@@ -339,9 +343,7 @@ public:
     /// Return the molar mass of the phase (in kg/mol).
     auto molarMass() const -> real
     {
-        const auto& M = mphase.speciesMolarMasses(); // in kg/mol
-        const auto& x = mdata.x;
-        return (M * x).sum();
+        return mdata.msum / mdata.nsum;
     }
 
     /// Return the molar volume of the phase (in m³/mol).
@@ -489,9 +491,7 @@ public:
     /// Return the sum of species masses in the phase (in kg).
     auto mass() const -> real
     {
-        const auto& M = mphase.speciesMolarMasses(); // in kg/mol
-        const auto& n = mdata.n;
-        return (M * n).sum();
+        return mdata.msum;
     }
 
     /// Return the volume of the phase (in m³).
@@ -606,6 +606,7 @@ private:
         const auto R = universalGasConstant;
 
         auto& nsum = mdata.nsum;
+        auto& msum = mdata.msum;
         auto& x    = mdata.x;
         auto& G0   = mdata.G0;
         auto& H0   = mdata.H0;
@@ -650,17 +651,22 @@ private:
             Cp0[i] = aux.Cp0;
         }
 
-        // Compute the activity properties of the phase.
+        // Compute the amount of the phase
         nsum = n.sum();
 
+        // Compute the mass of the phase
+        msum = (n * mphase.speciesMolarMasses()).sum();
+
+        // Compute the mole fractions of the species
         if(nsum == 0.0)
             x = (N == 1) ? 1.0 : 0.0;
         else x = n / nsum;
 
         // Ensure there are no zero mole fractions
         error(x.minCoeff() == 0.0, "Could not compute the chemical properties of phase ",
-              phase().name(), " because it has one or more species with zero amounts.");
+            phase().name(), " because it has one or more species with zero amounts.");
 
+        // Compute the activity properties of the phase
         ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, extra };
         ActivityArgs args{ T, P, x };
         const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.

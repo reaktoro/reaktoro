@@ -358,6 +358,9 @@ private:
     /// The sum of species amounts in each phase of the system (in mol).
     ArrayXr nsum;
 
+    /// The sum of species masses in each phase of the system (in kg).
+    ArrayXr msum;
+
     /// The mole fractions of the species in the system (in mol/mol).
     ArrayXr x;
 
