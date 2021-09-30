@@ -414,6 +414,66 @@ public:
         return Cp + T*VT*VT/VP;
     }
 
+    /// Return the specific volume of the phase (in m³/kg).
+    auto specificVolume() const -> real
+    {
+        return molarVolume() / molarMass();
+    }
+
+    /// Return the temperature derivative of the specific volume of the phase (in m³/(kg·K)).
+    auto specificVolumeT() const -> real
+    {
+        return molarVolumeT() / molarMass();
+    }
+
+    /// Return the pressure derivative of the specific volume of the phase (in m³/(kg·Pa)).
+    auto specificVolumeP() const -> real
+    {
+        return molarVolumeP() / molarMass();
+    }
+
+    /// Return the specific Gibbs energy of formation of the phase (in J/kg).
+    auto specificGibbsEnergy() const -> real
+    {
+        return molarGibbsEnergy() / molarMass();
+    }
+
+    /// Return the specific enthalpy of formation of the phase (in J/kg).
+    auto specificEnthalpy() const -> real
+    {
+        return molarEnthalpy() / molarMass();
+    }
+
+    /// Return the specific entropy of formation of the phase (in J/(kg·K)).
+    auto specificEntropy() const -> real
+    {
+        return molarEntropy() / molarMass();
+    }
+
+    /// Return the specific internal energy of formation of the phase (in J/kg).
+    auto specificInternalEnergy() const -> real
+    {
+        return molarInternalEnergy() / molarMass();
+    }
+
+    /// Return the specific Helmholtz energy of formation of the phase (in J/kg).
+    auto specificHelmholtzEnergy() const -> real
+    {
+        return molarHelmholtzEnergy() / molarMass();
+    }
+
+    /// Return the specific isobaric heat capacity of the phase (in J/(kg·K)).
+    auto specificHeatCapacityConstP() const -> real
+    {
+        return molarHeatCapacityConstP() / molarMass();
+    }
+
+    /// Return the specific isochoric heat capacity of the phase (in J/(kg·K)).
+    auto specificHeatCapacityConstV() const -> real
+    {
+        return molarHeatCapacityConstV() / molarMass();
+    }
+
     /// Return the density of the phase (in kg/m³).
     auto density() const -> real
     {
