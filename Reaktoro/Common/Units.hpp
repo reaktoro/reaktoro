@@ -20,6 +20,7 @@
 // C++ includes
 #include <string>
 
+namespace Reaktoro {
 namespace units {
 
 /// Return the slope factor in the linear function that converts a numeric value from a unit to another.
@@ -49,4 +50,5 @@ auto convert(const T& value, const std::string& from, const std::string& to) -> 
     return (from == to) ? value : value * slope(from, to) + intercept(from, to);
 }
 
-} /* namespace units */
+} // namespace units
+} // namespace Reaktoro

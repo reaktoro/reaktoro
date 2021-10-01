@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
+using namespace Reaktoro;
 
 TEST_CASE("Testing Units module", "[Units]")
 {
