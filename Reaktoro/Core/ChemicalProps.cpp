@@ -253,162 +253,6 @@ auto ChemicalProps::elementMassAmongSpecies(StringOrIndex element, ArrayXlConstR
     return amount * molarmass;
 }
 
-auto ChemicalProps::speciesAmount(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return n[ispecies];
-}
-
-auto ChemicalProps::speciesMass(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return n[ispecies] * msystem.species(ispecies).molarMass();
-}
-
-auto ChemicalProps::phaseAmount(StringOrIndex phase) const -> real
-{
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
-    return phaseProps(iphase).amount();
-}
-
-auto ChemicalProps::phaseMass(StringOrIndex phase) const -> real
-{
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
-    return phaseProps(iphase).mass();
-}
-
-auto ChemicalProps::phaseVolume(StringOrIndex phase) const -> real
-{
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
-    return phaseProps(iphase).volume();
-}
-
-auto ChemicalProps::moleFraction(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return x[ispecies];
-}
-
-auto ChemicalProps::concentration(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return exp(ln_a[ispecies] - ln_g[ispecies]);
-}
-
-auto ChemicalProps::lgConcentration(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return (ln_a[ispecies] - ln_g[ispecies])/ln10;
-}
-
-auto ChemicalProps::lnConcentration(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return ln_a[ispecies] - ln_g[ispecies];
-}
-
-auto ChemicalProps::activityCoefficient(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return exp(ln_g[ispecies]);
-}
-
-auto ChemicalProps::lgActivityCoefficient(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return ln_g[ispecies]/ln10;
-}
-
-auto ChemicalProps::lnActivityCoefficient(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return ln_g[ispecies];
-}
-
-auto ChemicalProps::activity(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return exp(ln_a[ispecies]);
-}
-
-auto ChemicalProps::lgActivity(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return ln_a[ispecies]/ln10;
-}
-
-auto ChemicalProps::lnActivity(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return ln_a[ispecies];
-}
-
-auto ChemicalProps::chemicalPotential(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return u[ispecies];
-}
-
-auto ChemicalProps::standardVolume(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return V0[ispecies];
-}
-
-auto ChemicalProps::standardVolumeT(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return VT0[ispecies];
-}
-
-auto ChemicalProps::standardVolumeP(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return VP0[ispecies];
-}
-
-auto ChemicalProps::standardGibbsEnergy(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return G0[ispecies];
-}
-
-auto ChemicalProps::standardEnthalpy(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return H0[ispecies];
-}
-
-auto ChemicalProps::standardEntropy(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return (H0[ispecies] - G0[ispecies])/T; // from G0 = H0 - T*S0
-}
-
-auto ChemicalProps::standardInternalEnergy(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return H0[ispecies] - P*V0[ispecies]; // from H0 = U0 + P*V0
-}
-
-auto ChemicalProps::standardHelmholtzEnergy(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return G0[ispecies] - P*V0[ispecies]; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
-}
-
-auto ChemicalProps::standardHeatCapacityConstP(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return Cp0[ispecies];
-}
-
-auto ChemicalProps::standardHeatCapacityConstV(StringOrIndex species) const -> real
-{
-    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return Cp0[ispecies] + T*VT0[ispecies]*VT0[ispecies]/VP0[ispecies]; // from Cv0 = Cp0 + T*VT0*VT0/VP0
-}
-
 auto ChemicalProps::elementAmounts() const -> ArrayXr
 {
     const auto A = msystem.formulaMatrixElements();
@@ -434,6 +278,144 @@ auto ChemicalProps::elementAmountsAmongSpecies(ArrayXlConstRef indices) const ->
     return (Ai * ni).array();
 }
 
+auto ChemicalProps::speciesAmount(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return n[ispecies];
+}
+
+auto ChemicalProps::speciesMass(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return n[ispecies] * msystem.species(ispecies).molarMass();
+}
+
+auto ChemicalProps::speciesMoleFraction(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return x[ispecies];
+}
+
+auto ChemicalProps::speciesConcentration(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return exp(ln_a[ispecies] - ln_g[ispecies]);
+}
+
+auto ChemicalProps::speciesConcentrationLg(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return (ln_a[ispecies] - ln_g[ispecies])/ln10;
+}
+
+auto ChemicalProps::speciesConcentrationLn(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return ln_a[ispecies] - ln_g[ispecies];
+}
+
+auto ChemicalProps::speciesActivityCoefficient(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return exp(ln_g[ispecies]);
+}
+
+auto ChemicalProps::speciesActivityCoefficientLg(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return ln_g[ispecies]/ln10;
+}
+
+auto ChemicalProps::speciesActivityCoefficientLn(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return ln_g[ispecies];
+}
+
+auto ChemicalProps::speciesActivity(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return exp(ln_a[ispecies]);
+}
+
+auto ChemicalProps::speciesActivityLg(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return ln_a[ispecies]/ln10;
+}
+
+auto ChemicalProps::speciesActivityLn(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return ln_a[ispecies];
+}
+
+auto ChemicalProps::speciesChemicalPotential(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return u[ispecies];
+}
+
+auto ChemicalProps::speciesStandardVolume(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return V0[ispecies];
+}
+
+auto ChemicalProps::speciesStandardVolumeT(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return VT0[ispecies];
+}
+
+auto ChemicalProps::speciesStandardVolumeP(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return VP0[ispecies];
+}
+
+auto ChemicalProps::speciesStandardGibbsEnergy(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return G0[ispecies];
+}
+
+auto ChemicalProps::speciesStandardEnthalpy(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return H0[ispecies];
+}
+
+auto ChemicalProps::speciesStandardEntropy(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return (H0[ispecies] - G0[ispecies])/T; // from G0 = H0 - T*S0
+}
+
+auto ChemicalProps::speciesStandardInternalEnergy(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return H0[ispecies] - P*V0[ispecies]; // from H0 = U0 + P*V0
+}
+
+auto ChemicalProps::speciesStandardHelmholtzEnergy(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return G0[ispecies] - P*V0[ispecies]; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
+}
+
+auto ChemicalProps::speciesStandardHeatCapacityConstP(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return Cp0[ispecies];
+}
+
+auto ChemicalProps::speciesStandardHeatCapacityConstV(StringOrIndex species) const -> real
+{
+    const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
+    return Cp0[ispecies] + T*VT0[ispecies]*VT0[ispecies]/VP0[ispecies]; // from Cv0 = Cp0 + T*VT0*VT0/VP0
+}
+
 auto ChemicalProps::speciesAmounts() const -> ArrayXrConstRef
 {
     return n;
@@ -447,79 +429,97 @@ auto ChemicalProps::speciesMasses() const -> ArrayXr
     return m;
 }
 
-auto ChemicalProps::moleFractions() const -> ArrayXrConstRef
+auto ChemicalProps::speciesMoleFractions() const -> ArrayXrConstRef
 {
     return x;
 }
 
-auto ChemicalProps::lnConcentrations() const -> ArrayXr
+auto ChemicalProps::speciesConcentrationsLn() const -> ArrayXr
 {
     return ln_a - ln_g;
 }
 
-auto ChemicalProps::lnActivityCoefficients() const -> ArrayXrConstRef
+auto ChemicalProps::speciesActivityCoefficientsLn() const -> ArrayXrConstRef
 {
     return ln_g;
 }
 
-auto ChemicalProps::lnActivities() const -> ArrayXrConstRef
+auto ChemicalProps::speciesActivitiesLn() const -> ArrayXrConstRef
 {
     return ln_a;
 }
 
-auto ChemicalProps::chemicalPotentials() const -> ArrayXrConstRef
+auto ChemicalProps::speciesChemicalPotentials() const -> ArrayXrConstRef
 {
     return u;
 }
 
-auto ChemicalProps::standardVolumes() const -> ArrayXrConstRef
+auto ChemicalProps::speciesStandardVolumes() const -> ArrayXrConstRef
 {
     return V0;
 }
 
-auto ChemicalProps::standardVolumesT() const -> ArrayXrConstRef
+auto ChemicalProps::speciesStandardVolumesT() const -> ArrayXrConstRef
 {
     return VT0;
 }
 
-auto ChemicalProps::standardVolumesP() const -> ArrayXrConstRef
+auto ChemicalProps::speciesStandardVolumesP() const -> ArrayXrConstRef
 {
     return VP0;
 }
 
-auto ChemicalProps::standardGibbsEnergies() const -> ArrayXrConstRef
+auto ChemicalProps::speciesStandardGibbsEnergies() const -> ArrayXrConstRef
 {
     return G0;
 }
 
-auto ChemicalProps::standardEnthalpies() const -> ArrayXrConstRef
+auto ChemicalProps::speciesStandardEnthalpies() const -> ArrayXrConstRef
 {
     return H0;
 }
 
-auto ChemicalProps::standardEntropies() const -> ArrayXr
+auto ChemicalProps::speciesStandardEntropies() const -> ArrayXr
 {
     return (H0 - G0)/T; // from G0 = H0 - T*S0
 }
 
-auto ChemicalProps::standardInternalEnergies() const -> ArrayXr
+auto ChemicalProps::speciesStandardInternalEnergies() const -> ArrayXr
 {
     return H0 - P*V0; // from H0 = U0 + P*V0
 }
 
-auto ChemicalProps::standardHelmholtzEnergies() const -> ArrayXr
+auto ChemicalProps::speciesStandardHelmholtzEnergies() const -> ArrayXr
 {
     return G0 - P*V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
-auto ChemicalProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
+auto ChemicalProps::speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstRef
 {
     return Cp0;
 }
 
-auto ChemicalProps::standardHeatCapacitiesConstV() const -> ArrayXr
+auto ChemicalProps::speciesStandardHeatCapacitiesConstV() const -> ArrayXr
 {
     return Cp0 + T*VT0*VT0/VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
+}
+
+auto ChemicalProps::phaseAmount(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    return phaseProps(iphase).amount();
+}
+
+auto ChemicalProps::phaseMass(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    return phaseProps(iphase).mass();
+}
+
+auto ChemicalProps::phaseVolume(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    return phaseProps(iphase).volume();
 }
 
 auto ChemicalProps::amount() const -> real
@@ -613,18 +613,18 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     const auto elements = props.system().elements();
     const auto b   = props.elementAmounts();
     const auto n   = props.speciesAmounts();
-    const auto x   = props.moleFractions();
-    const auto lng = props.lnActivityCoefficients();
-    const auto lna = props.lnActivities();
-    const auto mu  = props.chemicalPotentials();
-    const auto G0  = props.standardGibbsEnergies();
-    const auto H0  = props.standardEnthalpies();
-    const auto V0  = props.standardVolumes();
-    const auto S0  = props.standardEntropies();
-    const auto U0  = props.standardInternalEnergies();
-    const auto A0  = props.standardHelmholtzEnergies();
-    const auto Cp0 = props.standardHeatCapacitiesConstP();
-    const auto Cv0 = props.standardHeatCapacitiesConstV();
+    const auto x   = props.speciesMoleFractions();
+    const auto lng = props.speciesActivityCoefficientsLn();
+    const auto lna = props.speciesActivitiesLn();
+    const auto mu  = props.speciesChemicalPotentials();
+    const auto G0  = props.speciesStandardGibbsEnergies();
+    const auto H0  = props.speciesStandardEnthalpies();
+    const auto V0  = props.speciesStandardVolumes();
+    const auto S0  = props.speciesStandardEntropies();
+    const auto U0  = props.speciesStandardInternalEnergies();
+    const auto A0  = props.speciesStandardHelmholtzEnergies();
+    const auto Cp0 = props.speciesStandardHeatCapacitiesConstP();
+    const auto Cv0 = props.speciesStandardHeatCapacitiesConstV();
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });

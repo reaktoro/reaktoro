@@ -259,7 +259,7 @@ struct EquilibriumSetup::Impl
         const auto& n = cprops.speciesAmounts();
 
         // Update the vector of species chemical potentials in case there are p variables associated to them
-        mu = cprops.chemicalPotentials();
+        mu = cprops.speciesChemicalPotentials();
         for(auto i = 0; i < Np; ++i)
             if(pvars[i].ispecies != Index(-1))
                 mu[pvars[i].ispecies] = pvars[i].fn(cprops, p[i]);

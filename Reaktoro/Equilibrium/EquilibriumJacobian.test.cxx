@@ -53,7 +53,7 @@ TEST_CASE("Testing EquilibriumJacobian", "[EquilibriumJacobian]")
         auto u = [&](VectorXrConstRef n) -> VectorXr
         {
             props.update(T, P, n);
-            return props.chemicalPotentials()/RT;
+            return props.speciesChemicalPotentials()/RT;
         };
         return jacobian(u, wrt(n), at(n));
     };
@@ -64,7 +64,7 @@ TEST_CASE("Testing EquilibriumJacobian", "[EquilibriumJacobian]")
         auto u = [&](VectorXrConstRef n) -> VectorXr
         {
             props.updateIdeal(T, P, n);
-            return props.chemicalPotentials()/RT;
+            return props.speciesChemicalPotentials()/RT;
         };
         return jacobian(u, wrt(n), at(n));
     };

@@ -64,34 +64,34 @@ public:
     auto pressure() const -> const real&;
 
     /// Return the standard partial molar volumes of the species in the system (in m3/mol).
-    auto standardVolumes() const -> ArrayXrConstRef;
+    auto speciesStandardVolumes() const -> ArrayXrConstRef;
 
     /// Return the temperature derivative of the standard partial molar volumes of the species in the system (in m³/(mol·K)).
-    auto standardVolumesT() const -> ArrayXrConstRef;
+    auto speciesStandardVolumesT() const -> ArrayXrConstRef;
 
     /// Return the pressure derivative of the standard partial molar volumes of the species in the system (in m³/(mol·Pa)).
-    auto standardVolumesP() const -> ArrayXrConstRef;
+    auto speciesStandardVolumesP() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef;
+    auto speciesStandardGibbsEnergies() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar enthalpies of formation of the species in the system (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef;
+    auto speciesStandardEnthalpies() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol*K)).
-    auto standardEntropies() const -> ArrayXr;
+    auto speciesStandardEntropies() const -> ArrayXr;
 
     /// Return the standard partial molar internal energies of formation of the species in the system (in J/mol).
-    auto standardInternalEnergies() const -> ArrayXr;
+    auto speciesStandardInternalEnergies() const -> ArrayXr;
 
     /// Return the standard partial molar Helmholtz energies of formation of the species in the system (in J/mol).
-    auto standardHelmholtzEnergies() const -> ArrayXr;
+    auto speciesStandardHelmholtzEnergies() const -> ArrayXr;
 
     /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol*K)).
-    auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef;
+    auto speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstRef;
 
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol*K)).
-    auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef;
+    auto speciesStandardHeatCapacitiesConstV() const -> ArrayXrConstRef;
 
 private:
     struct Impl;

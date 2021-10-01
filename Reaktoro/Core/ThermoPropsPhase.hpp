@@ -221,61 +221,61 @@ public:
     }
 
     /// Return the standard partial molar volumes of the species in the phase (in m³/mol).
-    auto standardVolumes() const -> ArrayXrConstRef
+    auto speciesStandardVolumes() const -> ArrayXrConstRef
     {
         return mdata.V0;
     }
 
     /// Return the temperature derivative of the standard partial molar volumes of the species in the phase (in m³/(mol·K)).
-    auto standardVolumesT() const -> ArrayXrConstRef
+    auto speciesStandardVolumesT() const -> ArrayXrConstRef
     {
         return mdata.VT0;
     }
 
     /// Return the pressure derivative of the standard partial molar volumes of the species in the phase (in m³/(mol·Pa)).
-    auto standardVolumesP() const -> ArrayXrConstRef
+    auto speciesStandardVolumesP() const -> ArrayXrConstRef
     {
         return mdata.VP0;
     }
 
     /// Return the standard partial molar Gibbs energies of formation of the species in the phase (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef
+    auto speciesStandardGibbsEnergies() const -> ArrayXrConstRef
     {
         return mdata.G0;
     }
 
     /// Return the standard partial molar enthalpies of formation of the species in the phase (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef
+    auto speciesStandardEnthalpies() const -> ArrayXrConstRef
     {
         return mdata.H0;
     }
 
     /// Return the standard partial molar entropies of formation of the species in the phase (in J/(mol·K)).
-    auto standardEntropies() const -> ArrayXr
+    auto speciesStandardEntropies() const -> ArrayXr
     {
         return (mdata.H0 - mdata.G0)/mdata.T; // from G0 = H0 - T*S0
     }
 
     /// Return the standard partial molar internal energies of formation of the species in the phase (in J/mol).
-    auto standardInternalEnergies() const -> ArrayXr
+    auto speciesStandardInternalEnergies() const -> ArrayXr
     {
         return mdata.H0 - mdata.P * mdata.V0; // from H0 = U0 + P*V0
     }
 
     /// Return the standard partial molar Helmholtz energies of formation of the species in the phase (in J/mol).
-    auto standardHelmholtzEnergies() const -> ArrayXr
+    auto speciesStandardHelmholtzEnergies() const -> ArrayXr
     {
         return mdata.G0 - mdata.P * mdata.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
     }
 
     /// Return the standard partial molar isobaric heat capacities of the species in the phase (in J/(mol·K)).
-    auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef
+    auto speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstRef
     {
         return mdata.Cp0;
     }
 
     /// Return the standard partial molar isochoric heat capacities of the species in the phase (in J/(mol·K)).
-    auto standardHeatCapacitiesConstV() const -> ArrayXrConstRef
+    auto speciesStandardHeatCapacitiesConstV() const -> ArrayXrConstRef
     {
         return mdata.Cp0 + mdata.T * mdata.VT0 * mdata.VT0 / mdata.VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
     }

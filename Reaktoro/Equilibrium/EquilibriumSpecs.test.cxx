@@ -326,8 +326,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
             const auto G0_2 = species2.standardThermoProps(T, P).G0;
             const auto G0_3 = species3.standardThermoProps(T, P).G0;
 
-            const auto ln_c1 = props.lnConcentration(pvars[1].ispecies);
-            const auto ln_a3 = props.lnActivity(pvars[3].ispecies);
+            const auto ln_c1 = props.speciesConcentrationLn(pvars[1].ispecies);
+            const auto ln_a3 = props.speciesActivityLn(pvars[3].ispecies);
 
             CHECK( pvars[0].fn(props, pk) == Approx(G0_0 + RT*log(pk)) );
             CHECK( pvars[1].fn(props, pk) == Approx(G0_1 + RT*(log(pk) + ln_c1)) );

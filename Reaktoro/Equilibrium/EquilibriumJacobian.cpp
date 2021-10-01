@@ -103,7 +103,7 @@ struct EquilibriumJacobian::Impl
         auto fn = [&](VectorXrConstRef n) -> VectorXr
         {
             props.update(T, P, n);
-            return props.chemicalPotentials();
+            return props.speciesChemicalPotentials();
         };
         const double RT = universalGasConstant * T;
         dudn.noalias() = jacobian(fn, wrt(n), at(n))/RT;
@@ -116,7 +116,7 @@ struct EquilibriumJacobian::Impl
         auto fn = [&](VectorXrConstRef n) -> VectorXr
         {
             props.update(T, P, n);
-            return props.chemicalPotentials();
+            return props.speciesChemicalPotentials();
         };
         const double RT = universalGasConstant * T;
         dudn = dudnApproximate(n);

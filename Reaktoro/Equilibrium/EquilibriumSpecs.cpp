@@ -486,7 +486,7 @@ auto EquilibriumSpecs::addUnknownStandardChemicalPotential(const String& species
     pvar.fn = [=](const ChemicalProps& props, const real& pk) -> real
     {
         const auto& T = props.temperature();
-        const auto& lnai = props.lnActivity(ispecies);
+        const auto& lnai = props.speciesActivityLn(ispecies);
         const auto& R = universalGasConstant;
         return pk + R*T*lnai;
     };
@@ -504,7 +504,7 @@ auto EquilibriumSpecs::addUnknownActivity(const String& species) -> void
     pvar.fn = [=](const ChemicalProps& props, const real& pk) -> real
     {
         const auto& T = props.temperature();
-        const auto& G0 = props.standardGibbsEnergy(ispecies);
+        const auto& G0 = props.speciesStandardGibbsEnergy(ispecies);
         const auto& R = universalGasConstant;
         return G0 + R*T*log(pk);
     };
@@ -522,8 +522,8 @@ auto EquilibriumSpecs::addUnknownActivityCoefficient(const String& species) -> v
     pvar.fn = [=](const ChemicalProps& props, const real& pk) -> real
     {
         const auto& T = props.temperature();
-        const auto& G0 = props.standardGibbsEnergy(ispecies);
-        const auto& lnci = props.lnConcentration(ispecies);
+        const auto& G0 = props.speciesStandardGibbsEnergy(ispecies);
+        const auto& lnci = props.speciesConcentrationLn(ispecies);
         const auto& R = universalGasConstant;
         return G0 + R*T*(lnci + log(pk));
     };

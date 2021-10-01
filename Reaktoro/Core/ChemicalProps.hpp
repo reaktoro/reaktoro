@@ -128,6 +128,17 @@ public:
     /// @param indices The indices of the species in the system.
     auto elementMassAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real;
 
+    /// Return the amounts of the elements in the system (in mol).
+    auto elementAmounts() const -> ArrayXr;
+
+    /// Return the amounts of the elements in a phase of the system (in mol).
+    /// @param phase The name or index of the phase in the system.
+    auto elementAmountsInPhase(StringOrIndex phase) const -> ArrayXr;
+
+    /// Return the amounts of the elements among a group of species in the system (in mol).
+    /// @param indices The indices of the species in the system.
+    auto elementAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr;
+
     /// Return the amount of a species in the system (in mol).
     /// @param species The name or index of the species in the system.
     auto speciesAmount(StringOrIndex species) const -> real;
@@ -135,6 +146,141 @@ public:
     /// Return the mass of a species in the system.
     /// @param species The name or index of the species in the system.
     auto speciesMass(StringOrIndex species) const -> real;
+
+    /// Return the mole fraction of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesMoleFraction(StringOrIndex species) const -> real;
+
+    /// Return the concentration (activity divided by activity coefficient) of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesConcentration(StringOrIndex species) const -> real;
+
+    /// Return the lg concentration (activity divided by activity coefficient) of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesConcentrationLg(StringOrIndex species) const -> real;
+
+    /// Return the ln concentration (activity divided by activity coefficient) of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesConcentrationLn(StringOrIndex species) const -> real;
+
+    /// Return the activity coefficient of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesActivityCoefficient(StringOrIndex species) const -> real;
+
+    /// Return the lg activity coefficient of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesActivityCoefficientLg(StringOrIndex species) const -> real;
+
+    /// Return the ln activity coefficient of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesActivityCoefficientLn(StringOrIndex species) const -> real;
+
+    /// Return the activity of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesActivity(StringOrIndex species) const -> real;
+
+    /// Return the lg activity of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesActivityLg(StringOrIndex species) const -> real;
+
+    /// Return the ln activity of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesActivityLn(StringOrIndex species) const -> real;
+
+    /// Return the chemical potential of a species in the system.
+    /// @param species The name or index of the species in the system.
+    auto speciesChemicalPotential(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar volume of a species in the system (in m³/mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardVolume(StringOrIndex species) const -> real;
+
+    /// Return the temperature derivative of the standard partial molar volume of a species in the system (in m³/(mol·K)).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardVolumeT(StringOrIndex species) const -> real;
+
+    /// Return the pressure derivative of the standard partial molar volume of a species in the system (in m³/(mol·Pa)).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardVolumeP(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar Gibbs energy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardGibbsEnergy(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar enthalpy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardEnthalpy(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar entropy of formation of the species a the system (in J/(mol·K)).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardEntropy(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar internal energy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardInternalEnergy(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar Helmholtz energy of formation of a species in the system (in J/mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardHelmholtzEnergy(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar isobaric heat capacity of the species a the system (in J/(mol·K)).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardHeatCapacityConstP(StringOrIndex species) const -> real;
+
+    /// Return the standard partial molar isochoric heat capacity of the species a the system (in J/(mol·K)).
+    /// @param species The name or index of the species in the system.
+    auto speciesStandardHeatCapacityConstV(StringOrIndex species) const -> real;
+
+    /// Return the amounts of the species in the system (in mol).
+    auto speciesAmounts() const -> ArrayXrConstRef;
+
+    /// Return the masses of the species in the system (in kg).
+    auto speciesMasses() const -> ArrayXr;
+
+    /// Return the mole fractions of the species in the system.
+    auto speciesMoleFractions() const -> ArrayXrConstRef;
+
+    /// Return the ln concentrations (activity divided by activity coefficient) of the species in the system.
+    auto speciesConcentrationsLn() const -> ArrayXr;
+
+    /// Return the ln activity coefficients of the species in the system.
+    auto speciesActivityCoefficientsLn() const -> ArrayXrConstRef;
+
+    /// Return the ln activities of the species in the system.
+    auto speciesActivitiesLn() const -> ArrayXrConstRef;
+
+    /// Return the chemical potentials of the species in the system (in J/mol).
+    auto speciesChemicalPotentials() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar volumes of the species in the system (in m³/mol).
+    auto speciesStandardVolumes() const -> ArrayXrConstRef;
+
+    /// Return the temperature derivative of the standard molar volumes of the species in the system (in m³/(mol·K)).
+    auto speciesStandardVolumesT() const -> ArrayXrConstRef;
+
+    /// Return the pressure derivative of the standard molar volumes of the species in the system (in m³/(mol·Pa)).
+    auto speciesStandardVolumesP() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
+    auto speciesStandardGibbsEnergies() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar enthalpies of formation of the species in the system (in J/mol).
+    auto speciesStandardEnthalpies() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol·K)).
+    auto speciesStandardEntropies() const -> ArrayXr;
+
+    /// Return the standard partial molar internal energies of formation of the species in the system (in J/mol).
+    auto speciesStandardInternalEnergies() const -> ArrayXr;
+
+    /// Return the standard partial molar Helmholtz energies of formation of the species in the system (in J/mol).
+    auto speciesStandardHelmholtzEnergies() const -> ArrayXr;
+
+    /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol·K)).
+    auto speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstRef;
+
+    /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
+    auto speciesStandardHeatCapacitiesConstV() const -> ArrayXr;
 
     /// Return the amount of a phase in the system (in mol).
     /// @param phase The name or index of the phase in the system.
@@ -147,152 +293,6 @@ public:
     /// Return the volume of a phase in the system (in m³).
     /// @param phase The name or index of the phase in the system.
     auto phaseVolume(StringOrIndex phase) const -> real;
-
-    /// Return the mole fraction of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto moleFraction(StringOrIndex species) const -> real;
-
-    /// Return the concentration (activity divided by activity coefficient) of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto concentration(StringOrIndex species) const -> real;
-
-    /// Return the lg concentration (activity divided by activity coefficient) of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto lgConcentration(StringOrIndex species) const -> real;
-
-    /// Return the ln concentration (activity divided by activity coefficient) of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto lnConcentration(StringOrIndex species) const -> real;
-
-    /// Return the activity coefficient of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto activityCoefficient(StringOrIndex species) const -> real;
-
-    /// Return the lg activity coefficient of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto lgActivityCoefficient(StringOrIndex species) const -> real;
-
-    /// Return the ln activity coefficient of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto lnActivityCoefficient(StringOrIndex species) const -> real;
-
-    /// Return the activity of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto activity(StringOrIndex species) const -> real;
-
-    /// Return the lg activity of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto lgActivity(StringOrIndex species) const -> real;
-
-    /// Return the ln activity of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto lnActivity(StringOrIndex species) const -> real;
-
-    /// Return the chemical potential of a species in the system.
-    /// @param species The name or index of the species in the system.
-    auto chemicalPotential(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar volume of a species in the system (in m³/mol).
-    /// @param species The name or index of the species in the system.
-    auto standardVolume(StringOrIndex species) const -> real;
-
-    /// Return the temperature derivative of the standard partial molar volume of a species in the system (in m³/(mol·K)).
-    /// @param species The name or index of the species in the system.
-    auto standardVolumeT(StringOrIndex species) const -> real;
-
-    /// Return the pressure derivative of the standard partial molar volume of a species in the system (in m³/(mol·Pa)).
-    /// @param species The name or index of the species in the system.
-    auto standardVolumeP(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar Gibbs energy of formation of a species in the system (in J/mol).
-    /// @param species The name or index of the species in the system.
-    auto standardGibbsEnergy(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar enthalpy of formation of a species in the system (in J/mol).
-    /// @param species The name or index of the species in the system.
-    auto standardEnthalpy(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar entropy of formation of the species a the system (in J/(mol·K)).
-    /// @param species The name or index of the species in the system.
-    auto standardEntropy(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar internal energy of formation of a species in the system (in J/mol).
-    /// @param species The name or index of the species in the system.
-    auto standardInternalEnergy(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar Helmholtz energy of formation of a species in the system (in J/mol).
-    /// @param species The name or index of the species in the system.
-    auto standardHelmholtzEnergy(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar isobaric heat capacity of the species a the system (in J/(mol·K)).
-    /// @param species The name or index of the species in the system.
-    auto standardHeatCapacityConstP(StringOrIndex species) const -> real;
-
-    /// Return the standard partial molar isochoric heat capacity of the species a the system (in J/(mol·K)).
-    /// @param species The name or index of the species in the system.
-    auto standardHeatCapacityConstV(StringOrIndex species) const -> real;
-
-    /// Return the amounts of the elements in the system (in mol).
-    auto elementAmounts() const -> ArrayXr;
-
-    /// Return the amounts of the elements in a phase of the system (in mol).
-    /// @param phase The name or index of the phase in the system.
-    auto elementAmountsInPhase(StringOrIndex phase) const -> ArrayXr;
-
-    /// Return the amounts of the elements among a group of species in the system (in mol).
-    /// @param indices The indices of the species in the system.
-    auto elementAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr;
-
-    /// Return the amounts of the species in the system (in mol).
-    auto speciesAmounts() const -> ArrayXrConstRef;
-
-    /// Return the masses of the species in the system (in kg).
-    auto speciesMasses() const -> ArrayXr;
-
-    /// Return the mole fractions of the species in the system.
-    auto moleFractions() const -> ArrayXrConstRef;
-
-    /// Return the ln concentrations (activity divided by activity coefficient) of the species in the system.
-    auto lnConcentrations() const -> ArrayXr;
-
-    /// Return the ln activity coefficients of the species in the system.
-    auto lnActivityCoefficients() const -> ArrayXrConstRef;
-
-    /// Return the ln activities of the species in the system.
-    auto lnActivities() const -> ArrayXrConstRef;
-
-    /// Return the chemical potentials of the species in the system (in J/mol).
-    auto chemicalPotentials() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar volumes of the species in the system (in m³/mol).
-    auto standardVolumes() const -> ArrayXrConstRef;
-
-    /// Return the temperature derivative of the standard molar volumes of the species in the system (in m³/(mol·K)).
-    auto standardVolumesT() const -> ArrayXrConstRef;
-
-    /// Return the pressure derivative of the standard molar volumes of the species in the system (in m³/(mol·Pa)).
-    auto standardVolumesP() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).
-    auto standardGibbsEnergies() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar enthalpies of formation of the species in the system (in J/mol).
-    auto standardEnthalpies() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar entropies of formation of the species in the system (in J/(mol·K)).
-    auto standardEntropies() const -> ArrayXr;
-
-    /// Return the standard partial molar internal energies of formation of the species in the system (in J/mol).
-    auto standardInternalEnergies() const -> ArrayXr;
-
-    /// Return the standard partial molar Helmholtz energies of formation of the species in the system (in J/mol).
-    auto standardHelmholtzEnergies() const -> ArrayXr;
-
-    /// Return the standard partial molar isobaric heat capacities of the species in the system (in J/(mol·K)).
-    auto standardHeatCapacitiesConstP() const -> ArrayXrConstRef;
-
-    /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
-    auto standardHeatCapacitiesConstV() const -> ArrayXr;
 
     /// Return the sum of species amounts in the system (in mol).
     auto amount() const -> real;

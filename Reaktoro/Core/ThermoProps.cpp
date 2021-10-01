@@ -160,52 +160,52 @@ auto ThermoProps::pressure() const -> const real&
     return pimpl->P;
 }
 
-auto ThermoProps::standardVolumes() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardVolumes() const -> ArrayXrConstRef
 {
     return pimpl->V0;
 }
 
-auto ThermoProps::standardVolumesT() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardVolumesT() const -> ArrayXrConstRef
 {
     return pimpl->VT0;
 }
 
-auto ThermoProps::standardVolumesP() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardVolumesP() const -> ArrayXrConstRef
 {
     return pimpl->VP0;
 }
 
-auto ThermoProps::standardGibbsEnergies() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardGibbsEnergies() const -> ArrayXrConstRef
 {
     return pimpl->G0;
 }
 
-auto ThermoProps::standardEnthalpies() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardEnthalpies() const -> ArrayXrConstRef
 {
     return pimpl->H0;
 }
 
-auto ThermoProps::standardEntropies() const -> ArrayXr
+auto ThermoProps::speciesStandardEntropies() const -> ArrayXr
 {
     return (pimpl->H0 - pimpl->G0)/pimpl->T; // from G0 = H0 - T*S0
 }
 
-auto ThermoProps::standardInternalEnergies() const -> ArrayXr
+auto ThermoProps::speciesStandardInternalEnergies() const -> ArrayXr
 {
     return pimpl->H0 - pimpl->P * pimpl->V0; // from H0 = U0 + P*V0
 }
 
-auto ThermoProps::standardHelmholtzEnergies() const -> ArrayXr
+auto ThermoProps::speciesStandardHelmholtzEnergies() const -> ArrayXr
 {
     return pimpl->G0 - pimpl->P * pimpl->V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
 }
 
-auto ThermoProps::standardHeatCapacitiesConstP() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstRef
 {
     return pimpl->Cp0;
 }
 
-auto ThermoProps::standardHeatCapacitiesConstV() const -> ArrayXrConstRef
+auto ThermoProps::speciesStandardHeatCapacitiesConstV() const -> ArrayXrConstRef
 {
     return pimpl->Cp0 + pimpl->T * pimpl->VT0 * pimpl->VT0 / pimpl->VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }

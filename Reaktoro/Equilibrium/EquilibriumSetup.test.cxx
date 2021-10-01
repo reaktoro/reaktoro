@@ -309,7 +309,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             const auto RT = universalGasConstant * T;
 
-            const auto u = props.chemicalPotentials();
+            const auto u = props.speciesChemicalPotentials();
 
             const auto G = (n * u).sum();
 
@@ -369,7 +369,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             const auto RT = universalGasConstant * T;
 
-            const auto u = props.chemicalPotentials();
+            const auto u = props.speciesChemicalPotentials();
 
             const auto G = (n * u).sum();
 
@@ -457,7 +457,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 updatePropsSpecial(auxprops, T, P, n, options);
 
-                const auto u = auxprops.chemicalPotentials();
+                const auto u = auxprops.speciesChemicalPotentials();
                 const auto RT = universalGasConstant * T;
 
                 VectorXr g(Nx);

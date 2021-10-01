@@ -44,6 +44,6 @@ def testChemicalProps():
     assert props.speciesAmounts() == state.speciesAmounts()
     assert props.speciesAmounts() == [3.0, 7.0]
 
-    assert props.moleFractions() == [0.3, 0.7]
-    assert props.lnActivities().asarray() == pytest.approx([log(3.0), log(7.0)])
+    assert props.speciesMoleFractions() == [0.3, 0.7]
+    assert props.speciesActivitiesLn().asarray() == pytest.approx([log(3.0), log(7.0)])
 

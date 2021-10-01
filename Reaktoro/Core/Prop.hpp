@@ -65,40 +65,40 @@ public:
     static auto speciesMass(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the mole fraction of a species in the system.
-    static auto moleFraction(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesMoleFraction(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the activity coefficient of a species in the system.
-    static auto activityCoefficient(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesActivityCoefficient(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the activity of a species in the system.
-    static auto activity(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesActivity(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the chemical potentials of a species in the system (in J/mol).
-    static auto chemicalPotential(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesChemicalPotential(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar volume of a species in the system (in m3/mol).
-    static auto standardVolume(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardVolume(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar Gibbs energy of formation of a species in the system (in J/mol).
-    static auto standardGibbsEnergy(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardGibbsEnergy(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar enthalpy of formation of a species in the system (in J/mol).
-    static auto standardEnthalpy(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardEnthalpy(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar entropy of formation of a species in the system (in J/(mol*K)).
-    static auto standardEntropy(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardEntropy(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar internal energy of formation of a species in the system (in J/mol).
-    static auto standardInternalEnergy(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardInternalEnergy(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar Helmholtz energy of formation of a species in the system (in J/mol).
-    static auto standardHelmholtzEnergy(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardHelmholtzEnergy(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar isobaric heat capacity of a species in the system (in J/(mol*K)).
-    static auto standardHeatCapacitiesConstP(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardHeatCapacitiesConstP(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the standard partial molar isochoric heat capacity of a species in the system (in J/(mol*K)).
-    static auto standardHeatCapacitiesConstV(const ChemicalSystem& system, const String& species) -> Prop;
+    static auto speciesStandardHeatCapacitiesConstV(const ChemicalSystem& system, const String& species) -> Prop;
 
     /// Return a property function that evaluates the sum of species amounts in a phase of the system (in mol).
     static auto phaseAmount(const ChemicalSystem& system, const String& phase) -> Prop;

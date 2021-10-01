@@ -73,7 +73,7 @@ struct EquilibriumHessian::Impl
             autodiff::seed(n[i]);
             props.update(T, P, n);
             autodiff::unseed(n[i]);
-            H.row(i) = grad(props.chemicalPotentials());
+            H.row(i) = grad(props.speciesChemicalPotentials());
         }
         return H;
     }
@@ -91,7 +91,7 @@ struct EquilibriumHessian::Impl
             autodiff::seed(n[i]);
             props.update(T, P, n);
             autodiff::unseed(n[i]);
-            H.row(i) = grad(props.chemicalPotentials());
+            H.row(i) = grad(props.speciesChemicalPotentials());
         }
 
         return H;
@@ -127,7 +127,7 @@ struct EquilibriumHessian::Impl
     auto diagonalApprox(const ChemicalProps& props0) -> MatrixXdConstRef
     {
         const auto T = props0.temperature();
-        const auto x = props0.moleFractions();
+        const auto x = props0.speciesMoleFractions();
         const auto n = props0.speciesAmounts();
         const auto R = universalGasConstant;
 

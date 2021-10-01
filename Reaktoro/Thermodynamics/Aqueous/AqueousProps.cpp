@@ -159,7 +159,7 @@ struct AqueousProps::Impl
         props = aqprops;
         const auto& T = props.temperature();
         const auto& P = props.pressure();
-        const auto& x = props.moleFractions();
+        const auto& x = props.speciesMoleFractions();
         aqstate = aqsolution.state(T, P, x);
         naq = props.speciesAmounts();
         echelonizer.updateWithPriorityWeights(naq);
@@ -217,14 +217,14 @@ struct AqueousProps::Impl
 
     auto pH() const -> real
     {
-        const auto ln_aH = props.lnActivities()[iH];
+        const auto ln_aH = props.speciesActivitiesLn()[iH];
         return -ln_aH/ln10;
     }
 
     auto pE() const -> real
     {
         const auto T = props.temperature();
-        const auto u = props.chemicalPotentials();
+        const auto u = props.speciesChemicalPotentials();
         const auto ib = echelonizer.indicesBasicVariables();
         const auto R = echelonizer.R();
         const auto Rb = R.topRows(ib.size());

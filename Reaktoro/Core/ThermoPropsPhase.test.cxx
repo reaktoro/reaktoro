@@ -78,14 +78,14 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     CHECK( props.temperature() == T );
     CHECK( props.pressure()    == P );
 
-    CHECK( props.standardGibbsEnergies()        .isApprox(G0)   );
-    CHECK( props.standardEnthalpies()           .isApprox(H0)   );
-    CHECK( props.standardVolumes()              .isApprox(V0)   );
-    CHECK( props.standardEntropies()            .isApprox(S0)   );
-    CHECK( props.standardInternalEnergies()     .isApprox(U0)   );
-    CHECK( props.standardHelmholtzEnergies()    .isApprox(A0)   );
-    CHECK( props.standardHeatCapacitiesConstP() .isApprox(Cp0)  );
-    CHECK( props.standardHeatCapacitiesConstV() .isApprox(Cv0)  );
+    CHECK( props.speciesStandardGibbsEnergies()        .isApprox(G0)   );
+    CHECK( props.speciesStandardEnthalpies()           .isApprox(H0)   );
+    CHECK( props.speciesStandardVolumes()              .isApprox(V0)   );
+    CHECK( props.speciesStandardEntropies()            .isApprox(S0)   );
+    CHECK( props.speciesStandardInternalEnergies()     .isApprox(U0)   );
+    CHECK( props.speciesStandardHelmholtzEnergies()    .isApprox(A0)   );
+    CHECK( props.speciesStandardHeatCapacitiesConstP() .isApprox(Cp0)  );
+    CHECK( props.speciesStandardHeatCapacitiesConstV() .isApprox(Cv0)  );
 
     //---------------------------------------------------------------------
     // Testing temperature derivatives of the properties
@@ -106,16 +106,16 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     CHECK( grad(props.temperature()) == 1.0 );
     CHECK( grad(props.pressure())    == 0.0 );
 
-    CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_T)   );
-    CHECK( grad(props.standardEnthalpies())           .isApprox(H0_T)   );
-    CHECK( grad(props.standardVolumes())              .isApprox(V0_T)   );
-    CHECK( grad(props.standardVolumesT())             .isApprox(VT0_T)  );
-    CHECK( grad(props.standardVolumesP())             .isApprox(VP0_T)  );
-    CHECK( grad(props.standardEntropies())            .isApprox(S0_T)   );
-    CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_T)   );
-    CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_T)   );
-    CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
-    CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
+    CHECK( grad(props.speciesStandardGibbsEnergies())        .isApprox(G0_T)   );
+    CHECK( grad(props.speciesStandardEnthalpies())           .isApprox(H0_T)   );
+    CHECK( grad(props.speciesStandardVolumes())              .isApprox(V0_T)   );
+    CHECK( grad(props.speciesStandardVolumesT())             .isApprox(VT0_T)  );
+    CHECK( grad(props.speciesStandardVolumesP())             .isApprox(VP0_T)  );
+    CHECK( grad(props.speciesStandardEntropies())            .isApprox(S0_T)   );
+    CHECK( grad(props.speciesStandardInternalEnergies())     .isApprox(U0_T)   );
+    CHECK( grad(props.speciesStandardHelmholtzEnergies())    .isApprox(A0_T)   );
+    CHECK( grad(props.speciesStandardHeatCapacitiesConstP()) .isApprox(Cp0_T)  );
+    CHECK( grad(props.speciesStandardHeatCapacitiesConstV()) .isApprox(Cv0_T)  );
 
     //---------------------------------------------------------------------
     // Testing pressure derivatives of the properties
@@ -136,14 +136,14 @@ TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
     CHECK( grad(props.temperature()) == 0.0 );
     CHECK( grad(props.pressure())    == 1.0 );
 
-    CHECK( grad(props.standardGibbsEnergies())        .isApprox(G0_P)   );
-    CHECK( grad(props.standardEnthalpies())           .isApprox(H0_P)   );
-    CHECK( grad(props.standardVolumes())              .isApprox(V0_P)   );
-    CHECK( grad(props.standardVolumesT())             .isApprox(VT0_P)  );
-    CHECK( grad(props.standardVolumesP())             .isApprox(VP0_P)  );
-    CHECK( grad(props.standardEntropies())            .isApprox(S0_P)   );
-    CHECK( grad(props.standardInternalEnergies())     .isApprox(U0_P)   );
-    CHECK( grad(props.standardHelmholtzEnergies())    .isApprox(A0_P)   );
-    CHECK( grad(props.standardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
-    CHECK( grad(props.standardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
+    CHECK( grad(props.speciesStandardGibbsEnergies())        .isApprox(G0_P)   );
+    CHECK( grad(props.speciesStandardEnthalpies())           .isApprox(H0_P)   );
+    CHECK( grad(props.speciesStandardVolumes())              .isApprox(V0_P)   );
+    CHECK( grad(props.speciesStandardVolumesT())             .isApprox(VT0_P)  );
+    CHECK( grad(props.speciesStandardVolumesP())             .isApprox(VP0_P)  );
+    CHECK( grad(props.speciesStandardEntropies())            .isApprox(S0_P)   );
+    CHECK( grad(props.speciesStandardInternalEnergies())     .isApprox(U0_P)   );
+    CHECK( grad(props.speciesStandardHelmholtzEnergies())    .isApprox(A0_P)   );
+    CHECK( grad(props.speciesStandardHeatCapacitiesConstP()) .isApprox(Cp0_P)  );
+    CHECK( grad(props.speciesStandardHeatCapacitiesConstV()) .isApprox(Cv0_P)  );
 }

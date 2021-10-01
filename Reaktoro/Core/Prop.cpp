@@ -68,64 +68,64 @@ auto Prop::speciesMass(const ChemicalSystem& system, const String& species) -> P
     errorif(true, "Prop::speciesMass has not been implemented yet."); // TODO: Implement method Prop::speciesMass.
 }
 
-auto Prop::moleFraction(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesMoleFraction(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::moleFraction has not been implemented yet."); // TODO: Implement method Prop::moleFraction.
+    errorif(true, "Prop::moleFraction has not been implemented yet."); // TODO: Implement method Prop::speciesMoleFraction.
 }
 
-auto Prop::activityCoefficient(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesActivityCoefficient(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::activityCoefficient has not been implemented yet."); // TODO: Implement method Prop::activityCoefficient.
+    errorif(true, "Prop::activityCoefficient has not been implemented yet."); // TODO: Implement method Prop::speciesActivityCoefficient.
 }
 
-auto Prop::activity(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesActivity(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::activity has not been implemented yet."); // TODO: Implement method Prop::activity.
+    errorif(true, "Prop::activity has not been implemented yet."); // TODO: Implement method Prop::speciesActivity.
 }
 
-auto Prop::chemicalPotential(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesChemicalPotential(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::chemicalPotential has not been implemented yet."); // TODO: Implement method Prop::chemicalPotential.
+    errorif(true, "Prop::chemicalPotential has not been implemented yet."); // TODO: Implement method Prop::speciesChemicalPotential.
 }
 
-auto Prop::standardVolume(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardVolume(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardVolume has not been implemented yet."); // TODO: Implement method Prop::standardVolume.
+    errorif(true, "Prop::standardVolume has not been implemented yet."); // TODO: Implement method Prop::speciesStandardVolume.
 }
 
-auto Prop::standardGibbsEnergy(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardGibbsEnergy(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardGibbsEnergy has not been implemented yet."); // TODO: Implement method Prop::standardGibbsEnergy.
+    errorif(true, "Prop::standardGibbsEnergy has not been implemented yet."); // TODO: Implement method Prop::speciesStandardGibbsEnergy.
 }
 
-auto Prop::standardEnthalpy(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardEnthalpy(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardEnthalpy has not been implemented yet."); // TODO: Implement method Prop::standardEnthalpy.
+    errorif(true, "Prop::standardEnthalpy has not been implemented yet."); // TODO: Implement method Prop::speciesStandardEnthalpy.
 }
 
-auto Prop::standardEntropy(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardEntropy(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardEntropy has not been implemented yet."); // TODO: Implement method Prop::standardEntropy.
+    errorif(true, "Prop::standardEntropy has not been implemented yet."); // TODO: Implement method Prop::speciesStandardEntropy.
 }
 
-auto Prop::standardInternalEnergy(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardInternalEnergy(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardInternalEnergy has not been implemented yet."); // TODO: Implement method Prop::standardInternalEnergy.
+    errorif(true, "Prop::standardInternalEnergy has not been implemented yet."); // TODO: Implement method Prop::speciesStandardInternalEnergy.
 }
 
-auto Prop::standardHelmholtzEnergy(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardHelmholtzEnergy(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardHelmholtzEnergy has not been implemented yet."); // TODO: Implement method Prop::standardHelmholtzEnergy.
+    errorif(true, "Prop::standardHelmholtzEnergy has not been implemented yet."); // TODO: Implement method Prop::speciesStandardHelmholtzEnergy.
 }
 
-auto Prop::standardHeatCapacitiesConstP(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardHeatCapacitiesConstP(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardHeatCapacitiesConstP has not been implemented yet."); // TODO: Implement method Prop::standardHeatCapacitiesConstP.
+    errorif(true, "Prop::speciesStandardHeatCapacitiesConstP has not been implemented yet."); // TODO: Implement method Prop::speciesStandardHeatCapacitiesConstP.
 }
 
-auto Prop::standardHeatCapacitiesConstV(const ChemicalSystem& system, const String& species) -> Prop
+auto Prop::speciesStandardHeatCapacitiesConstV(const ChemicalSystem& system, const String& species) -> Prop
 {
-    errorif(true, "Prop::standardHeatCapacitiesConstV has not been implemented yet."); // TODO: Implement method Prop::standardHeatCapacitiesConstV.
+    errorif(true, "Prop::speciesStandardHeatCapacitiesConstV has not been implemented yet."); // TODO: Implement method Prop::speciesStandardHeatCapacitiesConstV.
 }
 
 auto Prop::phaseAmount(const ChemicalSystem& system, const String& phase) -> Prop
