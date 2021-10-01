@@ -582,6 +582,21 @@ auto ChemicalProps::helmholtzEnergy() const -> real
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).helmholtzEnergy(); });
 }
 
+auto ChemicalProps::heatCapacityConstP() const -> real
+{
+    const auto iend = system().phases().size();
+    return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).heatCapacityConstP(); });
+}
+
+auto ChemicalProps::heatCapacityConstV() const -> real
+{
+    const auto Cp = heatCapacityConstP();
+    const auto T = temperature();
+    const auto VT = volumeT();
+    const auto VP = volumeP();
+    return Cp + T*VT*VT/VP;
+}
+
 auto ChemicalProps::output(std::ostream& out) const -> void
 {
     out << *this;

@@ -324,6 +324,12 @@ public:
     /// Return the Helmholtz energy of formation of the system (in J).
     auto helmholtzEnergy() const -> real;
 
+    /// Return the isobaric heat capacity of the system (in J/K).
+    auto heatCapacityConstP() const -> real;
+
+    /// Return the isochoric heat capacity of the system (in J/K).
+    auto heatCapacityConstV() const -> real;
+
     /// Output the chemical properties of the system to a stream.
     auto output(std::ostream& out) const -> void;
 
