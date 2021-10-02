@@ -49,7 +49,7 @@ struct Param::Impl
     double upperbound = +std::numeric_limits<double>::infinity();
 
     /// The boolean flag that indicates if this parameter is constant.
-    double isconst = false;
+    bool isconst = false;
 };
 
 Param::Param()

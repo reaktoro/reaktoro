@@ -33,7 +33,7 @@ auto standardThermoModelAqueous(real T, real P) -> StandardThermoProps
     props.V0  = 2.3 * log(P/T);
     props.Cp0 = 2.4 * log(P/T);
     return props;
-};
+}
 
 /// Return mock standard thermodynamic model for a gaseous species.
 auto standardThermoModelGaseous(real T, real P) -> StandardThermoProps
@@ -44,7 +44,7 @@ auto standardThermoModelGaseous(real T, real P) -> StandardThermoProps
     props.V0  = 0.3 * log(P/T);
     props.Cp0 = 0.4 * log(P/T);
     return props;
-};
+}
 
 /// Return mock standard thermodynamic model for a solid species.
 auto standardThermoModelSolid(real T, real P) -> StandardThermoProps
@@ -55,7 +55,7 @@ auto standardThermoModelSolid(real T, real P) -> StandardThermoProps
     props.V0  = 1.3 * log(P/T);
     props.Cp0 = 1.4 * log(P/T);
     return props;
-};
+}
 
 /// Return a mock Species object of aqueous type for test reasons.
 auto createAqueousSpecies(String name)
