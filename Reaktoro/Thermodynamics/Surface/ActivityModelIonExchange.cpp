@@ -101,7 +101,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                 {
                     // Calculate the ln activity coefficient of the exchange species using the Davies activity model
                     ln_g[i] = ln10*(-Agamma*ze[i]*ze[i]*sqrtI/(1 + sqrtI) - 0.3*I);
-
                 }
                 else // otherwise, the Debye--Huckel activity model is preferred
                 {
@@ -112,6 +111,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         }
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
+
     };
 
     return fn;

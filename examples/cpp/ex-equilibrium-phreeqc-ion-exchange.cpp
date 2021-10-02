@@ -28,8 +28,8 @@
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
-const auto T = 25.0 + 273.15; // temperature in K
-const auto P = 1.0 * 1e5;    // pressure in Pa
+const auto T = 25.0; // temperature in celsius
+const auto P = 1.0;  // pressure in bar
 
 auto speciesListToStringList(const SpeciesList& specieslist) -> StringList
 {
@@ -54,8 +54,10 @@ int main()
     // Fetch species for ion-exchange modeling
     SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
 
-    // The exchanger (exchanging site) phase X with exchange species X-
+    // Define an ion exchange phase
     IonExchangePhase exchange_phase(speciesListToStringList(exchange_species));
+    //IonExchangePhase exchange_phase(speciate("X Ca Na Mg"));
+    //IonExchangePhase exchange_phase(speciate("X Ca Na Mg"), exclude("organic")); //
     exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
 
     // Construct the chemical system
@@ -70,14 +72,12 @@ int main()
 
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
-    conditions.temperature(60.0, "celsius");
-    conditions.pressure(100.0, "bar");
-    conditions.charge(0, "mol");
+    conditions.temperature(T, "celsius");
+    conditions.pressure(P, "bar");
+    conditions.charge(0.0);
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setTemperature(T, "celsius");
-    solutionstate.setPressure(P, "bar");
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
     solutionstate.setSpeciesAmount("Na+"  , 1.10, "mol");
     solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mol");
@@ -90,15 +90,7 @@ int main()
 
     // Output the chemical state to a text file
     solutionstate.output("state.txt");
-
-    // Compute chemical and thermodynamic properties at equilibrium state
-    ChemicalProps props(solutionstate);
-
-    // Compute chemical properties for the aqueous phase at equilibrium state
-    AqueousProps aqprops(props);
-
-    // Output these properties
-    aqprops.output("aqprops.txt");
+    std::cout << solutionstate << std::endl;
 
     return 0;
 }
