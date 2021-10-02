@@ -82,7 +82,7 @@ public:
     Species();
 
     /// Construct a Species object with given chemical formula (e.g., `H2O`, `CaCO3`, `CO3--`, `CO3-2`).
-    explicit Species(String formula);
+    explicit Species(const String& formula);
 
     /// Construct a Species object with given attributes.
     explicit Species(const Attribs& attribs);
@@ -123,7 +123,7 @@ public:
     /// withStandardThermoModel or @ref withFormationReaction, in case the
     /// thermodynamic model is based on reaction properties.
     /// @param G0 The constant standard Gibbs energy of the species (in J/mol).
-    auto withStandardGibbsEnergy(Param G0) const -> Species;
+    auto withStandardGibbsEnergy(const Param& G0) const -> Species;
 
     /// Return a duplicate of this Species object with new standard thermodynamic model.
     /// This method assigns a standard thermodynamic model for the computation

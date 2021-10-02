@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 
@@ -42,10 +41,9 @@ auto defaultStandardThermoModel() -> StandardThermoModel
             "To fix this error, use one of the methods below in this Species object: \n"
             "    1) Species::withStandardThermoModel\n"
             "    2) Species::withStandardGibbsEnergy\n"
-            "    3) Species::withFormationReaction");
-        return {};
+            "    3) Species::withFormationReaction")
     };
-};
+}
 
 } // namespace detail
 
@@ -70,7 +68,7 @@ struct Species::Impl
     FormationReaction reaction;
 
     /// The aggregate state of the species.
-    AggregateState aggregate_state;
+    AggregateState aggregate_state = AggregateState::Undefined;
 
     /// The standard thermodynamic model function of the species (if any).
     StandardThermoModel propsfn = detail::defaultStandardThermoModel();
@@ -99,21 +97,21 @@ struct Species::Impl
     Impl(const Attribs& attribs)
     {
         errorif(attribs.name.empty(), "Could not construct Species object with constructor Species(Species::Attribs). "
-            "Species::Attribs::name cannot be empty.");
+            "Species::Attribs::name cannot be empty.")
         errorif(attribs.formula.empty(), "Could not construct Species object with constructor Species(Species::Attribs). "
-            "Species::Attribs::formula cannot be empty.");
+            "Species::Attribs::formula cannot be empty.")
         errorif(attribs.elements.size() == 0 && attribs.charge == 0, "Could not construct Species object with constructor Species(Species::Attribs). "
-            "Species::Attribs::elements cannot be empty while Species::Attribs::charge is zero.");
+            "Species::Attribs::elements cannot be empty while Species::Attribs::charge is zero.")
         errorif(attribs.aggregate_state == AggregateState::Undefined, "Could not construct Species object with constructor Species(Species::Attribs). "
-            "Species::Attribs::aggregate_state cannot be AggregateState::Undefined.");
+            "Species::Attribs::aggregate_state cannot be AggregateState::Undefined.")
         errorif(!attribs.std_thermo_model.initialized() && !attribs.formation_reaction.initialized(),
             "Could not construct Species object with constructor Species(Species::Attribs). "
             "Species::Attribs::std_thermo_model and Species::Attribs::formation_reaction "
-            "cannot be both uninitialized.");
+            "cannot be both uninitialized.")
         errorif(attribs.std_thermo_model.initialized() && attribs.formation_reaction.initialized(),
             "Could not construct Species object with constructor Species(Species::Attribs). "
             "Species::Attribs::std_thermo_model and Species::Attribs::formation_reaction "
-            "cannot be both initialized.");
+            "cannot be both initialized.")
         name = attribs.name;
         formula = detail::removeSuffix(attribs.formula);
         substance = attribs.substance.empty() ? formula : attribs.substance;
@@ -139,7 +137,7 @@ Species::Species()
 : pimpl(new Impl())
 {}
 
-Species::Species(String formula)
+Species::Species(const String& formula)
 : pimpl(new Impl(formula))
 {}
 
@@ -204,7 +202,7 @@ auto Species::withFormationReaction(const FormationReaction& reaction) const -> 
     return copy;
 }
 
-auto Species::withStandardGibbsEnergy(Param G0) const -> Species
+auto Species::withStandardGibbsEnergy(const Param& G0) const -> Species
 {
     return withStandardThermoModel(StandardThermoModelConstant({ G0 }));
 }
