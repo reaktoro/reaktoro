@@ -30,8 +30,7 @@ namespace test { extern auto createDatabasePhases() -> Database; }
 TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
 {
     // Extend the list of elements by the exchanger element
-    const auto X = Element().withSymbol("X").withMolarMass(10.0);
-    Elements::append(X);
+    Elements::append(Element().withSymbol("X").withMolarMass(10.0));
 
     // Create custom database
     Database db = test::createDatabasePhases();
@@ -80,60 +79,5 @@ TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
         CHECK(surface_db.species()[4].name() == "MgX2" ); // MgX2
         CHECK(surface_db.species()[5].name() == "NaX"  ); // NaX
         CHECK(surface_db.species()[6].name() == "NH4X" ); // NH4X
-    }
-
-    // Load phreeqc database
-    PhreeqcDatabase dbphreeqc("phreeqc.dat");
-
-    // Define ion exchange species list
-    // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
-    SpeciesList species = dbphreeqc.species().withAggregateState(AggregateState::IonExchange);
-
-    // Create the aqueous mixture
-    IonExchangeSurface surface(species);
-
-    SECTION("Checking the species in IonExchangeSurface")
-    {
-        CHECK(surface.species()[0].name()  == "X-"     ); // X-
-        CHECK(surface.species()[1].name()  == "AlOHX2" ); // AlOHX2
-        CHECK(surface.species()[2].name()  == "AlX3"   ); // AlX3
-        CHECK(surface.species()[3].name()  == "BaX2"   ); // BaX2
-        CHECK(surface.species()[4].name()  == "CaX2"   ); // CaX2
-        CHECK(surface.species()[5].name()  == "CdX2"   ); // CdX2
-        CHECK(surface.species()[6].name()  == "CuX2"   ); // CuX2
-        CHECK(surface.species()[7].name()  == "FeX2"   ); // FeX2
-        CHECK(surface.species()[8].name()  == "KX"     ); // KX
-        CHECK(surface.species()[9].name()  == "LiX"    ); // LiX
-        CHECK(surface.species()[10].name() == "MgX2"   ); // MgX2
-        CHECK(surface.species()[11].name() == "MnX2"   ); // MnX2
-        CHECK(surface.species()[12].name() == "NH4X"   ); // NH4X
-        CHECK(surface.species()[13].name() == "NaX"    ); // NaX
-        CHECK(surface.species()[14].name() == "PbX2"   ); // PbX2
-        CHECK(surface.species()[15].name() == "SrX2"   ); // SrX2
-        CHECK(surface.species()[16].name() == "ZnX2"   ); // ZnX2
-    }
-
-    SECTION("Checking the charges of the species in IonExchangeSurface")
-    {
-        // The numbers of exchanger's equivalents for exchange species
-        ArrayXd ze = surface.ze();
-
-        CHECK( ze[0]  == 0 ); // X-
-        CHECK( ze[1]  == 2 ); // AlOHX2
-        CHECK( ze[2]  == 3 ); // AlX3
-        CHECK( ze[3]  == 2 ); // BaX2
-        CHECK( ze[4]  == 2 ); // CaX2
-        CHECK( ze[5]  == 2 ); // CdX2
-        CHECK( ze[6]  == 2 ); // CuX2
-        CHECK( ze[7]  == 2 ); // FeX2
-        CHECK( ze[8]  == 1 ); // KX
-        CHECK( ze[9]  == 1 ); // LiX
-        CHECK( ze[10] == 2 ); // MgX2
-        CHECK( ze[11] == 2 ); // MnX2
-        CHECK( ze[12] == 1 ); // NH4X
-        CHECK( ze[13] == 1 ); // NaX
-        CHECK( ze[14] == 2 ); // PbX2
-        CHECK( ze[15] == 2 ); // SrX2
-        CHECK( ze[16] == 2 ); // ZnX2
     }
 }
