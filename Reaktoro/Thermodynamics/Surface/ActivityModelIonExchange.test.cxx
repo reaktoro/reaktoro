@@ -61,9 +61,7 @@ namespace test
 {
     extern auto createDatabasePhases() -> Database;
 
-    extern Map<String, Any> databases;
-
-    extern auto initializeDatabases(const String& string) -> void;
+    auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase;
 }
 
 TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
@@ -107,8 +105,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
     }
 
     // Initialize the database corresponding to the string `phreeqc.dat` has been already initialized
-    test::initializeDatabases("phreeqc.dat");
-    auto dbphreeqc = std::any_cast<PhreeqcDatabase>(test::databases["phreeqc.dat"]);
+    auto dbphreeqc = test::getPhreeqcDatabase("phreeqc.dat");
 
     // Define ion exchange species list
     // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
