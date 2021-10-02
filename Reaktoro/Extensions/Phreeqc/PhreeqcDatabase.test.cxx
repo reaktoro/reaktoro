@@ -23,8 +23,6 @@
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
-#include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
-#include <Reaktoro/Extensions/ThermoFun/ThermoFunDatabase.hpp>
 
 using namespace Reaktoro;
 
