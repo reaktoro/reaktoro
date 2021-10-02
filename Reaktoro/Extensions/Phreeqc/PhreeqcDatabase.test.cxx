@@ -26,8 +26,7 @@
 
 using namespace Reaktoro;
 
-namespace test
-{
+namespace test {
 
 auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase
 {
@@ -45,8 +44,7 @@ auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase
     return db;
 }
 
-}
-
+} // namespace test
 
 //=================================================================================================
 // AUXILIARY FUNCTIONS: DECLARATION
