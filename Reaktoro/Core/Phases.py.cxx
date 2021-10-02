@@ -148,4 +148,10 @@ void exportPhases(py::module& m)
         .def(py::init<const Speciate&, const Exclude&>())
         .def(py::init<const Exclude&>())
         ;
+
+    py::class_<IonExchangePhase, GenericPhase>(m, "IonExchangePhase")
+        .def(py::init<String>())
+        .def(py::init<const Speciate&>())
+        .def(py::init<const Speciate&, const Exclude&>())
+        ;
 }
