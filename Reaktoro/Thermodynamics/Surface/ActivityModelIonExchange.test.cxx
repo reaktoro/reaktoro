@@ -57,7 +57,14 @@ inline auto initializeAqueousMoleFractions(const SpeciesList& species) -> ArrayX
     return n / n.sum();
 }
 
-namespace test { extern auto createDatabasePhases() -> Database; }
+namespace test
+{
+    extern auto createDatabasePhases() -> Database;
+
+    extern Map<String, Any> databases;
+
+    extern auto initializeDatabases(const String& string) -> void;
+}
 
 TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
 {
@@ -99,8 +106,9 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[6] == Approx(-13.7102)  ); // NH4X
     }
 
-    // Load phreeqc database
-    PhreeqcDatabase dbphreeqc("phreeqc.dat");
+    // Initialize the database corresponding to the string `phreeqc.dat` has been already initialized
+    test::initializeDatabases("phreeqc.dat");
+    auto dbphreeqc = std::any_cast<PhreeqcDatabase>(test::databases["phreeqc.dat"]);
 
     // Define ion exchange species list
     // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2

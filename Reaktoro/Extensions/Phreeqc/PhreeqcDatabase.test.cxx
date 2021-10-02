@@ -23,7 +23,58 @@
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
+#include <Reaktoro/Extensions/ThermoFun/ThermoFunDatabase.hpp>
+
 using namespace Reaktoro;
+
+namespace test
+{
+
+Map<String, Any> databases;
+
+enum DatabaseType
+{
+    Phreeqc,    // databases defined by the dat files
+    Supcrt,     // databases defined by the xml files with names `supcrt**`
+    ThermoFun,  // databases defined by the json files with names `**-thermofun`
+    Reaktoro    // databases defined by the json or yaml files `**tbl`
+};
+
+auto getDatabaseType(const String& string) -> DatabaseType
+{
+    if(string.find(".dat") < string.size())             // name of the file `.dat`
+        return DatabaseType::Phreeqc;
+    else if (string.find("supcrt") < string.size())     // name of the file `supcrt`
+        return DatabaseType::Supcrt;
+    else if (string.find("thermofun") < string.size())  // name of the file `thermofun`
+        return DatabaseType::ThermoFun;
+    else
+        return DatabaseType::Reaktoro;
+}
+
+auto initializeDatabases(const String& string) -> void
+{
+    if(!databases[string].has_value())
+    {
+        switch (getDatabaseType(string))
+        {
+            case DatabaseType::Phreeqc:
+                databases[string] = PhreeqcDatabase(string);
+                break;
+            case DatabaseType::Supcrt or DatabaseType::Reaktoro:
+                databases[string] = SupcrtDatabase(string);
+                break;
+            case DatabaseType::ThermoFun:
+                databases[string] = ThermoFunDatabase(string);
+                break;
+            default:
+                warning(true, "Reaktoro is not able to understand the type of database in the file " + string);
+        }
+    }
+}
+}
+
 
 //=================================================================================================
 // AUXILIARY FUNCTIONS: DECLARATION
@@ -400,7 +451,8 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 
 TEST_CASE("Testing pressure correction in standard thermodynamic properties calculations", "[PhreeqcDatabase]")
 {
-    static const PhreeqcDatabase db("phreeqc.dat"); // if not static, GENERATE causes many instantiations of PhreeqcDatabase
+    test::initializeDatabases("phreeqc.dat");
+    static const auto db = std::any_cast<PhreeqcDatabase>(test::databases["phreeqc.dat"]);
 
     const auto T = GENERATE( 298.15 );
     const auto P = GENERATE( 1.0e5 );
