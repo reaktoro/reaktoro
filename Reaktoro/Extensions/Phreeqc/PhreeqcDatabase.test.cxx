@@ -84,10 +84,10 @@ auto initializeDatabases(const String& string) -> void
 auto getStringContentsPhreeqcDatabaseComplement() -> String;
 
 /// Calculate the actual equilibrium constant of the formation reaction of a product species with given name.
-auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real;
+auto lgK(const PhreeqcDatabase& db, real T, real P, const String& name) -> real;
 
 /// Calculate the actual enthalpy of formation reaction of a product species with given name.
-auto dH0(const PhreeqcDatabase& db, real T, real P, String name) -> real;
+auto dH0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real;
 
 /// Calculate the actual standard molar Gibbs energies of species with given name.
 auto G0(const PhreeqcDatabase& db, real T, real P, String name) -> real;
@@ -111,10 +111,10 @@ auto lgK_analytic(real T, const Vec<real>& A) -> real;
 /// considers reactions for gases and minerals in a dissociation format (i.e.,
 /// the species associated with the reaction is on the left-hand side; it's a
 /// reactant species).
-auto lgK_sign(const PhreeqcDatabase& db, String name) -> real;
+auto lgK_sign(const PhreeqcDatabase& db, const String& name) -> real;
 
 /// Calculate the expected equilibrium constant of a reaction using standard molar Gibbs energies of species.
-auto lgK_fromG0(const PhreeqcDatabase& db, real T, real P, Pairs<String, double> reaction) -> real;
+auto lgK_fromG0(const PhreeqcDatabase& db, real T, real P, const Pairs<String, double>& reaction) -> real;
 
 TEST_CASE("Testing PhreeqcDatabase constructor and load method", "[PhreeqcDatabase]")
 {
@@ -247,7 +247,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("H") == 2              );
     CHECK( species.elements().coefficient("O") == 1              );
-    CHECK( species.reaction().reactants().size() == 0            );
+    CHECK( species.reaction().reactants().empty()                );
 
     species = db.species().get("e-");
 
@@ -259,7 +259,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.molarMass() == Approx(5.4857990888E-07)       );
     CHECK( species.elements().size() == 1                        );
     CHECK( species.elements().coefficient("e") == 1              );
-    CHECK( species.reaction().reactants().size() == 0            );
+    CHECK( species.reaction().reactants().empty()                );
 
     species = db.species().get("CO2");
 
@@ -288,7 +288,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
     CHECK( species.elements().size() == 2                        );
     CHECK( species.elements().coefficient("C") == 1              );
     CHECK( species.elements().coefficient("O") == 3              );
-    CHECK( species.reaction().reactants().size() == 0            );
+    CHECK( species.reaction().reactants().empty()                );
 
     species = db.species().get("Pb2OH+3");
 
@@ -402,9 +402,9 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 
     for(auto [species, pair] : vanthoff_data)
     {
-        INFO("species: " << species);
-        INFO("T: " << T << " K");
-        INFO("P: " << P << " Pa");
+        INFO("species: " << species)
+        INFO("T: " << T << " K")
+        INFO("P: " << P << " Pa")
         CHECK( lgK(db, T, P, species) == Approx(lgK_vantHoff(T, pair.first, pair.second) * lgK_sign(db, species)) );
     }
 
@@ -423,9 +423,9 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 
     for(auto [species, A] : coefficients_data)
     {
-        INFO("species: " << species);
-        INFO("T: " << T << " K");
-        INFO("P: " << P << " Pa");
+        INFO("species: " << species)
+        INFO("T: " << T << " K")
+        INFO("P: " << P << " Pa")
         CHECK( lgK(db, T, P, species) == Approx(lgK_analytic(T, A) * lgK_sign(db, species)) );
     }
 
@@ -442,9 +442,9 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 
     for(auto [species, reaction] : reactions)
     {
-        INFO("species: " << species);
-        INFO("T: " << T << " K");
-        INFO("P: " << P << " Pa");
+        INFO("species: " << species)
+        INFO("T: " << T << " K")
+        INFO("P: " << P << " Pa")
         CHECK( lgK(db, T, P, species) == Approx(lgK_fromG0(db, T, P, reaction)) );
     }
 }
@@ -471,7 +471,7 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         const auto propsT0P1 = species.props(T0, P1);
         const auto propsT1P1 = species.props(T1, P1);
 
-        INFO("species: " << species.name());
+        INFO("species: " << species.name())
 
         CHECK(propsT0P0.G0  == Approx(0.0)         );
         CHECK(propsT0P0.H0  == Approx(0.0)         );
@@ -502,7 +502,7 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         const auto propsT0P1 = species.props(T0, P1);
         const auto propsT1P1 = species.props(T1, P1);
 
-        INFO("species: " << species.name());
+        INFO("species: " << species.name())
 
         CHECK(propsT0P0.G0  == Approx(0.0) );
         CHECK(propsT0P0.H0  == Approx(0.0) );
@@ -533,7 +533,7 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         const auto propsT0P1 = species.props(T0, P1);
         const auto propsT1P1 = species.props(T1, P1);
 
-        INFO("species: " << species.name());
+        INFO("species: " << species.name())
 
         CHECK(propsT0P0.G0  == Approx(-95213.7)    );
         CHECK(propsT0P0.H0  == Approx(-24010.3)    );
@@ -564,7 +564,7 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         const auto propsT0P1 = species.props(T0, P1);
         const auto propsT1P1 = species.props(T1, P1);
 
-        INFO("species: " << species.name());
+        INFO("species: " << species.name())
 
         CHECK(propsT0P0.G0  == Approx(-48402.9) );
         CHECK(propsT0P0.H0  == Approx(9608.99)  );
@@ -598,7 +598,7 @@ auto evalReactionThermoProps(const Species& species, real T, real P)
     return species.reaction().reactionThermoModel()({T, P, dV0});
 }
 
-auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real
+auto lgK(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
 {
     const auto species = db.species().get(name);
     const auto dG0 = evalReactionThermoProps(species, T, P).dG0;
@@ -607,7 +607,7 @@ auto lgK(const PhreeqcDatabase& db, real T, real P, String name) -> real
     return lnK / ln10;
 }
 
-auto dH0(const PhreeqcDatabase& db, real T, real P, String name) -> real
+auto dH0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
 {
     const auto species = db.species().get(name);
     const auto dH0 = evalReactionThermoProps(species, T, P).dH0;
@@ -633,11 +633,11 @@ auto lgK_analytic(real T, const Vec<real>& A) -> real
     return A[0] + A[1]*T + A[2]/T + A[3]*log10(T) + A[4]/(T*T) + A[5]*T*T;
 }
 
-auto lgK_sign(const PhreeqcDatabase& db, String name) -> real
+auto lgK_sign(const PhreeqcDatabase& db, const String& name) -> real
 {
     // NOTE: The logic below is needed because in Reaktoro any reaction
     // associated with a chemical species is represented as a formation
-    // reaction, i.e., a reaction in which the species it self is on the
+    // reaction, i.e., a reaction in which the species itself is on the
     // product side (right-hand side of the reaction). In PHREEQC, this does
     // not for gases and minerals. That's why we multiply the log(K) by -1 for
     // chemical species with gas and solid aggregate state.
@@ -647,7 +647,7 @@ auto lgK_sign(const PhreeqcDatabase& db, String name) -> real
     return sign;
 }
 
-auto lgK_fromG0(const PhreeqcDatabase& db, real T, real P, Pairs<String, double> reaction) -> real
+auto lgK_fromG0(const PhreeqcDatabase& db, real T, real P, const Pairs<String, double>& reaction) -> real
 {
     real lnK = 0.0;
     for(auto [species, coeff] : reaction)
