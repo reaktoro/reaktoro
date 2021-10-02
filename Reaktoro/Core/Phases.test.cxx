@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phases.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Phases", "[Phases]")
@@ -365,6 +366,11 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkPhase(phase, species[0], species, StateOfMatter::Solid, AggregateState::Solid);
     };
 
+    auto checkIonExchangePhase = [&](Phase phase, StringList species)
+    {
+        checkPhase(phase, "IonExchangePhase", species, StateOfMatter::Solid, AggregateState::IonExchange);
+    };
+
     SECTION("Testing Phases with an aqueous solution only")
     {
         Phases phases(db);
@@ -633,5 +639,72 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkGaseousPhase(phasevec[1], "CO2(g) O2(g) H2(g) H2O(g) CH4(g) CO(g)");
         checkMineralPhase(phasevec[2], "Halite");
         checkMineralPhase(phasevec[3], "Graphite");
+    }
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
+    // TESTING CLASS: IonExchangePhase
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+
+    // Load phreeqc database
+    PhreeqcDatabase phreeqcdb("phreeqc.dat");
+
+    // Define ion exchange species list
+    // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
+    SpeciesList species = phreeqcdb.species().withAggregateState(AggregateState::IonExchange);
+
+    auto speciesListToStringList = [&](const SpeciesList& specieslist) -> StringList
+    {
+        std::vector<std::string> speciesvector;
+        for (const auto& species : specieslist)
+            speciesvector.push_back(species.name());
+
+        return StringList{speciesvector};
+    };
+
+    SECTION("Testing IonExchangePhase::IonExchange(StringList)")
+    {
+        Phases phases(phreeqcdb);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( IonExchangePhase(speciesListToStringList(species)) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "CO3-2 H+ H2O CO2 (CO2)2 HCO3- CH4 Cl- H2 Na+ NaCO3- NaHCO3 OH- NaOH O2");
+        checkIonExchangePhase(phasevec[1], "X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2");
+    }
+
+    SECTION("Testing IonExchangePhase::IonExchange(Speciate)")
+    {
+        Phases phases(phreeqcdb);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( IonExchangePhase(speciate("X Na Mg Cl Ca")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "CO3-2 H+ H2O CO2 (CO2)2 HCO3- CH4 Cl- H2 Na+ NaCO3- NaHCO3 OH- NaOH O2");
+        checkIonExchangePhase(phasevec[1], "X- CaX2 MgX2 NaX");
+    }
+
+    SECTION("Testing IonExchangePhase::IonExchange(Speciate, Exclude)")
+    {
+        Phases phases(phreeqcdb);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( IonExchangePhase(speciate("X Na Mg Cl Ca"), exclude("organics")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "CO3-2 H+ H2O CO2 (CO2)2 HCO3- CH4 Cl- H2 Na+ NaCO3- NaHCO3 OH- NaOH O2");
+        checkIonExchangePhase(phasevec[1], "X- CaX2 MgX2 NaX");
     }
 }
