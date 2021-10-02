@@ -59,7 +59,7 @@ inline auto initializeAqueousMoleFractions(const SpeciesList& species) -> ArrayX
 
 namespace test
 {
-    extern auto createDatabasePhases() -> Database;
+    extern auto createDatabase() -> Database;
 
     auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase;
 }
@@ -75,7 +75,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
     Elements::append(X);
 
     // Create custom database
-    Database db = test::createDatabasePhases();
+    Database db = test::createDatabase();
 
     // Define ion exchange species list
     // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X

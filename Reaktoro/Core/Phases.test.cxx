@@ -21,15 +21,14 @@
 // Reaktoro includes
 #include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 #include <Reaktoro/Singletons/Elements.hpp>
 
 using namespace Reaktoro;
 
-namespace test
-{
+namespace test {
+
 /// Return a mock Database object for testing different phases.
-auto createDatabasePhases() -> Database
+auto createDatabase() -> Database
 {
     Database db;
 
@@ -81,7 +80,8 @@ auto createDatabasePhases() -> Database
 
     return db;
 }
-}
+
+} // namespace test
 
 TEST_CASE("Testing Phases", "[Phases]")
 {
@@ -94,7 +94,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         return fn;
     };
 
-    Database db = test::createDatabasePhases();
+    Database db = test::createDatabase();
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
