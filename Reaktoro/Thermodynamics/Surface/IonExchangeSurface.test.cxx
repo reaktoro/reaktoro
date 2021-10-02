@@ -25,7 +25,7 @@
 
 using namespace Reaktoro;
 
-namespace test { extern auto createDatabasePhases() -> Database; }
+namespace test { extern auto createDatabase() -> Database; }
 
 TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
 {
@@ -33,7 +33,7 @@ TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
     Elements::append(Element().withSymbol("X").withMolarMass(10.0));
 
     // Create custom database
-    Database db = test::createDatabasePhases();
+    Database db = test::createDatabase();
 
     // Define ion exchange species list
     // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X
