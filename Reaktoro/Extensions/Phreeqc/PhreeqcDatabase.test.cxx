@@ -31,48 +31,22 @@ using namespace Reaktoro;
 namespace test
 {
 
-Map<String, Any> databases;
-
-enum DatabaseType
+auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase
 {
-    Phreeqc,    // databases defined by the dat files
-    Supcrt,     // databases defined by the xml files with names `supcrt**`
-    ThermoFun,  // databases defined by the json files with names `**-thermofun`
-    Reaktoro    // databases defined by the json or yaml files `**tbl`
-};
+    // Define map storing names files with corresponding initialized PhreeqcDatabase instances
+    static Map<String, PhreeqcDatabase> databases;
 
-auto getDatabaseType(const String& string) -> DatabaseType
-{
-    if(string.find(".dat") < string.size())             // name of the file `.dat`
-        return DatabaseType::Phreeqc;
-    else if (string.find("supcrt") < string.size())     // name of the file `supcrt`
-        return DatabaseType::Supcrt;
-    else if (string.find("thermofun") < string.size())  // name of the file `thermofun`
-        return DatabaseType::ThermoFun;
-    else
-        return DatabaseType::Reaktoro;
+    // Check if databases already contains PhreeqcDatabase database corresponding to the input filename
+    const auto it = databases.find(name);
+    if(it != databases.end()) return it->second;
+
+    // Create PhreeqcDatabase database and add an try to the `databases` map
+    PhreeqcDatabase db(name);
+    databases[name] = db;
+
+    return db;
 }
 
-auto initializeDatabases(const String& string) -> void
-{
-    if(!databases[string].has_value())
-    {
-        switch (getDatabaseType(string))
-        {
-            case DatabaseType::Phreeqc:
-                databases[string] = PhreeqcDatabase(string);
-                break;
-            case DatabaseType::Supcrt or DatabaseType::Reaktoro:
-                databases[string] = SupcrtDatabase(string);
-                break;
-            case DatabaseType::ThermoFun:
-                databases[string] = ThermoFunDatabase(string);
-                break;
-            default:
-                warning(true, "Reaktoro is not able to understand the type of database in the file " + string);
-        }
-    }
-}
 }
 
 
@@ -204,7 +178,7 @@ TEST_CASE("Testing PhreeqcDatabase constructor and load method", "[PhreeqcDataba
 
 TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase", "[PhreeqcDatabase]")
 {
-    const PhreeqcDatabase db("phreeqc.dat");
+    const auto db = test::getPhreeqcDatabase("phreeqc.dat");
 
     //-------------------------------------------------------------------------
     // Testing for the existence of selected elements
@@ -374,7 +348,7 @@ TEST_CASE("Testing species and its attributes after constructing PhreeqcDatabase
 
 TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDatabase]")
 {
-    static const PhreeqcDatabase db("phreeqc.dat"); // if not static, GENERATE causes many instantiations of PhreeqcDatabase
+    static const auto db = test::getPhreeqcDatabase("phreeqc.dat");
 
     // const auto T = GENERATE( 298.15, 303.15, 333.15, 363.15 );
     // const auto P = GENERATE( 1.0e5, 10.0e5, 50.0e5, 100.0e5 );
@@ -451,8 +425,7 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
 
 TEST_CASE("Testing pressure correction in standard thermodynamic properties calculations", "[PhreeqcDatabase]")
 {
-    test::initializeDatabases("phreeqc.dat");
-    static const auto db = std::any_cast<PhreeqcDatabase>(test::databases["phreeqc.dat"]);
+    static const auto db = test::getPhreeqcDatabase("phreeqc.dat");
 
     const auto T = GENERATE( 298.15 );
     const auto P = GENERATE( 1.0e5 );
