@@ -20,18 +20,19 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Phases.hpp>
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
+
 using namespace Reaktoro;
 
-TEST_CASE("Testing Phases", "[Phases]")
+namespace test
 {
-    ActivityModelGenerator activitymodel = [](const SpeciesList& species)
-    {
-        ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args) {};
-        return fn;
-    };
-
+/// Return a mock Database object for testing different phases.
+auto createDatabasePhases() -> Database
+{
     Database db;
+
     db.addSpecies( Species("H2O(aq)") );
     db.addSpecies( Species("H+") );
     db.addSpecies( Species("OH-") );
@@ -70,6 +71,30 @@ TEST_CASE("Testing Phases", "[Phases]")
     db.addSpecies( Species("H2O(g)") );
     db.addSpecies( Species("CH4(g)") );
     db.addSpecies( Species("CO(g)") );
+    db.addSpecies( Species("X-").withAggregateState(AggregateState::IonExchange));
+    db.addSpecies( Species("AlX3").withName("AlX3").withAggregateState(AggregateState::IonExchange ));
+    db.addSpecies( Species("CaX2").withName("CaX2").withAggregateState(AggregateState::IonExchange ));
+    db.addSpecies( Species("KX").withName("KX").withAggregateState(AggregateState::IonExchange ));
+    db.addSpecies( Species("MgX2").withName("MgX2").withAggregateState(AggregateState::IonExchange ));
+    db.addSpecies( Species("NaX").withName("NaX").withAggregateState(AggregateState::IonExchange ));
+    db.addSpecies( Species("NH4X").withName("NH4X").withAggregateState(AggregateState::IonExchange ));
+
+    return db;
+}
+}
+
+TEST_CASE("Testing Phases", "[Phases]")
+{
+    const auto X = Element().withSymbol("X").withMolarMass(10.0);
+    Elements::append(X);
+
+    ActivityModelGenerator activitymodel = [](const SpeciesList& species)
+    {
+        ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args) {};
+        return fn;
+    };
+
+    Database db = test::createDatabasePhases();
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
@@ -336,7 +361,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
 
-    auto checkPhase = [&](Phase phase, String name, StringList species, StateOfMatter stateofmatter, AggregateState aggregatestate)
+    auto checkPhase = [&](const Phase& phase, const String& name, const StringList& species, StateOfMatter stateofmatter, AggregateState aggregatestate)
     {
         CHECK( phase.name() == name );
         CHECK( phase.stateOfMatter() == stateofmatter );
@@ -346,27 +371,27 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.species().size() == species.size() );
         for(auto i = 0; i < species.size(); ++i)
         {
-            INFO(str("phase name = ", name, ", species index = ", i));
+            INFO(str("phase name = ", name, ", species index = ", i))
             CHECK( phase.species(i).name() == species[i] );
         }
     };
 
-    auto checkAqueousPhase = [&](Phase phase, StringList species)
+    auto checkAqueousPhase = [&](const Phase& phase, const StringList& species)
     {
         checkPhase(phase, "AqueousPhase", species, StateOfMatter::Liquid, AggregateState::Aqueous);
     };
 
-    auto checkGaseousPhase = [&](Phase phase, StringList species)
+    auto checkGaseousPhase = [&](const Phase& phase, const StringList& species)
     {
         checkPhase(phase, "GaseousPhase", species, StateOfMatter::Gas, AggregateState::Gas);
     };
 
-    auto checkMineralPhase = [&](Phase phase, StringList species)
+    auto checkMineralPhase = [&](const Phase& phase, const StringList& species)
     {
         checkPhase(phase, species[0], species, StateOfMatter::Solid, AggregateState::Solid);
     };
 
-    auto checkIonExchangePhase = [&](Phase phase, StringList species)
+    auto checkIonExchangePhase = [&](const Phase& phase, const StringList& species)
     {
         checkPhase(phase, "IonExchangePhase", species, StateOfMatter::Solid, AggregateState::IonExchange);
     };
@@ -647,13 +672,6 @@ TEST_CASE("Testing Phases", "[Phases]")
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
 
-    // Load phreeqc database
-    PhreeqcDatabase phreeqcdb("phreeqc.dat");
-
-    // Define ion exchange species list
-    // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
-    SpeciesList species = phreeqcdb.species().withAggregateState(AggregateState::IonExchange);
-
     auto speciesListToStringList = [&](const SpeciesList& specieslist) -> StringList
     {
         std::vector<std::string> speciesvector;
@@ -663,12 +681,68 @@ TEST_CASE("Testing Phases", "[Phases]")
         return StringList{speciesvector};
     };
 
-    SECTION("Testing IonExchangePhase::IonExchange(StringList)")
+    // Define ion exchange species list
+    // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X
+    SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange);
+
+    SECTION("Testing IonExchangePhase::IonExchange(StringList) initialized with custom database")
+    {
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( IonExchangePhase(speciesListToStringList(species)) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
+        checkIonExchangePhase(phasevec[1], "X- AlX3 CaX2 KX MgX2 NaX NH4X");
+    }
+
+    SECTION("Testing IonExchangePhase::IonExchange(Speciate) initialized with custom database")
+    {
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( IonExchangePhase(speciate("X Na Ca")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
+        checkIonExchangePhase(phasevec[1], "X- CaX2 NaX");
+    }
+
+    SECTION("Testing IonExchangePhase::IonExchange(Speciate, Exclude) initialized with custom database")
+    {
+        Phases phases(db);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
+        phases.add( IonExchangePhase(speciate("X Na Ca"), exclude("organics")) );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
+        checkIonExchangePhase(phasevec[1], "X- CaX2 NaX");
+    }
+
+    // Load phreeqc database
+    PhreeqcDatabase phreeqcdb("phreeqc.dat");
+
+    // Define ion exchange species list
+    // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
+    SpeciesList species_ = phreeqcdb.species().withAggregateState(AggregateState::IonExchange);
+
+    SECTION("Testing IonExchangePhase::IonExchange(StringList) initialized with PhreeqcDatabase")
     {
         Phases phases(phreeqcdb);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl")) );
-        phases.add( IonExchangePhase(speciesListToStringList(species)) );
+        phases.add( IonExchangePhase(speciesListToStringList(species_)) );
 
         Vec<Phase> phasevec = phases.convert();
 
@@ -678,7 +752,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkIonExchangePhase(phasevec[1], "X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2");
     }
 
-    SECTION("Testing IonExchangePhase::IonExchange(Speciate)")
+    SECTION("Testing IonExchangePhase::IonExchange(Speciate) initialized with PhreeqcDatabase")
     {
         Phases phases(phreeqcdb);
 
@@ -693,7 +767,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkIonExchangePhase(phasevec[1], "X- CaX2 MgX2 NaX");
     }
 
-    SECTION("Testing IonExchangePhase::IonExchange(Speciate, Exclude)")
+    SECTION("Testing IonExchangePhase::IonExchange(Speciate, Exclude) initialized with PhreeqcDatabase")
     {
         Phases phases(phreeqcdb);
 

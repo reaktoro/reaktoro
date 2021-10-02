@@ -21,9 +21,9 @@
 // Reaktoro includes
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 
 using namespace Reaktoro;
 
@@ -57,69 +57,57 @@ inline auto initializeAqueousMoleFractions(const SpeciesList& species) -> ArrayX
     return n / n.sum();
 }
 
+namespace test { extern auto createDatabasePhases() -> Database; }
+
 TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
 {
-    // Load phreeqc database
-    PhreeqcDatabase db("phreeqc.dat");
-
-    // Define ion exchange species list
-    // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
-    SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange);
-
-    // Initialize corresponding species fractions
-    const auto x = initializeMoleFractions(species);
-
-    SECTION("Checking the species")
-    {
-        CHECK(species[0].name()  == "X-"     ); // X-
-        CHECK(species[1].name()  == "AlOHX2" ); // AlOHX2
-        CHECK(species[2].name()  == "AlX3"   ); // AlX3
-        CHECK(species[3].name()  == "BaX2"   ); // BaX2
-        CHECK(species[4].name()  == "CaX2"   ); // CaX2
-        CHECK(species[5].name()  == "CdX2"   ); // CdX2
-        CHECK(species[6].name()  == "CuX2"   ); // CuX2
-        CHECK(species[7].name()  == "FeX2"   ); // FeX2
-        CHECK(species[8].name()  == "KX"     ); // KX
-        CHECK(species[9].name()  == "LiX"    ); // LiX
-        CHECK(species[10].name() == "MgX2"   ); // MgX2
-        CHECK(species[11].name() == "MnX2"   ); // MnX2
-        CHECK(species[12].name() == "NH4X"   ); // NH4X
-        CHECK(species[13].name() == "NaX"    ); // NaX
-        CHECK(species[14].name() == "PbX2"   ); // PbX2
-        CHECK(species[15].name() == "SrX2"   ); // SrX2
-        CHECK(species[16].name() == "ZnX2"   ); // ZnX2
-    }
-
-    SECTION("Checking the charges")
-    {
-        // Create the aqueous mixture
-        IonExchangeSurface surface(species);
-
-        // The numbers of exchanger's equivalents for exchange species
-        ArrayXd ze = surface.ze();
-
-        CHECK( ze[0]  == 0 ); // X-
-        CHECK( ze[1]  == 2 ); // AlOHX2
-        CHECK( ze[2]  == 3 ); // AlX3
-        CHECK( ze[3]  == 2 ); // BaX2
-        CHECK( ze[4]  == 2 ); // CaX2
-        CHECK( ze[5]  == 2 ); // CdX2
-        CHECK( ze[6]  == 2 ); // CuX2
-        CHECK( ze[7]  == 2 ); // FeX2
-        CHECK( ze[8]  == 1 ); // KX
-        CHECK( ze[9]  == 1 ); // LiX
-        CHECK( ze[10] == 2 ); // MgX2
-        CHECK( ze[11] == 2 ); // MnX2
-        CHECK( ze[12] == 1 ); // NH4X
-        CHECK( ze[13] == 1 ); // NaX
-        CHECK( ze[14] == 2 ); // PbX2
-        CHECK( ze[15] == 2 ); // SrX2
-        CHECK( ze[16] == 2 ); // ZnX2
-    }
-
     // Initialize input data for the ActivityProps
     const auto T = 300.0;
     const auto P = 12.3e5;
+
+    // Extend the list of elements by the exchanger element
+    const auto X = Element().withSymbol("X").withMolarMass(10.0);
+    Elements::append(X);
+
+    // Create custom database
+    Database db = test::createDatabasePhases();
+
+    // Define ion exchange species list
+    // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X
+    SpeciesList species_db = db.species().withAggregateState(AggregateState::IonExchange);
+
+    // Initialize corresponding species fractions
+    const auto x_db = initializeMoleFractions(species_db);
+
+    SECTION("Checking the activities (custom database)")
+    {
+        // Construct the activity model function with the given ion exchange species.
+        ActivityModel fn = ActivityModelIonExchange()(species_db);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species_db.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x_db});
+
+        CHECK( props.ln_a[0] == Approx(  0.0)     ); // X-
+        CHECK( props.ln_a[1] == Approx(-12.6116)  ); // AlX3
+        CHECK( props.ln_a[2] == Approx(-0.810936) ); // CaX2
+        CHECK( props.ln_a[3] == Approx(-13.7102)  ); // KX
+        CHECK( props.ln_a[4] == Approx(-1.5041)   ); // MgX2
+        CHECK( props.ln_a[5] == Approx(-1.09862)  ); // NaX
+        CHECK( props.ln_a[6] == Approx(-13.7102)  ); // NH4X
+    }
+
+    // Load phreeqc database
+    PhreeqcDatabase dbphreeqc("phreeqc.dat");
+
+    // Define ion exchange species list
+    // Expected species: X- AlOHX2 AlX3 BaX2 CaX2 CdX2 CuX2 FeX2 KX LiX MgX2 MnX2 NH4X NaX PbX2 SrX2 ZnX2
+    SpeciesList species = dbphreeqc.species().withAggregateState(AggregateState::IonExchange);
+
+    // Initialize corresponding species fractions
+    const auto x = initializeMoleFractions(species);
 
     SECTION("Checking the activities")
     {
