@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Singletons/Elements.hpp>
 
 namespace Reaktoro {
 
@@ -60,16 +59,16 @@ struct IonExchangeSurface::Impl
     }
 
     // Return the number of exchanger's equivalents (the charge of cations) for the ion exchange species.
-    static auto exchangerEquivalentsNumber(const Species& species) -> real
+    static auto exchangerEquivalentsNumber(const Species& species, const String& exchanger_symbol) -> real
     {
         // Run through the elements of the current species and return the coefficient of the exchanger
         for(auto [element, coeff] : species.elements())
-            if(!Elements::withSymbol(element.symbol()))
+            if(element.symbol() == exchanger_symbol)
                 return coeff;
 
-            // If all the elements are part of the periodic table then the exchanger is missing
-            errorif(true, "Could not get information about the exchanger equivalents number. "
-                          "Ensure the ion exchange phase contains correct species")
+        // If all the elements are part of the periodic table then the exchanger is missing
+        errorif(true, "Could not get information about the exchanger equivalents number. "
+                      "Ensure the ion exchange phase contains correct species")
     }
 
     /// Initialize the array of exchanger's equivalents numbers (or cation charges) in all species.
@@ -82,9 +81,12 @@ struct IonExchangeSurface::Impl
         // The numbers of exchanger's equivalents for exchange species
         ze = ArrayXr::Zero(num_species);
 
+        // Define the element symbol presenting the exchanger
+        auto exchanger_symbol = species[this->idx_exchanger].elements().symbols()[0];
+
         // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
         for(Index i : idx_exchange_species)
-            ze[i] = exchangerEquivalentsNumber(species[i]);
+            ze[i] = exchangerEquivalentsNumber(species[i], exchanger_symbol);
     }
 
     /// Initialize the indices related data of the species.
