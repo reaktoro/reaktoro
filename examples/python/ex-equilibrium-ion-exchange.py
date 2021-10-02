@@ -55,6 +55,8 @@ system = ChemicalSystem(db, solution, exchange)
 specs = EquilibriumSpecs(system)
 specs.temperature()
 specs.pressure()
+specs.charge()
+specs.openTo("Cl-")
 
 T = 25.0 # temperature in celsius
 P = 1.0  # pressure in bar
@@ -63,6 +65,7 @@ P = 1.0  # pressure in bar
 conditions = EquilibriumConditions(specs)
 conditions.temperature(T, "celsius")
 conditions.pressure(P, "bar")
+conditions.charge(0.0)
 
 # Define initial equilibrium state
 state = ChemicalState(system)
@@ -78,7 +81,4 @@ state.setSpeciesAmount("X-"  , 0.06, "mol")
 solver = EquilibriumSolver(specs)
 solver.solve(state, conditions)
 state.output("state-python-species-full.txt")
-
-# Compute chemical properties for the aqueous phase at equilibrium state and output them
-aprops = AqueousProps(state)
-aprops.output("aprops-python-species-full.txt")
+print(state)
