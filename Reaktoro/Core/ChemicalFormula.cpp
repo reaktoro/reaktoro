@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 
 namespace Reaktoro {

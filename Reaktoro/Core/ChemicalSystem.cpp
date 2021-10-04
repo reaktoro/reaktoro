@@ -18,13 +18,10 @@
 #include "ChemicalSystem.hpp"
 
 // C++ includes
-#include <cassert>
 #include <iostream>
-#include <iomanip>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
