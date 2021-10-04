@@ -26,19 +26,13 @@
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
+#include <Reaktoro/Core/Utils.hpp>
+
 using namespace Reaktoro;
 
 const auto T = 25.0; // temperature in celsius
 const auto P = 1.0;  // pressure in bar
 
-auto speciesListToStringList(const SpeciesList& specieslist) -> StringList
-{
-    std::vector<std::string> speciesvector;
-    for (const auto& species : specieslist)
-        speciesvector.push_back(species.name());
-
-    return StringList{speciesvector};
-}
 int main()
 {
     // Initialize the Phreeqc database
@@ -55,7 +49,7 @@ int main()
     SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
 
     // Define an ion exchange phase
-    IonExchangePhase exchange_phase(speciesListToStringList(exchange_species));
+    IonExchangePhase exchange_phase(detail::extractNames(exchange_species));
     //IonExchangePhase exchange_phase(speciate("X Ca Na Mg"));
     //IonExchangePhase exchange_phase(speciate("X Ca Na Mg"), exclude("organic")); //
     exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());

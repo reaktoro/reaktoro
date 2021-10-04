@@ -20,9 +20,15 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/ElementList.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
+
 using namespace Reaktoro;
 
 void exportCoreUtils(py::module& m)
 {
-
+    m.def("extractNames", py::overload_cast<const PhaseList&>(detail::extractNames));
+    m.def("extractNames", py::overload_cast<const ElementList&>(detail::extractNames));
+    m.def("extractNames", py::overload_cast<const SpeciesList&>(detail::extractNames));
 }

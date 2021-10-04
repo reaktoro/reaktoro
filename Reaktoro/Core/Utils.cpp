@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Common/Algorithms.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -117,6 +118,21 @@ auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elemen
     for(auto i = 0; i < num_species; ++i)
         A(num_elements, i) = species[i].charge();
     return A;
+}
+
+auto extractNames(const SpeciesList& list) -> Strings
+{
+    return vectorize(list, RKT_LAMBDA(x, x.name()));
+}
+
+auto extractNames(const ElementList& list) -> Strings
+{
+    return vectorize(list, RKT_LAMBDA(x, x.name()));
+}
+
+auto extractNames(const PhaseList& list) -> Strings
+{
+    return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
 } // namespace detail
