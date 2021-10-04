@@ -19,6 +19,7 @@ dependencies:
   - git
   - graphviz  # [linux]
   - gxx_linux-64=9.4.0  # [linux]
+  - make  # [unix]
   - ninja
   - nlohmann_json
   - numpy
