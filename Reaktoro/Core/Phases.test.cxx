@@ -21,7 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Singletons/Elements.hpp>
 
 using namespace Reaktoro;
@@ -672,15 +672,6 @@ TEST_CASE("Testing Phases", "[Phases]")
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
 
-    auto speciesListToStringList = [&](const SpeciesList& specieslist) -> StringList
-    {
-        std::vector<std::string> speciesvector;
-        for (const auto& species : specieslist)
-            speciesvector.push_back(species.name());
-
-        return StringList{speciesvector};
-    };
-
     // Define ion exchange species list
     // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X
     SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange);
@@ -690,7 +681,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl")) );
-        phases.add( IonExchangePhase(speciesListToStringList(species)) );
+        phases.add( IonExchangePhase(detail::extractNames(species)) );
 
         Vec<Phase> phasevec = phases.convert();
 

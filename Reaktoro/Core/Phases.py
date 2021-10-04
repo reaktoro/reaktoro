@@ -269,12 +269,6 @@ def testPhases():
     # Testing IonExchangePhases initialized by the list of species
     # -----------------------------------------------------------------------------------------------------------------
 
-    def speciesListToStringList(specieslist):
-        species_list = ""
-        for s in specieslist:
-            species_list += s.name() + " "
-        return species_list
-
     dbphreeqc = PhreeqcDatabase("phreeqc.dat")
 
     # Define an aqueous phase
@@ -282,7 +276,7 @@ def testPhases():
 
     # Define an ion exchange phase
     exchange_species = dbphreeqc.species().withAggregateState(AggregateState.IonExchange)
-    exchange = IonExchangePhase(speciesListToStringList(exchange_species))
+    exchange = IonExchangePhase(' '.join(extractNames(exchange_species)))
 
     phases = Phases(dbphreeqc)
     phases.add( solution )
