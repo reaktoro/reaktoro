@@ -59,7 +59,7 @@ struct IonExchangeSurface::Impl
     }
 
     // Return the number of exchanger's equivalents (the charge of cations) for the ion exchange species.
-    static auto exchangerEquivalentsNumber(const Species& species, const String& exchanger_symbol) -> real
+    auto exchangerEquivalentsNumber(const Species& species, const String& exchanger_symbol) -> real
     {
         // Run through the elements of the current species and return the coefficient of the exchanger
         for(auto [element, coeff] : species.elements())
@@ -82,7 +82,7 @@ struct IonExchangeSurface::Impl
         ze = ArrayXr::Zero(num_species);
 
         // Define the element symbol presenting the exchanger
-        auto exchanger_symbol = species[this->idx_exchanger].elements().symbols()[0];
+        auto exchanger_symbol = species[idx_exchanger].elements().symbols()[0];
 
         // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
         for(Index i : idx_exchange_species)
