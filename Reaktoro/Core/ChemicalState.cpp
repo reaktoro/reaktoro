@@ -233,6 +233,11 @@ struct ChemicalState::Impl
         const auto& A = system.formulaMatrixElements();
         return A * n.matrix();
     }
+    auto chargeAmount() const -> real
+    {
+        const auto& Az = system.formulaMatrixCharge();
+        return (Az * n.matrix())[0];
+    }
 };
 
 ChemicalState::ChemicalState(const ChemicalSystem& system)
@@ -390,6 +395,11 @@ auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
 auto ChemicalState::elementAmounts() const -> ArrayXr
 {
     return pimpl->elementAmounts();
+}
+
+auto ChemicalState::chargeAmount() const -> real
+{
+    return pimpl->chargeAmount();
 }
 
 auto ChemicalState::speciesAmount(Index ispecies) const -> real
@@ -692,8 +702,14 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", str(T), "K" });
     table.add_row({ "Pressure", str(P), "Pa" });
-    table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
-    table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
+    table.add_row({ "Element Amount:", "", "" });
+    for(auto i = 0; i < b.size(); ++i)
+        if(b[i] > 1e-15)
+            table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
+    table.add_row({ "Species Amount:", "", "" });
+    for(auto i = 0; i < n.size(); ++i)
+        if(n[i] > 1e-15)
+            table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
 
     auto i = 0;
     for(auto& row : table)
