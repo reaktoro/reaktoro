@@ -111,6 +111,9 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         }
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
+
+        // Update logarithms of the
+        surface.setLogarithmsOfActivities(ln_g);
     };
 
     return fn;

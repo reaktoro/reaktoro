@@ -43,6 +43,9 @@ struct IonExchangeSurface::Impl
     /// The indices of ion exchange species.
     Indices idx_exchange_species;
 
+    /// The state of the ion exchange surface
+    IonExchangeSurfaceState exchange_state;
+
     /// Construct a default IonExchangeSurface::Impl instance.
     Impl()
     {}
@@ -114,6 +117,41 @@ struct IonExchangeSurface::Impl
         exchange_species = filter(species, [](const Species& s){ return s.charge() == 0.0;});
     }
 
+    /// Return the amounts of the species on the ion exchange surface (in moles) if the molar fractions are provided.
+    auto amounts(ArrayXrConstRef x) const -> ArrayXr
+    {
+        return x*x.sum();
+    }
+
+    /// Return the equivalences of the species on the ion exchange composition (in meq) if amounts are provided.
+    auto equivalences(ArrayXrConstRef n) const -> ArrayXr
+    {
+        return n*ze;
+    }
+
+    /// Return the equivalences fractions of the species on ion exchange surface if molar fractions are provided.
+    auto equivalencesFractions(ArrayXrConstRef x) const -> ArrayXr
+    {
+        // beta_i = xi * zi / sum_c (xc * zc)
+        return x*ze/(x*ze).sum();
+    }
+
+    /// Return the state of the ion exchange surface.
+    auto state(ArrayXrConstRef x) -> IonExchangeSurfaceState
+    {
+        exchange_state.n  = amounts(x);
+        exchange_state.meq = equivalences(exchange_state.n);
+        exchange_state.beta = equivalencesFractions(x);
+
+        return exchange_state;
+    }
+
+    /// Set logarithm of activities of for ion exchange species.
+    auto setLogarithmsOfActivities(ArrayXrConstRef lng) -> void
+    {
+        exchange_state.lng = lng;
+    }
+
 };
 
 IonExchangeSurface::IonExchangeSurface()
@@ -154,6 +192,16 @@ auto IonExchangeSurface::indexExchanger() const -> Index
 auto IonExchangeSurface::indicesExchange() const -> const Indices&
 {
     return pimpl->idx_exchange_species;
+}
+
+auto IonExchangeSurface::state(ArrayXrConstRef x) -> IonExchangeSurfaceState
+{
+    return pimpl->state(x);
+}
+
+auto IonExchangeSurface::setLogarithmsOfActivities(ArrayXrConstRef lng) -> void
+{
+    return pimpl->setLogarithmsOfActivities(lng);
 }
 
 } // namespace Reaktoro
