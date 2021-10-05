@@ -24,6 +24,23 @@
 
 namespace Reaktoro {
 
+/// A type used to describe the state of an ion exchange surface.
+/// @see IonExchangeComposition
+struct IonExchangeSurfaceState
+{
+    /// The amounts of the exchange species (in mol)
+    ArrayXr n;
+
+    /// The equivalences of the exchange species (in meq)
+    ArrayXr meq;
+
+    /// The equivalence fractions of the exchange species
+    ArrayXr beta;
+
+    /// The natural logarithms of the activity coefficients (calculated during the activity model evaluation)
+    ArrayXr lng;
+};
+
 /// A type used to describe an ion exchange surface.
 /// The IonExchangeSurface class is defined as a collection of Species objects, representing,
 /// therefore, a composition of ion exchange phase. Its main purpose is to provide the
@@ -44,6 +61,7 @@ public:
     auto clone() const -> IonExchangeSurface;
 
     /// Return the exchange species on the surface with given index.
+    /// @param idx The index of the species in the ion exchange surface
     auto species(Index idx) const -> const Species&;
 
     /// Return the exchange species on the surface.
@@ -57,6 +75,13 @@ public:
 
     /// Return the array of exchanger's equivalents numbers (or cation charges) in ion exchange species.
     auto ze() const -> ArrayXdConstRef;
+
+    /// Calculate the state of the aqueous mixture.
+    /// @param x The fraction of the species in the composition
+    auto state(ArrayXrConstRef x) -> IonExchangeSurfaceState;
+
+    /// Set logarithm of activities of for ion exchange species.
+    auto setLogarithmsOfActivities(ArrayXrConstRef lng) -> void;
 
 private:
     struct Impl;
