@@ -25,7 +25,11 @@
 
 using namespace Reaktoro;
 
-namespace test { extern auto createDatabasePhases() -> Database; }
+namespace test {
+
+    extern auto createDatabasePhases() -> Database;
+
+} // namespace test
 
 TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
 {
@@ -36,8 +40,8 @@ TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
     Database db = test::createDatabasePhases();
 
     // Define ion exchange species list
-    // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X
-    SpeciesList species_db = db.species().withAggregateState(AggregateState::IonExchange);
+    // Expected species: AlX3 CaX2 KX MgX2 NaX NH4X
+    SpeciesList species_db = db.species().withAggregateState(AggregateState::IonExchange).withCharge(0.0);
 
     // Create the aqueous mixture
     IonExchangeSurface surface_db(species_db);
@@ -47,37 +51,21 @@ TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
         // The numbers of exchanger's equivalents for exchange species
         ArrayXd ze = surface_db.ze();
 
-        CHECK( ze[0] == 0 ); // X-
-        CHECK( ze[1] == 3 ); // AlX3
-        CHECK( ze[2] == 2 ); // CaX2
-        CHECK( ze[3] == 1 ); // KX
-        CHECK( ze[4] == 2 ); // MgX2
-        CHECK( ze[5] == 1 ); // NaX
-        CHECK( ze[6] == 1 ); // NH4X
-    }
-
-    SECTION("Checking indices in IonExchangeSurface (custom database)")
-    {
-        auto exchanger_index  = surface_db.indexExchanger();
-        auto exchange_indices = surface_db.indicesExchange();
-
-        CHECK( exchanger_index     == 0 );
-        CHECK( exchange_indices[0] == 1 );
-        CHECK( exchange_indices[1] == 2 );
-        CHECK( exchange_indices[2] == 3 );
-        CHECK( exchange_indices[3] == 4 );
-        CHECK( exchange_indices[4] == 5 );
-        CHECK( exchange_indices[5] == 6 );
+        CHECK( ze[0] == 3.0 ); // AlX3
+        CHECK( ze[1] == 2.0 ); // CaX2
+        CHECK( ze[2] == 1.0 ); // KX
+        CHECK( ze[3] == 2.0 ); // MgX2
+        CHECK( ze[4] == 1.0 ); // NaX
+        CHECK( ze[5] == 1.0 ); // NH4X
     }
 
     SECTION("Checking the species in IonExchangeSurface (custom database)")
     {
-        CHECK(surface_db.species()[0].name() == "X-"   ); // X-
-        CHECK(surface_db.species()[1].name() == "AlX3" ); // AlX3
-        CHECK(surface_db.species()[2].name() == "CaX2" ); // CaX2
-        CHECK(surface_db.species()[3].name() == "KX"   ); // KX
-        CHECK(surface_db.species()[4].name() == "MgX2" ); // MgX2
-        CHECK(surface_db.species()[5].name() == "NaX"  ); // NaX
-        CHECK(surface_db.species()[6].name() == "NH4X" ); // NH4X
+        CHECK(surface_db.species()[0].name() == "AlX3" ); // AlX3
+        CHECK(surface_db.species()[1].name() == "CaX2" ); // CaX2
+        CHECK(surface_db.species()[2].name() == "KX"   ); // KX
+        CHECK(surface_db.species()[3].name() == "MgX2" ); // MgX2
+        CHECK(surface_db.species()[4].name() == "NaX"  ); // NaX
+        CHECK(surface_db.species()[5].name() == "NH4X" ); // NH4X
     }
 }

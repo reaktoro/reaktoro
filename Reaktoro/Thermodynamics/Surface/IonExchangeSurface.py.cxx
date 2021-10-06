@@ -25,13 +25,21 @@ using namespace Reaktoro;
 
 void exportIonExchangeSurface(py::module& m)
 {
+    py::class_<IonExchangeSurfaceState>(m, "IonExchangeSurfaceState")
+    .def(py::init<>())
+    .def_readwrite("meq", &IonExchangeSurfaceState::meq)
+    .def_readwrite("lng", &IonExchangeSurfaceState::lng)
+    .def_readwrite("n", &IonExchangeSurfaceState::n)
+    .def_readwrite("meq", &IonExchangeSurfaceState::meq)
+    ;
+
     py::class_<IonExchangeSurface>(m, "IonExchangeSurface")
     .def(py::init<const SpeciesList&>())
     .def("clone", &IonExchangeSurface::clone)
     .def("species", py::overload_cast<Index>(&IonExchangeSurface::species, py::const_))
     .def("species", py::overload_cast<>(&IonExchangeSurface::species, py::const_))
-    .def("indicesExchange", &IonExchangeSurface::indicesExchange)
-    .def("indexExchanger", &IonExchangeSurface::indexExchanger)
     .def("ze", &IonExchangeSurface::ze)
+    .def("setLogarithmsOfActivities", &IonExchangeSurface::setLogarithmsOfActivities)
+    .def("state", &IonExchangeSurface::state)
     ;
 }

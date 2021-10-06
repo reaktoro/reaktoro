@@ -40,10 +40,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
     // The number of all species and ion exchange species in the current exchange phase only
     const auto num_species = species.size();
 
-    // The index of the exchanger and indices of the ion exchange species
-    const auto iexchanger = surface.indexExchanger();
-    const auto iexchange = surface.indicesExchange();
-
     // The numbers of exchanger's equivalents for exchange species
     ArrayXd ze = surface.ze();
 
@@ -57,16 +53,11 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
 
-        // Set the contribution of the exchanger activity
-        ln_a[iexchanger] = 0.0;
-
-        // Set the contribution of ion exchange species as the ln of equivalence fractions
-        ln_a(iexchange) = (x(iexchange)*ze(iexchange)/(x(iexchange)*ze(iexchange)).sum()).log();
+        // Calculate ln of activities of ion exchange species as the ln of equivalence fractions
+        ln_a = (x*ze/(x*ze).sum()).log();
 
         // Initialized the ln of activity coefficients of the ion exchange species on the surface
         ln_g = ArrayXr::Zero(num_species);
-
-        std::cout << "x(iexchange)*ze(iexchange)).sum() = " << (x(iexchange)*ze(iexchange)).sum() << std::endl;
 
         // Calculate Davies and Debye--Huckel parameters only if the AqueousPhase has been already evaluated
         if (props.extra["AqueousMixtureState"].has_value())
@@ -90,9 +81,9 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
             const auto Agamma = 0.5095; // the Debye-Huckel parameter
 
             // Loop over all ion exchange species in composition
-            for(Index i : iexchange)
+            for(auto i = 0; i < num_species; i++)
             {
-                // Fetch phreeqc species from the `attacheddata` field of the species
+                // Fetch phreeqc species from the `attachedData` field of the species
                 const auto phreeqc_species = std::any_cast<const PhreeqcSpecies*>(species[i].attachedData());
 
                 // Fetch Debye--Huckel activity model parameters a and b
@@ -109,15 +100,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                     // Calculate the ln activity coefficient of the exchange species using the Debye--Huckel model
                     ln_g[i] = ln10*(-A*ze[i]*ze[i]*sqrtI/(1.0 + a*B*sqrtI) + b*I);
                 }
-                std::cout << species[i].name()
-                          <<" | x[i] = " << x[i]
-                          <<" | z[i] = " << ze[i]
-                          <<" | beta[i] = " << exp(ln_a[i])
-                          <<" | ln_a[i] = " <<  ln_a[i]
-                          << " | ln_g[i] = " <<  ln_g[i]
-                          << " | " << ((b == 99.9)?" Davies ":" DH ")
-                          << " | a = " << a
-                          << " | b = " << b << std::endl;
             }
         }
         // Add the correction introduced by the activity coefficients
