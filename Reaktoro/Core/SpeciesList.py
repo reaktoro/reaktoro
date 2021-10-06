@@ -306,6 +306,24 @@ def testSpeciesList():
         specieslist.withSubstances("H+(aq) ABC")
 
     #-------------------------------------------------------------------------
+    # TESTING METHOD: SpeciesList::withCharge
+    #-------------------------------------------------------------------------
+
+    filtered = specieslist.withCharge(0.0)
+
+    assert filtered.size() == 9
+
+    assert filtered[0].name()  == "H2O(aq)"
+    assert filtered[1].name()  == "H2(aq)"
+    assert filtered[2].name()  == "O2(aq)"
+    assert filtered[3].name()  == "NaCl(aq)"
+    assert filtered[4].name()  == "CO2(aq)"
+    assert filtered[5].name()  == "CH4(aq)"
+    assert filtered[6].name()  == "H2O(g)"
+    assert filtered[7].name()  == "CO2(g)"
+    assert filtered[8].name()  == "CH4(g)"
+
+    #-------------------------------------------------------------------------
     # TESTING METHOD: SpeciesList::withTag
     #-------------------------------------------------------------------------
     filtered = specieslist.withTag("charged")

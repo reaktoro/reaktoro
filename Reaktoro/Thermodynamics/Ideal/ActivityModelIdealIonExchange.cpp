@@ -29,10 +29,6 @@ auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
         // Create the ion exchange surface
         IonExchangeSurface surface(species);
 
-        // Indices of the exchanger and ion exchange species
-        const auto iexchanger = surface.indexExchanger();
-        const auto iexchange = surface.indicesExchange();
-
         // The numbers of exchanger's equivalents for exchange species
         ArrayXd ze = surface.ze();
 
@@ -41,11 +37,8 @@ auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
             // Fetch species fractions for the activity model evaluation
             const auto x = args.x;
 
-            // Set the contribution of the exchanger activity
-            props.ln_a[iexchanger] = 0.0;
-
-            // Set the contribution of ion exchange species as the ln of equivalence fractions
-            props.ln_a(iexchange) = (x(iexchange)*ze(iexchange)/(x(iexchange)*ze(iexchange)).sum()).log();
+            // Calculate ln of activities of ion exchange species as the ln of equivalence fractions
+            props.ln_a = (x*ze/(x*ze).sum()).log();
         };
 
         return fn;

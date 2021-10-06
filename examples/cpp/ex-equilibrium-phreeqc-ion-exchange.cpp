@@ -61,22 +61,30 @@ int main()
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
-    specs.charge();
-    specs.openTo("Cl-");
+    //specs.charge();
+    specs.pH();
+    //specs.openTo("Cl-");
 
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
     conditions.temperature(T, "celsius");
     conditions.pressure(P, "bar");
-    conditions.charge(0.0);
+    //conditions.charge(0.0);
+    conditions.pH(7.0);
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mol");
-    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mol");
-    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mol");
+//    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mol");
+//    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mol");
+//    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mol");
+    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mmol");
+    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mmol");
+    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mmol");
     solutionstate.setSpeciesAmount("X-"   , 0.06, "mol");
+
+    // Output the chemical state to a text file
+    std::cout << solutionstate << std::endl;
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(specs);
@@ -85,6 +93,11 @@ int main()
     // Output the chemical state to a text file
     solutionstate.output("state.txt");
     std::cout << solutionstate << std::endl;
+
+    AqueousProps aprops(solutionstate);
+    std::cout << "I  = " << aprops.ionicStrength() << " mol/kgw" << std::endl;
+    std::cout << "pH = " << aprops.pH() << std::endl;
+    std::cout << "pE = " << aprops.pE() << std::endl;
 
     return 0;
 }

@@ -82,16 +82,16 @@ public:
     /// Return the index of the first species with given substance name or throw a runtime error if not found.
     auto indexWithSubstance(const String& substance) const -> Index;
 
-    /// Return the species with given name.
+    /// Return the species with a given name.
     auto get(const String& name) const -> const Species&;
 
-    /// Return the species with given name.
+    /// Return the species with a given name.
     auto getWithName(const String& name) const -> const Species&;
 
-    /// Return the species with given formula.
+    /// Return the species with a given formula.
     auto getWithFormula(const ChemicalFormula& formula) const -> const Species&;
 
-    /// Return the species with given substance name.
+    /// Return the species with a given substance name.
     auto getWithSubstance(const String substance) const -> const Species&;
 
     /// Return all species with given names.
@@ -103,8 +103,11 @@ public:
     /// Return all species with given substance names.
     auto withSubstances(const StringList& substances) const -> SpeciesList;
 
-    /// Return all species with given aggregate state.
+    /// Return all species with a given aggregate state.
     auto withAggregateState(AggregateState state) const -> SpeciesList;
+
+    /// Return all species with a given charge.
+    auto withCharge(real value) const -> SpeciesList;
 
     /// Return all species with a given tag.
     auto withTag(String tag) const -> SpeciesList;

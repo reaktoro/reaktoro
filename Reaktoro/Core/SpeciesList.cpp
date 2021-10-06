@@ -164,6 +164,11 @@ auto SpeciesList::withAggregateState(AggregateState state) const -> SpeciesList
     return filter(m_species, RKT_LAMBDA(s, s.aggregateState() == state));
 }
 
+auto SpeciesList::withCharge(real value) const -> SpeciesList
+{
+    return filter(m_species, RKT_LAMBDA(s, s.charge() == value));
+}
+
 auto SpeciesList::withTag(String tag) const -> SpeciesList
 {
     if(tag.empty())

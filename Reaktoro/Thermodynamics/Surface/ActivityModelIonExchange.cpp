@@ -66,6 +66,8 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         // Initialized the ln of activity coefficients of the ion exchange species on the surface
         ln_g = ArrayXr::Zero(num_species);
 
+        std::cout << "x(iexchange)*ze(iexchange)).sum() = " << (x(iexchange)*ze(iexchange)).sum() << std::endl;
+
         // Calculate Davies and Debye--Huckel parameters only if the AqueousPhase has been already evaluated
         if (props.extra["AqueousMixtureState"].has_value())
         {
@@ -107,6 +109,15 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
                     // Calculate the ln activity coefficient of the exchange species using the Debye--Huckel model
                     ln_g[i] = ln10*(-A*ze[i]*ze[i]*sqrtI/(1.0 + a*B*sqrtI) + b*I);
                 }
+                std::cout << species[i].name()
+                          <<" | x[i] = " << x[i]
+                          <<" | z[i] = " << ze[i]
+                          <<" | beta[i] = " << exp(ln_a[i])
+                          <<" | ln_a[i] = " <<  ln_a[i]
+                          << " | ln_g[i] = " <<  ln_g[i]
+                          << " | " << ((b == 99.9)?" Davies ":" DH ")
+                          << " | a = " << a
+                          << " | b = " << b << std::endl;
             }
         }
         // Add the correction introduced by the activity coefficients
@@ -115,7 +126,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         // Update logarithms of the
         surface.setLogarithmsOfActivities(ln_g);
     };
-
     return fn;
 }
 
