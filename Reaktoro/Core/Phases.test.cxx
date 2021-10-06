@@ -26,8 +26,8 @@
 
 using namespace Reaktoro;
 
-namespace test
-{
+namespace test {
+
 /// Return a mock Database object for testing different phases.
 auto createDatabasePhases() -> Database
 {
@@ -81,7 +81,7 @@ auto createDatabasePhases() -> Database
 
     return db;
 }
-}
+} // namespace test
 
 TEST_CASE("Testing Phases", "[Phases]")
 {
