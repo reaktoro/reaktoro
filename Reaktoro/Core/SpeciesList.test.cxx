@@ -311,6 +311,35 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     REQUIRE_THROWS( specieslist.withSubstances("H+(aq) ABC") );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: SpeciesList::withCharge
+    //-------------------------------------------------------------------------
+    filtered = specieslist.withCharge(0.0);
+
+    CHECK( filtered.size() == 9 );
+    CHECK( filtered[0].name()  == "H2O(aq)"  );
+    CHECK( filtered[1].name()  == "H2(aq)"   );
+    CHECK( filtered[2].name()  == "O2(aq)"   );
+    CHECK( filtered[3].name()  == "NaCl(aq)" );
+    CHECK( filtered[4].name()  == "CO2(aq)"  );
+    CHECK( filtered[5].name()  == "CH4(aq)"  );
+    CHECK( filtered[6].name()  == "H2O(g)"   );
+    CHECK( filtered[7].name()  == "CO2(g)"   );
+    CHECK( filtered[8].name()  == "CH4(g)"   );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: SpeciesList::withTag
+    //-------------------------------------------------------------------------
+    filtered = specieslist.withTag("charged");
+
+    CHECK( filtered.size() == 6 );
+    CHECK( filtered.indexWithName("H+(aq)"   ) < filtered.size() );
+    CHECK( filtered.indexWithName("OH-(aq)"  ) < filtered.size() );
+    CHECK( filtered.indexWithName("Na+(aq)"  ) < filtered.size() );
+    CHECK( filtered.indexWithName("Cl-(aq)"  ) < filtered.size() );
+    CHECK( filtered.indexWithName("HCO3-(aq)") < filtered.size() );
+    CHECK( filtered.indexWithName("CO3-2(aq)") < filtered.size() );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: SpeciesList::withTag
     //-------------------------------------------------------------------------
     filtered = specieslist.withTag("charged");
