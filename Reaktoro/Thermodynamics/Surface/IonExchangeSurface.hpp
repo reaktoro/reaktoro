@@ -67,12 +67,6 @@ public:
     /// Return the exchange species on the surface.
     auto species() const -> const SpeciesList&;
 
-    /// Return the indices of the exchanger on the surface.
-    auto indexExchanger() const -> Index;
-
-    /// Return the indices of the exchange species on the surface.
-    auto indicesExchange() const -> const Indices&;
-
     /// Return the array of exchanger's equivalents numbers (or cation charges) in ion exchange species.
     auto ze() const -> ArrayXdConstRef;
 

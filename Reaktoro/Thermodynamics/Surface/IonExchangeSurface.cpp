@@ -28,20 +28,11 @@ struct IonExchangeSurface::Impl
     /// All species on the ion exchange surface.
     SpeciesList species;
 
-    /// The ion exchange species on the surface.
-    SpeciesList exchange_species;
-
-    /// The exchanger on the surface.
-    SpeciesList exchanger_species;
+    /// The element symbol representing the exchanger
+    String exchanger_symbol;
 
     /// The array of exchanger's equivalents numbers for exchange species only (ze.size() = exchange_species.size()).
     ArrayXd ze;
-
-    /// The index of the exchanger.
-    Index idx_exchanger = 0;
-
-    /// The indices of ion exchange species.
-    Indices idx_exchange_species;
 
     /// The state of the ion exchange surface
     IonExchangeSurfaceState exchange_state;
@@ -54,11 +45,43 @@ struct IonExchangeSurface::Impl
     Impl(const SpeciesList& species)
     : species(species)
     {
-        /// Initialize the indices related data of the species
-        initializeIndices();
+        /// Initialize the symbol of the exchanger
+        intializeExchanger();
 
         /// Initialize the array of exchanger's equivalents numbers.
         initializeExchangerEquivalentsNumbers();
+    }
+
+    /// Initialize the symbol representing the exchanger.
+    auto intializeExchanger() -> void
+    {
+        errorif(species.size() == 0, "There is no species in the IonExchange Phase")
+
+        // Fetch elements' symbols from the first species
+        auto esymbols = species[0].elements().symbols();
+        auto num_esymbols = esymbols.size();
+
+        // Creat the auxiliary vector to count the matches of the symbol
+        std::vector<Index> count_elements(esymbols.size());
+
+        // Loop over symbols
+        for(auto i = 0; i < num_esymbols; i++)
+        {
+            // Loop over all species to check for the existence of the current symbol in them
+            for(auto s : species)
+            {
+                if(contains(s.elements().symbols(), esymbols[i]))
+                    count_elements[i]++;
+            }
+            // Step out if the common symbol has been found
+            if(count_elements[i] == species.size())
+            {
+                exchanger_symbol = esymbols[i];
+                break;
+            }
+        }
+        // Raise an error if the exchanger_symbol wasn't found
+        errorif(exchanger_symbol.empty(), "There is no common element amount species to represent an exchanger.")
     }
 
     // Return the number of exchanger's equivalents (the charge of cations) for the ion exchange species.
@@ -84,37 +107,9 @@ struct IonExchangeSurface::Impl
         // The numbers of exchanger's equivalents for exchange species
         ze = ArrayXr::Zero(num_species);
 
-        // Define the element symbol presenting the exchanger
-        auto exchanger_symbol = species[idx_exchanger].elements().symbols()[0];
-
-        // Initialize exchanger's equivalents by parsing the elements of the ion exchange species
-        for(Index i : idx_exchange_species)
+        // Initialize exchanger's equivalents by parsing the species on the ion exchange surface
+        for(int i = 0; i < num_species; ++i)
             ze[i] = exchangerEquivalentsNumber(species[i], exchanger_symbol);
-    }
-
-    /// Initialize the indices related data of the species.
-    auto initializeIndices() -> void
-    {
-        // Initialize the array of indices with charged species
-        Indices idx_charged_species;
-
-        // Initialize the indices of the ion exchange species
-        for(auto i = 0; i < species.size(); ++i)
-            if(species[i].charge() == 0.0)
-                idx_exchange_species.push_back(i);
-            else
-                idx_charged_species.push_back(i);
-
-        // Initialize the index of the exchanger (assuming that it is the only charged species)
-        idx_exchanger = idx_charged_species[0];
-    }
-
-    /// Initialize the lists of species separated into exchanger and exchange species on the surface
-    auto initializeSpecies() -> void
-    {
-        // Separate exchanger (e.g., X-) from exchange species (NaX, KX, NaY, NaY, ect)
-        exchanger_species = filter(species, [](const Species& s){ return s.charge() != 0.0;});
-        exchange_species = filter(species, [](const Species& s){ return s.charge() == 0.0;});
     }
 
     /// Return the amounts of the species on the ion exchange surface (in moles) if the molar fractions are provided.
@@ -182,16 +177,6 @@ auto IonExchangeSurface::species() const -> const SpeciesList&
 auto IonExchangeSurface::ze() const -> ArrayXdConstRef
 {
     return pimpl->ze;
-}
-
-auto IonExchangeSurface::indexExchanger() const -> Index
-{
-    return pimpl->idx_exchanger;
-}
-
-auto IonExchangeSurface::indicesExchange() const -> const Indices&
-{
-    return pimpl->idx_exchange_species;
 }
 
 auto IonExchangeSurface::state(ArrayXrConstRef x) -> IonExchangeSurfaceState
