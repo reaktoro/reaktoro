@@ -39,21 +39,16 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueous_phase(speciate("H O C Ca Na Mg Cl"));
+    AqueousPhase aqueous_phase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2");
     aqueous_phase.setActivityModel(chain(
-        ActivityModelHKF(),
-        ActivityModelDrummond("CO2")
+        ActivityModelHKF()
     ));
 
-    // Fetch species for ion-exchange modeling
-    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
-
     // Define an ion exchange phase
-    IonExchangePhase exchange_phase(detail::extractNames(exchange_species));
-    //IonExchangePhase exchange_phase(speciate("X Ca Na Mg"));
-    //IonExchangePhase exchange_phase(speciate("X Ca Na Mg"), exclude("organic")); //
-    exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
-
+    IonExchangePhase exchange_phase("NaX KX CaX2 MgX2");
+    exchange_phase.setActivityModel(chain(
+            ActivityModelIonExchangeGainesThomas()
+    ));
     // Construct the chemical system
     ChemicalSystem system(db, aqueous_phase, exchange_phase);
 
@@ -61,37 +56,40 @@ int main()
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
-    //specs.charge();
-    specs.pH();
-    //specs.openTo("Cl-");
 
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
     conditions.temperature(T, "celsius");
     conditions.pressure(P, "bar");
-    //conditions.charge(0.0);
-    conditions.pH(7.0);
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-//    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mol");
-//    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mol");
-//    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mol");
-    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mmol");
-    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mmol");
-    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mmol");
-    solutionstate.setSpeciesAmount("X-"   , 0.06, "mol");
+    solutionstate.setSpeciesAmount("Na+"  , 1.00, "mmol");
+    solutionstate.setSpeciesAmount("Ca+2" , 1.00, "mmol");
+    solutionstate.setSpeciesAmount("Mg+2" , 1.00, "mmol");
+    solutionstate.setSpeciesAmount("NaX"  , 1.00, "umol");
+    solutionstate.setSpeciesAmount("K+"   , 1.00, "mmol");
 
-    // Output the chemical state to a text file
-    std::cout << solutionstate << std::endl;
+    std::cout << "*******************************************" << std::endl;
+    std::cout << "Before equilibration: " << std::endl;
+    std::cout << "*******************************************" << std::endl;
+    std::cout << "b = " << solutionstate.elementAmounts().transpose() << std::endl;
+    std::cout << "Z = " << solutionstate.chargeAmount() << std::endl;
+
+    EquilibriumOptions opts;
+    opts.optima.output.active = true;
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(specs);
-    solver.solve(solutionstate, conditions);
 
-    // Output the chemical state to a text file
-    solutionstate.output("state.txt");
+    auto res = solver.solve(solutionstate, conditions);
+    std::cout << "*******************************************" << std::endl;
+    std::cout << "After equilibration: " << std::endl;
+    std::cout << "*******************************************" << std::endl;
+    std::cout << "b = " << solutionstate.elementAmounts().transpose() << std::endl;
+    std::cout << "Z = " << solutionstate.chargeAmount() << std::endl;
+    std::cout << "succeed = " << res.optima.succeeded << std::endl;
     std::cout << solutionstate << std::endl;
 
     AqueousProps aprops(solutionstate);
