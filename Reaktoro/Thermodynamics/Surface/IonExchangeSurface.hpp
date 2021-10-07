@@ -28,12 +28,6 @@ namespace Reaktoro {
 /// @see IonExchangeComposition
 struct IonExchangeSurfaceState
 {
-    /// The amounts of the exchange species (in mol)
-    ArrayXr n;
-
-    /// The equivalences of the exchange species (in meq)
-    ArrayXr meq;
-
     /// The equivalence fractions of the exchange species
     ArrayXr beta;
 

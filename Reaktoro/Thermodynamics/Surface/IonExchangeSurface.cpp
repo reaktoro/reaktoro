@@ -112,18 +112,6 @@ struct IonExchangeSurface::Impl
             ze[i] = exchangerEquivalentsNumber(species[i], exchanger_symbol);
     }
 
-    /// Return the amounts of the species on the ion exchange surface (in moles) if the molar fractions are provided.
-    auto amounts(ArrayXrConstRef x) const -> ArrayXr
-    {
-        return x*x.sum();
-    }
-
-    /// Return the equivalences of the species on the ion exchange composition (in meq) if amounts are provided.
-    auto equivalences(ArrayXrConstRef n) const -> ArrayXr
-    {
-        return n*ze;
-    }
-
     /// Return the equivalences fractions of the species on ion exchange surface if molar fractions are provided.
     auto equivalencesFractions(ArrayXrConstRef x) const -> ArrayXr
     {
@@ -134,8 +122,6 @@ struct IonExchangeSurface::Impl
     /// Return the state of the ion exchange surface.
     auto state(ArrayXrConstRef x) -> IonExchangeSurfaceState
     {
-        exchange_state.n  = amounts(x);
-        exchange_state.meq = equivalences(exchange_state.n);
         exchange_state.beta = equivalencesFractions(x);
 
         return exchange_state;
