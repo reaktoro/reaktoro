@@ -58,8 +58,14 @@ int main()
     EquilibriumSolver solver(specs);
 
     // Define temperature and pressure
-    double T = 300.0; // in Celsius
-    double P = Reaktoro::waterSaturatedPressureWagnerPruss(T + 273.15).val() * 1e-5; // is Psat of water at the T = 300
+//    double T = 300.0; // in Celsius
+//    double P = Reaktoro::waterSaturatedPressureWagnerPruss(T + 273.15).val() * 1e-5; // is Psat of water at the T = 300
+
+    double T = 400.0; // in Celsius
+    double P = 1e3; // in bar
+
+    std::cout << "T = " << T << std::endl;
+    std::cout << "P = " << P << std::endl;
 
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
@@ -79,11 +85,23 @@ int main()
     state.setSpeciesAmount("Albite"    , 19.937 , "mol"); // Na(AlSi3)O8 + 8 * H2O = Na+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
     state.setSpeciesAmount("Muscovite" , 2.15255, "mol"); // KAl2(AlSi3)O10(OH)2 = 1K+ + 3 * Al+++ - 10 * H+ + 6 * H2O + 3 * SiO2(aq)
 
+    // Initialize the amount of elements in the system
+    Index E = system.elements().size();
+
+    ArrayXr bgranite = ArrayXr::Zero(E + 1);
+    bgranite.head(E) = state.elementAmounts();
+    std::cout << "bgranite = " << bgranite.transpose() << std::endl;
+
+    EquilibriumOptions opts;
+    opts.optima.output.active = false;
+
     // Equilibrate the initial state with given conditions
-    solver.solve(state, conditions);
+    solver.setOptions(opts);
+    auto res = solver.solve(state, conditions);
 
     // Output the chemical state to a console
-    state.output("state.txt");
+    std::cout << state << std::endl;
 
+    std::cout << "res = " << res.optima.succeeded << std::endl;
     return 0;
 }
