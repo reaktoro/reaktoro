@@ -673,8 +673,8 @@ TEST_CASE("Testing Phases", "[Phases]")
     //=================================================================================================================
 
     // Define ion exchange species list
-    // Expected species: X- AlX3 CaX2 KX MgX2 NaX NH4X
-    SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange);
+    // Expected species: AlX3 CaX2 KX MgX2 NaX NH4X
+    SpeciesList species = db.species().withAggregateState(AggregateState::IonExchange).withCharge(0.0);
 
     SECTION("Testing IonExchangePhase::IonExchange(StringList) initialized with custom database")
     {
@@ -688,7 +688,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phasevec.size() == 2 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
-        checkIonExchangePhase(phasevec[1], "X- AlX3 CaX2 KX MgX2 NaX NH4X");
+        checkIonExchangePhase(phasevec[1], "AlX3 CaX2 KX MgX2 NaX NH4X");
     }
 
     SECTION("Testing IonExchangePhase::IonExchange(Speciate) initialized with custom database")
@@ -696,14 +696,14 @@ TEST_CASE("Testing Phases", "[Phases]")
         Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl")) );
-        phases.add( IonExchangePhase(speciate("X Na Ca")) );
+        phases.add( IonExchangePhase(speciate("Na Ca X")) );
 
         Vec<Phase> phasevec = phases.convert();
 
         CHECK( phasevec.size() == 2 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
-        checkIonExchangePhase(phasevec[1], "X- CaX2 NaX");
+        checkIonExchangePhase(phasevec[1], "CaX2 NaX");
     }
 
     SECTION("Testing IonExchangePhase::IonExchange(Speciate, Exclude) initialized with custom database")
@@ -711,13 +711,13 @@ TEST_CASE("Testing Phases", "[Phases]")
         Phases phases(db);
 
         phases.add( AqueousPhase(speciate("H O C Na Cl")) );
-        phases.add( IonExchangePhase(speciate("X Na Ca"), exclude("organics")) );
+        phases.add( IonExchangePhase(speciate("Na Ca X"), exclude("organics")) );
 
         Vec<Phase> phasevec = phases.convert();
 
         CHECK( phasevec.size() == 2 );
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
-        checkIonExchangePhase(phasevec[1], "X- CaX2 NaX");
+        checkIonExchangePhase(phasevec[1], "CaX2 NaX");
     }
 }
