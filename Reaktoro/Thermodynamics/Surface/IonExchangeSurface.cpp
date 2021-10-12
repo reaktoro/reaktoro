@@ -170,6 +170,11 @@ auto IonExchangeSurface::state(ArrayXrConstRef x) -> IonExchangeSurfaceState
     return pimpl->state(x);
 }
 
+auto IonExchangeSurface::state() const -> IonExchangeSurfaceState
+{
+    return pimpl->exchange_state;
+}
+
 auto IonExchangeSurface::setLogarithmsOfActivities(ArrayXrConstRef lng) -> void
 {
     return pimpl->setLogarithmsOfActivities(lng);
