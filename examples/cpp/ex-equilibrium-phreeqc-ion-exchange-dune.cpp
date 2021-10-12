@@ -87,5 +87,9 @@ int main()
     std::cout << "pH = " << aprops.pH() << std::endl;
     std::cout << "pE = " << aprops.pE() << std::endl;
 
+    ChemicalProps chemprops(solutionstate);
+    IonExchangeProps exprops(chemprops);
+    std::cout << exprops << std::endl;
+
     return 0;
 }
