@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 
@@ -92,6 +93,9 @@ public:
     /// Return the chemical properties of a phase with given index.
     /// @param phase The name or index of the phase in the system.
     auto phaseProps(StringOrIndex phase) const -> ChemicalPropsPhaseConstRef;
+
+    /// Return the extra data mapped to activity model of particular phase that may be reused by subsequent phases.
+    auto extra() const -> Map<String, Any>;
 
     /// Return the temperature of the system (in K).
     auto temperature() const -> real;
