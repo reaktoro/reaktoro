@@ -27,19 +27,18 @@ void exportIonExchangeSurface(py::module& m)
 {
     py::class_<IonExchangeSurfaceState>(m, "IonExchangeSurfaceState")
     .def(py::init<>())
-    .def_readwrite("meq", &IonExchangeSurfaceState::meq)
+    .def_readwrite("beta", &IonExchangeSurfaceState::beta)
     .def_readwrite("lng", &IonExchangeSurfaceState::lng)
-    .def_readwrite("n", &IonExchangeSurfaceState::n)
-    .def_readwrite("meq", &IonExchangeSurfaceState::meq)
     ;
 
     py::class_<IonExchangeSurface>(m, "IonExchangeSurface")
     .def(py::init<const SpeciesList&>())
-    .def("clone", &IonExchangeSurface::clone)
-    .def("species", py::overload_cast<Index>(&IonExchangeSurface::species, py::const_))
-    .def("species", py::overload_cast<>(&IonExchangeSurface::species, py::const_))
+    .def("clone", &IonExchangeSurface::clone, py::return_value_policy::reference_internal)
+    .def("species", py::overload_cast<Index>(&IonExchangeSurface::species, py::const_), py::return_value_policy::reference_internal)
+    .def("species", py::overload_cast<>(&IonExchangeSurface::species, py::const_), py::return_value_policy::reference_internal)
     .def("ze", &IonExchangeSurface::ze)
     .def("setLogarithmsOfActivities", &IonExchangeSurface::setLogarithmsOfActivities)
-    .def("state", &IonExchangeSurface::state)
+    .def("state", py::overload_cast<ArrayXrConstRef>(&IonExchangeSurface::state))
+    .def("state", py::overload_cast<>(&IonExchangeSurface::state, py::const_), py::return_value_policy::reference_internal)
     ;
 }
