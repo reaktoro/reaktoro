@@ -68,6 +68,9 @@ public:
     /// @param x The fraction of the species in the composition
     auto state(ArrayXrConstRef x) -> IonExchangeSurfaceState;
 
+    /// Return the state of the aqueous mixture.
+    auto state() const -> IonExchangeSurfaceState;
+
     /// Set logarithm of activities of for ion exchange species.
     auto setLogarithmsOfActivities(ArrayXrConstRef lng) -> void;
 
