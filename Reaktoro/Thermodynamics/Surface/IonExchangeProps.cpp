@@ -145,7 +145,7 @@ struct IonExchangeProps::Impl
     auto elementAmount(const String& symbol) const -> real
     {
         const auto idx = phase.elements().indexWithSymbol(symbol);
-        return (Aex.row(idx).array() * nex).sum();
+        return Aex.row(idx) * VectorXr(nex);
     }
 
     /// Return the amounts of the elements (in moles).
