@@ -30,9 +30,6 @@
 
 using namespace Reaktoro;
 
-const auto T = 25.0; // temperature in celsius
-const auto P = 1.0;  // pressure in bar
-
 int main()
 {
     // Initialize the Phreeqc database
@@ -46,7 +43,7 @@ int main()
     ));
 
     // Fetch species for ion-exchange modeling
-    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange);
+    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange).withCharge(0.0);
 
     // Define an ion exchange phase
     //IonExchangePhase exchange_phase(detail::extractNames(exchange_species));
@@ -61,6 +58,9 @@ int main()
     specs.temperature();
     specs.pressure();
 
+    const auto T = 25.0; // temperature in celsius
+    const auto P = 1.0;  // pressure in bar
+
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
     conditions.temperature(T, "celsius");
@@ -68,11 +68,13 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mmol");
-    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mmol");
-    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mmol");
-    solutionstate.setSpeciesAmount("NaX"  , 0.06, "mmol");
+    solutionstate.setSpeciesMass("H2O"    , 1.e6, "kg");
+    // Scale solution recipe to match the values of the PHREEQC examples
+    solutionstate.setSpeciesAmount("Na+"  , 1.10, "kmol");
+    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "kmol");
+    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "kmol");
+    // Set the number of exchange assuming that it is completely occupied by Na
+    solutionstate.setSpeciesAmount("NaX"  , 0.06, "mol");
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(specs);
