@@ -1,0 +1,158 @@
+# Reaktoro is a unified framework for modeling chemically reactive systems.
+#
+# Copyright © 2014-2021 Allan Leal
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+
+from reaktoro import *
+import pytest
+import numpy as np
+
+def testIonExchangeProps():
+
+    db = PhreeqcDatabase("phreeqc.dat")
+
+    # Define an aqueous phase
+    solution = AqueousPhase(speciate("H O C Ca Na Mg Cl"))
+
+    # Define an ion exchange phase
+    exchange = IonExchangePhase("NaX CaX2 KX AlX3 MgX2")
+
+    # Create chemical system
+    system = ChemicalSystem(db, solution, exchange)
+
+    T = 25.0 # temperature in celsius
+    P = 1.0  # pressure in bar
+
+    # Define equilibrium solver
+    solver = EquilibriumSolver(system)
+
+    # Initialize ion exchange props
+    exprops = IonExchangeProps(system)
+
+    # Fetch the phase from the ion exchange props
+    phase = exprops.phase()
+
+    # Auxiliary variables
+    species = system.species()
+    exspecies = phase.species()
+    exelements = phase.elements()
+    num_species = species.size()
+
+    # ------------------------------------------------------------------------
+    # Testing correct initialization of the `IonExchangeProps` instance
+    # ------------------------------------------------------------------------
+
+    assert phase.species().size()   == 5
+    assert phase.elements().size()  == 6
+    assert phase.species(0).name()  == "NaX"
+    assert phase.species(1).name()  == "CaX2"
+    assert phase.species(2).name()  == "KX"
+    assert phase.species(3).name()  == "AlX3"
+    assert phase.species(4).name()  == "MgX2"
+
+    # ------------------------------------------------------------------------
+    # Testing when species have zero amounts
+    # ------------------------------------------------------------------------
+
+    n = np.zeros(num_species)
+    state = ChemicalState(system)
+    state.setTemperature(T, "celsius")
+    state.setPressure(P, "bar")
+    state.setSpeciesAmounts(n)
+
+    with pytest.raises(Exception):
+        exprops.update(state)
+
+    # ------------------------------------------------------------------------
+    #  Testing when species have nonzero amounts
+    # ------------------------------------------------------------------------
+
+    n = np.ones(num_species)
+    state = ChemicalState(system)
+    state.setTemperature(T, "celsius")
+    state.setPressure(P, "bar")
+    state.setSpeciesAmounts(n)
+
+    # Update ion exchange properties
+    exprops.update(state)
+
+    # Check amounts of all species
+    for i in range(0, exspecies.size()):
+        assert exprops.speciesAmounts()[i] == pytest.approx(1.00)
+
+    # Check amounts of all elements
+    assert exprops.elementAmount("Al")[0] == pytest.approx(1.0)
+    assert exprops.elementAmount("Ca")[0] == pytest.approx(1.0)
+    assert exprops.elementAmount("K" )[0] == pytest.approx(1.0)
+    assert exprops.elementAmount("Na")[0] == pytest.approx(1.0)
+    assert exprops.elementAmount("Mg")[0] == pytest.approx(1.0)
+    assert exprops.elementAmount("X" )[0] == pytest.approx(9.0)
+
+    # ------------------------------------------------------------------------
+    # Testing when state is a brine"
+    # ------------------------------------------------------------------------
+
+    # Define initial equilibrium state
+    state = ChemicalState(system)
+    state.setTemperature(T, "celsius")
+    state.setPressure(P, "bar")
+    state.setSpeciesMass("H2O"   , 1.00, "kg")
+    state.setSpeciesAmount("Na+" , 1.00, "mmol")
+    state.setSpeciesAmount("Ca+2", 1.00, "mmol")
+    state.setSpeciesAmount("Mg+2", 1.00, "mmol")
+    state.setSpeciesAmount("NaX" , 1.00, "umol")
+    solver.solve(state)
+
+    # Update ion exchange properties
+    exprops.update(state)
+
+    print(exprops.speciesAmount("NaX" )[0])
+    print(exprops.speciesAmount("CaX2")[0])
+    print(exprops.speciesAmount("KX"  )[0])
+    print(exprops.speciesAmount("AlX3")[0])
+    print(exprops.speciesAmount("MgX2")[0])
+    print(exprops.elementAmount("Na"  )[0])
+    print(exprops.elementAmount("Mg"  )[0])
+    print(exprops.elementAmount("Al"  )[0])
+    print(exprops.elementAmount("K"   )[0])
+    print(exprops.elementAmount("Ca"  )[0])
+    print(exprops.elementAmount("X"   )[0])
+
+    # Check amounts of all species
+    assert exprops.speciesAmount("NaX" )[0] == pytest.approx(9.82045632527882e-09 )
+    assert exprops.speciesAmount("CaX2")[0] == pytest.approx(3.035478294086438e-07)
+    assert exprops.speciesAmount("KX"  )[0] == pytest.approx(1e-16                )
+    assert exprops.speciesAmount("AlX3")[0] == pytest.approx(1e-16                )
+    assert exprops.speciesAmount("MgX2")[0] == pytest.approx(1.915419424287168e-07)
+
+    # Check amounts of all elements
+    assert exprops.elementAmount("Na")[0] == pytest.approx(9.82045632527882e-09 )
+    assert exprops.elementAmount("Mg")[0] == pytest.approx(1.915419424287168e-07)
+    assert exprops.elementAmount("Al")[0] == pytest.approx(1e-16                )
+    assert exprops.elementAmount("K" )[0] == pytest.approx(1e-16                )
+    assert exprops.elementAmount("Ca")[0] == pytest.approx(3.035478294086438e-07)
+    assert exprops.elementAmount("X" )[0] == pytest.approx(1.0000000004e-06     )
+
+    # Test convenience methods species and element amounts
+    for s in exspecies:
+        name = s.name()
+        idx = exspecies.index(name)
+        assert exprops.speciesAmount(name)[0] == pytest.approx(exprops.speciesAmounts()[idx])
+
+    for e in exelements:
+        symbol = e.symbol()
+        idx = exelements.index(symbol)
+        assert exprops.elementAmount(symbol)[0] == pytest.approx(exprops.elementAmounts()[idx])
