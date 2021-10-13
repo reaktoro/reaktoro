@@ -37,15 +37,14 @@ def speciesListToStringList(specieslist):
 db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
-solution = AqueousPhase(speciate("H O C Ca Na Mg Cl"))
+solution = AqueousPhase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2")
 solution.setActivityModel(chain(
-    ActivityModelHKF(),
-    ActivityModelDrummond("CO2")
+    ActivityModelHKF()
 ))
 
 # Define an ion exchange phase
-exchange_species = db.species().withAggregateState(AggregateState.IonExchange)
-exchange = IonExchangePhase(speciesListToStringList(exchange_species))
+exchange_species = "NaX KX CaX2 MgX2"
+exchange = IonExchangePhase(exchange_species)
 exchange.setActivityModel(ActivityModelIonExchangeGainesThomas())
 
 # Create chemical system
@@ -55,8 +54,6 @@ system = ChemicalSystem(db, solution, exchange)
 specs = EquilibriumSpecs(system)
 specs.temperature()
 specs.pressure()
-specs.charge()
-specs.openTo("Cl-")
 
 T = 25.0 # temperature in celsius
 P = 1.0  # pressure in bar
@@ -65,20 +62,27 @@ P = 1.0  # pressure in bar
 conditions = EquilibriumConditions(specs)
 conditions.temperature(T, "celsius")
 conditions.pressure(P, "bar")
-conditions.charge(0.0)
 
 # Define initial equilibrium state
 state = ChemicalState(system)
 state.setTemperature(T, "celsius")
 state.setPressure(P, "bar")
 state.setSpeciesMass("H2O"   , 1.00, "kg")
-state.setSpeciesAmount("Na+" , 1.10, "mol")
-state.setSpeciesAmount("Mg+2", 0.48, "mol")
-state.setSpeciesAmount("Ca+2", 1.90, "mol")
-state.setSpeciesAmount("X-"  , 0.06, "mol")
+state.setSpeciesAmount("Na+" , 1.00, "mol")
+state.setSpeciesAmount("K+"  , 1.00, "mol")
+state.setSpeciesAmount("Mg+2", 1.00, "mol")
+state.setSpeciesAmount("Ca+2", 1.00, "mol")
+state.setSpeciesAmount("NaX" , 0.06, "umol") # set small to make sure we have plenty of water for available exchanger X-
 
 # Define equilibrium solver and equilibrate given initial state with input conditions
 solver = EquilibriumSolver(specs)
 solver.solve(state, conditions)
-state.output("state-python-species-full.txt")
 print(state)
+
+aqprops = AqueousProps(state)
+print("I  = %f mol/kgw" % aqprops.ionicStrength()[0])
+print("pH = %f" % aqprops.pH()[0])
+print("pE = %f" % aqprops.pE()[0])
+
+exprops = IonExchangeProps(state)
+print(exprops)
