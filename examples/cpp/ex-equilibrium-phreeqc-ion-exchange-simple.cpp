@@ -30,9 +30,6 @@
 
 using namespace Reaktoro;
 
-const auto T = 25.0; // temperature in celsius
-const auto P = 1.0;  // pressure in bar
-
 int main()
 {
     // Initialize the Phreeqc database
@@ -57,6 +54,9 @@ int main()
     specs.temperature();
     specs.pressure();
 
+    const auto T = 25.0; // temperature in celsius
+    const auto P = 1.0;  // pressure in bar
+
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
     conditions.temperature(T, "celsius");
@@ -68,8 +68,8 @@ int main()
     solutionstate.setSpeciesAmount("Na+"  , 1.00, "mmol");
     solutionstate.setSpeciesAmount("Ca+2" , 1.00, "mmol");
     solutionstate.setSpeciesAmount("Mg+2" , 1.00, "mmol");
-    solutionstate.setSpeciesAmount("NaX"  , 1.00, "umol");
     solutionstate.setSpeciesAmount("K+"   , 1.00, "mmol");
+    solutionstate.setSpeciesAmount("NaX"  , 1.00, "umol"); // set small to make sure we have plenty of water for available exchanger X-
 
     std::cout << "*******************************************" << std::endl;
     std::cout << "Before equilibration: " << std::endl;
