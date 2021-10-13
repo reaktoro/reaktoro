@@ -12,6 +12,7 @@
 #include "miniz.h"
 
 #include <iterator>
+#include <limits>
 
 namespace {
 
