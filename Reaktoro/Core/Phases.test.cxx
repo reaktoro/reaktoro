@@ -33,51 +33,51 @@ auto createDatabasePhases() -> Database
 {
     Database db;
 
-    db.addSpecies( Species("H2O(aq)") );
-    db.addSpecies( Species("H+") );
-    db.addSpecies( Species("OH-") );
-    db.addSpecies( Species("H2(aq)") );
-    db.addSpecies( Species("O2(aq)") );
-    db.addSpecies( Species("Na+") );
-    db.addSpecies( Species("Cl-") );
-    db.addSpecies( Species("NaCl(aq)") );
-    db.addSpecies( Species("HCl(aq)") );
-    db.addSpecies( Species("NaOH(aq)") );
-    db.addSpecies( Species("Ca++") );
-    db.addSpecies( Species("Mg++") );
-    db.addSpecies( Species("CO2(aq)") );
-    db.addSpecies( Species("HCO3-") );
-    db.addSpecies( Species("CO3--") );
-    db.addSpecies( Species("CaCl2(aq)") );
-    db.addSpecies( Species("MgCl2(aq)") );
-    db.addSpecies( Species("SiO2(aq)") );
-    db.addSpecies( Species("C4H9OH(aq)").withTags("organic").withName("1-Butanol(aq)") );
-    db.addSpecies( Species("C4H8(aq)").withTags("organic").withName("1-Butene(aq)") );
-    db.addSpecies( Species("NaCl(s)").withName("Halite") );
-    db.addSpecies( Species("CaCO3(s)").withName("Calcite").withTags("carbonate") );
-    db.addSpecies( Species("MgCO3(s)").withName("Magnesite").withTags("carbonate") );
-    db.addSpecies( Species("CaMg(CO3)2(s)").withName("Dolomite").withTags("carbonate") );
-    db.addSpecies( Species("SiO2(s)").withName("Quartz") );
-    db.addSpecies( Species("C(s)").withName("Graphite") );
-    db.addSpecies( Species("CaO(s)").withName("Lime") );
-    db.addSpecies( Species("N2(g)").withTags("inert") );
-    db.addSpecies( Species("BaSO4(s)").withName("Barite").withTags("sulfate") );
-    db.addSpecies( Species("SrSO4(s)").withName("Celestite").withTags("sulfate") );
-    db.addSpecies( Species("PbSO4(s)").withName("Anglesite").withTags("sulfate") );
-    db.addSpecies( Species("CaSO4(s)").withName("Anhydrite").withTags("sulfate") );
-    db.addSpecies( Species("CO2(g)") );
-    db.addSpecies( Species("O2(g)") );
-    db.addSpecies( Species("H2(g)") );
-    db.addSpecies( Species("H2O(g)") );
-    db.addSpecies( Species("CH4(g)") );
-    db.addSpecies( Species("CO(g)") );
-    db.addSpecies( Species("X-").withAggregateState(AggregateState::IonExchange));
-    db.addSpecies( Species("AlX3").withName("AlX3").withAggregateState(AggregateState::IonExchange ));
-    db.addSpecies( Species("CaX2").withName("CaX2").withAggregateState(AggregateState::IonExchange ));
-    db.addSpecies( Species("KX").withName("KX").withAggregateState(AggregateState::IonExchange ));
-    db.addSpecies( Species("MgX2").withName("MgX2").withAggregateState(AggregateState::IonExchange ));
-    db.addSpecies( Species("NaX").withName("NaX").withAggregateState(AggregateState::IonExchange ));
-    db.addSpecies( Species("NH4X").withName("NH4X").withAggregateState(AggregateState::IonExchange ));
+    db.addSpecies( Species("H2O(aq)"       ) );
+    db.addSpecies( Species("H+"            ) );
+    db.addSpecies( Species("OH-"           ) );
+    db.addSpecies( Species("H2(aq)"        ) );
+    db.addSpecies( Species("O2(aq)"        ) );
+    db.addSpecies( Species("Na+"           ) );
+    db.addSpecies( Species("Cl-"           ) );
+    db.addSpecies( Species("NaCl(aq)"      ) );
+    db.addSpecies( Species("HCl(aq)"       ) );
+    db.addSpecies( Species("NaOH(aq)"      ) );
+    db.addSpecies( Species("Ca++"          ) );
+    db.addSpecies( Species("Mg++"          ) );
+    db.addSpecies( Species("CO2(aq)"       ) );
+    db.addSpecies( Species("HCO3-"         ) );
+    db.addSpecies( Species("CO3--"         ) );
+    db.addSpecies( Species("CaCl2(aq)"     ) );
+    db.addSpecies( Species("MgCl2(aq)"     ) );
+    db.addSpecies( Species("SiO2(aq)"      ) );
+    db.addSpecies( Species("C4H9OH(aq)"    ).withTags("organic").withName("1-Butanol(aq)") );
+    db.addSpecies( Species("C4H8(aq)"      ).withTags("organic").withName("1-Butene(aq)") );
+    db.addSpecies( Species("CO2(g)"        ) );
+    db.addSpecies( Species("O2(g)"         ) );
+    db.addSpecies( Species("H2(g)"         ) );
+    db.addSpecies( Species("H2O(g)"        ) );
+    db.addSpecies( Species("CH4(g)"        ) );
+    db.addSpecies( Species("CO(g)"         ) );
+    db.addSpecies( Species("NaCl(s)"       ).withName("Halite"    ) );
+    db.addSpecies( Species("CaCO3(s)"      ).withName("Calcite"   ).withTags("carbonate") );
+    db.addSpecies( Species("MgCO3(s)"      ).withName("Magnesite" ).withTags("carbonate") );
+    db.addSpecies( Species("CaMg(CO3)2(s)" ).withName("Dolomite"  ).withTags("carbonate") );
+    db.addSpecies( Species("SiO2(s)"       ).withName("Quartz"    ) );
+    db.addSpecies( Species("C(s)"          ).withName("Graphite"  ) );
+    db.addSpecies( Species("CaO(s)"        ).withName("Lime"      ) );
+    db.addSpecies( Species("N2(g)"         ).withTags("inert") );
+    db.addSpecies( Species("BaSO4(s)"      ).withName("Barite"    ).withTags("sulfate") );
+    db.addSpecies( Species("SrSO4(s)"      ).withName("Celestite" ).withTags("sulfate") );
+    db.addSpecies( Species("PbSO4(s)"      ).withName("Anglesite" ).withTags("sulfate") );
+    db.addSpecies( Species("CaSO4(s)"      ).withName("Anhydrite" ).withTags("sulfate") );
+    db.addSpecies( Species("X-"            ).withName("X-"   ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
+    db.addSpecies( Species("AlX3"          ).withName("AlX3" ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
+    db.addSpecies( Species("CaX2"          ).withName("CaX2" ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
+    db.addSpecies( Species("KX"            ).withName("KX"   ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
+    db.addSpecies( Species("MgX2"          ).withName("MgX2" ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
+    db.addSpecies( Species("NaX"           ).withName("NaX"  ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
+    db.addSpecies( Species("NH4X"          ).withName("NH4X" ).withAggregateState(AggregateState::IonExchange ).withStandardGibbsEnergy(0.0));
 
     return db;
 }
@@ -689,35 +689,5 @@ TEST_CASE("Testing Phases", "[Phases]")
 
         checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
         checkIonExchangePhase(phasevec[1], "AlX3 CaX2 KX MgX2 NaX NH4X");
-    }
-
-    SECTION("Testing IonExchangePhase::IonExchange(Speciate) initialized with custom database")
-    {
-        Phases phases(db);
-
-        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
-        phases.add( IonExchangePhase(speciate("Na Ca X")) );
-
-        Vec<Phase> phasevec = phases.convert();
-
-        CHECK( phasevec.size() == 2 );
-
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
-        checkIonExchangePhase(phasevec[1], "CaX2 NaX");
-    }
-
-    SECTION("Testing IonExchangePhase::IonExchange(Speciate, Exclude) initialized with custom database")
-    {
-        Phases phases(db);
-
-        phases.add( AqueousPhase(speciate("H O C Na Cl")) );
-        phases.add( IonExchangePhase(speciate("Na Ca X"), exclude("organics")) );
-
-        Vec<Phase> phasevec = phases.convert();
-
-        CHECK( phasevec.size() == 2 );
-
-        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq) CO2(aq) HCO3- CO3-- 1-Butanol(aq) 1-Butene(aq)");
-        checkIonExchangePhase(phasevec[1], "CaX2 NaX");
     }
 }
