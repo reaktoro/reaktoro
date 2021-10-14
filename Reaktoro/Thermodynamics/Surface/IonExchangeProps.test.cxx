@@ -24,11 +24,20 @@
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeProps.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelHKF.hpp>
 #include <Reaktoro/Singletons/Elements.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 
 using namespace Reaktoro;
 
-namespace test { extern auto createDatabase() -> Database; }
+namespace test {
+
+    extern auto createDatabase() -> Database;
+
+    auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase;
+
+} // namespace test
 
 TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
 {
@@ -50,7 +59,7 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
     Phases phases(db);
 
     phases.add( AqueousPhase(speciate("H O C Na Cl Ca Mg")) );
-    phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2") );
+    phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2").setActivityModel(ActivityModelIonExchange()) );
 
     ChemicalSystem system(phases);
 
@@ -115,6 +124,24 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("Na") == Approx(1.0) );
         CHECK( exprops.elementAmount("Mg") == Approx(1.0) );
         CHECK( exprops.elementAmount("X")  == Approx(9.0) );
+
+        // Check equivalences of all species
+        CHECK( exprops.speciesEquivalence("NaX"  ) == Approx(1.0) );
+        CHECK( exprops.speciesEquivalence("CaX2" ) == Approx(2.0) );
+        CHECK( exprops.speciesEquivalence("KX"   ) == Approx(1.0) );
+        CHECK( exprops.speciesEquivalence("AlX3" ) == Approx(3.0) );
+        CHECK( exprops.speciesEquivalence("MgX2" ) == Approx(2.0) );
+
+        // Check equivalent fractions of all species
+        CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.111111) );
+        CHECK( exprops.speciesEquivalentFraction("CaX2" ) == Approx(0.222222) );
+        CHECK( exprops.speciesEquivalentFraction("KX"   ) == Approx(0.111111) );
+        CHECK( exprops.speciesEquivalentFraction("AlX3" ) == Approx(0.333333) );
+        CHECK( exprops.speciesEquivalentFraction("MgX2" ) == Approx(0.222222) );
+
+        // Check log10 gammas of all species
+        for(auto i = 0; i < exspecies.size(); i++)
+            CHECK( exprops.speciesLog10Gammas()[i] == Approx(0.00) );
     }
 
     SECTION("Testing when state is a brine")
@@ -146,13 +173,34 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("K" ) == Approx(1e-16       ) );
         CHECK( exprops.elementAmount("Ca") == Approx(2.46581e-07 ) );
         CHECK( exprops.elementAmount("X" ) == Approx(1e-06       ) );
+
+        // Check equivalences of all species
+        CHECK( exprops.speciesEquivalence("NaX"  ) == Approx(1.36704e-08 ) );
+        CHECK( exprops.speciesEquivalence("CaX2" ) == Approx(4.93161e-07 ) );
+        CHECK( exprops.speciesEquivalence("KX"   ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesEquivalence("AlX3" ) == Approx(3e-16       ) );
+        CHECK( exprops.speciesEquivalence("MgX2" ) == Approx(4.93161e-07 ) );
+
+        // Check equivalent fractions of all species
+        CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.0136704 ) );
+        CHECK( exprops.speciesEquivalentFraction("CaX2" ) == Approx(0.493161  ) );
+        CHECK( exprops.speciesEquivalentFraction("KX"   ) == Approx(1e-10     ) );
+        CHECK( exprops.speciesEquivalentFraction("AlX3" ) == Approx(3e-10     ) );
+        CHECK( exprops.speciesEquivalentFraction("MgX2" ) == Approx(0.493161  ) );
+
+        // Check log10 gammas of all species
+        for(auto i = 0; i < exspecies.size(); i++)
+            CHECK( exprops.speciesLog10Gammas()[i] == Approx(0.00) ); // because we are working on the custom library
     
-        // Test convenience methods species and element amounts
+        // Test convenience methods species amounts, equivalences, equivalent fractions, log10gamma and element amounts
         for(const auto& s : exspecies)
         {
             const auto name = s.name();
             const auto idx = exspecies.index(name);
-            CHECK( exprops.speciesAmount(name) == Approx(exprops.speciesAmounts()[idx]) );
+            CHECK( exprops.speciesAmount(name)             == Approx(exprops.speciesAmounts()[idx]) );
+            CHECK( exprops.speciesEquivalence(name)        == Approx(exprops.speciesEquivalences()[idx]) );
+            CHECK( exprops.speciesEquivalentFraction(name) == Approx(exprops.speciesEquivalentFractions()[idx]) );
+            CHECK( exprops.speciesLog10Gamma(name)         == Approx(exprops.speciesLog10Gammas()[idx]) );
         }
 
         for(const auto& e : exelements)
@@ -161,5 +209,80 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
             const auto idx = exelements.index(symbol);
             CHECK( exprops.elementAmount(symbol) == Approx(exprops.elementAmounts()[idx]) );
         }
+    }
+
+    SECTION("Testing when state is a brine and database is initialized by phreeqc.dat")
+    {
+        // Initialize the database corresponding to the string `phreeqc.dat` has been already initialized
+        auto dbphreeqc = test::getPhreeqcDatabase("phreeqc.dat");
+
+        Phases phases(dbphreeqc);
+
+        phases.add( AqueousPhase(speciate("H O C Na Cl Ca Mg")).setActivityModel(ActivityModelHKF()) );
+        phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2").setActivityModel(ActivityModelIonExchange()) );
+
+        ChemicalSystem system(phases);
+
+        EquilibriumSolver solver(system);
+
+        IonExchangeProps exprops(system);
+
+        auto phase = exprops.phase();
+
+        const auto& species = system.species();
+        const auto& elements = system.elements();
+        const auto& exspecies = phase.species();
+        const auto& exelements = phase.elements();
+
+        auto num_species = species.size();
+
+        ChemicalState state(system);
+        state.setTemperature(T, "celsius");
+        state.setPressure(P, "bar");
+        state.setSpeciesMass("H2O"    , 1.00, "kg");
+        state.setSpeciesAmount("Na+"  , 1.00, "mmol");
+        state.setSpeciesAmount("Ca+2" , 1.00, "mmol");
+        state.setSpeciesAmount("Mg+2" , 1.00, "mmol");
+        state.setSpeciesAmount("NaX"  , 1.00, "umol");
+
+        EquilibriumResult result = solver.solve(state);
+
+        exprops.update(state);
+
+        // Check molalities of all species
+        CHECK( exprops.speciesAmount("NaX"  ) == Approx(9.84068e-09 ) );
+        CHECK( exprops.speciesAmount("CaX2" ) == Approx(3.03997e-07 ) );
+        CHECK( exprops.speciesAmount("KX"   ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesAmount("AlX3" ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesAmount("MgX2" ) == Approx(1.91083e-07 ) );
+
+        // Check amounts of all elements
+        CHECK( exprops.elementAmount("X" ) == Approx(1e-06       ) );
+        CHECK( exprops.elementAmount("Na") == Approx(9.84068e-09 ) );
+        CHECK( exprops.elementAmount("Mg") == Approx(1.91083e-07 ) );
+        CHECK( exprops.elementAmount("Al") == Approx(1e-16       ) );
+        CHECK( exprops.elementAmount("K" ) == Approx(1e-16       ) );
+        CHECK( exprops.elementAmount("Ca") == Approx(3.03997e-07 ) );
+
+        // Check equivalences of all species
+        CHECK( exprops.speciesEquivalence("NaX"  ) == Approx(9.84068e-09 ) );
+        CHECK( exprops.speciesEquivalence("CaX2" ) == Approx(6.07993e-07 ) );
+        CHECK( exprops.speciesEquivalence("KX"   ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesEquivalence("AlX3" ) == Approx(3e-16       ) );
+        CHECK( exprops.speciesEquivalence("MgX2" ) == Approx(3.82166e-07 ) );
+
+        // Check equivalent fractions of all species
+        CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.00984068 ) );
+        CHECK( exprops.speciesEquivalentFraction("CaX2" ) == Approx(0.607993   ) );
+        CHECK( exprops.speciesEquivalentFraction("KX"   ) == Approx(1e-10      ) );
+        CHECK( exprops.speciesEquivalentFraction("AlX3" ) == Approx(3e-10      ) );
+        CHECK( exprops.speciesEquivalentFraction("MgX2" ) == Approx(0.382166   ) );
+
+        // Check log10 gammas of all species
+        CHECK( exprops.speciesLog10Gamma("NaX"  ) == Approx(-0.0311024 ) );
+        CHECK( exprops.speciesLog10Gamma("CaX2" ) == Approx(-0.122843  ) );
+        CHECK( exprops.speciesLog10Gamma("KX"   ) == Approx(-0.0317777 ) );
+        CHECK( exprops.speciesLog10Gamma("AlX3" ) == Approx(-0.257599  ) );
+        CHECK( exprops.speciesLog10Gamma("MgX2" ) == Approx(-0.12147   ) );
     }
 }
