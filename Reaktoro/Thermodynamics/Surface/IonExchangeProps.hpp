@@ -70,13 +70,22 @@ public:
     auto speciesAmount(const String& name) const -> real;
 
     /// Return the equivalences of the species on the ion exchange composition (in eq).
-    auto equivalences() const -> ArrayXr;
+    auto speciesEquivalences() const -> ArrayXr;
+
+    /// Return the equivalence of an ion exchange species (in eq).
+    auto speciesEquivalence(const String& name) const -> real;
 
     /// Return the equivalent fractions of the species on the ion exchange surface (in moles) if the molar fractions are provided.
-    auto equivalentFractions() const -> ArrayXr;
+    auto speciesEquivalentFractions() const -> ArrayXr;
+
+    /// Return the equivalent fraction of an ion exchange species.
+    auto speciesEquivalentFraction(const String& name) const -> real;
 
     /// Return the logarithms of the activity coefficients of the species on the ion exchange surface (in moles) if the molar fractions are provided.
-    auto logGamma() const -> ArrayXr;
+    auto speciesLog10Gammas() const -> ArrayXr;
+
+    /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
+    auto speciesLog10Gamma(const String& name) const -> real;
 
     /// Return the underlying Phase object for the aqueous phase.
     auto phase() const -> const Phase&;

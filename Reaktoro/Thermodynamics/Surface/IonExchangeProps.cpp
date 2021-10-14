@@ -169,32 +169,67 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the equivalences of the species on the ion exchange composition (in eq).
-    auto equivalences() const -> ArrayXr
+    auto speciesEquivalences() const -> ArrayXr
     {
         // Note: this definition eq = n * ze is consistent with the PHREEQC output,
         // but meq is usually defined via molalities as meq = 1e-3 * m, where m is the molality
         return nex * exsurface.ze();
     }
 
-    /// Return the equivalent fractions of the species on the ion exchange surface (in moles) if the molar fractions are provided.
-    auto equivalentFractions() const -> ArrayXr
+    /// Return the equivalence of an ion exchange species (in eq).
+    auto speciesEquivalence(const String& name) const -> real
+    {
+        // Note: this definition eq = n * ze is consistent with the PHREEQC output,
+        // but meq is usually defined via molalities as meq = 1e-3 * m, where m is the molality
+        const auto idx = phase.species().indexWithName(name);
+        return nex[idx] * exsurface.ze()[idx];
+    }
+
+    /// Return the equivalent fractions of the species on the ion exchange surface.
+    auto speciesEquivalentFractions() const -> ArrayXr
     {
         return exstate.beta;
     }
 
-    /// Return the logarithms of the activity coefficients of the species on the ion exchange surface (in moles) if the molar fractions are provided.
-    auto logGamma() const -> ArrayXr
+    /// Return the equivalent fraction of an ion exchange species.
+    auto speciesEquivalentFraction(const String& name) const -> real
     {
-        if(extra.at("IonExchangeLnGamma").has_value())
+        const auto idx = phase.species().indexWithName(name);
+        return exstate.beta[idx];
+    }
+
+    /// Return the base-10 logarithm of the activity coefficients of the species on the ion exchange surface.
+    auto speciesLog10Gammas() const -> ArrayXr
+    {
+        auto extr = extra;
+        if(!extr.empty() && extr["IonExchangeLnGamma"].has_value())
         {
             // Fetch ln(gamma) from `extra` data-field and convert it to the log10(gamma)
-            auto lng = std::any_cast<ArrayXrRef>(extra.at("IonExchangeLnGamma"));
+            auto lng = std::any_cast<ArrayXrRef>(extr["IonExchangeLnGamma"]);
             return lng / std::log(10);
         }
-        warningif(!extra.at("IonExchangeLnGamma").has_value(),
+        warningif(!extr["IonExchangeLnGamma"].has_value(),
                   "There is no information on the activity coefficients for the ion exchange species, "
-                  "log10(gamma) are set to zero.")
+                  "so log10(gamma) are set to zero.")
         return ArrayXr::Zero(phase.elements().size());
+    }
+
+    /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
+    auto speciesLog10Gamma(const String& name) const -> real
+    {
+        const auto idx = phase.species().indexWithName(name);
+        auto extr = extra;
+
+        if(!extr.empty() && extr["IonExchangeLnGamma"].has_value())
+        {
+            // Fetch ln(gamma) from `extra` data-field and convert it to the log10(gamma) with the index `idx`
+            auto lng = std::any_cast<ArrayXrRef>(extr["IonExchangeLnGamma"])[idx];
+            return lng / std::log(10);
+        }
+        warningif(!extr["IonExchangeLnGamma"].has_value(),
+                  "There is no information on the activity coefficients for an ion exchange species " + name +
+                  ", so log10(gamma(" + name + " )) is set to zero.")
+        return 0;
     }
 };
 
@@ -253,19 +288,34 @@ auto IonExchangeProps::speciesAmount(const String& name) const -> real
     return pimpl->speciesAmount(name);
 }
 
-auto IonExchangeProps::equivalences() const -> ArrayXr
+auto IonExchangeProps::speciesEquivalences() const -> ArrayXr
 {
-    return pimpl->equivalences();
+    return pimpl->speciesEquivalences();
 }
 
-auto IonExchangeProps::equivalentFractions() const -> ArrayXr
+auto IonExchangeProps::speciesEquivalence(const String& name) const -> real
 {
-    return pimpl->equivalentFractions();
+    return pimpl->speciesEquivalence(name);
 }
 
-auto IonExchangeProps::logGamma() const -> ArrayXr
+auto IonExchangeProps::speciesEquivalentFractions() const -> ArrayXr
 {
-    return pimpl->logGamma();
+    return pimpl->speciesEquivalentFractions();
+}
+
+auto IonExchangeProps::speciesEquivalentFraction(const String& name) const -> real
+{
+    return pimpl->speciesEquivalentFraction(name);
+}
+
+auto IonExchangeProps::speciesLog10Gamma(const String& name) const -> real
+{
+    return pimpl->speciesLog10Gamma(name);
+}
+
+auto IonExchangeProps::speciesLog10Gammas() const -> ArrayXr
+{
+    return pimpl->speciesLog10Gammas();
 }
 
 auto IonExchangeProps::phase() const -> const Phase&
@@ -291,9 +341,9 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     const auto species = props.phase().species();
     const auto ne = props.elementAmounts();
     const auto ns = props.speciesAmounts();
-    const auto eq = props.equivalences();
-    const auto beta = props.equivalentFractions();
-    const auto log10g = props.logGamma();
+    const auto eq = props.speciesEquivalences();
+    const auto beta = props.speciesEquivalentFractions();
+    const auto log10g = props.speciesLog10Gammas();
 
     // Check if the size of the species' and elements' data containers are the same
     assert(species.size() == ns.size());
