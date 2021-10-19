@@ -210,12 +210,6 @@ public:
         _update<false>(T, P, n, extra);
     }
 
-    /// Update the chemical properties of the phase.
-    auto update(const ChemicalPropsPhaseBaseData<Real, Array>& data)
-    {
-        mdata = data;
-    }
-
     /// Update the chemical properties of the phase using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
@@ -224,6 +218,12 @@ public:
     auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n, Map<String, Any>& extra)
     {
         _update<true>(T, P, n, extra);
+    }
+
+    /// Update the chemical properties of the phase with given data.
+    auto updateWithData(const ChemicalPropsPhaseBaseData<Real, Array>& data)
+    {
+        mdata = data;
     }
 
     /// Return the underlying Phase object.
