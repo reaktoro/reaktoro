@@ -86,10 +86,12 @@ public:
     auto system() const -> const ChemicalSystem&;
 
     /// Return the chemical properties of a phase with given index.
-    auto phaseProps(Index iphase) -> ChemicalPropsPhaseRef;
+    /// @param phase The name or index of the phase in the system.
+    auto phaseProps(StringOrIndex phase) -> ChemicalPropsPhaseRef;
 
     /// Return the chemical properties of a phase with given index.
-    auto phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef;
+    /// @param phase The name or index of the phase in the system.
+    auto phaseProps(StringOrIndex phase) const -> ChemicalPropsPhaseConstRef;
 
     /// Return the temperature of the system (in K).
     auto temperature() const -> real;

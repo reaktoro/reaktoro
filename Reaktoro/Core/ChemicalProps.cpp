@@ -148,13 +148,14 @@ auto ChemicalProps::system() const -> const ChemicalSystem&
     return msystem;
 }
 
-auto ChemicalProps::phaseProps(Index iphase) const -> ChemicalPropsPhaseConstRef
+auto ChemicalProps::phaseProps(StringOrIndex phaseid) const -> ChemicalPropsPhaseConstRef
 {
-    return const_cast<ChemicalProps&>(*this).phaseProps(iphase);
+    return const_cast<ChemicalProps&>(*this).phaseProps(phaseid);
 }
 
-auto ChemicalProps::phaseProps(Index iphase) -> ChemicalPropsPhaseRef
+auto ChemicalProps::phaseProps(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
 {
+    const auto iphase = detail::resolvePhaseIndex(msystem, phaseid);
     const auto phase = msystem.phase(iphase);
     const auto begin = msystem.phases().numSpeciesUntilPhase(iphase);
     const auto size = phase.species().size();
