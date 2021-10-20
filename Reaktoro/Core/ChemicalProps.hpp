@@ -282,18 +282,6 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
     auto speciesStandardHeatCapacitiesConstV() const -> ArrayXr;
 
-    /// Return the amount of a phase in the system (in mol).
-    /// @param phase The name or index of the phase in the system.
-    auto phaseAmount(StringOrIndex phase) const -> real;
-
-    /// Return the mass of a phase in the system (in kg).
-    /// @param phase The name or index of the phase in the system.
-    auto phaseMass(StringOrIndex phase) const -> real;
-
-    /// Return the volume of a phase in the system (in m³).
-    /// @param phase The name or index of the phase in the system.
-    auto phaseVolume(StringOrIndex phase) const -> real;
-
     /// Return the molar volume of the system (in m³/mol).
     auto molarVolume() const -> real;
 

@@ -238,7 +238,7 @@ auto EquilibriumSpecs::phaseAmount(const StringOrIndex& phase) -> void
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
     {
-        return props.phaseAmount(iphase) - w[idx];
+        return props.phaseProps(iphase).amount() - w[idx];
     };
     addConstraint(constraint);
 }
@@ -252,7 +252,7 @@ auto EquilibriumSpecs::phaseMass(const StringOrIndex& phase) -> void
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
     {
-        return props.phaseMass(iphase) - w[idx];
+        return props.phaseProps(iphase).mass() - w[idx];
     };
     addConstraint(constraint);
 }
@@ -266,7 +266,7 @@ auto EquilibriumSpecs::phaseVolume(const StringOrIndex& phase) -> void
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
     {
-        return props.phaseVolume(iphase) - w[idx];
+        return props.phaseProps(iphase).volume() - w[idx];
     };
     addConstraint(constraint);
 }

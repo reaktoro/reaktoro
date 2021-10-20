@@ -504,24 +504,6 @@ auto ChemicalProps::speciesStandardHeatCapacitiesConstV() const -> ArrayXr
     return Cp0 + T*VT0*VT0/VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
-auto ChemicalProps::phaseAmount(StringOrIndex phase) const -> real
-{
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
-    return phaseProps(iphase).amount();
-}
-
-auto ChemicalProps::phaseMass(StringOrIndex phase) const -> real
-{
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
-    return phaseProps(iphase).mass();
-}
-
-auto ChemicalProps::phaseVolume(StringOrIndex phase) const -> real
-{
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
-    return phaseProps(iphase).volume();
-}
-
 auto ChemicalProps::molarVolume() const -> real
 {
     return volume() / amount();
