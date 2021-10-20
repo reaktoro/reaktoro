@@ -294,6 +294,69 @@ public:
     /// @param phase The name or index of the phase in the system.
     auto phaseVolume(StringOrIndex phase) const -> real;
 
+    /// Return the molar volume of the system (in m³/mol).
+    auto molarVolume() const -> real;
+
+    /// Return the temperature derivative of the molar volume of the system (in m³/(mol·K)).
+    auto molarVolumeT() const -> real;
+
+    /// Return the pressure derivative of the molar volume of the system (in m³/(mol·Pa)).
+    auto molarVolumeP() const -> real;
+
+    /// Return the molar Gibbs energy of formation of the system (in J/mol).
+    auto molarGibbsEnergy() const -> real;
+
+    /// Return the molar enthalpy of formation of the system (in J/mol).
+    auto molarEnthalpy() const -> real;
+
+    /// Return the molar entropy of formation of the system (in J/(mol·K)).
+    auto molarEntropy() const -> real;
+
+    /// Return the molar internal energy of formation of the system (in J/mol).
+    auto molarInternalEnergy() const -> real;
+
+    /// Return the molar Helmholtz energy of formation of the system (in J/mol).
+    auto molarHelmholtzEnergy() const -> real;
+
+    /// Return the molar isobaric heat capacity of the system (in J/(mol·K)).
+    auto molarHeatCapacityConstP() const -> real;
+
+    /// Return the molar isochoric heat capacity of the system (in J/(mol·K)).
+    auto molarHeatCapacityConstV() const -> real;
+
+    /// Return the specific volume of the system (in m³/kg).
+    auto specificVolume() const -> real;
+
+    /// Return the temperature derivative of the specific volume of the system (in m³/(kg·K)).
+    auto specificVolumeT() const -> real;
+
+    /// Return the pressure derivative of the specific volume of the system (in m³/(kg·Pa)).
+    auto specificVolumeP() const -> real;
+
+    /// Return the specific Gibbs energy of formation of the system (in J/kg).
+    auto specificGibbsEnergy() const -> real;
+
+    /// Return the specific enthalpy of formation of the system (in J/kg).
+    auto specificEnthalpy() const -> real;
+
+    /// Return the specific entropy of formation of the system (in J/(kg·K)).
+    auto specificEntropy() const -> real;
+
+    /// Return the specific internal energy of formation of the system (in J/kg).
+    auto specificInternalEnergy() const -> real;
+
+    /// Return the specific Helmholtz energy of formation of the system (in J/kg).
+    auto specificHelmholtzEnergy() const -> real;
+
+    /// Return the specific isobaric heat capacity of the system (in J/(kg·K)).
+    auto specificHeatCapacityConstP() const -> real;
+
+    /// Return the specific isochoric heat capacity of the system (in J/(kg·K)).
+    auto specificHeatCapacityConstV() const -> real;
+
+    /// Return the density of the system (in kg/m³).
+    auto density() const -> real;
+
     /// Return the sum of species amounts in the system (in mol).
     auto amount() const -> real;
 

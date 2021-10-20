@@ -522,6 +522,111 @@ auto ChemicalProps::phaseVolume(StringOrIndex phase) const -> real
     return phaseProps(iphase).volume();
 }
 
+auto ChemicalProps::molarVolume() const -> real
+{
+    return volume() / amount();
+}
+
+auto ChemicalProps::molarVolumeT() const -> real
+{
+    return volumeT() / amount();
+}
+
+auto ChemicalProps::molarVolumeP() const -> real
+{
+    return volumeP() / amount();
+}
+
+auto ChemicalProps::molarGibbsEnergy() const -> real
+{
+    return gibbsEnergy() / amount();
+}
+
+auto ChemicalProps::molarEnthalpy() const -> real
+{
+    return enthalpy() / amount();
+}
+
+auto ChemicalProps::molarEntropy() const -> real
+{
+    return entropy() / amount();
+}
+
+auto ChemicalProps::molarInternalEnergy() const -> real
+{
+    return internalEnergy() / amount();
+}
+
+auto ChemicalProps::molarHelmholtzEnergy() const -> real
+{
+    return helmholtzEnergy() / amount();
+}
+
+auto ChemicalProps::molarHeatCapacityConstP() const -> real
+{
+    return heatCapacityConstP() / amount();
+}
+
+auto ChemicalProps::molarHeatCapacityConstV() const -> real
+{
+    return heatCapacityConstV() / amount();
+}
+
+auto ChemicalProps::specificVolume() const -> real
+{
+    return volume() / mass();
+}
+
+auto ChemicalProps::specificVolumeT() const -> real
+{
+    return volumeT() / mass();
+}
+
+auto ChemicalProps::specificVolumeP() const -> real
+{
+    return volumeP() / mass();
+}
+
+auto ChemicalProps::specificGibbsEnergy() const -> real
+{
+    return gibbsEnergy() / mass();
+}
+
+auto ChemicalProps::specificEnthalpy() const -> real
+{
+    return enthalpy() / mass();
+}
+
+auto ChemicalProps::specificEntropy() const -> real
+{
+    return entropy() / mass();
+}
+
+auto ChemicalProps::specificInternalEnergy() const -> real
+{
+    return internalEnergy() / mass();
+}
+
+auto ChemicalProps::specificHelmholtzEnergy() const -> real
+{
+    return helmholtzEnergy() / mass();
+}
+
+auto ChemicalProps::specificHeatCapacityConstP() const -> real
+{
+    return heatCapacityConstP() / mass();
+}
+
+auto ChemicalProps::specificHeatCapacityConstV() const -> real
+{
+    return heatCapacityConstV() / mass();
+}
+
+auto ChemicalProps::density() const -> real
+{
+    return mass() / volume();
+}
+
 auto ChemicalProps::amount() const -> real
 {
     const auto iend = system().phases().size();

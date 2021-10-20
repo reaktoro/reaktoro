@@ -147,11 +147,11 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         const real Ntot  = n.sum();
         const real Mtot  = (n * molar_masses).sum();
-        const real Gtot  = (G0 * n).sum() + (nsumphases * Gex).sum();
-        const real Htot  = (H0 * n).sum() + (nsumphases * Hex).sum();
         const real Vtot  = (V0 * n).sum() + (nsumphases * Vex).sum();
         const real VTtot = (VT0 * n).sum() + (nsumphases * VexT).sum();
         const real VPtot = (VP0 * n).sum() + (nsumphases * VexP).sum();
+        const real Gtot  = (G0 * n).sum() + (nsumphases * Gex).sum();
+        const real Htot  = (H0 * n).sum() + (nsumphases * Hex).sum();
         const real Cptot = (Cp0 * n).sum() + (nsumphases * Cpex).sum();
         const real Cvtot = Cptot + T*VTtot*VTtot/VPtot;
         const real Stot  = (Htot - Gtot)/T;
@@ -178,6 +178,28 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( props.speciesStandardHelmholtzEnergies()   .isApprox(A0)   );
         CHECK( props.speciesStandardHeatCapacitiesConstP().isApprox(Cp0)  );
         CHECK( props.speciesStandardHeatCapacitiesConstV().isApprox(Cv0)  );
+
+        CHECK( props.molarVolume()                == Approx(Vtot/Ntot)  );
+        CHECK( props.molarVolumeT()               == Approx(VTtot/Ntot) );
+        CHECK( props.molarVolumeP()               == Approx(VPtot/Ntot) );
+        CHECK( props.molarGibbsEnergy()           == Approx(Gtot/Ntot)  );
+        CHECK( props.molarEnthalpy()              == Approx(Htot/Ntot)  );
+        CHECK( props.molarEntropy()               == Approx(Stot/Ntot)  );
+        CHECK( props.molarInternalEnergy()        == Approx(Utot/Ntot)  );
+        CHECK( props.molarHelmholtzEnergy()       == Approx(Atot/Ntot)  );
+        CHECK( props.molarHeatCapacityConstP()    == Approx(Cptot/Ntot) );
+        CHECK( props.molarHeatCapacityConstV()    == Approx(Cvtot/Ntot) );
+        CHECK( props.specificVolume()             == Approx(Vtot/Mtot)  );
+        CHECK( props.specificVolumeT()            == Approx(VTtot/Mtot) );
+        CHECK( props.specificVolumeP()            == Approx(VPtot/Mtot) );
+        CHECK( props.specificGibbsEnergy()        == Approx(Gtot/Mtot)  );
+        CHECK( props.specificEnthalpy()           == Approx(Htot/Mtot)  );
+        CHECK( props.specificEntropy()            == Approx(Stot/Mtot)  );
+        CHECK( props.specificInternalEnergy()     == Approx(Utot/Mtot)  );
+        CHECK( props.specificHelmholtzEnergy()    == Approx(Atot/Mtot)  );
+        CHECK( props.specificHeatCapacityConstP() == Approx(Cptot/Mtot) );
+        CHECK( props.specificHeatCapacityConstV() == Approx(Cvtot/Mtot) );
+        CHECK( props.density()                    == Approx(Mtot/Vtot)  );
 
         CHECK( props.amount()             == Approx(Ntot)  );
         CHECK( props.mass()               == Approx(Mtot)  );
