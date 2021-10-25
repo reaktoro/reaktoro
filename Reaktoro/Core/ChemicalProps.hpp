@@ -21,8 +21,8 @@
 #include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
 
@@ -94,7 +94,7 @@ public:
     /// @param phase The name or index of the phase in the system.
     auto phaseProps(StringOrIndex phase) const -> ChemicalPropsPhaseConstRef;
 
-    /// Return the extra data mapped to activity model of particular phase that may be reused by subsequent phases.
+    /// Return the extra data produced during the evaluation of activity models.
     auto extra() const -> Map<String, Any>;
 
     /// Return the temperature of the system (in K).
@@ -472,7 +472,9 @@ private:
     /// The chemical potentials of the species in the system.
     ArrayXr u;
 
-    /// The extra data mapped to activity model of particular phase that may be reused by subsequent phases.
+    /// The extra data produced during the evaluation of activity models. This
+    /// extra data allows the activity model of a phase to reuse calculated
+    /// data from the activity model of a previous phase if needed.
     Map<String, Any> m_extra;
 };
 
