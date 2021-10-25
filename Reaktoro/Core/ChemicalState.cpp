@@ -242,7 +242,7 @@ struct ChemicalState::Impl
         return A * n.matrix();
     }
 
-    auto chargeAmount() const -> real
+    auto charge() const -> real
     {
         const auto& Az = system.formulaMatrixCharge();
         return (Az * n.matrix())[0];
@@ -411,9 +411,9 @@ auto ChemicalState::elementAmounts() const -> ArrayXr
     return pimpl->elementAmounts();
 }
 
-auto ChemicalState::chargeAmount() const -> real
+auto ChemicalState::charge() const -> real
 {
-    return pimpl->chargeAmount();
+    return pimpl->charge();
 }
 
 auto ChemicalState::speciesAmount(Index ispecies) const -> real

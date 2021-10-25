@@ -75,7 +75,7 @@ int main()
     std::cout << "Before equilibration: " << std::endl;
     std::cout << "*******************************************" << std::endl;
     std::cout << "b = " << solutionstate.elementAmounts().transpose() << std::endl;
-    std::cout << "Z = " << solutionstate.chargeAmount() << std::endl;
+    std::cout << "Z = " << solutionstate.charge() << std::endl;
 
     EquilibriumOptions opts;
     opts.optima.output.active = true;
@@ -88,7 +88,7 @@ int main()
     std::cout << "After equilibration: " << std::endl;
     std::cout << "*******************************************" << std::endl;
     std::cout << "b = " << solutionstate.elementAmounts().transpose() << std::endl;
-    std::cout << "Z = " << solutionstate.chargeAmount() << std::endl;
+    std::cout << "Z = " << solutionstate.charge() << std::endl;
     std::cout << "succeed = " << res.optima.succeeded << std::endl;
     std::cout << solutionstate << std::endl;
 

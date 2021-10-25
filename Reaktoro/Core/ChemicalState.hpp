@@ -176,8 +176,8 @@ public:
     /// Return the amounts of the elements in the chemical state (in mol).
     auto elementAmounts() const -> ArrayXr;
 
-    /// Return the amounts of the charge in the chemical state (in mol).
-    auto chargeAmount() const -> real;
+    /// Return the electric charge in the chemical state (in mol).
+    auto charge() const -> real;
 
     /// Return the amount of the species in the chemical state with given index (in mol).
     auto speciesAmount(Index ispecies) const -> real;
