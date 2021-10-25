@@ -316,15 +316,27 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     filtered = specieslist.withCharge(0.0);
 
     CHECK( filtered.size() == 9 );
-    CHECK( filtered[0].name()  == "H2O(aq)"  );
-    CHECK( filtered[1].name()  == "H2(aq)"   );
-    CHECK( filtered[2].name()  == "O2(aq)"   );
-    CHECK( filtered[3].name()  == "NaCl(aq)" );
-    CHECK( filtered[4].name()  == "CO2(aq)"  );
-    CHECK( filtered[5].name()  == "CH4(aq)"  );
-    CHECK( filtered[6].name()  == "H2O(g)"   );
-    CHECK( filtered[7].name()  == "CO2(g)"   );
-    CHECK( filtered[8].name()  == "CH4(g)"   );
+    CHECK( filtered[0].name() == "H2O(aq)"  );
+    CHECK( filtered[1].name() == "H2(aq)"   );
+    CHECK( filtered[2].name() == "O2(aq)"   );
+    CHECK( filtered[3].name() == "NaCl(aq)" );
+    CHECK( filtered[4].name() == "CO2(aq)"  );
+    CHECK( filtered[5].name() == "CH4(aq)"  );
+    CHECK( filtered[6].name() == "H2O(g)"   );
+    CHECK( filtered[7].name() == "CO2(g)"   );
+    CHECK( filtered[8].name() == "CH4(g)"   );
+
+    filtered = specieslist.withCharge(-1.0);
+
+    CHECK( filtered.size() == 3 );
+    CHECK( filtered[0].name() == "OH-"   );
+    CHECK( filtered[1].name() == "Cl-"   );
+    CHECK( filtered[2].name() == "HCO3-" );
+
+    filtered = specieslist.withCharge(-2.0);
+
+    CHECK( filtered.size() == 1 );
+    CHECK( filtered[0].name() == "CO3-2" );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: SpeciesList::withTag
