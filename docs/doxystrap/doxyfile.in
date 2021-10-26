@@ -21,7 +21,7 @@ CITE_BIB_FILES         = @CMAKE_CURRENT_SOURCE_DIR@/bib/references.bib
 QUIET                  = YES
 INPUT                  = @CMAKE_SOURCE_DIR@/Reaktoro \
                          @CMAKE_CURRENT_SOURCE_DIR@/src
-FILE_PATTERNS          = *.cpp, *.hpp, *.md
+FILE_PATTERNS          = *.hpp, *.md
 RECURSIVE              = YES
 EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/examples/cpp
 EXAMPLE_PATTERNS       =
