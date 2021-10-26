@@ -5,7 +5,8 @@ $( document ).ready(function() {
 
   $('li > a[href="index.html"] > span').before("<i class='fa fa-home'></i> ");
   $('li > a[href="installation.html"] > span').before("<i class='fa fa-cog'></i> ");
-  $('li > a[href="modules.html"] > span').before("<i class='fa fa-square'></i> ");
+  $('li > a[href="license.html"] > span').before("<i class='fa fa-gavel'></i> ");
+  $('li > a[href="modules.html"] > span').before("<i class='fa fa-puzzle-piece'></i> ");
   $('li > a[href="namespaces.html"] > span').before("<i class='fa fa-bars'></i> ");
   $('li > a[href="annotated.html"] > span').before("<i class='fa fa-list-ul'></i> ");
   $('li > a[href="files.html"] > span').before("<i class='fa fa-folder-open'></i> ");
