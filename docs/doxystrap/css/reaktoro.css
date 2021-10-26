@@ -157,6 +157,7 @@ a.elRef {
     float: none !important;
   }
 }
+
 /* vertical alignment styles */
 
 .col-top {
@@ -167,4 +168,10 @@ a.elRef {
 }
 .col-bottom {
   vertical-align: bottom;
+}
+
+/* markdown tables alignment styles */
+
+table.markdownTable {
+    width: 100%
 }
