@@ -6,7 +6,7 @@ your Python applications.
 Find below a list of important methods and classes in %Reaktoro that you might
 want to read about.
 
-### Thermochemical databases
+## Thermochemical databases
 
 - @ref Reaktoro::Database
 - @ref Reaktoro::PhreeqcDatabase
@@ -14,13 +14,13 @@ want to read about.
 - @ref Reaktoro::SupcrtDatabase
 - @ref Reaktoro::NasaDatabase (*in development*)
 
-### Chemical system constituents
+## Chemical system constituents
 
 - @ref Reaktoro::Element
 - @ref Reaktoro::Species
 - @ref Reaktoro::Phase
 
-### Chemical system definition
+## Chemical system definition
 
 - @ref Reaktoro::AqueousPhase
 - @ref Reaktoro::GaseousPhase
@@ -31,7 +31,7 @@ want to read about.
 - @ref Reaktoro::Phases
 - @ref Reaktoro::ChemicalSystem
 
-### Chemical state and thermochemical properties of a chemical system
+## Chemical state and thermochemical properties of a chemical system
 
 - @ref Reaktoro::ChemicalState
 - @ref Reaktoro::ChemicalPropsPhase
@@ -40,7 +40,7 @@ want to read about.
 - @ref Reaktoro::ThermoProps
 - @ref Reaktoro::AqueousProps
 
-### Chemical equilibrium problem definition and calculations
+## Chemical equilibrium problem definition and calculations
 
 - @ref Reaktoro::EquilibriumSpecs
 - @ref Reaktoro::EquilibriumRestrictions
@@ -51,7 +51,7 @@ want to read about.
 - @ref Reaktoro::EquilibriumSensitivity
 - @ref Reaktoro::EquilibriumPredictor
 
-### Activity models for aqueous phases
+## Activity models for aqueous phases
 
 - @ref Reaktoro::ActivityModelIdealAqueous
 - @ref Reaktoro::ActivityModelDebyeHuckel
@@ -62,7 +62,7 @@ want to read about.
 - @ref Reaktoro::ActivityModelRumpf
 - @ref Reaktoro::ActivityModelSetschenow
 
-### Activity models for fluid phases (gaseous or liquid)
+## Activity models for fluid phases (gaseous or liquid)
 
 - @ref Reaktoro::ActivityModelIdealGas
 - @ref Reaktoro::ActivityModelIdealSolution
@@ -73,13 +73,13 @@ want to read about.
 - @ref Reaktoro::ActivityModelSpycherPruessEnnis
 - @ref Reaktoro::ActivityModelSpycherReed
 
-### Activity models for solid solutions
+## Activity models for solid solutions
 
 - @ref Reaktoro::ActivityModelIdealSolution
 - @ref Reaktoro::ActivityModelRedlichKister
 - @ref Reaktoro::ActivityModelVanLaar (*needs adaptation to v2.0*)
 
-### Standard thermodynamic properties and models
+## Standard thermodynamic properties and models
 
 - @ref Reaktoro::StandardThermoProps
 - @ref Reaktoro::StandardThermoModelConstant
@@ -91,7 +91,7 @@ want to read about.
 - @ref Reaktoro::StandardVolumeModel
 - @ref Reaktoro::StandardVolumeModelConstant
 
-### Reaction thermodynamic properties and models
+## Reaction thermodynamic properties and models
 
 - @ref Reaktoro::ReactionThermoProps
 - @ref Reaktoro::ReactionThermoModelConstLgK
@@ -100,7 +100,7 @@ want to read about.
 - @ref Reaktoro::ReactionThermoModelPressureCorrection
 - @ref Reaktoro::ReactionThermoModelVantHoff
 
-### Water thermodynamic and electrostatic properties
+## Water thermodynamic and electrostatic properties
 
 - @ref Reaktoro::WaterElectroProps
 - @ref Reaktoro::WaterThermoProps
@@ -122,7 +122,7 @@ want to read about.
 - @ref Reaktoro::waterHelmholtzPropsHGK
 - @ref Reaktoro::waterHelmholtzPropsWagnerPruss
 
-### Worth checking classes and methods
+## Worth checking classes and methods
 
 - @ref Reaktoro::ElementList
 - @ref Reaktoro::PhaseList
@@ -138,6 +138,6 @@ want to read about.
 - @ref Reaktoro::Reaction
 - @ref Reaktoro::StateOfMatter
 
-### For all other needs
+## For all other needs
 
 Check the namespace Reaktoro for all available classes and methods.
