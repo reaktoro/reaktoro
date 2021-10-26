@@ -1,5 +1,5 @@
 # Copy and configure the doxygen configuration files to binary dir
-configure_file(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/doxyfile @ONLY)
+configure_file(doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doxyfile @ONLY)
 
 # Add target "docs" for building docs
 add_custom_target(doxystrap

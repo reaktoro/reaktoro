@@ -1,0 +1,47 @@
+PROJECT_NAME           = @CMAKE_PROJECT_NAME@
+PROJECT_NUMBER         = v@CMAKE_PROJECT_VERSION@
+PROJECT_BRIEF          = "A unified framework for modeling chemically reactive systems"
+PROJECT_LOGO           = @CMAKE_SOURCE_DIR@/resources/icons/reaktoro.svg
+ABBREVIATE_BRIEF       =
+STRIP_FROM_PATH        = @CMAKE_SOURCE_DIR@
+JAVADOC_AUTOBRIEF      = YES
+ALIASES                = bold{1}=**\1** \
+                         emph{1}=*\1* \
+                         eq{1}=@f$\1@f$ \
+                         eqc{1}=@f[\1@f] \
+                         sub{1}=<sub>\1</sub> \
+                         sup{1}=<sup>\1</sup> \
+                         "supcite{1}=<sup>\cite \1</sup>"
+BUILTIN_STL_SUPPORT    = YES
+EXTRACT_LOCAL_CLASSES  = NO
+HIDE_SCOPE_NAMES       = YES
+SORT_MEMBER_DOCS       = NO
+LAYOUT_FILE            = @CMAKE_CURRENT_SOURCE_DIR@/template/layout.xml
+CITE_BIB_FILES         = @CMAKE_CURRENT_SOURCE_DIR@/bib/references.bib
+QUIET                  = YES
+INPUT                  = @CMAKE_SOURCE_DIR@/Reaktoro \
+                         @CMAKE_CURRENT_SOURCE_DIR@/src
+FILE_PATTERNS          = *.cpp, *.hpp, *.md
+RECURSIVE              = YES
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/examples/cpp
+EXAMPLE_PATTERNS       =
+EXAMPLE_RECURSIVE      = YES
+IMAGE_PATH             = @CMAKE_SOURCE_DIR@/resources/ \
+                         @CMAKE_CURRENT_SOURCE_DIR@/img/
+HTML_HEADER            = @CMAKE_CURRENT_SOURCE_DIR@/template/header.html
+HTML_FOOTER            = @CMAKE_CURRENT_SOURCE_DIR@/template/footer.html
+HTML_TIMESTAMP         = YES
+HTML_DYNAMIC_MENUS     = NO
+HTML_FORMULA_FORMAT    = svg
+USE_MATHJAX            = YES
+MATHJAX_EXTENSIONS     = TeX/AMSmath \
+                         TeX/AMSsymbols \
+                         TeX/mhchem
+GENERATE_LATEX         = NO
+EXTRA_PACKAGES         = mathpazo
+HAVE_DOT               = YES
+CLASS_GRAPH            = NO
+GRAPHICAL_HIERARCHY    = NO
+DOT_IMAGE_FORMAT       = svg
+DOT_TRANSPARENT        = YES
+INTERACTIVE_SVG        = YES
