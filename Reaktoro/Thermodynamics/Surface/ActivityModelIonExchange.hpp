@@ -23,15 +23,17 @@
 namespace Reaktoro {
 
 /// Return the activity model for the ion exchange.
+/// @see @ref PageActivityModelIonExchangeGainesThomas
 /// @ingroup ActivityModels
 auto ActivityModelIonExchange() -> ActivityModelGenerator;
 
 /// Return the Gaines-Thomas activity model for ion exchange.
+/// @see @ref PageActivityModelIonExchangeGainesThomas
 /// @ingroup ActivityModels
 auto ActivityModelIonExchangeGainesThomas() -> ActivityModelGenerator;
 
 //=====================================================================================================================
-/// @page ActivityModelIonExchangeGainesThomas Gaines--Thomas activity model
+/// @page PageActivityModelIonExchangeGainesThomas Gaines--Thomas activity model
 /// The Gaines--Thomas activity model for ion exchange compositions.
 /// An instance of this class can be used to control how activities of the
 /// ion exchange species are calculated using the Gaines--Thomas activity model.

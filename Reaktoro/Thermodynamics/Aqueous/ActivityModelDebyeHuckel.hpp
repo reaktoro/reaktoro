@@ -23,6 +23,7 @@
 namespace Reaktoro {
 
 /// The parameters in the Debye--Hückel activity model for aqueous solutions.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 struct ActivityModelDebyeHuckelParams
 {
@@ -67,32 +68,37 @@ struct ActivityModelDebyeHuckelParams
 };
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 auto ActivityModelDebyeHuckel() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model with given custom parameters.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel limiting law model.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model with Kielland (1937) parameters.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 auto ActivityModelDebyeHuckelKielland() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model using PHREEQC parameters.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model using WATEQ4F parameters.
+/// @see @ref PageActivityModelDebyeHuckel
 /// @ingroup ActivityModels
 auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModelGenerator;
 
-
 //=====================================================================================================================
-/// @page ActivityModelDebyeHuckel Debye--Hückel activity model
+/// @page PageActivityModelDebyeHuckel Debye--Hückel activity model
 /// The Debye--Hückel activity model for aqueous solutions.
 /// An instance of this class can be used to control how activity coefficients
 /// of ionic and neutral species, @eq{\gamma_i} and @eq{\gamma_n} respectively,
