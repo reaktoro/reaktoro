@@ -225,12 +225,14 @@ auto random(Index rows, Index cols) -> decltype(MatrixXd::Random(rows, cols));
 auto identity(Index rows, Index cols) -> decltype(MatrixXd::Identity(rows, cols));
 
 /// Return a view of a sequence of rows of a matrix
+/// @param mat The matrix from which a row view is created
 /// @param start The row index of the start of the sequence
 /// @param num The number of rows in the sequence
 template<typename Derived>
 auto rows(Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decltype(mat.middleRows(start, num));
 
 /// Return a view of a sequence of rows of a matrix
+/// @param mat The matrix from which a row view is created
 /// @param start The row index of the start of the sequence
 /// @param num The number of rows in the sequence
 template<typename Derived>
@@ -249,12 +251,14 @@ template<typename Derived, typename Indices>
 auto rows(const Eigen::MatrixBase<Derived>& mat, const Indices& irows) -> decltype(mat(irows, Eigen::all));
 
 /// Return a view of a sequence of columns of a matrix
+/// @param mat The matrix from which a column view is created
 /// @param start The column index of the start of the sequence
 /// @param num The number of columns in the sequence
 template<typename Derived>
 auto cols(Eigen::MatrixBase<Derived>& mat, Index start, Index num) -> decltype(mat.middleCols(start, num));
 
 /// Return a view of a sequence of columns of a matrix
+/// @param mat The matrix from which a column view is created
 /// @param start The column index of the start of the sequence
 /// @param num The number of columns in the sequence
 template<typename Derived>
@@ -273,30 +277,34 @@ template<typename Derived, typename Indices>
 auto cols(const Eigen::MatrixBase<Derived>& mat, const Indices& icols) -> decltype(mat(Eigen::all, icols));
 
 /// Return a view of some rows and columns of a matrix
-/// @param mat The matrix for which the view is created
-/// @param irows The indices of the rows of the matrix
-/// @param icols The indices of the columns of the matrix
+/// @param vec The vector for which the view is created
+/// @param irow The index of the starting row
+/// @param nrows The number of rows in the view
 template<typename Derived>
 auto segment(Eigen::MatrixBase<Derived>& vec, Index irow, Index nrows) -> decltype(vec.segment(irow, nrows));
 
 /// Return a view of some rows and columns of a matrix
-/// @param mat The matrix for which the view is created
-/// @param irows The indices of the rows of the matrix
-/// @param icols The indices of the columns of the matrix
+/// @param vec The vector for which the view is created
+/// @param irow The index of the starting row
+/// @param nrows The number of rows in the view
 template<typename Derived>
 auto segment(const Eigen::MatrixBase<Derived>& vec, Index irow, Index nrows) -> decltype(vec.segment(irow, nrows));
 
 /// Return a view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created
-/// @param irows The indices of the rows of the matrix
-/// @param icols The indices of the columns of the matrix
+/// @param irow The index of the starting row
+/// @param icol The index of the starting column
+/// @param nrows The number of rows in the block view
+/// @param ncols The number of columns in the block view
 template<typename Derived>
 auto block(Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.block(irow, icol, nrows, ncols));
 
 /// Return a view of some rows and columns of a matrix
 /// @param mat The matrix for which the view is created
-/// @param irows The indices of the rows of the matrix
-/// @param icols The indices of the columns of the matrix
+/// @param irow The index of the starting row
+/// @param icol The index of the starting column
+/// @param nrows The number of rows in the block view
+/// @param ncols The number of columns in the block view
 template<typename Derived>
 auto block(const Eigen::MatrixBase<Derived>& mat, Index irow, Index icol, Index nrows, Index ncols) -> decltype(mat.block(irow, icol, nrows, ncols));
 

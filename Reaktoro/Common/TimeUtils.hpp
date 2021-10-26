@@ -32,12 +32,12 @@ auto time() -> Time;
 
 /// Return the elapsed time between two time points (in units of s)
 /// @param end The end time point
-/// @param end The begin time point
+/// @param begin The begin time point
 /// @return The elapsed time between *end* and *begin* in seconds
 auto elapsed(const Time& end, const Time& begin) -> double;
 
 /// Return the elapsed time between a time point and now (in units of s)
-/// @param end The begin time point
+/// @param begin The begin time point
 /// @return The elapsed time between now and *begin* in seconds
 auto elapsed(const Time& begin) -> double;
 

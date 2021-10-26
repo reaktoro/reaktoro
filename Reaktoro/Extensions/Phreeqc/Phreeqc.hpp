@@ -79,16 +79,16 @@ public:
     /// Return the name of a phase
     virtual auto phaseName(Index iphase) const -> String;
 
-    /// Return the thermodynamic properties of the phases and its species.
-    /// @param iphase The index of the phase
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
+    // /// Return the thermodynamic properties of the phases and its species.
+    // /// @param iphase The index of the phase
+    // /// @param T The temperature (in units of K)
+    // /// @param P The pressure (in units of Pa)
     // virtual auto properties(ThermoModelResult& res, double T, double P) -> void;
 
-    /// Return the chemical properties of the phases and its species.
-    /// @param T The temperature (in units of K)
-    /// @param P The pressure (in units of Pa)
-    /// @param n The amounts of the species (in units of mol)
+    // /// Return the chemical properties of the phases and its species.
+    // /// @param T The temperature (in units of K)
+    // /// @param P The pressure (in units of Pa)
+    // /// @param n The amounts of the species (in units of mol)
     // virtual auto properties(ChemicalModelResult& res, double T, double P, ArrayXdConstRef n) -> void;
 
     /// Set the temperature and pressure of the interfaced code.

@@ -47,7 +47,7 @@ auto linearlyIndependentCols(MatrixXdConstRef A, MatrixXdRef B) -> Indices;
 auto linearlyIndependentRows(MatrixXdConstRef A, MatrixXdRef B) -> Indices;
 
 /// Calculate the inverse of `A + D` where `inv(A)` is already known and `D` is a diagonal matrix.
-/// @param invA[in,out] The inverse of the matrix `A` and the final inverse of `A + D`
+/// @param invA The inverse of the matrix `A` and the final inverse of `A + D`
 /// @param D The diagonal matrix `D`
 auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> MatrixXd;
 
@@ -60,12 +60,13 @@ auto inverseShermanMorrison(MatrixXdConstRef invA, VectorXdConstRef D) -> Matrix
 auto rationalize(double x, unsigned maxden) -> std::tuple<long, long>;
 
 /// Clean an array that is known to have rational numbers from round-off errors.
-/// @param vals[in,out] The values to be cleaned
+/// @param[in,out] vals The values to be cleaned
+/// @param size The size of the data in `vals`
 /// @param maxden The maximum known denominator in the array with rational numbers
 auto cleanRationalNumbers(double* vals, long size, long maxden = 6) -> void;
 
 /// Clean a matrix that is known to have rational numbers from round-off errors.
-/// @param A[in,out] The matrix to be cleaned
+/// @param[in,out] A The matrix to be cleaned
 /// @param maxden The maximum known denominator in the matrix with rational numbers
 auto cleanRationalNumbers(MatrixXdRef A, long maxden = 6) -> void;
 

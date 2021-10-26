@@ -42,9 +42,10 @@ enum class PhaseIdentificationMethod
 };
 
 /// Return a CubicEOSFluidType that says if the phase is a Liquid or Gas based on Volume Method
-/// @param Temperature Phase temperature
-/// @param real Phase pressure
+/// @param temperature Phase temperature
+/// @param pressure Phase pressure
 /// @param Z Phase compressibility factor
+/// @param b The b factor
 /// @return The type of the phase
 ///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.
@@ -55,8 +56,8 @@ auto identifyPhaseUsingVolume(
     const real& b) -> CubicEOSFluidType;
 
 /// Return a CubicEOSFluidType that says if the phase is a Liquid or Gas based on Isothermal Compressibility
-/// @param Temperature Phase temperature
-/// @param real Phase pressure
+/// @param temperature Phase temperature
+/// @param pressure Phase pressure
 /// @param Z Phase compressibility factor
 /// @return The type of the phase
 ///
@@ -68,15 +69,11 @@ auto identifyPhaseUsingIsothermalCompressibility(
 
 /// Return a CubicEOSFluidType that says if the phase is a Liquid or Gas based on gibbs residual energy and
 /// equation of state
-/// @param pressure Phase pressure
-/// @param temperature Phase temperature
-/// @param amix attractive parameter
-/// @param Zs Z-roots, as calculated by the cubic EOS. Must have size 1 or 2 here.
 ///     If size(Z) == 2, the values od Gibbs residual energy are compared. It is a liquid phase if
 ///     Gibbs residual energy of Z_min is the smallest and gaseous if Gibbs residual energy of Z_max
 ///     is the smallest.
 ///     If size(Z) == 1, the pressue is compared with the local P_min and local P_max of the EoS.
-///     It is a liquid phase if P \textgreater P_min and gaseous if P \textless Pmax.
+///     It is a liquid phase if P > P_min and gaseous if P < Pmax.
 /// @return The type of the phase
 ///
 /// Reference: Bennett, J. and Schmidt, K.A., 2016. Comparison of Phase Identification Methods Used in Oil Industry Flow Simulations. Energy & Fuels, 31(4), pp.3370-3379.

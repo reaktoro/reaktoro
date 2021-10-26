@@ -45,9 +45,9 @@ public:
     static auto withName(const String& name) -> ThermoFunDatabase;
 
     /// Return a ThermoFunDatabase object constructed with a given local file.
-    /// @param path The path, including file name, to the database file.
-    /// @warning An exception is thrown if `path` does not point to a valid database file.
-    static auto fromFile(const String& file) ->  ThermoFunDatabase;
+    /// @param filepath The path, including file name, to the database file.
+    /// @warning An exception is thrown if `filepath` does not point to a valid database file.
+    static auto fromFile(const String& filepath) ->  ThermoFunDatabase;
 
     /// Return a ThermoFunDatabase object constructed with given database text contents.
     /// @param contents The contents of the database as a string.

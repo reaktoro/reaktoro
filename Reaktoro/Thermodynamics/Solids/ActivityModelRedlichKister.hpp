@@ -30,7 +30,6 @@ namespace Reaktoro {
 /// @f[\ln\gamma_{2}=x_{1}^{2}[a_{0}-a_{1}(3x_{2}-x_{1})+a_{2}(x_{2}-x_{1})(5x_{2}-x_{1})]@f].
 /// The parameters @f$a_0@f$, @f$a_1@f$, and @f$a_2@f$ must be provided.
 /// Set them to zero if not needed.
-/// @param mixture The mineral mixture
 /// @param a0 The Redlich-Kister parameter a0
 /// @param a1 The Redlich-Kister parameter a1
 /// @param a2 The Redlich-Kister parameter a2

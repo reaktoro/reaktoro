@@ -25,22 +25,22 @@ namespace Reaktoro {
 /// The parameters in the constant model for calculating standard thermodynamic properties of species.
 struct StandardThermoModelParamsConstant
 {
-    /// The constant standard molar Gibbs energy @f$G^{\circ}@f$ of the species (in J/mol).
+    /// The constant standard molar Gibbs energy @eq{G^{\circ}} of the species (in J/mol).
     Param G0 = Param("G0", 0.0);
 
-    /// The constant standard molar enthalpy @f$H^{\circ}@f$ of the species (in J/mol).
+    /// The constant standard molar enthalpy @eq{H^{\circ}} of the species (in J/mol).
     Param H0 = Param("H0", 0.0);
 
-    /// The constant standard molar volume @f$V^{\circ}@f$ of the species (in m³/mol).
+    /// The constant standard molar volume @eq{V^{\circ}} of the species (in m³/mol).
     Param V0 = Param("V0", 0.0);
 
-    /// The temperature derivative of the standard molar volume @f$@f$\partial V^{\circ}/\partial T@f$@f$ of the species (in m³/(mol·K)).
+    /// The temperature derivative of the standard molar volume @eq{\partial V^{\circ} / \partial T} of the species (in m³/(mol·K)).
     Param VT0 = Param("VT0", 0.0);
 
-    /// The pressure derivative of the standard molar volume @f$\partial V^{\circ}/\partial P@f$ of the species (in m³/(mol·K)).
+    /// The pressure derivative of the standard molar volume @eq{\partial V^{\circ} / \partial P} of the species (in m³/(mol·K)).
     Param VP0 = Param("VP0", 0.0);
 
-    /// The constant standard molar isobaric heat capacity @f$C_{P}^{\circ}@f$ of the species (in J/(mol·K)).
+    /// The constant standard molar isobaric heat capacity @eq{C_{P}^{\circ}} of the species (in J/(mol·K)).
     Param Cp0 = Param("Cp0", 0.0);
 };
 

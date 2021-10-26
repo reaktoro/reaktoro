@@ -34,6 +34,7 @@ struct WaterHelmholtzProps;
 ///   New York: Hemisphere Publishing Corporation.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
+/// @param stateofmatter The state of matter of water
 /// @return The thermodynamic state of water
 /// @see WaterThermoProps
 auto waterThermoPropsHGK(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps;
@@ -50,6 +51,7 @@ auto waterThermoPropsHGKMemoized(real T, real P, StateOfMatter stateofmatter) ->
 ///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
+/// @param stateofmatter The state of matter of water
 /// @return The thermodynamic state of water
 /// @see WaterThermoProps
 auto waterThermoPropsWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> WaterThermoProps;

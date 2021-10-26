@@ -123,8 +123,7 @@ public:
         PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
     };
 
-    /// Construct a CubicEOS instance with given number of species.
-    /// @param nspecies The number of species in the phase.
+    /// Construct a CubicEOS instance.
     explicit CubicEOS(const Args& args);
 
     /// Construct a copy of a CubicEOS instance

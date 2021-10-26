@@ -32,7 +32,7 @@ namespace Reaktoro {
 /// Provides a convenient way to initialized an exception with helpful error messages.
 /// **Usage**
 /// Below we demonstrate a convenient way to raise an exception using an
-/// Exception instance and the @ref raise macro.
+/// Exception instance.
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /// using namespace Reaktoro;
 /// Exception exception;

@@ -26,12 +26,14 @@ namespace Reaktoro {
 /// Calculate the density of water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
+/// @param stateofmatter The state of matter of water
 /// @return The density of liquid water (in units of kg/m3)
 auto waterDensityHGK(real T, real P, StateOfMatter stateofmatter) -> real;
 
 /// Calculate the density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
+/// @param stateofmatter The state of matter of water
 /// @return The density of liquid water (in units of kg/m3)
 auto waterDensityWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> real;
 
