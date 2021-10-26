@@ -1,4 +1,4 @@
-# API Reference {#mainpage}
+# API Reference {#index}
 
 Welcome to %Reaktoro's C++ API reference. You can also use this API guide for
 your Python applications.
@@ -139,5 +139,7 @@ want to read about.
 - @ref Reaktoro::StateOfMatter
 
 ## For all other needs
+
+- @ref license
 
 Check the namespace Reaktoro for all available classes and methods.
