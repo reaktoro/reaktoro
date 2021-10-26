@@ -25,7 +25,7 @@ namespace Reaktoro {
 /// The parameters in the Drummond (1981) activity model.
 /// The default values correspond to dissolved gas CO<sub>2</sub>(aq).
 /// @see @ref PageActivityModelDrummond
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 struct ActivityModelDrummondParams
 {
     real a1 = -1.0312;    ///< The coefficient @eq{a_1} in the activity model.
@@ -38,14 +38,14 @@ struct ActivityModelDrummondParams
 /// Return the activity model for a dissolved gas species in an aqueous phase based on Drummond (1981).
 /// @param gas The chemical formula of the dissolved gas in the aqueous phase.
 /// @see @ref PageActivityModelDrummond
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDrummond(String gas) -> ActivityModelGenerator;
 
 /// Return the activity model for a dissolved gas species in an aqueous phase based on Drummond (1981).
 /// @param gas The chemical formula of the dissolved gas in the aqueous phase.
 /// @param params The custom parameters for the activity model.
 /// @see @ref PageActivityModelDrummond
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> ActivityModelGenerator;
 
 

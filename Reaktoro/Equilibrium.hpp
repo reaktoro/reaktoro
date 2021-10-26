@@ -28,3 +28,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+
+/// @defgroup Equilibrium Equilibrium
+/// This is the equilibrium module in Reaktoro, in which methods and classes for chemical equilibrium calculations are implemented.

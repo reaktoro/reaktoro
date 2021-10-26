@@ -28,7 +28,7 @@ namespace Reaktoro {
 ///    carbon dioxide in aqueous mixtures of sodium chloride: Experimental
 ///    results and correlation. Journal of Solution Chemistry, 23(3), 431–448*.
 /// @param gas The chemical formula of the dissolved gas.
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelRumpf(String gas) -> ActivityModelGenerator;
 
 } // namespace Reaktoro

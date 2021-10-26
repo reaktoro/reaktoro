@@ -40,7 +40,7 @@ namespace Reaktoro {
 ///     coefficients, osmotic coefficients, and apparent molal and standard and
 ///     relative partial molal properties to 600°C. American Journal of
 ///     Science, 281(10), 1249–1516.
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelPitzerHMW() -> ActivityModelGenerator;
 
 } // namespace Reaktoro

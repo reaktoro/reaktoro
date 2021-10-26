@@ -33,18 +33,20 @@ auto ActivityModelIonExchange() -> ActivityModelGenerator;
 auto ActivityModelIonExchangeGainesThomas() -> ActivityModelGenerator;
 
 //=====================================================================================================================
-/// @page PageActivityModelIonExchangeGainesThomas Gaines--Thomas activity model
-/// The Gaines--Thomas activity model for ion exchange compositions.
-/// An instance of this class can be used to control how activities of the
-/// ion exchange species are calculated using the Gaines--Thomas activity model.
+/// @page PageActivityModelIonExchangeGainesThomas Gaines--Thomas ion exchange activity model
 ///
-/// The activity of \bold{ion exchange species} are calculated using the
+/// The Gaines--Thomas activity model for ion exchange compositions. An
+/// instance of this class can be used to control how activities of the ion
+/// exchange species are calculated using the Gaines--Thomas activity model.
+///
+/// The activity of **ion exchange species** are calculated using the
 /// equivalence fractions:
 ///
-/// \eqc{\beta_I=-\dfrac{x_{I}Ze_{I}}{\sum_{j} x_{j}Ze_{j},}
+/// @eqc{\beta_{i}=-\dfrac{x_{i}z_{\mathrm{e},i}}{\sum_{j}x_{j}z_{\mathrm{e},j}},}
 ///
-/// where @eq{x_{I}} and @eq{x_{i}} are species fractions and
-/// @eq{Ze_{I}} and @eq{Ze_{i}} are exchanger equivalences (or cation charges)
-/// in ion exchange species.
+/// where @eq{x_{i}} and @eq{x_{j}} are species mole fractions and
+/// @eq{z_{\mathrm{e},i}}} and @eq{z_{\mathrm{e},j}}} are exchanger
+/// equivalences (or cation charges) in ion exchange species.
+//=====================================================================================================================
 
 } // namespace Reaktoro

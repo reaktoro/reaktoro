@@ -17,3 +17,5 @@
 
 #pragma once
 
+/// @defgroup Math Math
+/// This is the module in Reaktoro in which math related methods and classes are implemented.

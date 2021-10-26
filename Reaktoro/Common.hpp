@@ -40,3 +40,6 @@
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Units.hpp>
+
+/// @defgroup Common Common
+/// This is the common module in Reaktoro, in which methods and classes commonly used in other modules are implemented.

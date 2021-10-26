@@ -29,7 +29,7 @@ namespace Reaktoro {
 ///    2000 bar. Chemical Geology, 193(3-4), 257–271
 /// Construct a ActivityModelDuanSun object with given dissolved gas formula.
 /// @param gas The chemical formula of the dissolved gas.
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator;
 
 } // namespace Reaktoro

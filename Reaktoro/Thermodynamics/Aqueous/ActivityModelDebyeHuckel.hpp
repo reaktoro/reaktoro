@@ -24,7 +24,7 @@ namespace Reaktoro {
 
 /// The parameters in the Debye--Hückel activity model for aqueous solutions.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 struct ActivityModelDebyeHuckelParams
 {
     /// The default value of the *å* parameter for ionic species.
@@ -69,32 +69,32 @@ struct ActivityModelDebyeHuckelParams
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDebyeHuckel() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model with given custom parameters.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDebyeHuckel(ActivityModelDebyeHuckelParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel limiting law model.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDebyeHuckelLimitingLaw() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model with Kielland (1937) parameters.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDebyeHuckelKielland() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model using PHREEQC parameters.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDebyeHuckelPHREEQC() -> ActivityModelGenerator;
 
 /// Return the activity model for aqueous phases based on the Debye--Hückel model using WATEQ4F parameters.
 /// @see @ref PageActivityModelDebyeHuckel
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelDebyeHuckelWATEQ4F() -> ActivityModelGenerator;
 
 //=====================================================================================================================

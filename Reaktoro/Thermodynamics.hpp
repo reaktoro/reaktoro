@@ -48,3 +48,7 @@
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
+
+/// @defgroup Thermodynamics Thermodynamics
+/// This is the thermodynamics module in Reaktoro, in which various thermodynamic models and related concepts are implemented.
+

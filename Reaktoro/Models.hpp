@@ -32,3 +32,6 @@
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
+
+/// @defgroup Models Models
+/// This is the module in Reaktoro in which various thermodynamic models are implemented.

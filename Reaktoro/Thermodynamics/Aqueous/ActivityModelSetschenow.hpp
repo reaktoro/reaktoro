@@ -25,7 +25,7 @@ namespace Reaktoro {
 /// Return the Setschenow activity model for a neutral aqueous species.
 /// @param neutral The formula of the neutral aqueous species (e.g., `NaCl`).
 /// @param b The Setschenow *b* coefficient.
-/// @ingroup ActivityModels
+/// @ingroup Thermodynamics
 auto ActivityModelSetschenow(String neutral, real b) -> ActivityModelGenerator;
 
 } // namespace Reaktoro
