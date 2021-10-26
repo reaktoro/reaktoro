@@ -64,17 +64,6 @@ div.line {
 
 /* Customizing Doxygen Table of Contents */
 div.toc {
-/*        padding: none !important;
-        background-color: none !important;
-        border: none;
-        border-radius: none;
-        position: relative;
-        float: left;
-        height: auto;
-        margin: none;
-        width: auto;*/
-}
-div.toc {
     padding: inherit;
     position: relative;
     background-color: inherit;
@@ -178,3 +167,4 @@ a.elRef {
 }
 .col-bottom {
   vertical-align: bottom;
+}
