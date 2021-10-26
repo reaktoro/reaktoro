@@ -1,5 +1,7 @@
 /* Customizing Bootstrap */
 
+@import url('http://fonts.cdnfonts.com/css/cascadia-code');
+
 h1, .h1 {
   font-size: 175%;
   font-weight: bold;
@@ -13,6 +15,10 @@ h2, .h2 {
 h3, .h3 {
   font-size: 125%;
   /*font-weight: bold;*/
+}
+
+div.line {
+    font-family: 'Cascadia Code', monospace, fixed;
 }
 
 /* Customizing fancybox */
