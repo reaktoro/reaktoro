@@ -329,14 +329,14 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
     filtered = specieslist.withCharge(-1.0);
 
     CHECK( filtered.size() == 3 );
-    CHECK( filtered[0].name() == "OH-"   );
-    CHECK( filtered[1].name() == "Cl-"   );
-    CHECK( filtered[2].name() == "HCO3-" );
+    CHECK( filtered[0].name() == "OH-(aq)"   );
+    CHECK( filtered[1].name() == "Cl-(aq)"   );
+    CHECK( filtered[2].name() == "HCO3-(aq)" );
 
     filtered = specieslist.withCharge(-2.0);
 
     CHECK( filtered.size() == 1 );
-    CHECK( filtered[0].name() == "CO3-2" );
+    CHECK( filtered[0].name() == "CO3-2(aq)" );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: SpeciesList::withTag

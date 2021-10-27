@@ -323,6 +323,18 @@ def testSpeciesList():
     assert filtered[7].name()  == "CO2(g)"
     assert filtered[8].name()  == "CH4(g)"
 
+    filtered = specieslist.withCharge(-1.0)
+
+    assert filtered.size() == 3
+    assert filtered[0].name() == "OH-(aq)"
+    assert filtered[1].name() == "Cl-(aq)"
+    assert filtered[2].name() == "HCO3-(aq)"
+
+    filtered = specieslist.withCharge(-2.0)
+
+    assert filtered.size() == 1
+    assert filtered[0].name() == "CO3-2(aq)"
+
     #-------------------------------------------------------------------------
     # TESTING METHOD: SpeciesList::withTag
     #-------------------------------------------------------------------------
