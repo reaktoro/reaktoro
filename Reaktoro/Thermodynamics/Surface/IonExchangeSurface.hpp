@@ -65,8 +65,10 @@ public:
     auto ze() const -> ArrayXdConstRef;
 
     /// Calculate the state of the aqueous mixture.
+    /// @param T The temperature (in K)
+    /// @param P The pressure (in Pa)
     /// @param x The fraction of the species in the composition
-    auto state(ArrayXrConstRef x) -> IonExchangeSurfaceState;
+    auto state(real T, real P, ArrayXrConstRef x) -> IonExchangeSurfaceState;
 
     /// Return the state of the aqueous mixture.
     auto state() const -> IonExchangeSurfaceState;

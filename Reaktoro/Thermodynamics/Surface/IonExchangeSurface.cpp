@@ -120,7 +120,7 @@ struct IonExchangeSurface::Impl
     }
 
     /// Return the state of the ion exchange surface.
-    auto state(ArrayXrConstRef x) -> IonExchangeSurfaceState
+    auto state(real T, real P, ArrayXrConstRef x) -> IonExchangeSurfaceState
     {
         exchange_state.beta = equivalencesFractions(x);
 
@@ -165,9 +165,9 @@ auto IonExchangeSurface::ze() const -> ArrayXdConstRef
     return pimpl->ze;
 }
 
-auto IonExchangeSurface::state(ArrayXrConstRef x) -> IonExchangeSurfaceState
+auto IonExchangeSurface::state(real T, real P, ArrayXrConstRef x) -> IonExchangeSurfaceState
 {
-    return pimpl->state(x);
+    return pimpl->state(T, P, x);
 }
 
 auto IonExchangeSurface::state() const -> IonExchangeSurfaceState
