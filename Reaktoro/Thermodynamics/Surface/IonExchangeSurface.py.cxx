@@ -38,7 +38,7 @@ void exportIonExchangeSurface(py::module& m)
     .def("species", py::overload_cast<>(&IonExchangeSurface::species, py::const_), py::return_value_policy::reference_internal)
     .def("ze", &IonExchangeSurface::ze)
     .def("setLogarithmsOfActivities", &IonExchangeSurface::setLogarithmsOfActivities)
-    .def("state", py::overload_cast<ArrayXrConstRef>(&IonExchangeSurface::state))
+    .def("state", py::overload_cast<real,real,ArrayXrConstRef>(&IonExchangeSurface::state))
     .def("state", py::overload_cast<>(&IonExchangeSurface::state, py::const_), py::return_value_policy::reference_internal)
     ;
 }

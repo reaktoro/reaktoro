@@ -126,7 +126,7 @@ struct IonExchangeProps::Impl
     auto update(const ChemicalPropsPhase& exprops) -> void
     {
         props = exprops;
-        exsurface.state(props.speciesMoleFractions());
+        exsurface.state(props.temperature(), props.pressure(), props.speciesMoleFractions());
         exstate = exsurface.state();
         nex = props.speciesAmounts();
     }
