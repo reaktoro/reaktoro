@@ -42,29 +42,15 @@ int main()
         ActivityModelDrummond("CO2")
     ));
 
-    // Fetch species for ion-exchange modeling
-    SpeciesList exchange_species = db.species().withAggregateState(AggregateState::IonExchange).withCharge(0.0);
-
     // Define an ion exchange phase
-    //IonExchangePhase exchange_phase(detail::extractNames(exchange_species));
     IonExchangePhase exchange_phase("NaX CaX2 MgX2");
     exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
 
     // Construct the chemical system
     ChemicalSystem system(db, aqueous_phase, exchange_phase);
 
-    // Specify conditions to be satisfied at the chemical equilibrium
-    EquilibriumSpecs specs(system);
-    specs.temperature();
-    specs.pressure();
-
     const auto T = 25.0; // temperature in celsius
     const auto P = 1.0;  // pressure in bar
-
-    // Define conditions to be satisfied at chemical equilibrium
-    EquilibriumConditions conditions(specs);
-    conditions.temperature(T, "celsius");
-    conditions.pressure(P, "bar");
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
@@ -77,8 +63,8 @@ int main()
     solutionstate.setSpeciesAmount("NaX"  , 0.06, "mol");
 
     // Define equilibrium solver and equilibrate given initial state
-    EquilibriumSolver solver(specs);
-    solver.solve(solutionstate, conditions);
+    EquilibriumSolver solver(system);
+    solver.solve(solutionstate);
 
     // Output the chemical state to a text file
     solutionstate.output("state.txt");
