@@ -61,9 +61,6 @@ struct ChemicalState::Impl
     /// The amounts of the chemical species (in mol)
     ArrayXr n;
 
-    /// The extra data mapped to activity model of particular phase that may be reused by subsequent phases.
-    Map<String, Any> m_extra;
-
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
     : system(system), equilibrium(system), props(system)
@@ -187,11 +184,6 @@ struct ChemicalState::Impl
     auto setSpeciesMass(String name, real mass, String unit) -> void
     {
         setSpeciesMass(system.species().index(name), mass, unit);
-    }
-
-    auto setExtra(const Map<String, Any>& extra) -> void
-    {
-        m_extra = extra;
     }
 
     auto speciesAmount(Index ispecies) const -> real
@@ -381,11 +373,6 @@ auto ChemicalState::setSpeciesMass(String name, real mass, String unit) -> void
     pimpl->setSpeciesMass(name, mass, unit);
 }
 
-auto ChemicalState::setExtra(const Map<String, Any>& extra) -> void
-{
-    pimpl->setExtra(extra);
-}
-
 auto ChemicalState::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
@@ -474,11 +461,6 @@ auto ChemicalState::props() const -> const ChemicalProps&
 auto ChemicalState::props() -> ChemicalProps&
 {
     return pimpl->props;
-}
-
-auto ChemicalState::extra() const -> Map<String, Any>
-{
-    return pimpl->m_extra;
 }
 
 auto ChemicalState::output(std::ostream& out) const -> void

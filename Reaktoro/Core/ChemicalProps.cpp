@@ -72,7 +72,7 @@ auto ChemicalProps::update(const ChemicalState& state) -> void
     const auto& T = state.temperature();
     const auto& P = state.pressure();
     const auto& n = state.speciesAmounts();
-    m_extra = state.extra();
+    m_extra = state.props().extra();
     update(T, P, n);
 }
 
@@ -189,6 +189,11 @@ auto ChemicalProps::phaseProps(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
 auto ChemicalProps::extra() const -> Map<String, Any>
 {
     return m_extra;
+}
+
+auto ChemicalProps::setExtra(const Map<String, Any>& extra) -> void
+{
+    m_extra = extra;
 }
 
 auto ChemicalProps::temperature() const -> real

@@ -117,7 +117,7 @@ struct IonExchangeProps::Impl
         const auto n = state.speciesAmounts();
         const auto ifirst = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = phase.species().size();
-        extra = state.extra();
+        extra = state.props().extra();
         props.update(T, P, n.segment(ifirst, size), extra);
         update(props);
     }
