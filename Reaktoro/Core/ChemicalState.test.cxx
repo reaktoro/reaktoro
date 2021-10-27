@@ -216,6 +216,11 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK( state.speciesMass(idx("CaCO3(s)"), "g") == 7.0 );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::charge()
+    //-------------------------------------------------------------------------
+    CHECK( state.charge() == Approx(-43.3475) );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::props()
     //-------------------------------------------------------------------------
     state.props().update(state);
@@ -239,6 +244,8 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 
         CHECK(  state.props().temperature() == 288.0 );
         CHECK(  state.props().pressure() == 1.3e5 );
+        CHECK(  state.charge() == Approx(-0.3) );
+
         CHECK( (state.props().speciesAmounts() == 0.1).all() );
         return state.props();
     };
