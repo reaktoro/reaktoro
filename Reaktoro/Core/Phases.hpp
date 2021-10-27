@@ -555,12 +555,6 @@ public:
     /// Construct an IonExchangePhase object with given species names.
     explicit IonExchangePhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-//    /// Construct a CondensedPhases object with given element symbols.
-//    explicit IonExchangePhase(const Speciate& elements) : GenericPhase(elements) { initialize(); }
-//
-//    /// Construct a CondensedPhases object with given element symbols excluding the species with provided tags
-//    explicit IonExchangePhase(const Speciate& elements, const Exclude& withtags) : GenericPhase(elements, withtags) { initialize(); };
-
     /// Initialize the default attributes of this IonExchangePhase object.
     auto initialize() -> void
     {
