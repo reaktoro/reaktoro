@@ -97,6 +97,9 @@ public:
     /// Return the extra data produced during the evaluation of activity models.
     auto extra() const -> Map<String, Any>;
 
+    /// Set the extra data produced during the evaluation of activity models.
+    auto setExtra(const Map<String, Any>& extra) -> void;
+
     /// Return the temperature of the system (in K).
     auto temperature() const -> real;
 

@@ -265,7 +265,7 @@ struct EquilibriumSolver::Impl
         state.equilibrium().setInputValues(conditions.inputValues());
         state.equilibrium().setInitialComponentAmounts(optproblem.be);
         state.equilibrium().setOptimaState(optstate);
-        state.setExtra(setup.chemicalProps().extra());
+        state.props().setExtra(setup.chemicalProps().extra());
     }
 
     /// Update the equilibrium sensitivity object with computed optimization sensitivity.
