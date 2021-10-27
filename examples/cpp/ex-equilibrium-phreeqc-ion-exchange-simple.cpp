@@ -37,30 +37,16 @@ int main()
 
     // Define an aqueous phase
     AqueousPhase aqueous_phase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2");
-    aqueous_phase.setActivityModel(chain(
-        ActivityModelHKF()
-    ));
+    aqueous_phase.setActivityModel(ActivityModelHKF());
 
     // Define an ion exchange phase
     IonExchangePhase exchange_phase("NaX KX CaX2 MgX2");
-    exchange_phase.setActivityModel(chain(
-            ActivityModelIonExchangeGainesThomas()
-    ));
+    exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
     // Construct the chemical system
     ChemicalSystem system(db, aqueous_phase, exchange_phase);
 
-    // Specify conditions to be satisfied at the chemical equilibrium
-    EquilibriumSpecs specs(system);
-    specs.temperature();
-    specs.pressure();
-
     const auto T = 25.0; // temperature in celsius
     const auto P = 1.0;  // pressure in bar
-
-    // Define conditions to be satisfied at chemical equilibrium
-    EquilibriumConditions conditions(specs);
-    conditions.temperature(T, "celsius");
-    conditions.pressure(P, "bar");
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
@@ -81,9 +67,9 @@ int main()
     opts.optima.output.active = true;
 
     // Define equilibrium solver and equilibrate given initial state
-    EquilibriumSolver solver(specs);
+    EquilibriumSolver solver(system);
 
-    auto res = solver.solve(solutionstate, conditions);
+    auto res = solver.solve(solutionstate);
     std::cout << "*******************************************" << std::endl;
     std::cout << "After equilibration: " << std::endl;
     std::cout << "*******************************************" << std::endl;
