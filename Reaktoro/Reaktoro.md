@@ -140,6 +140,4 @@ want to read about.
 
 ## For all other needs
 
-- @ref license
-
 Check the namespace Reaktoro for all available classes and methods.
