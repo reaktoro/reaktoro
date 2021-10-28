@@ -19,7 +19,7 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (14 October)
+#   • Svetlana Kyas (14 October 2021)
 #
 # and since revised by:
 #   •
@@ -53,12 +53,12 @@ state = ChemicalState(system)
 state.setTemperature(T, "celsius")
 state.setPressure(P, "bar")
 # Scale solution recipe to match the values of the PHREEQC examples
-state.setSpeciesMass("H2O"   , 1.0, "kg")
-state.setSpeciesAmount("Na+" , 1.10, "mol")
-state.setSpeciesAmount("Mg+2", 0.48, "mol")
-state.setSpeciesAmount("Ca+2", 1.90, "mol")
+state.setSpeciesMass("H2O"   , 1.e6, "kg")
+state.setSpeciesAmount("Na+" , 1.10, "kmol")
+state.setSpeciesAmount("Mg+2", 0.48, "kmol")
+state.setSpeciesAmount("Ca+2", 1.90, "kmol")
 # Set the number of exchange assuming that it is completely occupied by sodium
-state.setSpeciesAmount("NaX" , 0.06, "umol")
+state.setSpeciesAmount("NaX" , 0.06, "mol")
 
 # Define equilibrium solver and equilibrate given initial state with input conditions
 solver = EquilibriumSolver(system)
