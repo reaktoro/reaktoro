@@ -27,7 +27,7 @@ using namespace Reaktoro;
 
 namespace test {
 
-    extern auto createDatabasePhases() -> Database;
+extern auto createDatabasePhases() -> Database;
 
 } // namespace test
 
