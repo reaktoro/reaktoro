@@ -101,4 +101,5 @@ props = ChemicalProps(state)
 state.output("state.txt")
 props.output("props.txt")
 
-# Check if props.txt and props-expected.txt are numerically equivalent.
+print("Success! Check outputted files `state.txt`, `props.txt`, `state-expected.txt`, `props-expected.txt`.")
+print("Verify if `props.txt` and `props-expected.txt` are numerically equivalent.")

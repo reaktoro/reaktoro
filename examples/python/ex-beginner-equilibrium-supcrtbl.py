@@ -61,3 +61,5 @@ props.output("props.txt")
 
 aprops = AqueousProps(state)
 aprops.output("aprops.txt")
+
+print("Success! Check outputted files `props.txt` and `aprops.txt`.")

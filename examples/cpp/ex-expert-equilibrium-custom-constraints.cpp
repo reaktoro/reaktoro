@@ -109,6 +109,8 @@ int main()
     props.output("props.txt");
 
     // Check if props.txt and props-expected.txt are numerically equivalent.
+    std::cout << "Success! Check outputted files `state.txt`, `props.txt`, `state-expected.txt`, `props-expected.txt`." << std::endl;
+    std::cout << "Verify if `props.txt` and `props-expected.txt` are numerically equivalent." << std::endl;
 
     return 0;
 }

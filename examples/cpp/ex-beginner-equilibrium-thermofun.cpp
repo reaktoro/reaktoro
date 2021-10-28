@@ -71,5 +71,7 @@ int main()
     AqueousProps aprops(state);
     aprops.output("aprops.txt");
 
+    std::cout << "Success! Check outputted files `props.txt` and `aprops.txt`." << std::endl;
+
     return 0;
 }

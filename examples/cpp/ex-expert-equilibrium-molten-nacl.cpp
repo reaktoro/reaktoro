@@ -49,5 +49,7 @@ int main()
     ChemicalProps props(state);
     props.output("props.txt");
 
+    std::cout << "Success! Check outputted file `props.txt`." << std::endl;
+
     return 0;
 }
