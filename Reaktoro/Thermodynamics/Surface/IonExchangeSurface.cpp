@@ -50,15 +50,17 @@ struct IonExchangeSurface::Impl
     }
 
     /// Initialize the symbol representing the exchanger.
+    /// The method parses the ion exchange species list and identifies a common element that will be regarded as exchanger
+    /// For example, for the list of species NaX, CaX2, MgX2, KX, the `exchanger_symbol` is `X`
     auto intializeExchanger() -> void
     {
-        errorif(species.size() == 0, "There is no species in the IonExchange Phase")
+        errorif(species.size() == 0, "There is no species in the IonExchangePhase")
 
         // Fetch elements' symbols from the first species
         auto esymbols = species[0].elements().symbols();
         auto num_esymbols = esymbols.size();
 
-        // Creat the auxiliary vector to count the matches of the symbol
+        // Create the auxiliary vector to count the matches of the symbol
         std::vector<Index> count_elements(esymbols.size());
 
         // Loop over symbols
