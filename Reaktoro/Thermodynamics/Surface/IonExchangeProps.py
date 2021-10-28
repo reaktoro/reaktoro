@@ -157,11 +157,11 @@ def testIonExchangeProps():
     assert exprops.speciesEquivalentFraction("MgX2" )[0] == pytest.approx(0.38216621321705885)
 
     # Check log10 gammas of all species
-    assert exprops.speciesLog10Gamma("NaX"  )[0] == pytest.approx(-0.0311024451808121 )
-    assert exprops.speciesLog10Gamma("CaX2" )[0] == pytest.approx(-0.12284266932733671)
-    assert exprops.speciesLog10Gamma("KX"   )[0] == pytest.approx(-0.03177765462046158)
-    assert exprops.speciesLog10Gamma("AlX3" )[0] == pytest.approx(-0.2575985613718797 )
-    assert exprops.speciesLog10Gamma("MgX2" )[0] == pytest.approx(-0.12146978806964734)
+    assert exprops.speciesActivityCoefficientLg("NaX"  )[0] == pytest.approx(-0.0311024451808121 )
+    assert exprops.speciesActivityCoefficientLg("CaX2" )[0] == pytest.approx(-0.12284266932733671)
+    assert exprops.speciesActivityCoefficientLg("KX"   )[0] == pytest.approx(-0.03177765462046158)
+    assert exprops.speciesActivityCoefficientLg("AlX3" )[0] == pytest.approx(-0.2575985613718797 )
+    assert exprops.speciesActivityCoefficientLg("MgX2" )[0] == pytest.approx(-0.12146978806964734)
 
     # Check amounts of all elements
     assert exprops.elementAmount("Na")[0] == pytest.approx(9.84067523830254e-09  )
@@ -179,12 +179,12 @@ def testIonExchangeProps():
         assert exprops.speciesAmount(name)[0]             == pytest.approx(exprops.speciesAmounts()[idx])
         assert exprops.speciesEquivalence(name)[0]        == pytest.approx(exprops.speciesEquivalences()[idx])
         assert exprops.speciesEquivalentFraction(name)[0] == pytest.approx(exprops.speciesEquivalentFractions()[idx])
-        assert exprops.speciesLog10Gamma(name)[0]         == pytest.approx(exprops.speciesLog10Gammas()[idx])
+        assert exprops.speciesActivityCoefficientLg(name)[0]         == pytest.approx(exprops.speciesActivityCoefficientsLg()[idx])
 
         assert exprops.speciesAmount(idx)[0]             == pytest.approx(exprops.speciesAmounts()[idx])
         assert exprops.speciesEquivalence(idx)[0]        == pytest.approx(exprops.speciesEquivalences()[idx])
         assert exprops.speciesEquivalentFraction(idx)[0] == pytest.approx(exprops.speciesEquivalentFractions()[idx])
-        assert exprops.speciesLog10Gamma(idx)[0]         == pytest.approx(exprops.speciesLog10Gammas()[idx])
+        assert exprops.speciesActivityCoefficientLg(idx)[0]         == pytest.approx(exprops.speciesActivityCoefficientsLg()[idx])
 
 
 

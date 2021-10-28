@@ -82,10 +82,10 @@ public:
     auto speciesEquivalentFraction(const StringOrIndex& name) const -> real;
 
     /// Return the logarithms of the activity coefficients of the species on the ion exchange surface (in moles) if the molar fractions are provided.
-    auto speciesLog10Gammas() const -> ArrayXr;
+    auto speciesActivityCoefficientsLg() const -> ArrayXr;
 
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
-    auto speciesLog10Gamma(const StringOrIndex& name) const -> real;
+    auto speciesActivityCoefficientLg(const StringOrIndex& name) const -> real;
 
     /// Return the underlying Phase object for the ion exchange phase.
     auto phase() const -> const Phase&;

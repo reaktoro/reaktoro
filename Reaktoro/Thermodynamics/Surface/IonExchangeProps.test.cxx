@@ -141,7 +141,7 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
 
         // Check log10 gammas of all species
         for(auto i = 0; i < exspecies.size(); i++)
-            CHECK( exprops.speciesLog10Gammas()[i] == Approx(0.00) );
+            CHECK( exprops.speciesActivityCoefficientsLg()[i] == Approx(0.00) );
     }
 
     SECTION("Testing when state is a brine")
@@ -190,7 +190,7 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
 
         // Check log10 gammas of all species
         for(auto i = 0; i < exspecies.size(); i++)
-            CHECK( exprops.speciesLog10Gammas()[i] == Approx(0.00) ); // because we are working on the custom library
+            CHECK( exprops.speciesActivityCoefficientsLg()[i] == Approx(0.00) ); // because we are working on the custom library
     
         // Test convenience methods species amounts, equivalences, equivalent fractions, log10gamma and element amounts
         for(const auto& s : exspecies)
@@ -201,12 +201,12 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
             CHECK( exprops.speciesAmount(name)             == Approx(exprops.speciesAmounts()[idx]) );
             CHECK( exprops.speciesEquivalence(name)        == Approx(exprops.speciesEquivalences()[idx]) );
             CHECK( exprops.speciesEquivalentFraction(name) == Approx(exprops.speciesEquivalentFractions()[idx]) );
-            CHECK( exprops.speciesLog10Gamma(name)         == Approx(exprops.speciesLog10Gammas()[idx]) );
+            CHECK(exprops.speciesActivityCoefficientLg(name) == Approx(exprops.speciesActivityCoefficientsLg()[idx]) );
 
             CHECK( exprops.speciesAmount(idx)             == Approx(exprops.speciesAmounts()[idx]) );
             CHECK( exprops.speciesEquivalence(idx)        == Approx(exprops.speciesEquivalences()[idx]) );
             CHECK( exprops.speciesEquivalentFraction(idx) == Approx(exprops.speciesEquivalentFractions()[idx]) );
-            CHECK( exprops.speciesLog10Gamma(idx)         == Approx(exprops.speciesLog10Gammas()[idx]) );
+            CHECK(exprops.speciesActivityCoefficientLg(idx) == Approx(exprops.speciesActivityCoefficientsLg()[idx]) );
         }
 
         for(const auto& e : exelements)
@@ -287,11 +287,11 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.speciesEquivalentFraction("MgX2") == Approx(0.382166   ) );
 
         // Check log10 gammas of all species
-        CHECK( exprops.speciesLog10Gamma("NaX" ) == Approx(-0.0311024 ) );
-        CHECK( exprops.speciesLog10Gamma("CaX2") == Approx(-0.122843  ) );
-        CHECK( exprops.speciesLog10Gamma("KX"  ) == Approx(-0.0317777 ) );
-        CHECK( exprops.speciesLog10Gamma("AlX3") == Approx(-0.257599  ) );
-        CHECK( exprops.speciesLog10Gamma("MgX2") == Approx(-0.12147   ) );
+        CHECK(exprops.speciesActivityCoefficientLg("NaX") == Approx(-0.0311024 ) );
+        CHECK(exprops.speciesActivityCoefficientLg("CaX2") == Approx(-0.122843  ) );
+        CHECK(exprops.speciesActivityCoefficientLg("KX") == Approx(-0.0317777 ) );
+        CHECK(exprops.speciesActivityCoefficientLg("AlX3") == Approx(-0.257599  ) );
+        CHECK(exprops.speciesActivityCoefficientLg("MgX2") == Approx(-0.12147   ) );
 
     }
 }
