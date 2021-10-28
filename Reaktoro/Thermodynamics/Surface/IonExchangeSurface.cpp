@@ -34,9 +34,6 @@ struct IonExchangeSurface::Impl
     /// The array of exchanger's equivalents numbers for exchange species only (ze.size() = exchange_species.size()).
     ArrayXd ze;
 
-    /// The state of the ion exchange surface
-    IonExchangeSurfaceState exchange_state;
-
     /// Construct a default IonExchangeSurface::Impl instance.
     Impl()
     {}
@@ -122,8 +119,8 @@ struct IonExchangeSurface::Impl
     /// Return the state of the ion exchange surface.
     auto state(real T, real P, ArrayXrConstRef x) -> IonExchangeSurfaceState
     {
+        IonExchangeSurfaceState exchange_state;
         exchange_state.beta = equivalencesFractions(x);
-
         return exchange_state;
     }
 
@@ -162,11 +159,6 @@ auto IonExchangeSurface::ze() const -> ArrayXdConstRef
 auto IonExchangeSurface::state(real T, real P, ArrayXrConstRef x) -> IonExchangeSurfaceState
 {
     return pimpl->state(T, P, x);
-}
-
-auto IonExchangeSurface::state() const -> IonExchangeSurfaceState
-{
-    return pimpl->exchange_state;
 }
 
 } // namespace Reaktoro
