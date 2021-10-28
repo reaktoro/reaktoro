@@ -73,9 +73,6 @@ public:
     /// Return the state of the aqueous mixture.
     auto state() const -> IonExchangeSurfaceState;
 
-    /// Set logarithm of activities of for ion exchange species.
-    auto setLogarithmsOfActivities(ArrayXrConstRef lng) -> void;
-
 private:
     struct Impl;
 
