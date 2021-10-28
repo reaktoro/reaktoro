@@ -50,10 +50,12 @@ int main()
     ChemicalSystem system(db, aqueous_phase, exchange_phase);
 
     const auto T = 25.0; // temperature in celsius
-    const auto P = 1.0;  // pressure in bar
+    const auto P = 1.0;  // pressure in atm
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
+    solutionstate.setTemperature(T, "celsius");
+    solutionstate.setPressure(P, "atm");
     solutionstate.setSpeciesMass("H2O"    , 1.e6, "kg");
     // Scale solution recipe to match the values of the PHREEQC examples
     solutionstate.setSpeciesAmount("Na+"  , 1.10, "kmol");

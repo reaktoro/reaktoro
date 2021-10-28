@@ -50,6 +50,8 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
+    solutionstate.setTemperature(T, "celsius");
+    solutionstate.setPressure(P, "bar");
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
     solutionstate.setSpeciesAmount("Na+"  , 1.00, "mmol");
     solutionstate.setSpeciesAmount("Ca+2" , 1.00, "mmol");
