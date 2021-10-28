@@ -43,8 +43,8 @@ auto indexIonExchangePhase(const ChemicalSystem& system) -> Index
     const auto exchange_phases = system.phases().withAggregateState(AggregateState::IonExchange);
     warning(exchange_phases.size() > 1,
         "While creating an IonExchangeProps object, it has been detected ",
-        "more than one aqueous phase in the system. The IonExchangeProps object "
-        "created will correspond to the first aqueous phase found.");
+        "more than one ion exchange phase in the system. The IonExchangeProps object "
+        "created will correspond to the first ion exchange phase found.");
     const auto idx = system.phases().findWithAggregateState(AggregateState::IonExchange);
     error(idx >= system.phases().size(),
         "Could not create an IonExchangeProps object because there is no "
@@ -62,7 +62,7 @@ struct IonExchangeProps::Impl
     /// The index of the underlying Phase object for the ion exchange phase in the system.
     const Index iphase;
 
-    /// The underlying Phase object for the aqueous phase in the system.
+    /// The underlying Phase object for the ion exchange phase in the system.
     const Phase phase;
 
     /// The ion exchange phase as an ion exchange surface.
@@ -74,10 +74,10 @@ struct IonExchangeProps::Impl
     /// The chemical properties of the ion exchange phase.
     ChemicalPropsPhase props;
 
-    /// The formula matrix of the aqueous species.
+    /// The formula matrix of the ion exchange species.
     MatrixXd Aex;
 
-    /// The amounts of the species in the aqueous phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
+    /// The amounts of the species in the ion exchange phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
     ArrayXr nex;
 
     /// The extra properties and data produced during the evaluation of the ion exchange phase activity model.

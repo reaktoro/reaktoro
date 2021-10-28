@@ -51,10 +51,10 @@ public:
     /// Assign a IonExchangeProps object to this object.
     auto operator=(IonExchangeProps other) -> IonExchangeProps&;
 
-    /// Update the aqueous properties with given chemical state of the system.
+    /// Update the ion exchange properties with given chemical state of the system.
     auto update(const ChemicalState& state) -> void;
 
-    /// Update the aqueous properties with given chemical properties of the system.
+    /// Update the ion exchange properties with given chemical properties of the system.
     auto update(const ChemicalProps& props) -> void;
 
     /// Return the amount of an element (in moles).
@@ -87,13 +87,13 @@ public:
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
     auto speciesLog10Gamma(const String& name) const -> real;
 
-    /// Return the underlying Phase object for the aqueous phase.
+    /// Return the underlying Phase object for the ion exchange phase.
     auto phase() const -> const Phase&;
 
-    /// Output the properties of the aqueous phase to a stream.
+    /// Output the properties of the exchange phase to a stream.
     auto output(std::ostream& out) const -> void;
 
-    /// Output the properties of the aqueous phase to a file.
+    /// Output the properties of the exchange phase to a file.
     auto output(const String& filename) const -> void;
 
 private:
