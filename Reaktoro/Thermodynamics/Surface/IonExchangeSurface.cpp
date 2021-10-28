@@ -127,12 +127,6 @@ struct IonExchangeSurface::Impl
         return exchange_state;
     }
 
-    /// Set logarithm of activities of for ion exchange species.
-    auto setLogarithmsOfActivities(ArrayXrConstRef lng) -> void
-    {
-        exchange_state.lng = lng;
-    }
-
 };
 
 IonExchangeSurface::IonExchangeSurface()
@@ -173,11 +167,6 @@ auto IonExchangeSurface::state(real T, real P, ArrayXrConstRef x) -> IonExchange
 auto IonExchangeSurface::state() const -> IonExchangeSurfaceState
 {
     return pimpl->exchange_state;
-}
-
-auto IonExchangeSurface::setLogarithmsOfActivities(ArrayXrConstRef lng) -> void
-{
-    return pimpl->setLogarithmsOfActivities(lng);
 }
 
 } // namespace Reaktoro
