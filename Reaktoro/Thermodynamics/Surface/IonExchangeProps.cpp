@@ -199,14 +199,14 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the base-10 logarithm of the activity coefficients of the species on the ion exchange surface.
-    auto speciesLog10Gammas() const -> ArrayXr
+    auto speciesActivityCoefficientsLg() const -> ArrayXr
     {
         auto lng = props.speciesActivityCoefficientsLn();
         return lng / std::log(10);
     }
 
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
-    auto speciesLog10Gamma(const StringOrIndex& name) const -> real
+    auto speciesActivityCoefficientLg(const StringOrIndex& name) const -> real
     {
         const auto idx = detail::resolveSpeciesIndex(phase, name);
         auto lng = props.speciesActivityCoefficientsLn()[idx];
@@ -289,14 +289,14 @@ auto IonExchangeProps::speciesEquivalentFraction(const StringOrIndex& name) cons
     return pimpl->speciesEquivalentFraction(name);
 }
 
-auto IonExchangeProps::speciesLog10Gamma(const StringOrIndex& name) const -> real
+auto IonExchangeProps::speciesActivityCoefficientLg(const StringOrIndex& name) const -> real
 {
-    return pimpl->speciesLog10Gamma(name);
+    return pimpl->speciesActivityCoefficientLg(name);
 }
 
-auto IonExchangeProps::speciesLog10Gammas() const -> ArrayXr
+auto IonExchangeProps::speciesActivityCoefficientsLg() const -> ArrayXr
 {
-    return pimpl->speciesLog10Gammas();
+    return pimpl->speciesActivityCoefficientsLg();
 }
 
 auto IonExchangeProps::phase() const -> const Phase&
@@ -324,7 +324,7 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     const auto ns = props.speciesAmounts();
     const auto eq = props.speciesEquivalences();
     const auto beta = props.speciesEquivalentFractions();
-    const auto log10g = props.speciesLog10Gammas();
+    const auto log10g = props.speciesActivityCoefficientsLg();
 
     // Check if the size of the species' and elements' data containers are the same
     assert(species.size() == ns.size());
