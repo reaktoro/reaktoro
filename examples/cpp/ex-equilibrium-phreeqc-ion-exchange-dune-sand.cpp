@@ -56,13 +56,13 @@ int main()
     ChemicalState solutionstate(system);
     solutionstate.setTemperature(T, "celsius");
     solutionstate.setPressure(P, "atm");
-    solutionstate.setSpeciesMass("H2O"    , 1.e6, "kg");
+    solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
     // Scale solution recipe to match the values of the PHREEQC examples
-    solutionstate.setSpeciesAmount("Na+"  , 1.10, "kmol");
-    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "kmol");
-    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "kmol");
+    solutionstate.setSpeciesAmount("Na+"  , 1.10, "mol");
+    solutionstate.setSpeciesAmount("Mg+2" , 0.48, "mol");
+    solutionstate.setSpeciesAmount("Ca+2" , 1.90, "mol");
     // Set the number of exchange assuming that it is completely occupied by Na
-    solutionstate.setSpeciesAmount("NaX"  , 0.06, "mol");
+    solutionstate.setSpeciesAmount("NaX"  , 0.06, "umol");
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
