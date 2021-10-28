@@ -220,8 +220,6 @@ public:
     /// @warning properties using `state.props().update(state)`.
     auto props() -> ChemicalProps&;
 
-    auto extra() const -> Map<String, Any>;
-
     /// Output this ChemicalState instance to a stream.
     auto output(std::ostream& out) const -> void;
 
