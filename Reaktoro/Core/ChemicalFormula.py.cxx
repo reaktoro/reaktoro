@@ -50,6 +50,7 @@ void exportChemicalFormula(py::module& m)
         .def("equivalent", equivalent1)  // pybind11 does not support overloading both static and instance methods
         // .def_static("equivalent", equivalent2)
         .def(py::self == py::self)
+        .def("__repr__", [](const ChemicalFormula& self) { return self.str(); })
         ;
 
     py::implicitly_convertible<String, ChemicalFormula>();
