@@ -180,9 +180,9 @@ struct AqueousProps::Impl
         return props.pressure();
     }
 
-    auto elementMolality(const String& symbol) const -> real
+    auto elementMolality(const StringOrIndex& symbol) const -> real
     {
-        const auto idx = phase.elements().indexWithSymbol(symbol);
+        const auto idx = detail::resolveElementIndex(phase, symbol);
         const auto& m = aqstate.m.matrix();
         return Aaq.row(idx) * m;
     }
@@ -194,9 +194,9 @@ struct AqueousProps::Impl
         return Aaq.topRows(E) * m;
     }
 
-    auto speciesMolality(const String& name) const -> real
+    auto speciesMolality(const StringOrIndex& name) const -> real
     {
-        const auto idx = phase.species().indexWithName(name);
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
         return aqstate.m[idx];
     }
 
@@ -299,7 +299,7 @@ auto AqueousProps::pressure() const -> real
     return pimpl->pressure();
 }
 
-auto AqueousProps::elementMolality(const String& symbol) const -> real
+auto AqueousProps::elementMolality(const StringOrIndex& symbol) const -> real
 {
     return pimpl->elementMolality(symbol);
 }
@@ -309,7 +309,7 @@ auto AqueousProps::elementMolalities() const -> VectorXr
     return pimpl->elementMolalities();
 }
 
-auto AqueousProps::speciesMolality(const String& name) const -> real
+auto AqueousProps::speciesMolality(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesMolality(name);
 }

@@ -58,7 +58,7 @@ public:
     auto update(const ChemicalProps& props) -> void;
 
     /// Return the amount of an element (in moles).
-    auto elementAmount(const String& symbol) const -> real;
+    auto elementAmount(const StringOrIndex& symbol) const -> real;
 
     /// Return the amounts of the elements (in moles).
     auto elementAmounts() const -> ArrayXr;
@@ -67,25 +67,25 @@ public:
     auto speciesAmounts() const -> ArrayXr;
 
     /// Return the amounts of an ion exchange species (in moles).
-    auto speciesAmount(const String& name) const -> real;
+    auto speciesAmount(const StringOrIndex& name) const -> real;
 
     /// Return the equivalences of the species on the ion exchange composition (in eq).
     auto speciesEquivalences() const -> ArrayXr;
 
     /// Return the equivalence of an ion exchange species (in eq).
-    auto speciesEquivalence(const String& name) const -> real;
+    auto speciesEquivalence(const StringOrIndex& name) const -> real;
 
     /// Return the equivalent fractions of the species on the ion exchange surface (in moles) if the molar fractions are provided.
     auto speciesEquivalentFractions() const -> ArrayXr;
 
     /// Return the equivalent fraction of an ion exchange species.
-    auto speciesEquivalentFraction(const String& name) const -> real;
+    auto speciesEquivalentFraction(const StringOrIndex& name) const -> real;
 
     /// Return the logarithms of the activity coefficients of the species on the ion exchange surface (in moles) if the molar fractions are provided.
     auto speciesLog10Gammas() const -> ArrayXr;
 
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
-    auto speciesLog10Gamma(const String& name) const -> real;
+    auto speciesLog10Gamma(const StringOrIndex& name) const -> real;
 
     /// Return the underlying Phase object for the ion exchange phase.
     auto phase() const -> const Phase&;

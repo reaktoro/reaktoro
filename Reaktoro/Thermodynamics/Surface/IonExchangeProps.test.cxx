@@ -197,17 +197,25 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         {
             const auto name = s.name();
             const auto idx = exspecies.index(name);
+
             CHECK( exprops.speciesAmount(name)             == Approx(exprops.speciesAmounts()[idx]) );
             CHECK( exprops.speciesEquivalence(name)        == Approx(exprops.speciesEquivalences()[idx]) );
             CHECK( exprops.speciesEquivalentFraction(name) == Approx(exprops.speciesEquivalentFractions()[idx]) );
             CHECK( exprops.speciesLog10Gamma(name)         == Approx(exprops.speciesLog10Gammas()[idx]) );
+
+            CHECK( exprops.speciesAmount(idx)             == Approx(exprops.speciesAmounts()[idx]) );
+            CHECK( exprops.speciesEquivalence(idx)        == Approx(exprops.speciesEquivalences()[idx]) );
+            CHECK( exprops.speciesEquivalentFraction(idx) == Approx(exprops.speciesEquivalentFractions()[idx]) );
+            CHECK( exprops.speciesLog10Gamma(idx)         == Approx(exprops.speciesLog10Gammas()[idx]) );
         }
 
         for(const auto& e : exelements)
         {
             const auto symbol = e.symbol();
             const auto idx = exelements.index(symbol);
+
             CHECK( exprops.elementAmount(symbol) == Approx(exprops.elementAmounts()[idx]) );
+            CHECK( exprops.elementAmount(idx) == Approx(exprops.elementAmounts()[idx]) );
         }
     }
 
@@ -239,22 +247,22 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         ChemicalState state(system);
         state.setTemperature(T, "celsius");
         state.setPressure(P, "bar");
-        state.setSpeciesMass("H2O"    , 1.00, "kg");
-        state.setSpeciesAmount("Na+"  , 1.00, "mmol");
-        state.setSpeciesAmount("Ca+2" , 1.00, "mmol");
-        state.setSpeciesAmount("Mg+2" , 1.00, "mmol");
-        state.setSpeciesAmount("NaX"  , 1.00, "umol");
+        state.setSpeciesMass("H2O"   , 1.00, "kg");
+        state.setSpeciesAmount("Na+" , 1.00, "mmol");
+        state.setSpeciesAmount("Ca+2", 1.00, "mmol");
+        state.setSpeciesAmount("Mg+2", 1.00, "mmol");
+        state.setSpeciesAmount("NaX" , 1.00, "umol");
 
         EquilibriumResult result = solver.solve(state);
 
         exprops.update(state);
 
         // Check molalities of all species
-        CHECK( exprops.speciesAmount("NaX"  ) == Approx(9.84068e-09 ) );
-        CHECK( exprops.speciesAmount("CaX2" ) == Approx(3.03997e-07 ) );
-        CHECK( exprops.speciesAmount("KX"   ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesAmount("AlX3" ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesAmount("MgX2" ) == Approx(1.91083e-07 ) );
+        CHECK( exprops.speciesAmount("NaX" ) == Approx(9.84068e-09 ) );
+        CHECK( exprops.speciesAmount("CaX2") == Approx(3.03997e-07 ) );
+        CHECK( exprops.speciesAmount("KX"  ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesAmount("AlX3") == Approx(1e-16       ) );
+        CHECK( exprops.speciesAmount("MgX2") == Approx(1.91083e-07 ) );
 
         // Check amounts of all elements
         CHECK( exprops.elementAmount("X" ) == Approx(1e-06       ) );
@@ -265,24 +273,25 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("Ca") == Approx(3.03997e-07 ) );
 
         // Check equivalences of all species
-        CHECK( exprops.speciesEquivalence("NaX"  ) == Approx(9.84068e-09 ) );
-        CHECK( exprops.speciesEquivalence("CaX2" ) == Approx(6.07993e-07 ) );
-        CHECK( exprops.speciesEquivalence("KX"   ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesEquivalence("AlX3" ) == Approx(3e-16       ) );
-        CHECK( exprops.speciesEquivalence("MgX2" ) == Approx(3.82166e-07 ) );
+        CHECK( exprops.speciesEquivalence("NaX" ) == Approx(9.84068e-09 ) );
+        CHECK( exprops.speciesEquivalence("CaX2") == Approx(6.07993e-07 ) );
+        CHECK( exprops.speciesEquivalence("KX"  ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesEquivalence("AlX3") == Approx(3e-16       ) );
+        CHECK( exprops.speciesEquivalence("MgX2") == Approx(3.82166e-07 ) );
 
         // Check equivalent fractions of all species
-        CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.00984068 ) );
-        CHECK( exprops.speciesEquivalentFraction("CaX2" ) == Approx(0.607993   ) );
-        CHECK( exprops.speciesEquivalentFraction("KX"   ) == Approx(1e-10      ) );
-        CHECK( exprops.speciesEquivalentFraction("AlX3" ) == Approx(3e-10      ) );
-        CHECK( exprops.speciesEquivalentFraction("MgX2" ) == Approx(0.382166   ) );
+        CHECK( exprops.speciesEquivalentFraction("NaX" ) == Approx(0.00984068 ) );
+        CHECK( exprops.speciesEquivalentFraction("CaX2") == Approx(0.607993   ) );
+        CHECK( exprops.speciesEquivalentFraction("KX"  ) == Approx(1e-10      ) );
+        CHECK( exprops.speciesEquivalentFraction("AlX3") == Approx(3e-10      ) );
+        CHECK( exprops.speciesEquivalentFraction("MgX2") == Approx(0.382166   ) );
 
         // Check log10 gammas of all species
-        CHECK( exprops.speciesLog10Gamma("NaX"  ) == Approx(-0.0311024 ) );
-        CHECK( exprops.speciesLog10Gamma("CaX2" ) == Approx(-0.122843  ) );
-        CHECK( exprops.speciesLog10Gamma("KX"   ) == Approx(-0.0317777 ) );
-        CHECK( exprops.speciesLog10Gamma("AlX3" ) == Approx(-0.257599  ) );
-        CHECK( exprops.speciesLog10Gamma("MgX2" ) == Approx(-0.12147   ) );
+        CHECK( exprops.speciesLog10Gamma("NaX" ) == Approx(-0.0311024 ) );
+        CHECK( exprops.speciesLog10Gamma("CaX2") == Approx(-0.122843  ) );
+        CHECK( exprops.speciesLog10Gamma("KX"  ) == Approx(-0.0317777 ) );
+        CHECK( exprops.speciesLog10Gamma("AlX3") == Approx(-0.257599  ) );
+        CHECK( exprops.speciesLog10Gamma("MgX2") == Approx(-0.12147   ) );
+
     }
 }
