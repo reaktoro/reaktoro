@@ -330,56 +330,41 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     assert(species.size() == ns.size());
     assert(elements.size() == ne.size());
 
-    // Create first output table for the elements taking part in the ion exchange
     Table table;
-    table.add_row({ "Element", "Amounts [moles]"});
+    table.add_row({ "Property", "Value", "Unit" });
+    table.add_row({ "Element Amounts:" });
     for(auto i = 0; i < elements.size(); ++i)
-        table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "moles" });
+        table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "mole" });
+    table.add_row({ "Species Amounts:" });
+    for(auto i = 0; i < species.size(); ++i)
+        table.add_row({ ":: " + species[i].name(), str(ns[i]), "mole" });
+    table.add_row({ "Equivalences:" });
+    for(auto i = 0; i < species.size(); ++i)
+        table.add_row({ ":: " + species[i].name(), str(eq[i]), "eq" });
+    table.add_row({ "Equivalent Fractions:" });
+    for(auto i = 0; i < species.size(); ++i)
+        table.add_row({ ":: " + species[i].name(), str(beta[i]), "" });
+    table.add_row({ "Log10 Gammas:" });
+    for(auto i = 0; i < species.size(); ++i)
+        table.add_row({ ":: " + species[i].name(), str(log10g[i]), "" });
 
     auto i = 0;
     for(auto& row : table)
     {
         if(i >= 2)  // apply from the third row
             table[i]
-                .format()
-                .border_top("")
-                .column_separator("")
-                .corner_top_left("")
-                .corner_top_right("");
-        i += 1;
-    }
-
-    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
-    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
-
-    out << table << "\n";
-
-    // Create second output table for the species taking part in the ion exchange
-    Table table_species;
-    table_species.add_row({"Species" , "Amounts [moles]", "Equivalence [eq]", "Equivalent Fraction", "Log10 Gamma"});
-    for(auto i = 0; i < species.size(); ++i)
-        table_species.add_row({":: " + species[i].name(), str(ns[i]), str(eq[i]), str(beta[i]), str(log10g[i])});
-
-    auto j = 0;
-    for(auto& row : table_species)
-    {
-        if(j >= 2)  // apply from the third row
-            table_species[j]
             .format()
             .border_top("")
             .column_separator("")
             .corner_top_left("")
             .corner_top_right("");
-        j += 1;
+        i += 1;
     }
+    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
+    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
+    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
 
-    table_species.row(0).format().font_style({FontStyle::bold});  // Bold face for header
-    table_species.column(1).format().font_align(FontAlign::right); // Amount column with right alignment
-    table_species.column(2).format().font_align(FontAlign::right); // Equivalence column with right alignment
-    table_species.column(3).format().font_align(FontAlign::right); // Equivalent fraction column with right alignment
-    table_species.column(4).format().font_align(FontAlign::right); // Log10 gamma column with right alignment
-
-    out << table_species;
+    out << table;
 
     return out;
 }
