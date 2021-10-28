@@ -19,7 +19,7 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (29 September)
+#   • Svetlana Kyas (29 September 2021)
 #
 # and since revised by:
 #   •
