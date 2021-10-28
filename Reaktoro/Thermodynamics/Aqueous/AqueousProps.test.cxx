@@ -183,6 +183,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
             const auto name = s.name();
             const auto idx = aqspecies.index(name);
             CHECK( aqprops.speciesMolality(name)     == Approx(aqprops.speciesMolalities()[idx]) );
+            CHECK( aqprops.speciesMolality(idx)     == Approx(aqprops.speciesMolalities()[idx]) );
         }
 
         for(const auto& e : aqelements)
@@ -190,6 +191,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
             const auto symbol = e.symbol();
             const auto idx = aqelements.index(symbol);
             CHECK( aqprops.elementMolality(symbol)     == Approx(aqprops.elementMolalities()[idx]) );
+            CHECK( aqprops.elementMolality(idx)     == Approx(aqprops.elementMolalities()[idx]) );
         }
     }
 }

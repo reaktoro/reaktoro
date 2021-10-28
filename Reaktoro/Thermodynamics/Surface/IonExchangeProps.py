@@ -109,10 +109,6 @@ def testIonExchangeProps():
     assert exprops.speciesEquivalentFraction("AlX3" )[0] == pytest.approx(0.3333333333333333)
     assert exprops.speciesEquivalentFraction("MgX2" )[0] == pytest.approx(0.2222222222222222)
 
-    # # Check log10 gammas of all species
-    # for i in range(0, exspecies.size()):
-    #     assert exprops.speciesLog10Gammas()[i] == pytest.approx(0.00)
-
     # Check amounts of all elements
     assert exprops.elementAmount("Al")[0] == pytest.approx(1.0)
     assert exprops.elementAmount("Ca")[0] == pytest.approx(1.0)
@@ -179,12 +175,22 @@ def testIonExchangeProps():
     for s in exspecies:
         name = s.name()
         idx = exspecies.index(name)
+
         assert exprops.speciesAmount(name)[0]             == pytest.approx(exprops.speciesAmounts()[idx])
         assert exprops.speciesEquivalence(name)[0]        == pytest.approx(exprops.speciesEquivalences()[idx])
         assert exprops.speciesEquivalentFraction(name)[0] == pytest.approx(exprops.speciesEquivalentFractions()[idx])
         assert exprops.speciesLog10Gamma(name)[0]         == pytest.approx(exprops.speciesLog10Gammas()[idx])
 
+        assert exprops.speciesAmount(idx)[0]             == pytest.approx(exprops.speciesAmounts()[idx])
+        assert exprops.speciesEquivalence(idx)[0]        == pytest.approx(exprops.speciesEquivalences()[idx])
+        assert exprops.speciesEquivalentFraction(idx)[0] == pytest.approx(exprops.speciesEquivalentFractions()[idx])
+        assert exprops.speciesLog10Gamma(idx)[0]         == pytest.approx(exprops.speciesLog10Gammas()[idx])
+
+
+
     for e in exelements:
         symbol = e.symbol()
         idx = exelements.index(symbol)
+
         assert exprops.elementAmount(symbol)[0] == pytest.approx(exprops.elementAmounts()[idx])
+        assert exprops.elementAmount(idx)[0] == pytest.approx(exprops.elementAmounts()[idx])

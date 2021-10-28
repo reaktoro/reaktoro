@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Common/Algorithms.hpp>
 
 namespace Reaktoro {
@@ -64,6 +65,46 @@ auto resolveElementIndexAux(const ChemicalSystem& system, const String& symbol) 
 auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveElementIndexAux(system, arg); }, element);
+}
+
+auto resolveElementIndexAux(const Phase& phase, Index index) -> Index
+{
+    return index;
+}
+
+auto resolveElementIndexAux(const Phase& phase, int index) -> Index
+{
+    return index;
+}
+
+auto resolveElementIndexAux(const Phase& phase, const String& symbol) -> Index
+{
+    return phase.elements().index(symbol);
+}
+
+auto resolveElementIndex(const Phase& phase, StringOrIndex element) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolveElementIndexAux(phase, arg); }, element);
+}
+
+auto resolveSpeciesIndexAux(const Phase& phase, Index index) -> Index
+{
+    return index;
+}
+
+auto resolveSpeciesIndexAux(const Phase& phase, int index) -> Index
+{
+    return index;
+}
+
+auto resolveSpeciesIndexAux(const Phase& phase, const String& name) -> Index
+{
+    return phase.species().index(name);
+}
+
+auto resolveSpeciesIndex(const Phase& phase, StringOrIndex element) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(phase, arg); }, element);
 }
 
 auto resolveSpeciesIndexAux(const ChemicalSystem& system, Index index) -> Index

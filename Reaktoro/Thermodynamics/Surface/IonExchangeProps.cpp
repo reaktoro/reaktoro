@@ -142,9 +142,9 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the amount of an element (in moles).
-    auto elementAmount(const String& symbol) const -> real
+    auto elementAmount(const StringOrIndex& symbol) const -> real
     {
-        const auto idx = phase.elements().indexWithSymbol(symbol);
+        const auto idx = detail::resolveElementIndex(phase, symbol);
         return Aex.row(idx) * VectorXr(nex);
     }
 
@@ -162,9 +162,9 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the amounts of an ion exchange species (in moles).
-    auto speciesAmount(const String& name) const -> real
+    auto speciesAmount(const StringOrIndex& name) const -> real
     {
-        const auto idx = phase.species().indexWithName(name);
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
         return nex[idx];
     }
 
@@ -177,11 +177,11 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the equivalence of an ion exchange species (in eq).
-    auto speciesEquivalence(const String& name) const -> real
+    auto speciesEquivalence(const StringOrIndex& name) const -> real
     {
         // Note: this definition eq = n * ze is consistent with the PHREEQC output,
         // but meq is usually defined via molalities as meq = 1e-3 * m, where m is the molality
-        const auto idx = phase.species().indexWithName(name);
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
         return nex[idx] * exsurface.ze()[idx];
     }
 
@@ -192,9 +192,9 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the equivalent fraction of an ion exchange species.
-    auto speciesEquivalentFraction(const String& name) const -> real
+    auto speciesEquivalentFraction(const StringOrIndex& name) const -> real
     {
-        const auto idx = phase.species().indexWithName(name);
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
         return exstate.beta[idx];
     }
 
@@ -206,9 +206,9 @@ struct IonExchangeProps::Impl
     }
 
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
-    auto speciesLog10Gamma(const String& name) const -> real
+    auto speciesLog10Gamma(const StringOrIndex& name) const -> real
     {
-        const auto idx = phase.species().indexWithName(name);
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
         auto lng = props.speciesActivityCoefficientsLn()[idx];
         return lng / std::log(10);
     }
@@ -249,7 +249,7 @@ auto IonExchangeProps::update(const ChemicalProps& props) -> void
     pimpl->update(props);
 }
 
-auto IonExchangeProps::elementAmount(const String& symbol) const -> real
+auto IonExchangeProps::elementAmount(const StringOrIndex& symbol) const -> real
 {
     return pimpl->elementAmount(symbol);
 }
@@ -264,7 +264,7 @@ auto IonExchangeProps::speciesAmounts() const -> ArrayXr
     return pimpl->speciesAmounts();
 }
 
-auto IonExchangeProps::speciesAmount(const String& name) const -> real
+auto IonExchangeProps::speciesAmount(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesAmount(name);
 }
@@ -274,7 +274,7 @@ auto IonExchangeProps::speciesEquivalences() const -> ArrayXr
     return pimpl->speciesEquivalences();
 }
 
-auto IonExchangeProps::speciesEquivalence(const String& name) const -> real
+auto IonExchangeProps::speciesEquivalence(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesEquivalence(name);
 }
@@ -284,12 +284,12 @@ auto IonExchangeProps::speciesEquivalentFractions() const -> ArrayXr
     return pimpl->speciesEquivalentFractions();
 }
 
-auto IonExchangeProps::speciesEquivalentFraction(const String& name) const -> real
+auto IonExchangeProps::speciesEquivalentFraction(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesEquivalentFraction(name);
 }
 
-auto IonExchangeProps::speciesLog10Gamma(const String& name) const -> real
+auto IonExchangeProps::speciesLog10Gamma(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesLog10Gamma(name);
 }

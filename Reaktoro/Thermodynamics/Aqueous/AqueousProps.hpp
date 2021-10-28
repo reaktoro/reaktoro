@@ -64,13 +64,13 @@ public:
     auto pressure() const -> real;
 
     /// Return the molality of an element (in molal).
-    auto elementMolality(const String& symbol) const -> real;
+    auto elementMolality(const StringOrIndex& symbol) const -> real;
 
     /// Return the molality concentrations of the elements in  (in molal).
     auto elementMolalities() const -> VectorXr;
 
     /// Return the molality of an aqueous solute species (in molal).
-    auto speciesMolality(const String& name) const -> real;
+    auto speciesMolality(const StringOrIndex& name) const -> real;
 
     /// Return the molality concentrations of the species (in molal).
     auto speciesMolalities() const -> VectorXr;

@@ -25,6 +25,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class Phase;
 class PhaseList;
 class ElementList;
 class SpeciesList;
@@ -41,7 +42,7 @@ auto molarMasses(const SpeciesList& species) -> ArrayXd;
 /// @param unit The quantity unit of the species.
 auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, const String& unit) -> real;
 
-/// Resolve the index of a elementn in a chemical system with given either aa element symbol or its index itself.
+/// Resolve the index of a element in a chemical system with given either aa element symbol or its index itself.
 auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index;
 
 /// Resolve the index of a species in a chemical system with given either a species name or its index itself.
@@ -49,6 +50,12 @@ auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) ->
 
 /// Resolve the index of a phase in a chemical system with given either a phase name or its index itself.
 auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index;
+
+/// Resolve the index of a element in a phase with given either aa element symbol or its index itself.
+auto resolveElementIndex(const Phase& phase, StringOrIndex element) -> Index;
+
+/// Resolve the index of a element in a phase with given either aa element symbol or its index itself.
+auto resolveSpeciesIndex(const Phase& phase, StringOrIndex element) -> Index;
 
 /// Assemble the formula matrix of the list of `species` with respect to given `elements`.
 auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
