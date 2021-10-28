@@ -42,7 +42,7 @@ def testChemicalState():
 
     assert state.temperature() == 298.15
     assert state.pressure() == 1e5
-    assert state.charge()[0] == 0.0 # no amounts assigned yet
+    assert state.charge() == 0.0 # no amounts assigned yet
     assert npy.max(state.speciesAmounts()) == 0.0
 
     state.temperature(30.0, "celsius")
@@ -72,11 +72,11 @@ def testChemicalState():
     state.setSpeciesAmounts(1.0)
     assert npy.min(state.speciesAmounts()) == 1.0
     assert npy.max(state.speciesAmounts()) == 1.0
-    assert state.charge()[0] == 1.0 # +1 -1 +1 -1 +2 +2 -1 -2 = 1
+    assert state.charge() == 1.0 # +1 -1 +1 -1 +2 +2 -1 -2 = 1
 
     state.setSpeciesAmounts(n)
     assert npy.all(state.speciesAmounts() == n)
-    assert state.charge()[0] == -3.0 # +1 -1*2 +1*3 -1*4 +2*5 +2*6 -1*7 -2*8 = -3
+    assert state.charge() == -3.0 # +1 -1*2 +1*3 -1*4 +2*5 +2*6 -1*7 -2*8 = -3
 
     state.setSpeciesAmount(0, 3.1)
     assert state.speciesAmount(0) == 3.1
@@ -158,4 +158,4 @@ def testChemicalState():
     assert props.temperature() == state.temperature()
     assert props.pressure() == state.pressure()
     assert props.speciesAmounts() == state.speciesAmounts()
-    assert state.charge()[0] == -3.0
+    assert state.charge() == -3.0
