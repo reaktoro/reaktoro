@@ -201,35 +201,16 @@ struct IonExchangeProps::Impl
     /// Return the base-10 logarithm of the activity coefficients of the species on the ion exchange surface.
     auto speciesLog10Gammas() const -> ArrayXr
     {
-        auto extr = extra;
-        if(!extr.empty() && extr["IonExchangeLnGamma"].has_value())
-        {
-            // Fetch ln(gamma) from `extra` data-field and convert it to the log10(gamma)
-            auto lng = std::any_cast<ArrayXrRef>(extr["IonExchangeLnGamma"]);
-            return lng / std::log(10);
-        }
-        warningif(!extr["IonExchangeLnGamma"].has_value(),
-                  "There is no information on the activity coefficients for the ion exchange species, "
-                  "so log10(gamma) are set to zero.")
-        return ArrayXr::Zero(phase.elements().size());
+        auto lng = props.speciesActivityCoefficientsLn();
+        return lng / std::log(10);
     }
 
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
     auto speciesLog10Gamma(const String& name) const -> real
     {
         const auto idx = phase.species().indexWithName(name);
-        auto extr = extra;
-
-        if(!extr.empty() && extr["IonExchangeLnGamma"].has_value())
-        {
-            // Fetch ln(gamma) from `extra` data-field and convert it to the log10(gamma) with the index `idx`
-            auto lng = std::any_cast<ArrayXrRef>(extr["IonExchangeLnGamma"])[idx];
-            return lng / std::log(10);
-        }
-        warningif(!extr["IonExchangeLnGamma"].has_value(),
-                  "There is no information on the activity coefficients for an ion exchange species " + name +
-                  ", so log10(gamma(" + name + " )) is set to zero.")
-        return 0;
+        auto lng = props.speciesActivityCoefficientsLn()[idx];
+        return lng / std::log(10);
     }
 };
 

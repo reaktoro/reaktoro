@@ -105,8 +105,6 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
 
-        // Update natural logarithms of the activity coefficients
-        props.extra["IonExchangeLnGamma"] = ln_g;
     };
     return fn;
 }
