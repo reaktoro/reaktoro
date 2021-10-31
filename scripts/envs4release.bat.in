@@ -6,5 +6,6 @@
 if not defined REAKTORO_BACKUP_PYTHONPATH set REAKTORO_BACKUP_PYTHONPATH=%PYTHONPATH%
 if not defined REAKTORO_BACKUP_PATH set REAKTORO_BACKUP_PATH=%PATH%
 
-set PYTHONPATH=%CD%\python\package\installed\Debug\Lib\site-packages;%CD%\python\package\installed\Lib\site-packages;%REAKTORO_BACKUP_PYTHONPATH%
-set PATH=%CD%\Reaktoro\Debug;%CD%\Reaktoro;%REAKTORO_BACKUP_PATH%
+@REM Some path repetitions below (without Release in the path) happens in case ninja is used instead of MSVC.
+set PYTHONPATH=${PROJECT_BINARY_DIR_NATIVE}\python\package\installed\Release\Lib\site-packages;${PROJECT_BINARY_DIR_NATIVE}\python\package\installed\Lib\site-packages;%REAKTORO_BACKUP_PYTHONPATH%
+set PATH=${PROJECT_BINARY_DIR_NATIVE}\Reaktoro\Release;${PROJECT_BINARY_DIR_NATIVE}\Reaktoro;%REAKTORO_BACKUP_PATH%
