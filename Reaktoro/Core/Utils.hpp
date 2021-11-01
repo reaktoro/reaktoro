@@ -25,9 +25,9 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalSystem;
+class ElementList;
 class Phase;
 class PhaseList;
-class ElementList;
 class SpeciesList;
 
 namespace detail {
