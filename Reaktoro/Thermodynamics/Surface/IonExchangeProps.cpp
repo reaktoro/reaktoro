@@ -343,7 +343,7 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     table.add_row({ "Equivalent Fractions:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].name(), str(beta[i]), "" });
-    table.add_row({ "Log10 Gammas:" });
+    table.add_row({ "Activity Coefficients (log base 10):" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].name(), str(log10g[i]), "" });
 
