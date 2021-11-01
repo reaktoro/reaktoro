@@ -111,8 +111,8 @@ struct IonExchangeSurface::Impl
             ze[i] = exchangerEquivalentsNumber(species[i], exchanger_symbol);
     }
 
-    /// Return the equivalences fractions of the species on ion exchange surface if molar fractions are provided.
-    auto equivalencesFractions(ArrayXrConstRef x) const -> ArrayXr
+    /// Return the equivalents fractions of the species on ion exchange surface if molar fractions are provided.
+    auto equivalentFractions(ArrayXrConstRef x) const -> ArrayXr
     {
         // beta_i = xi * zi / sum_c (xc * zc)
         return x*ze/(x*ze).sum();
@@ -122,7 +122,7 @@ struct IonExchangeSurface::Impl
     auto state(real T, real P, ArrayXrConstRef x) -> IonExchangeSurfaceState
     {
         IonExchangeSurfaceState exchange_state;
-        exchange_state.beta = equivalencesFractions(x);
+        exchange_state.beta = equivalentFractions(x);
         return exchange_state;
     }
 

@@ -37,7 +37,7 @@ auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
             // Fetch species fractions for the activity model evaluation
             const auto x = args.x;
 
-            // Calculate ln of activities of ion exchange species as the ln of equivalence fractions
+            // Calculate ln of activities of ion exchange species as the ln of equivalent fractions
             props.ln_a = (x*ze/(x*ze).sum()).log();
         };
 

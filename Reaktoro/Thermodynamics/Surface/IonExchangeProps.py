@@ -95,12 +95,12 @@ def testIonExchangeProps():
     for i in range(0, exspecies.size()):
         assert exprops.speciesAmounts()[i] == pytest.approx(1.00)
 
-    # Check equivalences of all species
-    assert exprops.speciesEquivalence("NaX"  )[0] == pytest.approx(1.0)
-    assert exprops.speciesEquivalence("CaX2" )[0] == pytest.approx(2.0)
-    assert exprops.speciesEquivalence("KX"   )[0] == pytest.approx(1.0)
-    assert exprops.speciesEquivalence("AlX3" )[0] == pytest.approx(3.0)
-    assert exprops.speciesEquivalence("MgX2" )[0] == pytest.approx(2.0)
+    # Check equivalents of all species
+    assert exprops.speciesEquivalent("NaX"  )[0] == pytest.approx(1.0)
+    assert exprops.speciesEquivalent("CaX2" )[0] == pytest.approx(2.0)
+    assert exprops.speciesEquivalent("KX"   )[0] == pytest.approx(1.0)
+    assert exprops.speciesEquivalent("AlX3" )[0] == pytest.approx(3.0)
+    assert exprops.speciesEquivalent("MgX2" )[0] == pytest.approx(2.0)
 
     # Check equivalent fractions of all species
     assert exprops.speciesEquivalentFraction("NaX"  )[0] == pytest.approx(0.1111111111111111)
@@ -142,12 +142,12 @@ def testIonExchangeProps():
     assert exprops.speciesAmount("AlX3")[0] == pytest.approx(1e-16                 )
     assert exprops.speciesAmount("MgX2")[0] == pytest.approx(1.9108310668496267e-07)
 
-    # Check equivalences of all species
-    assert exprops.speciesEquivalence("NaX"  )[0] == pytest.approx(9.84067523830254e-09  )
-    assert exprops.speciesEquivalence("CaX2" )[0] == pytest.approx(6.07993111391772e-07  )
-    assert exprops.speciesEquivalence("KX"   )[0] == pytest.approx(1e-16       )
-    assert exprops.speciesEquivalence("AlX3" )[0] == pytest.approx(3e-16       )
-    assert exprops.speciesEquivalence("MgX2" )[0] == pytest.approx(3.8216621336992535e-07)
+    # Check equivalents of all species
+    assert exprops.speciesEquivalent("NaX"  )[0] == pytest.approx(9.84067523830254e-09  )
+    assert exprops.speciesEquivalent("CaX2" )[0] == pytest.approx(6.07993111391772e-07  )
+    assert exprops.speciesEquivalent("KX"   )[0] == pytest.approx(1e-16       )
+    assert exprops.speciesEquivalent("AlX3" )[0] == pytest.approx(3e-16       )
+    assert exprops.speciesEquivalent("MgX2" )[0] == pytest.approx(3.8216621336992535e-07)
 
     # Check equivalent fractions of all species
     assert exprops.speciesEquivalentFraction("NaX"  )[0] == pytest.approx(0.00984067523436627)
@@ -177,12 +177,12 @@ def testIonExchangeProps():
         idx = exspecies.index(name)
 
         assert exprops.speciesAmount(name)[0]             == pytest.approx(exprops.speciesAmounts()[idx])
-        assert exprops.speciesEquivalence(name)[0]        == pytest.approx(exprops.speciesEquivalences()[idx])
+        assert exprops.speciesEquivalent(name)[0]        == pytest.approx(exprops.speciesEquivalents()[idx])
         assert exprops.speciesEquivalentFraction(name)[0] == pytest.approx(exprops.speciesEquivalentFractions()[idx])
         assert exprops.speciesActivityCoefficientLg(name)[0]         == pytest.approx(exprops.speciesActivityCoefficientsLg()[idx])
 
         assert exprops.speciesAmount(idx)[0]             == pytest.approx(exprops.speciesAmounts()[idx])
-        assert exprops.speciesEquivalence(idx)[0]        == pytest.approx(exprops.speciesEquivalences()[idx])
+        assert exprops.speciesEquivalent(idx)[0]        == pytest.approx(exprops.speciesEquivalents()[idx])
         assert exprops.speciesEquivalentFraction(idx)[0] == pytest.approx(exprops.speciesEquivalentFractions()[idx])
         assert exprops.speciesActivityCoefficientLg(idx)[0]         == pytest.approx(exprops.speciesActivityCoefficientsLg()[idx])
 

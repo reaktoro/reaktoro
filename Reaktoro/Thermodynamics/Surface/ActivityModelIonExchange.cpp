@@ -53,7 +53,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
 
-        // Calculate ln of activities of ion exchange species as the ln of equivalence fractions
+        // Calculate ln of activities of ion exchange species as the ln of equivalent fractions
         ln_a = (x*ze/(x*ze).sum()).log();
 
         // Initialized the ln of activity coefficients of the ion exchange species on the surface
