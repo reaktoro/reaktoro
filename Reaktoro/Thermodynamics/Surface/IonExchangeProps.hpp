@@ -69,11 +69,11 @@ public:
     /// Return the amounts of an ion exchange species (in moles).
     auto speciesAmount(const StringOrIndex& name) const -> real;
 
-    /// Return the equivalences of the species on the ion exchange composition (in eq).
-    auto speciesEquivalences() const -> ArrayXr;
+    /// Return the equivalents of the species on the ion exchange composition (in eq).
+    auto speciesEquivalents() const -> ArrayXr;
 
-    /// Return the equivalence of an ion exchange species (in eq).
-    auto speciesEquivalence(const StringOrIndex& name) const -> real;
+    /// Return the equivalent of an ion exchange species (in eq).
+    auto speciesEquivalent(const StringOrIndex& name) const -> real;
 
     /// Return the equivalent fractions of the species on the ion exchange surface (in moles) if the molar fractions are provided.
     auto speciesEquivalentFractions() const -> ArrayXr;

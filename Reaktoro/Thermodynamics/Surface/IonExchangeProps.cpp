@@ -167,16 +167,16 @@ struct IonExchangeProps::Impl
         return nex[idx];
     }
 
-    /// Return the equivalences of the species on the ion exchange composition (in eq).
-    auto speciesEquivalences() const -> ArrayXr
+    /// Return the equivalents of the species on the ion exchange composition (in eq).
+    auto speciesEquivalents() const -> ArrayXr
     {
         // Note: this definition eq = n * ze is consistent with the PHREEQC output,
         // but meq is usually defined via molalities as meq = 1e-3 * m, where m is the molality
         return nex * exsurface.ze();
     }
 
-    /// Return the equivalence of an ion exchange species (in eq).
-    auto speciesEquivalence(const StringOrIndex& name) const -> real
+    /// Return the equivalent of an ion exchange species (in eq).
+    auto speciesEquivalent(const StringOrIndex& name) const -> real
     {
         // Note: this definition eq = n * ze is consistent with the PHREEQC output,
         // but meq is usually defined via molalities as meq = 1e-3 * m, where m is the molality
@@ -268,14 +268,14 @@ auto IonExchangeProps::speciesAmount(const StringOrIndex& name) const -> real
     return pimpl->speciesAmount(name);
 }
 
-auto IonExchangeProps::speciesEquivalences() const -> ArrayXr
+auto IonExchangeProps::speciesEquivalents() const -> ArrayXr
 {
-    return pimpl->speciesEquivalences();
+    return pimpl->speciesEquivalents();
 }
 
-auto IonExchangeProps::speciesEquivalence(const StringOrIndex& name) const -> real
+auto IonExchangeProps::speciesEquivalent(const StringOrIndex& name) const -> real
 {
-    return pimpl->speciesEquivalence(name);
+    return pimpl->speciesEquivalent(name);
 }
 
 auto IonExchangeProps::speciesEquivalentFractions() const -> ArrayXr
@@ -321,7 +321,7 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     const auto species = props.phase().species();
     const auto ne = props.elementAmounts();
     const auto ns = props.speciesAmounts();
-    const auto eq = props.speciesEquivalences();
+    const auto eq = props.speciesEquivalents();
     const auto beta = props.speciesEquivalentFractions();
     const auto log10g = props.speciesActivityCoefficientsLg();
 
@@ -337,7 +337,7 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     table.add_row({ "Species Amounts:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].name(), str(ns[i]), "mole" });
-    table.add_row({ "Equivalences:" });
+    table.add_row({ "Equivalents:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].name(), str(eq[i]), "eq" });
     table.add_row({ "Equivalent Fractions:" });

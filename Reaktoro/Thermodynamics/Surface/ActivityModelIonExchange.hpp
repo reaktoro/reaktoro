@@ -40,13 +40,13 @@ auto ActivityModelIonExchangeGainesThomas() -> ActivityModelGenerator;
 /// exchange species are calculated using the Gaines--Thomas activity model.
 ///
 /// The activity of **ion exchange species** are calculated using the
-/// equivalence fractions:
+/// equivalent fractions:
 ///
 /// @eqc{\beta_{i}=-\dfrac{x_{i}z_{\mathrm{e},i}}{\sum_{j}x_{j}z_{\mathrm{e},j}},}
 ///
 /// where @eq{x_{i}} and @eq{x_{j}} are species mole fractions and
 /// @eq{z_{\mathrm{e},i}}} and @eq{z_{\mathrm{e},j}}} are exchanger
-/// equivalences (or cation charges) in ion exchange species.
+/// equivalents (or cation charges) in ion exchange species.
 //=====================================================================================================================
 
 } // namespace Reaktoro

@@ -28,7 +28,7 @@ namespace Reaktoro {
 /// @see IonExchangeComposition
 struct IonExchangeSurfaceState
 {
-    /// The equivalence fractions of the exchange species
+    /// The equivalent fractions of the exchange species
     ArrayXr beta;
 
     /// The natural logarithms of the activity coefficients (calculated during the activity model evaluation)
@@ -39,7 +39,7 @@ struct IonExchangeSurfaceState
 /// The IonExchangeSurface class is defined as a collection of Species objects, representing,
 /// therefore, a composition of ion exchange phase. Its main purpose is to provide the
 /// necessary operations in the calculation of activities of ion exchange species.
-/// It implements methods for the calculation of equivalence fractions of species in ionic
+/// It implements methods for the calculation of equivalent fractions of species in ionic
 /// exchange phase. In addition, it provides methods that retrieves information about the
 /// exchanger (e.g., X-) and exchange species (e.g., NaX, CaX2).
 class IonExchangeSurface

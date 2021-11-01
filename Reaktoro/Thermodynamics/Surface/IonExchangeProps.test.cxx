@@ -125,12 +125,12 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("Mg") == Approx(1.0) );
         CHECK( exprops.elementAmount("X")  == Approx(9.0) );
 
-        // Check equivalences of all species
-        CHECK( exprops.speciesEquivalence("NaX"  ) == Approx(1.0) );
-        CHECK( exprops.speciesEquivalence("CaX2" ) == Approx(2.0) );
-        CHECK( exprops.speciesEquivalence("KX"   ) == Approx(1.0) );
-        CHECK( exprops.speciesEquivalence("AlX3" ) == Approx(3.0) );
-        CHECK( exprops.speciesEquivalence("MgX2" ) == Approx(2.0) );
+        // Check equivalents of all species
+        CHECK( exprops.speciesEquivalent("NaX"  ) == Approx(1.0) );
+        CHECK( exprops.speciesEquivalent("CaX2" ) == Approx(2.0) );
+        CHECK( exprops.speciesEquivalent("KX"   ) == Approx(1.0) );
+        CHECK( exprops.speciesEquivalent("AlX3" ) == Approx(3.0) );
+        CHECK( exprops.speciesEquivalent("MgX2" ) == Approx(2.0) );
 
         // Check equivalent fractions of all species
         CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.111111) );
@@ -174,12 +174,12 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("Ca") == Approx(2.46581e-07 ) );
         CHECK( exprops.elementAmount("X" ) == Approx(1e-06       ) );
 
-        // Check equivalences of all species
-        CHECK( exprops.speciesEquivalence("NaX"  ) == Approx(1.36704e-08 ) );
-        CHECK( exprops.speciesEquivalence("CaX2" ) == Approx(4.93161e-07 ) );
-        CHECK( exprops.speciesEquivalence("KX"   ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesEquivalence("AlX3" ) == Approx(3e-16       ) );
-        CHECK( exprops.speciesEquivalence("MgX2" ) == Approx(4.93161e-07 ) );
+        // Check equivalents of all species
+        CHECK( exprops.speciesEquivalent("NaX"  ) == Approx(1.36704e-08 ) );
+        CHECK( exprops.speciesEquivalent("CaX2" ) == Approx(4.93161e-07 ) );
+        CHECK( exprops.speciesEquivalent("KX"   ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesEquivalent("AlX3" ) == Approx(3e-16       ) );
+        CHECK( exprops.speciesEquivalent("MgX2" ) == Approx(4.93161e-07 ) );
 
         // Check equivalent fractions of all species
         CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.0136704 ) );
@@ -192,19 +192,19 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         for(auto i = 0; i < exspecies.size(); i++)
             CHECK( exprops.speciesActivityCoefficientsLg()[i] == Approx(0.00) ); // because we are working on the custom library
     
-        // Test convenience methods species amounts, equivalences, equivalent fractions, log10gamma and element amounts
+        // Test convenience methods species amounts, equivalents, equivalent fractions, log10gamma and element amounts
         for(const auto& s : exspecies)
         {
             const auto name = s.name();
             const auto idx = exspecies.index(name);
 
             CHECK( exprops.speciesAmount(name)             == Approx(exprops.speciesAmounts()[idx]) );
-            CHECK( exprops.speciesEquivalence(name)        == Approx(exprops.speciesEquivalences()[idx]) );
+            CHECK( exprops.speciesEquivalent(name)        == Approx(exprops.speciesEquivalents()[idx]) );
             CHECK( exprops.speciesEquivalentFraction(name) == Approx(exprops.speciesEquivalentFractions()[idx]) );
             CHECK(exprops.speciesActivityCoefficientLg(name) == Approx(exprops.speciesActivityCoefficientsLg()[idx]) );
 
             CHECK( exprops.speciesAmount(idx)             == Approx(exprops.speciesAmounts()[idx]) );
-            CHECK( exprops.speciesEquivalence(idx)        == Approx(exprops.speciesEquivalences()[idx]) );
+            CHECK( exprops.speciesEquivalent(idx)        == Approx(exprops.speciesEquivalents()[idx]) );
             CHECK( exprops.speciesEquivalentFraction(idx) == Approx(exprops.speciesEquivalentFractions()[idx]) );
             CHECK(exprops.speciesActivityCoefficientLg(idx) == Approx(exprops.speciesActivityCoefficientsLg()[idx]) );
         }
@@ -272,12 +272,12 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("K" ) == Approx(1e-16       ) );
         CHECK( exprops.elementAmount("Ca") == Approx(3.03997e-07 ) );
 
-        // Check equivalences of all species
-        CHECK( exprops.speciesEquivalence("NaX" ) == Approx(9.84068e-09 ) );
-        CHECK( exprops.speciesEquivalence("CaX2") == Approx(6.07993e-07 ) );
-        CHECK( exprops.speciesEquivalence("KX"  ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesEquivalence("AlX3") == Approx(3e-16       ) );
-        CHECK( exprops.speciesEquivalence("MgX2") == Approx(3.82166e-07 ) );
+        // Check equivalents of all species
+        CHECK( exprops.speciesEquivalent("NaX" ) == Approx(9.84068e-09 ) );
+        CHECK( exprops.speciesEquivalent("CaX2") == Approx(6.07993e-07 ) );
+        CHECK( exprops.speciesEquivalent("KX"  ) == Approx(1e-16       ) );
+        CHECK( exprops.speciesEquivalent("AlX3") == Approx(3e-16       ) );
+        CHECK( exprops.speciesEquivalent("MgX2") == Approx(3.82166e-07 ) );
 
         // Check equivalent fractions of all species
         CHECK( exprops.speciesEquivalentFraction("NaX" ) == Approx(0.00984068 ) );
