@@ -18,10 +18,10 @@
 #include "Utils.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Common/Algorithms.hpp>
 
 namespace Reaktoro {
 namespace detail {
