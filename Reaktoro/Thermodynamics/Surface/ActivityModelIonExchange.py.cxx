@@ -26,4 +26,5 @@ void exportActivityModelIonExchange(py::module& m)
 {
     m.def("ActivityModelIonExchange", ActivityModelIonExchange);
     m.def("ActivityModelIonExchangeGainesThomas", ActivityModelIonExchangeGainesThomas);
+    m.def("ActivityModelIonExchangeVanselow", ActivityModelIonExchangeVanselow);
 }
