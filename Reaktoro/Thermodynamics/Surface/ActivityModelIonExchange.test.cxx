@@ -102,6 +102,25 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[5] == Approx(-13.7102)  ); // NH4X
     }
 
+    SECTION("Checking the activities (custom database) for the Vanselow convention")
+    {
+        // Construct the activity model function with the given ion exchange species.
+        ActivityModel fn = ActivityModelIonExchangeVanselow()(species_db);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species_db.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x_db});
+
+        CHECK( props.ln_a[0] == Approx(-13.3047)  ); // AlX3
+        CHECK( props.ln_a[1] == Approx(-1.09862)  ); // CaX2
+        CHECK( props.ln_a[2] == Approx(-13.3047)  ); // KX
+        CHECK( props.ln_a[3] == Approx(-1.79176)  ); // MgX2
+        CHECK( props.ln_a[4] == Approx(-0.693152) ); // NaX
+        CHECK( props.ln_a[5] == Approx(-13.3047)  ); // NH4X
+    }
+
     // Initialize the database corresponding to the string `phreeqc.dat` has been already initialized
     auto dbphreeqc = test::getPhreeqcDatabase("phreeqc.dat");
 
@@ -139,6 +158,35 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[13] == Approx(-13.017)   ); // PbX2
         CHECK( props.ln_a[14] == Approx(-13.017)   ); // SrX2
         CHECK( props.ln_a[15] == Approx(-13.017)   ); // ZnX2
+    }
+
+    SECTION("Checking the activities for the Vanselow convention")
+    {
+        // Construct the activity model function with the given ion exchange species.
+        ActivityModel fn = ActivityModelIonExchangeVanselow()(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x});
+
+        CHECK( props.ln_a[0]  == Approx(-13.3047)  ); // AlOHX2
+        CHECK( props.ln_a[1]  == Approx(-13.3047)  ); // AlX3
+        CHECK( props.ln_a[2]  == Approx(-13.3047)  ); // BaX2
+        CHECK( props.ln_a[3]  == Approx(-1.09863)  ); // CaX2
+        CHECK( props.ln_a[4]  == Approx(-13.3047)  ); // CdX2
+        CHECK( props.ln_a[5]  == Approx(-13.3047)  ); // CuX2
+        CHECK( props.ln_a[6]  == Approx(-13.3047)  ); // FeX2
+        CHECK( props.ln_a[7]  == Approx(-13.3047)  ); // KX
+        CHECK( props.ln_a[8]  == Approx(-13.3047)  ); // LiX
+        CHECK( props.ln_a[9]  == Approx(-1.79178)  ); // MgX2
+        CHECK( props.ln_a[10] == Approx(-13.3047)  ); // MnX2
+        CHECK( props.ln_a[11] == Approx(-13.3047)  ); // NH4X
+        CHECK( props.ln_a[12] == Approx(-0.693169) ); // NaX
+        CHECK( props.ln_a[13] == Approx(-13.3047)  ); // PbX2
+        CHECK( props.ln_a[14] == Approx(-13.3047)  ); // SrX2
+        CHECK( props.ln_a[15] == Approx(-13.3047)  ); // ZnX2
     }
 
     // Define aqueous species list and corresponding fractions
@@ -190,12 +238,49 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         CHECK( props.ln_a[6]  == Approx(-14.3324)  ); // FeX2
         CHECK( props.ln_a[7]  == Approx(-14.1240)  ); // KX
         CHECK( props.ln_a[8]  == Approx(-14.039)   ); // LiX
-        CHECK( props.ln_a[9] == Approx( -2.69894) ); // MgX2
+        CHECK( props.ln_a[9]  == Approx( -2.69894) ); // MgX2
         CHECK( props.ln_a[10] == Approx(-14.3324)  ); // MnX2
         CHECK( props.ln_a[11] == Approx(-14.1962)  ); // NH4X
         CHECK( props.ln_a[12] == Approx(-1.42286)  ); // NaX
         CHECK( props.ln_a[13] == Approx(-15.1114)  ); // PbX2
         CHECK( props.ln_a[14] == Approx(-14.3174)  ); // SrX2
         CHECK( props.ln_a[15] == Approx(-14.4663)  ); // ZnX2
+    }
+
+    SECTION("Checking the activities (calculated based on the parameters fetched from phreeqc.dat) for the Vanselow convention")
+    {
+        // Create the aqueous mixture
+        AqueousMixture mixture(species_aq);
+
+        // The state of the aqueous mixture
+        AqueousMixtureState aqstate = mixture.state(T, P, x_aq);
+
+        // Construct the activity model function with the given ion exchange species.
+        ActivityModel fn = ActivityModelIonExchangeVanselow()(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        props.extra["AqueousMixtureState"] = aqstate;
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x});
+
+        CHECK( props.ln_a[0]  == Approx(-15.3991) ); // AlOHX2
+        CHECK( props.ln_a[1]  == Approx(-15.622)  ); // AlX3
+        CHECK( props.ln_a[2]  == Approx(-14.7773) ); // BaX2
+        CHECK( props.ln_a[3]  == Approx(-2.39589) ); // CaX2
+        CHECK( props.ln_a[4]  == Approx(-15.3991) ); // CdX2
+        CHECK( props.ln_a[5]  == Approx(-14.62)   ); // CuX2
+        CHECK( props.ln_a[6]  == Approx(-14.62)   ); // FeX2
+        CHECK( props.ln_a[7]  == Approx(-13.7185) ); // KX
+        CHECK( props.ln_a[8]  == Approx(-13.6335) ); // LiX
+        CHECK( props.ln_a[9]  == Approx(-2.98661) ); // MgX2
+        CHECK( props.ln_a[10] == Approx(-14.62)   ); // MnX2
+        CHECK( props.ln_a[11] == Approx(-13.7907) ); // NH4X
+        CHECK( props.ln_a[12] == Approx(-1.01739) ); // NaX
+        CHECK( props.ln_a[13] == Approx(-15.3991) ); // PbX2
+        CHECK( props.ln_a[14] == Approx(-14.6051) ); // SrX2
+        CHECK( props.ln_a[15] == Approx(-14.7539) ); // ZnX2
     }
 }

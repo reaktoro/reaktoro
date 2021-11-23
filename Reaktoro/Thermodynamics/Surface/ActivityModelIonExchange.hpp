@@ -53,7 +53,8 @@ auto ActivityModelIonExchangeVanselow() -> ActivityModelGenerator;
 /// @eq{z_{\mathrm{e},i}}} and @eq{z_{\mathrm{e},j}}} are exchanger
 /// equivalents (or cation charges) in ion exchange species, or
 /// the molar fractions
-/// @eqc{\beta^M_{i}=-\dfrac{x_{i}}{\sum_{j}x_{j}},}
+///
+/// @eqc{\beta^M_{i}=-\dfrac{x_{i}}{\sum_{j}x_{j}}.}
 //=====================================================================================================================
 
 } // namespace Reaktoro
