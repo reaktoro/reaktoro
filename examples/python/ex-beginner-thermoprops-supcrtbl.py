@@ -43,12 +43,12 @@ P = 80.0
 
 data = []
 for T in npy.arange(25.0, 105.0, 5.0):
-    G0_H2Og_bl = H2Og_bl.props(T+273.15, P*1e5).G0[0]/1000
-    G0_H2Og_98 = H2Og_98.props(T+273.15, P*1e5).G0[0]/1000
-    G0_CO2g_bl = CO2g_bl.props(T+273.15, P*1e5).G0[0]/1000
-    G0_CO2g_98 = CO2g_98.props(T+273.15, P*1e5).G0[0]/1000
-    G0_H2Sg_bl = H2Sg_bl.props(T+273.15, P*1e5).G0[0]/1000
-    G0_H2Sg_98 = H2Sg_98.props(T+273.15, P*1e5).G0[0]/1000
+    G0_H2Og_bl = float(H2Og_bl.props(T+273.15, P*1e5).G0)/1000
+    G0_H2Og_98 = float(H2Og_98.props(T+273.15, P*1e5).G0)/1000
+    G0_CO2g_bl = float(CO2g_bl.props(T+273.15, P*1e5).G0)/1000
+    G0_CO2g_98 = float(CO2g_98.props(T+273.15, P*1e5).G0)/1000
+    G0_H2Sg_bl = float(H2Sg_bl.props(T+273.15, P*1e5).G0)/1000
+    G0_H2Sg_98 = float(H2Sg_98.props(T+273.15, P*1e5).G0)/1000
     data.append([T, G0_H2Og_bl, G0_H2Og_98, G0_CO2g_bl, G0_CO2g_98, G0_H2Sg_bl, G0_H2Sg_98])
 
 data = npy.array(data)

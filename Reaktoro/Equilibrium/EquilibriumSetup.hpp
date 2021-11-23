@@ -109,13 +109,13 @@ public:
     /// Get the updated residuals of the equilibrium constraints.
     auto getConstraintResiduals() -> MatrixXdConstRef;
 
-    /// Get the updated Jacobian of the equilibrium constraints with respec to *x*.
+    /// Get the updated Jacobian of the equilibrium constraints with respect to *x*.
     auto getConstraintResidualsGradX() -> MatrixXdConstRef;
 
-    /// Get the updated Jacobian of the equilibrium constraints with respec to *p*.
+    /// Get the updated Jacobian of the equilibrium constraints with respect to *p*.
     auto getConstraintResidualsGradP() -> MatrixXdConstRef;
 
-    /// Get the updated Jacobian of the equilibrium constraints with respec to *c*.
+    /// Get the updated Jacobian of the equilibrium constraints with respect to *c*.
     auto getConstraintResidualsGradC() -> MatrixXdConstRef;
 
     /// Return true if partially exact derivatives are adopted for the Hessian matrix *Hxx*.
@@ -125,7 +125,7 @@ public:
     auto usingDiagonalApproxDerivatives() -> bool;
 
     /// Enable recording of derivatives of the chemical properties with respect
-    /// to *(n, p, w)* to contruct its full Jacobian matrix.
+    /// to *(n, p, w)* to construct its full Jacobian matrix.
     /// Consider a series of forward automatic differentiation passes to
     /// compute the partial derivatives of the chemical properties with respect
     /// to the variables *(n, p, w)*. Use this method before these operations

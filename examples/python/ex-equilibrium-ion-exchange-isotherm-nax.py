@@ -73,7 +73,11 @@ def equilibrate(solver, m_K, m_Ca):
     exprops.update(state)
     aqprops.update(state)
 
-    return [state.speciesAmount("K+")[0], state.speciesAmount("Ca+2")[0], state.speciesAmount("KX")[0], state.speciesAmount("CaX2")[0], state.speciesAmount("NaX")[0]]
+    return [float(state.speciesAmount("K+")),
+            float(state.speciesAmount("Ca+2")),
+            float(state.speciesAmount("KX")),
+            float(state.speciesAmount("CaX2")),
+            float(state.speciesAmount("NaX"))]
 
 print(f"  input K+ input Ca+2      mol_K     mol_Ca     mol_KX   mol_CaX2    mol_NaX")
 

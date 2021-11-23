@@ -52,7 +52,7 @@ def solubility_co2(system, solver, T, P, mNaCl):
     aqprops = AqueousProps(state)
 
     # Return concentration of the carbon in the aqueous phase
-    return aqprops.elementMolality("C")[0]
+    return float(aqprops.elementMolality("C"))
 
 # Initialize a thermodynamic database
 db = PhreeqcDatabase("phreeqc.dat")

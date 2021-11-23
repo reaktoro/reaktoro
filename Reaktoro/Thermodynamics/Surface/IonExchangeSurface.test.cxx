@@ -43,7 +43,7 @@ TEST_CASE("Testing IonExchangeSurface", "[IonExchangeSurface]")
     // Expected species: AlX3 CaX2 KX MgX2 NaX NH4X
     SpeciesList species_db = db.species().withAggregateState(AggregateState::IonExchange).withCharge(0.0);
 
-    // Create the aqueous mixture
+    // Create the ion exchange surface
     IonExchangeSurface surface_db(species_db);
 
     SECTION("Checking the charges of the species in IonExchangeSurface (custom database)")

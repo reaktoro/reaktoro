@@ -47,14 +47,14 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setTemperature(T, "celsius");
-    solutionstate.setPressure(P, "bar");
-    solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-    solutionstate.setSpeciesAmount("Na+"  , 1.00, "mmol");
-    solutionstate.setSpeciesAmount("Ca+2" , 1.00, "mmol");
-    solutionstate.setSpeciesAmount("Mg+2" , 1.00, "mmol");
-    solutionstate.setSpeciesAmount("K+"   , 1.00, "mmol");
-    solutionstate.setSpeciesAmount("NaX"  , 1.00, "umol"); // set small to make sure we have plenty of water for available exchanger X-
+    solutionstate.temperature(T, "celsius");
+    solutionstate.pressure(P, "bar");
+    solutionstate.set("H2O"    , 1.00, "kg");
+    solutionstate.set("Na+"  , 1.00, "mmol");
+    solutionstate.set("Ca+2" , 1.00, "mmol");
+    solutionstate.set("Mg+2" , 1.00, "mmol");
+    solutionstate.set("K+"   , 1.00, "mmol");
+    solutionstate.set("NaX"  , 1.00, "umol"); // set small to make sure we have plenty of water for available exchanger X-
 
     std::cout << "*******************************************" << std::endl;
     std::cout << "Before equilibration: " << std::endl;

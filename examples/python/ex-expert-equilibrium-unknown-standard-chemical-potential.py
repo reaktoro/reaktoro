@@ -32,8 +32,8 @@ P = 10.0 * 1e5    # pressure in Pa
 
 def computeSolubilityCaCO3(system):
     state = ChemicalState(system)
-    state.setTemperature(T)
-    state.setPressure(P)
+    state.temperature(T)
+    state.pressure(P)
     state.set("H2O(aq)", 1.0, "kg")
     state.set("Calcite", 1.0, "mol")
 
@@ -75,8 +75,8 @@ specs.addUnknownStandardChemicalPotential("Calcite")
 specs.addConstraint(constraint)
 
 state = ChemicalState(system)
-state.setTemperature(T)
-state.setPressure(P)
+state.temperature(T)
+state.pressure(P)
 state.set("H2O(aq)", 1.0, "kg")
 state.set("Calcite", 10.0, "mol")
 

@@ -54,12 +54,12 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.setTemperature(25.0, "celsius");
-    state.setPressure(1.0, "bar");
-    state.setSpeciesMass("H2O(aq)" , 1.00, "kg");
-    state.setSpeciesAmount("CO2(g)", 10.0, "mol");
-    state.setSpeciesAmount("Na+"   , 4.00, "mol");
-    state.setSpeciesAmount("Cl-"   , 4.00, "mol");
+    state.temperature(25.0, "celsius");
+    state.pressure(1.0, "bar");
+    state.set("H2O(aq)" , 1.00, "kg");
+    state.set("CO2(g)", 10.0, "mol");
+    state.set("Na+"   , 4.00, "mol");
+    state.set("Cl-"   , 4.00, "mol");
 
     // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
