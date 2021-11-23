@@ -66,10 +66,13 @@ def equilibrate_state(m_Ca):
     chemprops.update(state)
     exprops.update(state)
 
-    print(f"{chemprops.elementAmount('K')[0]:6.4e} {chemprops.elementAmount('Ca')[0]:6.4e} "
-          f"{state.speciesAmount('K+')[0]:6.4e} {state.speciesAmount('Ca+2')[0]:6.4e} "
-          f"{state.speciesAmount('KX')[0]:6.4e} {state.speciesAmount('CaX2')[0]:6.4e} "
-          f"{state.speciesAmount('NaX')[0]:6.4e}")
+    print(f"{float(chemprops.elementAmount('K')):6.4e} "
+          f"{float(chemprops.elementAmount('Ca')):6.4e} "
+          f"{float(state.speciesAmount('K+')):6.4e} "
+          f"{float(state.speciesAmount('Ca+2')):6.4e} "
+          f"{float(state.speciesAmount('KX')):6.4e} "
+          f"{float(state.speciesAmount('CaX2')):6.4e} "
+          f"{float(state.speciesAmount('NaX')):6.4e}")
 
 m_Ca = np.flip(np.linspace(0.0, 0.05, 21))
 

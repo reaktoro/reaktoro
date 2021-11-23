@@ -59,9 +59,9 @@ solver.solve(state)
 print(state)
 
 aqprops = AqueousProps(state)
-print("I  = %f mol/kgw" % aqprops.ionicStrength()[0])
-print("pH = %f" % aqprops.pH()[0])
-print("pE = %f" % aqprops.pE()[0])
+print("I  = %f mol/kgw" % float(aqprops.ionicStrength()))
+print("pH = %f"         % float(aqprops.pH()))
+print("pE = %f"         % float(aqprops.pE()))
 
 exprops = IonExchangeProps(system)
 exprops.update(state)

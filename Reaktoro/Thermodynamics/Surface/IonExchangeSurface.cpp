@@ -43,7 +43,7 @@ struct IonExchangeSurface::Impl
     : species(species)
     {
         /// Initialize the symbol of the exchanger
-        intializeExchanger();
+        initializeExchanger();
 
         /// Initialize the array of exchanger's equivalents numbers.
         initializeExchangerEquivalentsNumbers();
@@ -52,7 +52,7 @@ struct IonExchangeSurface::Impl
     /// Initialize the symbol representing the exchanger.
     /// The method parses the ion exchange species list and identifies a common element that will be regarded as exchanger
     /// For example, for the list of species NaX, CaX2, MgX2, KX, the `exchanger_symbol` is `X`
-    auto intializeExchanger() -> void
+    auto initializeExchanger() -> void
     {
         errorif(species.size() == 0, "There is no species in the IonExchangePhase")
 
@@ -91,7 +91,7 @@ struct IonExchangeSurface::Impl
             if(element.symbol() == exchanger_symbol)
                 return coeff;
 
-        // If all the elements are part of the periodic table then the exchanger is missing
+        // If none of the elements contained in species coincide with the name of the sites
         errorif(true, "Could not get information about the exchanger equivalents number. "
                       "Ensure the ion exchange phase contains correct species")
     }
@@ -103,8 +103,8 @@ struct IonExchangeSurface::Impl
         // The number of species in the ion exchange phase only
         const auto num_species = species.size();
 
-        // The numbers of exchanger's equivalents for exchange species
-        ze = ArrayXr::Zero(num_species);
+        // Initialize numbers of exchanger's equivalents for exchange species
+        ze = ArrayXd::Zero(num_species);
 
         // Initialize exchanger's equivalents by parsing the species on the ion exchange surface
         for(int i = 0; i < num_species; ++i)

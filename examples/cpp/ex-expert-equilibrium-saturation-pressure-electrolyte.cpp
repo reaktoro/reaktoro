@@ -47,8 +47,8 @@ int main()
     EquilibriumSolver solver(specs);
 
     ChemicalState state(system);
-    state.setTemperature(50.0, "celsius");
-    state.setPressure(300.0, "bar");
+    state.temperature(50.0, "celsius");
+    state.pressure(300.0, "bar");
     state.set("H2O(aq)", 1.0, "kg");
     state.set("Na+",     1.0, "mol");
     state.set("Cl-",     1.0, "mol");

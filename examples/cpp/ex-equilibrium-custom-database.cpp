@@ -45,9 +45,9 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.setTemperature(25.0, "celsius");
-    state.setPressure(1.0, "bar");
-    state.setSpeciesMass("H2O", 1.0, "kg");
+    state.temperature(25.0, "celsius");
+    state.pressure(1.0, "bar");
+    state.set("H2O", 1.0, "kg");
 
     // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);

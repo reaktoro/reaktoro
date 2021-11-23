@@ -62,14 +62,14 @@ def carbonates_in_seawater(system, solver, T, P):
     solver.solve(state_sw)
 
     # Fetch values of the specified species
-    nDolomite = state_sw.speciesAmount("Dolomite")
-    nCalcite  = state_sw.speciesAmount("Calcite")
-    nCa2      = state_sw.speciesAmount("Ca+2")
-    nMg2      = state_sw.speciesAmount("Mg+2")
-    nH        = state_sw.speciesAmount("H+")
-    nHCO3     = state_sw.speciesAmount("HCO3-")
+    nDolomite = float(state_sw.speciesAmount("Dolomite"))
+    nCalcite  = float(state_sw.speciesAmount("Calcite"))
+    nCa2      = float(state_sw.speciesAmount("Ca+2"))
+    nMg2      = float(state_sw.speciesAmount("Mg+2"))
+    nH        = float(state_sw.speciesAmount("H+"))
+    nHCO3     = float(state_sw.speciesAmount("HCO3-"))
 
-    return (nCalcite[0], nDolomite[0], nCa2[0], nMg2[0], nH[0], nHCO3[0])
+    return (nCalcite, nDolomite, nCa2, nMg2, nH, nHCO3)
 
 # Initialize a thermodynamic database
 db = PhreeqcDatabase("pitzer.dat")

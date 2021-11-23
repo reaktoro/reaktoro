@@ -58,22 +58,22 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.setTemperature(25.0, "celsius");
-    state.setPressure(1.0, "bar");
+    state.temperature(25.0, "celsius");
+    state.pressure(1.0, "bar");
 
     // Specify rainwater composition
-    state.setSpeciesMass("H2O(aq)", 1.00, "kg");
-    state.setSpeciesMass("Na+"    , 2.05, "mg");
-    state.setSpeciesMass("K+"     , 0.35, "mg");
-    state.setSpeciesMass("Ca+2"   , 1.42, "mg");
-    state.setSpeciesMass("Mg+2"   , 0.39, "mg");
-    state.setSpeciesMass("Cl-"    , 3.47, "mg");
-    state.setSpeciesMass("S2O4-2" , 2.19, "mg");
-    state.setSpeciesMass("NO3-"   , 0.27, "mg");
-    state.setSpeciesMass("NH4+"   , 0.41, "mg");
+    state.set("H2O(aq)", 1.00, "kg");
+    state.set("Na+"    , 2.05, "mg");
+    state.set("K+"     , 0.35, "mg");
+    state.set("Ca+2"   , 1.42, "mg");
+    state.set("Mg+2"   , 0.39, "mg");
+    state.set("Cl-"    , 3.47, "mg");
+    state.set("S2O4-2" , 2.19, "mg");
+    state.set("NO3-"   , 0.27, "mg");
+    state.set("NH4+"   , 0.41, "mg");
 
     // Specify the initial amount of calcite
-    state.setSpeciesAmount("Calcite", 10.0, "mol");
+    state.set("Calcite", 10.0, "mol");
 
     // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
