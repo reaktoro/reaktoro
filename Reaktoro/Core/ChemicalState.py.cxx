@@ -22,7 +22,6 @@
 #include <Optima/State.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 using namespace Reaktoro;
