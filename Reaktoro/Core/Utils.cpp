@@ -124,7 +124,7 @@ auto resolveSpeciesIndexAux(const ChemicalSystem& system, const String& name) ->
 
 auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index
 {
-return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(system, arg); }, species);
+    return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(system, arg); }, species);
 }
 
 auto resolvePhaseIndexAux(const ChemicalSystem& system, Index index) -> Index
