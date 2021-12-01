@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <fstream>
+#include <numeric>
 
 // cpp-tabulate includes
 #include <tabulate/table.hpp>
@@ -643,6 +644,22 @@ auto ChemicalProps::volumeP() const -> real
 {
     const auto iend = system().phases().size();
     return Reaktoro::sum(iend, [&](auto i) { return phaseProps(i).volumeP(); });
+}
+
+auto ChemicalProps::fluidVolume() const -> real
+{
+    const Indices iphases = msystem.indicesFluidPhases();
+    auto phase_volumes = vectorize(iphases, RKT_LAMBDA(iphase, phaseProps(iphase).volume()));
+    auto val = std::accumulate(phase_volumes.begin(), phase_volumes.end(), 0.0);
+    return val;
+}
+
+auto ChemicalProps::solidVolume() const -> real
+{
+    const Indices iphases = msystem.indicesSolidPhases();
+    auto phase_volumes = vectorize(iphases, RKT_LAMBDA(iphase, phaseProps(iphase).volume()));
+    auto val = std::accumulate(phase_volumes.begin(), phase_volumes.end(), 0.0);
+    return val;
 }
 
 auto ChemicalProps::gibbsEnergy() const -> real

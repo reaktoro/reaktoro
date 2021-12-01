@@ -366,6 +366,14 @@ public:
     /// Return the pressure derivative of the volume of the system (in m³/Pa).
     auto volumeP() const -> real;
 
+    /// Return the total fluid volume of the system (in m³).
+    /// The fluid volume is defined as the sum of volumes of all fluid phases.
+    auto fluidVolume() const -> real;
+
+    /// Return the total solid volume of the system (in units of m³).
+    /// The solid volume is defined as the sum of volumes of all solid phases.
+    auto solidVolume() const -> real;
+
     /// Return the Gibbs energy of formation of the system (in J).
     auto gibbsEnergy() const -> real;
 
