@@ -15,18 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#include "ReactiveTransportResult.hpp"
 
-void exportChemicalField(py::module& m);
-void exportMesh(py::module& m);
-void exportReactiveTransportProfiler(py::module& m);
-void exportReactiveTransportResult(py::module& m);
+namespace Reaktoro {
 
-void exportTransport(py::module& m)
+auto ReactiveTransportTiming::operator+=(const ReactiveTransportTiming& other) -> ReactiveTransportTiming&
 {
-    exportChemicalField(m);
-    exportMesh(m);
-    exportReactiveTransportProfiler(m);
-    exportReactiveTransportResult(m);
+    step += other.step;
+    transport += other.transport;
+    equilibrium += other.equilibrium;
+    kinetics += other.kinetics;
+    return *this;
 }
+
+} // namespace Reaktoro
