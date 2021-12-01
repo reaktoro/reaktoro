@@ -22,6 +22,22 @@
 
 namespace Reaktoro {
 
+/// Provide timing information of the operations during an equilibrium calculation.
+struct EquilibriumTiming
+{
+    /// The time spent for solving the chemical equilibrium problem.
+    double solve = 0.0;
+
+    /// The time spent for computing the standard thermochemical properties of the system.
+    double standard_thermodynamic_properties = 0.0;
+
+    /// The time spent for computing the chemical properties of the system.
+    double chemical_properties = 0.0;
+
+    /// Self addition of another EquilibriumTiming instance to this one.
+    auto operator+=(const EquilibriumTiming& other) -> EquilibriumTiming&;
+};
+
 /// A type used to describe the result of a smart equilibrium calculation.
 struct SmartEquilibriumResult
 {
@@ -38,6 +54,9 @@ struct EquilibriumResult
 
     /// The boolean flag that indicates if smart equilibrium calculation was used.
     SmartEquilibriumResult smart;
+
+    /// The timing information of the operations during an equilibrium calculation.
+    EquilibriumTiming timing;
 
     /// Apply an addition assignment to this instance
     auto operator+=(const EquilibriumResult& other) -> EquilibriumResult&;

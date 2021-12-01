@@ -22,6 +22,15 @@ namespace Reaktoro {
 auto EquilibriumResult::operator+=(const EquilibriumResult& other) -> EquilibriumResult&
 {
     optima += other.optima;
+    timing += other.timing;
+    return *this;
+}
+
+auto EquilibriumTiming::operator+=(const EquilibriumTiming& other) -> EquilibriumTiming&
+{
+    solve += other.solve;
+    standard_thermodynamic_properties += other.standard_thermodynamic_properties;
+    chemical_properties += other.chemical_properties;
     return *this;
 }
 
