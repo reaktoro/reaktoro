@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -15,39 +13,31 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "JsonEquilibrium.hpp"
 
-// C++ includes
-#include <fstream>
-
-// json includes
-#include <nlohmann/json.hpp>
+// Reaktoro includes
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 
 namespace Reaktoro {
 
-/// A type alias for nlohmann::json
-using json = nlohmann::json;
+void to_json(json& j, const EquilibriumResult& obj) {
+    j["timing"] = obj.timing;
+}
 
-/// Provides a convenient mechanism for outputting json files.
-class JsonOutput
-{
-public:
-    /// Construct a JsonOutput object.
-    JsonOutput(const std::string& filename)
-    : file(filename)
-    {}
+void from_json(const json& j, EquilibriumResult& obj) {
+    j.at("timing").get_to(obj.timing);
+}
 
-    /// Output a value (converted to json object) to a file.
-    template<typename T>
-    auto operator<<(const T& val) -> JsonOutput&
-    {
-        file << json(val);
-        file.close();
-        return *this;
-    }
+void to_json(json& j, const EquilibriumTiming& obj) {
+    j["solve"] = obj.solve;
+    j["standard_thermodynamic_properties"] = obj.standard_thermodynamic_properties;
+    j["chemical_properties"] = obj.chemical_properties;
+}
 
-private:
-    std::ofstream file;
-};
+void from_json(const json& j, EquilibriumTiming& obj) {
+    j.at("solve").get_to(obj.solve);
+    j.at("standard_thermodynamic_properties").get_to(obj.standard_thermodynamic_properties);
+    j.at("chemical_properties").get_to(obj.chemical_properties);
+}
 
 } // namespace Reaktoro

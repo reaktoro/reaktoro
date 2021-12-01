@@ -1,7 +1,5 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -17,6 +15,26 @@
 
 #pragma once
 
-#include <Reaktoro/Serialization/Serialization.YAML.hpp>
-#include <Reaktoro/Serialization/JSON/JsonEquilibrium.hpp>
-#include <Reaktoro/Serialization/JSON/JsonTransport.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Json.hpp>
+
+namespace Reaktoro {
+
+// Forward declarations (struct)
+struct ReactiveTransportAnalysis;
+struct TransportTiming;
+struct TransportResult;
+
+// Json converters for TransportTiming
+void to_json(json& j, const TransportTiming& obj);
+void from_json(const json& j, TransportTiming& obj);
+
+// Json converters for TransportResult
+void to_json(json& j, const TransportResult& obj);
+void from_json(const json& j, TransportResult& obj);
+
+// Json converters for ReactiveTransportAnalysis
+void to_json(json& j, const ReactiveTransportAnalysis& obj);
+void from_json(const json& j, ReactiveTransportAnalysis& obj);
+
+} // namespace Reaktoro
