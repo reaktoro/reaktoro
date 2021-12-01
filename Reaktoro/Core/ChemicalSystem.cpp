@@ -19,11 +19,14 @@
 
 // C++ includes
 #include <iostream>
+#include <functional>
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Common/SetUtils.hpp>
 #include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Core/Element.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -129,6 +132,103 @@ auto ChemicalSystem::phase(Index index) const -> const Phase&
 auto ChemicalSystem::phases() const -> const PhaseList&
 {
     return pimpl->phases;
+}
+
+auto ChemicalSystem::indexPhaseWithError(std::string name) const -> Index
+{
+    const Index index = phases().findWithName(name);
+
+    Assert(index < phases().size(),
+           "Could not get the index of phase `" + name + "`.",
+           "There is no phase called `" + name + "` in the system.")
+
+    return index;
+}
+
+auto ChemicalSystem::indexSpeciesWithError(std::string name) const -> Index
+{
+    const Index index = species().findWithName(name);
+
+    Assert(index < species().size(),
+           "Could not get the index of species `" + name + "`.",
+           "There is no species called `" + name + "` in the system.")
+    return index;
+}
+
+auto ChemicalSystem::indexSpeciesAny(const std::vector<std::string>& names) const -> Index
+{
+    return detail::indexAny(names, species());
+}
+
+auto ChemicalSystem::indicesFluidPhases() const -> Indices
+{
+    Indices indices;
+    auto numphases = phases().size();
+    indices.reserve(numphases);
+    for(Index i = 0; i < numphases; ++i)
+        if(phase(i).stateOfMatter() == StateOfMatter::Fluid or phase(i).stateOfMatter() == StateOfMatter::Liquid)
+            indices.push_back(i);
+    return indices;
+}
+
+auto ChemicalSystem::indicesSolidPhases() const -> Indices
+{
+    auto numphases = phases().size();
+    Indices indices;
+    indices.reserve(numphases);
+    for(Index i = 0; i < numphases; ++i)
+        if(phase(i).stateOfMatter() == StateOfMatter::Solid)
+            indices.push_back(i);
+    return indices;
+}
+
+auto ChemicalSystem::indicesElementsInSpecies(Index index) const -> Indices
+{
+    Indices indices;
+    for(const auto& pair : species(index).elements())
+    {
+        auto symbol = pair.first.symbol();
+        indices.push_back(elements().index(symbol));
+    }
+    return indices;
+}
+
+auto ChemicalSystem::indicesElementsInSpecies(const Indices& ispecies) const -> Indices
+{
+    std::set<Index> ielements;
+    for(const Index& i : ispecies)
+    {
+        const Indices& indices = indicesElementsInSpecies(i);
+        ielements.insert(indices.begin(), indices.end());
+    }
+    return Indices(ielements.begin(), ielements.end());
+}
+
+auto ChemicalSystem::indicesSpecies(const std::vector<std::string>& names) const -> Indices
+{
+    Indices indices;
+    indices.reserve(names.size());
+    for(const auto& name : names)
+        indices.push_back(indexSpeciesWithError(name));
+    return indices;
+}
+
+auto ChemicalSystem::indicesPhases(const std::vector<std::string>& names) const -> Indices
+{
+    Indices indices;
+    indices.reserve(names.size());
+    for(const auto& name : names)
+        indices.push_back(indexPhaseWithError(name));
+    return indices;
+}
+
+auto ChemicalSystem::elementAmountsInSpecies(const Indices& ispecies, ArrayXrConstRef n) const -> ArrayXr
+{
+    MatrixXdConstRef W = formulaMatrix();
+    ArrayXr b = zeros(W.rows());
+    for(Index i : ispecies)
+        b += ArrayXr(W.col(i)) * n[i];
+    return b;
 }
 
 auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
