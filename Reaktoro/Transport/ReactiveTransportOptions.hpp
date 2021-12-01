@@ -1,4 +1,4 @@
-// Reaktoro is a unified framework for modeling chemically reactive systems.
+/// Reaktoro is a unified framework for modeling chemically reactive systems.
 //
 // Copyright © 2014-2021 Allan Leal
 //
@@ -15,22 +15,26 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#pragma once
 
-void exportChemicalField(py::module& m);
-void exportMesh(py::module& m);
-void exportReactiveTransportProfiler(py::module& m);
-void exportReactiveTransportResult(py::module& m);
-void exportReactiveTransportAnalysis(py::module& m);
-void exportReactiveTransportOptions(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Transport/TransportOptions.hpp>
 
-void exportTransport(py::module& m)
+namespace Reaktoro {
+
+/// The options for the reactive transport calculations.
+struct ReactiveTransportOptions
 {
-    exportChemicalField(m);
-    exportMesh(m);
-    exportReactiveTransportProfiler(m);
-    exportReactiveTransportResult(m);
-    exportReactiveTransportAnalysis(m);
-    exportReactiveTransportOptions(m);
-}
+    /// The options for the transport calculations.
+    TransportOptions transport;
+
+    /// The options for the equilibrium calculations.
+    EquilibriumOptions equilibrium;
+
+    /// The boolean flag that indicates whether smart equilibrium solver should be used.
+    bool use_smart_solver = false;
+
+};
+
+} // namespace Reaktoro

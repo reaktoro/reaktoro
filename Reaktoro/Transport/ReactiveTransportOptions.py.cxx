@@ -18,19 +18,16 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportChemicalField(py::module& m);
-void exportMesh(py::module& m);
-void exportReactiveTransportProfiler(py::module& m);
-void exportReactiveTransportResult(py::module& m);
-void exportReactiveTransportAnalysis(py::module& m);
-void exportReactiveTransportOptions(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Transport/ReactiveTransportOptions.hpp>
+using namespace Reaktoro;
 
-void exportTransport(py::module& m)
+void exportReactiveTransportOptions(py::module& m)
 {
-    exportChemicalField(m);
-    exportMesh(m);
-    exportReactiveTransportProfiler(m);
-    exportReactiveTransportResult(m);
-    exportReactiveTransportAnalysis(m);
-    exportReactiveTransportOptions(m);
+    py::class_<ReactiveTransportOptions>(m, "ReactiveTransportOptions")
+        .def(py::init<>())
+        .def_readwrite("transport", &ReactiveTransportOptions::transport)
+        .def_readwrite("equilibrium", &ReactiveTransportOptions::equilibrium)
+        .def_readwrite("use_smart_solver", &ReactiveTransportOptions::use_smart_solver)
+        ;
 }
