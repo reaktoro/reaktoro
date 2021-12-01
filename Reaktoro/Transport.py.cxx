@@ -24,6 +24,7 @@ void exportReactiveTransportProfiler(py::module& m);
 void exportReactiveTransportResult(py::module& m);
 void exportReactiveTransportAnalysis(py::module& m);
 void exportReactiveTransportOptions(py::module& m);
+void exportTransportSolver(py::module& m);
 
 void exportTransport(py::module& m)
 {
@@ -33,4 +34,5 @@ void exportTransport(py::module& m)
     exportReactiveTransportResult(m);
     exportReactiveTransportAnalysis(m);
     exportReactiveTransportOptions(m);
+    exportTransportSolver(m);
 }
