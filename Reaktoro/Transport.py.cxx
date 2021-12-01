@@ -22,6 +22,7 @@ void exportChemicalField(py::module& m);
 void exportMesh(py::module& m);
 void exportReactiveTransportProfiler(py::module& m);
 void exportReactiveTransportResult(py::module& m);
+void exportReactiveTransportAnalysis(py::module& m);
 
 void exportTransport(py::module& m)
 {
@@ -29,4 +30,5 @@ void exportTransport(py::module& m)
     exportMesh(m);
     exportReactiveTransportProfiler(m);
     exportReactiveTransportResult(m);
+    exportReactiveTransportAnalysis(m);
 }
