@@ -179,6 +179,9 @@ public:
     /// @param b0 The amounts of the conservative components in the chemical equilibrium problem
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult;
 
+    /// Return the result of the last equilibrium calculation.
+    auto result() const -> const EquilibriumResult&;
+
 private:
     struct Impl;
 

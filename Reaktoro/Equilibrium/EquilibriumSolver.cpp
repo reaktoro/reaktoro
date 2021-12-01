@@ -72,6 +72,9 @@ struct EquilibriumSolver::Impl
     /// The options of the equilibrium solver.
     EquilibriumOptions options;
 
+    /// The result of the last equilibrium calculation.
+    EquilibriumResult result;
+
     /// The dimensions of the variables and constraints in the optimization problem.
     Optima::Dims optdims;
 
@@ -545,4 +548,8 @@ auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sens
     return pimpl->solve(state, sensitivity, conditions, restrictions, b0);
 }
 
+auto EquilibriumSolver::result() const -> const EquilibriumResult&
+{
+    return pimpl->result;
+}
 } // namespace Reaktoro
