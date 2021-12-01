@@ -18,25 +18,20 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportChemicalField(py::module& m);
-void exportMesh(py::module& m);
-void exportReactiveTransportProfiler(py::module& m);
-void exportReactiveTransportResult(py::module& m);
-void exportReactiveTransportAnalysis(py::module& m);
-void exportReactiveTransportOptions(py::module& m);
-void exportTransportSolver(py::module& m);
-void exportTransportOptions(py::module &m);
-void exportTransportResult(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Transport/TransportResult.hpp>
+using namespace Reaktoro;
 
-void exportTransport(py::module& m)
+void exportTransportResult(py::module& m)
 {
-    exportChemicalField(m);
-    exportMesh(m);
-    exportReactiveTransportProfiler(m);
-    exportReactiveTransportResult(m);
-    exportReactiveTransportAnalysis(m);
-    exportReactiveTransportOptions(m);
-    exportTransportSolver(m);
-    exportTransportOptions(m);
-    exportTransportResult(m);
+    py::class_<TransportTiming>(m, "TransportTiming")
+        .def_readwrite("step", &TransportTiming::step)
+        .def_readwrite("matrix_equation_assembly", &TransportTiming::matrix_equation_assembly)
+        .def_readwrite("matrix_equation_solve", &TransportTiming::matrix_equation_solve)
+        .def(py::self += py::self)
+        ;
+
+    py::class_<TransportResult>(m, "TransportResult")
+        .def_readwrite("timing", &TransportResult::timing)
+        ;
 }
