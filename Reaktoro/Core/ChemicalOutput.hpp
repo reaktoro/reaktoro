@@ -1,122 +1,129 @@
-// // Reaktoro is a unified framework for modeling chemically reactive systems.
-// //
-// // Copyright © 2014-2021 Allan Leal
-// //
-// // This library is free software; you can redistribute it and/or
-// // modify it under the terms of the GNU Lesser General Public
-// // License as published by the Free Software Foundation; either
-// // version 2.1 of the License, or (at your option) any later version.
-// //
-// // This library is distributed in the hope that it will be useful,
-// // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// // Lesser General Public License for more details.
-// //
-// // You should have received a copy of the GNU Lesser General Public License
-// // along with this library. If not, see <http://www.gnu.org/licenses/>.
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright © 2014-2021 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// #pragma once
+#pragma once
 
-// // C++ includes
-// #include <memory>
-// #include <vector>
-// #include <sstream>
-// #include <string>
+// C++ includes
+#include <memory>
+#include <vector>
+#include <sstream>
+#include <string>
 
-// namespace Reaktoro {
+// Reaktoro includes
+#include <Reaktoro/Core/ReactionSystem.hpp>
 
-// // Forward declarations
-// class ChemicalState;
-// class ChemicalSystem;
-// class ReactionSystem;
-// class StringList;
+namespace Reaktoro {
 
-// /// A type used to output sequence of chemical states to a file or terminal.
-// class ChemicalOutput
-// {
-// public:
-//     /// Construct a default ChemicalOutput instance.
-//     ChemicalOutput();
+// Forward declarations
+class ChemicalState;
+class ChemicalProps;
+class ChemicalSystem;
+class ReactionSystem;
+class StringList;
 
-//     /// Construct a ChemicalOutput instance with given ChemicalSystem instance.
-//     explicit ChemicalOutput(const ChemicalSystem& system);
+/// A type used to output sequence of chemical states to a file or terminal.
+class ChemicalOutput
+{
+public:
+    /// Construct a default ChemicalOutput instance.
+    ChemicalOutput();
 
-//     /// Construct a ChemicalOutput instance with given ReactionSystem instance.
-//     explicit ChemicalOutput(const ReactionSystem& reactions);
+    /// Construct a ChemicalOutput instance with given ChemicalSystem instance.
+    explicit ChemicalOutput(const ChemicalSystem& system);
 
-//     /// Destroy this ChemicalOutput instance.
-//     virtual ~ChemicalOutput();
+    /// Construct a ChemicalOutput instance with given ReactionSystem instance.
+    explicit ChemicalOutput(const ReactionSystem& reactions);
 
-//     /// Set the name of the output file.
-//     auto filename(std::string filename) -> void;
+    /// Destroy this ChemicalOutput instance.
+    virtual ~ChemicalOutput();
 
-//     /// Return the name of the output file.
-//     auto filename() const -> std::string;
+    /// Set the name of the output file.
+    auto filename(std::string filename) -> void;
 
-//     /// Set a sufix word to the output file name.
-//     auto suffix(std::string name) -> void;
+    /// Return the name of the output file.
+    auto filename() const -> std::string;
 
-//     /// Return the suffix word of the output file name.
-//     auto suffix() const -> std::string;
+    /// Set a sufix word to the output file name.
+    auto suffix(std::string name) -> void;
 
-//     /// Return the base name of output file name.
-//     auto basename() const -> std::string;
+    /// Return the suffix word of the output file name.
+    auto suffix() const -> std::string;
 
-//     /// Return the extension name of output file name.
-//     auto extension() const -> std::string;
+    /// Return the base name of output file name.
+    auto basename() const -> std::string;
 
-//     /// Add a quantity to be output.
-//     /// @param quantity The quantity name.
-//     auto add(std::string quantity) -> void;
+    /// Return the extension name of output file name.
+    auto extension() const -> std::string;
 
-//     /// Add a quantity to be output.
-//     /// @param quantity The quantity name.
-//     /// @param label The label to be used in the headings.
-//     auto add(std::string quantity, std::string label) -> void;
+    /// Add a quantity to be output.
+    /// @param quantity The quantity name.
+    auto add(std::string quantity) -> void;
 
-//     /// Set the titles of extra columns in the output file.
-//     auto attachments(std::vector<std::string> titles) -> void;
+    /// Add a quantity to be output.
+    /// @param quantity The quantity name.
+    /// @param label The label to be used in the headings.
+    auto add(std::string quantity, std::string label) -> void;
 
-//     /// Attach value to extra column data in the output file.
-//     auto attach(int value) -> void;
+    /// Set the titles of extra columns in the output file.
+    auto attachments(std::vector<std::string> titles) -> void;
 
-//     /// Attach extra column data in the output file.
-//     auto attach(double value) -> void;
+    /// Attach value to extra column data in the output file.
+    auto attach(int value) -> void;
 
-//     /// Attach extra column data in the output file.
-//     auto attach(std::string value) -> void;
+    /// Attach extra column data in the output file.
+    auto attach(double value) -> void;
 
-//     /// Set the floating-point precision in the output.
-//     auto precision(int val) -> void;
+    /// Attach extra column data in the output file.
+    auto attach(std::string value) -> void;
 
-//     /// Enable or disable output in scientific format.
-//     auto scientific(bool enable) -> void;
+    /// Set the floating-point precision in the output.
+    auto precision(int val) -> void;
 
-//     /// Enable or disable the output to the terminal.
-//     auto terminal(bool enabled) -> void;
+    /// Enable or disable output in scientific format.
+    auto scientific(bool enable) -> void;
 
-//     /// Return the name of the quantities in the output file.
-//     auto quantities() const -> std::vector<std::string>;
+    /// Enable or disable the output to the terminal.
+    auto terminal(bool enabled) -> void;
 
-//     /// Return the headings of the output file.
-//     auto headings() const -> std::vector<std::string>;
+    /// Return the name of the quantities in the output file.
+    auto quantities() const -> std::vector<std::string>;
 
-//     /// Open the output file.
-//     auto open() -> void;
+    /// Return the headings of the output file.
+    auto headings() const -> std::vector<std::string>;
 
-//     /// Update the output with a new chemical state and its tag.
-//     auto update(const ChemicalState& state, double t) -> void;
+    /// Open the output file.
+    auto open() -> void;
 
-//     /// Close the output file.
-//     auto close() -> void;
+    /// Update the output with a new chemical state and its tag.
+    auto update(const ChemicalState& state, double t) -> void;
 
-//     /// Convert this ChemicalOutput instance to bool.
-//     operator bool() const;
+    /// Update the output with a new chemical state and its properties.
+    auto update(const ChemicalState& state, const ChemicalProps& properties, double t) -> void;
 
-// private:
-//     struct Impl;
+    /// Close the output file.
+    auto close() -> void;
 
-//     std::shared_ptr<Impl> pimpl;
-// };
+    /// Convert this ChemicalOutput instance to bool.
+    operator bool() const;
 
-// } // namespace Reaktoro
+private:
+    struct Impl;
+
+    std::shared_ptr<Impl> pimpl;
+};
+
+} // namespace Reaktoro
