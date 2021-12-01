@@ -1,164 +1,166 @@
-// // Reaktoro is a unified framework for modeling chemically reactive systems.
-// //
-// // Copyright © 2014-2021 Allan Leal
-// //
-// // This library is free software; you can redistribute it and/or
-// // modify it under the terms of the GNU Lesser General Public
-// // License as published by the Free Software Foundation; either
-// // version 2.1 of the License, or (at your option) any later version.
-// //
-// // This library is distributed in the hope that it will be useful,
-// // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// // Lesser General Public License for more details.
-// //
-// // You should have received a copy of the GNU Lesser General Public License
-// // along with this library. If not, see <http://www.gnu.org/licenses/>.
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright © 2014-2021 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// #include "ReactionSystem.hpp"
+#include "ReactionSystem.hpp"
 
-// // Reaktoro includes
-// #include <Reaktoro/Common/Algorithms.hpp>
-// #include <Reaktoro/Common/Exception.hpp>
-// #include <Reaktoro/Core/ChemicalSystem.hpp>
-// #include <Reaktoro/Core/ChemicalProps.hpp>
-// #include <Reaktoro/Core/Reaction.hpp>
+// Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/Reaction.hpp>
 
-// namespace Reaktoro {
-// namespace {
+namespace Reaktoro {
 
-// auto stoichiometricMatrix(const ChemicalSystem& system, const std::vector<Reaction>& reactions) -> MatrixXd
-// {
-//     const auto& species = system.species();
-//     const auto num_reactions = reactions.size();
-//     const auto num_species = species.size();
-//     MatrixXd S = zeros(num_reactions, num_species);
-//     for(unsigned i = 0; i < num_reactions; ++i)
-//         for(unsigned j = 0; j < num_species; ++j)
-//             S(i, j) = reactions[i].stoichiometry(species[j].name());
-//     return S;
-// }
+namespace {
 
-// } // namespace
+auto stoichiometricMatrix(const ChemicalSystem& system, const std::vector<Reaction>& reactions) -> MatrixXd
+{
+    const auto& species = system.species();
+    const auto num_reactions = reactions.size();
+    const auto num_species = species.size();
+    MatrixXd S = zeros(num_reactions, num_species);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        for(unsigned j = 0; j < num_species; ++j)
+            S(i, j) = reactions[i].stoichiometry(species[j].name());
+    return S;
+}
 
-// struct ReactionSystem::Impl
-// {
-//     /// The chemical system instance
-//     ChemicalSystem system;
+} // namespace
 
-//     /// The reactions that compose the reaction system
-//     std::vector<Reaction> reactions;
+struct ReactionSystem::Impl
+{
+    /// The chemical system instance
+    ChemicalSystem system;
 
-//     /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
-//     MatrixXd stoichiometric_matrix;
+    /// The reactions that compose the reaction system
+    std::vector<Reaction> reactions;
 
-//     /// Construct a defaut ReactionSystem::Impl instance
-//     Impl()
-//     {}
+    /// The stoichiometric matrix of the reactions w.r.t. to all species in the system
+    MatrixXd stoichiometric_matrix;
 
-//     /// Construct a ReactionSystem::Impl instance with given reactions
-//     Impl(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
-//     : system(system), reactions(reactions)
-//     {
-//         // Initialize the stoichiometric matrix of the reactions
-//         stoichiometric_matrix = Reaktoro::stoichiometricMatrix(system, reactions);
-//     }
-// };
+    /// Construct a defaut ReactionSystem::Impl instance
+    Impl()
+    {}
 
-// ReactionSystem::ReactionSystem()
-// : pimpl(new Impl())
-// {}
+    /// Construct a ReactionSystem::Impl instance with given reactions
+    Impl(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
+    : system(system), reactions(reactions)
+    {
+        // Initialize the stoichiometric matrix of the reactions
+        stoichiometric_matrix = Reaktoro::stoichiometricMatrix(system, reactions);
+    }
+};
 
-// ReactionSystem::ReactionSystem(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
-// : pimpl(new Impl(system, reactions))
-// {}
+ReactionSystem::ReactionSystem()
+: pimpl(new Impl())
+{}
 
-// ReactionSystem::~ReactionSystem()
-// {}
+ReactionSystem::ReactionSystem(const ChemicalSystem& system, const std::vector<Reaction>& reactions)
+: pimpl(new Impl(system, reactions))
+{}
 
-// auto ReactionSystem::numReactions() const -> unsigned
-// {
-//     return reactions().size();
-// }
+ReactionSystem::~ReactionSystem()
+{}
 
-// auto ReactionSystem::indexReaction(std::string name) const -> Index
-// {
-//     return indexfn(reactions(), RKT_LAMBDA(s, s.name() == name));
-// }
+auto ReactionSystem::numReactions() const -> unsigned
+{
+    return reactions().size();
+}
 
-// auto ReactionSystem::indexReactionWithError(std::string name) const -> Index
-// {
-//     const Index index = indexReaction(name);
-//     Assert(index < numReactions(),
-//         "Cannot get the index of the reaction `" + name + "`.",
-//         "There is no reaction called `" + name + "` in the reaction system.");
-//     return index;
-// }
+auto ReactionSystem::indexReaction(std::string name) const -> Index
+{
+    return indexfn(reactions(), RKT_LAMBDA(s, s.name() == name));
+}
 
-// auto ReactionSystem::reactions() const -> const std::vector<Reaction>&
-// {
-//     return pimpl->reactions;
-// }
+auto ReactionSystem::indexReactionWithError(std::string name) const -> Index
+{
+    const Index index = indexReaction(name);
+    Assert(index < numReactions(),
+           "Cannot get the index of the reaction `" + name + "`.",
+           "There is no reaction called `" + name + "` in the reaction system.");
+    return index;
+}
 
-// auto ReactionSystem::reaction(Index index) const -> const Reaction&
-// {
-//     Assert(index < numReactions(),
-//         "Cannot return a Reaction instance with given "
-//         "index `" + std::to_string(index) + "`.",
-//         "The reaction index must be less than the "
-//         "number of reactions `" + std::to_string(numReactions()) + "`.");
+auto ReactionSystem::reactions() const -> const std::vector<Reaction>&
+{
+    return pimpl->reactions;
+}
 
-//     return pimpl->reactions[index];
-// }
+auto ReactionSystem::reaction(Index index) const -> const Reaction&
+{
+    Assert(index < numReactions(),
+     "Cannot return a Reaction instance with given index `" + std::to_string(index) + "`.",
+     "The reaction index must be less than the number of reactions `" + std::to_string(numReactions()) + "`.")
 
-// auto ReactionSystem::reaction(std::string name) const -> const Reaction&
-// {
-//     const Index index = indexReaction(name);
+    return pimpl->reactions[index];
+}
 
-//     Assert(index < numReactions(),
-//         "Cannot return a Reaction instance with given name `" + name + "`.",
-//         "There is no reaction with such name in this ReactionSystem instance.");
+auto ReactionSystem::reaction(std::string name) const -> const Reaction&
+{
+    const Index index = indexReaction(name);
 
-//     return pimpl->reactions[index];
-// }
+    Assert(index < numReactions(),
+           "Cannot return a Reaction instance with given name `" + name + "`.",
+           "There is no reaction with such name in this ReactionSystem instance.");
 
-// auto ReactionSystem::stoichiometricMatrix() const -> MatrixXdConstRef
-// {
-//     return pimpl->stoichiometric_matrix;
-// }
+    return pimpl->reactions[index];
+}
 
-// auto ReactionSystem::system() const -> const ChemicalSystem&
-// {
-//     return pimpl->system;
-// }
+auto ReactionSystem::stoichiometricMatrix() const -> MatrixXdConstRef
+{
+    return pimpl->stoichiometric_matrix;
+}
 
-// auto ReactionSystem::lnEquilibriumConstants(const ChemicalProps& properties) const -> VectorXr
-// {
-//     const unsigned num_reactions = numReactions();
-//     VectorXr res(num_reactions);
-//     for(unsigned i = 0; i < num_reactions; ++i)
-//         res[i] = reaction(i).lnEquilibriumConstant(properties);
-//     return res;
-// }
+auto ReactionSystem::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
 
-// auto ReactionSystem::lnReactionQuotients(const ChemicalProps& properties) const -> VectorXd
-// {
-//     const unsigned num_reactions = numReactions();
-//     const unsigned num_species = system().species().size();
-//     VectorXd res(num_reactions, num_species);
-//     for(unsigned i = 0; i < num_reactions; ++i)
-//         res[i] = reaction(i).lnReactionQuotient(properties);
-//     return res;
-// }
+auto ReactionSystem::lnEquilibriumConstants(const ChemicalProps& properties) const -> VectorXr
+{
+    const unsigned num_reactions = numReactions();
+    VectorXr res(num_reactions);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        res[i] = reaction(i).lnEquilibriumConstant(properties);
+    return res;
+}
 
-// auto ReactionSystem::rates(const ChemicalProps& properties) const -> VectorXd
-// {
-//     const unsigned num_reactions = numReactions();
-//     const unsigned num_species = system().species().size();
-//     VectorXd res(num_reactions, num_species);
-//     for(unsigned i = 0; i < num_reactions; ++i)
-//         res[i] = reaction(i).rate(properties);
-//     return res;
-// }
+auto ReactionSystem::lnReactionQuotients(const ChemicalProps& properties) const -> VectorXd
+{
+    const unsigned num_reactions = numReactions();
+    const unsigned num_species = system().species().size();
+    VectorXd res(num_reactions, num_species);
+    for(unsigned i = 0; i < num_reactions; ++i)
+        res[i] = reaction(i).lnReactionQuotient(properties);
+    return res;
+}
 
-// } // namespace Reaktoro
+auto ReactionSystem::rates(const ChemicalProps& properties) const -> VectorXd
+{
+    const unsigned num_reactions = numReactions();
+    const unsigned num_species = system().species().size();
+    VectorXd res(num_reactions, num_species);
+    for(unsigned i = 0; i < num_reactions; ++i)
+    {
+        auto fn = reaction(i).rateFn();
+        res[i] = fn(properties);
+    }
+    return res;
+}
+
+} // namespace Reaktoro

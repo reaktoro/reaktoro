@@ -71,6 +71,13 @@ public:
     /// Return the stoichiometric coefficient of a species in the reaction equation.
     auto coefficient(const String& name) const -> double;
 
+    /// Return the reaction equation as a map of species names and stoichiometries.
+    auto equation() const -> const Pairs<Species, double>&;
+
+    /// Return the stoichiometry of a species in the reaction equation.
+    /// @param species The name of the species.
+    auto stoichiometry(String species) const -> double;
+
     /// Convert this ReactionEquation object into a string.
     operator String() const;
 

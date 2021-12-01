@@ -67,6 +67,20 @@ auto ReactionEquation::coefficient(const String& name) const -> double
     return idx < size() ? m_species[idx].second : 0.0;
 }
 
+auto ReactionEquation::equation() const -> const Pairs<Species, double>&
+{
+    return m_species;
+}
+
+auto ReactionEquation::stoichiometry(String species) const -> double
+{
+    // m_species has a type Pairs<Species, double>
+    // auto is a Pair<T, U> = std::pair<T, U>;
+    auto iter = std::find_if(m_species.begin(), m_species.end(),
+                          [&](const auto& pair){ return !pair.first.name().compare(species);});
+    return iter != m_species.end() ? iter->second : 0.0;
+}
+
 ReactionEquation::operator String() const
 {
     auto coeffstr = [](double x) { return (x == 1.0) ? "" : std::to_string(x) + "*"; };

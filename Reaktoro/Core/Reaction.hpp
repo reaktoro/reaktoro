@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
 
@@ -51,6 +52,9 @@ public:
     /// Construct a default Reaction instance
     Reaction();
 
+    /// Construct a Reaction instance from a ReactionEquation instance
+    Reaction(const ReactionEquation& equation, const ChemicalSystem& system);
+
     /// Return a deep copy of this Reaction object.
     auto clone() const -> Reaction;
 
@@ -77,6 +81,30 @@ public:
 
     /// Return the rate function of the reaction.
     auto rateFn() const -> const ReactionRateFn&;
+
+    /// Calculate the equilibrium constant of the reaction (in natural log).
+    /// @param properties The chemical properties of the system
+    auto lnEquilibriumConstant(const ChemicalProps& properties) const -> real;
+
+    /// Calculate the reaction quotient of the reaction (in natural log scale).
+    /// The reaction quotient of a reaction is defined as:
+    /// @f[\ln Q=\sum_{i=1}^{N}\nu_{i}\ln a_{i},@f]
+    /// where @f$N@f$ denotes the number of species in the multiphase system,
+    /// @f$a_{i}@f$ the activity of the @f$i@f$-th species, and
+    /// @f$\nu_{i}@f$ the stoichiometry of the @f$i@f$-th species in the reaction:
+    /// @f[0\rightleftharpoons\sum_{i=1}^{N}\nu_{i}\alpha_{i},@f]
+    /// with @f$\alpha_{i}@f$ denoting the @f$i@f$-th species. The sign
+    /// convention for the stoichiometric coefficients is: *positive* for
+    /// products, *negative* for reactants.
+    /// @param properties The chemical properties of the system
+    auto lnReactionQuotient(const ChemicalProps& properties) const -> real;
+
+    /// Calculate the equilibrium index of the reaction as @f$\ln(Q/K)@f$.
+    auto lnEquilibriumIndex(const ChemicalProps& properties) const -> real;
+
+    /// Return the stoichiometry of a species in the reaction equation.
+    /// @param species The name of the species.
+    auto stoichiometry(std::string species) const -> double;
 
 private:
     struct Impl;
