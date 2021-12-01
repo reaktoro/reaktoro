@@ -158,6 +158,46 @@ public:
     /// Set the mass of a species with given name and mass unit (convertible to kg).
     auto setSpeciesMass(String name, real mass, String unit) -> void;
 
+    /// Scale the molar amounts of the species by a given scalar.
+    /// @param scalar The scale factor of the molar amounts
+    auto scaleSpeciesAmounts(double scalar) -> void;
+
+    /// Scale the molar amounts of the species in a phase by a given scalar.
+    /// @param index The index of the phase
+    /// @param scalar The scale factor of the molar amounts
+    auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void;
+
+    /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
+    /// @param volume The volume of the chemical system (in units of m3)
+    auto scaleVolume(double volume) -> void;
+
+    /// Scale the volume of the chemical system by adjusting the molar amounts of all species equally.
+    /// @param volume The volume of the chemical system
+    /// @param units The volume units
+    auto scaleVolume(double volume, std::string units) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param index The index of the phase
+    /// @param volume The volume of the phase (in units of m3)
+    auto scalePhaseVolume(Index index, double volume) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param index The index of the phase
+    /// @param volume The volume of the phase
+    /// @param units The units of the volume of the phase
+    auto scalePhaseVolume(Index index, double volume, std::string units) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param name The name of the phase
+    /// @param volume The volume of the phase (in units of m3)
+    auto scalePhaseVolume(std::string name, double volume) -> void;
+
+    /// Scale the volume of a phase by adjusting the molar amounts of its species.
+    /// @param name The name of the phase
+    /// @param volume The volume of the phase
+    /// @param units The units of the volume of the phase
+    auto scalePhaseVolume(std::string name, double volume, std::string units) -> void;
+
     /// Return the underlying chemical system for this chemical state.
     auto system() const -> const ChemicalSystem&;
 
@@ -172,6 +212,10 @@ public:
 
     /// Return the amounts of the elements in the chemical state (in mol).
     auto elementAmounts() const -> ArrayXr;
+
+    /// Return the molar amounts of the elements in a set of species (in units of mol)
+    /// @param indices The indices of the species
+    auto elementAmountsInSpecies(const Indices& indices) const -> ArrayXr;
 
     /// Return the electric charge in the chemical state (in mol).
     auto charge() const -> real;

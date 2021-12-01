@@ -186,6 +186,72 @@ struct ChemicalState::Impl
         setSpeciesMass(system.species().index(name), mass, unit);
     }
 
+    auto scaleSpeciesAmounts(double scalar) -> void
+    {
+        Assert(scalar >= 0.0, "Cannot scale the molar amounts of the species.",
+               "The given scalar is negative.");
+        for(int i = 0; i < n.rows(); ++i)
+            setSpeciesAmount(i, speciesAmount(i) * scalar);
+    }
+
+    auto scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
+    {
+        Assert(scalar >= 0.0,
+               "Cannot scale the molar amounts of the species.",
+               "The given scalar `" + std::to_string(scalar) << "` is negative.")
+        Assert(index < system.phases().size(), "Cannot set the volume of the phase.",
+               "The given phase index is out of range.")
+        const Index start = detail::resolveSpeciesIndex(system, system.phase(index).species()[0].name());
+        const Index size = system.phase(index).species().size();
+        for(unsigned i = 0; i < size; ++i)
+            setSpeciesAmount(start + i, speciesAmount(start + i) * scalar);
+    }
+
+    auto scaleVolume(double volume) -> void
+    {
+        Assert(volume >= 0.0,
+               "Cannot set the volume of the chemical state.",
+               "The given volume is negative.")
+        const auto vtotal = props.volume();
+        const auto scalar = (vtotal != 0.0) ? volume/vtotal : real(0.0);
+        scaleSpeciesAmounts(scalar);
+    }
+
+    auto scaleVolume(double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        return scaleVolume(volume);
+    }
+
+    auto scalePhaseVolume(Index index, double volume) -> void
+    {
+        Assert(volume >= 0.0, "Cannot set the volume of the phase.",
+               "The given volume is negative.");
+        Assert(index < system.phases().size(), "Cannot set the volume of the phase.",
+               "The given phase index is out of range.");
+        const auto v = props.phaseProps(index).volume();
+        const auto scalar = (v != 0.0) ? real(volume)/v : real(0.0);
+        scaleSpeciesAmountsInPhase(index, scalar);
+    }
+
+    auto scalePhaseVolume(Index index, double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        scalePhaseVolume(index, volume);
+    }
+
+    auto scalePhaseVolume(std::string name, double volume) -> void
+    {
+        const Index index = system.indexPhaseWithError(name);
+        scalePhaseVolume(index, volume);
+    }
+
+    auto scalePhaseVolume(std::string name, double volume, std::string units) -> void
+    {
+        volume = units::convert(volume, units, "m3");
+        scalePhaseVolume(name, volume);
+    }
+
     auto speciesAmount(Index ispecies) const -> real
     {
         assert(ispecies < system.species().size());
@@ -232,6 +298,11 @@ struct ChemicalState::Impl
     {
         const auto& A = system.formulaMatrixElements();
         return A * n.matrix();
+    }
+
+    auto elementAmountsInSpecies(const Indices& indices) const -> ArrayXr
+    {
+        return system.elementAmountsInSpecies(indices, n);
     }
 
     auto charge() const -> real
@@ -373,6 +444,46 @@ auto ChemicalState::setSpeciesMass(String name, real mass, String unit) -> void
     pimpl->setSpeciesMass(name, mass, unit);
 }
 
+auto ChemicalState::scaleSpeciesAmounts(double scalar) -> void
+{
+    pimpl->scaleSpeciesAmounts(scalar);
+}
+
+auto ChemicalState::scaleSpeciesAmountsInPhase(Index index, double scalar) -> void
+{
+    pimpl->scaleSpeciesAmountsInPhase(index, scalar);
+}
+
+auto ChemicalState::scaleVolume(double volume) -> void
+{
+    pimpl->scaleVolume(volume);
+}
+
+auto ChemicalState::scaleVolume(double volume, std::string units) -> void
+{
+    pimpl->scaleVolume(volume, units);
+}
+
+auto ChemicalState::scalePhaseVolume(Index index, double volume) -> void
+{
+    pimpl->scalePhaseVolume(index, volume);
+}
+
+auto ChemicalState::scalePhaseVolume(Index index, double volume, std::string units) -> void
+{
+    pimpl->scalePhaseVolume(index, volume, units);
+}
+
+auto ChemicalState::scalePhaseVolume(std::string name, double volume) -> void
+{
+    pimpl->scalePhaseVolume(name, volume);
+}
+
+auto ChemicalState::scalePhaseVolume(std::string name, double volume, std::string units) -> void
+{
+    pimpl->scalePhaseVolume(name, volume, units);
+}
+
 auto ChemicalState::system() const -> const ChemicalSystem&
 {
     return pimpl->system;
@@ -396,6 +507,11 @@ auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
 auto ChemicalState::elementAmounts() const -> ArrayXr
 {
     return pimpl->elementAmounts();
+}
+
+auto ChemicalState::elementAmountsInSpecies(const Indices& ispecies) const -> ArrayXr
+{
+    return pimpl->elementAmountsInSpecies(ispecies);
 }
 
 auto ChemicalState::charge() const -> real
