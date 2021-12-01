@@ -32,6 +32,7 @@
 #include <Reaktoro/Common/MoleFractionUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
+#include <Reaktoro/Common/Profiling.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
