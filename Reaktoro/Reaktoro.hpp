@@ -26,6 +26,7 @@
 #include <Reaktoro/Models.hpp>
 #include <Reaktoro/Thermodynamics.hpp>
 #include <Reaktoro/Transport.hpp>
+#include <Reaktoro/Serialization.hpp>
 #include <Reaktoro/Utils.hpp>
 
 /// The namespace containing all components of the Reaktoro library.
