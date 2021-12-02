@@ -18,9 +18,7 @@
 #include "EquilibriumSolver.hpp"
 
 // Optima includes
-#include <Optima/Options.hpp>
 #include <Optima/Problem.hpp>
-#include <Optima/Result.hpp>
 #include <Optima/Sensitivity.hpp>
 #include <Optima/Solver.hpp>
 #include <Optima/State.hpp>
@@ -28,7 +26,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
