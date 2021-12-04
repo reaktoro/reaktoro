@@ -59,6 +59,7 @@ private:
 
     std::shared_ptr<Impl> pimpl;
 
+    /// A map to identify species indices in entalphic BIP matrices
     std::unordered_map<std::string, int> bips_species_id_map;
 };
 
