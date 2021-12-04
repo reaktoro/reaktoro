@@ -166,7 +166,7 @@ auto ChemicalSystem::indicesFluidPhases() const -> Indices
     auto numphases = phases().size();
     indices.reserve(numphases);
     for(Index i = 0; i < numphases; ++i)
-        if(phase(i).stateOfMatter() == StateOfMatter::Fluid or phase(i).stateOfMatter() == StateOfMatter::Liquid)
+        if((phase(i).stateOfMatter() == StateOfMatter::Fluid) || (phase(i).stateOfMatter() == StateOfMatter::Liquid))
             indices.push_back(i);
     return indices;
 }
