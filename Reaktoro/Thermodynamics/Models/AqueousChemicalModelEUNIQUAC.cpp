@@ -186,6 +186,25 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             ln_g[ispecies] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
         }
 
+        // Calculate water UNIQUAC combinatorial contribution
+        // TODO: Improve this part using a neutral species separated calculation (if suitable)
+        auto phi_w = xw * r_w / phi_denominator;
+        auto theta_w = xw * q_w / theta_denominator;
+        auto phi_w_per_xw = phi_w / xw;
+        auto ln_phi_w_per_xw = log(phi_w_per_xw);
+        auto phi_w_per_theta_w = phi_w / theta_w;
+        auto ln_phi_w_per_theta_w = log(phi_w_per_theta_w);
+
+        auto ln_g_combinatorial_sym_w = ln_phi_w_per_xw + 1.0 - phi_w_per_xw -5.0 * q_w * (ln_phi_w_per_theta_w + 1 -
+            phi_w_per_theta_w);
+
+        auto ri_rw = r_w / r_w;
+        auto qi_qw = q_w / q_w;
+        auto ln_g_combinatorial_inf_w = std::log(ri_rw) + 1.0 - ri_rw;
+        ln_g_combinatorial_inf_w += -5.0 * q_w * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
+
+        ln_g[iwater] += ln_g_combinatorial_sym_w - ln_g_combinatorial_inf_w;
+
         // ==============================================================================
         // ================ Residual contribution =======================================
         // ==============================================================================
