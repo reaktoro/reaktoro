@@ -44,20 +44,33 @@ public:
     /// Construct a default EUNIQUACParams instance.
     EUNIQUACParams();
 
-    /// Get UNIQUAC r_i parameter given a species name
+    /// Get UNIQUAC r_i parameter given an species name
     auto ri(std::string name) const -> double;
 
     auto ri(std::string name, double value) -> void;
 
     auto ri(const std::map<std::string, double>& pairs) -> void;
 
-    /// Get UNIQUAC q_i parameter given a species name
+    /// Get UNIQUAC q_i parameter given an species name
     auto qi(std::string name) const -> double;
 
     auto qi(std::string name, double value) -> void;
 
     auto qi(const std::map<std::string, double>& pairs) -> void;
 
+    /// Get zeroth order energetic BIP values (Uij_0)
+    auto uij_0(const std::map<std::string, std::string>& species_pair_names) const -> double;
+
+    /// Set zeroth order energetic BIP values (Uij_0)
+    auto uij_0(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+
+    /// Get first order energetic BIP values (Uij_T)
+    auto uij_T(const std::map<std::string, std::string>& species_pair_names) const -> double;
+
+    /// Set first order energetic BIP values (Uij_T)
+    auto uij_T(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+
+    /// Set E-UNIQUAC parameters values according to DTU values
     auto setDTUvalues() -> void;
 
 private:

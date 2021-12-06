@@ -77,9 +77,9 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     // Define the intermediate chemical model function of the aqueous mixture
     PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
-        // ******************************************************************************
-        // **************** Long-range contribution *************************************
-        // ******************************************************************************
+        // ==============================================================================
+        // ================ Long-range contribution =====================================
+        // ==============================================================================
         const auto& I = state.Ie;           // ionic strength
         const auto& x = state.x;            // mole fractions of the species
         const auto& m = state.m;            // molalities of the species
@@ -116,9 +116,9 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         auto constant_term = Mw * 2.0 * A_parameter / (b * b * b);
         ln_g[iwater] = constant_term * inner_term;
 
-        // ******************************************************************************
-        // **************** Combinatorial contribution **********************************
-        // ******************************************************************************
+        // ==============================================================================
+        // ================ Combinatorial contribution ==================================
+        // ==============================================================================
 
         // Retrieve water parameters
         const AqueousSpecies& water_species = mixture.species(iwater);
@@ -184,6 +184,10 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 
             // Finally, the unsymmetrical combinatorial UNIQUAC contribution
             ln_g[ispecies] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
+
+            // ==============================================================================
+            // ================ Residual contribution =======================================
+            // ==============================================================================
         }
 
     };
