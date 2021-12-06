@@ -184,11 +184,11 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 
             // Finally, the unsymmetrical combinatorial UNIQUAC contribution
             ln_g[ispecies] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
-
-            // ==============================================================================
-            // ================ Residual contribution =======================================
-            // ==============================================================================
         }
+
+        // ==============================================================================
+        // ================ Residual contribution =======================================
+        // ==============================================================================
 
     };
 
