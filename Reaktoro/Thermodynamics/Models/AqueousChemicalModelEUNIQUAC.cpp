@@ -56,6 +56,18 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     // The electrical charges of the charged species only
     const Vector charges = mixture.chargesChargedSpecies();
 
+    // The UNIQUAC parameters ri_values and qi_values of the species
+    std::vector<double> ri_values;  // Volume fraction parameter
+    std::vector<double> qi_values;  // Surface area parameter
+
+    // Collect the UNIQUAC parameters a and b of the charged species
+    for(Index i : icharged_species)
+    {
+        const AqueousSpecies& species = mixture.species(i);
+        ri_values.push_back(params.ri(species.name()));
+        qi_values.push_back(params.qi(species.name()));
+    }
+
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
@@ -80,7 +92,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         xw = x[iwater];
         ln_xw = log(xw);
         sqrtI = sqrt(I);
-        double b = 1.5;
+        const double b = 1.5;
         auto A_parameter = calculateDebyeHuckelParameterA(T);
 
         // Loop over all charged species in the mixture
@@ -88,9 +100,6 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         {
             // The index of the current charged species
             const Index ispecies = icharged_species[i];
-
-            // The molality of the charged species and its molar derivatives
-            const auto mi = m[ispecies];
 
             // The electrical charge of the charged species
             const auto z = charges[i];
@@ -106,6 +115,76 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         auto inner_term = 1.0 + b_sqrtI - 1.0 / (1.0 + b_sqrtI) - 2.0 * log(1 + b_sqrtI);
         auto constant_term = Mw * 2.0 * A_parameter / (b * b * b);
         ln_g[iwater] = constant_term * inner_term;
+
+        // ******************************************************************************
+        // **************** Combinatorial contribution **********************************
+        // ******************************************************************************
+
+        // Retrieve water parameters
+        const AqueousSpecies& water_species = mixture.species(iwater);
+        const auto water_species_name = water_species.name();
+        const auto r_w = params.ri(water_species_name);
+        const auto q_w = params.qi(water_species_name);
+
+        // Calculate volume fractions (phi_i)
+
+        // First, the auxiliary denominator of phi and theta are computed
+        double phi_denominator = 0.0;
+        double theta_denominator = 0.0;
+        for(Index i = 0; i < num_charged_species; ++i)
+        {
+            // The index of the current charged species
+            const Index ispecies = icharged_species[i];
+
+            // Retrieve UNIQUAC species parameters
+            const auto r_i = ri_values[i];
+            const auto q_i = qi_values[i];
+
+            // Sum up the charged species i contribution to phi denominator
+            const auto xi = x[ispecies];
+            phi_denominator += xi.val * r_i;
+            theta_denominator += xi.val * q_i;
+        }
+
+        // Compute UNIQUAC combinatorial contribution to charged species
+        for(Index i = 0; i < num_charged_species; ++i)
+        {
+            // The index of the current charged species
+            const Index ispecies = icharged_species[i];
+
+            // Get species mol fraction
+            const auto xi = x[ispecies];
+
+            // Retrieve UNIQUAC species parameters
+            const auto r_i = ri_values[i];
+            const auto q_i = qi_values[i];
+
+            // Calculate species volume fraction (phi_i)
+            auto phi_i = xi * r_i / phi_denominator;
+
+            // Calculate species surface area fraction (theta_i)
+            auto theta_i = xi * q_i / theta_denominator;
+
+            // Calculate equation's parts
+            auto phi_i_per_xi = phi_i / xi;
+            auto ln_phi_i_per_xi = log(phi_i_per_xi);
+            auto phi_i_per_theta_i = phi_i / theta_i;
+            auto ln_phi_i_per_theta_i = log(phi_i_per_theta_i);
+
+            // Compute the charged species symmetrical combinatorial UNIQUAC contribution
+            auto ln_g_combinatorial_sym = ln_phi_i_per_xi + 1.0 - phi_i_per_xi -5.0 * q_i * (ln_phi_i_per_theta_i + 1 - phi_i_per_theta_i);
+
+            // Calculate species combinatorial UNIQUAC activity coeff at infinite dilution.
+            // This is necessary to convert the combinatorial contribution to unsymmetrical
+            // convention.
+            auto ri_rw = r_i / r_w;
+            auto qi_qw = q_i / q_w;
+            auto ln_g_combinatorial_inf = std::log(ri_rw) + 1.0 - ri_rw;
+            ln_g_combinatorial_inf += -5.0 * q_i * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
+
+            // Finally, the unsymmetrical combinatorial UNIQUAC contribution
+            ln_g[ispecies] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
+        }
 
     };
 

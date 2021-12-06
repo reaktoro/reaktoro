@@ -44,9 +44,15 @@ public:
     /// Construct a default EUNIQUACParams instance.
     EUNIQUACParams();
 
+    /// Get UNIQUAC r_i parameter given a species name
+    auto ri(std::string name) const -> double;
+
     auto ri(std::string name, double value) -> void;
 
     auto ri(const std::map<std::string, double>& pairs) -> void;
+
+    /// Get UNIQUAC q_i parameter given a species name
+    auto qi(std::string name) const -> double;
 
     auto qi(std::string name, double value) -> void;
 
