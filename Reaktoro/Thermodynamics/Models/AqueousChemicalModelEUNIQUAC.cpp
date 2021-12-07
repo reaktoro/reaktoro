@@ -126,8 +126,6 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         const auto r_w = params.ri(water_species_name);
         const auto q_w = params.qi(water_species_name);
 
-        // Calculate volume fractions (phi_i)
-
         // First, the auxiliary denominator of phi and theta are computed
         double phi_denominator = 0.0;
         double theta_denominator = 0.0;
