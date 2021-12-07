@@ -212,4 +212,37 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     return model;
 }
 
+struct EUNIQUACParams::Impl
+{
+    /// A map to identify species indices in entalphic BIP matrices
+    std::unordered_map<std::string, int> bips_species_id_map;
+
+    /// The volume fraction parameters `r_i` of the chemical species.
+    std::map<std::string, double> ri_values;
+
+    /// The surface area fraction parameters `q_i` of the chemical species.
+    std::map<std::string, double> qi_values;
+
+    /// Matrix to store zeroth order energetic BIP values (Uij_0)
+    MatrixXd constant_coeff_bips;
+
+    /// Matrix to store first order energetic BIP values (Uij_t)
+    MatrixXd linear_coeff_bips;
+
+    Impl()
+    {
+    }
+};
+
+EUNIQUACParams::EUNIQUACParams()
+    : pimpl(new Impl())
+{
+    setDTUvalues();
 }
+
+auto EUNIQUACParams::setDTUvalues() -> void
+{
+    // TODO
+}
+
+}  // namespace Reaktoro
