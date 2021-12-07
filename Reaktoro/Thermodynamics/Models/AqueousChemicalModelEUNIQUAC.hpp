@@ -45,30 +45,34 @@ public:
     EUNIQUACParams();
 
     /// Get UNIQUAC r_i parameter given an species name
-    auto ri(std::string name) const -> double;
+    auto ri(const std::string& name) const -> double;
 
-    auto ri(std::string name, double value) -> void;
-
-    auto ri(const std::map<std::string, double>& pairs) -> void;
+    // TODO: enable setters
+//    auto ri(std::string name, double value) -> void;
+//
+//    auto ri(const std::map<std::string, double>& pairs) -> void;
 
     /// Get UNIQUAC q_i parameter given an species name
-    auto qi(std::string name) const -> double;
+    auto qi(const std::string& name) const -> double;
 
-    auto qi(std::string name, double value) -> void;
-
-    auto qi(const std::map<std::string, double>& pairs) -> void;
+    // TODO: enable setters
+//    auto qi(std::string name, double value) -> void;
+//
+//    auto qi(const std::map<std::string, double>& pairs) -> void;
 
     /// Get zeroth order energetic BIP values (Uij_0)
-    auto uij_0(const std::map<std::string, std::string>& species_pair_names) const -> double;
+    auto uij_0(const std::string& first_species_name, const std::string& second_species_name) const -> double;
 
-    /// Set zeroth order energetic BIP values (Uij_0)
-    auto uij_0(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+    // TODO: enable setters
+//    /// Set zeroth order energetic BIP values (Uij_0)
+//    auto uij_0(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
 
     /// Get first order energetic BIP values (Uij_T)
-    auto uij_T(const std::map<std::string, std::string>& species_pair_names) const -> double;
+    auto uij_T(const std::string& first_species_name, const std::string& second_species_name) const -> double;
 
-    /// Set first order energetic BIP values (Uij_T)
-    auto uij_T(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+    // TODO: enable setters
+//    /// Set first order energetic BIP values (Uij_T)
+//    auto uij_T(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
 
     /// Set E-UNIQUAC parameters values according to DTU values
     auto setDTUvalues() -> void;

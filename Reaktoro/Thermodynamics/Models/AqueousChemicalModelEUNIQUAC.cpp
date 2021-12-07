@@ -315,6 +315,7 @@ auto EUNIQUACParams::setDTUvalues() -> void
         {328.141, 1.0E+10, 476.956, 1370.57, 0,       2372.94, 1158.91, 2500,    0,       1339.04, 1065.97, 565.786},
         {118.702, 1.0E+10, 980.982, 1123.44, 0,       2014.18, 956.609, 2500,    0,       2500,    565.786, 253.461},
     };
+    pimpl->constant_coeff_bips = uij_0_DTU;
 
     // First order energetic BIP values (Uij_T)
     MatrixXd uij_T_DTU {
@@ -331,7 +332,40 @@ auto EUNIQUACParams::setDTUvalues() -> void
         {-0.5059, 0, 2.8191, 5.0517, 0, 8.9402, 6.7255, 0, 0, 3.8129, -4.4653, -1.2033},
         {0.96, 0, 13.296, 2.7217, 0, 11.636, 8.6656, 0, 0, 0, -1.2033, 1.2824}
     };
-
+    pimpl->linear_coeff_bips = uij_T_DTU;
 }
 
+auto EUNIQUACParams::ri(const std::string& name) const -> double
+{
+    auto it = pimpl->ri_values.find(name);
+    // TODO: For now, let's return zero when data is unavailable
+    return it != pimpl->ri_values.end() ? it->second : 0.0;
+}
+
+auto EUNIQUACParams::qi(const std::string& name) const -> double
+{
+    auto it = pimpl->qi_values.find(name);
+    // TODO: For now, let's return zero when data is unavailable
+    return it != pimpl->qi_values.end() ? it->second : 0.0;
+}
+
+auto EUNIQUACParams::uij_0(
+    const std::string& first_species_name,
+    const std::string& second_species_name) const -> double
+{
+    // TODO: implement exception handling when species names are unavailable
+    const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
+    const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
+    return pimpl->constant_coeff_bips(first_species_id, second_species_id);
+}
+
+auto EUNIQUACParams::uij_T(
+    const std::string& first_species_name,
+    const std::string& second_species_name) const -> double
+{
+    // TODO: implement exception handling when species names are unavailable
+    const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
+    const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
+    return pimpl->linear_coeff_bips(first_species_id, second_species_id);
+}
 }  // namespace Reaktoro
