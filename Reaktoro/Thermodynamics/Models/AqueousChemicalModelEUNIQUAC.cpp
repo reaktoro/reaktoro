@@ -215,7 +215,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 struct EUNIQUACParams::Impl
 {
     /// A map to identify species indices in entalphic BIP matrices
-    std::unordered_map<std::string, int> bips_species_id_map;
+    std::map<std::string, int> bips_species_id_map;
 
     /// The volume fraction parameters `r_i` of the chemical species.
     std::map<std::string, double> ri_values;
@@ -316,7 +316,7 @@ auto EUNIQUACParams::setDTUvalues() -> void
         {118.702, 1.0E+10, 980.982, 1123.44, 0,       2014.18, 956.609, 2500,    0,       2500,    565.786, 253.461},
     };
 
-    //  First order energetic BIP values (Uij_T)
+    // First order energetic BIP values (Uij_T)
     MatrixXd uij_T_DTU {
         {0, 0, 0.4872, 0.9936, 0.5855, 14.631, 9.4905, 5.5499, 9.3251, 8.5455, -0.5059, 0.96},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
