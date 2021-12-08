@@ -30,6 +30,8 @@ void exportAqueousPhase(py::module& m)
 	auto setChemicalModelDebyeHuckel1 = static_cast<AqueousPhase&(AqueousPhase::*)()>(&AqueousPhase::setChemicalModelDebyeHuckel);
 	auto setChemicalModelDebyeHuckel2 = static_cast<AqueousPhase&(AqueousPhase::*)(const DebyeHuckelParams&)>(&AqueousPhase::setChemicalModelDebyeHuckel);
 
+    auto setChemicalModelEUNIQUAC1 = static_cast<AqueousPhase&(AqueousPhase::*)()>(&AqueousPhase::setChemicalModelEUNIQUAC);
+
     py::class_<AqueousPhase, Phase>(m, "AqueousPhase")
         .def(py::init<>())
         .def(py::init<const AqueousMixture&>())
@@ -39,6 +41,7 @@ void exportAqueousPhase(py::module& m)
         .def("setChemicalModelDebyeHuckel", setChemicalModelDebyeHuckel2, py::return_value_policy::reference_internal)
         .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF, py::return_value_policy::reference_internal)
         .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW, py::return_value_policy::reference_internal)
+        .def("setChemicalModelEUNIQUAC", setChemicalModelEUNIQUAC1, py::return_value_policy::reference_internal)
         .def("setActivityModel", &AqueousPhase::setActivityModel, py::return_value_policy::reference_internal)
         .def("setActivityModelIdeal", &AqueousPhase::setActivityModelIdeal, py::return_value_policy::reference_internal)
         .def("setActivityModelSetschenow", &AqueousPhase::setActivityModelSetschenow, py::return_value_policy::reference_internal)
