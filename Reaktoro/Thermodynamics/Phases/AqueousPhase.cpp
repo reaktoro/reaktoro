@@ -26,6 +26,7 @@
 #include <Reaktoro/Thermodynamics/Activity/AqueousActivityModelSetschenow.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelEUNIQUAC.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelHKF.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelIdeal.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelPitzerHMW.hpp>
@@ -139,6 +140,19 @@ auto AqueousPhase::setChemicalModelDebyeHuckel(const DebyeHuckelParams& params) 
 {
     pimpl->ln_activity_coeff_functions.clear();
     pimpl->base_model = aqueousChemicalModelDebyeHuckel(mixture(), params);
+    setChemicalModel(pimpl->combinedChemicalModel());
+    return *this;
+}
+
+auto AqueousPhase::setChemicalModelEUNIQUAC() -> AqueousPhase&
+{
+    return setChemicalModelEUNIQUAC({});
+}
+
+auto AqueousPhase::setChemicalModelEUNIQUAC(const EUNIQUACParams& params) -> AqueousPhase&
+{
+    pimpl->ln_activity_coeff_functions.clear();
+    pimpl->base_model = aqueousChemicalModelEUNIQUAC(mixture(), params);
     setChemicalModel(pimpl->combinedChemicalModel());
     return *this;
 }

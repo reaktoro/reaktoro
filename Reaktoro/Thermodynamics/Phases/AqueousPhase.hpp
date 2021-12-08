@@ -31,6 +31,7 @@ namespace Reaktoro {
 // Forward declarations
 class AqueousMixture;
 class DebyeHuckelParams;
+class EUNIQUACParams;
 
 /// A type used to describe an aqueous phase.
 class AqueousPhase : public Phase
@@ -54,10 +55,12 @@ public:
     auto setChemicalModelIdeal() -> AqueousPhase&;
 
     /// Set the chemical model of the phase with the Debye-Huckel equation of state.
-    /// {
     auto setChemicalModelDebyeHuckel() -> AqueousPhase&;
     auto setChemicalModelDebyeHuckel(const DebyeHuckelParams& params) -> AqueousPhase&;
-    /// }
+
+    /// Set Extended UNIQUAC (E-UNIQUAC) as Chemical Model of the phase.
+    auto setChemicalModelEUNIQUAC() -> AqueousPhase&;
+    auto setChemicalModelEUNIQUAC(const EUNIQUACParams& params) -> AqueousPhase&;
 
     /// Set the chemical model of the phase with the HKF equation of state.
     auto setChemicalModelHKF() -> AqueousPhase&;
