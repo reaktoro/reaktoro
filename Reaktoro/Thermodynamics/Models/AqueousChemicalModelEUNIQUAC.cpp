@@ -91,6 +91,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 
     // Auxiliary variables
     ChemicalScalar xw, ln_xw, sqrtI;
+    ChemicalVector ln_m;
 
     // Define the intermediate chemical model function of the aqueous mixture
     PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
@@ -109,6 +110,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 
         xw = x[iwater];
         ln_xw = log(xw);
+        ln_m = log(m);
         sqrtI = sqrt(I);
         const double b = 1.5;
         auto A_parameter = calculateDebyeHuckelParameterA(T);
@@ -261,6 +263,13 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             // Assemble the unsymmetrical residual UNIQUAC contribution
             ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
         }
+
+        // ==============================================================================
+        // ========== Calculate activities from activities coefficients =================
+        // ==============================================================================
+        for (Index i = 0; i < num_species; ++i)
+            ln_a[i] = ln_g[i] + ln_m[i];
+
     };
 
     return model;
