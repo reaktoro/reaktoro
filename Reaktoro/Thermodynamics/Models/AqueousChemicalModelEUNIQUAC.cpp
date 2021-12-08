@@ -167,6 +167,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         }
 
         // Compute UNIQUAC combinatorial contribution to all species
+        std::vector<double> theta;  // to store theta_i values
+        std::vector<double> phi;  // to store phi_i values
         for(Index i = 0; i < num_species; ++i)
         {
             // Get species mol fraction
@@ -178,9 +180,11 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 
             // Calculate species volume fraction (phi_i)
             auto phi_i = xi * r_i / phi_denominator;
+            phi.push_back(phi_i.val);
 
             // Calculate species surface area fraction (theta_i)
             auto theta_i = xi * q_i / theta_denominator;
+            theta.push_back(theta_i.val);
 
             // Calculate equation's parts
             auto phi_i_per_xi = phi_i / xi;
@@ -188,7 +192,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             auto phi_i_per_theta_i = phi_i / theta_i;
             auto ln_phi_i_per_theta_i = log(phi_i_per_theta_i);
 
-            // Compute the charged species symmetrical combinatorial UNIQUAC contribution
+            // Compute the species symmetrical combinatorial UNIQUAC contribution
             auto ln_g_combinatorial_sym = ln_phi_i_per_xi + 1.0 - phi_i_per_xi -5.0 * q_i * (ln_phi_i_per_theta_i + 1 - phi_i_per_theta_i);
 
             // Calculate species combinatorial UNIQUAC activity coeff at infinite dilution.
@@ -225,9 +229,38 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             for (Index j = 0; j < num_species; ++j)
                 psi(i, j) = std::exp(-(u(i, j) - u(j, j)) / T.val);
 
-        // Compute auxiliary summation (mean of psis weighted by thetas)
-        std::vector<double> theta_psi_product;
+        // Calculate UNIQUAC residual contributions to all species
+        for (Index i = 0; i < num_species; ++i)
+        {
+            // Retrieve UNIQUAC species q_i parameter
+            const auto q_i = qi_values[i];
 
+            // Calculate auxiliary summation (theta_l * psi_li product, i index is fixed)
+            double theta_psi_product = 0.0;
+            for (Index l = 0; l < num_species; ++l)
+                theta_psi_product += theta[l] * psi(l, i);
+
+            // Calculate another auxiliary summation (normalized theta_j * psi_ij product)
+            double normalized_theta_psi_product = 0.0;
+            for (Index j = 0; j < num_species; ++j)
+            {
+                double denominator = 0.0;
+                for (Index l = 0; l < num_species; ++l)
+                    denominator += theta[l] * psi(l, j);
+                normalized_theta_psi_product += theta[j] * psi(i, j) / denominator;
+            }
+
+            // Compute the species symmetrical residual UNIQUAC contribution
+            auto ln_g_residual_sym = q_i * (1.0 - std::log(theta_psi_product) - normalized_theta_psi_product);
+
+            // Calculate species residual UNIQUAC activity coeff at infinite dilution.
+            // This is necessary to convert the residual contribution to unsymmetrical
+            // convention.
+            auto ln_g_residual_inf = q_i * (1.0 - std::log(psi(iwater, i)) - psi(i, iwater));
+
+            // Assemble the unsymmetrical residual UNIQUAC contribution
+            ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
+        }
     };
 
     return model;
