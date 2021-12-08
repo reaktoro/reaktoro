@@ -68,6 +68,24 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         qi_values.push_back(params.qi(species.name()));
     }
 
+    // Build enthalpic BIP matrices for mixture species in the phase
+    MatrixXd u_0(num_species, num_species);  // constant enthalpic BIPs term
+    MatrixXd u_T(num_species, num_species);  // linear enthalpic BIPs term
+    for (Index i = 0; i < num_species; ++i)
+    {
+        const AqueousSpecies& ispecies = mixture.species(i);
+        const auto& ispecies_name = ispecies.name();
+        for (Index j = 0; j < num_species; ++j)
+        {
+            const AqueousSpecies& jspecies = mixture.species(j);
+            const auto& jspecies_name = jspecies.name();
+            const auto& u_ij_0 = params.uij_0(ispecies_name, jspecies_name);
+            const auto& u_ij_T = params.uij_T(ispecies_name, jspecies_name);
+            u_0(i, j) = u_ij_0;
+            u_T(i, j) = u_ij_T;
+        }
+    }
+
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
@@ -206,6 +224,24 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ==============================================================================
         // ================ Residual contribution =======================================
         // ==============================================================================
+
+        // Calculate u_ij temperature dependent BIPs. Please note: this is a symmetric matrix.
+        MatrixXd u(num_species, num_species);
+        for (Index i = 0; i < num_species; ++i)
+            for (Index j = 0; j < num_species; ++j)
+            {
+                const auto& u_ij_0 = u_0(i, j);
+                const auto& u_ij_T = u_T(i, j);
+                // Note that the temperature T must be given in Kelvin
+                const double T_ref = 298.15;
+                u(i, j) = u_ij_0 + u_ij_T * (T.val - T_ref);
+            }
+
+        // Calculate the enthalpic psi BIPs
+        MatrixXd psi(num_species, num_species);
+        for (Index i = 0; i < num_species; ++i)
+            for (Index j = 0; j < num_species; ++j)
+                psi(i, j) = std::exp(-(u(i, j) - u(j, j)) / T.val);
 
     };
 
