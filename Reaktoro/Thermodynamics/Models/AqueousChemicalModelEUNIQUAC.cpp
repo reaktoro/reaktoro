@@ -60,8 +60,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     std::vector<double> ri_values;  // Volume fraction parameter
     std::vector<double> qi_values;  // Surface area parameter
 
-    // Collect the UNIQUAC parameters a and b of the charged species
-    for(Index i : icharged_species)
+    // Collect the UNIQUAC parameters r_i and q_i of the all species
+    for (Index i = 0; i < num_species; ++i)
     {
         const AqueousSpecies& species = mixture.species(i);
         ri_values.push_back(params.ri(species.name()));
@@ -128,6 +128,13 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             ln_g[ispecies] = numerator / denominator;
         }
 
+        // Loop over all neutral species in the mixture
+        for(Index i = 0; i < num_neutral_species; ++i)
+        {
+            // Calculate the DH ln activity coefficient of the current neutral species
+            ln_g[i] = 0.0;
+        }
+
         // Computing the water activity coefficient
         auto b_sqrtI = b * sqrtI;
         auto inner_term = 1.0 + b_sqrtI - 1.0 / (1.0 + b_sqrtI) - 2.0 * log(1 + b_sqrtI);
@@ -147,29 +154,23 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // First, the auxiliary denominator of phi and theta are computed
         double phi_denominator = 0.0;
         double theta_denominator = 0.0;
-        for(Index i = 0; i < num_charged_species; ++i)
+        for (Index i = 0; i < num_species; ++i)
         {
-            // The index of the current charged species
-            const Index ispecies = icharged_species[i];
-
             // Retrieve UNIQUAC species parameters
             const auto r_i = ri_values[i];
             const auto q_i = qi_values[i];
 
             // Sum up the charged species i contribution to phi denominator
-            const auto xi = x[ispecies];
+            const auto xi = x[i];
             phi_denominator += xi.val * r_i;
             theta_denominator += xi.val * q_i;
         }
 
-        // Compute UNIQUAC combinatorial contribution to charged species
-        for(Index i = 0; i < num_charged_species; ++i)
+        // Compute UNIQUAC combinatorial contribution to all species
+        for(Index i = 0; i < num_species; ++i)
         {
-            // The index of the current charged species
-            const Index ispecies = icharged_species[i];
-
             // Get species mol fraction
-            const auto xi = x[ispecies];
+            const auto xi = x[i];
 
             // Retrieve UNIQUAC species parameters
             const auto r_i = ri_values[i];
@@ -199,27 +200,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             ln_g_combinatorial_inf += -5.0 * q_i * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
 
             // Finally, the unsymmetrical combinatorial UNIQUAC contribution
-            ln_g[ispecies] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
+            ln_g[i] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
         }
-
-        // Calculate water UNIQUAC combinatorial contribution
-        // TODO: Improve this part using a neutral species separated calculation (if suitable)
-        auto phi_w = xw * r_w / phi_denominator;
-        auto theta_w = xw * q_w / theta_denominator;
-        auto phi_w_per_xw = phi_w / xw;
-        auto ln_phi_w_per_xw = log(phi_w_per_xw);
-        auto phi_w_per_theta_w = phi_w / theta_w;
-        auto ln_phi_w_per_theta_w = log(phi_w_per_theta_w);
-
-        auto ln_g_combinatorial_sym_w = ln_phi_w_per_xw + 1.0 - phi_w_per_xw -5.0 * q_w * (ln_phi_w_per_theta_w + 1 -
-            phi_w_per_theta_w);
-
-        auto ri_rw = r_w / r_w;
-        auto qi_qw = q_w / q_w;
-        auto ln_g_combinatorial_inf_w = std::log(ri_rw) + 1.0 - ri_rw;
-        ln_g_combinatorial_inf_w += -5.0 * q_w * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
-
-        ln_g[iwater] += ln_g_combinatorial_sym_w - ln_g_combinatorial_inf_w;
 
         // ==============================================================================
         // ================ Residual contribution =======================================
@@ -242,6 +224,9 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         for (Index i = 0; i < num_species; ++i)
             for (Index j = 0; j < num_species; ++j)
                 psi(i, j) = std::exp(-(u(i, j) - u(j, j)) / T.val);
+
+        // Compute auxiliary summation (mean of psis weighted by thetas)
+        std::vector<double> theta_psi_product;
 
     };
 
