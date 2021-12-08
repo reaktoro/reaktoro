@@ -307,7 +307,7 @@ auto EUNIQUACParams::setDTUvalues() -> void
 {
     // Define the species id map to retrieve species indices in BIP matrices
     pimpl->bips_species_id_map = {
-        {"H2O", 0},
+        {"H2O(l)", 0},
         {"H+", 1},
         {"Na+", 2},
         {"K+", 3},
@@ -323,7 +323,7 @@ auto EUNIQUACParams::setDTUvalues() -> void
 
     // Volume fraction parameters
     pimpl->ri_values = {
-        {"H2O", 0.92},
+        {"H2O(l)", 0.92},
         {"H+", 0.13779},
         {"Na+", 1.4034},
         {"K+", 2.2304},
@@ -344,7 +344,7 @@ auto EUNIQUACParams::setDTUvalues() -> void
 
     // Surface area parameters
     pimpl->qi_values = {
-        {"H2O", 1.4},
+        {"H2O(l)", 1.4},
         {"H+", 1.00E-15},
         {"Na+", 1.199},
         {"K+", 2.4306},
