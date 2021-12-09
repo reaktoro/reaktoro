@@ -210,8 +210,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             ln_g_combinatorial_inf += -5.0 * q_i * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
 
             // Finally, the unsymmetrical combinatorial UNIQUAC contribution
-//            ln_g[i] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
-            ln_g[i] += 0.0;
+            ln_g[i] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
         }
 
         // ==============================================================================
@@ -266,8 +265,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             auto ln_g_residual_inf = q_i * (1.0 - std::log(psi(iwater, i)) - psi(i, iwater));
 
             // Assemble the unsymmetrical residual UNIQUAC contribution
-//            ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
-            ln_g[i] += 0.0;
+            ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
         }
 
         // ==============================================================================
