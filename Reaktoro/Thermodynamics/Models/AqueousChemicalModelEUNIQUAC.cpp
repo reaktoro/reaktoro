@@ -28,7 +28,8 @@ auto calculateDebyeHuckelParameterA(Temperature T)
     const auto coeff0 = 1.131;
     const auto coeff1 = 1.335e-3;
     const auto coeff2 = 1.164e-5;
-    return coeff0 + coeff1 * T + coeff2 * T * T;
+    const auto T_ref = 273.15;
+    return coeff0 + coeff1 * (T - T_ref) + coeff2 * (T - T_ref) * (T - T_ref);
 }
 
 auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACParams& params) -> PhaseChemicalModel
@@ -198,7 +199,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             auto ln_phi_i_per_theta_i = log(phi_i_per_theta_i);
 
             // Compute the species symmetrical combinatorial UNIQUAC contribution
-            auto ln_g_combinatorial_sym = ln_phi_i_per_xi + 1.0 - phi_i_per_xi -5.0 * q_i * (ln_phi_i_per_theta_i + 1 - phi_i_per_theta_i);
+            auto ln_g_combinatorial_sym = ln_phi_i_per_xi + 1.0 - phi_i_per_xi -5.0 * q_i * (ln_phi_i_per_theta_i + 1.0 - phi_i_per_theta_i);
 
             // Calculate species combinatorial UNIQUAC activity coeff at infinite dilution.
             // This is necessary to convert the combinatorial contribution to unsymmetrical
@@ -209,7 +210,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             ln_g_combinatorial_inf += -5.0 * q_i * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
 
             // Finally, the unsymmetrical combinatorial UNIQUAC contribution
-            ln_g[i] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
+//            ln_g[i] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
+            ln_g[i] += 0.0;
         }
 
         // ==============================================================================
@@ -264,7 +266,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             auto ln_g_residual_inf = q_i * (1.0 - std::log(psi(iwater, i)) - psi(i, iwater));
 
             // Assemble the unsymmetrical residual UNIQUAC contribution
-            ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
+//            ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
+            ln_g[i] += 0.0;
         }
 
         // ==============================================================================
