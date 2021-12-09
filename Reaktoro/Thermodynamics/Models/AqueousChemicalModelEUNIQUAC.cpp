@@ -133,8 +133,11 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // Loop over all neutral species in the mixture
         for(Index i = 0; i < num_neutral_species; ++i)
         {
+            // The index of the current neutral species
+            const Index ispecies = ineutral_species[i];
+
             // Calculate the DH ln activity coefficient of the current neutral species
-            ln_g[i] = 0.0;
+            ln_g[ispecies] = 0.0;
         }
 
         // Computing the water activity coefficient
