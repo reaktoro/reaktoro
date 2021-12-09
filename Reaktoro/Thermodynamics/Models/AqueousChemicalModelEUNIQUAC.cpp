@@ -86,9 +86,6 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         }
     }
 
-    // The state of the aqueous mixture
-    AqueousMixtureState state;
-
     // Auxiliary variables
     ChemicalScalar xw, ln_xw, sqrtI;
     ChemicalVector ln_m;
@@ -96,6 +93,9 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     // Define the intermediate chemical model function of the aqueous mixture
     PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
+        // Evaluate the state of the aqueous mixture
+        auto state = mixture.state(T, P, n);
+
         // ==============================================================================
         // ================ Long-range contribution =====================================
         // ==============================================================================

@@ -66,17 +66,14 @@ struct AqueousPhase::Impl
         // Create a copy of the data member `ln_activity_coeff_functions` to be used in the following lambda function
         auto ln_activity_coeff_functions = this->ln_activity_coeff_functions;
 
-        // The state of the aqueous mixture
-        AqueousMixtureState state;
-
         // Define the function that calculates the chemical properties of the phase
         PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
         {
             // Evaluate the state of the aqueous mixture
-            state = mixture.state(T, P, n);
+            auto state = mixture.state(T, P, n);
 
             // Evaluate the aqueous chemical model
-			base_model(res, T, P, n);
+            base_model(res, T, P, n);
             
             // Update the activity coefficients and activities of selected species
             for(auto pair : ln_activity_coeff_functions)
