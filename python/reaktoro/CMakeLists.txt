@@ -12,7 +12,7 @@ set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 configure_file(${SETUP_PY_IN} ${SETUP_PY})
 
 # Create a custom target to build reaktoro python package during build stage
-add_custom_target(reaktoro ALL
+add_custom_target(PyReaktoro-install ALL
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:PyReaktoro>
         ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_NAME:PyReaktoro>
     COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} --quiet
@@ -24,8 +24,8 @@ add_custom_target(reaktoro ALL
         --no-index --no-deps --no-cache-dir --force-reinstall
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-# Set dependencies of reaktoro target
-add_dependencies(reaktoro PyReaktoro)
+# Set dependencies of PyReaktoro-install target
+add_dependencies(PyReaktoro-install PyReaktoro)
 
 # Set the path where the python package is installed to CMAKE_INSTALL_PREFIX if not given
 if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)
