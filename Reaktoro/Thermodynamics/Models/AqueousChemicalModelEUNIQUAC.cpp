@@ -271,8 +271,24 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ==============================================================================
         // ========== Calculate activities from activities coefficients =================
         // ==============================================================================
+        // TODO: check the correct way to compute water activity
+//        for (Index i = 0; i < num_charged_species; ++i)
+//        {
+//            const Index ispecies = icharged_species[i];
+//            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+//        }
+//
+//        for (Index i = 0; i < num_neutral_species; ++i)
+//        {
+//            const Index ispecies = ineutral_species[i];
+//            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+//        }
+
         for (Index i = 0; i < num_species; ++i)
             ln_a[i] = ln_g[i] + ln_m[i];
+
+        // Finalize the computation of the activity of water (in mole fraction scale)
+        ln_a[iwater] *= -1.0/nwo;
 
     };
 
