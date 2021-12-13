@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelEUNIQUAC.hpp>
 #include <Reaktoro/Thermodynamics/Phases/AqueousPhase.hpp>
 #include <Reaktoro/Thermodynamics/Species/AqueousSpecies.hpp>
 
@@ -31,6 +32,7 @@ void exportAqueousPhase(py::module& m)
 	auto setChemicalModelDebyeHuckel2 = static_cast<AqueousPhase&(AqueousPhase::*)(const DebyeHuckelParams&)>(&AqueousPhase::setChemicalModelDebyeHuckel);
 
     auto setChemicalModelEUNIQUAC1 = static_cast<AqueousPhase&(AqueousPhase::*)()>(&AqueousPhase::setChemicalModelEUNIQUAC);
+    auto setChemicalModelEUNIQUAC2 = static_cast<AqueousPhase&(AqueousPhase::*)(const EUNIQUACParams&)>(&AqueousPhase::setChemicalModelEUNIQUAC);
 
     py::class_<AqueousPhase, Phase>(m, "AqueousPhase")
         .def(py::init<>())
@@ -42,6 +44,7 @@ void exportAqueousPhase(py::module& m)
         .def("setChemicalModelHKF", &AqueousPhase::setChemicalModelHKF, py::return_value_policy::reference_internal)
         .def("setChemicalModelPitzerHMW", &AqueousPhase::setChemicalModelPitzerHMW, py::return_value_policy::reference_internal)
         .def("setChemicalModelEUNIQUAC", setChemicalModelEUNIQUAC1, py::return_value_policy::reference_internal)
+        .def("setChemicalModelEUNIQUAC", setChemicalModelEUNIQUAC2, py::return_value_policy::reference_internal)
         .def("setActivityModel", &AqueousPhase::setActivityModel, py::return_value_policy::reference_internal)
         .def("setActivityModelIdeal", &AqueousPhase::setActivityModelIdeal, py::return_value_policy::reference_internal)
         .def("setActivityModelSetschenow", &AqueousPhase::setActivityModelSetschenow, py::return_value_policy::reference_internal)
