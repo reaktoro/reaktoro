@@ -32,12 +32,21 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
     auto ri3 = static_cast<double(EUNIQUACParams::*)(const std::string&) const>(&EUNIQUACParams::ri);
     auto ri4 = static_cast<std::map<std::string, double>(EUNIQUACParams::*)() const>(&EUNIQUACParams::ri);
 
+    auto qi1 = static_cast<void(EUNIQUACParams::*)(const std::string&,double)>(&EUNIQUACParams::qi);
+    auto qi2 = static_cast<void(EUNIQUACParams::*)(const std::map<std::string, double>&)>(&EUNIQUACParams::qi);
+    auto qi3 = static_cast<double(EUNIQUACParams::*)(const std::string&) const>(&EUNIQUACParams::qi);
+    auto qi4 = static_cast<std::map<std::string, double>(EUNIQUACParams::*)() const>(&EUNIQUACParams::qi);
+
     py::class_<EUNIQUACParams>(m, "EUNIQUACParams")
         .def(py::init<>())
         .def("ri", ri1)
         .def("ri", ri2)
         .def("ri", ri3)
         .def("ri", ri4)
+        .def("qi", qi1)
+        .def("qi", qi2)
+        .def("qi", qi3)
+        .def("qi", qi4)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
         ;
 }

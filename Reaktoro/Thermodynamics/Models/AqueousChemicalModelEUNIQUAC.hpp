@@ -56,6 +56,12 @@ public:
     /// Get UNIQUAC q_i parameter given an species name
     auto qi(const std::string& name) const -> double;
 
+    auto qi(const std::string& name, double value) -> void;
+
+    auto qi(const std::map<std::string, double>& pairs) -> void;
+
+    auto qi() const -> std::map<std::string, double>;
+
     // TODO: enable setters
 //    auto qi(std::string name, double value) -> void;
 //

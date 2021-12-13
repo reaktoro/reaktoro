@@ -467,4 +467,20 @@ auto EUNIQUACParams::ri() const -> std::map<std::string, double>
 {
     return pimpl->ri_values;
 }
+
+auto EUNIQUACParams::qi(const std::string& name, double value) -> void
+{
+    pimpl->qi_values[name] = value;
+}
+
+auto EUNIQUACParams::qi(const std::map<std::string, double>& pairs) -> void
+{
+    for(const auto& pair : pairs)
+        qi(pair.first, pair.second);
+}
+
+auto EUNIQUACParams::qi() const -> std::map<std::string, double>
+{
+    return pimpl->qi_values;
+}
 }  // namespace Reaktoro
