@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// C++ includes
+#include <map>
+
 #include <PyReaktoro/PyReaktoro.hpp>
 
 // Reaktoro includes
@@ -27,12 +30,14 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
     auto ri1 = static_cast<void(EUNIQUACParams::*)(const std::string&,double)>(&EUNIQUACParams::ri);
     auto ri2 = static_cast<void(EUNIQUACParams::*)(const std::map<std::string, double>&)>(&EUNIQUACParams::ri);
     auto ri3 = static_cast<double(EUNIQUACParams::*)(const std::string&) const>(&EUNIQUACParams::ri);
+    auto ri4 = static_cast<std::map<std::string, double>(EUNIQUACParams::*)() const>(&EUNIQUACParams::ri);
 
     py::class_<EUNIQUACParams>(m, "EUNIQUACParams")
         .def(py::init<>())
         .def("ri", ri1)
         .def("ri", ri2)
         .def("ri", ri3)
+        .def("ri", ri4)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
         ;
 }

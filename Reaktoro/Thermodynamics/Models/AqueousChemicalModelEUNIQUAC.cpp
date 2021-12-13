@@ -462,4 +462,9 @@ auto EUNIQUACParams::ri(const std::map<std::string, double>& pairs) -> void
     for(const auto& pair : pairs)
         ri(pair.first, pair.second);
 }
+
+auto EUNIQUACParams::ri() const -> std::map<std::string, double>
+{
+    return pimpl->ri_values;
+}
 }  // namespace Reaktoro

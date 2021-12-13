@@ -51,6 +51,8 @@ public:
 
     auto ri(const std::map<std::string, double>& pairs) -> void;
 
+    auto ri() const -> std::map<std::string, double>;
+
     /// Get UNIQUAC q_i parameter given an species name
     auto qi(const std::string& name) const -> double;
 
