@@ -100,6 +100,7 @@ extern void exportChemicalEditor(py::module& m);
 extern void exportDatabase(py::module& m);
 extern void exportThermo(py::module& m);
 extern void exportAqueousChemicalModelDebyeHuckel(py::module& m);
+extern void exportAqueousChemicalModelEUNIQUAC(py::module& m);
 extern void exportCubicEOS(py::module& m);
 extern void exportAqueousPhase(py::module& m);
 extern void exportFluidPhase(py::module& m);
@@ -202,6 +203,7 @@ PYBIND11_MODULE(PyReaktoro, m)
     exportChemicalEditor(m);
     exportThermo(m);
     exportAqueousChemicalModelDebyeHuckel(m);
+    exportAqueousChemicalModelEUNIQUAC(m);
     exportCubicEOS(m);
     exportAqueousPhase(m);
     exportFluidPhase(m);

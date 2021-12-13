@@ -451,4 +451,15 @@ auto EUNIQUACParams::uij_T(
     const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
     return pimpl->linear_coeff_bips(first_species_id, second_species_id);
 }
+
+auto EUNIQUACParams::ri(const std::string& name, double value) -> void
+{
+    pimpl->ri_values[name] = value;
+}
+
+auto EUNIQUACParams::ri(const std::map<std::string, double>& pairs) -> void
+{
+    for(const auto& pair : pairs)
+        ri(pair.first, pair.second);
+}
 }  // namespace Reaktoro

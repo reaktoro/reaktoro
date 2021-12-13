@@ -47,10 +47,9 @@ public:
     /// Get UNIQUAC r_i parameter given an species name
     auto ri(const std::string& name) const -> double;
 
-    // TODO: enable setters
-//    auto ri(std::string name, double value) -> void;
-//
-//    auto ri(const std::map<std::string, double>& pairs) -> void;
+    auto ri(const std::string& name, double value) -> void;
+
+    auto ri(const std::map<std::string, double>& pairs) -> void;
 
     /// Get UNIQUAC q_i parameter given an species name
     auto qi(const std::string& name) const -> double;
