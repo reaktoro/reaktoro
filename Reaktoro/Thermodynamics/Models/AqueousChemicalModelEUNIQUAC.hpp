@@ -62,11 +62,6 @@ public:
 
     auto qi() const -> std::map<std::string, double>;
 
-    // TODO: enable setters
-//    auto qi(std::string name, double value) -> void;
-//
-//    auto qi(const std::map<std::string, double>& pairs) -> void;
-
     /// Get zeroth order energetic BIP values (Uij_0)
     auto uij_0(const std::string& first_species_name, const std::string& second_species_name) const -> double;
 
