@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+import numpy as np
 import pytest
+
 import reaktoro as rkt
 
 
@@ -150,3 +152,36 @@ def test_euniquac_qi_setup():
     euniquac_params = rkt.EUNIQUACParams()
     euniquac_params.ri(qi_ion_2_name, qi_ion_2_value)
     assert euniquac_params.ri(qi_ion_2_name) == qi_ion_2_value
+
+
+def test_uij_bips_setup():
+    """
+    Test if energetic BIPs matrices are properly working for getters and setters.
+    """
+    # Please note that the BIPs matrices should be symmetric
+    uij_0_custom = np.array([
+        [1.0, 2.0],
+        [2.0, 3.0],
+    ])
+    uij_T_custom = np.array([
+        [4.0, 5.0],
+        [5.0, 6.0],
+    ])
+    bips_species_id_map = {
+        "Na+": 0,
+        "Cl-": 1,
+    }
+
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.set_uij_bips(uij_0_custom, uij_T_custom, bips_species_id_map)
+
+    uij_0_stored = euniquac_params.uij_0()
+    uij_T_stored = euniquac_params.uij_T()
+    assert np.allclose(uij_0_stored, uij_0_custom)
+    assert np.allclose(uij_T_stored, uij_T_custom)
+    assert euniquac_params.uij_0("Na+", "Na+") == 1.0
+    assert euniquac_params.uij_0("Na+", "Cl-") == 2.0
+    assert euniquac_params.uij_0("Cl-", "Cl-") == 3.0
+    assert euniquac_params.uij_T("Na+", "Na+") == 4.0
+    assert euniquac_params.uij_T("Na+", "Cl-") == 5.0
+    assert euniquac_params.uij_T("Cl-", "Cl-") == 6.0
