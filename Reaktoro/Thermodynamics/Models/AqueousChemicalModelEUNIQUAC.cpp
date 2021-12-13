@@ -55,7 +55,7 @@ auto sanityCheckEnergyInteractionParams(
                     "BIPs matrix u_ij_0 is not symmetric.", "Check your u_ij_0 BIPs matrix input."
                 );
                 Assert(uij_T(i, j) == uij_T(j, i),
-                    "BIPs matrix u_ij_0 is not symmetric.", "Check your u_ij_0 BIPs matrix input."
+                    "BIPs matrix u_ij_T is not symmetric.", "Check your u_ij_T BIPs matrix input."
                 );
             }
         }
