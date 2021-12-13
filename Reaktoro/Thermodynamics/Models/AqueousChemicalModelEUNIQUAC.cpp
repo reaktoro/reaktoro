@@ -549,4 +549,9 @@ auto EUNIQUACParams::uij_T() const -> MatrixXd
 {
     return pimpl->linear_coeff_bips;
 }
+
+auto EUNIQUACParams::bips_species_id_map() const -> std::map<std::string, int>
+{
+    return pimpl->bips_species_id_map;
+}
 }  // namespace Reaktoro

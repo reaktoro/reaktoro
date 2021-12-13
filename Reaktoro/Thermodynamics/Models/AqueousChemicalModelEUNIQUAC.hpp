@@ -89,6 +89,8 @@ public:
     /// Set E-UNIQUAC parameters values according to DTU values
     auto setDTUvalues() -> void;
 
+    auto bips_species_id_map() const -> std::map<std::string, int>;
+
 private:
     struct Impl;
 

@@ -60,6 +60,7 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
         .def("uij_T", uij_T_1)
         .def("uij_T", uij_T_2)
         .def("set_uij_bips", uij_1)
+        .def("bipsSpeciesIds", &EUNIQUACParams::bips_species_id_map)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
         ;
 }
