@@ -71,19 +71,51 @@ def ri_values_dtu(species_names):
     return ri_values
 
 
-def test_euniquac_params_DTU_values_initialization(ri_values_dtu):
+@pytest.fixture
+def qi_values_dtu(species_names):
+    qi = [
+        1.4,
+        1.00e-15,
+        1.199,
+        2.4306,
+        4.6028,
+        10.197,
+        12.444,
+        22.495,
+        6.2074,
+        8.8171,
+        11.32,
+        4.712,
+        1.00e-15,
+        1.00e-15,
+        1.48,
+        0.2818,
+        0.2278,
+    ]
+    qi_values = {}
+    for i, species in enumerate(species_names):
+        qi_values[species] = qi[i]
+
+    return qi_values
+
+
+def test_euniquac_params_DTU_values_initialization(ri_values_dtu, qi_values_dtu):
     """
-    Test if ri's DTU default parameters are properly initialized and stored. Moreover, the getter
-    EUNIQUACParams.ri() is also tested.
+    Test if ri and qi DTU default parameters are properly initialized and stored.
+    Moreover, the getters EUNIQUACParams.ri() and EUNIQUACParams.qi() are also tested.
     """
     euniquac_params = rkt.EUNIQUACParams()
     euniquac_params.setDTUvalues()
     ri_values = euniquac_params.ri()
+    qi_values = euniquac_params.qi()
     assert type(ri_values) == dict
+    assert type(qi_values) == dict
 
     ri_expected = ri_values_dtu
+    qi_expected = qi_values_dtu
     for species in ri_expected:
         assert ri_values[species] == ri_expected[species]
+        assert qi_values[species] == qi_expected[species]
 
 
 def test_euniquac_ri_setup():
@@ -101,3 +133,20 @@ def test_euniquac_ri_setup():
     euniquac_params = rkt.EUNIQUACParams()
     euniquac_params.ri(ri_ion_2_name, ri_ion_2_value)
     assert euniquac_params.ri(ri_ion_2_name) == ri_ion_2_value
+
+
+def test_euniquac_qi_setup():
+    """
+    Test if the E-UNIQUAC qi's setters and getters are working properly.
+    """
+    qi_ion_1 = 300.0
+    new_ion_1_dict = {"ion1": qi_ion_1}
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.qi(new_ion_1_dict)
+    assert euniquac_params.qi("ion1") == new_ion_1_dict["ion1"]
+
+    qi_ion_2_name = "ion2"
+    qi_ion_2_value = 400.0
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.ri(qi_ion_2_name, qi_ion_2_value)
+    assert euniquac_params.ri(qi_ion_2_name) == qi_ion_2_value
