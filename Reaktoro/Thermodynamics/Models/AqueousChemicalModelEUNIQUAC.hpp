@@ -65,6 +65,8 @@ public:
     /// Get zeroth order energetic BIP values (Uij_0)
     auto uij_0(const std::string& first_species_name, const std::string& second_species_name) const -> double;
 
+    auto uij_0() const -> MatrixXd;
+
     // TODO: enable setters
 //    /// Set zeroth order energetic BIP values (Uij_0)
 //    auto uij_0(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
@@ -72,9 +74,17 @@ public:
     /// Get first order energetic BIP values (Uij_T)
     auto uij_T(const std::string& first_species_name, const std::string& second_species_name) const -> double;
 
+    auto uij_T() const -> MatrixXd;
+
     // TODO: enable setters
 //    /// Set first order energetic BIP values (Uij_T)
 //    auto uij_T(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+
+    /// Set both uij_0 and uij_T given an species id map.
+    auto set_uij_bips(
+        const MatrixXd& uij_0_values,
+        const MatrixXd& uij_T_values,
+        const std::map<std::string, int>& species_id_map) -> void;
 
     /// Set E-UNIQUAC parameters values according to DTU values
     auto setDTUvalues() -> void;

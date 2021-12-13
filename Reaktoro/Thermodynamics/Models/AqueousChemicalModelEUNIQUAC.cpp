@@ -18,10 +18,55 @@
 #include "AqueousChemicalModelEUNIQUAC.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
+
+/// Sanity check free function to verify if BIPs matrices have proper dimensions.
+/// @see EUNIQUACParams::set_uij_bips
+auto sanityCheckEnergyInteractionParams(
+    const MatrixXd& uij_0,
+    const MatrixXd& uij_T,
+    const std::map<std::string, int>& species_id_map) -> void
+{
+    // Check k's dimensions
+    auto uij_0_size = uij_0.size();
+    auto uij_T_size = uij_T.size();
+    if (uij_0_size > 0 && uij_T_size > 0) {
+        auto uij_0_num_of_rows = uij_0.rows();
+        auto uij_0_num_of_cols = uij_0.cols();
+        auto uij_T_num_of_rows = uij_T.rows();
+        auto uij_T_num_of_cols = uij_T.cols();
+        auto num_species_in_id_map = species_id_map.size();
+        Assert(uij_0_num_of_rows == uij_T_num_of_rows && uij_0_num_of_cols == uij_T_num_of_cols,
+            "BIPs matrices should have the same num of rows and columns.", "Check your energy BIPs matrices input."
+        );
+        Assert(num_species_in_id_map == uij_T_num_of_rows && num_species_in_id_map == uij_T_num_of_cols,
+            "The species id map for energy BIPs matrices does not match with provided matrices.",
+            "Check your energy BIPs matrices and the related species id map."
+        );
+
+        // Check k's symmetry
+        for (unsigned i = 0; i < uij_0_num_of_rows; i++){
+            for (auto j = i + 1; j < uij_0_num_of_cols; j++){
+                Assert(uij_0(i, j) == uij_0(j, i),
+                    "BIPs matrix u_ij_0 is not symmetric.", "Check your u_ij_0 BIPs matrix input."
+                );
+                Assert(uij_T(i, j) == uij_T(j, i),
+                    "BIPs matrix u_ij_0 is not symmetric.", "Check your u_ij_0 BIPs matrix input."
+                );
+            }
+        }
+    }
+    else {
+        Exception exception;
+        exception.error << "Invalid dimension for the energy BIPs matrices.";
+        exception.reason << "Logic error: a proper non-empty symmetric matrix should be passed as BIPs.";
+        RaiseError(exception);
+    }
+}
 
 auto calculateDebyeHuckelParameterA(Temperature T)
 {
@@ -482,5 +527,26 @@ auto EUNIQUACParams::qi(const std::map<std::string, double>& pairs) -> void
 auto EUNIQUACParams::qi() const -> std::map<std::string, double>
 {
     return pimpl->qi_values;
+}
+
+auto EUNIQUACParams::set_uij_bips(
+    const MatrixXd& uij_0_values,
+    const MatrixXd& uij_T_values,
+    const std::map<std::string, int>& species_id_map) -> void
+{
+    sanityCheckEnergyInteractionParams(uij_0_values, uij_T_values, species_id_map);
+    pimpl->bips_species_id_map = species_id_map;
+    pimpl->constant_coeff_bips = uij_0_values;
+    pimpl->linear_coeff_bips = uij_T_values;
+}
+
+auto EUNIQUACParams::uij_0() const -> MatrixXd
+{
+    return pimpl->constant_coeff_bips;
+}
+
+auto EUNIQUACParams::uij_T() const -> MatrixXd
+{
+    return pimpl->linear_coeff_bips;
 }
 }  // namespace Reaktoro

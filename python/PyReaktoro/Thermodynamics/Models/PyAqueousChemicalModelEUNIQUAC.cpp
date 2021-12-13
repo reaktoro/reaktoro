@@ -37,6 +37,14 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
     auto qi3 = static_cast<double(EUNIQUACParams::*)(const std::string&) const>(&EUNIQUACParams::qi);
     auto qi4 = static_cast<std::map<std::string, double>(EUNIQUACParams::*)() const>(&EUNIQUACParams::qi);
 
+    auto uij_0_1 = static_cast<double(EUNIQUACParams::*)(const std::string&, const std::string&) const>(&EUNIQUACParams::uij_0);
+    auto uij_0_2 = static_cast<MatrixXd(EUNIQUACParams::*)() const>(&EUNIQUACParams::uij_0);
+
+    auto uij_T_1 = static_cast<double(EUNIQUACParams::*)(const std::string&, const std::string&) const>(&EUNIQUACParams::uij_T);
+    auto uij_T_2 = static_cast<MatrixXd(EUNIQUACParams::*)() const>(&EUNIQUACParams::uij_T);
+
+    auto uij_1 = static_cast<void(EUNIQUACParams::*)(const MatrixXd&, const MatrixXd&, const std::map<std::string, int>&)>(&EUNIQUACParams::set_uij_bips);
+
     py::class_<EUNIQUACParams>(m, "EUNIQUACParams")
         .def(py::init<>())
         .def("ri", ri1)
@@ -47,6 +55,11 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
         .def("qi", qi2)
         .def("qi", qi3)
         .def("qi", qi4)
+        .def("uij_0", uij_0_1)
+        .def("uij_0", uij_0_2)
+        .def("uij_T", uij_T_1)
+        .def("uij_T", uij_T_2)
+        .def("set_uij_bips", uij_1)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
         ;
 }
