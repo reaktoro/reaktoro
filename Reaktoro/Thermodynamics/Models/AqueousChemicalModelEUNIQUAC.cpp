@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
@@ -68,13 +69,30 @@ auto sanityCheckEnergyInteractionParams(
     }
 }
 
-auto calculateDebyeHuckelParameterA(Temperature T)
+auto calculateFittedDebyeHuckelParameterA(Temperature T)
 {
     const auto coeff0 = 1.131;
     const auto coeff1 = 1.335e-3;
     const auto coeff2 = 1.164e-5;
     const auto T_ref = 273.15;
     return coeff0 + coeff1 * (T - T_ref) + coeff2 * (T - T_ref) * (T - T_ref);
+}
+
+auto calculateDebyeHuckelParameterA(const Temperature T, const ThermoScalar& eps_r, const ThermoScalar& rho)
+{
+    const auto& F = faradayConstant;
+    const auto& R = universalGasConstant;
+    const auto& eps_0 = vacuumPermittivity;
+    const auto& N_A = avogadroNumber;
+    const double pi = 3.14159265359;  // TODO: should we use a more precise value?
+
+    auto constant_factor = F * F * F / (4.0 * pi * N_A);
+    auto denominator_factor = eps_0 * eps_r * R * T;
+    auto denominator = 2.0 * denominator_factor * denominator_factor * denominator_factor;
+    auto sqrt_term = sqrt(rho / denominator);
+    auto parameterA = constant_factor * sqrt_term;
+
+    return parameterA;
 }
 
 auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACParams& params) -> PhaseChemicalModel
@@ -148,7 +166,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         const auto& I = state.Ie;           // ionic strength
         const auto& x = state.x;            // mole fractions of the species
         const auto& m = state.m;            // molalities of the species
-        const auto& rho = state.rho/1000;    // density in units of g/cm3
+        const auto& rho = state.rho;    // density in units of kg/m3
+        const auto& epsilon = state.epsilon;  // dielectric constant
 
         // Auxiliary references
         auto& ln_g = res.ln_activity_coefficients;
@@ -159,7 +178,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         ln_m = log(m);
         sqrtI = sqrt(I);
         const double b = 1.5;
-        auto A_parameter = calculateDebyeHuckelParameterA(T);
+        auto A_parameter = calculateFittedDebyeHuckelParameterA(T);
 
         // Loop over all charged species in the mixture
         for(Index i = 0; i < num_charged_species; ++i)

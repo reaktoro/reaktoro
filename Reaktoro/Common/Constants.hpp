@@ -25,6 +25,12 @@ constexpr auto universalGasConstant = 8.3144621;
 /// The Faraday constant (in units of C/mol)
 constexpr auto faradayConstant = 96485.3329;
 
+/// The Avogadro's number (in units of 1/mol)
+constexpr auto avogadroNumber = 6.023e23;
+
+/// The vacuum permittivity (in units of C^2/(J*m)
+constexpr auto vacuumPermittivity = 8.8542e-12;
+
 /// The constant factor that converts joule to calorie
 constexpr auto jouleToCalorie = 0.239005736;
 
