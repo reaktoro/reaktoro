@@ -166,8 +166,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         const auto& I = state.Ie;           // ionic strength
         const auto& x = state.x;            // mole fractions of the species
         const auto& m = state.m;            // molalities of the species
-        const auto& rho = state.rho;    // density in units of kg/m3
-        const auto& epsilon = state.epsilon;  // dielectric constant
+        const auto& rho = state.rho;         // density in units of kg/m3
+        const auto& epsilon = state.epsilon; // dielectric constant
 
         // Auxiliary references
         auto& ln_g = res.ln_activity_coefficients;
@@ -179,6 +179,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         sqrtI = sqrt(I);
         const double b = 1.5;
         auto A_parameter = calculateFittedDebyeHuckelParameterA(T);
+//        auto A_parameter = calculateDebyeHuckelParameterA(T, epsilon, rho);
 
         // Loop over all charged species in the mixture
         for(Index i = 0; i < num_charged_species; ++i)
@@ -336,23 +337,26 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ========== Calculate activities from activities coefficients =================
         // ==============================================================================
         // TODO: check the correct way to compute water activity
-//        for (Index i = 0; i < num_charged_species; ++i)
-//        {
-//            const Index ispecies = icharged_species[i];
-//            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
-//        }
-//
-//        for (Index i = 0; i < num_neutral_species; ++i)
-//        {
-//            const Index ispecies = ineutral_species[i];
-//            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
-//        }
+        for (Index i = 0; i < num_charged_species; ++i)
+        {
+            const Index ispecies = icharged_species[i];
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+        }
 
-        for (Index i = 0; i < num_species; ++i)
-            ln_a[i] = ln_g[i] + ln_m[i];
+        for (Index i = 0; i < num_neutral_species; ++i)
+        {
+            const Index ispecies = ineutral_species[i];
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+        }
 
         // Finalize the computation of the activity of water (in mole fraction scale)
-        ln_a[iwater] *= -1.0/nwo;
+        ln_a[iwater] = ln_g[iwater] + ln_xw;
+
+//        for (Index i = 0; i < num_species; ++i)
+//            ln_a[i] = ln_g[i] + ln_m[i];
+
+        // Finalize the computation of the activity of water (in mole fraction scale)
+//        ln_a[iwater] *= -1.0/nwo;
 
     };
 
