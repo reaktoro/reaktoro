@@ -24,6 +24,7 @@
 #include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 
@@ -52,6 +53,8 @@ auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
         return StandardThermoModelMineralHKF(params);
     if(model == "WaterHKF")
         return StandardThermoModelWaterHKF(params);
+    if(model == "Nasa")
+        return StandardThermoModelNasa(params);
     errorif(true, "Cannot create a StandardThermoModel with "
         "unsupported model name `", model, "` in yaml node:\n", node.repr());
 }
