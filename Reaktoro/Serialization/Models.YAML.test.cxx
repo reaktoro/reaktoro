@@ -493,6 +493,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
         CHECK( params.V0.empty() );
         CHECK( params.VT0.empty() );
         CHECK( params.VP0.empty() );
+    }
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsNasa with polynomials")
     {
