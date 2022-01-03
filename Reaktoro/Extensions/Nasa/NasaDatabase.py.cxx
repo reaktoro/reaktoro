@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
+// Copyright (C) 2014-2020 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16,19 +16,20 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
 
-void exportExtensionNasa(py::module& m);
-void exportExtensionPhreeqc(py::module& m);
-void exportExtensionPorousMedia(py::module& m);
-void exportExtensionSupcrt(py::module& m);
-void exportExtensionThermoFun(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Extensions/Nasa/NasaDatabase.hpp>
+using namespace Reaktoro;
 
-void exportExtensions(py::module& m)
+void exportNasaDatabase(py::module& m)
 {
-    exportExtensionNasa(m);
-    exportExtensionPhreeqc(m);
-    exportExtensionPorousMedia(m);
-    exportExtensionSupcrt(m);
-    exportExtensionThermoFun(m);
+    py::class_<NasaDatabase, Database>(m, "NasaDatabase")
+        .def(py::init<>())
+        .def(py::init<String>())
+        .def_static("withName", &NasaDatabase::withName)
+        .def_static("fromFile", &NasaDatabase::fromFile)
+        .def_static("fromStream", &NasaDatabase::fromStream)
+        ;
 }

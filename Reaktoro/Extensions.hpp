@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <Reaktoro/Extensions/Nasa.hpp>
 #include <Reaktoro/Extensions/Phreeqc.hpp>
 #include <Reaktoro/Extensions/PorousMedia.hpp>
 #include <Reaktoro/Extensions/Supcrt.hpp>
