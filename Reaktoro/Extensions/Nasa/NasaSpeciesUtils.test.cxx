@@ -167,7 +167,7 @@ TEST_CASE("Testing NasaSpeciesUtils module", "[NasaSpeciesUtils]")
     species02.name = "Mg(cr)";
     species02.formula = {{"MG", 1.0}};
     species02.molarmass = 24.3050000;
-    species02.aggregatestate = NasaAggregateState::Condensed;
+    species02.aggregatestate = NasaAggregateState::Solid;
     species02.type = NasaSpeciesType::Product;
 
     NasaSpecies species03;
@@ -181,21 +181,21 @@ TEST_CASE("Testing NasaSpeciesUtils module", "[NasaSpeciesUtils]")
     species04.name = "NaCN(II)";
     species04.formula = {{"NA", 1.0}, {"C", 1.0}, {"N", 1.0}};
     species04.molarmass = 49.0071700;
-    species04.aggregatestate = NasaAggregateState::Condensed;
+    species04.aggregatestate = NasaAggregateState::Solid;
     species04.type = NasaSpeciesType::Product;
 
     NasaSpecies species05;
     species05.name = "C2H2(L),acetyle";
     species05.formula = {{"C", 2.0}, {"H", 2.0}};
     species05.molarmass = 26.0372800;
-    species05.aggregatestate = NasaAggregateState::Condensed;
+    species05.aggregatestate = NasaAggregateState::Liquid;
     species05.type = NasaSpeciesType::Product;
 
     NasaSpecies species06;
     species06.name = "N2O4(L)";
     species06.formula = {{"N", 2.0}, {"O", 4.0}};
     species06.molarmass = 92.0110000;
-    species06.aggregatestate = NasaAggregateState::Condensed;
+    species06.aggregatestate = NasaAggregateState::Liquid;
     species06.type = NasaSpeciesType::Product;
 
     NasaSpecies species07;
@@ -309,11 +309,11 @@ TEST_CASE("Testing NasaSpeciesUtils module", "[NasaSpeciesUtils]")
     //======================================================================
 
     CHECK( NasaUtils::aggregateState(species01) == AggregateState::Gas );
-    CHECK( NasaUtils::aggregateState(species02) == AggregateState::CondensedPhase );
+    CHECK( NasaUtils::aggregateState(species02) == AggregateState::Solid );
     CHECK( NasaUtils::aggregateState(species03) == AggregateState::Gas );
-    CHECK( NasaUtils::aggregateState(species04) == AggregateState::CondensedPhase );
-    CHECK( NasaUtils::aggregateState(species05) == AggregateState::CondensedPhase );
-    CHECK( NasaUtils::aggregateState(species06) == AggregateState::CondensedPhase );
+    CHECK( NasaUtils::aggregateState(species04) == AggregateState::Solid );
+    CHECK( NasaUtils::aggregateState(species05) == AggregateState::Liquid );
+    CHECK( NasaUtils::aggregateState(species06) == AggregateState::Liquid );
     CHECK( NasaUtils::aggregateState(species07) == AggregateState::Gas );
     CHECK( NasaUtils::aggregateState(species08) == AggregateState::Gas );
     CHECK( NasaUtils::aggregateState(species09) == AggregateState::Gas );

@@ -24,7 +24,7 @@
 namespace Reaktoro {
 namespace NasaUtils {
 
-auto areTemperatureIntervalsContinuous(const Vec<NasaThermoParams>& data) -> bool
+auto areTemperatureIntervalsContinuous(const Vec<NasaThermoData>& data) -> bool
 {
     for(auto const& params : data)
         if(params.Tmin > params.Tmax) // Tmin cannot be greater than Tmax
@@ -35,13 +35,13 @@ auto areTemperatureIntervalsContinuous(const Vec<NasaThermoParams>& data) -> boo
     return true;
 }
 
-auto minSupportedTemperature(const Vec<NasaThermoParams>& data) -> real
+auto minSupportedTemperature(const Vec<NasaThermoData>& data) -> real
 {
     if(data.empty()) return {};
     return data.front().Tmin;
 }
 
-auto maxSupportedTemperature(const Vec<NasaThermoParams>& data) -> real
+auto maxSupportedTemperature(const Vec<NasaThermoData>& data) -> real
 {
     if(data.empty()) return {};
     return data.back().Tmax;
@@ -64,7 +64,7 @@ auto correctTemperature(const NasaSpecies& species, const real& Torig) -> real
     return T;
 }
 
-auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& data, const real& T) -> NasaThermoParams
+auto getNasaThermoDataForGivenTemperature(const Vec<NasaThermoData>& data, const real& T) -> NasaThermoData
 {
     assert(data.size());
     for(const auto& obj : data)
@@ -76,7 +76,7 @@ auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& data, c
     return {};
 }
 
-auto computeStandardThermoProps(const NasaThermoParams& params, const real& T) -> StandardThermoProps
+auto computeStandardThermoProps(const NasaThermoData& params, const real& T) -> StandardThermoProps
 {
     StandardThermoProps props;
 
@@ -124,13 +124,13 @@ auto computeStandardThermoProps(const NasaSpecies& species, const real& T) -> St
 
     if(within_range)
     {
-        const auto params = getNasaThermoParamsForGivenTemperature(species.thermodata, T);
+        const auto params = getNasaThermoDataForGivenTemperature(species.thermodata, T);
         return computeStandardThermoProps(params, T);
     }
     else
     {
         StandardThermoProps props;
-        props.G0 = 999'999'999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+        props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
         return props;
     }
 }
@@ -143,7 +143,7 @@ auto StandardThermoModelNasa(const NasaSpecies& species) -> StandardThermoModel
         return [species](real T, real P)
         {
             StandardThermoProps props;
-            props.G0 = 999'999'999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+            props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
             props.H0 = species.H0;
             return props;
         };

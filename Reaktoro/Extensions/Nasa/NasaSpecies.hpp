@@ -18,38 +18,41 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Extensions/Nasa/NasaThermoParams.hpp>
+#include <Reaktoro/Extensions/Nasa/NasaThermoData.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class Species;
 
-/// The possible aggregate states of a chemical species in a NASA thermodynamic database.
-enum class NasaAggregateState { Gas, Condensed };
+/// The possible aggregate states of a species in a NASA thermodynamic database.
+enum class NasaAggregateState { Gas, Liquid, Solid };
 
-/// The possible types of chemical species in a NASA thermodynamic database.
+/// The possible types of species in a NASA thermodynamic database.
 enum class NasaSpeciesType { Product, Reactant, ProductReactant };
 
 /// Used to represent a species in a NASA thermodynamic database.
 struct NasaSpecies
 {
-    /// The name of the chemical species.
+    /// The name of the species.
     String name;
 
-    /// The comment and data source of the chemical species.
+    /// The comment and data source of the species.
     String comment;
 
-    /// The identification code of the chemical species.
+    /// The identification code of the species.
     String idcode;
 
-    /// The element symbols and coefficients in the formula of the chemical species.
+    /// The element symbols and coefficients in the formula of the species.
     Pairs<String, double> formula;
 
-    /// The aggregate state of the chemical species.
+    /// The aggregate state code of the species (zero for gas, nonzero for condensed phases).
+    int aggregatecode;
+
+    /// The aggregate state of the species (liquid, gas, or solid) determined from name and aggregate state code.
     NasaAggregateState aggregatestate;
 
-    /// The type of the chemical species.
+    /// The type of the species.
     NasaSpeciesType type;
 
     /// The molar mass of the species (in g/mol).
@@ -61,14 +64,30 @@ struct NasaSpecies
     /// The value of \eq{\Delta H_{0}^{\circ}=H^{\circ}(298.15)-H^{\circ}(0)} (in J/mol).
     real dH0;
 
-    /// The assigned enthalpy (in J/mol) of the chemical species when there are no temperature intervals.
+    /// The assigned enthalpy (in J/mol) of the species when there are no temperature intervals.
     real H0;
 
     /// The temperature (in K) corresponding to the assigned enthalpy when there are no temperature intervals.
     real TH0;
 
     /// The data used to compute standard thermodynamic properties of the species at different temperature ranges.
-    Vec<NasaThermoParams> thermodata;
+    Vec<NasaThermoData> thermodata;
+};
+
+/// Used to represent a species in a NASA thermodynamic database that has or not phase transitions.
+struct NasaExtendedSpecies
+{
+    /// The original name of the species if it has no phase transition, otherwise a name with suffix (cd) to denote condensed substance.
+    String name;
+
+    /// The different species to represent this extended species over a wider range of temperature.
+    Vec<NasaSpecies> specieslist;
+
+    /// Return the aggregate state of the extended species at given temperature.
+    auto aggregateStateAtTemperature(double T) const -> NasaAggregateState;
+
+    /// Return the aggregate state of the extended species at given temperature.
+    auto speciesNameAtTemperature(double T) const -> String;
 };
 
 /// Return true if two NasaSpecies objects are different.

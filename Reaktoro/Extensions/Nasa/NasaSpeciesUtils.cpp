@@ -61,9 +61,13 @@ auto charge(const NasaSpecies& species) -> double
 
 auto aggregateState(const NasaSpecies& species) -> AggregateState
 {
-    return (species.aggregatestate == NasaAggregateState::Gas) ?
-        AggregateState::Gas :
-        AggregateState::CondensedPhase;
+    if(species.aggregatestate == NasaAggregateState::Gas)
+        return AggregateState::Gas;
+    if(species.aggregatestate == NasaAggregateState::Solid)
+        return AggregateState::Solid;
+    if(species.aggregatestate == NasaAggregateState::Liquid)
+        return AggregateState::Liquid;
+    return AggregateState::Liquid;
 }
 
 auto tags(const NasaSpecies& species) -> Strings

@@ -20,25 +20,25 @@
 // Reaktoro includes
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 #include <Reaktoro/Extensions/Nasa/NasaSpecies.hpp>
-#include <Reaktoro/Extensions/Nasa/NasaThermoParams.hpp>
+#include <Reaktoro/Extensions/Nasa/NasaThermoData.hpp>
 
 namespace Reaktoro {
 namespace NasaUtils {
 
 /// Return true if given thermodynamic parameters have continuous temperature intervals.
-auto areTemperatureIntervalsContinuous(const Vec<NasaThermoParams>& data) -> bool;
+auto areTemperatureIntervalsContinuous(const Vec<NasaThermoData>& data) -> bool;
 
 /// Return the minimum supported temperature (in K) for provided thermodynamic data.
-auto minSupportedTemperature(const Vec<NasaThermoParams>& data) -> real;
+auto minSupportedTemperature(const Vec<NasaThermoData>& data) -> real;
 
 /// Return the maximum supported temperature (in K) for provided thermodynamic data.
-auto maxSupportedTemperature(const Vec<NasaThermoParams>& data) -> real;
+auto maxSupportedTemperature(const Vec<NasaThermoData>& data) -> real;
 
-/// Return the NasaThermoParams object that is applicable for given temperature value (in K).
-auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& data, const real& T) -> NasaThermoParams;
+/// Return the NasaThermoData object that is applicable for given temperature value (in K).
+auto getNasaThermoDataForGivenTemperature(const Vec<NasaThermoData>& data, const real& T) -> NasaThermoData;
 
 /// Compute the standard thermodynamic properties of a species with given NASA thermodynamic parameters.
-auto computeStandardThermoProps(const NasaThermoParams& params, const real& T) -> StandardThermoProps;
+auto computeStandardThermoProps(const NasaThermoData& params, const real& T) -> StandardThermoProps;
 
 /// Compute the standard thermodynamic properties of a species with given NASA thermodynamic parameters.
 auto computeStandardThermoProps(const NasaSpecies& species, const real& T) -> StandardThermoProps;
