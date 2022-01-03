@@ -78,10 +78,10 @@ auto parseFormula(const String& formula) -> Pairs<String, double>;
 /// 7.219318660D-10 7.329846740D-14                -3.425302600D+04-9.387539141D+00
 /// ~~~
 ///
-/// This method will return a NasaSpeciesThermoParams object initialized as follows:
+/// This method will return a NasaThermoParams object initialized as follows:
 ///
 /// ~~~c++
-/// NasaSpeciesThermoParams params;
+/// NasaThermoParams params;
 /// params.Tmin =  200.0;
 /// params.Tmax =  1000.0;
 /// params.qN   =  7;
@@ -106,7 +106,7 @@ auto parseFormula(const String& formula) -> Pairs<String, double>;
 /// Note the values 10764.801 above was not used. This value is set
 /// in @ref NasaSpecies::dH0 by @ref createNextSpecies when creating
 /// a NasaSpecies object.
-auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesThermoParams;
+auto parseNasaThermoParams(const StringsRange& lines) -> NasaThermoParams;
 
 /// Return the number of species blocks in a range of string lines.
 /// This method assumes that the number of species is the number of lines

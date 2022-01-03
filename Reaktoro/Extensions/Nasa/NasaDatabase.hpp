@@ -31,23 +31,24 @@ public:
     /// Construct a default NasaDatabase instance.
     NasaDatabase();
 
-    /// Construct a copy of a NasaDatabase instance.
-    NasaDatabase(const NasaDatabase& other);
+    /// Construct a NasaDatabase object using an embedded database file.
+    /// The currently supported embedded NASA database files are named:
+    /// - `thermo.inp`
+    /// @param name The name of the embedded NASA database file
+    /// @warning An exception is thrown if `name` is not one of the above supported names.
+    NasaDatabase(String name);
 
-    /// Construct a NasaDatabase instance with given species.
-    explicit NasaDatabase(const Vec<Species>& species);
+    /// Return a NasaDatabase object initialized using an embedded NASA database.
+    /// The currently supported embedded NASA database files are named:
+    /// - `thermo.inp`
+    /// @param name The name of the embedded NASA database file
+    /// @warning An exception is thrown if `name` is not one of the above supported names.
+    static auto withName(String name) -> NasaDatabase;
 
-    /// Destroy this NasaDatabase instance.
-    ~NasaDatabase();
-
-    /// Assign another NasaDatabase instance to this.
-    auto operator=(NasaDatabase other) -> NasaDatabase&;
-
-
-private:
-    struct Impl;
-
-    std::unique_ptr<Impl> pimpl;
+    /// Construct a NasaDatabase object with given path to a database file.
+    /// @param path The path, including file name, to the database file.
+    /// @warning An exception is thrown if `path` does not point to a valid database file.
+    static auto fromFile(String path) -> NasaDatabase;
 };
 
 

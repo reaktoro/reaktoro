@@ -107,18 +107,18 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         == Pairs<String, double>{{"C", 12.0}, {"H", 23.0}} );
 
     //======================================================================
-    // Testing method NasaUtils::parseNasaSpeciesThermoParams
+    // Testing method NasaUtils::parseNasaThermoParams
     //======================================================================
 
     Strings lines;
-    NasaSpeciesThermoParams params;
+    NasaThermoParams params;
 
     const Strings lines00 = {
         "    200.000   1000.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        10764.801",
         " 8.906039290D+04-9.750803930D+02 5.870772320D+00 6.896663690D-03-4.045817280D-06",
         " 7.219318660D-10 7.329846740D-14                -3.425302600D+04-9.387539141D+00" };
 
-    params = parseNasaSpeciesThermoParams(lines00);
+    params = parseNasaThermoParams(lines00);
 
     CHECK( params.Tmin ==  200.0 );
     CHECK( params.Tmax ==  1000.0 );
@@ -145,7 +145,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "-1.494237648D+11 0.000000000D+00 8.652205900D+06-3.521604880D+04 3.968501633D+01",
         " 0.000000000D+00 0.000000000D+00                -1.866195945D+09-4.140143280D+07" };
 
-    params = parseNasaSpeciesThermoParams(lines01);
+    params = parseNasaThermoParams(lines01);
 
     CHECK( params.Tmin ==  287.700 );
     CHECK( params.Tmax ==  288.500 );
@@ -172,7 +172,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "-3.834452340D+04-9.563261140D+02 8.200962780D+00-2.062130802D-04 9.872288990D-09",
         " 8.158366760D-12-7.527519660D-16                -3.423564020D+04-2.224772278D+01" };
 
-    params = parseNasaSpeciesThermoParams(lines02);
+    params = parseNasaThermoParams(lines02);
 
     CHECK( params.Tmin ==  1000.000 );
     CHECK( params.Tmax ==  6000.000 );
@@ -199,7 +199,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 2.291781634D+09-1.608862960D+06 4.312466360D+02-5.396508990D-02 3.531856210D-06",
         "-1.164403850D-10 1.527134223D-15                 1.258651434D+07-3.692101610D+03" };
 
-    params = parseNasaSpeciesThermoParams(lines03);
+    params = parseNasaThermoParams(lines03);
 
     CHECK( params.Tmin ==  6000.000 );
     CHECK( params.Tmax ==  20000.000 );
@@ -226,7 +226,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 5.676714650D+06-6.561919460D+04 2.971622148D+02-6.132148300D-01 6.373067250D-04",
         "-2.569754132D-07 0.000000000D+00                 3.113488256D+05-1.716694497D+03" };
 
-    params = parseNasaSpeciesThermoParams(lines04);
+    params = parseNasaThermoParams(lines04);
 
     CHECK( params.Tmin ==  298.150 );
     CHECK( params.Tmax ==  700.000 );
@@ -253,7 +253,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 8.246680410D+05-1.965549089D+03 5.659967790D+00 1.366241998D-02-1.241835551D-05",
         " 6.313550760D-09-1.192405400D-12                -3.594772610D+03-3.071970867D+01" };
 
-    params = parseNasaSpeciesThermoParams(lines05);
+    params = parseNasaThermoParams(lines05);
 
     CHECK( params.Tmin ==  700.000 );
     CHECK( params.Tmax ==  1500.000 );
@@ -280,7 +280,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 4.325258320D+09-1.355254539D+07 1.757503878D+04-1.205560629D+01 4.623646210D-03",
         "-9.389890050D-07 7.891119490D-11                 8.506076540D+07-1.227417790D+05" };
 
-    params = parseNasaSpeciesThermoParams(lines06);
+    params = parseNasaThermoParams(lines06);
 
     CHECK( params.Tmin ==  1500.000 );
     CHECK( params.Tmax ==  2500.000 );
@@ -307,7 +307,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "-2.112979833D+06 0.000000000D+00 2.207431906D+02-1.164973854D+00 1.853971249D-03",
         " 0.000000000D+00 0.000000000D+00                -1.746831159D+05-9.949025210D+02" };
 
-    params = parseNasaSpeciesThermoParams(lines07);
+    params = parseNasaThermoParams(lines07);
 
     CHECK( params.Tmin ==  200.000 );
     CHECK( params.Tmax ==  306.000 );
@@ -334,7 +334,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 0.000000000D+00 0.000000000D+00 6.705915562D+03-4.303760534D+01 6.919229155D-02",
         " 0.000000000D+00 0.000000000D+00                -8.349875160D+05-2.844167579D+04" };
 
-    params = parseNasaSpeciesThermoParams(lines08);
+    params = parseNasaThermoParams(lines08);
 
     CHECK( params.Tmin ==  306.000 );
     CHECK( params.Tmax ==  310.000 );
@@ -361,7 +361,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 0.000000000D+00 0.000000000D+00 2.443570337D+02-1.399445548D+00 2.113509996D-03",
         " 0.000000000D+00 0.000000000D+00                -1.665032895D+05-1.059172219D+03" };
 
-    params = parseNasaSpeciesThermoParams(lines09);
+    params = parseNasaThermoParams(lines09);
 
     CHECK( params.Tmin ==  310.000 );
     CHECK( params.Tmax ==  335.000 );
@@ -388,7 +388,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "-3.415474875D+05 0.000000000D+00 1.616932327D+01-1.517828471D-03 1.014852348D-06",
         " 0.000000000D+00 0.000000000D+00                -1.430478214D+05-8.374919535D+01" };
 
-    params = parseNasaSpeciesThermoParams(lines10);
+    params = parseNasaThermoParams(lines10);
 
     CHECK( params.Tmin ==  335.000 );
     CHECK( params.Tmax ==  2705.000 );
@@ -436,7 +436,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.comment == "Gurvich,1996a pt1 p398 pt2 p318." );
     CHECK( species.idcode == "tpis96" );
     CHECK( species.formula == Pairs<String, double>{{"MG", 1.0}, {"O", 1.0}} );
-    CHECK( species.type == NasaSpeciesType::Gas );
+    CHECK( species.aggregatestate == NasaAggregateState::Gas );
     CHECK( species.molarmass == 40.3044000 );
     CHECK( species.dHf == 32261.307 );
     CHECK( species.dH0 == 8909.107 );
@@ -444,9 +444,9 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.Tmin == 200.0 );
     CHECK( species.Tmax == 20000.0 );
     CHECK( species.thermodata.size() == 3 );
-    CHECK( species.thermodata[0] == parseNasaSpeciesThermoParams(StringsRange(lines11).segment(2, 3)) );
-    CHECK( species.thermodata[1] == parseNasaSpeciesThermoParams(StringsRange(lines11).segment(5, 3)) );
-    CHECK( species.thermodata[2] == parseNasaSpeciesThermoParams(StringsRange(lines11).segment(8, 3)) );
+    CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines11).segment(2, 3)) );
+    CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines11).segment(5, 3)) );
+    CHECK( species.thermodata[2] == parseNasaThermoParams(StringsRange(lines11).segment(8, 3)) );
 
     const Strings lines12 = {
         "Mg(cr)            Hexagonal. Ref-Elm. Alcock,1993.",
@@ -465,7 +465,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.comment == "Hexagonal. Ref-Elm. Alcock,1993." );
     CHECK( species.idcode == "srd 93" );
     CHECK( species.formula == Pairs<String, double>{{"MG", 1.0}} );
-    CHECK( species.type == NasaSpeciesType::Condensed );
+    CHECK( species.aggregatestate == NasaAggregateState::Condensed );
     CHECK( species.molarmass == 24.3050000 );
     CHECK( species.dHf == 0.000 );
     CHECK( species.dH0 == 4979.161 );
@@ -473,8 +473,8 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.Tmin == 100.0 );
     CHECK( species.Tmax == 923.0 );
     CHECK( species.thermodata.size() == 2 );
-    CHECK( species.thermodata[0] == parseNasaSpeciesThermoParams(StringsRange(lines12).segment(2, 3)) );
-    CHECK( species.thermodata[1] == parseNasaSpeciesThermoParams(StringsRange(lines12).segment(5, 3)) );
+    CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines12).segment(2, 3)) );
+    CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines12).segment(5, 3)) );
 
     const Strings lines13 = {
         "Jet-A(g)          McBride,1996. Faith,1971. Gracia-Salcedo,1988.          React.",
@@ -493,7 +493,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.comment == "McBride,1996. Faith,1971. Gracia-Salcedo,1988.          React." );
     CHECK( species.idcode == "g 8/01" );
     CHECK( species.formula == Pairs<String, double>{{"C", 12.0}, {"H", 23.0}} );
-    CHECK( species.type == NasaSpeciesType::Gas );
+    CHECK( species.aggregatestate == NasaAggregateState::Gas );
     CHECK( species.molarmass == 167.3110200 );
     CHECK( species.dHf == -249657.000 );
     CHECK( species.dH0 == 0.0 );
@@ -501,8 +501,8 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.Tmin == 273.150 );
     CHECK( species.Tmax == 6000.00 );
     CHECK( species.thermodata.size() == 2 );
-    CHECK( species.thermodata[0] == parseNasaSpeciesThermoParams(StringsRange(lines13).segment(2, 3)) );
-    CHECK( species.thermodata[1] == parseNasaSpeciesThermoParams(StringsRange(lines13).segment(5, 3)) );
+    CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines13).segment(2, 3)) );
+    CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines13).segment(5, 3)) );
 
     const Strings lines14 = {
         "NaCN(II)          Lambda trans@288.5K. Chase,1998(3/66) pp631-3. Messer,1941.",
@@ -533,7 +533,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.comment == "Lambda trans@288.5K. Chase,1998(3/66) pp631-3. Messer,1941." );
     CHECK( species.idcode == "g 8/01" );
     CHECK( species.formula == Pairs<String, double>{{"NA", 1.0}, {"C", 1.0}, {"N", 1.0}} );
-    CHECK( species.type == NasaSpeciesType::Condensed );
+    CHECK( species.aggregatestate == NasaAggregateState::Condensed );
     CHECK( species.molarmass == 49.0071700 );
     CHECK( species.dHf == -90709.000 );
     CHECK( species.dH0 == 19422.128 );
@@ -541,12 +541,12 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.Tmin == 197.700 );
     CHECK( species.Tmax == 288.500 );
     CHECK( species.thermodata.size() == 6 );
-    CHECK( species.thermodata[0] == parseNasaSpeciesThermoParams(StringsRange(lines14).segment(2, 3)) );
-    CHECK( species.thermodata[1] == parseNasaSpeciesThermoParams(StringsRange(lines14).segment(5, 3)) );
-    CHECK( species.thermodata[2] == parseNasaSpeciesThermoParams(StringsRange(lines14).segment(8, 3)) );
-    CHECK( species.thermodata[3] == parseNasaSpeciesThermoParams(StringsRange(lines14).segment(11, 3)) );
-    CHECK( species.thermodata[4] == parseNasaSpeciesThermoParams(StringsRange(lines14).segment(14, 3)) );
-    CHECK( species.thermodata[5] == parseNasaSpeciesThermoParams(StringsRange(lines14).segment(17, 3)) );
+    CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines14).segment(2, 3)) );
+    CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines14).segment(5, 3)) );
+    CHECK( species.thermodata[2] == parseNasaThermoParams(StringsRange(lines14).segment(8, 3)) );
+    CHECK( species.thermodata[3] == parseNasaThermoParams(StringsRange(lines14).segment(11, 3)) );
+    CHECK( species.thermodata[4] == parseNasaThermoParams(StringsRange(lines14).segment(14, 3)) );
+    CHECK( species.thermodata[5] == parseNasaThermoParams(StringsRange(lines14).segment(17, 3)) );
 
     const Strings lines15 = {
         "C2H2(L),acetyle   Acetylene. McBride,1996 pp84,92.",
@@ -560,7 +560,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.comment == "Acetylene. McBride,1996 pp84,92." );
     CHECK( species.idcode == "g 6/96" );
     CHECK( species.formula == Pairs<String, double>{{"C", 2.0}, {"H", 2.0}} );
-    CHECK( species.type == NasaSpeciesType::Condensed );
+    CHECK( species.aggregatestate == NasaAggregateState::Condensed );
     CHECK( species.molarmass == 26.0372800 );
     CHECK( species.dHf == 0.0 );
     CHECK( species.dH0 == 0.0 );
@@ -581,7 +581,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.comment == "Dinitrogen tetroxide. McBride,1996 pp85,93." );
     CHECK( species.idcode == "g 6/96" );
     CHECK( species.formula == Pairs<String, double>{{"N", 2.0}, {"O", 4.0}} );
-    CHECK( species.type == NasaSpeciesType::Condensed );
+    CHECK( species.aggregatestate == NasaAggregateState::Condensed );
     CHECK( species.molarmass == 92.0110000 );
     CHECK( species.dHf == 0.0 );
     CHECK( species.dH0 == 0.0 );

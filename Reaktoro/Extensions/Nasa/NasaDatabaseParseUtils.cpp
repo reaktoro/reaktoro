@@ -82,7 +82,7 @@ auto parseFormula(const String& formula) -> Pairs<String, double>
     return pairs;
 }
 
-auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesThermoParams
+auto parseNasaThermoParams(const StringsRange& lines) -> NasaThermoParams
 {
     assert(lines.size() == 3);
 
@@ -98,7 +98,7 @@ auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesTherm
     error(qvalues.size() != 8, "Expecting 8 values for q exponents "
         "(last being zero) between columns 24 and 63 of line:\n", record3);
 
-    NasaSpeciesThermoParams params;
+    NasaThermoParams params;
     params.Tmin = std::stod(segment[0]);
     params.Tmax = std::stod(segment[1]);
     params.qN = getIntegerBetweenColumns(record3, 23, 23);
@@ -125,9 +125,9 @@ auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesTherm
     return params;
 }
 
-auto convertIntegerToSpeciesType(Index value) -> NasaSpeciesType
+auto convertIntegerToSpeciesType(Index value) -> NasaAggregateState
 {
-    return value == 0 ? NasaSpeciesType::Gas : NasaSpeciesType::Condensed;
+    return value == 0 ? NasaAggregateState::Gas : NasaAggregateState::Condensed;
 }
 
 auto getNumberTextLinesForNextSpeciesBlock(const StringsRange& lines) -> Index
@@ -161,7 +161,7 @@ auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies
     species.comment   = trim(getStringBetweenColumns(record1, 19, 80));
     species.idcode    = trim(getStringBetweenColumns(record2, 4, 9));
     species.formula   = parseFormula(getStringBetweenColumns(record2, 11, 50));
-    species.type      = convertIntegerToSpeciesType(getIntegerBetweenColumns(record2, 52, 52));
+    species.aggregatestate      = convertIntegerToSpeciesType(getIntegerBetweenColumns(record2, 52, 52));
     species.molarmass = getDoubleBetweenColumns(record2, 53, 65);
 
     const auto numintervals = getIntegerBetweenColumns(record2, 1, 2);
@@ -170,7 +170,7 @@ auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies
     {
         species.thermodata.resize(numintervals);
         for(auto i = 0; i < numintervals; ++i)
-            species.thermodata[i] = parseNasaSpeciesThermoParams(lines.segment(2 + 3*i, 3));
+            species.thermodata[i] = parseNasaThermoParams(lines.segment(2 + 3*i, 3));
 
         species.dHf  = getDoubleBetweenColumns(record2, 66, 80);
         species.dH0  = getDoubleBetweenColumns(record3, 66, 80);

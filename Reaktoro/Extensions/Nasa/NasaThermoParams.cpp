@@ -15,32 +15,35 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "NasaSpecies.hpp"
-
-// Reaktoro includes
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Extensions/Nasa/NasaThermoModels.hpp>
+#include "NasaThermoParams.hpp"
 
 namespace Reaktoro {
 
-auto operator!=(const NasaSpecies& l, const NasaSpecies& r) -> bool
+auto operator!=(const NasaThermoParams& l, const NasaThermoParams& r) -> bool
 {
     return
-        l.name != r.name &&
-        l.comment != r.comment &&
-        l.idcode != r.idcode &&
-        l.formula != r.formula &&
-        l.aggregatestate != r.aggregatestate &&
-        l.molarmass != r.molarmass &&
-        l.dHf != r.dHf &&
-        l.dH0 != r.dH0 &&
-        l.H0 != r.H0 &&
         l.Tmin != r.Tmin &&
         l.Tmax != r.Tmax &&
-        l.thermodata != r.thermodata;
+        l.qN != r.qN &&
+        l.q1 != r.q1 &&
+        l.q2 != r.q2 &&
+        l.q3 != r.q3 &&
+        l.q4 != r.q4 &&
+        l.q5 != r.q5 &&
+        l.q6 != r.q6 &&
+        l.q7 != r.q7 &&
+        l.a1 != r.a1 &&
+        l.a2 != r.a2 &&
+        l.a3 != r.a3 &&
+        l.a4 != r.a4 &&
+        l.a5 != r.a5 &&
+        l.a6 != r.a6 &&
+        l.a7 != r.a7 &&
+        l.b1 != r.b1 &&
+        l.b2 != r.b2;
 }
 
-auto operator==(const NasaSpecies& l, const NasaSpecies& r) -> bool
+auto operator==(const NasaThermoParams& l, const NasaThermoParams& r) -> bool
 {
     return !(l != r);
 }
