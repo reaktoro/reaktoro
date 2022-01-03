@@ -19,6 +19,13 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 #include <Reaktoro/Extensions/Nasa/NasaDatabase.hpp>
 using namespace Reaktoro;
 
@@ -43,4 +50,62 @@ TEST_CASE("Testing NasaDatabase module", "[NasaDatabase]")
     CHECK(db.species().getWithName("CO2").props(Tr, Pr).H0 == Approx( -393510.000) );
     CHECK(db.species().getWithName("Zr+").props(Tr, Pr).H0 == Approx( 1246246.292) );
     CHECK(db.species().getWithName("Ti+").props(Tr, Pr).H0 == Approx( 1137624.029) );
+}
+
+TEST_CASE("Testing NasaDatabase with EquilibriumSolver", "[NasaDatabase][EquilibriumSolver]")
+{
+    NasaDatabase db("nasa-cea");
+
+    EquilibriumOptions options;
+    // options.optima.output.active = true;
+    // options.optima.maxiters = 100;
+
+    auto checkEquilibriumSolver = [&](auto reactantName, auto xiters)
+    {
+        auto oxidizerName = "Air";
+        auto reactantAmount = 1.0; // in mol
+        auto oxidizerAmount = 2.0; // in mol
+
+        auto reactant = db.species().getWithName(reactantName);
+        auto oxidizer = db.species().getWithName(oxidizerName);
+
+        auto symbols = unique(concatenate(reactant.elements().symbols(), oxidizer.elements().symbols()));
+
+        GaseousPhase gases(speciate(symbols));
+        CondensedPhases condensed(speciate(symbols));
+
+        ChemicalSystem system(db, gases, condensed);
+
+        ChemicalState state0(system);
+        state0.temperature(25.0, "celsius");
+        state0.pressure(1.0, "atm");
+        state0.setSpeciesAmounts(1e-16);
+        state0.set(reactantName, reactantAmount, "mol");
+        state0.set(oxidizerName, oxidizerAmount, "mol");
+
+        ChemicalProps props0(state0);
+
+        EquilibriumSpecs specs(system);
+        specs.pressure();
+        specs.enthalpy();
+
+        EquilibriumConditions conditions(specs);
+        conditions.pressure(props0.pressure());
+        conditions.enthalpy(props0.enthalpy());
+        conditions.setLowerBoundTemperature(100.0, "celsius");
+        conditions.setUpperBoundTemperature(4000.0, "celsius");
+
+        ChemicalState state(state0);
+
+        EquilibriumSolver solver(specs);
+        solver.setOptions(options);
+
+        auto result = solver.solve(state, conditions);
+
+        CHECK( result.optima.succeeded );
+        CHECK( result.optima.iterations == xiters );
+    };
+
+    checkEquilibriumSolver("Mg(cd)", 43);
+    checkEquilibriumSolver("CH4", 34);
 }
