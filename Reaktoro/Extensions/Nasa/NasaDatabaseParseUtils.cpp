@@ -63,14 +63,6 @@ auto isCommentLine(const String& line) -> bool
     return firstnonspacechar == '!' || firstnonspacechar == '#';
 }
 
-auto skipCommentLines(const Strings& lines, Index linepos) -> Index
-{
-    const auto numlines = lines.size();
-    while(linepos < numlines && isCommentLine(lines[linepos]))
-        ++linepos;
-    return linepos;
-}
-
 auto parseFormula(const String& formula) -> Pairs<String, double>
 {
     assert(formula.size() == 40);
@@ -78,19 +70,19 @@ auto parseFormula(const String& formula) -> Pairs<String, double>
     auto offset = 0;
     for(auto i = 0; i < 5; ++i)
     {
-        const auto element = formula.substr(offset, 2);
+        const auto element = trim(formula.substr(offset, 2));
         const auto coeffstr = formula.substr(offset + 2, 6);
         const auto coeff = tofloat(coeffstr);
         if(coeff != 0.0)
-        {
             pairs.push_back({ element, coeff });
-            error(!trim(element).empty(), "Cannot accept zero coefficient for element ", element, ".");
-        }
+        error(coeff == 0.0 && !element.empty(),
+            "Cannot accept zero coefficient for element ", element, ".");
+        offset += 8;
     }
     return pairs;
 }
 
-auto parseThermoData(const StringsRange& lines) -> NasaSpeciesThermoParams
+auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesThermoParams
 {
     assert(lines.size() == 3);
 
@@ -98,16 +90,18 @@ auto parseThermoData(const StringsRange& lines) -> NasaSpeciesThermoParams
     const auto record4 = lines[1];
     const auto record5 = lines[2];
 
-    const auto range = split(getStringBetweenColumns(record3, 0, 22));
-    error(range.size() != 2, "Expecting Tmin and Tmax only within the first 22 chars of line:\n", record3);
+    const auto range = split(getStringBetweenColumns(record3, 1, 22));
+    error(range.size() != 2, "Expecting only two double values, "
+        "Tmin and Tmax, within the first 22 chars of line:\n", record3);
 
     const auto qvalues = split(getStringBetweenColumns(record3, 24, 63));
-    error(qvalues.size() != 8, "Expecting 8 values for q exponents (last zero) between columns 24 and 63 of line:\n", record3);
+    error(qvalues.size() != 8, "Expecting 8 values for q exponents "
+        "(last being zero) between columns 24 and 63 of line:\n", record3);
 
     NasaSpeciesThermoParams params;
     params.Tmin = std::stod(range[0]);
     params.Tmax = std::stod(range[1]);
-    params.qN = std::stoi(std::to_string(record3[22]));
+    params.qN = getIntegerBetweenColumns(record3, 23, 23);
     params.q1 = std::stod(qvalues[0]);
     params.q2 = std::stod(qvalues[1]);
     params.q3 = std::stod(qvalues[2]);
@@ -125,7 +119,8 @@ auto parseThermoData(const StringsRange& lines) -> NasaSpeciesThermoParams
     params.b1 = getDoubleBetweenColumns(record5, 49, 64);
     params.b2 = getDoubleBetweenColumns(record5, 65, 80);
 
-    error(params.qN != 7, "Cannot accept number of coefficients for Cp0 model different than 7.");
+    error(params.qN != 7, "Cannot accept number of coefficients for "
+        "Cp0 model different than 7. Got qN = ", params.qN, ".");
 
     return params;
 }
@@ -175,7 +170,7 @@ auto createSpecies(const StringsRange& lines) -> NasaSpecies
     {
         species.thermodata.resize(numintervals);
         for(auto i = 0; i < numintervals; ++i)
-            species.thermodata[i] = parseThermoData(lines.range(2 + 3*i, 3));
+            species.thermodata[i] = parseNasaSpeciesThermoParams(lines.range(2 + 3*i, 3));
 
         species.dHf  = getDoubleBetweenColumns(record2, 66, 80);
         species.dH0  = getDoubleBetweenColumns(record3, 66, 80);

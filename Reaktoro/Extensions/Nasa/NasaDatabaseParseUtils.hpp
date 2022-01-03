@@ -82,7 +82,7 @@ struct StringsRange
     using Iter = Strings::const_iterator;
     Iter b; ///< The begin iterator of the range.
     Iter e;   ///< The end iterator of the range.
-    auto operator[](Index i) const -> const String& { return *(b + 1); }
+    auto operator[](Index i) const -> const String& { return *(b + i); }
     auto size() const { return e - b; }
     auto range(Index pos, Index n) const { return StringsRange(b + pos, b + pos + n); }
     auto range(Index pos) const { return range(pos, size() - pos); }
@@ -109,13 +109,6 @@ auto getDoubleBetweenColumns(const String& str, Index begincol, Index endcol) ->
 
 /// Return true if a line in the Nasa database file is a comment line (it starts with ! or #).
 auto isCommentLine(const String& line) -> bool;
-
-/// Return the line position corresponding to a line that is not comment.
-auto skipCommentLines(const Strings& lines, Index linepos) -> Index;
-
-auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies;
-
-auto initNasaSpeciesBasicInfo(NasaSpecies& species, const Strings& lines, Index& linepos) -> void;
 
 /// Return the pairs of element symbols and coefficients in a Nasa-format formula string.
 /// For example, species `ALH2F` has formula string:
@@ -164,7 +157,7 @@ auto parseFormula(const String& formula) -> Pairs<String, double>;
 /// Note the values 10764.801 above was not used. This value is set
 /// in @ref NasaSpecies::dH0 by @ref createNextSpecies when creating
 /// a NasaSpecies object.
-auto parseThermoData(const StringsRange& lines) -> NasaSpeciesThermoParams;
+auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesThermoParams;
 
 /// Return the number of species blocks in a range of string lines.
 /// This method assumes that the number of species is the number of lines
