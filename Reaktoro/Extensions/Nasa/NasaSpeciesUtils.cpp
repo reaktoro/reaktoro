@@ -22,7 +22,7 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Extensions/Nasa/NasaSpecies.hpp>
 #include <Reaktoro/Extensions/Nasa/NasaThermoModels.hpp>
-#include <Reaktoro/Singletons/PeriodicTable.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 
 namespace Reaktoro {
 namespace NasaUtils {
@@ -37,17 +37,17 @@ auto correctElementSymbol(const String& symbol) -> String
 auto createElement(const String& symbol0) -> Element
 {
     const String symbol = correctElementSymbol(symbol0);
-    const auto element = PeriodicTable::elementWithSymbol(symbol);
+    const auto element = Elements::withSymbol(symbol);
     error(!element.has_value(), "Could not create Element object with given NASA CEA element symbol: ", symbol0);
     return element.value();
 }
 
 auto createElements(const NasaSpecies& species) -> ElementalComposition
 {
-    Map<Element, double> pairs;
+    Pairs<Element, double> pairs;
     for(auto const& [symbol, coeff] : species.formula)
         if(symbol != "E") // skip charge, which is handled with Species::withCharge and Species::charge methods
-            pairs.emplace(createElement(symbol), coeff);
+            pairs.emplace_back(createElement(symbol), coeff);
     return ElementalComposition(pairs);
 }
 

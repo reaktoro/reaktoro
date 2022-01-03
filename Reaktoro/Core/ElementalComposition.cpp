@@ -113,7 +113,7 @@ ElementalComposition::operator String() const
 
 auto operator!=(const ElementalComposition& l, const ElementalComposition& r) -> bool
 {
-    return Map<Element, double>(l) != Map<Element, double>(r);
+    return Pairs<Element, double>(l) != Pairs<Element, double>(r);
 }
 
 auto operator==(const ElementalComposition& l, const ElementalComposition& r) -> bool
