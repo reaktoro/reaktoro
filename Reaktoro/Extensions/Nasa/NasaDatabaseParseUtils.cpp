@@ -90,8 +90,8 @@ auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesTherm
     const auto record4 = lines[1];
     const auto record5 = lines[2];
 
-    const auto range = split(getStringBetweenColumns(record3, 1, 22));
-    error(range.size() != 2, "Expecting only two double values, "
+    const auto segment = split(getStringBetweenColumns(record3, 1, 22));
+    error(segment.size() != 2, "Expecting only two double values, "
         "Tmin and Tmax, within the first 22 chars of line:\n", record3);
 
     const auto qvalues = split(getStringBetweenColumns(record3, 24, 63));
@@ -99,8 +99,8 @@ auto parseNasaSpeciesThermoParams(const StringsRange& lines) -> NasaSpeciesTherm
         "(last being zero) between columns 24 and 63 of line:\n", record3);
 
     NasaSpeciesThermoParams params;
-    params.Tmin = std::stod(range[0]);
-    params.Tmax = std::stod(range[1]);
+    params.Tmin = std::stod(segment[0]);
+    params.Tmax = std::stod(segment[1]);
     params.qN = getIntegerBetweenColumns(record3, 23, 23);
     params.q1 = std::stod(qvalues[0]);
     params.q2 = std::stod(qvalues[1]);
@@ -146,7 +146,7 @@ auto getNumberSpeciesBlocks(const StringsRange& lines) -> Index
     return counter;
 }
 
-auto createSpecies(const StringsRange& lines) -> NasaSpecies
+auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies
 {
     assert(lines.size() >= 3);
     assert(lines.size() == getNumberTextLinesForNextSpeciesBlock(lines));
@@ -157,9 +157,9 @@ auto createSpecies(const StringsRange& lines) -> NasaSpecies
     const auto record2 = lines[1];
     const auto record3 = lines[2];
 
-    species.name      = getStringBetweenColumns(record1,  1, 18);
-    species.comment   = getStringBetweenColumns(record1, 19, 80);
-    species.idcode    = getStringBetweenColumns(record2, 4, 9);
+    species.name      = trim(getStringBetweenColumns(record1,  1, 18));
+    species.comment   = trim(getStringBetweenColumns(record1, 19, 80));
+    species.idcode    = trim(getStringBetweenColumns(record2, 4, 9));
     species.formula   = parseFormula(getStringBetweenColumns(record2, 11, 50));
     species.type      = convertIntegerToSpeciesType(getIntegerBetweenColumns(record2, 52, 52));
     species.molarmass = getDoubleBetweenColumns(record2, 53, 65);
@@ -170,7 +170,7 @@ auto createSpecies(const StringsRange& lines) -> NasaSpecies
     {
         species.thermodata.resize(numintervals);
         for(auto i = 0; i < numintervals; ++i)
-            species.thermodata[i] = parseNasaSpeciesThermoParams(lines.range(2 + 3*i, 3));
+            species.thermodata[i] = parseNasaSpeciesThermoParams(lines.segment(2 + 3*i, 3));
 
         species.dHf  = getDoubleBetweenColumns(record2, 66, 80);
         species.dH0  = getDoubleBetweenColumns(record3, 66, 80);
@@ -190,7 +190,7 @@ auto createSpecies(const StringsRange& lines) -> NasaSpecies
     return species;
 }
 
-auto createSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
+auto createNasaSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
 {
     Vec<NasaSpecies> vec;
     vec.reserve(getNumberSpeciesBlocks(lines));
@@ -199,9 +199,9 @@ auto createSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
     while(sublines.size())
     {
         const auto numlines = getNumberTextLinesForNextSpeciesBlock(sublines);
-        const auto nextlines = sublines.range(0, numlines);
-        vec.push_back(createSpecies(nextlines));
-        sublines = sublines.range(numlines);
+        const auto nextlines = sublines.segment(0, numlines);
+        vec.push_back(createNasaSpecies(nextlines));
+        sublines = sublines.segment(numlines);
     }
 
     return vec;
@@ -299,7 +299,7 @@ auto createTextLines(std::istream& file) -> Strings
     String line;
     while(std::getline(file, line))
     {
-        line = trim(line);
+        line = trimright(line);
         if(line.empty() || isCommentLine(line))
             continue;
         lines.push_back(line);

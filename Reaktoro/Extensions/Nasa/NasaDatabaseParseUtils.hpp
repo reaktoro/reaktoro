@@ -23,69 +23,18 @@
 namespace Reaktoro {
 namespace NasaUtils {
 
-// Use this for testing.
-// W(cr)             Crystal. Ref-Elm. Chase,1998 pp1925-8.
-//  4 j 6/66 W   1.00    0.00    0.00    0.00    0.00 1  183.8400000          0.000
-//     200.000   1000.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4973.000
-// -6.824541400D+03-2.254249090D+02 4.976604610D+00-6.926436340D-03 1.202272986D-05
-// -9.344133510D-09 2.818887123D-12                -3.510679270D+00-2.361334984D+01
-//    1000.000   2600.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4973.000
-//  5.530134840D+05-2.041485344D+03 5.870839470D+00-1.920714198D-03 1.067652983D-06
-// -2.355109022D-10 2.160679310D-14                 1.163812518D+04-3.319171800D+01
-//    2600.000   3200.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4973.000
-//  2.474736879D+09 4.488921620D+06-1.235978300D+04 9.678565660D+00-3.556364610D-03
-//  6.380420610D-07-4.521123450D-11                -2.029500909D+07 8.274369690D+04
-//    3200.000   3680.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4973.000
-// -1.755550399D+10 1.179059156D+07 1.177715365D+03-2.675166841D+00 7.252172480D-04
-// -6.128007580D-08 0.000000000D+00                -9.702249190D+07-1.148926234D+03
-// NaCN(II)          Lambda trans@288.5K. Chase,1998(3/66) pp631-3. Messer,1941.
-//  6 g 8/01 NA  1.00C   1.00N   1.00    0.00    0.00 1   49.0071700     -90709.000
-//     197.700    245.9007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        19422.128
-//  4.995073610D+08-1.007656780D+07 7.458386410D+04-2.134406974D+02-6.965856220D-02
-//  1.540182072D-03-2.204709373D-06                 4.493712560D+07-3.984423000D+05
-//     245.900    273.1007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        19422.128
-// -4.546907220D+08 4.339535660D+06 5.476070770D+02-1.324240852D+02 5.045446840D-01
-// -5.791737950D-04 0.000000000D+00                -2.385188911D+07 3.106410058D+04
-//     273.100    284.2007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        19422.128
-// -4.415096320D+08 0.000000000D+00 3.452631670D+04-1.661761169D+02 2.250608921D-01
-//  0.000000000D+00 0.000000000D+00                -6.388306670D+06-1.596447272D+05
-//     284.200    286.3007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        19422.128
-//  1.647379186D+09 0.000000000D+00-6.100370390D+04 1.429224260D+02 0.000000000D+00
-//  0.000000000D+00 0.000000000D+00                 1.735057318D+07 3.142435378D+05
-//     286.300    287.7007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        19422.128
-//  1.607424258D+11 0.000000000D+00-8.629992400D+06 3.290155880D+04-3.355904228D+01
-//  0.000000000D+00 0.000000000D+00                 1.946284579D+09 4.175641230D+07
-//     287.700    288.5007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        19422.128
-// -1.494237648D+11 0.000000000D+00 8.652205900D+06-3.521604880D+04 3.968501633D+01
-//  0.000000000D+00 0.000000000D+00                -1.866195945D+09-4.140143280D+07
-// S(L)              Liquid. Ref-Elm. Gurvich,1989 pt1 p265 pt2 p160.
-//  5 tpis89 S   1.00    0.00    0.00    0.00    0.00 3   32.0650000          0.000
-//     388.360    428.1507 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4412.000
-// -6.366550765D+07 0.000000000D+00 2.376860693D+03-7.888076026D+00 7.376076522D-03
-//  0.000000000D+00 0.000000000D+00                -6.356594920D+05-1.186929589D+04
-//     428.150    432.2507 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4412.000
-//  0.000000000D+00 0.000000000D+00 6.928522306D+03-3.254655981D+01 3.824448176D-02
-//  0.000000000D+00 0.000000000D+00                -9.832222680D+05-3.154806751D+04
-//     432.250    453.1507 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4412.000
-//  0.000000000D+00 0.000000000D+00 1.649945697D+02-6.843534977D-01 7.315907973D-04
-//  0.000000000D+00 0.000000000D+00                -2.638846929D+04-7.681730097D+02
-//     453.150    717.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4412.000
-//  1.972984578D+06 0.000000000D+00-2.441009753D+01 6.090352889D-02-3.744069103D-05
-//  0.000000000D+00 0.000000000D+00                 1.113013440D+04 1.363174183D+02
-//     717.000   6000.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         4412.000
-//  0.000000000D+00 0.000000000D+00 3.848693429D+00 0.000000000D+00 0.000000000D+00
-//  0.000000000D+00 0.000000000D+00                -8.284589830D+02-1.736128237D+01
-
 /// The view to a sequence of strings in a vector of strings.
 struct StringsRange
 {
     using Iter = Strings::const_iterator;
     Iter b; ///< The begin iterator of the range.
-    Iter e;   ///< The end iterator of the range.
+    Iter e; ///< The end iterator of the range.
     auto operator[](Index i) const -> const String& { return *(b + i); }
     auto size() const { return e - b; }
-    auto range(Index pos, Index n) const { return StringsRange(b + pos, b + pos + n); }
-    auto range(Index pos) const { return range(pos, size() - pos); }
+    auto segment(Index pos, Index n) const { return StringsRange(b + pos, b + pos + n); }
+    auto segment(Index pos) const { return segment(pos, size() - pos); }
+    auto range(Index ibegin, Index iend) const { return StringsRange(b + ibegin, b + iend); }
+    auto range(Index ibegin) const { return range(ibegin, size() - ibegin); }
     auto begin() const { return b; }
     auto end() const { return e; }
     StringsRange(const Iter& b, const Iter& e) : b(b), e(e) {}
@@ -189,13 +138,13 @@ auto getNumberSpeciesBlocks(const StringsRange& lines) -> Index;
 auto getNumberTextLinesForNextSpeciesBlock(const StringsRange& lines) -> Index;
 
 /// Create a chemical species with the given string lines.
-auto createSpecies(const StringsRange& lines) -> NasaSpecies;
+auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies;
 
 /// Create all chemical species with the given string lines comprising one or more species blocks.
 /// This method assumes that `lines` only contain actual species data.
 /// There are no comment lines (i.e., lines starting with `!` or `#`) and
 /// lines starting with words `thermo`, `END PRODUCTS`, `END REACTANTS`.
-auto createSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
+auto createNasaSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
 
 /// Return a range of text lines comprising the text blocks for product species.
 /// This method returns all lines shown below:

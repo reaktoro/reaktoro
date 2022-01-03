@@ -59,6 +59,12 @@ struct NasaSpeciesThermoParams
     real b2;   ///< The integration constant \eq{b_2} used to compute \eq{S^\circ}.
 };
 
+/// Return true if two NasaSpeciesThermoParams objects are different.
+auto operator!=(const NasaSpeciesThermoParams& l, const NasaSpeciesThermoParams& r) -> bool;
+
+/// Return true if two NasaSpeciesThermoParams objects are equal.
+auto operator==(const NasaSpeciesThermoParams& l, const NasaSpeciesThermoParams& r) -> bool;
+
 /// The possible types of a chemical species in a NASA thermodynamic database.
 enum NasaSpeciesType { Gas, Condensed };
 
@@ -101,5 +107,11 @@ struct NasaSpecies
     /// The data used to compute standard thermodynamic properties of the species at different temperature ranges.
     Vec<NasaSpeciesThermoParams> thermodata;
 };
+
+/// Return true if two NasaSpecies objects are different.
+auto operator!=(const NasaSpecies& l, const NasaSpecies& r) -> bool;
+
+/// Return true if two NasaSpecies objects are equal.
+auto operator==(const NasaSpecies& l, const NasaSpecies& r) -> bool;
 
 } // namespace Reaktoro
