@@ -81,7 +81,7 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, con
     if(params.polynomials.empty())
     {
         StandardThermoProps props;
-        props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+        props.G0 = 999'999'999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
         props.H0 = params.H0;
         return props;
     };
@@ -95,7 +95,7 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, con
 
     // Otherwise, return standard thermo props whose G0 is high to penalize the species from appearing at equilibrium
     StandardThermoProps props;
-    props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+    props.G0 = 999'999'999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
     return props;
 }
 
