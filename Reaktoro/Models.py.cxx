@@ -31,6 +31,7 @@ void exportStandardThermoModelHollandPowell(py::module& m);
 void exportStandardThermoModelInterpolation(py::module& m);
 void exportStandardThermoModelMaierKelley(py::module& m);
 void exportStandardThermoModelMineralHKF(py::module& m);
+void exportStandardThermoModelNasa(py::module& m);
 void exportStandardThermoModelWaterHKF(py::module& m);
 void exportStandardThermoModelYAML(py::module& m);
 
@@ -49,6 +50,7 @@ void exportModels(py::module& m)
     exportStandardThermoModelInterpolation(m);
     exportStandardThermoModelMaierKelley(m);
     exportStandardThermoModelMineralHKF(m);
+    exportStandardThermoModelNasa(m);
     exportStandardThermoModelWaterHKF(m);
     exportStandardThermoModelYAML(m);
 }
