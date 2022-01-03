@@ -52,6 +52,7 @@ struct StandardThermoModelParamsHollandPowell;
 struct StandardThermoModelParamsInterpolation;
 struct StandardThermoModelParamsMaierKelley;
 struct StandardThermoModelParamsMineralHKF;
+struct StandardThermoModelParamsNasa;
 struct StandardThermoModelParamsWaterHKF;
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsConstant);
@@ -71,6 +72,9 @@ REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsMaierKelley);
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsMineralHKF);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsMineralHKF);
+
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsNasa);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsNasa);
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsWaterHKF);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsWaterHKF);

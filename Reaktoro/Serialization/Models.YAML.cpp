@@ -28,6 +28,7 @@
 #include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
@@ -310,6 +311,18 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsMineralHKF)
     node.at("Vtr").to(obj.Vtr);
     node.at("dPdTtr").to(obj.dPdTtr);
     node.at("Tmax").to(obj.Tmax);
+}
+
+//----------------------------------------------------------------------
+
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa)
+{
+    errorif(true, "REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa) not implemented!");
+}
+
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsNasa)
+{
+    errorif(true, "REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa) not implemented!");
 }
 
 //----------------------------------------------------------------------
