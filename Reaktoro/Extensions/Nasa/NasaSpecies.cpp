@@ -17,12 +17,7 @@
 
 #include "NasaSpecies.hpp"
 
-// Reaktoro includes
-#include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Extensions/Nasa/NasaThermoModels.hpp>
-
 namespace Reaktoro {
-
 
 auto operator!=(const NasaSpecies& l, const NasaSpecies& r) -> bool
 {
@@ -31,7 +26,9 @@ auto operator!=(const NasaSpecies& l, const NasaSpecies& r) -> bool
         l.comment != r.comment &&
         l.idcode != r.idcode &&
         l.formula != r.formula &&
+        l.aggregatecode != r.aggregatecode &&
         l.aggregatestate != r.aggregatestate &&
+        l.type != r.type &&
         l.molarmass != r.molarmass &&
         l.dHf != r.dHf &&
         l.dH0 != r.dH0 &&
