@@ -35,14 +35,14 @@ namespace Reaktoro {
 /// Return the contents of the embedded NASA database with given name (or empty)
 auto getNasaDatabaseContent(String name) -> String
 {
-    error(!oneof(name,
-        "thermo.inp"),
+    error(!oneof(name, "cea", "burcat"),
         "Could not load embedded NASA database file with name `", name, "`. ",
         "The currently supported names are: \n"
-        "    - thermo.inp    \n",
+        "    - cea    \n",
+        "    - burcat \n",
         "");
     auto fs = cmrc::ReaktoroDatabases::get_filesystem();
-    auto contents = fs.open("databases/nasa/" + name);
+    auto contents = fs.open("databases/nasa/" + name + ".dat");
     return String(contents.begin(), contents.end());
 }
 
