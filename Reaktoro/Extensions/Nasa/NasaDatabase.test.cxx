@@ -24,11 +24,11 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing NasaDatabase module", "[NasaDatabase]")
 {
-    NasaDatabase db("cea");
+    NasaDatabase db("nasa-cea");
 
     CHECK( db.species().size() == 2085 );
 
-    CHECK( db.species().findWithName("ALF+") );
+    CHECK( db.species().findWithName("AlF+") );
     CHECK( db.species().findWithName("B3H9") );
     CHECK( db.species().findWithName("C3S2") );
     CHECK( db.species().findWithName("Zr+") );
