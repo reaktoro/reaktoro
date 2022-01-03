@@ -435,5 +435,76 @@ TEST_CASE("Testing NasaSpeciesUtils module", "[NasaSpeciesUtils]")
     CHECK( s09.standardThermoModel() );
     CHECK( s10.standardThermoModel() );
     CHECK( s11.standardThermoModel() );
-}
 
+    //======================================================================
+    // Check method Species::props(T, P)
+    //======================================================================
+
+    NasaSpecies nasaspecies;
+    nasaspecies.name = "W(cr)";
+    nasaspecies.formula = {{"W", 1.0}};
+    nasaspecies.dHf = 0.0;
+    nasaspecies.dH0 = 4973.0;
+    nasaspecies.thermodata.resize(4);
+    nasaspecies.thermodata[0].Tmin = 200.0;
+    nasaspecies.thermodata[0].Tmax = 1000.0;
+    nasaspecies.thermodata[0].a1 = -6.824541400e+03;
+    nasaspecies.thermodata[0].a2 = -2.254249090e+02;
+    nasaspecies.thermodata[0].a3 =  4.976604610e+00;
+    nasaspecies.thermodata[0].a4 = -6.926436340e-03;
+    nasaspecies.thermodata[0].a5 =  1.202272986e-05;
+    nasaspecies.thermodata[0].a6 = -9.344133510e-09;
+    nasaspecies.thermodata[0].a7 =  2.818887123e-12;
+    nasaspecies.thermodata[0].b1 = -3.510679270e+00;
+    nasaspecies.thermodata[0].b2 = -2.361334984e+01;
+    nasaspecies.thermodata[1].Tmin = 1000.0;
+    nasaspecies.thermodata[1].Tmax = 2600.0;
+    nasaspecies.thermodata[1].a1 =  5.530134840e+05;
+    nasaspecies.thermodata[1].a2 = -2.041485344e+03;
+    nasaspecies.thermodata[1].a3 =  5.870839470e+00;
+    nasaspecies.thermodata[1].a4 = -1.920714198e-03;
+    nasaspecies.thermodata[1].a5 =  1.067652983e-06;
+    nasaspecies.thermodata[1].a6 = -2.355109022e-10;
+    nasaspecies.thermodata[1].a7 =  2.160679310e-14;
+    nasaspecies.thermodata[1].b1 =  1.163812518e+04;
+    nasaspecies.thermodata[1].b2 = -3.319171800e+01;
+    nasaspecies.thermodata[2].Tmin = 2600.0;
+    nasaspecies.thermodata[2].Tmax = 3200.0;
+    nasaspecies.thermodata[2].a1 =  2.474736879e+09;
+    nasaspecies.thermodata[2].a2 =  4.488921620e+06;
+    nasaspecies.thermodata[2].a3 = -1.235978300e+04;
+    nasaspecies.thermodata[2].a4 =  9.678565660e+00;
+    nasaspecies.thermodata[2].a5 = -3.556364610e-03;
+    nasaspecies.thermodata[2].a6 =  6.380420610e-07;
+    nasaspecies.thermodata[2].a7 = -4.521123450e-11;
+    nasaspecies.thermodata[2].b1 = -2.029500909e+07;
+    nasaspecies.thermodata[2].b2 =  8.274369690e+04;
+    nasaspecies.thermodata[3].Tmin = 3200.0;
+    nasaspecies.thermodata[3].Tmax = 3680.0;
+    nasaspecies.thermodata[3].a1 = -1.755550399e+10;
+    nasaspecies.thermodata[3].a2 =  1.179059156e+07;
+    nasaspecies.thermodata[3].a3 =  1.177715365e+03;
+    nasaspecies.thermodata[3].a4 = -2.675166841e+00;
+    nasaspecies.thermodata[3].a5 =  7.252172480e-04;
+    nasaspecies.thermodata[3].a6 = -6.128007580e-08;
+    nasaspecies.thermodata[3].a7 =  0.000000000e+00;
+    nasaspecies.thermodata[3].b1 = -9.702249190e+07;
+    nasaspecies.thermodata[3].b2 = -1.148926234e+03;
+
+    Species species = NasaUtils::convertSpecies(nasaspecies);
+
+    const auto P = 1.0e5;
+    const auto eps = 1e-6;
+
+    // Perform some regression tests
+    CHECK( species.props( 298.15, P).H0 == Approx(5.46599e-06) );
+    CHECK( species.props( 500.00, P).H0 == Approx(5024.19) );
+    CHECK( species.props(1500.00, P).H0 == Approx(32600.4) );
+    CHECK( species.props(2000.00, P).H0 == Approx(48124.5) );
+    CHECK( species.props(2500.00, P).H0 == Approx(64868.6) );
+
+    // Check continuitity of the properties when going crossing temperature intervals
+    CHECK( species.props(1000 - eps, P).H0 == Approx(species.props(1000 + eps, P).H0) );
+    CHECK( species.props(2600 - eps, P).H0 == Approx(species.props(2600 + eps, P).H0) );
+    CHECK( species.props(3200 - eps, P).H0 == Approx(species.props(3200 + eps, P).H0) );
+}

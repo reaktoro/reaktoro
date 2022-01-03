@@ -23,6 +23,7 @@
 
 namespace Reaktoro {
 
+
 auto operator!=(const NasaSpecies& l, const NasaSpecies& r) -> bool
 {
     return
@@ -35,8 +36,6 @@ auto operator!=(const NasaSpecies& l, const NasaSpecies& r) -> bool
         l.dHf != r.dHf &&
         l.dH0 != r.dH0 &&
         l.H0 != r.H0 &&
-        l.Tmin != r.Tmin &&
-        l.Tmax != r.Tmax &&
         l.thermodata != r.thermodata;
 }
 

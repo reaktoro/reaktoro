@@ -175,16 +175,14 @@ auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies
         species.dHf  = getDoubleBetweenColumns(record2, 66, 80);
         species.dH0  = getDoubleBetweenColumns(record3, 66, 80);
         species.H0   = 0.0;
-        species.Tmin = species.thermodata.front().Tmin;
-        species.Tmax = species.thermodata.back().Tmax;
+        species.TH0  = 0.0;
     }
     else
     {
         species.dHf  = 0.0;
         species.dH0  = 0.0;
         species.H0   = getDoubleBetweenColumns(record2, 66, 80);
-        species.Tmin = getDoubleBetweenColumns(record3, 1, 11);
-        species.Tmax = species.Tmin;
+        species.TH0  = getDoubleBetweenColumns(record3, 1, 11);
     }
 
     return species;

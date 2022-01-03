@@ -22,16 +22,41 @@
 #include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
-
 namespace NasaUtils {
 
-/// Return either the original given temperature or one of its lower or upper bounds to stay within valid range.
-auto correctTemperature(const real& Torig, const real& Tmin, const real& Tmax, const String& spname) -> real
+auto areTemperatureIntervalsContinuous(const Vec<NasaThermoParams>& data) -> bool
 {
+    for(auto const& params : data)
+        if(params.Tmin > params.Tmax) // Tmin cannot be greater than Tmax
+            return false;
+    for(auto i = 1; i < data.size(); ++i)
+        if(data[i - 1].Tmax != data[i].Tmin) // Tmin of next interval = Tmax of previous interval
+            return false;
+    return true;
+}
+
+auto minSupportedTemperature(const Vec<NasaThermoParams>& data) -> real
+{
+    if(data.empty()) return {};
+    return data.front().Tmin;
+}
+
+auto maxSupportedTemperature(const Vec<NasaThermoParams>& data) -> real
+{
+    if(data.empty()) return {};
+    return data.back().Tmax;
+}
+
+/// Return either the original given temperature or one of its lower or upper bounds to stay within valid range.
+auto correctTemperature(const NasaSpecies& species, const real& Torig) -> real
+{
+    const auto Tmin = minSupportedTemperature(species.thermodata);
+    const auto Tmax = maxSupportedTemperature(species.thermodata);
+
     const auto T = (Torig < Tmin) ? Tmin : (Torig > Tmax) ? Tmax : Torig;
 
     warning(T != Torig, "Computing standard thermodynamic properties of "
-        "species ", spname, " at ", Torig, " K, which is outside "
+        "species ", species.name, " at ", Torig, " K, which is outside "
         "the valid temperature interval of T(min) = ", Tmin, " K "
         "and T(max) = ", Tmax, " K. Proceeding instead with T = ", T, " K "
         "for the computation of these standard properties.");
@@ -39,14 +64,14 @@ auto correctTemperature(const real& Torig, const real& Tmin, const real& Tmax, c
     return T;
 }
 
-auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& params, const real& T) -> NasaThermoParams
+auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& data, const real& T) -> NasaThermoParams
 {
-    assert(params.size());
-    for(const auto& obj : params)
+    assert(data.size());
+    for(const auto& obj : data)
         if(obj.Tmin <= T && T < obj.Tmax) // prefer the next interval when T = Tmax of current interval
             return obj;
-    if(T == params.back().Tmax)
-        return params.back();
+    if(T == data.back().Tmax)
+        return data.back();
     assert(false); // there is something wrong with given T and previous methods not addressing properly
     return {};
 }
@@ -92,7 +117,7 @@ auto computeStandardThermoProps(const NasaThermoParams& params, const real& T) -
 
 auto computeStandardThermoProps(const NasaSpecies& species, const real& Torig) -> StandardThermoProps
 {
-    const auto T = correctTemperature(Torig, species.Tmin, species.Tmax, species.name);
+    const auto T = correctTemperature(species, Torig);
     const auto params = getNasaThermoParamsForGivenTemperature(species.thermodata, T);
     return computeStandardThermoProps(params, T);
 }
@@ -101,6 +126,19 @@ auto computeStandardThermoProps(const NasaSpecies& species, const real& Torig) -
 
 auto StandardThermoModelNasa(const NasaSpecies& species) -> StandardThermoModel
 {
+    const auto Tmin = NasaUtils::minSupportedTemperature(species.thermodata);
+    const auto Tmax = NasaUtils::maxSupportedTemperature(species.thermodata);
+
+    if(Tmin == Tmax && Tmin == 0.0)
+        return [species](real T, real P)
+        {
+            error(true, "Cannot compute the standard thermodynamic "
+                "properties of species ", species.name, " since its minimum and "
+                "maximum temperature of support is 0 K. Ensure you have set correctly "
+                "these extreme temperature values for its NASA CEA parameters.");
+            return StandardThermoProps{};
+        };
+
     if(species.thermodata.empty())
         return [species](real T, real P)
         {

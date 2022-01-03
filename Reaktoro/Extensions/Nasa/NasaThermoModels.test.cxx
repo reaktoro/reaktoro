@@ -67,8 +67,6 @@ TEST_CASE("Testing NasaThermoModels module", "[NasaThermoModels]")
 {
     NasaSpecies species;
     species.name = "Abc(cr)";
-    species.Tmin = 200.0;
-    species.Tmax = 9000.0;
     species.thermodata.resize(3);
 
     const auto Cp0x = 345.6; // the expected Cp0 at reference temperatures for manufactured thermo params

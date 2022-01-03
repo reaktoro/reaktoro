@@ -25,8 +25,17 @@
 namespace Reaktoro {
 namespace NasaUtils {
 
+/// Return true if given thermodynamic parameters have continuous temperature intervals.
+auto areTemperatureIntervalsContinuous(const Vec<NasaThermoParams>& data) -> bool;
+
+/// Return the minimum supported temperature (in K) for provided thermodynamic data.
+auto minSupportedTemperature(const Vec<NasaThermoParams>& data) -> real;
+
+/// Return the maximum supported temperature (in K) for provided thermodynamic data.
+auto maxSupportedTemperature(const Vec<NasaThermoParams>& data) -> real;
+
 /// Return the NasaThermoParams object that is applicable for given temperature value (in K).
-auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& params, const real& T) -> NasaThermoParams;
+auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& data, const real& T) -> NasaThermoParams;
 
 /// Compute the standard thermodynamic properties of a species with given NASA thermodynamic parameters.
 auto computeStandardThermoProps(const NasaThermoParams& params, const real& T) -> StandardThermoProps;

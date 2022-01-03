@@ -64,11 +64,8 @@ struct NasaSpecies
     /// The assigned enthalpy (in J/mol) of the chemical species when there are no temperature intervals.
     real H0;
 
-    /// The extreme minimum temperature (in K) for which standard thermodynamic properties can be calculated.
-    real Tmin;
-
-    /// The extreme maximum temperature (in K) for which standard thermodynamic properties can be calculated.
-    real Tmax;
+    /// The temperature (in K) corresponding to the assigned enthalpy when there are no temperature intervals.
+    real TH0;
 
     /// The data used to compute standard thermodynamic properties of the species at different temperature ranges.
     Vec<NasaThermoParams> thermodata;

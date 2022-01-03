@@ -441,8 +441,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.dHf == 32261.307 );
     CHECK( species.dH0 == 8909.107 );
     CHECK( species.H0 == 0.0 );
-    CHECK( species.Tmin == 200.0 );
-    CHECK( species.Tmax == 20000.0 );
     CHECK( species.thermodata.size() == 3 );
     CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines11).segment(2, 3)) );
     CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines11).segment(5, 3)) );
@@ -470,8 +468,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.dHf == 0.000 );
     CHECK( species.dH0 == 4979.161 );
     CHECK( species.H0 == 0.0 );
-    CHECK( species.Tmin == 100.0 );
-    CHECK( species.Tmax == 923.0 );
     CHECK( species.thermodata.size() == 2 );
     CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines12).segment(2, 3)) );
     CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines12).segment(5, 3)) );
@@ -498,8 +494,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.dHf == -249657.000 );
     CHECK( species.dH0 == 0.0 );
     CHECK( species.H0 == 0.0 );
-    CHECK( species.Tmin == 273.150 );
-    CHECK( species.Tmax == 6000.00 );
     CHECK( species.thermodata.size() == 2 );
     CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines13).segment(2, 3)) );
     CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines13).segment(5, 3)) );
@@ -538,8 +532,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.dHf == -90709.000 );
     CHECK( species.dH0 == 19422.128 );
     CHECK( species.H0 == 0.0 );
-    CHECK( species.Tmin == 197.700 );
-    CHECK( species.Tmax == 288.500 );
     CHECK( species.thermodata.size() == 6 );
     CHECK( species.thermodata[0] == parseNasaThermoParams(StringsRange(lines14).segment(2, 3)) );
     CHECK( species.thermodata[1] == parseNasaThermoParams(StringsRange(lines14).segment(5, 3)) );
@@ -565,8 +557,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.dHf == 0.0 );
     CHECK( species.dH0 == 0.0 );
     CHECK( species.H0 == 207599.000 );
-    CHECK( species.Tmin == 192.350 );
-    CHECK( species.Tmax == 192.350 );
     CHECK( species.thermodata.empty() );
 
     const Strings lines16 = {
@@ -586,8 +576,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
     CHECK( species.dHf == 0.0 );
     CHECK( species.dH0 == 0.0 );
     CHECK( species.H0 == -17549.000 );
-    CHECK( species.Tmin == 298.150 );
-    CHECK( species.Tmax == 298.150 );
     CHECK( species.thermodata.empty() );
 
     //======================================================================
