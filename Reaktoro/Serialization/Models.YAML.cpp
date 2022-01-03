@@ -315,14 +315,73 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsMineralHKF)
 
 //----------------------------------------------------------------------
 
+REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsNasa::Polynomial);
+REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsNasa::Polynomial);
+
+REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa::Polynomial)
+{
+    node["Tmin"]  = obj.Tmin;
+    node["Tmax"]  = obj.Tmax;
+    node["Label"] = obj.label;
+    node["State"] = obj.state;
+    node["a1"]    = obj.a1;
+    node["a2"]    = obj.a2;
+    node["a3"]    = obj.a3;
+    node["a4"]    = obj.a4;
+    node["a5"]    = obj.a5;
+    node["a6"]    = obj.a6;
+    node["a7"]    = obj.a7;
+    node["b1"]    = obj.b1;
+    node["b2"]    = obj.b2;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsNasa::Polynomial)
+{
+    node.at("Tmin").to(obj.Tmin);
+    node.at("Tmax").to(obj.Tmax);
+    node.at("Label").to(obj.label);
+    node.at("State").to(obj.state);
+    node.at("a1").to(obj.a1);
+    node.at("a2").to(obj.a2);
+    node.at("a3").to(obj.a3);
+    node.at("a4").to(obj.a4);
+    node.at("a5").to(obj.a5);
+    node.at("a6").to(obj.a6);
+    node.at("a7").to(obj.a7);
+    node.at("b1").to(obj.b1);
+    node.at("b2").to(obj.b2);
+}
+
+//----------------------------------------------------------------------
+
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa)
 {
-    errorif(true, "REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa) not implemented!");
+    if(obj.polynomials.size())
+    {
+        node["dHf"] = obj.dHf;
+        node["dH0"] = obj.dH0;
+        node["Polynomials"] = obj.polynomials;
+    }
+    else
+    {
+        node["H0"] = obj.H0;
+        node["T0"] = obj.T0;
+    }
 }
 
 REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsNasa)
 {
-    errorif(true, "REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsNasa) not implemented!");
+    if(node["Polynomials"])
+    {
+        node.at("dHf").to(obj.dHf);
+        node.at("dH0").to(obj.dH0);
+        node.at("Polynomials").to(obj.polynomials);
+    }
+    else
+    {
+        node.at("H0").to(obj.H0);
+        node.at("T0").to(obj.T0);
+    }
 }
 
 //----------------------------------------------------------------------

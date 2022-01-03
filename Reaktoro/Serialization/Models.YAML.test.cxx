@@ -40,6 +40,7 @@ using namespace Catch;
 #include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
@@ -48,16 +49,15 @@ using namespace Reaktoro;
 //======================================================================
 // Parameters in YAML format for standard thermodynamic models (stm)
 //======================================================================
-String params_stm_const = R"(
+String params_stm_const = R"xyz(
 G0: 1.0
 H0: 2.0
 V0: 3.0
-VT0: 4.0
-VP0: 5.0
-Cp0: 6.0
-)";
+Cp0: 4.0
+Cv0: 5.0
+)xyz";
 
-String params_stm_mk = R"(
+String params_stm_mk = R"xyz(
 Gf: -3679250.6
 Hf: -3876463.4
 Sr: 209.32552
@@ -66,9 +66,9 @@ a: 251.41656
 b: 0.0476976
 c: -4769760.0
 Tmax: 1700.0
-)";
+)xyz";
 
-String params_stm_hkfmk1 = R"(
+String params_stm_hkfmk1 = R"xyz(
 Gf: -3708312.7
 Hf: -3931621.1
 Sr: 207.14984
@@ -82,9 +82,9 @@ Htr: [.nan]
 Vtr: [.nan]
 dPdTtr: [.nan]
 Tmax: 1200.0
-)";
+)xyz";
 
-String params_stm_hkfmk2 = R"(
+String params_stm_hkfmk2 = R"xyz(
 Gf: -39522.064
 Hf: -31589.2
 Sr: 143.5112
@@ -98,9 +98,9 @@ Htr: [3974.8, 2510.4]
 Vtr: [.nan, .nan]
 dPdTtr: [.nan, .nan]
 Tmax: 1000.0
-)";
+)xyz";
 
-String params_stm_hkfmk3 = R"(
+String params_stm_hkfmk3 = R"xyz(
 Gf: .nan
 Hf: .nan
 Sr: 286.604
@@ -114,16 +114,16 @@ Htr: [.nan, .nan, .nan]
 Vtr: [.nan, .nan, .nan]
 dPdTtr: [.nan, .nan, .nan]
 Tmax: 1100.0
-)";
+)xyz";
 
-String params_stm_whkf = R"(
+String params_stm_whkf = R"xyz(
 Ttr: 273.16
 Str: 63.312288
 Gtr: -235517.36
 Htr: -287721.128
-)";
+)xyz";
 
-String params_stm_hkf = R"(
+String params_stm_hkf = R"xyz(
 Gf: 39371.44
 Hf: -151084.24
 Sr: 197.4848
@@ -136,9 +136,9 @@ c2: 116047.42
 wref: -156816.32
 charge: 0.0
 Tmax: 0.0
-)";
+)xyz";
 
-String params_stm_hp = R"(
+String params_stm_hp = R"xyz(
 Gf: -4937500.0
 Hf: -5260650.0
 Sr: 342.0
@@ -153,9 +153,9 @@ kappa0p: 2.98
 kappa0pp: -1.6e-11
 numatoms: 20.0
 Tmax: 0.0
-)";
+)xyz";
 
-String params_stm_hpg = R"(
+String params_stm_hpg = R"xyz(
 Gf: -50710.0
 Hf: -74810.0
 Sr: 186.26
@@ -165,9 +165,9 @@ b: 0.002063
 c: 3427700.0
 d: -2650.4
 Tmax: 0.0
-)";
+)xyz";
 
-String params_stm_hpl = R"(
+String params_stm_hpl = R"xyz(
 Gf: -2192340.0
 Hf: -2307040.0
 Sr: 127.6
@@ -182,7 +182,98 @@ kappa0p: 4.07
 kappa0pp: -4.1e-11
 numatoms: 7.0
 Tmax: 0.0
-)";
+)xyz";
+
+// StandaThermoModelParamsNasa with polynomials
+String params_stm_nasa_1 = R"xyz(
+dHf: -365600.0
+dH0: 23662.0
+Polynomials:
+- State: Solid
+  Label: NH4NO3(IV)
+  Tmin: 256.2
+  Tmax: 298.15
+  a1: -10465619.04
+  a2: 156037.5249
+  a3: -914.31536
+  a4: 2.670225944
+  a5: -0.00354993291
+  a6: 1.692615192e-06
+  a7: 0.0
+  b1: -786173.516
+  b2: 5038.72621
+- State: Solid
+  Label: NH4NO3(IV)
+  Tmin: 298.15
+  Tmax: 305.38
+  a1: 0.0
+  a2: 0.0
+  a3: 5.865649329
+  a4: 0.03643028874
+  a5: 0.0
+  a6: 0.0
+  a7: 0.0
+  b1: -47339.3723
+  b2: -26.14362444
+- State: Solid
+  Label: NH4NO3(III)
+  Tmin: 305.38
+  Tmax: 357.25
+  a1: 0.0
+  a2: 0.0
+  a3: 7.233138213
+  a4: 0.02333270391
+  a5: 0.0
+  a6: 0.0
+  a7: 0.0
+  b1: -46941.7938
+  b2: -29.29851693
+- State: Solid
+  Label: NH4NO3(II)
+  Tmin: 357.25
+  Tmax: 399.0
+  a1: 0.0
+  a2: 0.0
+  a3: 60.23205216
+  a4: -0.1767993544
+  a5: 0.0
+  a6: 4.528829721e-07
+  a7: 0.0
+  b1: -54786.3351
+  b2: -275.7806209
+- State: Solid
+  Label: NH4NO3(I)
+  Tmin: 399.0
+  Tmax: 442.85
+  a1: 0.0
+  a2: 0.0
+  a3: 12.95325882
+  a4: 0.01563531705
+  a5: 0.0
+  a6: 0.0
+  a7: 0.0
+  b1: -47837.0128
+  b2: -58.48510823
+- State: Liquid
+  Label: NH4NO3(l)
+  Tmin: 442.85
+  Tmax: 900.0
+  a1: 0.0
+  a2: 0.0
+  a3: 19.36373881
+  a4: 0.0
+  a5: 0.0
+  a6: 0.0
+  a7: 0.0
+  b1: -48437.933
+  b2: -89.03005276
+)xyz";
+
+// StandaThermoModelParamsNasa without polynomial
+String params_stm_nasa_2 = R"xyz(
+H0: -47436.0
+T0: 226.4
+)xyz";
 
 String params_stm_interpolation = R"(
 Temperatures: [100, 200, 300]
@@ -194,9 +285,9 @@ H0: [[4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
 //======================================================================
 // Parameters in YAML format for standard volume models (svm)
 //======================================================================
-String params_svm_const = R"(
+String params_svm_const = R"xyz(
 V0: 1.23e-5
-)";
+)xyz";
 
 template<typename VecType>
 auto allNaN(const VecType& v)
@@ -402,7 +493,98 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
         CHECK( params.V0.empty() );
         CHECK( params.VT0.empty() );
         CHECK( params.VP0.empty() );
-        CHECK( params.Cp0.empty() );
+
+    SECTION("Testing YAML serialization of StandardThermoModelParamsNasa with polynomials")
+    {
+        StandardThermoModelParamsNasa params = yaml::parse(params_stm_nasa_1);
+        CHECK( params.dHf == -365600.0 );
+        CHECK( params.dH0 ==  23662.0 );
+
+        CHECK( params.polynomials.size() == 6 );
+
+        CHECK( params.polynomials[0].state == AggregateState::Solid  );
+        CHECK( params.polynomials[0].label == "NH4NO3(IV)"           );
+        CHECK( params.polynomials[0].Tmin  == 256.2                  );
+        CHECK( params.polynomials[0].Tmax  == 298.15                 );
+        CHECK( params.polynomials[0].a1    == -10465619.04           );
+        CHECK( params.polynomials[0].a2    == 156037.5249            );
+        CHECK( params.polynomials[0].a3    == -914.31536             );
+        CHECK( params.polynomials[0].a4    == 2.670225944            );
+        CHECK( params.polynomials[0].a5    == -0.00354993291         );
+        CHECK( params.polynomials[0].a6    == 1.692615192e-06        );
+        CHECK( params.polynomials[0].a7    == 0.0                    );
+        CHECK( params.polynomials[0].b1    == -786173.516            );
+        CHECK( params.polynomials[0].b2    == 5038.72621             );
+
+        CHECK( params.polynomials[1].state == AggregateState::Solid  );
+        CHECK( params.polynomials[1].label == "NH4NO3(IV)"           );
+        CHECK( params.polynomials[1].Tmin  == 298.15                 );
+        CHECK( params.polynomials[1].Tmax  == 305.38                 );
+        CHECK( params.polynomials[1].a1    == 0.0                    );
+        CHECK( params.polynomials[1].a2    == 0.0                    );
+        CHECK( params.polynomials[1].a3    == 5.865649329            );
+        CHECK( params.polynomials[1].a4    == 0.03643028874          );
+        CHECK( params.polynomials[1].a5    == 0.0                    );
+        CHECK( params.polynomials[1].a6    == 0.0                    );
+        CHECK( params.polynomials[1].a7    == 0.0                    );
+        CHECK( params.polynomials[1].b1    == -47339.3723            );
+        CHECK( params.polynomials[1].b2    == -26.14362444           );
+
+        CHECK( params.polynomials[2].state == AggregateState::Solid  );
+        CHECK( params.polynomials[2].label == "NH4NO3(III)"          );
+        CHECK( params.polynomials[2].Tmin  == 305.38                 );
+        CHECK( params.polynomials[2].Tmax  == 357.25                 );
+        CHECK( params.polynomials[2].a1    == 0.0                    );
+        CHECK( params.polynomials[2].a2    == 0.0                    );
+        CHECK( params.polynomials[2].a3    == 7.233138213            );
+        CHECK( params.polynomials[2].a4    == 0.02333270391          );
+        CHECK( params.polynomials[2].a5    == 0.0                    );
+        CHECK( params.polynomials[2].a6    == 0.0                    );
+        CHECK( params.polynomials[2].a7    == 0.0                    );
+        CHECK( params.polynomials[2].b1    == -46941.7938            );
+        CHECK( params.polynomials[2].b2    == -29.29851693           );
+
+        CHECK( params.polynomials[3].state == AggregateState::Solid  );
+        CHECK( params.polynomials[3].label == "NH4NO3(II)"           );
+        CHECK( params.polynomials[3].Tmin  == 357.25                 );
+        CHECK( params.polynomials[3].Tmax  == 399.0                  );
+        CHECK( params.polynomials[3].a1    == 0.0                    );
+        CHECK( params.polynomials[3].a2    == 0.0                    );
+        CHECK( params.polynomials[3].a3    == 60.23205216            );
+        CHECK( params.polynomials[3].a4    == -0.1767993544          );
+        CHECK( params.polynomials[3].a5    == 0.0                    );
+        CHECK( params.polynomials[3].a6    == 4.528829721e-07        );
+        CHECK( params.polynomials[3].a7    == 0.0                    );
+        CHECK( params.polynomials[3].b1    == -54786.3351            );
+        CHECK( params.polynomials[3].b2    == -275.7806209           );
+
+        CHECK( params.polynomials[4].state == AggregateState::Solid  );
+        CHECK( params.polynomials[4].label == "NH4NO3(I)"            );
+        CHECK( params.polynomials[4].Tmin  == 399.0                  );
+        CHECK( params.polynomials[4].Tmax  == 442.85                 );
+        CHECK( params.polynomials[4].a1    == 0.0                    );
+        CHECK( params.polynomials[4].a2    == 0.0                    );
+        CHECK( params.polynomials[4].a3    == 12.95325882            );
+        CHECK( params.polynomials[4].a4    == 0.01563531705          );
+        CHECK( params.polynomials[4].a5    == 0.0                    );
+        CHECK( params.polynomials[4].a6    == 0.0                    );
+        CHECK( params.polynomials[4].a7    == 0.0                    );
+        CHECK( params.polynomials[4].b1    == -47837.0128            );
+        CHECK( params.polynomials[4].b2    == -58.48510823           );
+
+        CHECK( params.polynomials[5].state == AggregateState::Liquid );
+        CHECK( params.polynomials[5].label == "NH4NO3(l)"            );
+        CHECK( params.polynomials[5].Tmin  == 442.85                 );
+        CHECK( params.polynomials[5].Tmax  == 900.0                  );
+        CHECK( params.polynomials[5].a1    == 0.0                    );
+        CHECK( params.polynomials[5].a2    == 0.0                    );
+        CHECK( params.polynomials[5].a3    == 19.36373881            );
+        CHECK( params.polynomials[5].a4    == 0.0                    );
+        CHECK( params.polynomials[5].a5    == 0.0                    );
+        CHECK( params.polynomials[5].a6    == 0.0                    );
+        CHECK( params.polynomials[5].a7    == 0.0                    );
+        CHECK( params.polynomials[5].b1    == -48437.933             );
+        CHECK( params.polynomials[5].b2    == -89.03005276           );
     }
 }
 
