@@ -135,7 +135,7 @@ auto StandardThermoModelNasa(const StandardThermoModelParamsNasa& params) -> Sta
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
-        return detail::computeStandardThermoProps(params, T);
+        props = detail::computeStandardThermoProps(params, T);
     };
 
     return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));

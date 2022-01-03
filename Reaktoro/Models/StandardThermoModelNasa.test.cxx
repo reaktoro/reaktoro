@@ -130,4 +130,14 @@ TEST_CASE("Testing StandardThermoModelNasa module", "[StandardThermoModelNasa]")
 
     CHECK( detail::computeStandardThermoProps(params, 8650.0).G0 ==
            detail::computeStandardThermoProps(params.polynomials[2], 8650.0).G0 );
+
+    //======================================================================
+    // Testing method StandardThermoModelNasa
+    //======================================================================
+
+    auto model = StandardThermoModelNasa(params);
+
+    CHECK( detail::computeStandardThermoProps(params,  650.0).G0 == model( 650.0, 1e5).G0 );
+    CHECK( detail::computeStandardThermoProps(params, 1650.0).G0 == model(1650.0, 1e5).G0 );
+    CHECK( detail::computeStandardThermoProps(params, 8650.0).G0 == model(8650.0, 1e5).G0 );
 }
