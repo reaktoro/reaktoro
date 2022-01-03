@@ -69,9 +69,11 @@ auto aggregateState(const NasaSpecies& species) -> AggregateState
 auto tags(const NasaSpecies& species) -> Strings
 {
     if(species.type == NasaSpeciesType::Product)
-        return { "product" };
+        return {"product"};
     if(species.type == NasaSpeciesType::Reactant)
-        return { "reactant" };
+        return {"reactant"};
+    if(species.type == NasaSpeciesType::ProductReactant)
+        return {"product", "reactant"};
     return {};
 }
 

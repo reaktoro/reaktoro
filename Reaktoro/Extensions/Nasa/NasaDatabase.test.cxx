@@ -24,7 +24,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing NasaDatabase module", "[NasaDatabase]")
 {
-    NasaDatabase db("thermo.inp");
+    NasaDatabase db("cea");
 
     CHECK( db.species().size() == 2085 );
 

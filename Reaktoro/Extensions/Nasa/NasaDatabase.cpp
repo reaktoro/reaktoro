@@ -35,10 +35,11 @@ namespace Reaktoro {
 /// Return the contents of the embedded NASA database with given name (or empty)
 auto getNasaDatabaseContent(String name) -> String
 {
-    error(!oneof(name, "cea", "burcat"),
+    error(!oneof(name, "cea", "cea-improved", "burcat"),
         "Could not load embedded NASA database file with name `", name, "`. ",
         "The currently supported names are: \n"
         "    - cea    \n",
+        "    - cea-improved \n",
         "    - burcat \n",
         "");
     auto fs = cmrc::ReaktoroDatabases::get_filesystem();
@@ -71,18 +72,11 @@ auto NasaDatabase::fromFile(String path) -> NasaDatabase
 auto NasaDatabase::fromStream(std::istream& stream) -> NasaDatabase
 {
     const auto lines = NasaUtils::createTextLines(stream);
-    const auto lines_products = NasaUtils::getTextLinesForProducts(lines);
-    const auto lines_reactants = NasaUtils::getTextLinesForReactants(lines);
-
-    const auto products = NasaUtils::createNasaProductSpeciesVector(lines_products);
-    const auto reactants = NasaUtils::createNasaReactantSpeciesVector(lines_reactants);
+    const auto specieslist = NasaUtils::createNasaSpeciesVector(lines);
 
     NasaDatabase db;
 
-    for(auto const& species : products)
-        db.addSpecies(NasaUtils::convertSpecies(species));
-
-    for(auto const& species : reactants)
+    for(auto const& species : specieslist)
         db.addSpecies(NasaUtils::convertSpecies(species));
 
     return db;

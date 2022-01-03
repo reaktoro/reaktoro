@@ -430,13 +430,14 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "-3.523030610D-12 4.613111760D-17                 1.490218815D+05-8.007281730D+01",
     };
 
-    species = createNasaSpecies(lines11);
+    species = createNasaSpecies(lines11, NasaSpeciesType::Product);
 
     CHECK( species.name == "MgO" );
     CHECK( species.comment == "Gurvich,1996a pt1 p398 pt2 p318." );
     CHECK( species.idcode == "tpis96" );
     CHECK( species.formula == Pairs<String, double>{{"MG", 1.0}, {"O", 1.0}} );
     CHECK( species.aggregatestate == NasaAggregateState::Gas );
+    CHECK( species.type == NasaSpeciesType::Product );
     CHECK( species.molarmass == 40.3044000 );
     CHECK( species.dHf == 32261.307 );
     CHECK( species.dH0 == 8909.107 );
@@ -457,13 +458,14 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 0.000000000D+00 0.000000000D+00                -1.089519906D+03-1.545973664D+01",
     };
 
-    species = createNasaSpecies(lines12);
+    species = createNasaSpecies(lines12, NasaSpeciesType::Product);
 
     CHECK( species.name == "Mg(cr)" );
     CHECK( species.comment == "Hexagonal. Ref-Elm. Alcock,1993." );
     CHECK( species.idcode == "srd 93" );
     CHECK( species.formula == Pairs<String, double>{{"MG", 1.0}} );
     CHECK( species.aggregatestate == NasaAggregateState::Condensed );
+    CHECK( species.type == NasaSpeciesType::Product );
     CHECK( species.molarmass == 24.3050000 );
     CHECK( species.dHf == 0.000 );
     CHECK( species.dH0 == 4979.161 );
@@ -483,13 +485,14 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 1.223955647D-11-3.149201922D-15                 4.221989520D+05-8.986061040D+02",
     };
 
-    species = createNasaSpecies(lines13);
+    species = createNasaSpecies(lines13, NasaSpeciesType::Reactant);
 
     CHECK( species.name == "Jet-A(g)" );
     CHECK( species.comment == "McBride,1996. Faith,1971. Gracia-Salcedo,1988.          React." );
     CHECK( species.idcode == "g 8/01" );
     CHECK( species.formula == Pairs<String, double>{{"C", 12.0}, {"H", 23.0}} );
     CHECK( species.aggregatestate == NasaAggregateState::Gas );
+    CHECK( species.type == NasaSpeciesType::Reactant );
     CHECK( species.molarmass == 167.3110200 );
     CHECK( species.dHf == -249657.000 );
     CHECK( species.dH0 == 0.0 );
@@ -521,13 +524,14 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         " 0.000000000D+00 0.000000000D+00                -1.866195945D+09-4.140143280D+07",
     };
 
-    species = createNasaSpecies(lines14);
+    species = createNasaSpecies(lines14, NasaSpeciesType::ProductReactant);
 
     CHECK( species.name == "NaCN(II)" );
     CHECK( species.comment == "Lambda trans@288.5K. Chase,1998(3/66) pp631-3. Messer,1941." );
     CHECK( species.idcode == "g 8/01" );
     CHECK( species.formula == Pairs<String, double>{{"NA", 1.0}, {"C", 1.0}, {"N", 1.0}} );
     CHECK( species.aggregatestate == NasaAggregateState::Condensed );
+    CHECK( species.type == NasaSpeciesType::ProductReactant );
     CHECK( species.molarmass == 49.0071700 );
     CHECK( species.dHf == -90709.000 );
     CHECK( species.dH0 == 19422.128 );
@@ -546,13 +550,14 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "    192.350      0.0000  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0            0.000",
     };
 
-    species = createNasaSpecies(lines15);
+    species = createNasaSpecies(lines15, NasaSpeciesType::ProductReactant);
 
     CHECK( species.name == "C2H2(L),acetyle" );
     CHECK( species.comment == "Acetylene. McBride,1996 pp84,92." );
     CHECK( species.idcode == "g 6/96" );
     CHECK( species.formula == Pairs<String, double>{{"C", 2.0}, {"H", 2.0}} );
     CHECK( species.aggregatestate == NasaAggregateState::Condensed );
+    CHECK( species.type == NasaSpeciesType::ProductReactant );
     CHECK( species.molarmass == 26.0372800 );
     CHECK( species.dHf == 0.0 );
     CHECK( species.dH0 == 0.0 );
@@ -565,13 +570,14 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "    298.150      0.0000  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0            0.000",
     };
 
-    species = createNasaSpecies(lines16);
+    species = createNasaSpecies(lines16, NasaSpeciesType::ProductReactant);
 
     CHECK( species.name == "N2O4(L)" );
     CHECK( species.comment == "Dinitrogen tetroxide. McBride,1996 pp85,93." );
     CHECK( species.idcode == "g 6/96" );
     CHECK( species.formula == Pairs<String, double>{{"N", 2.0}, {"O", 4.0}} );
     CHECK( species.aggregatestate == NasaAggregateState::Condensed );
+    CHECK( species.type == NasaSpeciesType::ProductReactant );
     CHECK( species.molarmass == 92.0110000 );
     CHECK( species.dHf == 0.0 );
     CHECK( species.dH0 == 0.0 );
@@ -605,41 +611,7 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "-4.233046770D-10 3.266859200D-14                -7.112782350D+02-7.921945570D+01",
     };
 
-    CHECK( getNumberSpeciesBlocks(lines14) == 1 );
-    CHECK( getNumberSpeciesBlocks(lines15) == 1 );
-    CHECK( getNumberSpeciesBlocks(lines16) == 1 );
-    CHECK( getNumberSpeciesBlocks(lines17) == 4 );
-
-    //======================================================================
-    // Testing method NasaUtils::getNumberTextLinesForNextSpeciesBlock
-    //======================================================================
-
-    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(0))  == 3 ); // from CLO3F(L) to CL2(L)
-    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(3))  == 3 ); // from CL2(L) to V2O5(L)
-    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(6))  == 5 ); // from V2O5(L) to ZrC(cr)
-    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(11)) == 8 ); // from ZrC(cr) to end
-
-    //======================================================================
-    // Testing method NasaUtils::createNasaSpeciesVector
-    //======================================================================
-
-    speciesvec = createNasaSpeciesVector(lines17);
-
-    CHECK( speciesvec.size() == 4 );
-    CHECK( speciesvec[0] == createNasaSpecies(StringsRange(lines17).segment(0, 3)) );
-    CHECK( speciesvec[1] == createNasaSpecies(StringsRange(lines17).segment(3, 3)) );
-    CHECK( speciesvec[2] == createNasaSpecies(StringsRange(lines17).segment(6, 5)) );
-    CHECK( speciesvec[3] == createNasaSpecies(StringsRange(lines17).segment(11, 8)) );
-
-    //======================================================================
-    // Testing method NasaUtils::getTextLinesForProducts
-    //======================================================================
-
     const Strings lines18 = {
-        "!                                                                               ",
-        "!                                                                               ",
-        "thermo                                                                          ",
-        "    200.00   1000.00   6000.00  20000.     9/09/04                              ",
         "CLO3F(L)          Perchloryl Fluoride. McBride,1996 pp85,93.                    ",
         " 0 g 6/96 CL  1.00O   3.00F   1.00    0.00    0.00 1  102.4496032     -47436.000",
         "    226.400      0.0000  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0            0.000",
@@ -663,17 +635,40 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "END REACTANTS                                                                   ",
     };
 
-    CHECK( getTextLinesForProducts(lines18).size() == 6 );
-    CHECK( getTextLinesForProducts(lines18)[0] == lines18[4] );
-    CHECK( getTextLinesForProducts(lines18)[5] == lines18[9] );
+    CHECK( getNumberSpeciesBlocks(lines14) == 1 );
+    CHECK( getNumberSpeciesBlocks(lines15) == 1 );
+    CHECK( getNumberSpeciesBlocks(lines16) == 1 );
+    CHECK( getNumberSpeciesBlocks(lines17) == 4 );
+    CHECK( getNumberSpeciesBlocks(lines18) == 4 );
 
     //======================================================================
-    // Testing method NasaUtils::getTextLinesForReactants
+    // Testing method NasaUtils::getNumberTextLinesForNextSpeciesBlock
     //======================================================================
 
-    CHECK( getTextLinesForReactants(lines18).size() == 13 );
-    CHECK( getTextLinesForReactants(lines18)[0]  == lines18[11] );
-    CHECK( getTextLinesForReactants(lines18)[12] == lines18[23] );
+    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(0))  == 3 ); // from CLO3F(L) to CL2(L)
+    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(3))  == 3 ); // from CL2(L) to V2O5(L)
+    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(6))  == 5 ); // from V2O5(L) to ZrC(cr)
+    CHECK( getNumberTextLinesForNextSpeciesBlock(StringsRange(lines17).segment(11)) == 8 ); // from ZrC(cr) to end
+
+    //======================================================================
+    // Testing method NasaUtils::createNasaSpeciesVector
+    //======================================================================
+
+    speciesvec = createNasaSpeciesVector(lines17);
+
+    CHECK( speciesvec.size() == 4 );
+    CHECK( speciesvec[0] == createNasaSpecies(StringsRange(lines17).segment( 0, 3), NasaSpeciesType::ProductReactant) );
+    CHECK( speciesvec[1] == createNasaSpecies(StringsRange(lines17).segment( 3, 3), NasaSpeciesType::ProductReactant) );
+    CHECK( speciesvec[2] == createNasaSpecies(StringsRange(lines17).segment( 6, 5), NasaSpeciesType::ProductReactant) );
+    CHECK( speciesvec[3] == createNasaSpecies(StringsRange(lines17).segment(11, 8), NasaSpeciesType::ProductReactant) );
+
+    speciesvec = createNasaSpeciesVector(lines18);
+
+    CHECK( speciesvec.size() == 4 );
+    CHECK( speciesvec[0] == createNasaSpecies(StringsRange(lines17).segment( 0, 3), NasaSpeciesType::Product) );
+    CHECK( speciesvec[1] == createNasaSpecies(StringsRange(lines17).segment( 3, 3), NasaSpeciesType::Product) );
+    CHECK( speciesvec[2] == createNasaSpecies(StringsRange(lines17).segment( 6, 5), NasaSpeciesType::Reactant) );
+    CHECK( speciesvec[3] == createNasaSpecies(StringsRange(lines17).segment(11, 8), NasaSpeciesType::Reactant) );
 
     //======================================================================
     // Testing method NasaUtils::createTextLines
@@ -712,8 +707,6 @@ TEST_CASE("Testing NasaDatabaseParseUtils module", "[NasaDatabaseParseUtils]")
         "                                                                                \n";
 
     const Strings cleaned_and_right_trimmed_textlines = {
-        "thermo",
-        "    200.00   1000.00   6000.00  20000.     9/09/04",
         "CLO3F(L)          Perchloryl Fluoride. McBride,1996 pp85,93.",
         " 0 g 6/96 CL  1.00O   3.00F   1.00    0.00    0.00 1  102.4496032     -47436.000",
         "    226.400      0.0000  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0            0.000",

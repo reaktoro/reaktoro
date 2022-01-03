@@ -21,6 +21,7 @@
 #include <iostream>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 
@@ -139,6 +140,19 @@ auto getNumberTextLinesForNextSpeciesBlock(const StringsRange& lines) -> Index
 
 auto getNumberSpeciesBlocks(const StringsRange& lines) -> Index
 {
+    // This function finds how many lines there are in `lines` that start with a space,
+    // followed by a single digit, and then another space. See example below, in which
+    // this single digit is 3 for species BH2F:
+    // ~~~
+    // BH2F              Gurvich,1996a pt1 p69 pt2 p46.
+    //  2 tpis96 B   1.00H   2.00F   1.00    0.00    0.00 0   31.8252832    -323956.732
+    //     200.000   1000.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        10137.922
+    // -8.837920440D+04 1.705285929D+03-8.061246130D+00 3.643188680D-02-4.152482550D-05
+    //  2.620135756D-08-6.930886410D-12                -4.787273410D+04 6.862087670D+01
+    //    1000.000   6000.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0        10137.922
+    //  1.435082111D+06-6.625320170D+03 1.409165008D+01-1.422469060D-03 2.828724718D-07
+    // -2.992498948D-11 1.302618926D-15                -7.937192670D+02-6.801356400D+01
+    // ~~~
     auto counter = 0;
     for(const auto& line : lines)
         if(line.size() > 3 && line[0] == ' ' && std::isdigit(line[1]) && line[2] == ' ')
@@ -146,7 +160,7 @@ auto getNumberSpeciesBlocks(const StringsRange& lines) -> Index
     return counter;
 }
 
-auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies
+auto createNasaSpecies(const StringsRange& lines, NasaSpeciesType type) -> NasaSpecies
 {
     assert(lines.size() >= 3);
     assert(lines.size() == getNumberTextLinesForNextSpeciesBlock(lines));
@@ -157,12 +171,13 @@ auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies
     const auto record2 = lines[1];
     const auto record3 = lines[2];
 
-    species.name      = trim(getStringBetweenColumns(record1,  1, 18));
-    species.comment   = trim(getStringBetweenColumns(record1, 19, 80));
-    species.idcode    = trim(getStringBetweenColumns(record2, 4, 9));
-    species.formula   = parseFormula(getStringBetweenColumns(record2, 11, 50));
-    species.aggregatestate      = convertIntegerToSpeciesType(getIntegerBetweenColumns(record2, 52, 52));
-    species.molarmass = getDoubleBetweenColumns(record2, 53, 65);
+    species.name           = trim(getStringBetweenColumns(record1,  1, 18));
+    species.comment        = trim(getStringBetweenColumns(record1, 19, 80));
+    species.idcode         = trim(getStringBetweenColumns(record2, 4, 9));
+    species.formula        = parseFormula(getStringBetweenColumns(record2, 11, 50));
+    species.aggregatestate = convertIntegerToSpeciesType(getIntegerBetweenColumns(record2, 52, 52));
+    species.type           = type;
+    species.molarmass      = getDoubleBetweenColumns(record2, 53, 65);
 
     const auto numintervals = getIntegerBetweenColumns(record2, 1, 2);
 
@@ -196,117 +211,41 @@ auto createNasaSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
     auto sublines = lines;
     while(sublines.size())
     {
+        // Change the type of all previous species with type ProductReactant to either Product or Reactant
+        if(oneof(trim(sublines[0]), "END PRODUCTS", "END REACTANTS"))
+        {
+            const auto newtype = trim(sublines[0]) == "END PRODUCTS" ? NasaSpeciesType::Product : NasaSpeciesType::Reactant;
+            for(auto& obj : vec)
+                if(obj.type == NasaSpeciesType::ProductReactant)
+                    obj.type = newtype;
+            sublines = sublines.segment(1);
+            continue;
+        }
+
+        // Construct a new species using the next lines of text
         const auto numlines = getNumberTextLinesForNextSpeciesBlock(sublines);
         const auto nextlines = sublines.segment(0, numlines);
-        vec.push_back(createNasaSpecies(nextlines));
+        vec.push_back(createNasaSpecies(nextlines, NasaSpeciesType::ProductReactant));
         sublines = sublines.segment(numlines);
     }
 
     return vec;
 }
 
-auto createNasaSpeciesVectorWithType(const StringsRange& lines, NasaSpeciesType type) -> Vec<NasaSpecies>
+auto combineSolidAndLiquidNasaSpecies(const Vec<NasaSpecies>& specieslist) -> Vec<NasaSpecies>
 {
-    Vec<NasaSpecies> vec = createNasaSpeciesVector(lines);
-    for(auto& species : vec)
-        species.type = type;
+    Vec<NasaSpecies> vec;
+    vec.reserve(specieslist.size());
+
+    // while(sublines.size())
+    // {
+    //     const auto numlines = getNumberTextLinesForNextSpeciesBlock(sublines);
+    //     const auto nextlines = sublines.segment(0, numlines);
+    //     vec.push_back(createNasaSpecies(nextlines));
+    //     sublines = sublines.segment(numlines);
+    // }
+
     return vec;
-}
-
-auto createNasaProductSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
-{
-    return createNasaSpeciesVectorWithType(lines, NasaSpeciesType::Product);
-}
-
-auto createNasaReactantSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
-{
-    return createNasaSpeciesVectorWithType(lines, NasaSpeciesType::Reactant);
-}
-
-auto getLineIndexBeginProducts(const StringsRange& lines) -> Index
-{
-    // This method goes from top to bottom and find the line containing the
-    // word `thermo`. It then returns the index of this line incremented by 2,
-    // since the first species block is after two lines. See below an example
-    // in which species e- starts two lines after the `thermo` line:
-    // ~~~
-    // thermo
-    //     200.00   1000.00   6000.00  20000.     9/09/04
-    // e-                Ref-Species. Chase,1998 3/82.
-    //  3 g12/98 E   1.00    0.00    0.00    0.00    0.00 0.000548579903          0.000
-    //     298.150   1000.0007 -2.0 -1.0  0.0  1.0  2.0  3.0  4.0  0.0         6197.428
-    //  0.000000000D+00 0.000000000D+00 2.500000000D+00 0.000000000D+00 0.000000000D+00
-    //  0.000000000D+00 0.000000000D+00                -7.453750000D+02-1.172081224D+01
-    // ~~~
-
-    auto iline = 0;
-    for(const auto& line : lines)
-        if(line.substr(0, 6) == "thermo")
-            break;
-        else ++iline;
-    iline += 2;
-    return iline;
-}
-
-auto getLineIndexEndWord(const StringsRange& lines, const String& word) -> Index
-{
-    // This method goes from bottom to top (because there are fewer lines to
-    // check for "END PRODUCTS", "END REACTANTS") to identify the line
-    // containing the given word.
-
-    const auto n = lines.size();
-    auto i = 1;
-    for(; i <= lines.size(); ++i)
-        if(lines[n - i].substr(0, word.size()) == word)
-            break;
-    const auto iline = n - i;
-    return iline;
-}
-
-auto getLineIndexEndProducts(const StringsRange& lines) -> Index
-{
-    return getLineIndexEndWord(lines, "END PRODUCTS");
-}
-
-auto getLineIndexBeginReactants(const StringsRange& lines) -> Index
-{
-    return getLineIndexEndProducts(lines) + 1; // next line after END PRODUCTS
-}
-
-auto getLineIndexEndReactants(const StringsRange& lines) -> Index
-{
-    return getLineIndexEndWord(lines, "END REACTANTS");
-}
-
-auto getTextLinesForProducts(const StringsRange& lines) -> StringsRange
-{
-    const auto ibegin = getLineIndexBeginProducts(lines);
-    const auto iend = getLineIndexEndProducts(lines);
-
-    error(ibegin >= lines.size(), "There is no `thermo` line in the database. "
-        "Ensure a thermodynamic database file with NASA format has been provided.");
-
-    error(iend >= lines.size(), "There is no `END PRODUCTS` line in the database. "
-        "Ensure a thermodynamic database file with NASA format has been provided.");
-
-    error(iend <= ibegin, "The `thermo` line is after the `END PRODUCTS` line. "
-        "Ensure a thermodynamic database file with NASA format has been provided.");
-
-    return lines.range(ibegin, iend);
-}
-
-auto getTextLinesForReactants(const StringsRange& lines) -> StringsRange
-{
-    const auto ibegin = getLineIndexBeginReactants(lines);
-    const auto iend = getLineIndexEndReactants(lines);
-
-    error(ibegin >= lines.size(), "There is no reactants in the database. "
-        "Ensure a thermodynamic database file with NASA format has been provided.");
-
-    error(iend >= lines.size(), "There is no `END REACTANTS` line in the database. "
-        "Ensure a thermodynamic database file with NASA format has been provided.");
-
-    return lines.range(ibegin, iend);
 }
 
 auto createTextLines(std::istream& file) -> Strings
@@ -318,6 +257,11 @@ auto createTextLines(std::istream& file) -> Strings
         line = trimright(line);
         if(line.empty() || isCommentLine(line))
             continue;
+        if(line == "thermo")
+        {
+            std::getline(file, line); // skip the next line after thermo
+            continue;
+        }
         lines.push_back(line);
     }
     return lines;

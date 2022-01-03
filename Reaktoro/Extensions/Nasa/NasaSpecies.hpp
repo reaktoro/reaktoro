@@ -29,7 +29,7 @@ class Species;
 enum class NasaAggregateState { Gas, Condensed };
 
 /// The possible types of chemical species in a NASA thermodynamic database.
-enum class NasaSpeciesType { Product, Reactant };
+enum class NasaSpeciesType { Product, Reactant, ProductReactant };
 
 /// Used to represent a species in a NASA thermodynamic database.
 struct NasaSpecies

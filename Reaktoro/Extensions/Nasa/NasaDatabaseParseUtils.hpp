@@ -137,47 +137,22 @@ auto getNumberSpeciesBlocks(const StringsRange& lines) -> Index;
 /// then this method returns 8, i.e., the number of lines between `ALBr2` and `CH4(L)`.
 auto getNumberTextLinesForNextSpeciesBlock(const StringsRange& lines) -> Index;
 
-/// Create a chemical species with the given string lines.
-auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies;
+/// Create a chemical species with the given string lines and type.
+auto createNasaSpecies(const StringsRange& lines, NasaSpeciesType type) -> NasaSpecies;
 
-/// Create all chemical species with the given string lines comprising one or more species blocks.
-/// This method assumes that `lines` only contain actual species data.
-/// There are no comment lines (i.e., lines starting with `!` or `#`) and
-/// lines starting with words `thermo`, `END PRODUCTS`, `END REACTANTS`.
+/// Create all chemical species with the given string lines comprising one or
+/// more species blocks. This method assumes that `lines` only contain actual
+/// species data. There are no comment lines (i.e., lines starting with `!` or
+/// `#`) and lines starting with words `thermo`. The lines containing sentences
+/// `END PRODUCTS` and `END REACTANTS` can exist, however, to indicate the type
+/// of the preceding species.
 auto createNasaSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
 
-/// Similar to createNasaSpecies, but it also sets NasaSpeciesType::Product as the type of the created species.
-auto createNasaProductSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
-
-/// Similar to createNasaSpecies, but it also sets NasaSpeciesType::Reactant as the type of the created species.
-auto createNasaReactantSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
-
-/// Return a range of text lines comprising the text blocks for product species.
-/// This method returns all lines shown below:
-/// ~~~
-/// thermo
-///     200.00   1000.00   6000.00  20000.     9/09/04
-/// ...
-/// ... the lines that go here are returned!
-/// ...
-/// END PRODUCTS
-/// ~~~
-auto getTextLinesForProducts(const StringsRange& lines) -> StringsRange;
-
-/// Return a range of text lines comprising the text blocks for reactant species.
-/// This method returns all lines shown below:
-/// ~~~
-/// END PRODUCTS
-/// ...
-/// ... the lines that go here are returned!
-/// ...
-/// END REACTANTS
-/// ~~~
-auto getTextLinesForReactants(const StringsRange& lines) -> StringsRange;
-
 /// Return a vector with string lines comprising the contents of a database file.
-/// In the process, all empty lines and comment lines (i.e., those starting
-/// with `!` or `#`) are removed.
+/// In the process, the following lines are ignored:
+///   * the lines without non-space characters (i.e., empty lines)
+///   * the lines whose first non-space character is `!` or `#`
+///   * the line with `thermo` string and its subsequent line.
 auto createTextLines(std::istream& file) -> Strings;
 
 } // namemespace NasaUtils
