@@ -24,36 +24,36 @@
 namespace Reaktoro {
 namespace detail {
 
-auto indexTemperatureInterval(const Vec<StandardThermoModelParamsNasa::TemperatureInterval>& intervals, const real& T) -> Index
+auto indexTemperatureInterval(const Vec<StandardThermoModelParamsNasa::Polynomial>& polynomials, const real& T) -> Index
 {
-    for(auto i = 0; i < intervals.size(); ++i)
+    for(auto i = 0; i < polynomials.size(); ++i)
     {
-        const auto Tmin = intervals[i].Tmin;
-        const auto Tmax = intervals[i].Tmax;
+        const auto Tmin = polynomials[i].Tmin;
+        const auto Tmax = polynomials[i].Tmax;
         if(Tmin <= T && T <= Tmax)
             return i;
     }
-    return intervals.size();
+    return polynomials.size();
 }
 
-auto computeStandardThermoProps(const StandardThermoModelParamsNasa::TemperatureInterval& interval, const real& T) -> StandardThermoProps
+auto computeStandardThermoProps(const StandardThermoModelParamsNasa::Polynomial& polynomial, const real& T) -> StandardThermoProps
 {
     StandardThermoProps props;
 
-    const auto& Tmin = interval.Tmin;
-    const auto& Tmax = interval.Tmax;
+    const auto& Tmin = polynomial.Tmin;
+    const auto& Tmax = polynomial.Tmax;
 
     assert(Tmin <= T && T <= Tmax);
 
-    const auto& a1 = interval.a1.value();
-    const auto& a2 = interval.a2.value();
-    const auto& a3 = interval.a3.value();
-    const auto& a4 = interval.a4.value();
-    const auto& a5 = interval.a5.value();
-    const auto& a6 = interval.a6.value();
-    const auto& a7 = interval.a7.value();
-    const auto& b1 = interval.b1.value();
-    const auto& b2 = interval.b2.value();
+    const auto& a1 = polynomial.a1.value();
+    const auto& a2 = polynomial.a2.value();
+    const auto& a3 = polynomial.a3.value();
+    const auto& a4 = polynomial.a4.value();
+    const auto& a5 = polynomial.a5.value();
+    const auto& a6 = polynomial.a6.value();
+    const auto& a7 = polynomial.a7.value();
+    const auto& b1 = polynomial.b1.value();
+    const auto& b2 = polynomial.b2.value();
 
     const auto T2 = T*T;
     const auto T3 = T*T2;
@@ -78,7 +78,7 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa::Temperature
 auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, const real& T) -> StandardThermoProps
 {
     // Check if params corresponds to a species without temperature intervals, and just enthalpy at a single temperature point.
-    if(params.intervals.empty())
+    if(params.polynomials.empty())
     {
         StandardThermoProps props;
         props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
@@ -87,11 +87,11 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, con
     };
 
     // Find the index of the temperature interval in which T is contained
-    const auto iT = indexTemperatureInterval(params.intervals, T);
+    const auto iT = indexTemperatureInterval(params.polynomials, T);
 
     // Compute the standard thermodynamic properties only if within valid temperature range
-    if(iT < params.intervals.size())
-        return computeStandardThermoProps(params.intervals[iT], T);
+    if(iT < params.polynomials.size())
+        return computeStandardThermoProps(params.polynomials[iT], T);
 
     // Otherwise, return standard thermo props whose G0 is high to penalize the species from appearing at equilibrium
     StandardThermoProps props;
@@ -105,17 +105,17 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, con
 auto extractParams(const StandardThermoModelParamsNasa& params) -> Vec<Param>
 {
     Vec<Param> collected;
-    for(const auto& interval : params.intervals)
+    for(const auto& polynomial : params.polynomials)
     {
-        collected.push_back(interval.a1);
-        collected.push_back(interval.a2);
-        collected.push_back(interval.a3);
-        collected.push_back(interval.a4);
-        collected.push_back(interval.a5);
-        collected.push_back(interval.a6);
-        collected.push_back(interval.a7);
-        collected.push_back(interval.b1);
-        collected.push_back(interval.b2);
+        collected.push_back(polynomial.a1);
+        collected.push_back(polynomial.a2);
+        collected.push_back(polynomial.a3);
+        collected.push_back(polynomial.a4);
+        collected.push_back(polynomial.a5);
+        collected.push_back(polynomial.a6);
+        collected.push_back(polynomial.a7);
+        collected.push_back(polynomial.b1);
+        collected.push_back(polynomial.b2);
     }
     return collected;
 }

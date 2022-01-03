@@ -27,14 +27,13 @@ namespace Reaktoro {
 struct StandardThermoModelParamsNasa
 {
     /// Used to store Nasa polynomial coefficients valid for a certain temperature interval
-    struct TemperatureInterval
+    struct Polynomial
     {
         double Tmin; ///< The minimum temperature (in K) for which the NASA polynomial coefficients below are valid.
         double Tmax; ///< The maximum temperature (in K) for which the NASA polynomial coefficients below are valid.
 
         String label; ///< The label describing the species name and its physical form or crystal configuration such as Mg(L)L, Li3ALF6(IV), etc. (optional).
-
-        AggregateState aggregatestate; ///< The aggregate state of the species within this temperature interval.
+        AggregateState state; ///< The aggregate state of the species within this temperature interval.
 
         Param a1; /// The least-square coefficient \eq{a_1} in the regression model for \eq{C_{p}^{\circ}}.
         Param a2; /// The least-square coefficient \eq{a_2} in the regression model for \eq{C_{p}^{\circ}}.
@@ -59,8 +58,8 @@ struct StandardThermoModelParamsNasa
     /// The temperature (in K) corresponding to the assigned enthalpy when there are no temperature intervals.
     double T0;
 
-    /// The Nasa polynomial coefficients for one or more temperature intervals.
-    Vec<TemperatureInterval> intervals;
+    /// The Nasa polynomials for one or more temperature intervals.
+    Vec<Polynomial> polynomials;
 };
 
 /// Return a function that calculates thermodynamic properties of a species using the Maier-Kelley model.
@@ -74,14 +73,14 @@ namespace detail {
 
 /// Return the index of the temperature interval that contains a given temperature.
 /// If the given temperature is out-of-bounds, then the number of intervals is returned.
-/// @param intervals The temperature intervals for the NASA polynomial coefficients
+/// @param polynomials The NASA polynomials for one or more temperature intervals
 /// @param T The temperature (in K)
-auto indexTemperatureInterval(const Vec<StandardThermoModelParamsNasa::TemperatureInterval>& intervals, const real& T) -> Index;
+auto indexTemperatureInterval(const Vec<StandardThermoModelParamsNasa::Polynomial>& polynomials, const real& T) -> Index;
 
 /// Compute the standard thermodynamic properties of a species with given NASA thermodynamic parameters.
-/// @param interval The temperature interval for the NASA polynomial coefficients
+/// @param polynomial The NASA polynomial covering a certain temperature interval
 /// @param T The temperature (in K)
-auto computeStandardThermoProps(const StandardThermoModelParamsNasa::TemperatureInterval& interval, const real& T) -> StandardThermoProps;
+auto computeStandardThermoProps(const StandardThermoModelParamsNasa::Polynomial& polynomial, const real& T) -> StandardThermoProps;
 
 /// Compute the standard thermodynamic properties of a species with given NASA thermodynamic parameters.
 /// @param params The parameters in the NASA polynomial model for a species
