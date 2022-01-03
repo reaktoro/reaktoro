@@ -145,6 +145,8 @@ const Vec<Element> default_elements =
     Element({ "Lv" , 0.000000000 , "Livermorium"   }),
     Element({ "Ts" , 0.000000000 , "Tennessine"    }),
     Element({ "Og" , 0.000000000 , "Oganesson"     }),
+    Element({ "D"  , 0.002014102 , "Deuterium"     }),
+    Element({ "T"  , 0.003016049 , "Tritium"       }),
 };
 
 } // namespace detail
