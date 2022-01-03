@@ -23,15 +23,15 @@
 #include <Reaktoro/Extensions/Nasa/NasaThermoModels.hpp>
 using namespace Reaktoro;
 
-/// Manufacture coefficients a1, a2, ..., a7, b1, b2 in NasaThermoParams object.
+/// Manufacture coefficients a1, a2, ..., a7, b1, b2 in NasaThermoData object.
 /// @param Tr The reference temperature at which Cp0(Tr) = Cp0x, H0(Tr) = H0x, and S0(Tr) = S0x
 /// @param Tmin The minimum temperature in the interval
 /// @param Tmax The maximum temperature in the interval
 /// @param Cp0x The expected value of Cp0 at Tr
 /// @param H0x The expected value of H0 at Tr
 /// @param S0x The expected value of S0 at Tr
-/// @return NasaThermoParams
-auto manufactureNasaThermoParams(real Tr, real Tmin, real Tmax, real Cp0x, real H0x, real S0x) -> NasaThermoParams
+/// @return NasaThermoData
+auto manufactureNasaThermoData(real Tr, real Tmin, real Tmax, real Cp0x, real H0x, real S0x) -> NasaThermoData
 {
     const auto Tr2 = Tr*Tr;
     const auto Tr3 = Tr*Tr2;
@@ -48,7 +48,7 @@ auto manufactureNasaThermoParams(real Tr, real Tmin, real Tmax, real Cp0x, real 
     const auto b1 = -Tr*(-a1/Tr2 + a2/Tr*lnTr + a3 + a4*Tr/2 + a5*Tr2/3 + a6*Tr3/4 + a7*Tr4/5) + H0x/R;
     const auto b2 = -(-a1/Tr2/2 - a2/Tr + a3*lnTr + a4*Tr + a5*Tr2/2 + a6*Tr3/3 + a7*Tr4/4) + S0x/R;
 
-    NasaThermoParams params;
+    NasaThermoData params;
     params.Tmin = Tmin;
     params.Tmax = Tmax;
     params.a1 = a1;
@@ -77,21 +77,21 @@ TEST_CASE("Testing NasaThermoModels module", "[NasaThermoModels]")
     const auto Tr1 = 2000.0; // the reference temperature at temperature interval 1
     const auto Tr2 = 8000.0; // the reference temperature at temperature interval 2
 
-    species.thermodata[0] = manufactureNasaThermoParams(Tr0,  200.0, 1000.0, Cp0x, H0x, S0x);
-    species.thermodata[1] = manufactureNasaThermoParams(Tr1, 1000.0, 6000.0, Cp0x, H0x, S0x);
-    species.thermodata[2] = manufactureNasaThermoParams(Tr2, 6000.0, 9000.0, Cp0x, H0x, S0x);
+    species.thermodata[0] = manufactureNasaThermoData(Tr0,  200.0, 1000.0, Cp0x, H0x, S0x);
+    species.thermodata[1] = manufactureNasaThermoData(Tr1, 1000.0, 6000.0, Cp0x, H0x, S0x);
+    species.thermodata[2] = manufactureNasaThermoData(Tr2, 6000.0, 9000.0, Cp0x, H0x, S0x);
 
     //======================================================================
-    // Testing method NasaUtils::getNasaThermoParamsForGivenTemperature
+    // Testing method NasaUtils::getNasaThermoDataForGivenTemperature
     //======================================================================
 
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata,  200.0).Tmin == 200.0 );
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata,  500.0).Tmin == 200.0 );
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata, 1000.0).Tmin == 1000.0 );
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata, 2000.0).Tmin == 1000.0 );
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata, 6000.0).Tmin == 6000.0 );
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata, 8000.0).Tmin == 6000.0 );
-    CHECK( NasaUtils::getNasaThermoParamsForGivenTemperature(species.thermodata, 9000.0).Tmin == 6000.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata,  200.0).Tmin == 200.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata,  500.0).Tmin == 200.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata, 1000.0).Tmin == 1000.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata, 2000.0).Tmin == 1000.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata, 6000.0).Tmin == 6000.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata, 8000.0).Tmin == 6000.0 );
+    CHECK( NasaUtils::getNasaThermoDataForGivenTemperature(species.thermodata, 9000.0).Tmin == 6000.0 );
 
     //======================================================================
     // Testing method NasaUtils::computeStandardThermoProps(params, T)

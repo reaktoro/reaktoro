@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "NasaThermoParams.hpp"
+#include "NasaThermoData.hpp"
 
 namespace Reaktoro {
 
-auto operator!=(const NasaThermoParams& l, const NasaThermoParams& r) -> bool
+auto operator!=(const NasaThermoData& l, const NasaThermoData& r) -> bool
 {
     return
         l.Tmin != r.Tmin &&
@@ -43,7 +43,7 @@ auto operator!=(const NasaThermoParams& l, const NasaThermoParams& r) -> bool
         l.b2 != r.b2;
 }
 
-auto operator==(const NasaThermoParams& l, const NasaThermoParams& r) -> bool
+auto operator==(const NasaThermoData& l, const NasaThermoData& r) -> bool
 {
     return !(l != r);
 }
