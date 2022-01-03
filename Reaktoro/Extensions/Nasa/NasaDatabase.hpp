@@ -28,31 +28,25 @@ namespace Reaktoro {
 class NasaDatabase : public Database
 {
 public:
-    /// Construct a default NasaDatabase instance.
-    NasaDatabase();
+    // Inherit all Database constructors.
+    using Database::Database;
+
+    /// Construct a NasaDatabase object using an object of Database.
+    NasaDatabase(Database database);
 
     /// Construct a NasaDatabase object using an embedded database file.
     /// The currently supported embedded NASA database files are named:
-    /// - `thermo.inp`
+    /// - `nasa-cea`
     /// @param name The name of the embedded NASA database file
     /// @warning An exception is thrown if `name` is not one of the above supported names.
     NasaDatabase(String name);
 
     /// Return a NasaDatabase object initialized using an embedded NASA database.
     /// The currently supported embedded NASA database files are named:
-    /// - `thermo.inp`
+    /// - `nasa-cea`
     /// @param name The name of the embedded NASA database file
     /// @warning An exception is thrown if `name` is not one of the above supported names.
     static auto withName(String name) -> NasaDatabase;
-
-    /// Construct a NasaDatabase object with given path to a database file.
-    /// @param path The path, including file name, to the database file.
-    /// @warning An exception is thrown if `path` does not point to a valid database file.
-    static auto fromFile(String path) -> NasaDatabase;
-
-    /// Construct a NasaDatabase object with given input stream.
-    /// @param stream The input stream containing the database file contents.
-    static auto fromStream(std::istream& stream) -> NasaDatabase;
 };
 
 } // namespace Reaktoro

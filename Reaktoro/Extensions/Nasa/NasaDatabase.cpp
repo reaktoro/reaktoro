@@ -17,38 +17,15 @@
 
 #include "NasaDatabase.hpp"
 
-// C++ includes
-#include <fstream>
-#include <sstream>
-
 // CMakeRC includes
 #include <cmrc/cmrc.hpp>
 
 CMRC_DECLARE(ReaktoroDatabases);
 
-// Reaktoro includes
-#include <Reaktoro/Extensions/Nasa/NasaDatabaseParseUtils.hpp>
-#include <Reaktoro/Extensions/Nasa/NasaSpeciesUtils.hpp>
-
 namespace Reaktoro {
 
-/// Return the contents of the embedded NASA database with given name (or empty)
-auto getNasaDatabaseContent(String name) -> String
-{
-    error(!oneof(name, "cea", "cea-improved", "burcat"),
-        "Could not load embedded NASA database file with name `", name, "`. ",
-        "The currently supported names are: \n"
-        "    - cea    \n",
-        "    - cea-improved \n",
-        "    - burcat \n",
-        "");
-    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
-    auto contents = fs.open("databases/nasa/" + name + ".dat");
-    return String(contents.begin(), contents.end());
-}
-
-NasaDatabase::NasaDatabase()
-: Database()
+NasaDatabase::NasaDatabase(Database database)
+: Database(std::move(database))
 {}
 
 NasaDatabase::NasaDatabase(String name)
@@ -57,29 +34,15 @@ NasaDatabase::NasaDatabase(String name)
 
 auto NasaDatabase::withName(String name) -> NasaDatabase
 {
-    const String content = getNasaDatabaseContent(name);
-    std::istringstream stream(content);
-    return fromStream(stream);
-}
-
-auto NasaDatabase::fromFile(String path) -> NasaDatabase
-{
-    std::ifstream stream(path);
-    error(!stream.is_open(), "Could not open NASA database file with given path: ", path);
-    return fromStream(stream);
-}
-
-auto NasaDatabase::fromStream(std::istream& stream) -> NasaDatabase
-{
-    const auto lines = NasaUtils::createTextLines(stream);
-    const auto specieslist = NasaUtils::createNasaSpeciesVector(lines);
-
-    NasaDatabase db;
-
-    for(auto const& species : specieslist)
-        db.addSpecies(NasaUtils::convertSpecies(species));
-
-    return db;
+    errorif(!oneof(name, "nasa-cea"),
+        "Could not load embedded NASA database file with name `", name, "`. ",
+        "The currently supported names are: \n"
+        "    - nasa-cea \n",
+        "");
+    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
+    auto file = fs.open("databases/reaktoro/" + name + ".yaml");
+    const String contents(file.begin(), file.end());
+    return fromContents(contents);
 }
 
 } // namespace Reaktoro
