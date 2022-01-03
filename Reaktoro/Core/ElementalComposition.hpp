@@ -87,4 +87,10 @@ public:
     inline auto end() { return m_elements.end(); }
 };
 
+/// Return true if two ElementalComposition objects are different.
+auto operator!=(const ElementalComposition& l, const ElementalComposition& r) -> bool;
+
+/// Return true if two ElementalComposition objects are equal.
+auto operator==(const ElementalComposition& l, const ElementalComposition& r) -> bool;
+
 } // namespace Reaktoro

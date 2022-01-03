@@ -111,4 +111,14 @@ ElementalComposition::operator String() const
     return repr();
 }
 
+auto operator!=(const ElementalComposition& l, const ElementalComposition& r) -> bool
+{
+    return Map<Element, double>(l) != Map<Element, double>(r);
+}
+
+auto operator==(const ElementalComposition& l, const ElementalComposition& r) -> bool
+{
+    return !(l != r);
+}
+
 } // namespace Reaktoro
