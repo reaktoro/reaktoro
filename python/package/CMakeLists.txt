@@ -25,8 +25,8 @@ add_custom_target(reaktoro-setuptools ALL
 
 # Ensure the path where the python package is installed is not empty
 if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)
-    set(REAKTORO_PYTHON_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+    file(TO_NATIVE_PATH ${CMAKE_INSTALL_PREFIX} REAKTORO_PYTHON_INSTALL_PREFIX)
 endif()
 
 # Create an install target for the reaktoro python package
-install(CODE "execute_process(COMMAND pip install ${CMAKE_CURRENT_BINARY_DIR} --no-deps --force-reinstall --no-compile --prefix=${REAKTORO_PYTHON_INSTALL_PREFIX})")
+install(CODE "execute_process(COMMAND pip install . --no-deps --force-reinstall --no-compile --prefix=${REAKTORO_PYTHON_INSTALL_PREFIX} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})")
