@@ -170,7 +170,7 @@ def combineSpeciesBlocksWhenPossible(specieslist:list[NasaSpecies]) -> list[list
     physical state (solid/liquid) or different crystal structure. This method
     returns a list of list of species, where the inner list comprises one or
     more species that are in fact the same substance."""
-    result = []
+    species_groups = []
     i = 0
     n = len(specieslist)
     condensed = lambda s1, s2:         \
@@ -185,9 +185,13 @@ def combineSpeciesBlocksWhenPossible(specieslist:list[NasaSpecies]) -> list[list
         while j < n and condensed(specieslist[i], specieslist[j]):
             sublist.append(specieslist[j])
             j += 1
-        result.append(sublist)
+        species_groups.append(sublist)
         i += len(sublist)
-    return result
+
+    # Ensure the original number of species equals number of species within all groups
+    assert len(specieslist) == sum([len(group) for group in species_groups])
+
+    return species_groups
 
 
 def segment(lst:list, begin:int, length:int) -> list:
