@@ -1,0 +1,144 @@
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright © 2014-2021 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+#include "StandardThermoModelNasa.hpp"
+
+// Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
+
+namespace Reaktoro {
+namespace detail {
+
+auto indexTemperatureInterval(const Vec<StandardThermoModelParamsNasa::TemperatureInterval>& intervals, const real& T) -> Index
+{
+    for(auto i = 0; i < intervals.size(); ++i)
+    {
+        const auto Tmin = intervals[i].Tmin;
+        const auto Tmax = intervals[i].Tmax;
+        if(Tmin <= T && T <= Tmax)
+            return i;
+    }
+    return intervals.size();
+}
+
+auto computeStandardThermoProps(const StandardThermoModelParamsNasa::TemperatureInterval& interval, const real& T) -> StandardThermoProps
+{
+    StandardThermoProps props;
+
+    const auto& Tmin = interval.Tmin;
+    const auto& Tmax = interval.Tmax;
+
+    assert(Tmin <= T && T <= Tmax);
+
+    const auto& a1 = interval.a1.value();
+    const auto& a2 = interval.a2.value();
+    const auto& a3 = interval.a3.value();
+    const auto& a4 = interval.a4.value();
+    const auto& a5 = interval.a5.value();
+    const auto& a6 = interval.a6.value();
+    const auto& a7 = interval.a7.value();
+    const auto& b1 = interval.b1.value();
+    const auto& b2 = interval.b2.value();
+
+    const auto T2 = T*T;
+    const auto T3 = T*T2;
+    const auto T4 = T*T3;
+    const auto lnT = log(T);
+
+    const auto R = universalGasConstant;
+
+    const auto Cp0 = ( a1/T2 + a2/T + a3 + a4*T + a5*T2 + a6*T3 + a7*T4) * R;
+    const auto H0  = (-a1/T2 + a2*lnT/T + a3 + a4*T/2.0 + a5*T2/3.0 + a6*T3/4.0 + a7*T4/5.0 + b1/T) * R*T;
+    const auto S0  = (-a1/T2*0.5 - a2/T + a3*lnT + a4*T + a5*T2/2.0 + a6*T3/3.0 + a7*T4/4.0 + b2) * R;
+
+    props.G0  = H0 - T*S0;
+    props.H0  = H0;
+    props.V0  = 0.0;
+    props.Cp0 = Cp0;
+    props.Cv0 = 0.0;
+
+    return props;
+}
+
+auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, const real& T) -> StandardThermoProps
+{
+    // Check if params corresponds to a species without temperature intervals, and just enthalpy at a single temperature point.
+    if(params.intervals.empty())
+    {
+        StandardThermoProps props;
+        props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+        props.H0 = params.H0;
+        return props;
+    };
+
+    // Find the index of the temperature interval in which T is contained
+    const auto iT = indexTemperatureInterval(params.intervals, T);
+
+    // Compute the standard thermodynamic properties only if within valid temperature range
+    if(iT < params.intervals.size())
+        return computeStandardThermoProps(params.intervals[iT], T);
+
+    // Otherwise, return standard thermo props whose G0 is high to penalize the species from appearing at equilibrium
+    StandardThermoProps props;
+    props.G0 = 999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+    return props;
+}
+
+} // namemespace detail
+
+/// Return a Params object containing all Param objects in @p params.
+auto extractParams(const StandardThermoModelParamsNasa& params) -> Vec<Param>
+{
+    Vec<Param> collected;
+    for(const auto& interval : params.intervals)
+    {
+        collected.push_back(interval.a1);
+        collected.push_back(interval.a2);
+        collected.push_back(interval.a3);
+        collected.push_back(interval.a4);
+        collected.push_back(interval.a5);
+        collected.push_back(interval.a6);
+        collected.push_back(interval.a7);
+        collected.push_back(interval.b1);
+        collected.push_back(interval.b2);
+    }
+    return collected;
+}
+
+/// Return a ModelSerializer for given model parameters in @p params.
+auto createModelSerializer(const StandardThermoModelParamsNasa& params) -> ModelSerializer
+{
+    return [=]()
+    {
+        yaml node;
+        node["Nasa"] = params;
+        return node;
+    };
+}
+
+auto StandardThermoModelNasa(const StandardThermoModelParamsNasa& params) -> StandardThermoModel
+{
+    auto evalfn = [=](StandardThermoProps& props, real T, real P)
+    {
+        return detail::computeStandardThermoProps(params, T);
+    };
+
+    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+}
+
+} // namespace Reaktoro
