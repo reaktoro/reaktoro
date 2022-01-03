@@ -35,13 +35,19 @@ auto correctTemperature(const real& Torig, const real& Tmin, const real& Tmax, c
         "the valid temperature interval of T(min) = ", Tmin, " K "
         "and T(max) = ", Tmax, " K. Proceeding instead with T = ", T, " K "
         "for the computation of these standard properties.");
+
+    return T;
 }
 
 auto getNasaThermoParamsForGivenTemperature(const Vec<NasaThermoParams>& params, const real& T) -> NasaThermoParams
 {
+    assert(params.size());
     for(const auto& obj : params)
-        if(obj.Tmin <= T && T <= obj.Tmax)
+        if(obj.Tmin <= T && T < obj.Tmax) // prefer the next interval when T = Tmax of current interval
             return obj;
+    if(T == params.back().Tmax)
+        return params.back();
+    assert(false); // there is something wrong with given T and previous methods not addressing properly
     return {};
 }
 

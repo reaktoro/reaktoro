@@ -424,16 +424,16 @@ TEST_CASE("Testing NasaSpeciesUtils module", "[NasaSpeciesUtils]")
     CHECK( s10.molarMass() == Approx(species10.molarmass * 1e-3).epsilon(1e-3) );
     CHECK( s11.molarMass() == Approx(species11.molarmass * 1e-3).epsilon(1e-3) );
 
-    CHECK( s01.props(298.15, 1.0e5).H0 == Approx(species01.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s02.props(298.15, 1.0e5).H0 == Approx(species02.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s03.props(298.15, 1.0e5).H0 == Approx(species03.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s04.props(298.15, 1.0e5).H0 == Approx(species04.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s05.props(298.15, 1.0e5).H0 == Approx(species05.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s06.props(298.15, 1.0e5).H0 == Approx(species06.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s07.props(298.15, 1.0e5).H0 == Approx(species07.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s08.props(298.15, 1.0e5).H0 == Approx(species08.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s09.props(298.15, 1.0e5).H0 == Approx(species09.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s10.props(298.15, 1.0e5).H0 == Approx(species10.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
-    CHECK( s11.props(298.15, 1.0e5).H0 == Approx(species11.dHf) ); // FIXME: There are no params set to the NasaSpecies objects.
+    CHECK( s01.standardThermoModel() );
+    CHECK( s02.standardThermoModel() );
+    CHECK( s03.standardThermoModel() );
+    CHECK( s04.standardThermoModel() );
+    CHECK( s05.standardThermoModel() );
+    CHECK( s06.standardThermoModel() );
+    CHECK( s07.standardThermoModel() );
+    CHECK( s08.standardThermoModel() );
+    CHECK( s09.standardThermoModel() );
+    CHECK( s10.standardThermoModel() );
+    CHECK( s11.standardThermoModel() );
 }
 
