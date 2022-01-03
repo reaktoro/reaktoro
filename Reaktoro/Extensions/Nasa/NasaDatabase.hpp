@@ -49,7 +49,10 @@ public:
     /// @param path The path, including file name, to the database file.
     /// @warning An exception is thrown if `path` does not point to a valid database file.
     static auto fromFile(String path) -> NasaDatabase;
-};
 
+    /// Construct a NasaDatabase object with given input stream.
+    /// @param stream The input stream containing the database file contents.
+    static auto fromStream(std::istream& stream) -> NasaDatabase;
+};
 
 } // namespace Reaktoro

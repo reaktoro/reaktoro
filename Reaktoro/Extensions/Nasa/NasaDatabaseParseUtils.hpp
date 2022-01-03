@@ -146,6 +146,12 @@ auto createNasaSpecies(const StringsRange& lines) -> NasaSpecies;
 /// lines starting with words `thermo`, `END PRODUCTS`, `END REACTANTS`.
 auto createNasaSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
 
+/// Similar to createNasaSpecies, but it also sets NasaSpeciesType::Product as the type of the created species.
+auto createNasaProductSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
+
+/// Similar to createNasaSpecies, but it also sets NasaSpeciesType::Reactant as the type of the created species.
+auto createNasaReactantSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>;
+
 /// Return a range of text lines comprising the text blocks for product species.
 /// This method returns all lines shown below:
 /// ~~~

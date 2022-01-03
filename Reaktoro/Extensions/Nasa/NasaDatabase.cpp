@@ -19,6 +19,7 @@
 
 // C++ includes
 #include <fstream>
+#include <sstream>
 
 // CMakeRC includes
 #include <cmrc/cmrc.hpp>
@@ -27,6 +28,7 @@ CMRC_DECLARE(ReaktoroDatabases);
 
 // Reaktoro includes
 #include <Reaktoro/Extensions/Nasa/NasaDatabaseParseUtils.hpp>
+#include <Reaktoro/Extensions/Nasa/NasaSpeciesUtils.hpp>
 
 namespace Reaktoro {
 
@@ -54,33 +56,34 @@ NasaDatabase::NasaDatabase(String name)
 
 auto NasaDatabase::withName(String name) -> NasaDatabase
 {
-    const auto content = getNasaDatabaseContent(name);
-
-    NasaDatabase db;
-    // detail::NasaDatabaseHelper helper(content);
-    // db.addSpecies(helper.species);
-    // db.attachData(helper);
-    return db;
+    const String content = getNasaDatabaseContent(name);
+    std::istringstream stream(content);
+    return fromStream(stream);
 }
 
 auto NasaDatabase::fromFile(String path) -> NasaDatabase
 {
-    std::ifstream file(path);
+    std::ifstream stream(path);
+    error(!stream.is_open(), "Could not open NASA database file with given path: ", path);
+    return fromStream(stream);
+}
 
-    error(!file.is_open(), "Could not open NASA database file with given path: ", path);
+auto NasaDatabase::fromStream(std::istream& stream) -> NasaDatabase
+{
+    const auto lines = NasaUtils::createTextLines(stream);
+    const auto lines_products = NasaUtils::getTextLinesForProducts(lines);
+    const auto lines_reactants = NasaUtils::getTextLinesForReactants(lines);
 
-    const auto lines = NasaUtils::createTextLines(file);
-    const auto lines_prods = NasaUtils::getTextLinesForProducts(lines);
-    const auto lines_reacs = NasaUtils::getTextLinesForReactants(lines);
-
-    const auto species_prods = NasaUtils::createNasaSpeciesVector(lines_prods);
-    const auto species_reacs = NasaUtils::createNasaSpeciesVector(lines_reacs);
+    const auto products = NasaUtils::createNasaProductSpeciesVector(lines_products);
+    const auto reactants = NasaUtils::createNasaReactantSpeciesVector(lines_reactants);
 
     NasaDatabase db;
-    // db.addSpecies(convertNasaSpeciesVector(species_prods));
-    // db.addSpecies(convertNasaSpeciesVector(species_reacs));
 
-    file.close();
+    for(auto const& species : products)
+        db.addSpecies(NasaUtils::convertSpecies(species));
+
+    for(auto const& species : reactants)
+        db.addSpecies(NasaUtils::convertSpecies(species));
 
     return db;
 }

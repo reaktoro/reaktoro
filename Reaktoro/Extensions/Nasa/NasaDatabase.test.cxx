@@ -24,71 +24,23 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing NasaDatabase module", "[NasaDatabase]")
 {
-    // NasaDatabase db = NasaDatabase::withName("supcrt98.xml");
+    NasaDatabase db("thermo.inp");
 
-    // CHECK( db.species().findWithName("H2O(l)") );
-    // CHECK( db.species().findWithName("H+") );
-    // CHECK( db.species().findWithName("OH-") );
-    // CHECK( db.species().findWithName("CO2(aq)") );
+    CHECK( db.species().size() == 2085 );
 
-    // // TODO: More tests are needed for NasaDatabase, at different T and P values,
-    // {
-    //     auto sp = db.species().getWithName("H2O(l)");
+    CHECK( db.species().findWithName("ALF+") );
+    CHECK( db.species().findWithName("B3H9") );
+    CHECK( db.species().findWithName("C3S2") );
+    CHECK( db.species().findWithName("Zr+") );
+    CHECK( db.species().findWithName("Ti+") );
+    CHECK( db.species().findWithName("CO2") );
+    CHECK( db.species().findWithName("PbBr2(cr)") );
+    CHECK( db.species().findWithName("Jet-A(g)") );
 
-    //     const auto T = 25.0 + 273.15;
-    //     const auto P =  1.0 * 1e5;
+    const auto Tr = 298.15; // in K
+    const auto Pr = 1.0e5;  // in Pa
 
-    //     auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
-
-    //     CHECK( G0  == Approx(-237182)     );
-    //     CHECK( H0  == Approx(-285831)     );
-    //     CHECK( V0  == Approx(1.80686e-05) );
-    //     CHECK( Cp0 == Approx(75.3276)     );
-    //     CHECK( Cv0 == Approx(74.5394)     );
-    // }
-
-    // {
-    //     auto sp = db.species().getWithName("HCO3-");
-
-    //     const auto T = 25.0 + 273.15;
-    //     const auto P =  1.0 * 1e5;
-
-    //     auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
-
-    //     CHECK( G0  == Approx(-586940)     );
-    //     CHECK( H0  == Approx(-689934)     );
-    //     CHECK( V0  == Approx(2.77452e-05) );
-    //     CHECK( Cp0 == Approx(-34.9279)    );
-    //     CHECK( Cv0 == Approx(-34.9279)    );
-    // }
-
-    // {
-    //     auto sp = db.species().getWithName("CO2(g)");
-
-    //     const auto T = 25.0 + 273.15;
-    //     const auto P =  1.0 * 1e5;
-
-    //     auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
-
-    //     CHECK( G0  == Approx(-394359)     );
-    //     CHECK( H0  == Approx(-393509)     );
-    //     CHECK( V0  == Approx(0.0247893)   );
-    //     CHECK( Cp0 == Approx(37.1486)     );
-    //     CHECK( Cv0 == Approx(28.8342)     );
-    // }
-
-    // {
-    //     auto sp = db.species().getWithName("Calcite");
-
-    //     const auto T = 25.0 + 273.15;
-    //     const auto P =  1.0 * 1e5;
-
-    //     auto [G0, H0, V0, Cp0, Cv0] = sp.props(T, P);
-
-    //     CHECK( G0  == Approx(-1.12918e+06));
-    //     CHECK( H0  == Approx(-1.2073e+06) );
-    //     CHECK( V0  == Approx(3.6934e-05)  );
-    //     CHECK( Cp0 == Approx(81.8711)     );
-    //     CHECK( Cv0 == Approx(81.8711)     );
-    // }
+    CHECK(db.species().getWithName("CO2").props(Tr, Pr).H0 == Approx( -393510.000) );
+    CHECK(db.species().getWithName("Zr+").props(Tr, Pr).H0 == Approx( 1246246.292) );
+    CHECK(db.species().getWithName("Ti+").props(Tr, Pr).H0 == Approx( 1137624.029) );
 }

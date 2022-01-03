@@ -205,6 +205,24 @@ auto createNasaSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
     return vec;
 }
 
+auto createNasaSpeciesVectorWithType(const StringsRange& lines, NasaSpeciesType type) -> Vec<NasaSpecies>
+{
+    Vec<NasaSpecies> vec = createNasaSpeciesVector(lines);
+    for(auto& species : vec)
+        species.type = type;
+    return vec;
+}
+
+auto createNasaProductSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
+{
+    return createNasaSpeciesVectorWithType(lines, NasaSpeciesType::Product);
+}
+
+auto createNasaReactantSpeciesVector(const StringsRange& lines) -> Vec<NasaSpecies>
+{
+    return createNasaSpeciesVectorWithType(lines, NasaSpeciesType::Reactant);
+}
+
 auto getLineIndexBeginProducts(const StringsRange& lines) -> Index
 {
     // This method goes from top to bottom and find the line containing the
