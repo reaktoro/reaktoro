@@ -53,8 +53,9 @@ String params_stm_const = R"xyz(
 G0: 1.0
 H0: 2.0
 V0: 3.0
-Cp0: 4.0
-Cv0: 5.0
+VT0: 4.0
+VP0: 5.0
+Cp0: 6.0
 )xyz";
 
 String params_stm_mk = R"xyz(
@@ -493,6 +494,7 @@ TEST_CASE("Testing Serialization for StandardThermoModel types", "[Serialization
         CHECK( params.V0.empty() );
         CHECK( params.VT0.empty() );
         CHECK( params.VP0.empty() );
+        CHECK( params.Cp0.empty() );
     }
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsNasa with polynomials")

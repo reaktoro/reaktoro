@@ -109,8 +109,9 @@ auto computeStandardThermoProps(const NasaThermoData& params, const real& T) -> 
     props.G0  = H0 - T*S0;
     props.H0  = H0;
     props.V0  = 0.0;
+    props.VT0 = 0.0;
+    props.VP0 = 0.0;
     props.Cp0 = Cp0;
-    props.Cv0 = 0.0;
 
     return props;
 }

@@ -104,19 +104,16 @@ TEST_CASE("Testing StandardThermoModelNasa module", "[StandardThermoModelNasa]")
     CHECK( props0.H0  == Approx(H0x)           );
     CHECK( props0.G0  == Approx(H0x - Tr0*S0x) );
     CHECK( props0.V0  == 0.0                   );
-    CHECK( props0.Cv0 == 0.0                   );
 
     CHECK( props1.Cp0 == Approx(Cp0x)          );
     CHECK( props1.H0  == Approx(H0x)           );
     CHECK( props1.G0  == Approx(H0x - Tr1*S0x) );
     CHECK( props1.V0  == 0.0                   );
-    CHECK( props1.Cv0 == 0.0                   );
 
     CHECK( props2.Cp0 == Approx(Cp0x)          );
     CHECK( props2.H0  == Approx(H0x)           );
     CHECK( props2.G0  == Approx(H0x - Tr2*S0x) );
     CHECK( props2.V0  == 0.0                   );
-    CHECK( props2.Cv0 == 0.0                   );
 
     //======================================================================
     // Testing method detail::computeStandardThermoProps(params, T)
