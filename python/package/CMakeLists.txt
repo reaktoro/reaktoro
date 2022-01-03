@@ -19,7 +19,7 @@ add_custom_target(reaktoro-setuptools ALL
         "PYTHONPATH=${REAKTORO_PYTHONPATH}"
             ${PYBIND11_STUBGEN_COMMAND}
     COMMAND ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro
-    COMMAND ${PYTHON_EXECUTABLE} setup.py --quiet install --force --no-compile --prefix=installed/$<CONFIG>
+    COMMAND ${PYTHON_EXECUTABLE} setup.py --quiet build --force
     COMMAND ${CMAKE_COMMAND} -E rm reaktoro/$<TARGET_FILE_NAME:reaktoro4py>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -29,5 +29,4 @@ if(NOT DEFINED REAKTORO_PYTHON_INSTALL_PREFIX)
 endif()
 
 # Create an install target for the reaktoro python package
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/installed/$<CONFIG>/
-    DESTINATION ${REAKTORO_PYTHON_INSTALL_PREFIX})
+install(CODE "execute_process(COMMAND pip install ${CMAKE_CURRENT_BINARY_DIR} --no-deps --force-reinstall --no-compile --prefix=${REAKTORO_PYTHON_INSTALL_PREFIX})")

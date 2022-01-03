@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='Reaktoro',
+    name='reaktoro',
     version='${PROJECT_VERSION}',
     description='The Python interface of the Reaktoro library.',
     author='Allan Leal',
