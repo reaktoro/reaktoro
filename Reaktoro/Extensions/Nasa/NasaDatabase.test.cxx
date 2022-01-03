@@ -33,7 +33,7 @@ TEST_CASE("Testing NasaDatabase module", "[NasaDatabase]")
 {
     NasaDatabase db("nasa-cea");
 
-    CHECK( db.species().size() == 2085 );
+    CHECK( db.species().size() == 1658 );
 
     CHECK( db.species().findWithName("AlF+") );
     CHECK( db.species().findWithName("B3H9") );
