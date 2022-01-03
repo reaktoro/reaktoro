@@ -115,17 +115,39 @@ auto computeStandardThermoProps(const NasaThermoParams& params, const real& T) -
     return props;
 }
 
-auto computeStandardThermoProps(const NasaSpecies& species, const real& Torig) -> StandardThermoProps
+auto computeStandardThermoProps(const NasaSpecies& species, const real& T) -> StandardThermoProps
 {
-    const auto T = correctTemperature(species, Torig);
-    const auto params = getNasaThermoParamsForGivenTemperature(species.thermodata, T);
-    return computeStandardThermoProps(params, T);
+    const auto Tmin = minSupportedTemperature(species.thermodata);
+    const auto Tmax = maxSupportedTemperature(species.thermodata);
+
+    const auto within_range = Tmin <= T && T <= Tmax;
+
+    if(within_range)
+    {
+        const auto params = getNasaThermoParamsForGivenTemperature(species.thermodata, T);
+        return computeStandardThermoProps(params, T);
+    }
+    else
+    {
+        StandardThermoProps props;
+        props.G0 = 999'999'999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+        return props;
+    }
 }
 
 } // namespace NasaUtils
 
 auto StandardThermoModelNasa(const NasaSpecies& species) -> StandardThermoModel
 {
+    if(species.thermodata.empty())
+        return [species](real T, real P)
+        {
+            StandardThermoProps props;
+            props.G0 = 999'999'999'999; // NOTE: This high value for G0 is to ensure the condensed species with limited data is never stable at equilibrium
+            props.H0 = species.H0;
+            return props;
+        };
+
     const auto Tmin = NasaUtils::minSupportedTemperature(species.thermodata);
     const auto Tmax = NasaUtils::maxSupportedTemperature(species.thermodata);
 
@@ -136,16 +158,6 @@ auto StandardThermoModelNasa(const NasaSpecies& species) -> StandardThermoModel
                 "properties of species ", species.name, " since its minimum and "
                 "maximum temperature of support is 0 K. Ensure you have set correctly "
                 "these extreme temperature values for its NASA CEA parameters.");
-            return StandardThermoProps{};
-        };
-
-    if(species.thermodata.empty())
-        return [species](real T, real P)
-        {
-            warning(true, "Cannot compute the standard thermodynamic "
-                "properties of species ", species.name, " since it does not have "
-                "sufficient NASA CEA parameters (i.e., its number of temperature "
-                "intervals is zero). Returning zero for all such properties.");
             return StandardThermoProps{};
         };
 
