@@ -69,6 +69,22 @@ auto isCommentLine(const String& line) -> bool;
 /// `{{"AL", 1.0}, {"H", 2.0}, {"F", 1.0}}`.
 auto parseFormula(const String& formula) -> Pairs<String, double>;
 
+/// Return the aggregate state of a species.
+/// This function returns NasaAggregateState::Gas in case `aggregatecode` is
+/// zero. If `aggregatecode` is nonzero, then the aggregate state of the
+/// species is either liquid or solid. The identification is performed using
+/// information in `name`. If `(L)` or `(l)` is found in `name`, then
+/// NasaAggregateState::Liquid is returned. If `name` ends with `)`, then
+/// NasaAggregateState::Solid is returned. This allows any label to be used to
+/// denote solid or crystal configuration, with the most common ones being
+/// `(cr)`, `(a)`, `(b)`, `(c)`, `(I)`, `(II)`, `(III)`, and others. If none of
+/// these rules apply, then NasaAggregateState::Liquid is returned, which
+/// covers species whose name does not contain `(L)` but the species is liquid,
+/// such as RP-1, JP-4, JP-5, IRFNA.
+/// @param name The name of the species such as Mg(cr), Mg(L), O2, NH4NO3(IV), NH4NO3(III), AL2O3(a)
+/// @param aggregatecode The aggregate code of the species (zero for gas, nonzero for condensed phases)
+auto identifyAggregateState(const String& name, Index aggregatecode) -> NasaAggregateState;
+
 /// Return the Nasa thermodynamic paramerters in a block of lines.
 /// Consider the following lines:
 ///
@@ -78,10 +94,10 @@ auto parseFormula(const String& formula) -> Pairs<String, double>;
 /// 7.219318660D-10 7.329846740D-14                -3.425302600D+04-9.387539141D+00
 /// ~~~
 ///
-/// This method will return a NasaThermoParams object initialized as follows:
+/// This method will return a NasaThermoData object initialized as follows:
 ///
 /// ~~~c++
-/// NasaThermoParams params;
+/// NasaThermoData params;
 /// params.Tmin =  200.0;
 /// params.Tmax =  1000.0;
 /// params.qN   =  7;
@@ -106,7 +122,7 @@ auto parseFormula(const String& formula) -> Pairs<String, double>;
 /// Note the values 10764.801 above was not used. This value is set
 /// in @ref NasaSpecies::dH0 by @ref createNextSpecies when creating
 /// a NasaSpecies object.
-auto parseNasaThermoParams(const StringsRange& lines) -> NasaThermoParams;
+auto parseNasaThermoData(const StringsRange& lines) -> NasaThermoData;
 
 /// Return the number of species blocks in a range of string lines.
 /// This method assumes that the number of species is the number of lines

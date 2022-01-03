@@ -83,7 +83,7 @@ auto parseFormula(const String& formula) -> Pairs<String, double>
     return pairs;
 }
 
-auto parseNasaThermoParams(const StringsRange& lines) -> NasaThermoParams
+auto parseNasaThermoData(const StringsRange& lines) -> NasaThermoData
 {
     assert(lines.size() == 3);
 
@@ -99,7 +99,7 @@ auto parseNasaThermoParams(const StringsRange& lines) -> NasaThermoParams
     error(qvalues.size() != 8, "Expecting 8 values for q exponents "
         "(last being zero) between columns 24 and 63 of line:\n", record3);
 
-    NasaThermoParams params;
+    NasaThermoData params;
     params.Tmin = std::stod(segment[0]);
     params.Tmax = std::stod(segment[1]);
     params.qN = getIntegerBetweenColumns(record3, 23, 23);
@@ -126,9 +126,18 @@ auto parseNasaThermoParams(const StringsRange& lines) -> NasaThermoParams
     return params;
 }
 
-auto convertIntegerToSpeciesType(Index value) -> NasaAggregateState
+auto identifyAggregateState(const String& name, Index aggregatecode) -> NasaAggregateState
 {
-    return value == 0 ? NasaAggregateState::Gas : NasaAggregateState::Condensed;
+    if(aggregatecode == 0)
+        return NasaAggregateState::Gas;
+
+    if(name.find("(L)") != String::npos || name.find("(l)") != String::npos)
+        return NasaAggregateState::Liquid;
+
+    if(name.back() == ')') // name ends with ) to indicate solid/crystal configuration such as (cr), (a), (b), (I), (II), (III)
+        return NasaAggregateState::Solid;
+
+    return NasaAggregateState::Liquid; // return liquid if nothing is provided (e.g., RP-1, JP-4, JP-5, IRFNA)
 }
 
 auto getNumberTextLinesForNextSpeciesBlock(const StringsRange& lines) -> Index
@@ -175,7 +184,8 @@ auto createNasaSpecies(const StringsRange& lines, NasaSpeciesType type) -> NasaS
     species.comment        = trim(getStringBetweenColumns(record1, 19, 80));
     species.idcode         = trim(getStringBetweenColumns(record2, 4, 9));
     species.formula        = parseFormula(getStringBetweenColumns(record2, 11, 50));
-    species.aggregatestate = convertIntegerToSpeciesType(getIntegerBetweenColumns(record2, 52, 52));
+    species.aggregatecode  = getIntegerBetweenColumns(record2, 52, 52);
+    species.aggregatestate = identifyAggregateState(species.name, species.aggregatecode);
     species.type           = type;
     species.molarmass      = getDoubleBetweenColumns(record2, 53, 65);
 
@@ -185,7 +195,7 @@ auto createNasaSpecies(const StringsRange& lines, NasaSpeciesType type) -> NasaS
     {
         species.thermodata.resize(numintervals);
         for(auto i = 0; i < numintervals; ++i)
-            species.thermodata[i] = parseNasaThermoParams(lines.segment(2 + 3*i, 3));
+            species.thermodata[i] = parseNasaThermoData(lines.segment(2 + 3*i, 3));
 
         species.dHf  = getDoubleBetweenColumns(record2, 66, 80);
         species.dH0  = getDoubleBetweenColumns(record3, 66, 80);
