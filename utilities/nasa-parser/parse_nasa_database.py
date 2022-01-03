@@ -433,7 +433,8 @@ def createElementsString(elements:list[tuple[str, float]]) -> str:
             continue
         res += f"{formatNumber(coeff)}:{symbol.title()} "
         """"""
-    return res.rstrip()
+    res = res.rstrip()
+    return res if res != "" else None
 
 
 def getCharge(elements:list[tuple[str, float]]) -> int:
@@ -524,9 +525,9 @@ def createTextLines(file) -> list[str]:
 
 
 def createDatabase(specieslist:list[NasaSpecies]) -> list:
-    database = []
+    database = {}
     species_groups = combineSpeciesBlocksWhenPossible(specieslist)
+    species_list = database["Species"] = []
     for species_group in species_groups:
-        database.append(serialize(species_group))
+        species_list.append(serialize(species_group))
     return database
-

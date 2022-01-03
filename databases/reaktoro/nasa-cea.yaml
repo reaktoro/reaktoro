@@ -1,5 +1,7 @@
+Species:
 - Name: e-
   Formula: e-
+  Elements: null
   Charge: -1
   Tags: product
   AggregateState: Gas
