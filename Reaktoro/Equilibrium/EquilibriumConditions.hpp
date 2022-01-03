@@ -166,10 +166,10 @@ public:
     /// Specify the **fugacity** of a gaseous species at chemical equilibrium.
     /// @param species The name of the gaseous species.
     /// @param value The constrained fugacity value.
-    /// @param unit The unit for the constrained fugacity value (must be convertible to Pa).
+    /// @param unit The unit for the constrained fugacity value (must be convertible to Pa; default is bar).
     /// @warning An error is thrown if the specifications for the chemical equilibrium calculation
     /// @warning do not consider a fugacity constraint for the gas.
-    auto fugacity(String species, real value, String unit="Pa") -> void;
+    auto fugacity(String species, real value, String unit="bar") -> void;
 
     /// Specify the *pH* at chemical equilibrium.
     /// @param value The constrained value for pH.
