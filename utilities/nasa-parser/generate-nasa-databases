@@ -65,20 +65,7 @@ if __name__ == "__main__":
     print("Parsing database...")
     specieslist = createNasaSpeciesList(textlines)
 
-    condensed = identifyCondensedSpecies(specieslist)
-
-    for lst in condensed:
-        if len(lst) > 1:
-            names = [x.name for x in lst]
-            commonname = identifyCommonName(names)
-            print(f"{commonname}: {names}")
-
     db = createDatabase(specieslist)
-
-    # print(db)
-
-    # # Preserve only 8 significant figures in the float numbers
-    # db = roundFloats(db, sigfigures=8)
 
     # Perform a json dump
     print("Creating json output...")
@@ -89,8 +76,8 @@ if __name__ == "__main__":
     ydump = yaml.dump(db)
 
     # Clean both json and yaml dumps from, for example, @ surrounding dictionaries (e.g., &{...}&)
-    jdump = jdump.replace("\"&{", "{ ").replace("}&\"", " }").replace("'", "\"")
-    ydump = ydump.replace("&{", "{ ").replace("}&", " }").replace("'", "")
+    jdump = jdump.replace("\"&{", "{ ").replace("}&\"", " }")
+    ydump = ydump.replace("&{", "{ ").replace("}&", " }")
 
     # Output the database in json format
     with open(args.outputjson, 'w') as f:

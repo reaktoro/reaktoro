@@ -39,19 +39,23 @@ def test_correctNasaSpeciesName():
     assert correctNasaSpeciesName("ALBr3(cr)") == "AlBr3(cr)"
 
 
-def test_identifyCommonName():
-    assert "BaCO3"     == identifyCommonName(["BaCO3(a)", "BaCO3(b)", "BaCO3(c)", "BaCO3(L)"])
-    assert "Cr2O3"     == identifyCommonName(["Cr2O3(I')", "Cr2O3(I)", "Cr2O3(I)", "Cr2O3(I)", "Cr2O3(L)"])
-    assert "Li3ALF6"   == identifyCommonName(["Li3ALF6(IV)", "Li3ALF6(III)", "Li3ALF6(II)", "Li3ALF6(I)", "Li3ALF6(L)"])
-    assert "Ag"        == identifyCommonName(["Ag(cr)", "Ag(L)"])
-    assert "Fe2O3(cr)" == identifyCommonName(["Fe2O3(cr)", "Fe2O3(cr)"])
-    assert "K2Si2O5"   == identifyCommonName(["K2Si2O5(a)", "K2Si2O5(b)", "K2Si2O5(c)", "K2Si2O5(L)"])
-    assert "SrCO3"     == identifyCommonName(['SrCO3(a)', 'SrCO3(b)', 'SrCO3(c)', 'SrCO3(L)'])
-    assert "SiO2"      == identifyCommonName(['SiO2(a-qz)', 'SiO2(b-qz)', 'SiO2(b-crt)', 'SiO2(L)'])
-    assert "K(HF2)"    == identifyCommonName(['K(HF2)(a)', 'K(HF2)(b)', 'K(HF2)(L)'])
+def test_identifyCommonSpeciesName():
+    assert "BaCO3"     == identifyCommonSpeciesName(["BaCO3(a)", "BaCO3(b)", "BaCO3(c)", "BaCO3(L)"])
+    assert "Cr2O3"     == identifyCommonSpeciesName(["Cr2O3(I')", "Cr2O3(I)", "Cr2O3(I)", "Cr2O3(I)", "Cr2O3(L)"])
+    assert "Li3ALF6"   == identifyCommonSpeciesName(["Li3ALF6(IV)", "Li3ALF6(III)", "Li3ALF6(II)", "Li3ALF6(I)", "Li3ALF6(L)"])
+    assert "Ag"        == identifyCommonSpeciesName(["Ag(cr)", "Ag(L)"])
+    assert "Fe2O3(cr)" == identifyCommonSpeciesName(["Fe2O3(cr)", "Fe2O3(cr)"])
+    assert "K2Si2O5"   == identifyCommonSpeciesName(["K2Si2O5(a)", "K2Si2O5(b)", "K2Si2O5(c)", "K2Si2O5(L)"])
+    assert "SrCO3"     == identifyCommonSpeciesName(['SrCO3(a)', 'SrCO3(b)', 'SrCO3(c)', 'SrCO3(L)'])
+    assert "SiO2"      == identifyCommonSpeciesName(['SiO2(a-qz)', 'SiO2(b-qz)', 'SiO2(b-crt)', 'SiO2(L)'])
+    assert "K(HF2)"    == identifyCommonSpeciesName(['K(HF2)(a)', 'K(HF2)(b)', 'K(HF2)(L)'])
 
 
-def test_identifyCondensedSpecies():
+def test_determineSpeciesNameSuffix():
+    pass
+
+
+def test_combineSpeciesBlocksWhenPossible():
     pass
 
 
@@ -595,7 +599,7 @@ def test_createNasaSpecies():
 
     species = createNasaSpecies(lines15)
 
-    assert species.name == "C2H2(L),acetyle"
+    assert species.name == "C2H2(l),acetyle"
     assert species.comment == "Acetylene. McBride,1996 pp84,92."
     assert species.idcode == "g 6/96"
     assert species.elements == [("C", 2.0), ("H", 2.0)]
@@ -616,7 +620,7 @@ def test_createNasaSpecies():
 
     species = createNasaSpecies(lines16)
 
-    assert species.name == "N2O4(L)"
+    assert species.name == "N2O4(l)"
     assert species.comment == "Dinitrogen tetroxide. McBride,1996 pp85,93."
     assert species.idcode == "g 6/96"
     assert species.elements == [("N", 2.0), ("O", 4.0)]
@@ -705,7 +709,7 @@ def test_getStandardThermoModel():
 
     species.polynomials = [poly0, poly1]
 
-    data = getStandardThermoModel(species)
+    data = getStandardThermoModel([species])
 
     assert data["Nasa"]["Polynomials"][0]["Tmin"] == poly0.Tmin
     assert data["Nasa"]["Polynomials"][0]["Tmax"] == poly0.Tmax

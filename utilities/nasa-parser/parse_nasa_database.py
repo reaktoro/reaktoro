@@ -99,11 +99,12 @@ def formatNumber(num:float):
 
 
 def correctNasaSpeciesName(name:str):
-    """Replace CL and AL by Cl and Al in the name of a species."""
-    return name.replace("CL", "Cl").replace("AL", "Al")
+    """Replace CL and AL by Cl and Al in the name of a species.
+    Replace also (L) to (l) as liquid designator."""
+    return name.replace("CL", "Cl").replace("AL", "Al").replace("(L)", "(l)")
 
 
-def identifyCommonName(names:list[str]):
+def identifyCommonSpeciesName(names:list[str]):
     """Given names Na2SO4(V), Na2SO4(IV), Na2SO4(I), Na2SO4(L), return Na2SO4"""
     if names == []:
         return ""
@@ -112,7 +113,7 @@ def identifyCommonName(names:list[str]):
     i = 0
     commonname = ""
 
-    def cleanCommonNameEnding(name:str):
+    def _cleanCommonNameEnding(name:str):
         iopen = name.rfind('(')
         iclose = name.rfind(')')
         return name if iopen <= iclose else name[:iopen]
@@ -122,13 +123,53 @@ def identifyCommonName(names:list[str]):
         commonchar = names[0][i]
         for name in names:
             if name[i] != commonchar:
-                return cleanCommonNameEnding(commonname)
+                return _cleanCommonNameEnding(commonname)
         commonname += commonchar
-    return cleanCommonNameEnding(commonname)
+    return _cleanCommonNameEnding(commonname)
 
 
-def identifyCondensedSpecies(specieslist:list[NasaSpecies]) -> list[list[NasaSpecies]]:
-    """Find all sequences of solid species terminating or not with a liquid species that should form a single condensed species"""
+def determineSpeciesNameSuffix(specieslist:list[NasaSpecies]) -> str:
+    """Determine if suffix (cd), (s) or (l) must be returned for a species formed by combining one or more others."""
+    if len(specieslist) == 1:
+        return ""  # there is just one species, so use whatever suffix it already has!
+    names = set([x.name for x in specieslist])
+    if len(names) == 1:
+        return ""  # all species have the same name, so use whatever suffix it already has!
+    aggregatestates = set([x.aggregatestate for x in specieslist])
+    if aggregatestates == set(["Liquid", "Solid"]):
+        return "(cd)"  # the species have different aggregate state, so use cd for condensed
+    if aggregatestates == set(["Liquid"]):
+        return "(l)"  # the species have common liquid aggregate state, so return (l) to denote liquid
+    if aggregatestates == set(["Solid"]):
+        return "(s)"  # the species have common solid aggregate state, so return (s) to denote solid
+    raise RuntimeError("Could not identify a suffix for name of the common species formed out of {names}")
+
+
+def determineSpeciesAggregateState(specieslist:list[NasaSpecies]) -> str:
+    """Determine the aggregate state for a species formed by combining one or more others."""
+    if len(specieslist) == 1:
+        return specieslist[0].aggregatestate  # there is just one species, so use whatever agregate state it already has!
+    aggregatestates = set([x.aggregatestate for x in specieslist])
+    if aggregatestates == set(["Liquid", "Solid"]):
+        return "CondensedPhase"  # the species have different aggregate state, liquid/solid, so assign condensed phase to it
+    if aggregatestates == set(["Liquid", "Gas"]):
+        return "Fluid"  # the species have different aggregate state, liquid/gas, so assign fluid phase to it
+    if aggregatestates == set(["Liquid"]):
+        return "Liquid"  # the species have common liquid aggregate state
+    if aggregatestates == set(["Solid"]):
+        return "Solid"  # the species have common solid aggregate state
+    if aggregatestates == set(["Gas"]):
+        return "Gas"  # the species have common gas aggregate state
+    raise RuntimeError("Could not identify the aggregate state for the common species formed out of {names}")
+
+
+def combineSpeciesBlocksWhenPossible(specieslist:list[NasaSpecies]) -> list[list[NasaSpecies]]:
+    """Find all sequences of condensed species, terminating or not with a
+    liquid species, that should form a single species. This usually happens
+    when multiple species are present in the database to describe different
+    physical state (solid/liquid) or different crystal structure. This method
+    returns a list of list of species, where the inner list comprises one or
+    more species that are in fact the same substance."""
     result = []
     i = 0
     n = len(specieslist)
@@ -311,6 +352,7 @@ def createNasaSpecies(lines:list[str]) -> NasaSpecies:
     species = NasaSpecies()
 
     species.name           = getStringBetweenColumns(recordline1,  1, 18).strip()
+    species.name           = correctNasaSpeciesName(species.name)
     species.comment        = getStringBetweenColumns(recordline1, 19, 80).strip()
     species.idcode         = getStringBetweenColumns(recordline2, 4, 9).strip()
     species.elements       = parseFormula(getStringBetweenColumns(recordline2, 11, 50))
@@ -407,47 +449,58 @@ def getTags(speciestype:str) -> list[str]:
     return speciestype
 
 
-def getStandardThermoModel(species:NasaSpecies) -> dict:
+def getStandardThermoModel(species_group:list[NasaSpecies]) -> dict:
+    assert species_group != []
+
+    species0 = species_group[0]
+
     data = {}
-
-    # data["Comment"] = species.comment
-
-    if species.polynomials == []:
-        data["H0"] = species.H0
-        data["T0"] = species.T0
+    if species0.polynomials == []:
+        data["H0"] = species0.H0
+        data["T0"] = species0.T0
         return {"Nasa": data}
 
-    data["dHf"] = species.dHf
-    data["dH0"] = species.dH0
+    data["dHf"] = species0.dHf
+    data["dH0"] = species0.dH0
 
     data["Polynomials"] = []
-    for polynomial in species.polynomials:
-        child = {}
-        child["Tmin"] = polynomial.Tmin
-        child["Tmax"] = polynomial.Tmax
-        child["a1"] = polynomial.a1
-        child["a2"] = polynomial.a2
-        child["a3"] = polynomial.a3
-        child["a4"] = polynomial.a4
-        child["a5"] = polynomial.a5
-        child["a6"] = polynomial.a6
-        child["a7"] = polynomial.a7
-        child["b1"] = polynomial.b1
-        child["b2"] = polynomial.b2
-        data["Polynomials"].append(child)
+    for species in species_group:
+        for polynomial in species.polynomials:
+            child = {}
+            child["State"] = species.aggregatestate
+            child["Label"] = species.name
+            child["Tmin"] = polynomial.Tmin
+            child["Tmax"] = polynomial.Tmax
+            child["a1"] = polynomial.a1
+            child["a2"] = polynomial.a2
+            child["a3"] = polynomial.a3
+            child["a4"] = polynomial.a4
+            child["a5"] = polynomial.a5
+            child["a6"] = polynomial.a6
+            child["a7"] = polynomial.a7
+            child["b1"] = polynomial.b1
+            child["b2"] = polynomial.b2
+            # child["Comment"] = species.comment
+            data["Polynomials"].append(child)
 
     return {"Nasa": data}
 
 
-def serialize(species:NasaSpecies):
+def serialize(species_groups:list[NasaSpecies]) -> dict:
+    assert species_groups != []
+    species0 = species_groups[0]
+    names = [species.name for species in species_groups]
+    name = identifyCommonSpeciesName(names)
+    suffix = determineSpeciesNameSuffix(species_groups)
+    name = name + suffix
     obj = dict()
-    obj["Name"] = species.name
-    obj["Formula"] = createFormulaString(species.elements)
-    obj["Elements"] = createElementsString(species.elements)
-    obj["Charge"] = getCharge(species.elements)
-    obj["Tags"] = getTags(species.speciestype)
-    obj["AggregateState"] = species.aggregatestate
-    obj["StandardThermoModel"] = getStandardThermoModel(species)
+    obj["Name"] = name
+    obj["Formula"] = createFormulaString(species0.elements)
+    obj["Elements"] = createElementsString(species0.elements)
+    obj["Charge"] = getCharge(species0.elements)
+    obj["Tags"] = getTags(species0.speciestype)
+    obj["AggregateState"] = determineSpeciesAggregateState(species_groups)
+    obj["StandardThermoModel"] = getStandardThermoModel(species_groups)
     if obj["Elements"] == "":  # this happens when species is e-
         obj.pop("Elements")
     if obj["Charge"] == 0.0:
@@ -472,7 +525,8 @@ def createTextLines(file) -> list[str]:
 
 def createDatabase(specieslist:list[NasaSpecies]) -> list:
     database = []
-    for species in specieslist:
-        database.append(serialize(species))
+    species_groups = combineSpeciesBlocksWhenPossible(specieslist)
+    for species_group in species_groups:
+        database.append(serialize(species_group))
     return database
 
