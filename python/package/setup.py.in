@@ -11,6 +11,7 @@ setup(
     packages=['reaktoro', 'reaktoro.extensions'],
     package_data={
         'reaktoro': [
+            'Reaktoro.dll',
             'reaktoro4py${PYTHON_MODULE_EXTENSION}',
             'reaktoro4py/*'
             '*.pyi',
