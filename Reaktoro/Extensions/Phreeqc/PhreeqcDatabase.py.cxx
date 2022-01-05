@@ -27,8 +27,11 @@ void exportPhreeqcDatabase(py::module& m)
     py::class_<PhreeqcDatabase, Database>(m, "PhreeqcDatabase")
         .def(py::init<>())
         .def(py::init<const String&>())
+        .def("load", &PhreeqcDatabase::load)
         .def_static("withName", &PhreeqcDatabase::withName)
         .def_static("fromFile", &PhreeqcDatabase::fromFile)
         .def_static("fromContents", &PhreeqcDatabase::fromContents)
+        .def_static("contents", &PhreeqcDatabase::contents)
+        .def_static("namesEmbeddedDatabases", &PhreeqcDatabase::namesEmbeddedDatabases)
         ;
 }

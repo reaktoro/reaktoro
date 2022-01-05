@@ -44,6 +44,12 @@ public:
     /// @param name The name of the embedded PHREEQC database file
     PhreeqcDatabase(const String& name);
 
+    /// Extend this PhreeqcDatabase object with contents in given database file.
+    /// This method supports either a path to a database file, including its
+    /// file name, or a multi-line string containing the database contents.
+    /// @param database The path to the database file or its contents as a string
+    auto load(const String& database) -> PhreeqcDatabase&;
+
     /// Return a PhreeqcDatabase object constructed with an embedded database file.
     /// If `name` does not correspond to one of the following names, an exception is thrown:
     /// - Amm.dat
@@ -73,11 +79,8 @@ public:
     /// @see withName
     static auto contents(const String& name) -> String;
 
-    /// Extend this PhreeqcDatabase object with contents in given database file.
-    /// This method supports either a path to a database file, including its
-    /// file name, or a multi-line string containing the database contents.
-    /// @param database The path to the database file or its contents as a string
-    auto load(const String& database) -> PhreeqcDatabase&;
+    /// Return the names of the currently supported embedded PHREEQC databases.
+    static auto namesEmbeddedDatabases() -> Strings;
 };
 
 } // namespace Reaktoro

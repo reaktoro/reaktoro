@@ -215,29 +215,22 @@ struct PhreeqcDatabaseHelper
 /// Return the contents of the embedded PHREEQC database with given name (or empty)
 auto getPhreeqcDatabaseContent(String name) -> String
 {
-    error(!oneof(name,
-        "Amm.dat",
-        "frezchem.dat",
-        "iso.dat",
-        "llnl.dat",
-        "minteq.dat",
-        "minteq.v4.dat",
-        "phreeqc.dat",
-        "pitzer.dat",
-        "sit.dat",
-        "wateq4f.dat"),
+    error(!contains(PhreeqcDatabase::namesEmbeddedDatabases(), name),
         "Could not load embedded PHREEQC database file with name `", name, "`. ",
         "The currently supported names are: \n"
-        "    - Amm.dat       \n",
-        "    - frezchem.dat  \n",
-        "    - iso.dat       \n",
-        "    - llnl.dat      \n",
-        "    - minteq.dat    \n",
-        "    - minteq.v4.dat \n",
-        "    - phreeqc.dat   \n",
-        "    - pitzer.dat    \n",
-        "    - sit.dat       \n",
-        "    - wateq4f.dat   \n",
+        "    - Amm.dat            \n"
+        "    - ColdChem.dat       \n"
+        "    - core10.dat         \n"
+        "    - frezchem.dat       \n"
+        "    - iso.dat            \n"
+        "    - llnl.dat           \n"
+        "    - minteq.dat         \n"
+        "    - minteq.v4.dat      \n"
+        "    - phreeqc.dat        \n"
+        "    - pitzer.dat         \n"
+        "    - sit.dat            \n"
+        "    - Tipping_Hurley.dat \n"
+        "    - wateq4f.da         \n"
         "");
     auto fs = cmrc::ReaktoroDatabases::get_filesystem();
     auto contents = fs.open("databases/phreeqc/" + name);
@@ -261,13 +254,17 @@ PhreeqcDatabase::PhreeqcDatabase(const String& name)
 : PhreeqcDatabase(PhreeqcDatabase::withName(name))
 {}
 
+auto PhreeqcDatabase::load(const String& filename) -> PhreeqcDatabase&
+{
+    detail::PhreeqcDatabaseHelper helper(filename);
+    Database::clear();
+    Database::addSpecies(helper.species_list);
+    Database::attachData(helper);
+    return *this;
+}
+
 auto PhreeqcDatabase::withName(const String& name) -> PhreeqcDatabase
 {
-    // PhreeqcDatabase db;
-    // const auto content = detail::getPhreeqcDatabaseContent(name);
-    // const auto species = detail::createSpeciesWithDatabaseContentOrPath(content);
-    // db.addSpecies(species);
-    // return db;
     PhreeqcDatabase db;
     const auto content = detail::getPhreeqcDatabaseContent(name);
     detail::PhreeqcDatabaseHelper helper(content);
@@ -290,18 +287,28 @@ auto PhreeqcDatabase::fromContents(const String& contents) -> PhreeqcDatabase
     return fromFile(contents); // PhreeqcDatabase::fromFile also works with contents string!
 }
 
-auto PhreeqcDatabase::load(const String& filename) -> PhreeqcDatabase&
-{
-    detail::PhreeqcDatabaseHelper helper(filename);
-    Database::clear();
-    Database::addSpecies(helper.species_list);
-    Database::attachData(helper);
-    return *this;
-}
-
 auto PhreeqcDatabase::contents(const String& database) -> String
 {
     return detail::getPhreeqcDatabaseContent(database);
+}
+
+auto PhreeqcDatabase::namesEmbeddedDatabases() -> Strings
+{
+    return {
+        "Amm.dat",
+        "ColdChem.dat",
+        "core10.dat",
+        "frezchem.dat",
+        "iso.dat",
+        "llnl.dat",
+        "minteq.dat",
+        "minteq.v4.dat",
+        "phreeqc.dat",
+        "pitzer.dat",
+        "sit.dat",
+        "Tipping_Hurley.dat",
+        "wateq4f.dat"
+    };
 }
 
 } // namespace Reaktoro
