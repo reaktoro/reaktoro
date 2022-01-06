@@ -12,7 +12,7 @@ want to read about.
 - @ref Reaktoro::PhreeqcDatabase
 - @ref Reaktoro::ThermoFunDatabase
 - @ref Reaktoro::SupcrtDatabase
-- @ref Reaktoro::NasaDatabase (*in development*)
+- @ref Reaktoro::NasaDatabase
 
 ## Chemical system constituents
 

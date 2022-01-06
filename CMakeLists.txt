@@ -110,9 +110,6 @@ endif()
 # Build the project documentation
 if(REAKTORO_BUILD_DOCS)
     add_subdirectory(docs EXCLUDE_FROM_ALL)
-    add_custom_target(docs
-        COMMAND ${CMAKE_COMMAND} --build docs --parallel
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()
 
 # Build the tests
