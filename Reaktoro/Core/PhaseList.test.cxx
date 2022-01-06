@@ -226,6 +226,28 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     REQUIRE_THROWS( phases.indexWithStateOfMatter(StateOfMatter::Plasma) );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::get
+    //-------------------------------------------------------------------------
+    REQUIRE( phases.get("AqueousPhase").name() == "AqueousPhase" );
+    REQUIRE( phases.get("GaseousPhase").name() == "GaseousPhase" );
+    REQUIRE( phases.get("Calcite").name()      == "Calcite"      );
+    REQUIRE( phases.get("Halite").name()       == "Halite"       );
+    REQUIRE( phases.get("Magnesite").name()    == "Magnesite"    );
+
+    REQUIRE_THROWS( phases.get("@#$") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::getWithName
+    //-------------------------------------------------------------------------
+    REQUIRE( phases.getWithName("AqueousPhase").name() == "AqueousPhase" );
+    REQUIRE( phases.getWithName("GaseousPhase").name() == "GaseousPhase" );
+    REQUIRE( phases.getWithName("Calcite").name()      == "Calcite"      );
+    REQUIRE( phases.getWithName("Halite").name()       == "Halite"       );
+    REQUIRE( phases.getWithName("Magnesite").name()    == "Magnesite"    );
+
+    REQUIRE_THROWS( phases.getWithName("@#$") );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::withNames
     //-------------------------------------------------------------------------
     filtered = phases.withNames("AqueousPhase GaseousPhase");

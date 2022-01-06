@@ -88,6 +88,12 @@ public:
     /// Return the index of the first phase with given state of matter or throw a runtime error if not found.
     auto indexWithStateOfMatter(StateOfMatter option) const -> Index;
 
+    /// Return the phase with a given name.
+    auto get(const String& name) const -> const Phase&;
+
+    /// Return the phase with a given name.
+    auto getWithName(const String& name) const -> const Phase&;
+
     /// Return all phases with given names.
     auto withNames(const StringList& names) const -> PhaseList;
 

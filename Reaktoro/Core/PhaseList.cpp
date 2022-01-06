@@ -144,6 +144,16 @@ auto PhaseList::indexWithStateOfMatter(StateOfMatter option) const -> Index
     return idx;
 }
 
+auto PhaseList::get(const String& name) const -> const Phase&
+{
+    return getWithName(name);
+}
+
+auto PhaseList::getWithName(const String& name) const -> const Phase&
+{
+    return m_phases[indexWithName(name)];
+}
+
 auto PhaseList::withNames(const StringList& names) const -> PhaseList
 {
     return vectorize(names, RKT_LAMBDA(name, m_phases[indexWithName(name)]));
