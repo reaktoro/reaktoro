@@ -107,7 +107,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 29 );
+            CHECK( result.optima.iterations == 17 );
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -192,7 +192,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 29 );
+            CHECK( result.optima.iterations == 25 );
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -244,7 +244,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 55 );
+            CHECK( result.optima.iterations == 41 );
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -297,7 +297,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 55 );
+            CHECK( result.optima.iterations == 41 );
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -354,7 +354,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state);
 
                 CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 56 );
+                CHECK( result.optima.iterations == 57 );
 
                 result = solver.solve(state); // check a recalculation converges in 0 iterations
 
@@ -394,7 +394,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state, restrictions);
 
                 CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 55 );
+                CHECK( result.optima.iterations == 41 );
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
 
@@ -459,7 +459,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 30 );
+            CHECK( result.optima.iterations == 17 );
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
 
@@ -576,7 +576,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 55 );
+            CHECK( result.optima.iterations == 42 );
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
 
