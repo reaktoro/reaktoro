@@ -65,7 +65,7 @@ struct ChemicalState::Impl
     Impl(const ChemicalSystem& system)
     : system(system), equilibrium(system), props(system)
     {
-        n.setZero(system.species().size());
+        n.setConstant(system.species().size(), 1e-16); // set small positive value for initial species amounts
     }
 
     auto temperature(real val) -> void
