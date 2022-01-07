@@ -419,7 +419,7 @@ auto ChemicalProps::speciesStandardHeatCapacityConstP(StringOrIndex species) con
 auto ChemicalProps::speciesStandardHeatCapacityConstV(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
-    return Cp0[ispecies] + T*VT0[ispecies]*VT0[ispecies]/VP0[ispecies]; // from Cv0 = Cp0 + T*VT0*VT0/VP0
+    return VP0[ispecies] == 0.0 ? Cp0[ispecies] : Cp0[ispecies] + T*VT0[ispecies]*VT0[ispecies]/VP0[ispecies]; // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
 auto ChemicalProps::speciesAmounts() const -> ArrayXrConstRef
@@ -507,7 +507,7 @@ auto ChemicalProps::speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstR
 
 auto ChemicalProps::speciesStandardHeatCapacitiesConstV() const -> ArrayXr
 {
-    return Cp0 + T*VT0*VT0/VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
+    return (VP0 == 0.0).select(Cp0, Cp0 + T*VT0*VT0/VP0); // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
 auto ChemicalProps::molarVolume() const -> real

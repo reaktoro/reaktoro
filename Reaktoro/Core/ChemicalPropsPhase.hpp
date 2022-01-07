@@ -337,7 +337,11 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the phase (in J/(mol·K)).
     auto speciesStandardHeatCapacitiesConstV() const -> ArrayXr
     {
-        return mdata.Cp0 + mdata.T * mdata.VT0 * mdata.VT0 / mdata.VP0; // from Cv0 = Cp0 + T*VT0*VT0/VP0
+        const auto& Cp0 = mdata.Cp0;
+        const auto& T   = mdata.T;
+        const auto& VT0 = mdata.VT0;
+        const auto& VP0 = mdata.VP0;
+        return (VP0 == 0.0).select(Cp0, Cp0 + T*VT0*VT0/VP0); // from Cv0 = Cp0 + T*VT0*VT0/VP0
     }
 
     /// Return the molar mass of the phase (in kg/mol).
@@ -413,7 +417,7 @@ public:
         const auto VT = molarVolumeT();
         const auto VP = molarVolumeP();
         const auto T  = temperature();
-        return Cp + T*VT*VT/VP;
+        return VP == 0.0 ? Cp : Cp + T*VT*VT/VP;
     }
 
     /// Return the specific volume of the phase (in m³/kg).

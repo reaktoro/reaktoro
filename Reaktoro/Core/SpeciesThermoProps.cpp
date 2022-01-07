@@ -31,7 +31,7 @@ SpeciesThermoProps::SpeciesThermoProps(const real& T, const real& P, const Stand
   VT0(sprops.VT0),
   VP0(sprops.VP0),
   Cp0(sprops.Cp0),
-  Cv0(Cp0 + T*VT0*VT0/VP0),
+  Cv0(VP0 == 0.0 ? Cp0 : Cp0 + T*VT0*VT0/VP0),
   U0(H0 - P*V0),
   S0((H0 - G0)/T),
   A0(U0 - T*S0)
