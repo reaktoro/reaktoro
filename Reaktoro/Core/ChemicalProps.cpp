@@ -744,6 +744,7 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     table.add_row({ "Entropy", str(props.entropy()), "J/K" });
     table.add_row({ "Internal Energy", str(props.internalEnergy()), "J" });
     table.add_row({ "Helmholtz Energy", str(props.helmholtzEnergy()), "J" });
+    table.add_row({ "Charge", str(props.charge()), "mol" });
 
     table.add_row({ "Element Amount:" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
     table.add_row({ "Species Amount:" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });

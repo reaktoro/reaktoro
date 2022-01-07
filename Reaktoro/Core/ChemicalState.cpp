@@ -692,8 +692,6 @@ auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const auto T = state.temperature();
-    const auto P = state.pressure();
     const auto n = state.speciesAmounts();
     const auto b = state.elementAmounts();
     const auto species = state.system().species();
@@ -701,8 +699,10 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ "Temperature", str(T), "K" });
-    table.add_row({ "Pressure", str(P), "Pa" });
+    table.add_row({ "Temperature", str(state.temperature()), "K" });
+    table.add_row({ "Pressure", str(state.pressure()), "Pa" });
+    table.add_row({ "Charge:", str(state.charge()), "mol" });
+
     table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
     table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
 
