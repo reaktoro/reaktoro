@@ -355,6 +355,8 @@ auto Phases::convert() const -> Vec<Phase>
             if(phase.species().size())
                 for(auto&& s : db.species().withNames(phase.species()))
                     result = merge(result, s.elements().symbols());
+            if(phase.aggregateState() == AggregateState::Aqueous)
+                result = merge(result, Strings{"H", "O"}); // ensure both H and O are considered in case there is aqueous phases
             return result;
         };
 

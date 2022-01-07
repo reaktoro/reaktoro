@@ -425,6 +425,21 @@ TEST_CASE("Testing Phases", "[Phases]")
         checkMineralPhase(phasevec[2], "Halite");
     }
 
+    SECTION("Testing Phases with an aqueous solution using empty species/element list together with a mineral wihout H and O elements")
+    {
+        Phases phases(db);
+
+        phases.add( AqueousPhase() );
+        phases.add( MineralPhase("Halite") );
+
+        Vec<Phase> phasevec = phases.convert();
+
+        CHECK( phasevec.size() == 2 );
+
+        checkAqueousPhase(phasevec[0], "H2O(aq) H+ OH- H2(aq) O2(aq) Na+ Cl- NaCl(aq) HCl(aq) NaOH(aq)");
+        checkMineralPhase(phasevec[1], "Halite");
+    }
+
     SECTION("Testing Phases with an aqueous solution speciated automatically together with a gaseous phase and minerals")
     {
         Phases phases(db);
