@@ -8,7 +8,7 @@
             "name": "Debug C++ Tests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/debug/gcc/bin/reaktoro-cpptests",
+            "program": "${workspaceFolder}/build/debug/gcc/Reaktoro/reaktoro-cpptests",
             "preLaunchTask": "Build",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
