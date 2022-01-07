@@ -49,8 +49,8 @@ auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModelGener
 
             props.ln_a = props.ln_g + log(x);
 
-            props.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
-            props.Hex = props.Gex;
+            props.Gx = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
+            props.Hx = props.Gx;
         };
 
         return fn;

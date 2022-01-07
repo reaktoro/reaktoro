@@ -56,12 +56,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
     ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x] = args;
-        props.Vex  = 1.0 * (T*P)*(T*P);
-        props.VexT = 2.0 * (T*P)*(T*P);
-        props.VexP = 3.0 * (T*P)*(T*P);
-        props.Gex  = 4.0 * (T*P)*(T*P);
-        props.Hex  = 5.0 * (T*P)*(T*P);
-        props.Cpex = 6.0 * (T*P)*(T*P);
+        props.Vx  = 1.0 * (T*P)*(T*P);
+        props.VxT = 2.0 * (T*P)*(T*P);
+        props.VxP = 3.0 * (T*P)*(T*P);
+        props.Gx  = 4.0 * (T*P)*(T*P);
+        props.Hx  = 5.0 * (T*P)*(T*P);
+        props.Cpx = 6.0 * (T*P)*(T*P);
         props.ln_g = 8.0 * x;
         props.ln_a = 9.0 * x;
     };
@@ -69,12 +69,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
     ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x] = args;
-        props.Vex  = 1.1 * (T*P)*(T*P);
-        props.VexT = 2.1 * (T*P)*(T*P);
-        props.VexP = 3.1 * (T*P)*(T*P);
-        props.Gex  = 4.1 * (T*P)*(T*P);
-        props.Hex  = 5.1 * (T*P)*(T*P);
-        props.Cpex = 6.1 * (T*P)*(T*P);
+        props.Vx  = 1.1 * (T*P)*(T*P);
+        props.VxT = 2.1 * (T*P)*(T*P);
+        props.VxP = 3.1 * (T*P)*(T*P);
+        props.Gx  = 4.1 * (T*P)*(T*P);
+        props.Hx  = 5.1 * (T*P)*(T*P);
+        props.Cpx = 6.1 * (T*P)*(T*P);
         props.ln_g = 8.1 * x;
         props.ln_a = 9.1 * x;
     };
@@ -134,12 +134,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         const ArrayXr  U0 = H0 - P*V0;
         const ArrayXr  A0 = G0 - P*V0;
 
-        const ArrayXr Vex  = ArrayXr{{ 1.0, 1.1 }} * (T*P)*(T*P);
-        const ArrayXr VexT = ArrayXr{{ 2.0, 2.1 }} * (T*P)*(T*P);
-        const ArrayXr VexP = ArrayXr{{ 3.0, 3.1 }} * (T*P)*(T*P);
-        const ArrayXr Gex  = ArrayXr{{ 4.0, 4.1 }} * (T*P)*(T*P);
-        const ArrayXr Hex  = ArrayXr{{ 5.0, 5.1 }} * (T*P)*(T*P);
-        const ArrayXr Cpex = ArrayXr{{ 6.0, 6.1 }} * (T*P)*(T*P);
+        const ArrayXr Vx  = ArrayXr{{ 1.0, 1.1 }} * (T*P)*(T*P);
+        const ArrayXr VxT = ArrayXr{{ 2.0, 2.1 }} * (T*P)*(T*P);
+        const ArrayXr VxP = ArrayXr{{ 3.0, 3.1 }} * (T*P)*(T*P);
+        const ArrayXr Gx  = ArrayXr{{ 4.0, 4.1 }} * (T*P)*(T*P);
+        const ArrayXr Hx  = ArrayXr{{ 5.0, 5.1 }} * (T*P)*(T*P);
+        const ArrayXr Cpx = ArrayXr{{ 6.0, 6.1 }} * (T*P)*(T*P);
 
         const ArrayXr ln_g = ArrayXr{{ 8.0*x[0], 8.0*x[1], 8.1*x[2] }};
         const ArrayXr ln_a = ArrayXr{{ 9.0*x[0], 9.0*x[1], 9.1*x[2] }};
@@ -147,12 +147,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         const real Ntot  = n.sum();
         const real Mtot  = (n * molar_masses).sum();
-        const real Vtot  = (V0 * n).sum() + (nsumphases * Vex).sum();
-        const real VTtot = (VT0 * n).sum() + (nsumphases * VexT).sum();
-        const real VPtot = (VP0 * n).sum() + (nsumphases * VexP).sum();
-        const real Gtot  = (G0 * n).sum() + (nsumphases * Gex).sum();
-        const real Htot  = (H0 * n).sum() + (nsumphases * Hex).sum();
-        const real Cptot = (Cp0 * n).sum() + (nsumphases * Cpex).sum();
+        const real Vtot  = (V0 * n).sum() + (nsumphases * Vx).sum();
+        const real VTtot = (VT0 * n).sum() + (nsumphases * VxT).sum();
+        const real VPtot = (VP0 * n).sum() + (nsumphases * VxP).sum();
+        const real Gtot  = (G0 * n).sum() + (nsumphases * Gx).sum();
+        const real Htot  = (H0 * n).sum() + (nsumphases * Hx).sum();
+        const real Cptot = (Cp0 * n).sum() + (nsumphases * Cpx).sum();
         const real Cvtot = Cptot + T*VTtot*VTtot/VPtot;
         const real Stot  = (Htot - Gtot)/T;
         const real Utot  = Htot - P*Vtot;
@@ -427,12 +427,12 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         const ArrayXd Ntot_n  = ArrayXd::Ones(3);
         const ArrayXd Mtot_n  = molar_masses;
-        const ArrayXd Gtot_n  = dot(n_n, G0) + dot(nsumphases_n, Gex);
-        const ArrayXd Htot_n  = dot(n_n, H0) + dot(nsumphases_n, Hex);
-        const ArrayXd Vtot_n  = dot(n_n, V0) + dot(nsumphases_n, Vex);
-        const ArrayXd VTtot_n = dot(n_n, VT0) + dot(nsumphases_n, VexT);
-        const ArrayXd VPtot_n = dot(n_n, VP0) + dot(nsumphases_n, VexP);
-        const ArrayXd Cptot_n = dot(n_n, Cp0) + dot(nsumphases_n, Cpex);
+        const ArrayXd Gtot_n  = dot(n_n, G0) + dot(nsumphases_n, Gx);
+        const ArrayXd Htot_n  = dot(n_n, H0) + dot(nsumphases_n, Hx);
+        const ArrayXd Vtot_n  = dot(n_n, V0) + dot(nsumphases_n, Vx);
+        const ArrayXd VTtot_n = dot(n_n, VT0) + dot(nsumphases_n, VxT);
+        const ArrayXd VPtot_n = dot(n_n, VP0) + dot(nsumphases_n, VxP);
+        const ArrayXd Cptot_n = dot(n_n, Cp0) + dot(nsumphases_n, Cpx);
         const ArrayXd Cvtot_n = Cptot_n + 2*T*VTtot*VTtot_n/VPtot - T*VTtot*VTtot/VPtot/VPtot * VPtot_n;
         const ArrayXd Stot_n  = (Htot_n - Gtot_n)/T;
         const ArrayXd Utot_n  = Htot_n - P*Vtot_n;

@@ -57,6 +57,8 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
+        CHECK( props.Vx == Approx(0.00189912) );
+
         CHECK( exp(props.ln_g[0]) == Approx(0.84961190475435533) ); // H2O
         CHECK( exp(props.ln_g[1]) == Approx(0.93520991341973592) ); // CO2
         CHECK( exp(props.ln_g[2]) == Approx(0.98003282312005890) ); // CH4
@@ -79,6 +81,8 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
+        CHECK( props.Vx == Approx(0.00186714) );
+
         CHECK( exp(props.ln_g[0]) == Approx(0.84135538513830999) ); // H2O
         CHECK( exp(props.ln_g[1]) == Approx(0.93544583990584096) ); // CO2
 
@@ -99,6 +103,8 @@ TEST_CASE("Testing ActivityModelCubicEOS", "[ActivityModelCubicEOS]")
 
         // Evaluate the activity props function
         fn(props, {T, P, x});
+
+        CHECK( props.Vx == Approx(0.00197476) );
 
         CHECK( exp(props.ln_g[0]) == Approx(0.97385868141252452) ); // CH4
 

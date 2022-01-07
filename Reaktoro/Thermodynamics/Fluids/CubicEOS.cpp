@@ -433,7 +433,7 @@ struct CubicEOS::Impl
         }
 
         // Auxiliary references
-        auto& [Vres, VresT, VresP, Gres, Hres, Cpres, Cvres, ln_phi] = props;
+        auto& [V, VT, VP, Gres, Hres, Cpres, Cvres, ln_phi] = props;
 
         //=========================================================================================
         // Calculate the ideal volume properties of the phase
@@ -443,18 +443,15 @@ struct CubicEOS::Impl
         const real V0P = -V0/P;
 
         //=========================================================================================
-        // Calculate the real volume properties of the phase
+        // Calculate the corrected volumetric properties of the phase
         //=========================================================================================
-        const real V  = Z*V0;
-        const real VT = ZT*V0 + Z*V0T;
-        const real VP = ZP*V0 + Z*V0P;
+        V  = Z*V0;
+        VT = ZT*V0 + Z*V0T;
+        VP = ZP*V0 + Z*V0P;
 
         //=========================================================================================
         // Calculate the residual properties of the phase
         //=========================================================================================
-        Vres  = V - V0;
-        VresT = VT - V0T;
-        VresP = VP - V0P;
         Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
         Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
         Cpres = Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)

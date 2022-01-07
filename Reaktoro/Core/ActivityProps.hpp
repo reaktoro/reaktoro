@@ -27,28 +27,51 @@
 
 namespace Reaktoro {
 
-/// The base type for the primary activity and excess thermodynamic properties of a phase.
-/// @see ActivityModel, ActivityArgs
+/// The base type for the primary activity and corrective thermodynamic
+/// properties of a phase. Thermodynamic properties for a phase, such as
+/// internal energy, enthalpy, Gibbs energy, entropy, and volume can be broken
+/// down into *ideal* and *corrective* contributions. Let us denote by @eq{M}
+/// one of these properties. The previous statement implies that:
+///
+/// @eqc{M=\sum_{i=1}^{\mathrm{N}}x_{i}M_{i}^{\circ}+M^{\mathrm{x}},}
+///
+/// with the first term being the *ideal contribution* and the second term,
+/// @eq{M^{\mathrm{x}}}, being the *corrective contribution*, where @eq{x_{i}}
+/// and @eq{M_{i}^{\circ}} are, respectively, the mole fraction and respective
+/// standard molar property of the \eq{i}-th species in the phase.
+///
+/// Thus, corrective thermodynamic properties are those that need to be added
+/// to their ideal counterpart to obtain more correct values that take into
+/// account the non-ideal thermodynamic behavior of phases. The word
+/// *corrective* is adopted in %Reaktoro to mean either *excess* or *residual*
+/// properties.
+///
+/// @note The corrective property \eq{M^{\mathrm{x}}} may sometimes be the
+/// *actual complete property* of the phase, i.e., \eq{M^{\mathrm{x}} \equiv
+/// M}. For example, for gaseous phases in which the partial molar volumes of
+/// the species are conventionally zero, @eq{V_{i}^{\circ}=0}, the corrective
+/// molar volume, @eq{V^{\mathrm{x}}}, must be set as the total molar volume of
+/// the phase. @see ActivityModel, ActivityArgs
 template<typename Real, typename Array, typename Extra>
 struct ActivityPropsBase
 {
-    /// The excess molar volume of the phase (in m3/mol).
-    Real Vex;
+    /// The corrective molar volume of the phase (in m3/mol).
+    Real Vx;
 
-    /// The temperature derivative of the excess molar volume at constant pressure (in m3/(mol*K)).
-    Real VexT;
+    /// The temperature derivative of the corrective molar volume at constant pressure (in m3/(mol*K)).
+    Real VxT;
 
-    /// The pressure derivative of the excess molar volume at constant temperature (in m3/(mol*Pa)).
-    Real VexP;
+    /// The pressure derivative of the corrective molar volume at constant temperature (in m3/(mol*Pa)).
+    Real VxP;
 
-    /// The excess molar Gibbs energy of the phase (in units of J/mol).
-    Real Gex;
+    /// The corrective molar Gibbs energy of the phase (in units of J/mol).
+    Real Gx;
 
-    /// The excess molar enthalpy of the phase (in units of J/mol).
-    Real Hex;
+    /// The corrective molar enthalpy of the phase (in units of J/mol).
+    Real Hx;
 
-    /// The excess molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    Real Cpex;
+    /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    Real Cpx;
 
     /// The activity coefficients (natural log) of the species in the phase.
     Array ln_g;
@@ -62,12 +85,12 @@ struct ActivityPropsBase
     /// Assign a common value to all properties in this ActivityPropsBase object.
     auto operator=(real value) -> ActivityPropsBase&
     {
-        Vex  = value;
-        VexT = value;
-        VexP = value;
-        Gex  = value;
-        Hex  = value;
-        Cpex = value;
+        Vx  = value;
+        VxT = value;
+        VxP = value;
+        Gx  = value;
+        Hx  = value;
+        Cpx = value;
         ln_g = value;
         ln_a = value;
         return *this;
@@ -77,12 +100,12 @@ struct ActivityPropsBase
     template<typename RX, typename AX, typename EX>
     auto operator=(const ActivityPropsBase<RX, AX, EX>& other) -> ActivityPropsBase&
     {
-        Vex   = other.Vex;
-        VexT  = other.VexT;
-        VexP  = other.VexP;
-        Gex   = other.Gex;
-        Hex   = other.Hex;
-        Cpex  = other.Cpex;
+        Vx   = other.Vx;
+        VxT  = other.VxT;
+        VxP  = other.VxP;
+        Gx   = other.Gx;
+        Hx   = other.Hx;
+        Cpx  = other.Cpx;
         ln_g  = other.ln_g;
         ln_a  = other.ln_a;
         extra = other.extra;
@@ -93,14 +116,14 @@ struct ActivityPropsBase
     template<typename RX, typename AX, typename EX>
     operator ActivityPropsBase<RX, AX, EX>()
     {
-        return { Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, extra };
+        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
     template<typename RX, typename AX, typename EX>
     operator ActivityPropsBase<RX, AX, EX>() const
     {
-        return { Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, extra };
+        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
     }
 
     /// Create a ActivityPropsBase object with given number of species.
@@ -109,25 +132,25 @@ struct ActivityPropsBase
     static auto create(Index numspecies) -> ActivityPropsBase<Real, Array, Extra>
     {
         ActivityPropsBase<Real, Array, Extra> props = {};
-        props.Vex  = 0.0;
-        props.VexT = 0.0;
-        props.VexP = 0.0;
-        props.Gex  = 0.0;
-        props.Hex  = 0.0;
-        props.Cpex = 0.0;
+        props.Vx  = 0.0;
+        props.VxT = 0.0;
+        props.VxP = 0.0;
+        props.Gx  = 0.0;
+        props.Hx  = 0.0;
+        props.Cpx = 0.0;
         props.ln_g = Array::Zero(numspecies);
         props.ln_a = Array::Zero(numspecies);
         return props;
     }
 };
 
-/// The activity and excess thermodynamic properties of a phase.
+/// The activity and corrective thermodynamic properties of a phase.
 using ActivityProps = ActivityPropsBase<real, ArrayXr, Map<String, Any>>;
 
-/// The non-const view to the activity and excess thermodynamic properties of a phase.
+/// The non-const view to the activity and corrective thermodynamic properties of a phase.
 using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef, Map<String, Any>&>;
 
-/// The const view to the activity and excess thermodynamic properties of a phase.
+/// The const view to the activity and corrective thermodynamic properties of a phase.
 using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef, const Map<String, Any>&>;
 
 } // namespace Reaktoro

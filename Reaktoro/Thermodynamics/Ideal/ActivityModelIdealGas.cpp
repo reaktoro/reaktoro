@@ -37,9 +37,9 @@ auto ActivityModelIdealGas() -> ActivityModelGenerator
             const auto Pbar = P * 1.0e-5; // from Pa to bar
 
             props = 0.0;
-            props.Vex  =  R*T/P; // identical to entire volume, since V0 = 0 for gases
-            props.VexT =  props.Vex/T;
-            props.VexP = -props.Vex/P;
+            props.Vx  =  R*T/P; // identical to entire volume, since V0 = 0 for gases
+            props.VxT =  props.Vx/T;
+            props.VxP = -props.Vx/P;
             props.ln_a = x.log() + log(Pbar);
         };
 

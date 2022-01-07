@@ -27,14 +27,14 @@ namespace Reaktoro {
 /// The properties calculated by evaluating a cubic equation of state.
 struct CubicEOSProps
 {
-    /// The residual molar volume of the phase (in m3/mol).
-    real Vres = {};
+    /// The molar volume of the phase (in m3/mol).
+    real V = {};
 
-    /// The temperature derivative of the residual molar volume at constant pressure (in m3/(mol*K)).
-    real VresT = {};
+    /// The temperature derivative of the molar volume at constant pressure (in m3/(mol*K)).
+    real VT = {};
 
-    /// The pressure derivative of the residual molar volume constant temperature (in m3/(mol*Pa)).
-    real VresP = {};
+    /// The pressure derivative of the molar volume constant temperature (in m3/(mol*Pa)).
+    real VP = {};
 
     /// The residual molar Gibbs energy of the phase (in J/mol).
     real Gres = {};

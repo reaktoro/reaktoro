@@ -445,23 +445,23 @@ private:
     /// The standard molar isobaric heat capacities of the species in the system (in J/(mol·K)).
     ArrayXr Cp0;
 
-    /// The excess molar volume of each phase in the system (in m³/mol).
-    ArrayXr Vex;
+    /// The corrective molar volume of each phase in the system (in m³/mol).
+    ArrayXr Vx;
 
-    /// The temperature derivative at constant pressure of the excess molar volume of each phase in the system (in m³/(mol·K)).
-    ArrayXr VexT;
+    /// The temperature derivative at constant pressure of the corrective molar volume of each phase in the system (in m³/(mol·K)).
+    ArrayXr VxT;
 
-    /// The pressure derivative at constant temperature of the excess molar volume of each phase in the system (in m³/(mol·Pa)).
-    ArrayXr VexP;
+    /// The pressure derivative at constant temperature of the corrective molar volume of each phase in the system (in m³/(mol·Pa)).
+    ArrayXr VxP;
 
-    /// The excess molar Gibbs energy of each phase in the system (in J/mol).
-    ArrayXr Gex;
+    /// The corrective molar Gibbs energy of each phase in the system (in J/mol).
+    ArrayXr Gx;
 
-    /// The excess molar enthalpy of each phase in the system (in J/mol).
-    ArrayXr Hex;
+    /// The corrective molar enthalpy of each phase in the system (in J/mol).
+    ArrayXr Hx;
 
-    /// The excess molar isobaric heat capacity of each phase in the system (in J/(mol·K)).
-    ArrayXr Cpex;
+    /// The corrective molar isobaric heat capacity of each phase in the system (in J/(mol·K)).
+    ArrayXr Cpx;
 
     /// The activity coefficients (natural log) of the species in the system.
     ArrayXr ln_g;

@@ -64,23 +64,23 @@ struct ChemicalPropsPhaseBaseData
     /// The standard molar isobaric heat capacities of the species in the phase (in J/(mol·K))
     Array Cp0;
 
-    /// The excess molar volume of the phase (in m³/mol).
-    Real Vex;
+    /// The corrective molar volume of the phase (in m³/mol).
+    Real Vx;
 
-    /// The temperature derivative of the excess molar volume at constant pressure (in m³/(mol·K)).
-    Real VexT;
+    /// The temperature derivative of the corrective molar volume at constant pressure (in m³/(mol·K)).
+    Real VxT;
 
-    /// The pressure derivative of the excess molar volume at constant temperature (in m³/(mol·Pa)).
-    Real VexP;
+    /// The pressure derivative of the corrective molar volume at constant temperature (in m³/(mol·Pa)).
+    Real VxP;
 
-    /// The excess molar Gibbs energy of the phase (in units of J/mol).
-    Real Gex;
+    /// The corrective molar Gibbs energy of the phase (in units of J/mol).
+    Real Gx;
 
-    /// The excess molar enthalpy of the phase (in units of J/mol).
-    Real Hex;
+    /// The corrective molar enthalpy of the phase (in units of J/mol).
+    Real Hx;
 
-    /// The excess molar isobaric heat capacity of the phase (in units of J/(mol·K)).
-    Real Cpex;
+    /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol·K)).
+    Real Cpx;
 
     /// The activity coefficients (natural log) of the species in the phase.
     Array ln_g;
@@ -107,12 +107,12 @@ struct ChemicalPropsPhaseBaseData
         VT0  = other.VT0;
         VP0  = other.VP0;
         Cp0  = other.Cp0;
-        Vex  = other.Vex;
-        VexT = other.VexT;
-        VexP = other.VexP;
-        Gex  = other.Gex;
-        Hex  = other.Hex;
-        Cpex = other.Cpex;
+        Vx  = other.Vx;
+        VxT = other.VxT;
+        VxP = other.VxP;
+        Gx  = other.Gx;
+        Hx  = other.Hx;
+        Cpx = other.Cpx;
         ln_g = other.ln_g;
         ln_a = other.ln_a;
         u    = other.u;
@@ -123,27 +123,27 @@ struct ChemicalPropsPhaseBaseData
     template<typename RX, typename AX>
     operator ChemicalPropsPhaseBaseData<RX, AX>()
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u };
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into another.
     template<typename RX, typename AX>
     operator ChemicalPropsPhaseBaseData<RX, AX>() const
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u };
     }
 
     /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
     auto operator=(const ArrayStream<Real>& array)
     {
-        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u);
+        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
         return *this;
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into an array.
     operator ArrayStream<Real>() const
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u };
     }
 };
 
@@ -349,38 +349,38 @@ public:
     /// Return the molar volume of the phase (in m³/mol).
     auto molarVolume() const -> real
     {
-        return (mdata.x * mdata.V0).sum() + mdata.Vex;
+        return (mdata.x * mdata.V0).sum() + mdata.Vx;
     }
 
     /// Return the temperature derivative of the molar volume of the phase (in m³/(mol·K)).
     auto molarVolumeT() const -> real
     {
-        return (mdata.x * mdata.VT0).sum() + mdata.VexT;
+        return (mdata.x * mdata.VT0).sum() + mdata.VxT;
     }
 
     /// Return the pressure derivative of the molar volume of the phase (in m³/(mol·Pa)).
     auto molarVolumeP() const -> real
     {
-        return (mdata.x * mdata.VP0).sum() + mdata.VexP;
+        return (mdata.x * mdata.VP0).sum() + mdata.VxP;
     }
 
     /// Return the molar Gibbs energy of formation of the phase (in J/mol).
     auto molarGibbsEnergy() const -> real
     {
-        return (mdata.x * mdata.G0).sum() + mdata.Gex;
+        return (mdata.x * mdata.G0).sum() + mdata.Gx;
     }
 
     /// Return the molar enthalpy of formation of the phase (in J/mol).
     auto molarEnthalpy() const -> real
     {
-        return (mdata.x * mdata.H0).sum() + mdata.Hex;
+        return (mdata.x * mdata.H0).sum() + mdata.Hx;
     }
 
     /// Return the molar entropy of formation of the phase (in J/(mol·K)).
     auto molarEntropy() const -> real
     {
         const auto S0 = (mdata.H0 - mdata.G0)/mdata.T; // from G0 = H0 - T*S0
-        const auto Sx = (mdata.Hex - mdata.Gex)/mdata.T; // from Gx = Hx - T*Sx
+        const auto Sx = (mdata.Hx - mdata.Gx)/mdata.T; // from Gx = Hx - T*Sx
         return (mdata.x * S0).sum() + Sx;
     }
 
@@ -388,7 +388,7 @@ public:
     auto molarInternalEnergy() const -> real
     {
         const auto U0 = mdata.H0 - mdata.P * mdata.V0; // from H0 = U0 + P*V0
-        const auto Ux = mdata.Hex - mdata.P * mdata.Vex; // from Hx = U0 + P*Vx
+        const auto Ux = mdata.Hx - mdata.P * mdata.Vx; // from Hx = U0 + P*Vx
         return (mdata.x * U0).sum() + Ux;
     }
 
@@ -396,14 +396,14 @@ public:
     auto molarHelmholtzEnergy() const -> real
     {
         const auto A0 = mdata.G0 - mdata.P * mdata.V0; // from A0 = U0 - T*S0 = (H0 - P*V0) + (G0 - H0) = G0 - P*V0
-        const auto Ax = mdata.Gex - mdata.P * mdata.Vex; // from Ax = U0 - T*Sx = (Hx - P*Vx) + (Gx - Hx) = Gx - P*Vx
+        const auto Ax = mdata.Gx - mdata.P * mdata.Vx; // from Ax = U0 - T*Sx = (Hx - P*Vx) + (Gx - Hx) = Gx - P*Vx
         return (mdata.x * A0).sum() + Ax;
     }
 
     /// Return the molar isobaric heat capacity of the phase (in J/(mol·K)).
     auto molarHeatCapacityConstP() const -> real
     {
-        return (mdata.x * mdata.Cp0).sum() + mdata.Cpex;
+        return (mdata.x * mdata.Cp0).sum() + mdata.Cpx;
     }
 
     /// Return the molar isochoric heat capacity of the phase (in J/(mol·K)).
@@ -614,12 +614,12 @@ private:
         auto& VT0  = mdata.VT0;
         auto& VP0  = mdata.VP0;
         auto& Cp0  = mdata.Cp0;
-        auto& Vex  = mdata.Vex;
-        auto& VexT = mdata.VexT;
-        auto& VexP = mdata.VexP;
-        auto& Gex  = mdata.Gex;
-        auto& Hex  = mdata.Hex;
-        auto& Cpex = mdata.Cpex;
+        auto& Vx  = mdata.Vx;
+        auto& VxT = mdata.VxT;
+        auto& VxP = mdata.VxP;
+        auto& Gx  = mdata.Gx;
+        auto& Hx  = mdata.Hx;
+        auto& Cpx = mdata.Cpx;
         auto& ln_g = mdata.ln_g;
         auto& ln_a = mdata.ln_a;
         auto& u    = mdata.u;
@@ -667,7 +667,7 @@ private:
             phase().name(), " because it has one or more species with zero amounts.");
 
         // Compute the activity properties of the phase
-        ActivityPropsRef aprops{ Vex, VexT, VexP, Gex, Hex, Cpex, ln_g, ln_a, extra };
+        ActivityPropsRef aprops{ Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
         ActivityArgs args{ T, P, x };
         const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.
             phase().idealActivityModel() : phase().activityModel();

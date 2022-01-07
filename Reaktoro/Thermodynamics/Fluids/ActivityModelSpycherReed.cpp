@@ -302,12 +302,12 @@ auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
         }
 
         // The result of the chemical model (equation of state) of the phase
-        auto& Vex   = props.Vex;
-        auto& VexT  = props.VexT;
-        auto& VexP  = props.VexP;
-        auto& Gres  = props.Gex;
-        auto& Hres  = props.Hex;
-        auto& Cpres = props.Cpex;
+        auto& Vx   = props.Vx;
+        auto& VxT  = props.VxT;
+        auto& VxP  = props.VxP;
+        auto& Gres  = props.Gx;
+        auto& Hres  = props.Hx;
+        auto& Cpres = props.Cpx;
         auto& ln_g  = props.ln_g;
         auto& ln_a  = props.ln_a;
 
@@ -321,10 +321,10 @@ auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
         const real VT = ZT*V0 + Z*V0T;
         const real VP = ZP*V0 + Z*V0P;
 
-        // Calculate the excess molar volume of the phase (in m3/mol) and its derivatives
-        Vex  = V - V0;
-        VexT = VT - V0T;
-        VexP = VP - V0P;
+        // Calculate the corrective molar volume of the phase (in m3/mol) and its derivatives (as actual total molar volumes)
+        Vx  = V;
+        VxT = VT;
+        VxP = VP;
 
         // Calculate the residual molar Gibbs energy of the phase
         Gres = R * T*(Bmix + 0.5*Cmix*Pbar)*Pbar;

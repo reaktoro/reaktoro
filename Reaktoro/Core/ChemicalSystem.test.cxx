@@ -31,12 +31,12 @@ extern auto createDatabase() -> Database;
 auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
 {
     const auto [T, P, x] = args;
-    props.Vex  = 0.1 * log(P/T);
-    props.VexT = 0.2 * log(P/T);
-    props.VexP = 0.3 * log(P/T);
-    props.Gex  = 0.4 * log(P/T);
-    props.Hex  = 0.5 * log(P/T);
-    props.Cpex = 0.6 * log(P/T);
+    props.Vx  = 0.1 * log(P/T);
+    props.VxT = 0.2 * log(P/T);
+    props.VxP = 0.3 * log(P/T);
+    props.Gx  = 0.4 * log(P/T);
+    props.Hx  = 0.5 * log(P/T);
+    props.Cpx = 0.6 * log(P/T);
     props.ln_g = 0.8 * x;
     props.ln_a = 0.9 * x;
 };
@@ -45,12 +45,12 @@ auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
 auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
 {
     const auto [T, P, x] = args;
-    props.Vex  = 1.0 * log(P/T);
-    props.VexT = 2.0 * log(P/T);
-    props.VexP = 3.0 * log(P/T);
-    props.Gex  = 4.0 * log(P/T);
-    props.Hex  = 5.0 * log(P/T);
-    props.Cpex = 6.0 * log(P/T);
+    props.Vx  = 1.0 * log(P/T);
+    props.VxT = 2.0 * log(P/T);
+    props.VxP = 3.0 * log(P/T);
+    props.Gx  = 4.0 * log(P/T);
+    props.Hx  = 5.0 * log(P/T);
+    props.Cpx = 6.0 * log(P/T);
     props.ln_g = 8.0 * x;
     props.ln_a = 9.0 * x;
 };
@@ -59,12 +59,12 @@ auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
 auto activityModelSolid(ActivityPropsRef props, ActivityArgs args)
 {
     const auto [T, P, x] = args;
-    props.Vex  = 1.1 * log(P/T);
-    props.VexT = 2.1 * log(P/T);
-    props.VexP = 3.1 * log(P/T);
-    props.Gex  = 4.1 * log(P/T);
-    props.Hex  = 5.1 * log(P/T);
-    props.Cpex = 6.1 * log(P/T);
+    props.Vx  = 1.1 * log(P/T);
+    props.VxT = 2.1 * log(P/T);
+    props.VxP = 3.1 * log(P/T);
+    props.Gx  = 4.1 * log(P/T);
+    props.Hx  = 5.1 * log(P/T);
+    props.Cpx = 6.1 * log(P/T);
     props.ln_g = 8.1 * x;
     props.ln_a = 9.1 * x;
 };

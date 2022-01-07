@@ -42,8 +42,7 @@ def testChemicalState():
 
     assert state.temperature() == 298.15
     assert state.pressure() == 1e5
-    assert state.charge() == 0.0 # no amounts assigned yet
-    assert npy.max(state.speciesAmounts()) == 0.0
+    assert npy.max(state.speciesAmounts()) == 1e-16  # default initial amount of all species
 
     state.temperature(30.0, "celsius")
     assert state.temperature() == pytest.approx(303.15)

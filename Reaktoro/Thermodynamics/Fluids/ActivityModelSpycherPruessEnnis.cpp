@@ -138,8 +138,8 @@ auto activityModelSpycherPruessEnnis(const SpeciesList& species) -> ActivityMode
         // The molar volume of the phase (in m3/mol)
         const auto V = convertCubicCentimeterToCubicMeter(v);
 
-        // Set the excess molar volume of the phase (in m3/mol)
-        props.Vex = V - R*T/P;
+        // Set the corrective molar volume of the phase (in m3/mol)
+        props.Vx = V;
 
         // Set the ln activities of the gaseous species to ideal values
         props.ln_a = ln_x + ln_Pb;

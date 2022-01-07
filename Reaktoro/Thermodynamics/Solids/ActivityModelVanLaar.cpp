@@ -62,8 +62,8 @@
 // //
 // //        res.ln_activities = res.ln_activity_coefficients + log(state.x);
 // //
-// //        res.Gex = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
-// //        res.Hex = res.Gex;
+// //        res.Gx = (x1*x2*(a0 + a1*(x1 - x2) + a2*pow((x1 - x2), 2))) * RT;
+// //        res.Hx = res.Gx;
 
 //        return res;
 //    };

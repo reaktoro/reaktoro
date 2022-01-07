@@ -57,12 +57,12 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
     ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args)
     {
         const auto [T, P, x] = args;
-        props.Vex  = 1.0 * (T * P);
-        props.VexT = 2.0 * (T * P);
-        props.VexP = 3.0 * (T * P) * (-1.0); // needs to be negative!
-        props.Gex  = 4.0 * (T * P);
-        props.Hex  = 5.0 * (T * P);
-        props.Cpex = 100 * (T * P);
+        props.Vx  = 1.0 * (T * P);
+        props.VxT = 2.0 * (T * P);
+        props.VxP = 3.0 * (T * P) * (-1.0); // needs to be negative!
+        props.Gx  = 4.0 * (T * P);
+        props.Hx  = 5.0 * (T * P);
+        props.Cpx = 100 * (T * P);
         props.ln_g = 8.0 * x;
         props.ln_a = 9.0 * x;
     };
@@ -106,12 +106,12 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
         const ArrayXr U0  = H0 - P*V0;
         const ArrayXr A0  = G0 - P*V0;
 
-        const real Vex  = 1.0 * (T * P);
-        const real VexT = 2.0 * (T * P);
-        const real VexP = 3.0 * (T * P) * (-1.0); // needs to be negative!
-        const real Gex  = 4.0 * (T * P);
-        const real Hex  = 5.0 * (T * P);
-        const real Cpex = 100 * (T * P);
+        const real Vx  = 1.0 * (T * P);
+        const real VxT = 2.0 * (T * P);
+        const real VxP = 3.0 * (T * P) * (-1.0); // needs to be negative!
+        const real Gx  = 4.0 * (T * P);
+        const real Hx  = 5.0 * (T * P);
+        const real Cpx = 100 * (T * P);
 
         const ArrayXr ln_g = 8.0 * x;
         const ArrayXr ln_a = 9.0 * x;
@@ -122,12 +122,12 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 
         const real MM = mass/nsum; // expected molar mass
 
-        const real G  = (G0 * x).sum() + Gex;
-        const real H  = (H0 * x).sum() + Hex;
-        const real V  = (V0 * x).sum() + Vex;
-        const real VT = (VT0 * x).sum() + VexT;
-        const real VP = (VP0 * x).sum() + VexP;
-        const real Cp = (Cp0 * x).sum() + Cpex;
+        const real G  = (G0 * x).sum() + Gx;
+        const real H  = (H0 * x).sum() + Hx;
+        const real V  = (V0 * x).sum() + Vx;
+        const real VT = (VT0 * x).sum() + VxT;
+        const real VP = (VP0 * x).sum() + VxP;
+        const real Cp = (Cp0 * x).sum() + Cpx;
         const real Cv = Cp + T*VT*VT/VP;
         const real S  = (H - G)/T;
         const real U  = H - P*V;

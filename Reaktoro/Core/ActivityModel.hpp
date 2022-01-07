@@ -45,7 +45,7 @@ struct ActivityArgs
 // Declare this so that Model understands ActivityPropsRef as reference type for ActivityProps instead of ActivityProps&.
 REAKTORO_DEFINE_REFERENCE_TYPE_OF(ActivityProps, ActivityPropsRef);
 
-/// The function type for the calculation of activity and excess thermodynamic properties of a phase.
+/// The function type for the calculation of activity and corrective thermodynamic properties of a phase.
 using ActivityModel = Model<ActivityProps(ActivityArgs)>;
 
 /// The type for functions that construct an ActivityModel for a phase.
