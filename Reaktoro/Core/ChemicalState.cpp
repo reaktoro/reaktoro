@@ -500,6 +500,9 @@ struct ChemicalState::Equilibrium::Impl
     /// The computed control variables *q* in the equilibrium calculation.
     ArrayXd q;
 
+    /// The computed control variables *p* in the equilibrium calculation.
+    ArrayXd p;
+
     /// The Optima::State object used for warm start Optima optimization calculations.
     Optima::State optstate;
 
@@ -555,19 +558,24 @@ auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef b) -
 
 auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef p) -> void
 {
-    pimpl->optstate.p = p;
+    pimpl->p = p;
+    pimpl->optstate.p = -p;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef q) -> void
 {
+    const auto Nq = pimpl->optstate.x.size() - pimpl->Nn;
     pimpl->q = q;
+    if(Nq > 0)
+        pimpl->optstate.x.tail(Nq) = -q;
 }
 
 auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> void
 {
     pimpl->optstate = state;
     const auto Nq = state.x.size() - pimpl->Nn;
-    pimpl->q = state.x.tail(Nq);
+    pimpl->q = -state.x.tail(Nq); // negative because of the preferred positive coefficients in the conservation matrix
+    pimpl->p = -state.p; // negative because of the preferred positive coefficients in the conservation matrix
 }
 
 auto ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void
@@ -657,7 +665,7 @@ auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConst
 
 auto ChemicalState::Equilibrium::controlVariablesP() const -> ArrayXdConstRef
 {
-    return pimpl->optstate.p;
+    return pimpl->p;
 }
 
 auto ChemicalState::Equilibrium::controlVariablesQ() const -> ArrayXdConstRef
@@ -667,7 +675,7 @@ auto ChemicalState::Equilibrium::controlVariablesQ() const -> ArrayXdConstRef
 
 auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
 {
-    return pimpl->optstate.p;
+    return pimpl->p;
 }
 
 auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
