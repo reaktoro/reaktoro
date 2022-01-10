@@ -28,4 +28,5 @@ void exportUnits(py::module& m)
 
     sub.def("convertible", &units::convertible);
     sub.def("convert", &units::convert<double>);
+    sub.def("convert", &units::convert<real>);
 }
