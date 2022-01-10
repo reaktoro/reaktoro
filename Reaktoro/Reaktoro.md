@@ -23,7 +23,10 @@ want to read about.
 ## Chemical system definition
 
 - @ref Reaktoro::AqueousPhase
+- @ref Reaktoro::CondensedPhase
+- @ref Reaktoro::CondensedPhases
 - @ref Reaktoro::GaseousPhase
+- @ref Reaktoro::IonExchangePhase
 - @ref Reaktoro::LiquidPhase
 - @ref Reaktoro::MineralPhase
 - @ref Reaktoro::MineralPhases
