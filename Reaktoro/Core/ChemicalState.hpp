@@ -170,6 +170,9 @@ public:
     /// Return the amounts of the species in the chemical state (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef;
 
+    /// Return the amounts of the elements and charge in the chemical state (in mol).
+    auto componentAmounts() const -> ArrayXr;
+
     /// Return the amounts of the elements in the chemical state (in mol).
     auto elementAmounts() const -> ArrayXr;
 

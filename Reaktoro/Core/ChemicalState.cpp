@@ -228,10 +228,16 @@ struct ChemicalState::Impl
         return speciesMass(system.species().index(name), unit);
     }
 
+    auto componentAmounts() const -> ArrayXr
+    {
+        const auto& A = system.formulaMatrix();
+        return A * n.matrix();
+    }
+
     auto elementAmounts() const -> ArrayXr
     {
-        const auto& A = system.formulaMatrixElements();
-        return A * n.matrix();
+        const auto& Ae = system.formulaMatrixElements();
+        return Ae * n.matrix();
     }
 
     auto charge() const -> real
@@ -391,6 +397,11 @@ auto ChemicalState::pressure() const -> real
 auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
 {
     return pimpl->n;
+}
+
+auto ChemicalState::componentAmounts() const -> ArrayXr
+{
+    return pimpl->componentAmounts();
 }
 
 auto ChemicalState::elementAmounts() const -> ArrayXr
