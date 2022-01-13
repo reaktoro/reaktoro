@@ -45,14 +45,13 @@ int main()
 
     // Define minerals
     MineralPhases minerals("Lim Cal Portlandite Gbs Gp Corundum Periclase Fe2O3 Na2O K2O "
-                           "monocarbonate hemicarbonate hydrotalcite "
-                           "Fe-monosulph05 Fe-monosulphate");
+                           "monocarbonate hemicarbonate hydrotalcite");
     // Note: C4AsH14, C4Ac0.5H12, C4AcH11 are not found
     
     // Define solid phases
     SolidPhase solidphase_C3AFS084H("C3FS0.84H4.32 C3AFS0.84H4.32");
     SolidPhase solidphase_ettringite_Al("ettringite Fe-ettringite");
-    SolidPhase solidphase_monosulphate_Fe("Fe-monosulph05 monosulphate14");
+    SolidPhase solidphase_monosulphate_Fe("Fe-monosulph05 Fe-monosulphate");
     SolidPhase solidphase_ettringite("ettringite ettringite30");
     SolidPhase solidphase_OH_SO4_AFm("C4AH19 monosulphate14");
     SolidPhase solidphase_CO3_SO4_AFt("tricarboalu03 ettringite03_ss");
