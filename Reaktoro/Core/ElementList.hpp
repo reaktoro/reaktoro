@@ -131,4 +131,7 @@ public:
     using value_type = Element;
 };
 
+/// Return the concatenation of two ElementList objects.
+auto operator+(const ElementList &a, const ElementList &b) -> ElementList;
+
 } // namespace Reaktoro

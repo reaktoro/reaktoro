@@ -144,4 +144,9 @@ ElementList::operator Vec<Element>const&() const
     return m_elements;
 }
 
+auto operator+(const ElementList &a, const ElementList &b) -> ElementList
+{
+    return concatenate(a, b);
+}
+
 } // namespace Reaktoro

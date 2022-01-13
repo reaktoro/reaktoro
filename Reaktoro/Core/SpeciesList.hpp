@@ -188,4 +188,7 @@ public:
     using value_type = Species;
 };
 
+/// Return the concatenation of two SpeciesList objects.
+auto operator+(const SpeciesList &a, const SpeciesList &b) -> SpeciesList;
+
 } // namespace Reaktoro

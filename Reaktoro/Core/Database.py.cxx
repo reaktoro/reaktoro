@@ -36,6 +36,8 @@ void exportDatabase(py::module& m)
 
     py::class_<Database>(m, "Database")
         .def(py::init<>())
+        .def(py::init<const SpeciesList&>())
+        .def(py::init<const ElementList&, const SpeciesList&>())
         .def(py::init<const Vec<Element>&, const Vec<Species>&>())
         .def(py::init<const Vec<Species>&>())
         .def("clear", &Database::clear)

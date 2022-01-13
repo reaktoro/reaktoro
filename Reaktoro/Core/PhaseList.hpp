@@ -144,4 +144,7 @@ public:
     using value_type = Phase;
 };
 
+/// Return the concatenation of two PhaseList objects.
+auto operator+(const PhaseList &a, const PhaseList &b) -> PhaseList;
+
 } // namespace Reaktoro
