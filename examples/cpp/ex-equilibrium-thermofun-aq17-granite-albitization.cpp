@@ -58,22 +58,20 @@ int main()
     // Define chemical system by providing database, aqueous phase, and minerals
     ChemicalSystem system(db, solution, minerals);
 
-    // Specify conditions to be satisfied at chemical equilibrium
-//    EquilibriumSpecs specs(system);
-//    specs.temperature();
-//    specs.pressure();
-
     // Define equilibrium solver
     EquilibriumOptions opts;
 
     EquilibriumSolver solver(system);
 
    // Define temperature and pressure
-    double T = 400.0; // in Celsius
-    double P = 1e3; // in bar
+//    double T = 400.0; // in Celsius
+//    double P = 1e3; // in bar
 
-//    double T = 25.0; // in Celsius
-//    double P = 1.0; // in bar
+    double T = 25.0; // in Celsius
+    double P = 1.0; // in bar
+
+    std::cout << "T = " << T << std::endl;
+    std::cout << "P = " << P << std::endl;
 
     // Initialize the amount of elements in the system
     Index E = system.elements().size();
@@ -82,6 +80,10 @@ int main()
     ChemicalState stategranite(system);
     stategranite.temperature(T, "celsius");
     stategranite.pressure(P, "bar");
+
+    // -------------------------------------------------------------------------------------------- //
+    // Pure granite
+    // -------------------------------------------------------------------------------------------- //
 
     // Define granite element amounts
     // GEMS input:
@@ -105,12 +107,16 @@ int main()
     // Output the chemical state to a console
     stategranite.output("state-aq17-granite.txt");
 
+    // -------------------------------------------------------------------------------------------- //
+    // Mix of granite and fluid
+    // -------------------------------------------------------------------------------------------- //
+
     // Define initial equilibrium state for the granite-fluid mix calculations
     ChemicalState stategranitefluid(system);
     stategranitefluid.temperature(T, "celsius");
     stategranitefluid.pressure(P, "bar");
 
-    // Define granite-fluid element amounts
+    // Define granite-fluid element amounts (mixed granit/fluid 0.2 mass ratio)
     // GEMS input:
     //Al e 0.84149656
     //Cl e 0.98929196
@@ -127,9 +133,12 @@ int main()
     res = solver.solve(stategranitefluid, bgranitefluid);
     std::cout << "res (granite and fluid) = " << res.optima.succeeded << std::endl;
 
-
     // Output the chemical state to a console
     stategranitefluid.output("state-aq17-bgranitefluid.txt");
+
+    // -------------------------------------------------------------------------------------------- //
+    // Pure fluid
+    // -------------------------------------------------------------------------------------------- //
 
     // Define initial equilibrium state for the fluid calculations
     ChemicalState statefluid(system);
