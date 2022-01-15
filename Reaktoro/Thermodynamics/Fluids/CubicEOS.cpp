@@ -24,6 +24,7 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Math/Roots.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/PhaseIdentification.hpp>
 
@@ -522,6 +523,96 @@ auto CubicEOS::setStablePhaseIdentificationMethod(const PhaseIdentificationMetho
 auto CubicEOS::compute(CubicEOSProps& props, real T, real P, ArrayXrConstRef x) -> void
 {
     return pimpl->compute(props, T, P, x);
+}
+
+/// Compute the local minimum of pressure along an isotherm of a cubic equation of state.
+/// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
+/// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
+/// @param e The @eq{\epsilon} parameter in the cubic equation of state
+/// @param s The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+/// @return double
+auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double s, double e, double T) -> double
+{
+    auto V = b;
+
+    const auto RT = universalGasConstant * T;
+
+    const auto maxiters = 100;
+    const auto tolerance = 1e-6;
+
+    auto i = 0;
+    for(; i < maxiters; ++i)
+    {
+        const auto f = a*((V + s*b) + (V + e*b))*(V - b)*(V - b) - RT*(V + e*b)*(V + e*b)*(V + s*b)*(V + s*b);
+        const auto J = 2*a*(V - b)*(V - b) + 2*a*((V + s*b) + (V + e*b))*(V - b) - 2*RT*(V + e*b)*(V + s*b)*((V + s*b) + (V + e*b));
+        const auto dV = -f / J;
+
+        V += dV;
+
+        if(std::abs(f) < tolerance)
+            break;
+    }
+
+    errorif(i == maxiters, "Could not compute the minimum pressure along an isotherm of a cubic equation of state.");
+
+    const auto P = RT/(V - b) - a/((V + e*b)*(V + s*b));
+
+    return P;
+}
+
+/// Compute the residual Gibbs energy of the fluid for a given compressibility factor.
+/// @param Z The compressibility factor
+/// @param beta The @eq{\beta=Pb/(RT)} variable in the cubic equation of state
+/// @param q The @eq{q=a/(bRT)} variable in the cubic equation of state
+/// @param epsilon The @eq{\epsilon} parameter in the cubic equation of state
+/// @param sigma The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+auto computeResidualGibbsEnergy(double Z, double beta, double q, double epsilon, double sigma, double T) -> double
+{
+    const auto RT = universalGasConstant * T;
+
+    auto I = 0.0;
+
+    if(epsilon != sigma) // CASE I:  Eq. (13.72) of Smith et al. (2017)
+        I = log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon); // @eq{ I=\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right) }
+    else // CASE II: Eq. (13.74) of Smith et al. (2017)
+        I = beta/(Z + epsilon*beta); // @eq{ I=\frac{\beta}{Z+\epsilon\beta} }
+
+    const auto Gres = RT*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
+
+    return Gres;
+}
+
+/// Determine the state of matter of the fluid when three real roots are available.
+/// @param Zmin The compressibility factor with minimum value
+/// @param Zmax The compressibility factor with maximum value
+/// @param beta The @eq{\beta=Pb/(RT)} variable in the cubic equation of state
+/// @param q The @eq{q=a/(bRT)} variable in the cubic equation of state
+/// @param epsilon The @eq{\epsilon} parameter in the cubic equation of state
+/// @param sigma The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+/// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
+auto determineStateOfMatter(double Zmin, double Zmax, double beta, double q, double epsilon, double sigma, double T) -> StateOfMatter
+{
+    const auto Gresmin = computeResidualGibbsEnergy(Zmin, beta, q, epsilon, sigma, T);
+    const auto Gresmax = computeResidualGibbsEnergy(Zmax, beta, q, epsilon, sigma, T);
+    return Gresmin < Gresmax ? StateOfMatter::Liquid : StateOfMatter::Gas;
+}
+
+/// Determine the state of matter of the fluid when only one real root is available.
+/// @param Z The single compressibility factor
+/// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
+/// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
+/// @param e The @eq{\epsilon} parameter in the cubic equation of state
+/// @param s The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+/// @param P The pressure (in Pa)
+/// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
+auto determineStateOfMatter(double Z, double a, double b, double s, double e, double T, double P) -> StateOfMatter
+{
+    const auto Pmin = computeLocalMinimumPressureAlongIsotherm(a, b, s, e, T);
+    return P < Pmin ? StateOfMatter::Gas : StateOfMatter::Supercritical;
 }
 
 } // namespace Reaktoro
