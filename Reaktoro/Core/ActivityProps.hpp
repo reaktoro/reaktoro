@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/TypeOp.hpp>
 #include <Reaktoro/Core/Model.hpp>
 
 namespace Reaktoro {
@@ -52,35 +53,35 @@ namespace Reaktoro {
 /// the species are conventionally zero, @eq{V_{i}^{\circ}=0}, the corrective
 /// molar volume, @eq{V^{\mathrm{x}}}, must be set as the total molar volume of
 /// the phase. @see ActivityModel, ActivityArgs
-template<typename Real, typename Array, typename Extra>
+template<template<typename> typename TypeOp>
 struct ActivityPropsBase
 {
     /// The corrective molar volume of the phase (in m3/mol).
-    Real Vx;
+    TypeOp<real> Vx;
 
     /// The temperature derivative of the corrective molar volume at constant pressure (in m3/(mol*K)).
-    Real VxT;
+    TypeOp<real> VxT;
 
     /// The pressure derivative of the corrective molar volume at constant temperature (in m3/(mol*Pa)).
-    Real VxP;
+    TypeOp<real> VxP;
 
     /// The corrective molar Gibbs energy of the phase (in units of J/mol).
-    Real Gx;
+    TypeOp<real> Gx;
 
     /// The corrective molar enthalpy of the phase (in units of J/mol).
-    Real Hx;
+    TypeOp<real> Hx;
 
     /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol*K)).
-    Real Cpx;
+    TypeOp<real> Cpx;
 
     /// The activity coefficients (natural log) of the species in the phase.
-    Array ln_g;
+    TypeOp<ArrayXr> ln_g;
 
     /// The activities (natural log) of the species in the phase.
-    Array ln_a;
+    TypeOp<ArrayXr> ln_a;
 
     /// The extra data produced by an activity model that may be reused by subsequent models within a chained activity model.
-    Extra extra;
+    TypeOp<Map<String, Any>> extra;
 
     /// Assign a common value to all properties in this ActivityPropsBase object.
     auto operator=(real value) -> ActivityPropsBase&
@@ -97,8 +98,8 @@ struct ActivityPropsBase
     }
 
     /// Convert this ActivityPropsBase object into another.
-    template<typename RX, typename AX, typename EX>
-    auto operator=(const ActivityPropsBase<RX, AX, EX>& other) -> ActivityPropsBase&
+    template<template<typename> typename OtherTypeOp>
+    auto operator=(const ActivityPropsBase<OtherTypeOp>& other) -> ActivityPropsBase&
     {
         Vx   = other.Vx;
         VxT  = other.VxT;
@@ -113,15 +114,15 @@ struct ActivityPropsBase
     }
 
     /// Convert this ActivityPropsBase object into another.
-    template<typename RX, typename AX, typename EX>
-    operator ActivityPropsBase<RX, AX, EX>()
+    template<template<typename> typename OtherTypeOp>
+    operator ActivityPropsBase<OtherTypeOp>()
     {
         return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
-    template<typename RX, typename AX, typename EX>
-    operator ActivityPropsBase<RX, AX, EX>() const
+    template<template<typename> typename OtherTypeOp>
+    operator ActivityPropsBase<OtherTypeOp>() const
     {
         return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
     }
@@ -129,28 +130,28 @@ struct ActivityPropsBase
     /// Create a ActivityPropsBase object with given number of species.
     /// This static method is needed, instead of a constructor, which would
     /// prevent aggregate initialization of this struct.
-    static auto create(Index numspecies) -> ActivityPropsBase<Real, Array, Extra>
+    static auto create(Index numspecies) -> ActivityPropsBase<TypeOp>
     {
-        ActivityPropsBase<Real, Array, Extra> props = {};
+        ActivityPropsBase<TypeOp> props = {};
         props.Vx  = 0.0;
         props.VxT = 0.0;
         props.VxP = 0.0;
         props.Gx  = 0.0;
         props.Hx  = 0.0;
         props.Cpx = 0.0;
-        props.ln_g = Array::Zero(numspecies);
-        props.ln_a = Array::Zero(numspecies);
+        props.ln_g = ArrayXr::Zero(numspecies);
+        props.ln_a = ArrayXr::Zero(numspecies);
         return props;
     }
 };
 
 /// The activity and corrective thermodynamic properties of a phase.
-using ActivityProps = ActivityPropsBase<real, ArrayXr, Map<String, Any>>;
+using ActivityProps = ActivityPropsBase<TypeOpIdentity>;
 
 /// The non-const view to the activity and corrective thermodynamic properties of a phase.
-using ActivityPropsRef = ActivityPropsBase<real&, ArrayXrRef, Map<String, Any>&>;
+using ActivityPropsRef = ActivityPropsBase<TypeOpRef>;
 
 /// The const view to the activity and corrective thermodynamic properties of a phase.
-using ActivityPropsConstRef = ActivityPropsBase<const real&, ArrayXrConstRef, const Map<String, Any>&>;
+using ActivityPropsConstRef = ActivityPropsBase<TypeOpConstRef>;
 
 } // namespace Reaktoro

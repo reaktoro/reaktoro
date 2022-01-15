@@ -27,6 +27,7 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
+#include <Reaktoro/Common/TypeOp.hpp>
 
 namespace Reaktoro {
 
@@ -480,6 +481,39 @@ struct MemoizationTraits<Eigen::Ref<EigenType>>
     }
 };
 
+} // namespace Reaktoro
+
+//=========================================================================
+// CODE BELOW NEEDED FOR TypeOp TRAITS INVOLVING EIGEN TYPES
+//=========================================================================
+namespace Reaktoro {
+namespace detail {
+
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+struct TypeOpRef<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
+{
+    using type = Eigen::Ref<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>;
+};
+
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+struct TypeOpRef<Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
+{
+    using type = Eigen::Ref<Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>;
+};
+
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+struct TypeOpConstRef<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
+{
+    using type = Eigen::Ref<const Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>;
+};
+
+template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
+struct TypeOpConstRef<Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
+{
+    using type = Eigen::Ref<const Eigen::Array<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>;
+};
+
+} // namespace detail
 } // namespace Reaktoro
 
 namespace Reaktoro {
