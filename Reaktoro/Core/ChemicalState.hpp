@@ -146,35 +146,6 @@ public:
     /// @param unit The mass unit
     auto setSpeciesMass(StringOrIndex species, real mass, String unit) -> void;
 
-    /// Return the underlying chemical system for this chemical state.
-    auto system() const -> const ChemicalSystem&;
-
-    /// Return the temperature in the chemical state (in K).
-    auto temperature() const -> real;
-
-    /// Return the pressure in the chemical state (in Pa).
-    auto pressure() const -> real;
-
-    /// Return the amounts of the species in the chemical state (in mol).
-    auto speciesAmounts() const -> ArrayXrConstRef;
-
-    /// Return the amounts of the elements and charge in the chemical state (in mol).
-    auto componentAmounts() const -> ArrayXr;
-
-    /// Return the amounts of the elements in the chemical state (in mol).
-    auto elementAmounts() const -> ArrayXr;
-
-    /// Return the electric charge in the chemical state (in mol).
-    auto charge() const -> real;
-
-    /// Return the amount of a species in the chemical state (in mol).
-    /// @param species The name or index of the species in the system.
-    auto speciesAmount(StringOrIndex species) const -> real;
-
-    /// Return the mass of a species in the chemical state (in kg).
-    /// @param species The name or index of the species in the system.
-    auto speciesMass(StringOrIndex species) const -> real;
-
     /// Scale the amounts of every species by a given scalar.
     /// @param scalar The scale factor
     auto scaleSpeciesAmounts(real scalar) -> void;
@@ -225,6 +196,39 @@ public:
     // /// @param value The new total mass of solids in the system
     // /// @param unit The mass unit
     // auto scaleSolidMass(real value, String unit) -> void;
+
+    /// Return the underlying chemical system for this chemical state.
+    auto system() const -> const ChemicalSystem&;
+
+    /// Return the temperature in the chemical state (in K).
+    auto temperature() const -> real;
+
+    /// Return the pressure in the chemical state (in Pa).
+    auto pressure() const -> real;
+
+    /// Return the amounts of the species in the chemical state (in mol).
+    auto speciesAmounts() const -> ArrayXrConstRef;
+
+    /// Return the amounts of the species from a phase in the chemical state (in mol).
+    /// @param phase The name or index of the phase in the system.
+    auto speciesAmountsInPhase(StringOrIndex phase) const -> ArrayXrConstRef;
+
+    /// Return the amounts of the elements and charge in the chemical state (in mol).
+    auto componentAmounts() const -> ArrayXr;
+
+    /// Return the amounts of the elements in the chemical state (in mol).
+    auto elementAmounts() const -> ArrayXr;
+
+    /// Return the electric charge in the chemical state (in mol).
+    auto charge() const -> real;
+
+    /// Return the amount of a species in the chemical state (in mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesAmount(StringOrIndex species) const -> real;
+
+    /// Return the mass of a species in the chemical state (in kg).
+    /// @param species The name or index of the species in the system.
+    auto speciesMass(StringOrIndex species) const -> real;
 
     /// Return the chemical properties of the system. For performance reasons,
     /// the stored chemical properties are not updated at every change in the

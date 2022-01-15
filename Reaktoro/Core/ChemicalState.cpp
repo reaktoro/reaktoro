@@ -164,6 +164,15 @@ struct ChemicalState::Impl
         n[ispecies] = units::convert(mass, unit, "kg") / system.species(ispecies).molarMass();
     }
 
+    auto speciesAmountsInPhase(StringOrIndex phase) const -> ArrayXrConstRef
+    {
+        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
+        const auto start = system.phases().numSpeciesUntilPhase(iphase);
+        const auto size = system.phase(iphase).species().size();
+        return n.segment(start, size);
+    }
+
     auto componentAmounts() const -> ArrayXr
     {
         const auto& A = system.formulaMatrix();
@@ -275,7 +284,7 @@ struct ChemicalState::Impl
     auto scalePhaseMass(StringOrIndex phase, real mass, String unit) -> void
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
-        mass = units::convert(mass, unit, "m3");
+        mass = units::convert(mass, unit, "kg");
         const auto iphase = detail::resolvePhaseIndex(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
         props.update(T, P, n);
@@ -387,51 +396,6 @@ auto ChemicalState::setSpeciesMass(StringOrIndex species, real mass, String unit
     pimpl->setSpeciesMass(species, mass, unit);
 }
 
-auto ChemicalState::system() const -> const ChemicalSystem&
-{
-    return pimpl->system;
-}
-
-auto ChemicalState::temperature() const -> real
-{
-    return pimpl->T;
-}
-
-auto ChemicalState::pressure() const -> real
-{
-    return pimpl->P;
-}
-
-auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
-{
-    return pimpl->n;
-}
-
-auto ChemicalState::componentAmounts() const -> ArrayXr
-{
-    return pimpl->componentAmounts();
-}
-
-auto ChemicalState::elementAmounts() const -> ArrayXr
-{
-    return pimpl->elementAmounts();
-}
-
-auto ChemicalState::charge() const -> real
-{
-    return pimpl->charge();
-}
-
-auto ChemicalState::speciesAmount(StringOrIndex species) const -> real
-{
-    return pimpl->speciesAmount(species);
-}
-
-auto ChemicalState::speciesMass(StringOrIndex species) const -> real
-{
-    return pimpl->speciesMass(species);
-}
-
 auto ChemicalState::scaleSpeciesAmounts(real scalar) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar);
@@ -481,6 +445,56 @@ auto ChemicalState::scalePhaseMass(StringOrIndex phase, real value, String unit)
 // {
 //     pimpl->scaleSolidMass(value, unit);
 // }
+
+auto ChemicalState::system() const -> const ChemicalSystem&
+{
+    return pimpl->system;
+}
+
+auto ChemicalState::temperature() const -> real
+{
+    return pimpl->T;
+}
+
+auto ChemicalState::pressure() const -> real
+{
+    return pimpl->P;
+}
+
+auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
+{
+    return pimpl->n;
+}
+
+auto ChemicalState::speciesAmountsInPhase(StringOrIndex phase) const -> ArrayXrConstRef
+{
+    return pimpl->speciesAmountsInPhase(phase);
+}
+
+auto ChemicalState::componentAmounts() const -> ArrayXr
+{
+    return pimpl->componentAmounts();
+}
+
+auto ChemicalState::elementAmounts() const -> ArrayXr
+{
+    return pimpl->elementAmounts();
+}
+
+auto ChemicalState::charge() const -> real
+{
+    return pimpl->charge();
+}
+
+auto ChemicalState::speciesAmount(StringOrIndex species) const -> real
+{
+    return pimpl->speciesAmount(species);
+}
+
+auto ChemicalState::speciesMass(StringOrIndex species) const -> real
+{
+    return pimpl->speciesMass(species);
+}
 
 auto ChemicalState::props() const -> const ChemicalProps&
 {

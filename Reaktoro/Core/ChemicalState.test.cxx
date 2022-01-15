@@ -24,64 +24,16 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 using namespace Reaktoro;
 
+namespace test {
+
+/// Return a mock ChemicalSystem object for test reasons.
+auto createChemicalSystem() -> ChemicalSystem;
+
+} // namespace test
+
 TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 {
-    // Create the Database object for the ChemicalSystem
-    Database db;
-    db.addSpecies( Species("H2O(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("H+(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("OH-(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("H2(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("O2(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("Na+(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("Cl-(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("NaCl(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("HCO3-(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("CO2(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("CO3--(aq)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("H2O(g)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("CO2(g)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("H2(g)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("O2(g)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("NaCl(s)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("CaCO3(s)").withStandardGibbsEnergy(0.0) );
-    db.addSpecies( Species("SiO2(s)").withStandardGibbsEnergy(0.0) );
-
-    // Create the ActivityModel of the Phase objects for the ChemicalSystem
-    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args) {};
-
-    // Create the Phase objects for the ChemicalSystem
-    const Vec<Phase> phases =
-    {
-        Phase()
-            .withName("AqueousPhase")
-            .withSpecies(db.speciesWithAggregateState(AggregateState::Aqueous))
-            .withStateOfMatter(StateOfMatter::Liquid)
-            .withActivityModel(activity_model),
-        Phase()
-            .withName("GaseousPhase")
-            .withSpecies(db.speciesWithAggregateState(AggregateState::Gas))
-            .withStateOfMatter(StateOfMatter::Gas)
-            .withActivityModel(activity_model),
-        Phase()
-            .withName("Halite")
-            .withSpecies({ db.species().get("NaCl(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activity_model),
-        Phase()
-            .withName("CaCO3(s)")
-            .withSpecies({ db.species().get("CaCO3(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activity_model),
-        Phase()
-            .withName("Quartz")
-            .withSpecies({ db.species().get("SiO2(s)") })
-            .withStateOfMatter(StateOfMatter::Solid)
-            .withActivityModel(activity_model)
-    };
-
-    // Create the ChemicalSystem object
-    ChemicalSystem system(db, phases);
+    ChemicalSystem system = test::createChemicalSystem();
 
     ChemicalState state(system);
 
@@ -214,7 +166,69 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::charge()
     //-------------------------------------------------------------------------
-    CHECK( state.charge() == Approx(-43.3475) );
+    state.setSpeciesAmounts(1e-16);
+    state.set("H2O(aq)", 1.0, "kg");
+    state.set("Na+(aq)", 1.0, "mol");
+    state.set("Cl-(aq)", 1.0, "mol");
+    state.set("Ca++(aq)", 1.0, "mol");
+
+    CHECK( state.charge() == Approx(2.0) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scaleSpeciesAmounts()
+    //-------------------------------------------------------------------------
+    ChemicalState scaled(system);
+    scaled = ChemicalState(state);
+    scaled.scaleSpeciesAmounts(2.0);
+    CHECK( scaled.speciesAmounts().isApprox(state.speciesAmounts() * 2.0) );
+    CHECK_THROWS( scaled.scaleSpeciesAmounts(-1.0) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scaleSpeciesAmountsInPhase()
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scaleSpeciesAmountsInPhase(0, 3.0);
+    scaled.scaleSpeciesAmountsInPhase("GaseousPhase", 4.0);
+    CHECK( scaled.speciesAmountsInPhase(0).isApprox(state.speciesAmountsInPhase(0) * 3.0) );
+    CHECK( scaled.speciesAmountsInPhase("GaseousPhase").isApprox(state.speciesAmountsInPhase("GaseousPhase") * 4.0) );
+    CHECK_THROWS( scaled.scaleSpeciesAmountsInPhase(0, -1.0) );
+    CHECK_THROWS( scaled.scaleSpeciesAmountsInPhase("XYZ", -1.0) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scaleVolume()
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scaleVolume(1.2, "m3");
+    scaled.props().update(scaled);
+    CHECK( scaled.props().volume() == Approx(1.2) );
+    CHECK_THROWS( scaled.scaleVolume(-1.2, "m3") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scalePhaseVolume()
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scalePhaseVolume("AqueousPhase", 1.2, "m3");
+    scaled.props().update(scaled);
+    CHECK( scaled.props().phaseProps("AqueousPhase").volume() == Approx(1.2) );
+    CHECK_THROWS( scaled.scalePhaseVolume("AqueousPhase", -1.2, "m3") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scaleMass()
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scaleMass(1.2, "kg");
+    scaled.props().update(scaled);
+    CHECK( scaled.props().mass() == Approx(1.2) );
+    CHECK_THROWS( scaled.scaleMass(-1.2, "kg") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scalePhaseMass()
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scalePhaseMass("AqueousPhase", 1.2, "kg");
+    scaled.props().update(scaled);
+    CHECK( scaled.props().phaseProps("AqueousPhase").mass() == Approx(1.2) );
+    CHECK_THROWS( scaled.scalePhaseMass("AqueousPhase", -1.2, "kg") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::props()
@@ -235,20 +249,25 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
         ChemicalState state(system);
         state.setTemperature(288.0);
         state.setPressure(1.3e5);
-        state.setSpeciesAmounts(0.1);
+        state.set("H2O(aq)", 1.0, "kg");
+        state.set("Na+(aq)", 1.0, "mol");
+        state.set("Cl-(aq)", 1.0, "mol");
+        state.set("Ca++(aq)", 1.0, "mol");
+        state.set("Mg++(aq)", 1.0, "mol");
+        state.set("CO3--(aq)", 2.0, "mol");
+        state.set("HCO3-(aq)", 1.234, "mol");
         state.props().update(state);
 
         CHECK(  state.props().temperature() == 288.0 );
         CHECK(  state.props().pressure() == 1.3e5 );
-        CHECK(  state.charge() == Approx(-0.3) );
+        CHECK(  state.props().charge() == Approx(-1.234) );
 
-        CHECK( (state.props().speciesAmounts() == 0.1).all() );
         return state.props();
     };
 
-    props = createChemicalProps(); // checking here if a returned ChemicalState::Props from a function scope works!
+    props = createChemicalProps();
 
     CHECK(  props.temperature() == 288.0 );
     CHECK(  props.pressure() == 1.3e5 );
-    CHECK( (props.speciesAmounts() == 0.1).all() );
+    CHECK(  props.charge() == Approx(-1.234) );
 }
