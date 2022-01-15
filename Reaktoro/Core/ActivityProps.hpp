@@ -80,18 +80,21 @@ struct ActivityPropsBase
     /// The activities (natural log) of the species in the phase.
     TypeOp<ArrayXr> ln_a;
 
+    /// The state of matter of the phase.
+    TypeOp<StateOfMatter> som;
+
     /// The extra data produced by an activity model that may be reused by subsequent models within a chained activity model.
     TypeOp<Map<String, Any>> extra;
 
     /// Assign a common value to all properties in this ActivityPropsBase object.
     auto operator=(real value) -> ActivityPropsBase&
     {
-        Vx  = value;
-        VxT = value;
-        VxP = value;
-        Gx  = value;
-        Hx  = value;
-        Cpx = value;
+        Vx   = value;
+        VxT  = value;
+        VxP  = value;
+        Gx   = value;
+        Hx   = value;
+        Cpx  = value;
         ln_g = value;
         ln_a = value;
         return *this;
@@ -101,14 +104,15 @@ struct ActivityPropsBase
     template<template<typename> typename OtherTypeOp>
     auto operator=(const ActivityPropsBase<OtherTypeOp>& other) -> ActivityPropsBase&
     {
-        Vx   = other.Vx;
-        VxT  = other.VxT;
-        VxP  = other.VxP;
-        Gx   = other.Gx;
-        Hx   = other.Hx;
-        Cpx  = other.Cpx;
+        Vx    = other.Vx;
+        VxT   = other.VxT;
+        VxP   = other.VxP;
+        Gx    = other.Gx;
+        Hx    = other.Hx;
+        Cpx   = other.Cpx;
         ln_g  = other.ln_g;
         ln_a  = other.ln_a;
+        som   = other.som;
         extra = other.extra;
         return *this;
     }
@@ -117,14 +121,14 @@ struct ActivityPropsBase
     template<template<typename> typename OtherTypeOp>
     operator ActivityPropsBase<OtherTypeOp>()
     {
-        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
+        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
     template<template<typename> typename OtherTypeOp>
     operator ActivityPropsBase<OtherTypeOp>() const
     {
-        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
+        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
     }
 
     /// Create a ActivityPropsBase object with given number of species.
