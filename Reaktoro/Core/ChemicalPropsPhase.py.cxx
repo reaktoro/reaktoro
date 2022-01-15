@@ -28,6 +28,7 @@ auto createTemplateClassForChemicalPropsPhaseType(py::module& m, const char* nam
     return py::class_<ChemicalPropsPhaseType>(m, name)
         .def("phase", &ChemicalPropsPhaseType::phase, py::return_value_policy::reference_internal, "Return the underlying Phase object.")
         .def("data", &ChemicalPropsPhaseType::data, py::return_value_policy::reference_internal, "Return the primary chemical property data of the phase from which others are calculated.")
+        .def("stateOfMatter", &ChemicalPropsPhaseType::stateOfMatter, "Return the state of matter of the phase.")
         .def("temperature", &ChemicalPropsPhaseType::temperature, "Return the temperature of the phase (in K).")
         .def("pressure", &ChemicalPropsPhaseType::pressure, "Return the pressure of the phase (in Pa).")
         .def("speciesAmounts", &ChemicalPropsPhaseType::speciesAmounts, py::return_value_policy::reference_internal, "Return the amounts of the species in the phase (in mol).")

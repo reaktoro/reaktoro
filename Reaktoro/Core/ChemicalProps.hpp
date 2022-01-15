@@ -472,6 +472,9 @@ private:
     /// The chemical potentials of the species in the system.
     ArrayXr u;
 
+    /// The state of matter of the phses in the system.
+    Vec<StateOfMatter> som;
+
     /// The extra data produced during the evaluation of activity models. This
     /// extra data allows the activity model of a phase to reuse calculated
     /// data from the activity model of a previous phase if needed.
