@@ -37,7 +37,7 @@ TEST_CASE("Testing EquilibriumJacobian", "[EquilibriumJacobian]")
     state.temperature(3.0);
     state.pressure(5.0);
     for(auto i = 0; i < Nn; ++i)
-        state.setSpeciesAmount(i, 0.1 * i);
+        state.setSpeciesAmount(i, 0.1 * i, "mol");
     state.set("H2O(aq)", 1.0, "kg");
 
     const auto T = state.temperature();

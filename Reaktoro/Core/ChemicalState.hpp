@@ -134,29 +134,17 @@ public:
     /// Set the amounts of the species in the chemical state (in mol).
     auto setSpeciesAmounts(ArrayXdConstRef n) -> void;
 
-    /// Set the amount of a species with given index (in mol).
-    auto setSpeciesAmount(Index ispecies, real amount) -> void;
+    /// Set the amount of a species in the system.
+    /// @param species The name or index of the species in the system.
+    /// @param amount The new amount of the species
+    /// @param unit The amount unit
+    auto setSpeciesAmount(StringOrIndex species, real amount, String unit) -> void;
 
-    /// Set the amount of a species with given index and molar unit (convertible to mol).
-    auto setSpeciesAmount(Index ispecies, real amount, String unit) -> void;
-
-    /// Set the amount of a species with given name (in mol).
-    auto setSpeciesAmount(String name, real amount) -> void;
-
-    /// Set the amount of a species with given name and molar unit (convertible to mol).
-    auto setSpeciesAmount(String name, real amount, String unit) -> void;
-
-    /// Set the mass of a species with given index (in kg).
-    auto setSpeciesMass(Index ispecies, real mass) -> void;
-
-    /// Set the mass of a species with given index and mass unit (convertible to kg).
-    auto setSpeciesMass(Index ispecies, real mass, String unit) -> void;
-
-    /// Set the mass of a species with given name (in kg).
-    auto setSpeciesMass(String name, real mass) -> void;
-
-    /// Set the mass of a species with given name and mass unit (convertible to kg).
-    auto setSpeciesMass(String name, real mass, String unit) -> void;
+    /// Set the mass of a species in the system.
+    /// @param species The name or index of the species in the system.
+    /// @param mass The new mass of the species
+    /// @param unit The mass unit
+    auto setSpeciesMass(StringOrIndex species, real mass, String unit) -> void;
 
     /// Return the underlying chemical system for this chemical state.
     auto system() const -> const ChemicalSystem&;
@@ -179,49 +167,82 @@ public:
     /// Return the electric charge in the chemical state (in mol).
     auto charge() const -> real;
 
-    /// Return the amount of the species in the chemical state with given index (in mol).
-    auto speciesAmount(Index ispecies) const -> real;
+    /// Return the amount of a species in the chemical state (in mol).
+    /// @param species The name or index of the species in the system.
+    auto speciesAmount(StringOrIndex species) const -> real;
 
-    /// Return the amount of the species in the chemical state with given index and unit (convertible to mol).
-    auto speciesAmount(Index ispecies, String unit) const -> real;
+    /// Return the mass of a species in the chemical state (in kg).
+    /// @param species The name or index of the species in the system.
+    auto speciesMass(StringOrIndex species) const -> real;
 
-    /// Return the amount of the species in the chemical state with given name (in mol).
-    auto speciesAmount(String name) const -> real;
+    /// Scale the amounts of every species by a given scalar.
+    /// @param scalar The scale factor
+    auto scaleSpeciesAmounts(real scalar) -> void;
 
-    /// Return the amount of the species in the chemical state with given name and unit (convertible to mol).
-    auto speciesAmount(String name, String unit) const -> real;
+    /// Scale the amounts of the species in a phase by a given scalar.
+    /// @param phase The name or index of the phase in the system.
+    /// @param scalar The scale factor
+    auto scaleSpeciesAmountsInPhase(StringOrIndex phase, real scalar) -> void;
 
-    /// Return the mass of the species in the chemical state with given index (in kg).
-    auto speciesMass(Index ispecies) const -> real;
+    /// Scale the volume of the system by adjusting the amounts of its species equally.
+    /// @param value The new volume of the system
+    /// @param unit The volume unit
+    auto scaleVolume(real value, String unit) -> void;
 
-    /// Return the mass of the species in the chemical state with given index and unit (convertible to kg).
-    auto speciesMass(Index ispecies, String unit) const -> real;
+    /// Scale the volume of a phase by adjusting the amounts of its species equally.
+    /// @param phase The name or index of the phase in the system.
+    /// @param value The new volume of the phase
+    /// @param unit The volume unit
+    auto scalePhaseVolume(StringOrIndex phase, real value, String unit) -> void;
 
-    /// Return the mass of the species in the chemical state with given name (in kg).
-    auto speciesMass(String name) const -> real;
+    // /// Scale the total volume of fluids in the system by adjusting the volumes of fluid phases equally.
+    // /// @param value The new total volume of fluids in the system
+    // /// @param unit The volume unit
+    // auto scaleFluidVolume(real value, String unit) -> void;
 
-    /// Return the mass of the species in the chemical state with given name and unit (convertible to kg).
-    auto speciesMass(String name, String unit) const -> real;
+    // /// Scale the total volume of solids in the system by adjusting the volumes of solid phases equally.
+    // /// @param value The new total volume of solids in the system
+    // /// @param unit The volume unit
+    // auto scaleSolidVolume(real value, String unit) -> void;
+
+    /// Scale the mass of the system by adjusting the amounts of its species equally.
+    /// @param value The new mass of the system
+    /// @param unit The mass unit
+    auto scaleMass(real value, String unit) -> void;
+
+    /// Scale the mass of a phase by adjusting the amounts of its species equally.
+    /// @param phase The name or index of the phase in the system.
+    /// @param value The new mass of the phase
+    /// @param unit The mass unit
+    auto scalePhaseMass(StringOrIndex phase, real value, String unit) -> void;
+
+    // /// Scale the total mass of fluids in the system by adjusting the masses of fluid phases equally.
+    // /// @param value The new total mass of fluids in the system
+    // /// @param unit The mass unit
+    // auto scaleFluidMass(real value, String unit) -> void;
+
+    // /// Scale the total mass of solids in the system by adjusting the masses of solid phases equally.
+    // /// @param value The new total mass of solids in the system
+    // /// @param unit The mass unit
+    // auto scaleSolidMass(real value, String unit) -> void;
+
+    /// Return the chemical properties of the system. For performance reasons,
+    /// the stored chemical properties are not updated at every change in the
+    /// chemical state. For a ChemicalState object `state`, update its chemical
+    /// properties using `state.props().update(state)`.
+    auto props() const -> const ChemicalProps&;
+
+    /// Return the chemical properties of the system. For performance reasons,
+    /// the stored chemical properties are not updated at every change in the
+    /// chemical state. For a ChemicalState object `state`, update its chemical
+    /// properties using `state.props().update(state)`.
+    auto props() -> ChemicalProps&;
 
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
     auto equilibrium() const -> const Equilibrium&;
 
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
     auto equilibrium() -> Equilibrium&;
-
-    /// Return the chemical properties of the system.
-    /// @warning For performance reasons, the stored chemical properties are
-    /// @warning not updated at every change in the chemical state.
-    /// @warning For a ChemicalState object `state`, update its chemical
-    /// @warning properties using `state.props().update(state)`.
-    auto props() const -> const ChemicalProps&;
-
-    /// Return the chemical properties of the system.
-    /// @warning For performance reasons, the stored chemical properties are
-    /// @warning not updated at every change in the chemical state.
-    /// @warning For a ChemicalState object `state`, update its chemical
-    /// @warning properties using `state.props().update(state)`.
-    auto props() -> ChemicalProps&;
 
     /// Output this ChemicalState instance to a stream.
     auto output(std::ostream& out) const -> void;
