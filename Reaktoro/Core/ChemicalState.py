@@ -151,6 +151,36 @@ def testChemicalState():
     state.set("Calcite", 5000.0, "mg")
     assert state.speciesMass("Calcite") == 0.005  # in kg
 
+    scaled = ChemicalState(state)
+    scaled.scaleSpeciesAmounts(2.0)
+    assert (scaled.speciesAmounts().asarray()
+        == state.speciesAmounts().asarray() * 2.0).all()
+
+    scaled = ChemicalState(state)
+    scaled.scaleSpeciesAmountsInPhase("AqueousPhase", 3.0)
+    assert (scaled.speciesAmountsInPhase("AqueousPhase").asarray()
+        == state.speciesAmountsInPhase("AqueousPhase").asarray() * 3.0).all()
+
+    scaled = ChemicalState(state)
+    scaled.scaleVolume(1.0, "m3")
+    scaled.props().update(scaled)
+    assert scaled.props().volume() == 1.0
+
+    scaled = ChemicalState(state)
+    scaled.scalePhaseVolume("AqueousPhase", 1.0, "m3")
+    scaled.props().update(scaled)
+    assert scaled.props().phaseProps("AqueousPhase").volume() == 1.0
+
+    scaled = ChemicalState(state)
+    scaled.scaleMass(1.0, "kg")
+    scaled.props().update(scaled)
+    assert scaled.props().mass()[0] == pytest.approx(1.0)
+
+    scaled = ChemicalState(state)
+    scaled.scalePhaseMass("AqueousPhase", 1.0, "kg")
+    scaled.props().update(scaled)
+    assert scaled.props().phaseProps("AqueousPhase").mass()[0] == pytest.approx(1.0)
+
     props = state.props()
     props.update(state)
 
