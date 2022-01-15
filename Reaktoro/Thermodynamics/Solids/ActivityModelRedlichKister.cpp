@@ -39,6 +39,9 @@ auto ActivityModelRedlichKister(real a0, real a1, real a2) -> ActivityModelGener
             // The arguments for the activity model evaluation
             const auto& [T, P, x] = args;
 
+            // Set the state of matter of the phase
+            props.som = StateOfMatter::Solid;
+
             const auto RT = universalGasConstant * T;
 
             const auto x1 = x[0];

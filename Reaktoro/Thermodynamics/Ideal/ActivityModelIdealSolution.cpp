@@ -19,12 +19,15 @@
 
 namespace Reaktoro {
 
-auto ActivityModelIdealSolution() -> ActivityModelGenerator
+auto ActivityModelIdealSolution(StateOfMatter stateofmatter) -> ActivityModelGenerator
 {
-    ActivityModelGenerator model = [](const SpeciesList& species)
+    ActivityModelGenerator model = [=](const SpeciesList& species)
     {
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
+            // Set the state of matter of the phase
+            props.som = stateofmatter;
+
             props = 0.0;
             props.ln_a = args.x.log();
         };

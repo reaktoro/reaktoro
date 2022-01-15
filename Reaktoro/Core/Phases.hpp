@@ -403,8 +403,8 @@ public:
         setName("LiquidPhase");
         setStateOfMatter(StateOfMatter::Liquid);
         setAggregateState(AggregateState::Liquid);
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
+        setActivityModel(ActivityModelIdealSolution(StateOfMatter::Liquid));
+        setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Liquid));
     }
 };
 
@@ -426,8 +426,8 @@ public:
         setName("SolidPhase");
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
+        setActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
+        setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
     }
 };
 
@@ -448,8 +448,8 @@ public:
             AggregateState::CrystallineSolid,
             AggregateState::AmorphousSolid
         });
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
+        setActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
+        setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
     }
 };
 
@@ -481,8 +481,8 @@ public:
             AggregateState::CrystallineSolid,
             AggregateState::AmorphousSolid
         });
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
+        setActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
+        setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
     }
 };
 
@@ -506,8 +506,8 @@ public:
             AggregateState::CrystallineSolid,
             AggregateState::AmorphousSolid
         });
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
+        setActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid)); // TODO: Create ActivityModelIdealCondensedPhase(melting_temperature) or rely on a MeltingTemperature attribute in the species block of the database
+        setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
     }
 };
 
@@ -542,8 +542,8 @@ public:
             AggregateState::CrystallineSolid,
             AggregateState::AmorphousSolid
         });
-        setActivityModel(ActivityModelIdealSolution());
-        setIdealActivityModel(ActivityModelIdealSolution());
+        setActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid)); // TODO: Create ActivityModelIdealCondensedPhase(melting_temperature)
+        setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
     }
 };
 

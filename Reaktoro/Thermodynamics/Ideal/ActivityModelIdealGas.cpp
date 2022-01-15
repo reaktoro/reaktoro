@@ -36,6 +36,9 @@ auto ActivityModelIdealGas() -> ActivityModelGenerator
 
             const auto Pbar = P * 1.0e-5; // from Pa to bar
 
+            // Set the state of matter of the phase
+            props.som = StateOfMatter::Gas;
+
             props = 0.0;
             props.Vx  =  R*T/P; // identical to entire volume, since V0 = 0 for gases
             props.VxT =  props.Vx/T;

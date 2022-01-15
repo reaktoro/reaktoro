@@ -101,7 +101,7 @@ auto createMineralPhase(const Database& db, String phasename, String mineral) ->
     phase = phase.withSpecies({ db.species().get(mineral) });
     phase = phase.withStateOfMatter(StateOfMatter::Solid);
     phase = phase.withActivityModel(activityModelSolid);
-    phase = phase.withIdealActivityModel(ActivityModelIdealSolution()(phase.species()));
+    phase = phase.withIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid)(phase.species()));
     return phase;
 }
 
