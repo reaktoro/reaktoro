@@ -25,13 +25,14 @@ namespace Reaktoro {
 /// The list of states of matter for phases.
 enum class StateOfMatter
 {
-    Unspecified, ///< when the state of matter of a phase has not been specified
-    Solid,       ///< when the state of matter of a phase is always considered solid
-    Liquid,      ///< when the state of matter of a phase is always considered liquid
-    Gas,         ///< when the state of matter of a phase is always considered gas
-    Plasma,      ///< when the state of matter of a phase is always considered plama
-    Fluid,       ///< when the state of matter of a phase can be either liquid, gas, or plasma  // TODO: StateOfMatter::Fluid needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
-    Condensed,   ///< when the state of matter of a phase can be either liquid or solid  // TODO: StateOfMatter::Condensed needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
+    Unspecified,   ///< when the state of matter of a phase is unspecified
+    Solid,         ///< when the state of matter of a phase is solid
+    Liquid,        ///< when the state of matter of a phase is liquid
+    Gas,           ///< when the state of matter of a phase is gas
+    Supercritical, ///< when the state of matter of a phase is supercritical
+    Plasma,        ///< when the state of matter of a phase is plama
+    Fluid,         ///< when the state of matter of a phase can be either liquid, gas, or plasma  // TODO: StateOfMatter::Fluid needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
+    Condensed,     ///< when the state of matter of a phase can be either liquid or solid  // TODO: StateOfMatter::Condensed needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
 };
 
 /// Output a StateOfMatter value.
@@ -39,12 +40,13 @@ inline auto operator<<(std::ostream& out, StateOfMatter option) -> std::ostream&
 {
     switch(option)
     {
-    case StateOfMatter::Solid:     out << "Solid";     return out;
-    case StateOfMatter::Liquid:    out << "Liquid";    return out;
-    case StateOfMatter::Gas:       out << "Gas";       return out;
-    case StateOfMatter::Plasma:    out << "Plasma";    return out;
-    case StateOfMatter::Fluid:     out << "Fluid";     return out;
-    case StateOfMatter::Condensed: out << "Condensed"; return out;
+    case StateOfMatter::Solid:         out << "Solid";         return out;
+    case StateOfMatter::Liquid:        out << "Liquid";        return out;
+    case StateOfMatter::Gas:           out << "Gas";           return out;
+    case StateOfMatter::Supercritical: out << "Supercritical"; return out;
+    case StateOfMatter::Plasma:        out << "Plasma";        return out;
+    case StateOfMatter::Fluid:         out << "Fluid";         return out;
+    case StateOfMatter::Condensed:     out << "Condensed";     return out;
     default: out << "Unspecified"; return out;
     }
 }
