@@ -147,6 +147,26 @@ auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Ind
     return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(system, arg); }, phase);
 }
 
+auto stringfyAux(Index index) -> String
+{
+    return std::to_string(index);
+}
+
+auto stringfyAux(int index) -> String
+{
+    return std::to_string(index);
+}
+
+auto stringfyAux(const String& name) -> String
+{
+    return name;
+}
+
+auto stringfy(StringOrIndex value) -> String
+{
+    return std::visit([&](auto&& arg) { return stringfyAux(arg); }, value);
+}
+
 auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd
 {
     const auto num_elements = elements.size();
