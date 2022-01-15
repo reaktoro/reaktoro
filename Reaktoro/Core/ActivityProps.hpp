@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/TypeOp.hpp>
 #include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
 

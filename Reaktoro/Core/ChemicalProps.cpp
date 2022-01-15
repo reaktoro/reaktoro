@@ -50,15 +50,16 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     VT0  = ArrayXr::Zero(N);
     VP0  = ArrayXr::Zero(N);
     Cp0  = ArrayXr::Zero(N);
-    Vx  = ArrayXr::Zero(K);
-    VxT = ArrayXr::Zero(K);
-    VxP = ArrayXr::Zero(K);
-    Gx  = ArrayXr::Zero(K);
-    Hx  = ArrayXr::Zero(K);
-    Cpx = ArrayXr::Zero(K);
+    Vx   = ArrayXr::Zero(K);
+    VxT  = ArrayXr::Zero(K);
+    VxP  = ArrayXr::Zero(K);
+    Gx   = ArrayXr::Zero(K);
+    Hx   = ArrayXr::Zero(K);
+    Cpx  = ArrayXr::Zero(K);
     ln_g = ArrayXr::Zero(N);
     ln_a = ArrayXr::Zero(N);
     u    = ArrayXr::Zero(N);
+    som  = Vec(K);
 }
 
 ChemicalProps::ChemicalProps(const ChemicalState& state)
@@ -92,12 +93,12 @@ auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> v
 
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
 }
 
 auto ChemicalProps::update(ArrayXdConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
 }
 
 auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
@@ -125,22 +126,22 @@ auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.from(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
 }
 
 auto ChemicalProps::serialize(ArrayStream<double>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.from(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.to(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<double>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.to(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
 }
 
 auto ChemicalProps::system() const -> const ChemicalSystem&
@@ -181,7 +182,8 @@ auto ChemicalProps::phaseProps(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
         Cpx[iphase],
         ln_g.segment(begin, size),
         ln_a.segment(begin, size),
-        u.segment(begin, size)
+        u.segment(begin, size),
+        som[iphase]
     });
 }
 

@@ -22,6 +22,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/TypeOp.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
@@ -92,6 +93,9 @@ struct ChemicalPropsPhaseBaseData
     /// The chemical potentials of the species in the phase.
     TypeOp<ArrayXr> u;
 
+    /// The state of matter of the phase.
+    TypeOp<StateOfMatter> som;
+
     /// Assign a ChemicalPropsPhaseBaseData object to this.
     template<template<typename> typename OtherTypeOp>
     auto operator=(const ChemicalPropsPhaseBaseData<OtherTypeOp>& other)
@@ -108,15 +112,16 @@ struct ChemicalPropsPhaseBaseData
         VT0  = other.VT0;
         VP0  = other.VP0;
         Cp0  = other.Cp0;
-        Vx  = other.Vx;
-        VxT = other.VxT;
-        VxP = other.VxP;
-        Gx  = other.Gx;
-        Hx  = other.Hx;
-        Cpx = other.Cpx;
+        Vx   = other.Vx;
+        VxT  = other.VxT;
+        VxP  = other.VxP;
+        Gx   = other.Gx;
+        Hx   = other.Hx;
+        Cpx  = other.Cpx;
         ln_g = other.ln_g;
         ln_a = other.ln_a;
         u    = other.u;
+        som  = other.som;
         return *this;
     }
 
@@ -124,27 +129,27 @@ struct ChemicalPropsPhaseBaseData
     template<template<typename> typename OtherTypeOp>
     operator ChemicalPropsPhaseBaseData<OtherTypeOp>()
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into another.
     template<template<typename> typename OtherTypeOp>
     operator ChemicalPropsPhaseBaseData<OtherTypeOp>() const
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 
     /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
     auto operator=(const ArrayStream<real>& array)
     {
-        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som);
         return *this;
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into an array.
     operator ArrayStream<real>() const
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 };
 
@@ -237,6 +242,12 @@ public:
     auto data() const -> const ChemicalPropsPhaseBaseData<TypeOp>&
     {
         return mdata;
+    }
+
+    /// Return the state of matter of the phase.
+    auto stateOfMatter() const -> StateOfMatter
+    {
+        return mdata.som;
     }
 
     /// Return the temperature of the phase (in K).
@@ -619,15 +630,16 @@ private:
         auto& VT0  = mdata.VT0;
         auto& VP0  = mdata.VP0;
         auto& Cp0  = mdata.Cp0;
-        auto& Vx  = mdata.Vx;
-        auto& VxT = mdata.VxT;
-        auto& VxP = mdata.VxP;
-        auto& Gx  = mdata.Gx;
-        auto& Hx  = mdata.Hx;
-        auto& Cpx = mdata.Cpx;
+        auto& Vx   = mdata.Vx;
+        auto& VxT  = mdata.VxT;
+        auto& VxP  = mdata.VxP;
+        auto& Gx   = mdata.Gx;
+        auto& Hx   = mdata.Hx;
+        auto& Cpx  = mdata.Cpx;
         auto& ln_g = mdata.ln_g;
         auto& ln_a = mdata.ln_a;
         auto& u    = mdata.u;
+        auto& som  = mdata.som;
 
         const auto& species = phase().species();
         const auto N = species.size();
@@ -672,7 +684,7 @@ private:
             phase().name(), " because it has one or more species with zero amounts.");
 
         // Compute the activity properties of the phase
-        ActivityPropsRef aprops{ Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, extra };
+        ActivityPropsRef aprops{ Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
         ActivityArgs args{ T, P, x };
         const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.
             phase().idealActivityModel() : phase().activityModel();
