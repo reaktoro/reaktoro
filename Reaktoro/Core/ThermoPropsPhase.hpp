@@ -20,41 +20,42 @@
 // Reaktoro includes
 #include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/AutoDiff.hpp>
+#include <Reaktoro/Common/TypeOp.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
 
 /// The base type for primary standard thermodynamic property data of a phase from which others are computed.
-template<typename Real, typename Array>
+template<template<typename> typename TypeOp>
 struct ThermoPropsPhaseBaseData
 {
     /// The temperature of the phase (in K).
-    Real T;
+    TypeOp<real> T;
 
     /// The pressure of the phase (in Pa).
-    Real P;
+    TypeOp<real> P;
 
     /// The standard molar Gibbs energies of formation of the species in the phase (in J/mol)
-    Array G0;
+    TypeOp<ArrayXr> G0;
 
     /// The standard molar enthalpies of formation of the species in the phase (in J/mol)
-    Array H0;
+    TypeOp<ArrayXr> H0;
 
     /// The standard molar volumes of the species in the phase (in m³/mol)
-    Array V0;
+    TypeOp<ArrayXr> V0;
 
     /// The temperature derivative of the standard molar volumes of the species in the phase (in m³/(mol·K)).
-    Array VT0;
+    TypeOp<ArrayXr> VT0;
 
     /// The pressure derivative of the standard molar volumes of the species in the phase (in m³/(mol·Pa)).
-    Array VP0;
+    TypeOp<ArrayXr> VP0;
 
     /// The standard molar isobaric heat capacities of the species in the phase (in J/(mol·K))
-    Array Cp0;
+    TypeOp<ArrayXr> Cp0;
 
     /// Assign a ThermoPropsPhaseBaseData object to this.
-    template<typename RX, typename AX>
-    auto operator=(const ThermoPropsPhaseBaseData<RX, AX>& other)
+    template<template<typename> typename OtherTypeOp>
+    auto operator=(const ThermoPropsPhaseBaseData<OtherTypeOp>& other)
     {
         T   = other.T;
         P   = other.P;
@@ -68,47 +69,47 @@ struct ThermoPropsPhaseBaseData
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into another.
-    template<typename RX, typename AX>
-    operator ThermoPropsPhaseBaseData<RX, AX>()
+    template<template<typename> typename OtherTypeOp>
+    operator ThermoPropsPhaseBaseData<OtherTypeOp>()
     {
         return { T, P, G0, H0, V0, VT0, VP0, Cp0 };
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into another.
-    template<typename RX, typename AX>
-    operator ThermoPropsPhaseBaseData<RX, AX>() const
+    template<template<typename> typename OtherTypeOp>
+    operator ThermoPropsPhaseBaseData<OtherTypeOp>() const
     {
         return { T, P, G0, H0, V0, VT0, VP0, Cp0 };
     }
 
     /// Assign the given array data to this ThermoPropsPhaseBaseData object.
-    auto operator=(const ArrayStream<Real>& array)
+    auto operator=(const ArrayStream<real>& array)
     {
         array.to(T, P, G0, H0, V0, VT0, VP0, Cp0);
         return *this;
     }
 
     /// Convert this ThermoPropsPhaseBaseData object into an array.
-    operator ArrayStream<Real>() const
+    operator ArrayStream<real>() const
     {
         return {T, P, G0, H0, V0, VT0, VP0, Cp0};
     }
 };
 
 /// The primary standard thermodynamic property data of a phase from which others are computed.
-using ThermoPropsPhaseData = ThermoPropsPhaseBaseData<real, ArrayXr>;
+using ThermoPropsPhaseData = ThermoPropsPhaseBaseData<TypeOpIdentity>;
 
 /// The primary standard thermodynamic property data of a phase from which others are computed.
-using ThermoPropsPhaseDataRef = ThermoPropsPhaseBaseData<real&, ArrayXrRef>;
+using ThermoPropsPhaseDataRef = ThermoPropsPhaseBaseData<TypeOpRef>;
 
 /// The primary standard thermodynamic property data of a phase from which others are computed.
-using ThermoPropsPhaseDataConstRef = ThermoPropsPhaseBaseData<const real&, ArrayXrConstRef>;
+using ThermoPropsPhaseDataConstRef = ThermoPropsPhaseBaseData<TypeOpConstRef>;
 
 /// The type of functions that computes the primary standard thermodynamic property data of a phase.
 using ThermoPropsPhaseFn = Fn<void(ThermoPropsPhaseDataRef, const real&, const real&, ArrayXrConstRef)>;
 
 /// The base type for standard thermodynamic properties of a phase and its species.
-template<typename Real, typename Array>
+template<template<typename> typename TypeOp>
 class ThermoPropsPhaseBase
 {
 public:
@@ -127,19 +128,19 @@ public:
     }
 
     /// Construct a ThermoPropsPhaseBase instance.
-    ThermoPropsPhaseBase(const Phase& phase, const ThermoPropsPhaseBaseData<Real, Array>& data)
+    ThermoPropsPhaseBase(const Phase& phase, const ThermoPropsPhaseBaseData<TypeOp>& data)
     : mphase(phase), mdata(data)
     {}
 
     /// Construct a ThermoPropsPhaseBase instance.
-    template<typename RX, typename AX>
-    ThermoPropsPhaseBase(ThermoPropsPhaseBase<RX, AX>& other)
+    template<template<typename> typename OtherTypeOp>
+    ThermoPropsPhaseBase(ThermoPropsPhaseBase<OtherTypeOp>& other)
     : mphase(other.mphase), mdata(other.mdata)
     {}
 
     /// Construct a ThermoPropsPhaseBase instance.
-    template<typename RX, typename AX>
-    ThermoPropsPhaseBase(const ThermoPropsPhaseBase<RX, AX>& other)
+    template<template<typename> typename OtherTypeOp>
+    ThermoPropsPhaseBase(const ThermoPropsPhaseBase<OtherTypeOp>& other)
     : mphase(other.mphase), mdata(other.mdata)
     {}
 
@@ -203,7 +204,7 @@ public:
     }
 
     /// Return the primary standard thermodynamic property data of the phase from which others are calculated.
-    auto data() const -> const ThermoPropsPhaseBaseData<Real, Array>&
+    auto data() const -> const ThermoPropsPhaseBaseData<TypeOp>&
     {
         return mdata;
     }
@@ -281,20 +282,20 @@ public:
     }
 
     /// Assign the given array data to this ThermoPropsPhaseBase object.
-    auto operator=(const ArrayStream<Real>& array)
+    auto operator=(const ArrayStream<real>& array)
     {
         mdata = array;
         return *this;
     }
 
     /// Convert this ThermoPropsPhaseBase object into an array.
-    operator ArrayStream<Real>() const
+    operator ArrayStream<real>() const
     {
         return mdata;
     }
 
     // Ensure other ThermoPropsPhaseBase types are friend among themselves.
-    template<typename RX, typename AX>
+    template<template<typename> typename OtherTypeOp>
     friend class ThermoPropsPhaseBase;
 
 private:
@@ -302,16 +303,16 @@ private:
     Phase mphase;
 
     /// The primary standard thermodynamic property data of the phase from which others are calculated.
-    ThermoPropsPhaseBaseData<Real, Array> mdata;
+    ThermoPropsPhaseBaseData<TypeOp> mdata;
 };
 
 /// The standard thermodynamic properties of a phase and its species.
-using ThermoPropsPhase = ThermoPropsPhaseBase<real, ArrayXr>;
+using ThermoPropsPhase = ThermoPropsPhaseBase<TypeOpIdentity>;
 
 /// The non-const view to the standard thermodynamic properties of a phase and its species.
-using ThermoPropsPhaseRef = ThermoPropsPhaseBase<real&, ArrayXrRef>;
+using ThermoPropsPhaseRef = ThermoPropsPhaseBase<TypeOpRef>;
 
 /// The const view to the standard thermodynamic properties of a phase and its species.
-using ThermoPropsPhaseConstRef = ThermoPropsPhaseBase<const real&, ArrayXrConstRef>;
+using ThermoPropsPhaseConstRef = ThermoPropsPhaseBase<TypeOpConstRef>;
 
 } // namespace Reaktoro
