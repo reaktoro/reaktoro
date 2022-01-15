@@ -108,7 +108,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::add(name, value, unit)
     //-------------------------------------------------------------------------
-    state.setSpeciesAmount("SiO2(s)", 0.0);
+    state.setSpeciesAmount("SiO2(s)", 0.0, "mol");
     state.add("SiO2(s)", 1.0, "mol");
     CHECK( state.speciesAmount("SiO2(s)") == Approx(1.0) );
     state.add("SiO2(s)", 2.0, "mol");
@@ -116,7 +116,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     state.add("SiO2(s)", 5.0, "mmol");
     CHECK( state.speciesAmount("SiO2(s)") == Approx(3.005) );
 
-    state.setSpeciesAmount("SiO2(s)", 0.0);
+    state.setSpeciesAmount("SiO2(s)", 0.0, "mol");
     state.add("SiO2(s)", 2000.0, "g");
     CHECK( state.speciesMass("SiO2(s)") == Approx(2.0) ); // in kg
     state.add("SiO2(s)", 3000.0, "g");
@@ -166,7 +166,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmount(ispecies, amount)
     //-------------------------------------------------------------------------
-    state.setSpeciesAmount(3, 4.0);
+    state.setSpeciesAmount(3, 4.0, "mol");
     CHECK( state.speciesAmount(3) == 4.0 );
 
     //-------------------------------------------------------------------------
@@ -174,12 +174,11 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     state.setSpeciesAmount(3, 4.0, "mmol");
     CHECK( state.speciesAmount(3) == 0.004 );
-    CHECK( state.speciesAmount(3, "mmol") == 4.0 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmount(name, amount)
     //-------------------------------------------------------------------------
-    state.setSpeciesAmount("CO2(g)", 7.0);
+    state.setSpeciesAmount("CO2(g)", 7.0, "mol");
     CHECK( state.speciesAmount(idx("CO2(g)")) == 7.0 );
 
     //-------------------------------------------------------------------------
@@ -187,12 +186,11 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     state.setSpeciesAmount("CaCO3(s)", 9.0, "kmol");
     CHECK( state.speciesAmount(idx("CaCO3(s)")) == 9000.0 );
-    CHECK( state.speciesAmount(idx("CaCO3(s)"), "kmol") == 9.0 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesMass(ispecies, mass)
     //-------------------------------------------------------------------------
-    state.setSpeciesMass(5, 10.0);
+    state.setSpeciesMass(5, 10.0, "kg");
     CHECK( state.speciesMass(5) == 10.0 );
 
     //-------------------------------------------------------------------------
@@ -200,12 +198,11 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     state.setSpeciesMass(5, 15.0, "g");
     CHECK( state.speciesMass(5) == Approx(0.015) );
-    CHECK( state.speciesMass(5, "g") == Approx(15.0) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesMass(name, mass)
     //-------------------------------------------------------------------------
-    state.setSpeciesMass("CO2(g)", 7.0);
+    state.setSpeciesMass("CO2(g)", 7.0, "kg");
     CHECK( state.speciesMass(idx("CO2(g)")) == 7.0 );
 
     //-------------------------------------------------------------------------
@@ -213,7 +210,6 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     //-------------------------------------------------------------------------
     state.setSpeciesMass("CaCO3(s)", 7.0, "g");
     CHECK( state.speciesMass(idx("CaCO3(s)")) == 0.007 );
-    CHECK( state.speciesMass(idx("CaCO3(s)"), "g") == 7.0 );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::charge()
