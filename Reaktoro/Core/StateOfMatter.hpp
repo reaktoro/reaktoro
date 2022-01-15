@@ -25,13 +25,13 @@ namespace Reaktoro {
 /// The list of states of matter for phases.
 enum class StateOfMatter
 {
-    Unspecified ///< when the state of matter of a phase has not been specified
-    Solid,      ///< when the state of matter of a phase is always considered solid
-    Liquid,     ///< when the state of matter of a phase is always considered liquid
-    Gas,        ///< when the state of matter of a phase is always considered gas
-    Plasma,     ///< when the state of matter of a phase is always considered plama
-    Fluid,      ///< when the state of matter of a phase can be either liquid, gas, or plasma  // TODO: StateOfMatter::Fluid needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
-    Condensed,  ///< when the state of matter of a phase can be either liquid or solid  // TODO: StateOfMatter::Condensed needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
+    Unspecified, ///< when the state of matter of a phase has not been specified
+    Solid,       ///< when the state of matter of a phase is always considered solid
+    Liquid,      ///< when the state of matter of a phase is always considered liquid
+    Gas,         ///< when the state of matter of a phase is always considered gas
+    Plasma,      ///< when the state of matter of a phase is always considered plama
+    Fluid,       ///< when the state of matter of a phase can be either liquid, gas, or plasma  // TODO: StateOfMatter::Fluid needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
+    Condensed,   ///< when the state of matter of a phase can be either liquid or solid  // TODO: StateOfMatter::Condensed needs to go once StateOfMatter is a result of a activity model evaluation, and not a constant phase attribute.
 };
 
 /// Output a StateOfMatter value.
