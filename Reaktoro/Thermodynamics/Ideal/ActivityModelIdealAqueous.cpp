@@ -35,6 +35,10 @@ auto ActivityModelIdealAqueous() -> ActivityModelGenerator
         {
             const auto x = args.x;
             const auto m = x/(MH2O * args.x[iH2O]); // molalities
+
+            // Set the state of matter of the phase
+            props.som = StateOfMatter::Liquid;
+
             props = 0.0;
             props.ln_a = m.log();
             props.ln_a[iH2O] = log(x[iH2O]);

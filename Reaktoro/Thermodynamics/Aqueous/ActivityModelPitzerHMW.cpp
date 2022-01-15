@@ -1397,6 +1397,9 @@ auto activityModelPitzerHMW(const SpeciesList& species) -> ActivityModel
         // Evaluate the state of the aqueous mixture
         state = mixture.state(T, P, x);
 
+        // Set the state of matter of the phase
+        props.som = StateOfMatter::Liquid;
+
         // Export the aqueous mixture and its state via the `extra` data member
         props.extra["AqueousMixtureState"] = state;
         props.extra["AqueousMixture"] = mixture;

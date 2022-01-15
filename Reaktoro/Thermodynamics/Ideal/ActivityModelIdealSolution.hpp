@@ -23,6 +23,7 @@
 namespace Reaktoro {
 
 /// Return the activity model for an ideal solution.
-auto ActivityModelIdealSolution() -> ActivityModelGenerator;
+/// @param stateofmatter The state of matter of the solution
+auto ActivityModelIdealSolution(StateOfMatter stateofmatter) -> ActivityModelGenerator;
 
 } // namespace Reaktoro
