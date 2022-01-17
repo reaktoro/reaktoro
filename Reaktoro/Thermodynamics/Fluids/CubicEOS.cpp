@@ -26,7 +26,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Math/Roots.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/PhaseIdentification.hpp>
 
 //=================================================================================================
 // == REFERENCE ==
@@ -50,12 +49,12 @@ namespace Reaktoro {
 using std::log;
 using std::sqrt;
 
-namespace internal {
+namespace detail {
 
-using AlphaResult = std::tuple<real, real, real>;
+using AlphaResult = Tuple<real, real, real>;
 
 /// A high-order function that return an `alpha` function that calculates alpha, alphaT and alphaTT for a given EOS.
-auto alpha(CubicEOSModel type) -> std::function<AlphaResult(real, real, real)>
+auto alpha(CubicEOSModel type) -> Fn<AlphaResult(real, real, real)>
 {
     // The alpha function for van der Waals EOS (see Table 3.1 of Smith et al. 2017)
     auto alphaVDW = [](real Tr, real TrT, real omega) -> AlphaResult
@@ -174,21 +173,106 @@ auto Psi(CubicEOSModel type) -> real
     }
 }
 
-} // namespace internal
+
+/// Compute the local minimum of pressure along an isotherm of a cubic equation of state.
+/// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
+/// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
+/// @param e The @eq{\epsilon} parameter in the cubic equation of state
+/// @param s The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+/// @return double
+auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double s, double e, double T) -> double
+{
+    auto V = b;
+
+    const auto RT = universalGasConstant * T;
+
+    const auto maxiters = 100;
+    const auto tolerance = 1e-6;
+
+    auto i = 0;
+    for(; i < maxiters; ++i)
+    {
+        const auto f = a*((V + s*b) + (V + e*b))*(V - b)*(V - b) - RT*(V + e*b)*(V + e*b)*(V + s*b)*(V + s*b);
+        const auto J = 2*a*(V - b)*(V - b) + 2*a*((V + s*b) + (V + e*b))*(V - b) - 2*RT*(V + e*b)*(V + s*b)*((V + s*b) + (V + e*b));
+        const auto dV = -f / J;
+
+        V += dV;
+
+        if(std::abs(f) < tolerance)
+            break;
+    }
+
+    errorif(i == maxiters, "Could not compute the minimum pressure along an isotherm of a cubic equation of state.");
+
+    const auto P = RT/(V - b) - a/((V + e*b)*(V + s*b));
+
+    return P;
+}
+
+/// Compute the residual Gibbs energy of the fluid for a given compressibility factor.
+/// @param Z The compressibility factor
+/// @param beta The @eq{\beta=Pb/(RT)} variable in the cubic equation of state
+/// @param q The @eq{q=a/(bRT)} variable in the cubic equation of state
+/// @param epsilon The @eq{\epsilon} parameter in the cubic equation of state
+/// @param sigma The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+auto computeResidualGibbsEnergy(double Z, double beta, double q, double epsilon, double sigma, double T) -> double
+{
+    const auto RT = universalGasConstant * T;
+
+    auto I = 0.0;
+
+    if(epsilon != sigma) // CASE I:  Eq. (13.72) of Smith et al. (2017)
+        I = log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon); // @eq{ I=\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right) }
+    else // CASE II: Eq. (13.74) of Smith et al. (2017)
+        I = beta/(Z + epsilon*beta); // @eq{ I=\frac{\beta}{Z+\epsilon\beta} }
+
+    const auto Gres = RT*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
+
+    return Gres;
+}
+
+/// Determine the state of matter of the fluid when three real roots are available (either liquid or gas).
+/// @param Zmin The compressibility factor with minimum value
+/// @param Zmax The compressibility factor with maximum value
+/// @param beta The @eq{\beta=Pb/(RT)} variable in the cubic equation of state
+/// @param q The @eq{q=a/(bRT)} variable in the cubic equation of state
+/// @param epsilon The @eq{\epsilon} parameter in the cubic equation of state
+/// @param sigma The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+/// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
+auto determineWhetherLiquidOrGas(double Zmin, double Zmax, double beta, double q, double epsilon, double sigma, double T) -> StateOfMatter
+{
+    const auto Gresmin = computeResidualGibbsEnergy(Zmin, beta, q, epsilon, sigma, T);
+    const auto Gresmax = computeResidualGibbsEnergy(Zmax, beta, q, epsilon, sigma, T);
+    return Gresmin < Gresmax ? StateOfMatter::Liquid : StateOfMatter::Gas;
+}
+
+/// Determine the state of matter of the fluid when only one real root is available (either supercritical or low pressure gas).
+/// @param Z The single compressibility factor
+/// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
+/// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
+/// @param e The @eq{\epsilon} parameter in the cubic equation of state
+/// @param s The @eq{\sigma} parameter in the cubic equation of state
+/// @param T The temperature (in K)
+/// @param P The pressure (in Pa)
+/// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
+auto determineWhetherSupercriticalOrGas(double Z, double a, double b, double s, double e, double T, double P) -> StateOfMatter
+{
+    const auto Pmin = computeLocalMinimumPressureAlongIsotherm(a, b, s, e, T);
+    return P < Pmin ? StateOfMatter::Gas : StateOfMatter::Supercritical;
+}
+
+} // namespace detail
 
 struct CubicEOS::Impl
 {
     /// The number of species in the phase.
     unsigned nspecies;
 
-    /// The fluid type for which the equation of state should be configured.
-    CubicEOSFluidType fluidtype = CubicEOSFluidType::Vapor;
-
     /// The type of the cubic equation of state.
     CubicEOSModel model = CubicEOSModel::PengRobinson;
-
-    /// The type of phase identification method that is going to be used
-    PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
 
     /// The critical temperatures of the substances (in K).
     ArrayXr Tcr;
@@ -216,9 +300,7 @@ struct CubicEOS::Impl
       Tcr(args.Tcr),
       Pcr(args.Pcr),
       omega(args.omega),
-      fluidtype(args.fluidtype),
       model(args.model),
-      phase_identification_method(args.phase_identification_method),
       interaction_params_fn(args.interaction_params_fn),
       a(args.nspecies),
       aT(args.nspecies),
@@ -244,11 +326,11 @@ struct CubicEOS::Impl
 
         // Auxiliary variables
         const auto R = universalGasConstant;
-        const auto Psi = internal::Psi(model);
-        const auto Omega = internal::Omega(model);
-        const auto epsilon = internal::epsilon(model);
-        const auto sigma = internal::sigma(model);
-        const auto alphafn = internal::alpha(model);
+        const auto Psi = detail::Psi(model);
+        const auto Omega = detail::Omega(model);
+        const auto epsilon = detail::epsilon(model);
+        const auto sigma = detail::sigma(model);
+        const auto alphafn = detail::alpha(model);
 
         // Calculate the parameters `a` and `b` of the cubic equation of state for each species
         for(auto k = 0; k < nspecies; ++k)
@@ -346,66 +428,30 @@ struct CubicEOS::Impl
         const real BP = (epsilon*sigma - epsilon - sigma)*(2*beta*betaP) + qP*beta - (epsilon + sigma - q)*betaP;
         const real CP = -epsilon*sigma*(3*beta*beta*betaP) - qP*beta*beta - (epsilon*sigma + q)*(2*beta*betaP);
 
-        // Calculate cubicEOS roots using cardano's method
-        auto cubicEOS_roots = realRoots(cardano(A, B, C));
+        // Calculate cubic roots using cardano's method
+        auto roots = realRoots(cardano(A, B, C));
 
-        // All possible Compressibility factor
-        std::vector<real> Zs;
-        if (cubicEOS_roots.size() == 1)
-        {
-            Zs.push_back(cubicEOS_roots[0]);
-        }
-        else
-        {
-            if (cubicEOS_roots.size() != 3) {
-                Exception exception;
-                exception.error << "Could not calculate the cubic equation of state.";
-                exception.reason << "Logic error: it was expected Z roots of size 3, but got: " << Zs.size();
-                RaiseError(exception)
-            }
-            Zs.push_back(cubicEOS_roots[0]);  // Z_max
-            Zs.push_back(cubicEOS_roots[2]);  // Z_min
-        }
+        // Ensure there are either 1 or 3 real roots!
+        assert(roots.size() == 1 || roots.size() == 3);
 
-        // Selecting compressibility factor - Z_liq < Z_gas
+        // Determine the physical state of the fluid phase for given TPx conditions and its compressibility factor
         real Z = {};
-        if (fluidtype == CubicEOSFluidType::Vapor)
-            Z = *std::max_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
-        else
-            Z = *std::min_element(cubicEOS_roots.begin(), cubicEOS_roots.end());
 
-        auto identified_phase_type = fluidtype;
-
-        switch(phase_identification_method)
+        if(roots.size() == 3)
         {
-        case PhaseIdentificationMethod::None:
-            // `identified_phase_type` is already `input_phase_type`, keep it this way
-            break;
-
-        case PhaseIdentificationMethod::VolumeMethod:
-            identified_phase_type = identifyPhaseUsingVolume(T, P, Z, bmix);
-            break;
-
-        case PhaseIdentificationMethod::IsothermalCompressibilityMethods:
-            identified_phase_type = identifyPhaseUsingIsothermalCompressibility(T, P, Z);
-            break;
-
-        case PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod:
-            identified_phase_type = identifyPhaseUsingGibbsEnergyAndEos(
-                P, T, amix, bmix, A, B, C, Zs, epsilon, sigma);
-            break;
-
-        default:
-            throw std::logic_error("CubicEOS received an unexpected phaseIdentificationMethod");
+            const auto Zmax = roots[0];
+            const auto Zmin = roots[2];
+            props.som = detail::determineWhetherLiquidOrGas(Zmin, Zmax, beta, q, epsilon, sigma, T);
+            Z = (props.som == StateOfMatter::Gas) ? Zmax : Zmin;
         }
-
-        if(identified_phase_type != fluidtype)
+        else
         {
-            // Since the phase is identified as different than the expect input phase type, it is
-            // deemed inappropriate. Artificially high values are configured for fugacities, so that
-            // this condition is "removed" by the optimizer.
-            props.ln_phi.fill(100.0);
-            return;
+            // TODO: Add pressure test here to determine if the fluid is
+            // Supercritical or Gas. For performance reasons, and assuming that
+            // user will be mainly handling high pressures, the supercritical
+            // state is assumed here.
+            props.som = StateOfMatter::Supercritical;
+            Z = roots[0];
         }
 
         // Calculate ZT := (dZ/dT)_P and ZP := (dZ/dP)_T
@@ -432,9 +478,6 @@ struct CubicEOS::Impl
             IP = I*(betaP/beta - (ZP + epsilon*betaP)/(Z + epsilon*beta)); // @eq{ I_{P}\equiv\left(\frac{\partial I}{\partial P}\right)_{T}=I\left(\frac{\beta_{P}}{\beta}-\frac{Z_{P}+\epsilon\beta_{P}}{Z+\epsilon\beta}\right) }
         }
 
-        // Auxiliary references
-        auto& [V, VT, VP, Gres, Hres, Cpres, Cvres, ln_phi] = props;
-
         //=========================================================================================
         // Calculate the ideal volume properties of the phase
         //=========================================================================================
@@ -445,16 +488,16 @@ struct CubicEOS::Impl
         //=========================================================================================
         // Calculate the corrected volumetric properties of the phase
         //=========================================================================================
-        V  = Z*V0;
-        VT = ZT*V0 + Z*V0T;
-        VP = ZP*V0 + Z*V0P;
+        const auto& V  = props.V  = Z*V0;
+        const auto& VT = props.VT = ZT*V0 + Z*V0T;
+        const auto& VP = props.VP = ZP*V0 + Z*V0P;
 
         //=========================================================================================
         // Calculate the residual properties of the phase
         //=========================================================================================
-        Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
-        Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
-        Cpres = Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)
+        const auto& Gres  = props.Gres  = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
+        const auto& Hres  = props.Hres  = R*T*(Z - 1 + T*qT*I); // equation after Eq. (13.74), but using T*qT instead of Tr*qTr, which is equivalent
+        const auto& Cpres = props.Cpres = Hres/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT); // from Eq. (2.19), Cp(res) := (dH(res)/dT)P === R*(Z - 1 + T*qT*I) + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT) = H_res/T + R*T*(ZT + qT*I + T*qTT*I + T*qT*IT)
 
         //=========================================================================================
         // Calculate the fugacity coefficients for each species
@@ -495,19 +538,9 @@ auto CubicEOS::operator=(CubicEOS other) -> CubicEOS&
     return *this;
 }
 
-auto CubicEOS::numSpecies() const -> unsigned
-{
-    return pimpl->nspecies;
-}
-
 auto CubicEOS::setModel(CubicEOSModel model) -> void
 {
     pimpl->model = model;
-}
-
-auto CubicEOS::setFluidType(CubicEOSFluidType fluidtype) -> void
-{
-    pimpl->fluidtype = fluidtype;
 }
 
 auto CubicEOS::setInteractionParamsFunction(const CubicEOSInteractionParamsFn& func) -> void
@@ -515,104 +548,9 @@ auto CubicEOS::setInteractionParamsFunction(const CubicEOSInteractionParamsFn& f
     pimpl->interaction_params_fn = func;
 }
 
-auto CubicEOS::setStablePhaseIdentificationMethod(const PhaseIdentificationMethod& method) -> void
-{
-    pimpl->phase_identification_method = method;
-}
-
 auto CubicEOS::compute(CubicEOSProps& props, real T, real P, ArrayXrConstRef x) -> void
 {
     return pimpl->compute(props, T, P, x);
-}
-
-/// Compute the local minimum of pressure along an isotherm of a cubic equation of state.
-/// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
-/// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
-/// @param e The @eq{\epsilon} parameter in the cubic equation of state
-/// @param s The @eq{\sigma} parameter in the cubic equation of state
-/// @param T The temperature (in K)
-/// @return double
-auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double s, double e, double T) -> double
-{
-    auto V = b;
-
-    const auto RT = universalGasConstant * T;
-
-    const auto maxiters = 100;
-    const auto tolerance = 1e-6;
-
-    auto i = 0;
-    for(; i < maxiters; ++i)
-    {
-        const auto f = a*((V + s*b) + (V + e*b))*(V - b)*(V - b) - RT*(V + e*b)*(V + e*b)*(V + s*b)*(V + s*b);
-        const auto J = 2*a*(V - b)*(V - b) + 2*a*((V + s*b) + (V + e*b))*(V - b) - 2*RT*(V + e*b)*(V + s*b)*((V + s*b) + (V + e*b));
-        const auto dV = -f / J;
-
-        V += dV;
-
-        if(std::abs(f) < tolerance)
-            break;
-    }
-
-    errorif(i == maxiters, "Could not compute the minimum pressure along an isotherm of a cubic equation of state.");
-
-    const auto P = RT/(V - b) - a/((V + e*b)*(V + s*b));
-
-    return P;
-}
-
-/// Compute the residual Gibbs energy of the fluid for a given compressibility factor.
-/// @param Z The compressibility factor
-/// @param beta The @eq{\beta=Pb/(RT)} variable in the cubic equation of state
-/// @param q The @eq{q=a/(bRT)} variable in the cubic equation of state
-/// @param epsilon The @eq{\epsilon} parameter in the cubic equation of state
-/// @param sigma The @eq{\sigma} parameter in the cubic equation of state
-/// @param T The temperature (in K)
-auto computeResidualGibbsEnergy(double Z, double beta, double q, double epsilon, double sigma, double T) -> double
-{
-    const auto RT = universalGasConstant * T;
-
-    auto I = 0.0;
-
-    if(epsilon != sigma) // CASE I:  Eq. (13.72) of Smith et al. (2017)
-        I = log((Z + sigma*beta)/(Z + epsilon*beta))/(sigma - epsilon); // @eq{ I=\frac{1}{\sigma-\epsilon}\ln\left(\frac{Z+\sigma\beta}{Z+\epsilon\beta}\right) }
-    else // CASE II: Eq. (13.74) of Smith et al. (2017)
-        I = beta/(Z + epsilon*beta); // @eq{ I=\frac{\beta}{Z+\epsilon\beta} }
-
-    const auto Gres = RT*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
-
-    return Gres;
-}
-
-/// Determine the state of matter of the fluid when three real roots are available.
-/// @param Zmin The compressibility factor with minimum value
-/// @param Zmax The compressibility factor with maximum value
-/// @param beta The @eq{\beta=Pb/(RT)} variable in the cubic equation of state
-/// @param q The @eq{q=a/(bRT)} variable in the cubic equation of state
-/// @param epsilon The @eq{\epsilon} parameter in the cubic equation of state
-/// @param sigma The @eq{\sigma} parameter in the cubic equation of state
-/// @param T The temperature (in K)
-/// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
-auto determineStateOfMatter(double Zmin, double Zmax, double beta, double q, double epsilon, double sigma, double T) -> StateOfMatter
-{
-    const auto Gresmin = computeResidualGibbsEnergy(Zmin, beta, q, epsilon, sigma, T);
-    const auto Gresmax = computeResidualGibbsEnergy(Zmax, beta, q, epsilon, sigma, T);
-    return Gresmin < Gresmax ? StateOfMatter::Liquid : StateOfMatter::Gas;
-}
-
-/// Determine the state of matter of the fluid when only one real root is available.
-/// @param Z The single compressibility factor
-/// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
-/// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
-/// @param e The @eq{\epsilon} parameter in the cubic equation of state
-/// @param s The @eq{\sigma} parameter in the cubic equation of state
-/// @param T The temperature (in K)
-/// @param P The pressure (in Pa)
-/// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
-auto determineStateOfMatter(double Z, double a, double b, double s, double e, double T, double P) -> StateOfMatter
-{
-    const auto Pmin = computeLocalMinimumPressureAlongIsotherm(a, b, s, e, T);
-    return P < Pmin ? StateOfMatter::Gas : StateOfMatter::Supercritical;
 }
 
 } // namespace Reaktoro

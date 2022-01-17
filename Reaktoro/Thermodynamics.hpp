@@ -42,7 +42,6 @@
 #include <Reaktoro/Thermodynamics/Solids/ActivityModelVanLaar.hpp>
 #include <Reaktoro/Thermodynamics/Solids/ActivityModelRedlichKister.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/PhaseIdentification.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherPruessEnnis.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherReed.hpp>

@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/PhaseIdentification.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
@@ -50,6 +50,9 @@ struct CubicEOSProps
 
     /// The ln fugacity coefficients of the species in the phase.
     ArrayXr ln_phi;
+
+    /// The state of matter of the fluid phase
+    StateOfMatter som;
 };
 
 /// The options for the cubic equation of state models.
@@ -107,20 +110,11 @@ public:
         /// The acentric factor of the substances.
         ArrayXrConstRef omega;
 
-        /// The fluid type for which the equation of state should be confifured.
-        CubicEOSFluidType fluidtype = CubicEOSFluidType::Vapor;
-
         /// The cubic equation of state model to be used.
         CubicEOSModel model = CubicEOSModel::PengRobinson;
 
         /// The function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
         CubicEOSInteractionParamsFn interaction_params_fn;
-
-        /// The method to identify whether liquid or vapor phases is stable.
-        /// If both vapor and liquid phases are considered in the system, it is
-        /// recommended to configure a robust phase identification method such as
-        /// GibbsEnergyAndEquationOfStateMethod for BOTH phases.
-        PhaseIdentificationMethod phase_identification_method = PhaseIdentificationMethod::None;
     };
 
     /// Construct a CubicEOS instance.
@@ -135,21 +129,12 @@ public:
     /// Assign a CubicEOS instance to this
     auto operator=(CubicEOS other) -> CubicEOS&;
 
-    /// Return the number of species in the phase.
-    auto numSpecies() const -> unsigned;
-
     /// Set the cubic equation of state model.
     auto setModel(CubicEOSModel model) -> void;
-
-    /// Set the fluid type, liquid or vapor, for which the equation of state should be confifured.
-    auto setFluidType(CubicEOSFluidType fluidtype) -> void;
 
     /// Set the function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
     /// @see CubicEOSInteractionParamsFn, CubicEOSInteractionParams
     auto setInteractionParamsFunction(const CubicEOSInteractionParamsFn& func) -> void;
-
-    /// Set the method to identify whether liquid or vapor phases is stable.
-    auto setStablePhaseIdentificationMethod(const PhaseIdentificationMethod& method) -> void;
 
     /// Compute the thermodynamic properties of the phase.
     /// @param[in] props The evaluated thermodynamic properties of the phase.
@@ -161,7 +146,7 @@ public:
 private:
     struct Impl;
 
-    std::unique_ptr<Impl> pimpl;
+    Ptr<Impl> pimpl;
 };
 
 } // namespace Reaktoro
