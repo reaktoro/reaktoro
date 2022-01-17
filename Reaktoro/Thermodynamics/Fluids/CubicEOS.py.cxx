@@ -31,19 +31,10 @@ void exportCubicEOS(py::module& m)
         .value("PengRobinson", CubicEOSModel::PengRobinson)
         ;
 
-    py::enum_<PhaseIdentificationMethod>(m, "PhaseIdentificationMethod")
-        .value("None", PhaseIdentificationMethod::None)
-        .value("VolumeMethod", PhaseIdentificationMethod::VolumeMethod)
-        .value("IsothermalCompressibilityMethods", PhaseIdentificationMethod::IsothermalCompressibilityMethods)
-        .value("GibbsEnergyAndEquationOfStateMethod", PhaseIdentificationMethod::GibbsEnergyAndEquationOfStateMethod)
-        ;
-
     // TODO: Implement CubicEOS.py.cxx (previous implementation in v1.0 no longer valid in v2.0)
     // py::class_<CubicEOSInteractionParams>(m, "CubicEOSInteractionParams")
     //     .def(
-    //         py::init<CubicEOS::Model, PhaseIdentificationMethod, CubicEOS::InteractionParamsFunction>(),
     //         py::arg("model") = CubicEOS::PengRobinson,
-    //         py::arg("phase_identification_method") = PhaseIdentificationMethod::None,
     //         py::arg("binary_interaction_values") = CubicEOS::InteractionParamsFunction{}
     //     )
     //     .def_readwrite("model", &CubicEOS::Params::model)

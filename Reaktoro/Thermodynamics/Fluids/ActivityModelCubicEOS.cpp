@@ -61,13 +61,8 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
     // Initialize the CubicEOS instance
     CubicEOS eos({nspecies, Tcr, Pcr, omega});
 
-    if( aggregatestate == AggregateState::Gas )
-        eos.setFluidType(CubicEOSFluidType::Vapor);
-    else eos.setFluidType(CubicEOSFluidType::Liquid);
-
     eos.setModel(type);
     eos.setInteractionParamsFunction(params.interaction_params_fn);
-    eos.setStablePhaseIdentificationMethod(params.phase_identification_method);
 
     /// The thermodynamic properties calculated with CubicEOS
     CubicEOSProps res;
@@ -83,14 +78,15 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
 
         eos.compute(res, T, P, x);
 
-        props.Vx  = res.V;
-        props.VxT = res.VT;
-        props.VxP = res.VP;
-        props.Gx  = res.Gres;
-        props.Hx  = res.Hres;
-        props.Cpx = res.Cpres;
+        props.Vx   = res.V;
+        props.VxT  = res.VT;
+        props.VxP  = res.VP;
+        props.Gx   = res.Gres;
+        props.Hx   = res.Hres;
+        props.Cpx  = res.Cpres;
         props.ln_g = res.ln_phi;
         props.ln_a = res.ln_phi + log(x) + log(Pbar);
+        props.som  = res.som;
     };
 
     return model;
