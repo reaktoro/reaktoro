@@ -692,6 +692,62 @@ auto ChemicalProps::heatCapacityConstV() const -> real
     return Cp + T*VT*VT/VP;
 }
 
+auto ChemicalProps::indicesPhasesWithState(StateOfMatter stateofmatter) const -> Indices
+{
+    const auto K = msystem.phases().size();
+    Indices res;
+    res.reserve(K);
+    for(auto i = 0; i < K; ++i)
+        if(som[i] == stateofmatter)
+            res.push_back(i);
+    return res;
+}
+
+auto ChemicalProps::indicesPhasesWithStates(std::initializer_list<StateOfMatter> stateofmatters) const -> Indices
+{
+    const auto K = msystem.phases().size();
+    Indices res;
+    res.reserve(K);
+    for(auto i = 0; i < K; ++i)
+        if(contains(stateofmatters, som[i]))
+            res.push_back(i);
+    return res;
+}
+
+auto ChemicalProps::indicesPhasesWithFluidState() const -> Indices
+{
+    return indicesPhasesWithStates({ StateOfMatter::Liquid, StateOfMatter::Gas, StateOfMatter::Supercritical });
+}
+
+auto ChemicalProps::indicesPhasesWithSolidState() const -> Indices
+{
+    return indicesPhasesWithState(StateOfMatter::Solid);
+}
+
+auto ChemicalProps::indicesSpeciesInPhasesWithState(StateOfMatter som) const -> Indices
+{
+    const auto iphases = indicesPhasesWithState(som);
+    return msystem.phases().indicesSpeciesInPhases(iphases);
+}
+
+auto ChemicalProps::indicesSpeciesInPhasesWithStates(std::initializer_list<StateOfMatter> soms) const -> Indices
+{
+    const auto iphases = indicesPhasesWithStates(soms);
+    return msystem.phases().indicesSpeciesInPhases(iphases);
+}
+
+auto ChemicalProps::indicesSpeciesInPhasesWithFluidState() const -> Indices
+{
+    const auto iphases = indicesPhasesWithFluidState();
+    return msystem.phases().indicesSpeciesInPhases(iphases);
+}
+
+auto ChemicalProps::indicesSpeciesInPhasesWithSolidState() const -> Indices
+{
+    const auto iphases = indicesPhasesWithSolidState();
+    return msystem.phases().indicesSpeciesInPhases(iphases);
+}
+
 auto ChemicalProps::output(std::ostream& out) const -> void
 {
     out << *this;
