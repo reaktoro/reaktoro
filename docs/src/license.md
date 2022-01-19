@@ -1,6 +1,6 @@
 # License {#license}
 
-Copyright © 2014-2021 Allan Leal
+Copyright © 2014-2022 Allan Leal
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

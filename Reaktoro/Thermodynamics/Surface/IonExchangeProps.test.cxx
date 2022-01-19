@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
+// Copyright © 2014-2022 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -191,7 +191,7 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         // Check log10 gammas of all species
         for(auto i = 0; i < exspecies.size(); i++)
             CHECK( exprops.speciesActivityCoefficientsLg()[i] == Approx(0.00) ); // because we are working on the custom library
-    
+
         // Test convenience methods species amounts, equivalents, equivalent fractions, log10gamma and element amounts
         for(const auto& s : exspecies)
         {
