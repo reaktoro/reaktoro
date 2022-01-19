@@ -22,6 +22,9 @@
 #include <cassert>
 #include <vector>
 
+// Reaktoro includes
+#include <Reaktoro/Common/TraitsUtils.hpp>
+
 namespace Reaktoro {
 
 /// @def RKT_LAMBDA(x, expr)
@@ -225,6 +228,17 @@ template<typename Function>
 auto sum(std::size_t iend, const Function& f)
 {
     return sum(0, iend, f);
+}
+
+/// Return the sum `f(inds[0]) + ... + f(inds[inds.size() - 1])` for a given function `f`.
+template<typename Indices, typename Function, EnableIf<!isArithmetic<Indices>>...>
+auto sum(const Indices& inds, const Function& f)
+{
+    using T = std::invoke_result_t<Function, std::size_t>;
+    T res = static_cast<T>(0);
+    for(auto i : inds)
+        res += f(i);
+    return res;
 }
 
 } // namespace Reaktoro
