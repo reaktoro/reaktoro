@@ -46,8 +46,11 @@
 
 namespace Reaktoro {
 
+using std::abs;
 using std::log;
 using std::sqrt;
+
+const auto R = universalGasConstant;
 
 namespace detail {
 
@@ -173,7 +176,6 @@ auto Psi(CubicEOSModel type) -> real
     }
 }
 
-
 /// Compute the local minimum of pressure along an isotherm of a cubic equation of state.
 /// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
 /// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
@@ -181,11 +183,12 @@ auto Psi(CubicEOSModel type) -> real
 /// @param s The @eq{\sigma} parameter in the cubic equation of state
 /// @param T The temperature (in K)
 /// @return double
-auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double s, double e, double T) -> double
+auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double e, double s, double T) -> double
 {
-    auto V = b;
+    const auto RT = R*T;
 
-    const auto RT = universalGasConstant * T;
+    auto V = b;
+    auto Pprev = 0.0;
 
     const auto maxiters = 100;
     const auto tolerance = 1e-6;
@@ -193,21 +196,35 @@ auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double s, doub
     auto i = 0;
     for(; i < maxiters; ++i)
     {
-        const auto f = a*((V + s*b) + (V + e*b))*(V - b)*(V - b) - RT*(V + e*b)*(V + e*b)*(V + s*b)*(V + s*b);
-        const auto J = 2*a*(V - b)*(V - b) + 2*a*((V + s*b) + (V + e*b))*(V - b) - 2*RT*(V + e*b)*(V + s*b)*((V + s*b) + (V + e*b));
-        const auto dV = -f / J;
+        const auto t  = (V + e*b)*(V + s*b);
+        const auto tV = 2*V + b*(e + s);
+
+        const auto aux   = 1/b * sqrt(RT/(a*tV));
+        const auto auxV  = -aux/tV;
+        const auto auxVV = -3*auxV/tV;
+
+        const auto q   = 1 + t*aux - V/b;
+        const auto qV  = tV*aux + t*auxV - 1/b;
+        const auto qVV = t*auxVV;
+
+        const auto f = q*qV;
+        const auto J = qV*qV + q*qVV;
+
+        const auto dV = -f/J;
 
         V += dV;
 
-        if(std::abs(f) < tolerance)
-            break;
+        const auto P = RT/(V - b) - a/((V + e*b)*(V + s*b));
+
+        if(abs(P - Pprev) < abs(P) * tolerance)
+            return abs(q) < abs(qV) ? P : NaN;
+
+        Pprev = P;
     }
 
     errorif(i == maxiters, "Could not compute the minimum pressure along an isotherm of a cubic equation of state.");
 
-    const auto P = RT/(V - b) - a/((V + e*b)*(V + s*b));
-
-    return P;
+    return NaN;
 }
 
 /// Compute the residual Gibbs energy of the fluid for a given compressibility factor.
@@ -219,8 +236,6 @@ auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double s, doub
 /// @param T The temperature (in K)
 auto computeResidualGibbsEnergy(double Z, double beta, double q, double epsilon, double sigma, double T) -> double
 {
-    const auto RT = universalGasConstant * T;
-
     auto I = 0.0;
 
     if(epsilon != sigma) // CASE I:  Eq. (13.72) of Smith et al. (2017)
@@ -228,7 +243,7 @@ auto computeResidualGibbsEnergy(double Z, double beta, double q, double epsilon,
     else // CASE II: Eq. (13.74) of Smith et al. (2017)
         I = beta/(Z + epsilon*beta); // @eq{ I=\frac{\beta}{Z+\epsilon\beta} }
 
-    const auto Gres = RT*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
+    const auto Gres = R*T*(Z - 1 - log(Z - beta) - q*I); // from Eq. (13.74) of Smith et al. (2017)
 
     return Gres;
 }
@@ -242,7 +257,7 @@ auto computeResidualGibbsEnergy(double Z, double beta, double q, double epsilon,
 /// @param sigma The @eq{\sigma} parameter in the cubic equation of state
 /// @param T The temperature (in K)
 /// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
-auto determineWhetherLiquidOrGas(double Zmin, double Zmax, double beta, double q, double epsilon, double sigma, double T) -> StateOfMatter
+auto determinePhysicalStateThreeRealRoots(double Zmin, double Zmax, double beta, double q, double epsilon, double sigma, double T) -> StateOfMatter
 {
     const auto Gresmin = computeResidualGibbsEnergy(Zmin, beta, q, epsilon, sigma, T);
     const auto Gresmax = computeResidualGibbsEnergy(Zmax, beta, q, epsilon, sigma, T);
@@ -250,7 +265,6 @@ auto determineWhetherLiquidOrGas(double Zmin, double Zmax, double beta, double q
 }
 
 /// Determine the state of matter of the fluid when only one real root is available (either supercritical or low pressure gas).
-/// @param Z The single compressibility factor
 /// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
 /// @param b The @eq{b_\mathrm{mix}} variable in the equation of state
 /// @param e The @eq{\epsilon} parameter in the cubic equation of state
@@ -258,10 +272,10 @@ auto determineWhetherLiquidOrGas(double Zmin, double Zmax, double beta, double q
 /// @param T The temperature (in K)
 /// @param P The pressure (in Pa)
 /// @return StateOfMatter The state of matter of the fluid, by comparing the residual Gibbs energy of the two states.
-auto determineWhetherSupercriticalOrGas(double Z, double a, double b, double s, double e, double T, double P) -> StateOfMatter
+auto determinePhysicalStateOneRealRoot(double a, double b, double e, double s, double T, double P) -> StateOfMatter
 {
-    const auto Pmin = computeLocalMinimumPressureAlongIsotherm(a, b, s, e, T);
-    return P < Pmin ? StateOfMatter::Gas : StateOfMatter::Supercritical;
+    const auto Pmin = computeLocalMinimumPressureAlongIsotherm(a, b, e, s, T);
+    return (Pmin != Pmin) ? StateOfMatter::Supercritical : (P < Pmin) ? StateOfMatter::Gas : StateOfMatter::Liquid;
 }
 
 } // namespace detail
@@ -325,7 +339,6 @@ struct CubicEOS::Impl
             return;
 
         // Auxiliary variables
-        const auto R = universalGasConstant;
         const auto Psi = detail::Psi(model);
         const auto Omega = detail::Omega(model);
         const auto epsilon = detail::epsilon(model);
@@ -439,18 +452,14 @@ struct CubicEOS::Impl
 
         if(roots.size() == 3)
         {
-            const auto Zmax = roots[0];
-            const auto Zmin = roots[2];
-            props.som = detail::determineWhetherLiquidOrGas(Zmin, Zmax, beta, q, epsilon, sigma, T);
+            const auto Zmax = std::max({roots[0], roots[1], roots[2]});
+            const auto Zmin = std::min({roots[0], roots[1], roots[2]});
+            props.som = detail::determinePhysicalStateThreeRealRoots(Zmin, Zmax, beta, q, epsilon, sigma, T);
             Z = (props.som == StateOfMatter::Gas) ? Zmax : Zmin;
         }
         else
         {
-            // TODO: Add pressure test here to determine if the fluid is
-            // Supercritical or Gas. For performance reasons, and assuming that
-            // user will be mainly handling high pressures, the supercritical
-            // state is assumed here.
-            props.som = StateOfMatter::Supercritical;
+            props.som = detail::determinePhysicalStateOneRealRoot(amix, bmix, epsilon, sigma, T, P);
             Z = roots[0];
         }
 
