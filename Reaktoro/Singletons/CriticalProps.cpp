@@ -156,26 +156,16 @@ SubstanceCriticalProps::SubstanceCriticalProps(const SubstanceCriticalPropsData&
 : m_data(std::move(data)), m_names(detail::correctNames(names))
 {}
 
-auto SubstanceCriticalProps::setTemperature(real value) -> void
-{
-    error(value <= 0.0, "Cannot set non-positive critical temperature value (", value, " K) to substance with name identifiers ", names(), ".");
-    m_data.Tcr = value;
-}
-
 auto SubstanceCriticalProps::setTemperature(real value, String unit) -> void
 {
-    setTemperature(units::convert(value, unit, "K"));
-}
-
-auto SubstanceCriticalProps::setPressure(real value) -> void
-{
-    error(value <= 0.0, "Cannot set non-positive critical pressure value (", value, " Pa) to substance with name identifiers ", names(), ".");
-    m_data.Pcr = value;
+    value = units::convert(value, unit, "K");
+    errorif(value <= 0.0, "Cannot set non-positive critical temperature value (", value, " K) to substance with name identifiers ", names(), ".");
+    m_data.Tcr = value;
 }
 
 auto SubstanceCriticalProps::setPressure(real value, String unit) -> void
 {
-    error(value <= 0.0, "Cannot set non-positive critical pressure value (", value, " ", unit, ") to substance with name identifiers ", names(), ".");
+    errorif(value <= 0.0, "Cannot set non-positive critical pressure value (", value, " ", unit, ") to substance with name identifiers ", names(), ".");
     m_data.Pcr = units::convert(value, unit, "Pa");
 }
 
@@ -245,7 +235,7 @@ auto CriticalProps::append(SubstanceCriticalProps substance) -> void
     {
         const auto has_common_name = !disjoint(substance.names(), current.names());
 
-        error(has_common_name,
+        errorif(has_common_name,
             "Appending critical property data for substance with names {", substance.names(), "}.\n"
             "However, one of these names conflic with one or more names of another already\n"
             "stored substance with names {", current.names(), "}.\n"
@@ -304,26 +294,6 @@ auto CriticalProps::get(const StringList& substances) -> Optional<SubstanceCriti
         if(const auto subs = get(substance); subs)
             return subs;
     return defaultCriticalProps();
-}
-
-auto CriticalProps::begin() const
-{
-    return m_data.begin();
-}
-
-auto CriticalProps::begin()
-{
-    return m_data.begin();
-}
-
-auto CriticalProps::end() const
-{
-    return m_data.end();
-}
-
-auto CriticalProps::end()
-{
-    return m_data.end();
 }
 
 } // namespace Reaktoro

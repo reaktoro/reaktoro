@@ -31,13 +31,13 @@ namespace Reaktoro {
 struct SubstanceCriticalPropsData
 {
     /// The critical temperature of the substance (in K).
-    real Tcr = {};
+    real Tcr;
 
     /// The critical pressure of the substance (in Pa).
-    real Pcr = {};
+    real Pcr;
 
     /// The acentric factor of the substance.
-    real omega = {};
+    real omega;
 };
 
 /// A type used to represent a substance and its critical properties.
@@ -55,14 +55,8 @@ public:
     /// @param names The names that can uniquely identify the substance *(case-insensitive)*
     SubstanceCriticalProps(const SubstanceCriticalPropsData& data, const StringList& names);
 
-    /// Set the critical temperature of the substance (in K)
-    auto setTemperature(real value) -> void;
-
     /// Set the critical temperature of the substance with given unit.
     auto setTemperature(real value, String unit) -> void;
-
-    /// Set the critical pressure of the substance (in Pa)
-    auto setPressure(real value) -> void;
 
     /// Set the critical pressure of the substance with given unit.
     auto setPressure(real value, String unit) -> void;
@@ -136,17 +130,17 @@ public:
     /// Return the substance and its critical properties with given alternative names.
     static auto get(const StringList& substances) -> Optional<SubstanceCriticalProps>;
 
-    /// Return begin const iterator of this CriticalProps instance
-    auto begin() const;
+    /// Return begin const iterator of this ChemicalProps instance.
+    auto begin() const { return data().begin(); }
 
-    /// Return begin iterator of this CriticalProps instance
-    auto begin();
+    /// Return begin iterator of this ChemicalProps instance.
+    auto begin() { return data().begin(); }
 
-    /// Return end const iterator of this CriticalProps instance
-    auto end() const;
+    /// Return end const iterator of this ChemicalProps instance.
+    auto end() const { return data().end(); }
 
-    /// Return end iterator of this CriticalProps instance
-    auto end();
+    /// Return end iterator of this ChemicalProps instance.
+    auto end() { return data().end(); }
 
 private:
     /// The critical properties currently stored in the database.
