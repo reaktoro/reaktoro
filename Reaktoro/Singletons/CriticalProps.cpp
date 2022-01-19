@@ -28,7 +28,7 @@
 namespace Reaktoro {
 namespace detail {
 
-const std::deque<SubstanceCriticalProps> default_substances =
+const std::deque<SubstanceCriticalProps> preset_critical_props_data =
 {
 //     Tc/K     Pc/Pa     omega    unique identifiers (case insensitive)
     { {190.60,  45.99e5,  0.0120}, {"METHANE", "CH4"}           },
@@ -215,7 +215,7 @@ SubstanceCriticalProps::operator SubstanceCriticalPropsData() const
 }
 
 CriticalProps::CriticalProps()
-: m_substances(detail::default_substances)
+: m_data(detail::preset_critical_props_data)
 {}
 
 CriticalProps::~CriticalProps()
@@ -227,15 +227,20 @@ auto CriticalProps::instance() -> CriticalProps&
     return obj;
 }
 
-auto CriticalProps::substances() -> const std::deque<SubstanceCriticalProps>&
+auto CriticalProps::data() -> const std::deque<SubstanceCriticalProps>&
 {
-    return instance().m_substances;
+    return instance().m_data;
+}
+
+auto CriticalProps::defaultCriticalProps() -> const Optional<SubstanceCriticalProps>&
+{
+    return instance().m_default_crprops;
 }
 
 auto CriticalProps::append(SubstanceCriticalProps substance) -> void
 {
     // Ensure there are no equivalent substances in the database (same name or same aliases).
-    auto& substances = instance().m_substances;
+    auto& substances = instance().m_data;
     for(auto& current : substances)
     {
         const auto has_common_name = !disjoint(substance.names(), current.names());
@@ -253,7 +258,7 @@ auto CriticalProps::append(SubstanceCriticalProps substance) -> void
 auto CriticalProps::overwrite(SubstanceCriticalProps substance) -> void
 {
     // Ensure there are no equivalent substances in the database (same name or same aliases).
-    auto& substances = instance().m_substances;
+    auto& substances = instance().m_data;
     for(auto& current : substances)
     {
         const auto has_common_name = !disjoint(substance.names(), current.names());
@@ -266,45 +271,59 @@ auto CriticalProps::overwrite(SubstanceCriticalProps substance) -> void
     substances.push_back(substance);
 }
 
+auto CriticalProps::setMissingAs(const String& substance) -> void
+{
+    const auto idx = find(substance);
+    errorif(idx >= size(),
+        "CriticalProps::setMissingAs requires an existing substance "
+        "in the CriticalProps database, and ", substance, " is not present in it.");
+    instance().m_default_crprops = data()[idx];
+}
+
 auto CriticalProps::size() -> Index
 {
-    return substances().size();
+    return data().size();
 }
 
-auto CriticalProps::get(String name) -> Optional<SubstanceCriticalProps>
+auto CriticalProps::find(const String& substance) -> Index
 {
-    name = detail::correctName(name);
-    const auto idx = indexfn(substances(), [&](auto&& s) { return contains(s.names(), name); });
-    if(idx < size()) return substances()[idx];
-    return {};
+    const auto name = detail::correctName(substance);
+    return indexfn(data(), [&](auto&& s) { return contains(s.names(), name); });
 }
 
-auto CriticalProps::get(const StringList& names) -> Optional<SubstanceCriticalProps>
+auto CriticalProps::get(const String& substance) -> Optional<SubstanceCriticalProps>
 {
-    for(auto&& name : names)
-        if(const auto subs = get(name); subs)
+    const auto idx = find(substance);
+    if(idx < size()) return data()[idx];
+    return defaultCriticalProps();
+}
+
+auto CriticalProps::get(const StringList& substances) -> Optional<SubstanceCriticalProps>
+{
+    for(auto&& substance : substances)
+        if(const auto subs = get(substance); subs)
             return subs;
-    return {};
+    return defaultCriticalProps();
 }
 
 auto CriticalProps::begin() const
 {
-    return m_substances.begin();
+    return m_data.begin();
 }
 
 auto CriticalProps::begin()
 {
-    return m_substances.begin();
+    return m_data.begin();
 }
 
 auto CriticalProps::end() const
 {
-    return m_substances.end();
+    return m_data.end();
 }
 
 auto CriticalProps::end()
 {
-    return m_substances.end();
+    return m_data.end();
 }
 
 } // namespace Reaktoro

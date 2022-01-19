@@ -109,23 +109,32 @@ public:
     /// Return the single CriticalProps object.
     static auto instance() -> CriticalProps&;
 
-    /// Return the substances and their critical properties in the database.
-    static auto substances() -> const std::deque<SubstanceCriticalProps>&;
+    /// Return the critical properties data in the database.
+    static auto data() -> const std::deque<SubstanceCriticalProps>&;
 
-    /// Append a substance and its critical properties in to the database.
-    static auto append(SubstanceCriticalProps substance) -> void;
+    /// Return the default critical properties used for missing substances in the database.
+    static auto defaultCriticalProps() -> const Optional<SubstanceCriticalProps>&;
 
-    /// Append a substance and its critical properties in the database or overwrite an existing one with conflicting name.
-    static auto overwrite(SubstanceCriticalProps substance) -> void;
+    /// Append critical properties for a substance in the database.
+    static auto append(SubstanceCriticalProps crprops) -> void;
+
+    /// Append critical properties for a substance in the database or overwrite if data already exists for the same substance.
+    static auto overwrite(SubstanceCriticalProps crprops) -> void;
+
+    /// Set a given existing substance in the database as the default choice for missing substances when using @ref get.
+    static auto setMissingAs(const String& substance) -> void;
 
     /// Return the number of substances in the database.
     static auto size() -> Index;
 
+    /// Return the index of a substance in the database or number of substances if not found.
+    static auto find(const String& substance) -> Index;
+
     /// Return the substance and its critical properties with given name (e.g. "WATER", "CARBON-DIOXIDE", "HYDROGEN-SULFIDE", etc.).
-    static auto get(String name) -> Optional<SubstanceCriticalProps>;
+    static auto get(const String& substance) -> Optional<SubstanceCriticalProps>;
 
     /// Return the substance and its critical properties with given alternative names.
-    static auto get(const StringList& names) -> Optional<SubstanceCriticalProps>;
+    static auto get(const StringList& substances) -> Optional<SubstanceCriticalProps>;
 
     /// Return begin const iterator of this CriticalProps instance
     auto begin() const;
@@ -140,8 +149,11 @@ public:
     auto end();
 
 private:
-    /// The substances stored in the database.
-    std::deque<SubstanceCriticalProps> m_substances;
+    /// The critical properties currently stored in the database.
+    std::deque<SubstanceCriticalProps> m_data;
+
+    /// The default critical properties for substances not in the database.
+    Optional<SubstanceCriticalProps> m_default_crprops;
 
 private:
     /// Construct a default CriticalProps object [private].
