@@ -166,15 +166,15 @@ public:
     /// @param unit The volume unit
     auto scalePhaseVolume(StringOrIndex phase, real value, String unit) -> void;
 
-    // /// Scale the total volume of fluids in the system by adjusting the volumes of fluid phases equally.
-    // /// @param value The new total volume of fluids in the system
-    // /// @param unit The volume unit
-    // auto scaleFluidVolume(real value, String unit) -> void;
+    /// Scale the total volume of fluids in the system by adjusting the volumes of fluid phases equally.
+    /// @param value The new total volume of fluids in the system
+    /// @param unit The volume unit
+    auto scaleFluidVolume(real value, String unit) -> void;
 
-    // /// Scale the total volume of solids in the system by adjusting the volumes of solid phases equally.
-    // /// @param value The new total volume of solids in the system
-    // /// @param unit The volume unit
-    // auto scaleSolidVolume(real value, String unit) -> void;
+    /// Scale the total volume of solids in the system by adjusting the volumes of solid phases equally.
+    /// @param value The new total volume of solids in the system
+    /// @param unit The volume unit
+    auto scaleSolidVolume(real value, String unit) -> void;
 
     /// Scale the mass of the system by adjusting the amounts of its species equally.
     /// @param value The new mass of the system
@@ -187,15 +187,15 @@ public:
     /// @param unit The mass unit
     auto scalePhaseMass(StringOrIndex phase, real value, String unit) -> void;
 
-    // /// Scale the total mass of fluids in the system by adjusting the masses of fluid phases equally.
-    // /// @param value The new total mass of fluids in the system
-    // /// @param unit The mass unit
-    // auto scaleFluidMass(real value, String unit) -> void;
+    /// Scale the total mass of fluids in the system by adjusting the masses of fluid phases equally.
+    /// @param value The new total mass of fluids in the system
+    /// @param unit The mass unit
+    auto scaleFluidMass(real value, String unit) -> void;
 
-    // /// Scale the total mass of solids in the system by adjusting the masses of solid phases equally.
-    // /// @param value The new total mass of solids in the system
-    // /// @param unit The mass unit
-    // auto scaleSolidMass(real value, String unit) -> void;
+    /// Scale the total mass of solids in the system by adjusting the masses of solid phases equally.
+    /// @param value The new total mass of solids in the system
+    /// @param unit The mass unit
+    auto scaleSolidMass(real value, String unit) -> void;
 
     /// Return the underlying chemical system for this chemical state.
     auto system() const -> const ChemicalSystem&;

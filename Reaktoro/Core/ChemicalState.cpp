@@ -28,6 +28,7 @@ using namespace tabulate;
 #include <Optima/State.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -227,28 +228,6 @@ struct ChemicalState::Impl
         n.segment(start, size) *= scalar;
     }
 
-    // auto scaleFluidVolume(real volume, String unit) -> void
-    // {
-    //     errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
-    //     volume = units::convert(volume, unit, "m3");
-    //     props.update(T, P, n);
-    //     const auto& fluid_volume = properties().fluidVolume();
-    //     const auto& factor = fluid_volume.val ? volume/fluid_volume.val : real(0.0);
-    //     const auto& ifluidspecies = system.indicesFluidSpecies();
-    //     scaleSpeciesAmounts(factor, ifluidspecies);
-    // }
-
-    // auto scaleSolidVolume(real volume, String unit) -> void
-    // {
-    //     errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
-    //     volume = units::convert(volume, unit, "m3");
-    //     props.update(T, P, n);
-    //     const auto& solid_volume = properties().solidVolume();
-    //     const auto& factor = solid_volume.val ? volume/solid_volume.val : real(0.0);
-    //     const auto& isolidspecies = system.indicesSolidSpecies();
-    //     scaleSpeciesAmounts(factor, isolidspecies);
-    // }
-
     auto scaleVolume(real volume, String unit) -> void
     {
         errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
@@ -271,6 +250,32 @@ struct ChemicalState::Impl
         scaleSpeciesAmountsInPhase(iphase, scalar);
     }
 
+    auto scaleFluidVolume(real volume, String unit) -> void
+    {
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
+        volume = units::convert(volume, unit, "m3");
+        props.update(T, P, n);
+        const auto ifluidphases = props.indicesPhasesWithFluidState();
+        const auto current_fluid_volume =
+            Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).volume(); });
+        const auto& factor = current_fluid_volume > 0.0 ? volume / current_fluid_volume : real(0.0);
+        const auto& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
+        scaleSpeciesAmounts(factor, ifluidspecies);
+    }
+
+    auto scaleSolidVolume(real volume, String unit) -> void
+    {
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
+        volume = units::convert(volume, unit, "m3");
+        props.update(T, P, n);
+        const auto isolidphases = props.indicesPhasesWithSolidState();
+        const auto current_solid_volume =
+            Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).volume(); });
+        const auto& factor = current_solid_volume > 0.0 ? volume / current_solid_volume : real(0.0);
+        const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
+        scaleSpeciesAmounts(factor, isolidspecies);
+    }
+
     auto scaleMass(real mass, String unit) -> void
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
@@ -291,6 +296,32 @@ struct ChemicalState::Impl
         const auto current_mass = props.phaseProps(iphase).mass();
         const auto scalar = (current_mass != 0.0) ? mass/current_mass : real(0.0);
         scaleSpeciesAmountsInPhase(iphase, scalar);
+    }
+
+    auto scaleFluidMass(real mass, String unit) -> void
+    {
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        mass = units::convert(mass, unit, "kg");
+        props.update(T, P, n);
+        const auto ifluidphases = props.indicesPhasesWithFluidState();
+        const auto current_fluid_mass =
+            Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).mass(); });
+        const auto& factor = current_fluid_mass > 0.0 ? mass / current_fluid_mass : real(0.0);
+        const auto& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
+        scaleSpeciesAmounts(factor, ifluidspecies);
+    }
+
+    auto scaleSolidMass(real mass, String unit) -> void
+    {
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        mass = units::convert(mass, unit, "kg");
+        props.update(T, P, n);
+        const auto isolidphases = props.indicesPhasesWithSolidState();
+        const auto current_solid_mass =
+            Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).mass(); });
+        const auto& factor = current_solid_mass > 0.0 ? mass / current_solid_mass : real(0.0);
+        const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
+        scaleSpeciesAmounts(factor, isolidspecies);
     }
 };
 
@@ -416,15 +447,15 @@ auto ChemicalState::scalePhaseVolume(StringOrIndex phase, real value, String uni
     pimpl->scalePhaseVolume(phase, value, unit);
 }
 
-// auto ChemicalState::scaleFluidVolume(real value, String unit) -> void
-// {
-//     pimpl->scaleFluidVolume(value, unit);
-// }
+auto ChemicalState::scaleFluidVolume(real value, String unit) -> void
+{
+    pimpl->scaleFluidVolume(value, unit);
+}
 
-// auto ChemicalState::scaleSolidVolume(real value, String unit) -> void
-// {
-//     pimpl->scaleSolidVolume(value, unit);
-// }
+auto ChemicalState::scaleSolidVolume(real value, String unit) -> void
+{
+    pimpl->scaleSolidVolume(value, unit);
+}
 
 auto ChemicalState::scaleMass(real value, String unit) -> void
 {
@@ -436,15 +467,15 @@ auto ChemicalState::scalePhaseMass(StringOrIndex phase, real value, String unit)
     pimpl->scalePhaseMass(phase, value, unit);
 }
 
-// auto ChemicalState::scaleFluidMass(real value, String unit) -> void
-// {
-//     pimpl->scaleFluidMass(value, unit);
-// }
+auto ChemicalState::scaleFluidMass(real value, String unit) -> void
+{
+    pimpl->scaleFluidMass(value, unit);
+}
 
-// auto ChemicalState::scaleSolidMass(real value, String unit) -> void
-// {
-//     pimpl->scaleSolidMass(value, unit);
-// }
+auto ChemicalState::scaleSolidMass(real value, String unit) -> void
+{
+    pimpl->scaleSolidMass(value, unit);
+}
 
 auto ChemicalState::system() const -> const ChemicalSystem&
 {

@@ -172,6 +172,18 @@ def testChemicalState():
     assert scaled.props().phaseProps("AqueousPhase").volume() == 1.0
 
     scaled = ChemicalState(state)
+    scaled.scaleFluidVolume(2.0, "m3")
+    scaled.props().update(scaled)
+    iphases = scaled.props().indicesPhasesWithFluidState()
+    assert sum([scaled.props().phaseProps(i).volume() for i in iphases]) == 2.0
+
+    scaled = ChemicalState(state)
+    scaled.scaleSolidVolume(3.0, "m3")
+    scaled.props().update(scaled)
+    iphases = scaled.props().indicesPhasesWithSolidState()
+    assert sum([scaled.props().phaseProps(i).volume() for i in iphases]) == 3.0
+
+    scaled = ChemicalState(state)
     scaled.scaleMass(1.0, "kg")
     scaled.props().update(scaled)
     assert scaled.props().mass()[0] == pytest.approx(1.0)
@@ -180,6 +192,18 @@ def testChemicalState():
     scaled.scalePhaseMass("AqueousPhase", 1.0, "kg")
     scaled.props().update(scaled)
     assert scaled.props().phaseProps("AqueousPhase").mass()[0] == pytest.approx(1.0)
+
+    scaled = ChemicalState(state)
+    scaled.scaleFluidMass(2.0, "kg")
+    scaled.props().update(scaled)
+    iphases = scaled.props().indicesPhasesWithFluidState()
+    assert sum([scaled.props().phaseProps(i).mass() for i in iphases]) == 2.0
+
+    scaled = ChemicalState(state)
+    scaled.scaleSolidMass(3.0, "kg")
+    scaled.props().update(scaled)
+    iphases = scaled.props().indicesPhasesWithSolidState()
+    assert sum([scaled.props().phaseProps(i).mass() for i in iphases]) == 3.0
 
     props = state.props()
     props.update(state)
