@@ -64,6 +64,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.Cpx = 6.0 * (T*P)*(T*P);
         props.ln_g = 8.0 * x;
         props.ln_a = 9.0 * x;
+        props.som = StateOfMatter::Gas;
     };
 
     ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args)
@@ -77,6 +78,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.Cpx = 6.1 * (T*P)*(T*P);
         props.ln_g = 8.1 * x;
         props.ln_a = 9.1 * x;
+        props.som = StateOfMatter::Solid;
     };
 
     Database db;
@@ -598,5 +600,20 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
             i += 1;
         }
+    }
+
+    SECTION("testing indices methods")
+    {
+        real T = 3.0;
+        real P = 5.0;
+        ArrayXr n = ArrayXr{{ 4.0, 6.0, 5.0 }};
+
+        props.update(T, P, n);
+
+        CHECK( props.indicesPhasesWithState(StateOfMatter::Gas) == Indices{0} );
+        CHECK( props.indicesPhasesWithState(StateOfMatter::Solid) == Indices{1} );
+        CHECK( props.indicesPhasesWithStates({StateOfMatter::Solid, StateOfMatter::Gas}) == Indices{0, 1} );
+        CHECK( props.indicesPhasesWithFluidState() == Indices{0} );
+        CHECK( props.indicesPhasesWithSolidState() == Indices{1} );
     }
 }
