@@ -41,22 +41,18 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
             species[i].formula(),
             species[i].name()
         });
-        error(!crprops.has_value(), "Cannot create any cubic equation of state model "
-            "(e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.) without "
-            "critical properties for the species with name ", species[i].name(), ". "
-            "In order to fix this error, use CriticalProps::append to register the "
-            "critical properties of this substance.");
+
+        errorif(crprops.has_value() == false,
+            "Could not find critical properties for substance ", species[i].formula().str(), " "
+            "while creating a cubic equation of state model (e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.). ",
+            "The following are ways to fix this error:\n"
+            "  - use CriticalProps::append(crprops) to register the critical properties of this substance in the CriticalProps database,\n"
+            "  - use CriticalProps::setMissingAs(\"He\") to consider all missing substances in the CriticalProps database as if they were He.");
+
         Tcr[i] = crprops->temperature();
         Pcr[i] = crprops->pressure();
         omega[i] = crprops->acentricFactor();
     }
-
-    const auto aggregatestate = species[0].aggregateState();
-
-    error(aggregatestate != AggregateState::Gas && aggregatestate != AggregateState::Liquid,
-        "Cannot create a cubic equation of state model if the species "
-        "in the phase have aggregate state ", aggregatestate, ". "
-        "Only Gas or Liquid AggregateState values are permitted.");
 
     // Initialize the CubicEOS instance
     CubicEOS eos({nspecies, Tcr, Pcr, omega});
