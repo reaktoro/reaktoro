@@ -106,6 +106,9 @@ public:
     /// Return the number of species over all phases up to the one with given index.
     auto numSpeciesUntilPhase(Index iphase) const -> Index;
 
+    /// Return the indices of the species in the given phases.
+    auto indicesSpeciesInPhases(const Indices& iphases) const -> Indices;
+
     /// Convert this PhaseList object into its Vec<Phase>.
     operator Vec<Phase>&();
 

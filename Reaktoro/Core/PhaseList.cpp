@@ -177,6 +177,19 @@ auto PhaseList::numSpeciesUntilPhase(Index iphase) const -> Index
     return sum;
 }
 
+auto PhaseList::indicesSpeciesInPhases(const Indices& iphases) const -> Indices
+{
+    Indices res;
+    for(auto i : iphases)
+    {
+        const auto ifirst = numSpeciesUntilPhase(i);
+        const auto nspecies = m_phases[i].species().size();
+        for(auto i = 0; i < nspecies; ++i)
+            res.push_back(ifirst + i);
+    }
+    return res;
+}
+
 PhaseList::operator Vec<Phase>&()
 {
     return m_phases;
