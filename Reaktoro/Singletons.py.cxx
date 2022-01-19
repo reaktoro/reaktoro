@@ -18,23 +18,9 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportCommon(py::module& m);
-void exportCore(py::module& m);
-void exportEquilibrium(py::module& m);
-void exportExtensions(py::module& m);
-void exportModels(py::module& m);
-void exportSerialization(py::module& m);
-void exportSingletons(py::module& m);
-void exportThermodynamics(py::module& m);
+void exportCriticalProps(py::module& m);
 
-PYBIND11_MODULE(reaktoro4py, m)
+void exportSingletons(py::module& m)
 {
-    exportCommon(m);
-    exportCore(m);
-    exportEquilibrium(m);
-    exportExtensions(m);
-    exportModels(m);
-    exportSerialization(m);
-    exportSingletons(m);
-    exportThermodynamics(m);
+    exportCriticalProps(m);
 }
