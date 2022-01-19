@@ -17,19 +17,9 @@
 
 #pragma once
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Extensions.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Models.hpp>
-#include <Reaktoro/Singletons.hpp>
-#include <Reaktoro/Thermodynamics.hpp>
-#include <Reaktoro/Transport.hpp>
-#include <Reaktoro/Utils.hpp>
+#include <Reaktoro/Singletons/CriticalProps.hpp>
+#include <Reaktoro/Singletons/DissociationReactions.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 
-/// The namespace containing all components of the Reaktoro library.
-namespace Reaktoro {
-
-} // namespace Reaktoro
+/// @defgroup Singletons Singletons
+/// This is the singletons module in Reaktoro, in which default databases for critical properties, elements, dissociation reactions and others are implemented.
