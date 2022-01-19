@@ -387,6 +387,30 @@ public:
     /// Return the isochoric heat capacity of the system (in J/K).
     auto heatCapacityConstV() const -> real;
 
+    /// Return the indices of the phases in a given state of matter.
+    auto indicesPhasesWithState(StateOfMatter som) const -> Indices;
+
+    /// Return the indices of the phases with one of the given states of matter.
+    auto indicesPhasesWithStates(std::initializer_list<StateOfMatter> soms) const -> Indices;
+
+    /// Return the indices of the phases in liquid, gaseous, or supercritical states.
+    auto indicesPhasesWithFluidState() const -> Indices;
+
+    /// Return the indices of the phases in solid states.
+    auto indicesPhasesWithSolidState() const -> Indices;
+
+    /// Return the indices of the phases in a given state of matter.
+    auto indicesSpeciesInPhasesWithState(StateOfMatter som) const -> Indices;
+
+    /// Return the indices of the phases with one of the given states of matter.
+    auto indicesSpeciesInPhasesWithStates(std::initializer_list<StateOfMatter> soms) const -> Indices;
+
+    /// Return the indices of the phases in liquid, gaseous, or supercritical states.
+    auto indicesSpeciesInPhasesWithFluidState() const -> Indices;
+
+    /// Return the indices of the phases in solid states.
+    auto indicesSpeciesInPhasesWithSolidState() const -> Indices;
+
     /// Output the chemical properties of the system to a stream.
     auto output(std::ostream& out) const -> void;
 
