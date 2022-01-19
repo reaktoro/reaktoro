@@ -199,13 +199,13 @@ auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double e, doub
         const auto t  = (V + e*b)*(V + s*b);
         const auto tV = 2*V + b*(e + s);
 
-        const auto aux   = 1/b * sqrt(RT/(a*tV));
-        const auto auxV  = -aux/tV;
-        const auto auxVV = -3*auxV/tV;
+        const auto w   = 1/b * sqrt(RT/(a*tV));
+        const auto wV  = -w/tV;
+        const auto wVV = -3*wV/tV;
 
-        const auto q   = 1 + t*aux - V/b;
-        const auto qV  = tV*aux + t*auxV - 1/b;
-        const auto qVV = t*auxVV;
+        const auto q   = 1 + t*w - V/b;
+        const auto qV  = tV*w + t*wV - 1/b;
+        const auto qVV = t*wVV;
 
         const auto f = q*qV;
         const auto J = qV*qV + q*qVV;
