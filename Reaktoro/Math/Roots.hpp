@@ -18,15 +18,15 @@
 #pragma once
 
 // C++ includes
+#include <array>
 #include <complex>
 #include <functional>
-#include <tuple>
 
 namespace Reaktoro {
 
 /// Define a type that describes the roots of a cubic equation
 template<typename T>
-using CubicRoots = std::tuple<std::complex<T>, std::complex<T>, std::complex<T>>;
+using CubicRoots = std::array<std::complex<T>, 3>;
 
 /// Calculate the roots of a cubic equation using Cardano's method.
 /// The calculation uses the approach presented in:
@@ -39,8 +39,7 @@ using CubicRoots = std::tuple<std::complex<T>, std::complex<T>, std::complex<T>>
 /// @param c The coefficient *c* of the cubic equation
 /// @param d The coefficient *d* of the cubic equation
 /// @return The three roots \f$ (r_1, r_2, r_3) \f$ that solve the cubic
-/// equation, where \f$ |r_1| \geq |r_2| \geq |r_3| \f$. If they are all real,
-/// they are returned in descending order (the first element is the highest).
+/// equation. No ordering is performed on the roots!
 template<typename T>
 auto cardano(const T& b, const T& c, const T& d) -> CubicRoots<T>
 {
