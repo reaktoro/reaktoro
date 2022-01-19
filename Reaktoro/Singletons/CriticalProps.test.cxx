@@ -42,7 +42,7 @@ auto acentricFactor(std::vector<std::string> names) { return get(names).acentric
 
 TEST_CASE("Testing CriticalProps", "[CriticalProps]")
 {
-    REQUIRE(CriticalProps::size() == CriticalProps::substances().size());
+    REQUIRE(CriticalProps::size() == CriticalProps::data().size());
     REQUIRE_NOTHROW( withName::get("methane")              );
     REQUIRE_NOTHROW( withName::get("ethane")               );
     REQUIRE_NOTHROW( withName::get("propane")              );
@@ -206,4 +206,12 @@ TEST_CASE("Testing CriticalProps", "[CriticalProps]")
     REQUIRE( withName::temperature("HCl")    == Approx(473.15)   );
     REQUIRE( withName::pressure("HCl")       == Approx(150.0e+5) );
     REQUIRE( withName::acentricFactor("HCl") == Approx(0.9999)   );
+
+    REQUIRE_NOTHROW( CriticalProps::setMissingAs("H2") ); // set default properties for missing substances as that of H2
+
+    REQUIRE( withName::temperature("InexistentSubstance") == withName::temperature("H2") );
+    REQUIRE( withName::pressure("InexistentSubstance") == withName::pressure("H2") );
+    REQUIRE( withName::acentricFactor("InexistentSubstance") == withName::acentricFactor("H2") );
+
+    REQUIRE_THROWS( CriticalProps::setMissingAs("XYZ") ); // cannot set default properties for missing substances using inexistent substance in the database
 }
