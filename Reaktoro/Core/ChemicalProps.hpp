@@ -399,16 +399,16 @@ public:
     /// Return the indices of the phases in solid states.
     auto indicesPhasesWithSolidState() const -> Indices;
 
-    /// Return the indices of the phases in a given state of matter.
+    /// Return the indices of the phases with a given state of matter.
     auto indicesSpeciesInPhasesWithState(StateOfMatter som) const -> Indices;
 
     /// Return the indices of the phases with one of the given states of matter.
     auto indicesSpeciesInPhasesWithStates(std::initializer_list<StateOfMatter> soms) const -> Indices;
 
-    /// Return the indices of the phases in liquid, gaseous, or supercritical states.
+    /// Return the indices of the phases with liquid, gaseous, or supercritical states.
     auto indicesSpeciesInPhasesWithFluidState() const -> Indices;
 
-    /// Return the indices of the phases in solid states.
+    /// Return the indices of the phases with solid states.
     auto indicesSpeciesInPhasesWithSolidState() const -> Indices;
 
     /// Output the chemical properties of the system to a stream.
