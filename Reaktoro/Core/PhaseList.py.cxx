@@ -49,6 +49,7 @@ void exportPhaseList(py::module& m)
         .def("withStateOfMatter", &PhaseList::withStateOfMatter)
         .def("withAggregateState", &PhaseList::withAggregateState)
         .def("numSpeciesUntilPhase", &PhaseList::numSpeciesUntilPhase)
+        .def("indicesSpeciesInPhases", &PhaseList::indicesSpeciesInPhases)
         .def("__getitem__", [](const PhaseList& self, Index i) { return self[i]; }, py::return_value_policy::reference_internal)
         .def("__iter__", [](const PhaseList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         .def(py::self + py::self);

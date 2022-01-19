@@ -251,6 +251,18 @@ def testPhaseList():
     assert phases.numSpeciesUntilPhase(5) == 8 + 6 + 1 + 1 + 1
 
     #-------------------------------------------------------------------------
+    # TESTING METHOD: PhaseList::indicesSpeciesInPhases
+    #-------------------------------------------------------------------------
+    assert phases.indicesSpeciesInPhases([0]) == [0, 1, 2, 3, 4, 5, 6, 7]
+    assert phases.indicesSpeciesInPhases([1]) == [8, 9, 10, 11, 12, 13]
+    assert phases.indicesSpeciesInPhases([2]) == [14]
+    assert phases.indicesSpeciesInPhases([3]) == [15]
+    assert phases.indicesSpeciesInPhases([4]) == [16]
+    assert phases.indicesSpeciesInPhases([0, 1]) == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    assert phases.indicesSpeciesInPhases([1, 0]) == [8, 9, 10, 11, 12, 13, 0, 1, 2, 3, 4, 5, 6, 7]
+    assert phases.indicesSpeciesInPhases([2, 3, 4]) == [14, 15, 16]
+
+    #-------------------------------------------------------------------------
     # TESTING METHOD: PhaseList::__iter__
     #-------------------------------------------------------------------------
     for i, phase in enumerate(phases):
