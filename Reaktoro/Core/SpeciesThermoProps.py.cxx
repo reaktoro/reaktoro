@@ -27,7 +27,6 @@ using namespace Reaktoro;
 void exportSpeciesThermoProps(py::module& m)
 {
     py::class_<SpeciesThermoProps>(m, "SpeciesThermoProps")
-        .def(py::init<>())
         .def(py::init<const real&, const real&, const StandardThermoProps&>())
         .def_readwrite("T"  , &SpeciesThermoProps::T)
         .def_readwrite("P"  , &SpeciesThermoProps::P)
@@ -42,10 +41,5 @@ void exportSpeciesThermoProps(py::module& m)
         .def_readwrite("S0" , &SpeciesThermoProps::S0)
         .def_readwrite("A0" , &SpeciesThermoProps::A0)
         .def("__repr__", [](const SpeciesThermoProps& self) { std::stringstream ss; ss << self; return ss.str(); })
-        .def(py::self + py::self)
-        .def(py::self - py::self)
-        .def(double() * py::self)
-        .def(py::self * double())
-        .def(py::self / double())
         ;
 }
