@@ -321,8 +321,8 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     table.add_row({ ":: Z     (charge)"        , str(props.complexationSurfaceState().Z)        , "eq"    });
     table.add_row({ ":: sigma (charge density)", str(props.complexationSurfaceState().sigma)    , "C/m2"  });
     table.add_row({ ":: psi   (potential) "    , str(props.complexationSurfaceState().psi), "Volt"  });
-    table.add_row({ ":: -F*psi/RT"             , str(- F * props.complexationSurfaceState().psi / R / props.complexationSurfaceState().T), ""  });
-    table.add_row({ ":: exp(-F*psi/RT)"        , str(exp(- F * props.complexationSurfaceState().psi / R / props.complexationSurfaceState().T)), ""  });
+    table.add_row({ ":: -F*psi/(R*T)"          , str(- F * props.complexationSurfaceState().psi / R / props.complexationSurfaceState().T), ""  });
+    table.add_row({ ":: exp(-F*psi/(R*T))"     , str(exp(- F * props.complexationSurfaceState().psi / R / props.complexationSurfaceState().T)), ""  });
 
     table.add_row({ ":: mass  (mass)" , str(props.complexationSurfaceState().mass)       , "kg" });
     table.add_row({ "Element Amounts:" });
@@ -334,9 +334,6 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     table.add_row({ "Fractions:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].name(), str(x[i]), "" });
-    table.add_row({ "Log (base 10) Amount:" });
-    for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].name(), str(log10(ns[i])), "molal" });
 
     // TODO: figure out how surface complexation species are considered and how is molality calculated?
     //  Site amount:
