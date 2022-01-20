@@ -249,17 +249,17 @@ auto parseElectricCharge(const String& formula) -> double
 auto parseReactionEquation(const String& equation) -> Pairs<String, double>
 {
     // Split the reaction equation into two words: reactants and products
-    auto two_words = split(equation, "=");
+    auto words = split(equation, "=");
 
     // Assert the equation has a single equal sign `=`
-    errorif(two_words.size() != 2,
+    errorif(words.size() > 2,
         "Cannot parse the reaction equation `" +  equation + "`. ",
         "Expecting an equation with a single equal sign `=` separating "
         "reactants from products.");
 
     // The reactants and products as string
-    const auto& reactants_str = two_words[0];
-    const auto& products_str = two_words[1];
+    const auto reactants_str = words[0];
+    const auto products_str = words.size() == 2 ? words[1] : "";
 
     // Split the string representing the reactants and products at each `+` sign
     auto reactants = split(reactants_str, " ");
@@ -268,7 +268,7 @@ auto parseReactionEquation(const String& equation) -> Pairs<String, double>
     // The pairs of species names and stoichiometric coefficients
     Pairs<String, double> pairs;
 
-    // Iterave over all strings representing pair number and species name in the reactants
+    // Iterate over all strings representing pair number and species name in the reactants
     for(auto word : reactants)
     {
         if(word == "+") continue;
@@ -278,7 +278,7 @@ auto parseReactionEquation(const String& equation) -> Pairs<String, double>
         pairs.emplace_back(species, -number); // negative sign for reactants
     }
 
-    // Iterave over all strings representing pair number and species name in the products
+    // Iterate over all strings representing pair number and species name in the products
     for(auto word : products)
     {
         if(word == "+") continue;
