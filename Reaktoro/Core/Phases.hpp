@@ -580,12 +580,11 @@ public:
     /// Initialize the default attributes of this SurfaceComplexationPhase object.
     auto initialize() -> void
     {
-        setName("IonExchangePhase");
+        setName("SurfaceComplexationPhase");
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Adsorbed);
         setActivityModel(ActivityModelIdealSurfaceComplexation());
         setIdealActivityModel(ActivityModelIdealSurfaceComplexation());
-
     }
 };
 
