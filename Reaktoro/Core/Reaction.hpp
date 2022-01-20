@@ -20,24 +20,19 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
+#include <Reaktoro/Core/ReactionProps.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
 
-/// The function type for calculation of equilibrium constant of reaction (in natural log).
-/// @param T The temperature for the calculation (in K)
-/// @param P The pressure for the calculation (in Pa)
-/// @return The ln equilibrium constant of the reaction (@eq{\ln{K}})
-using EquilibriumConstantFn = std::function<real(real T, real P)>;
-
 /// The function type for calculation of reaction rates (in mol/s).
 /// @param props The chemical properties of the chemical system
 /// @return The rate of the reaction (in mol/s)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateFn = std::function<real(const ChemicalProps& props)>;
+using ReactionRateFn = Fn<real(const ChemicalProps& props)>;
 
 /// A class to represent a reaction and its attributes.
 /// The Reaction class provides a representation of a chemical reaction and
@@ -60,9 +55,6 @@ public:
     /// Return a duplicate of this Reaction object with new reaction equation.
     auto withEquation(const ReactionEquation& equation) const -> Reaction;
 
-    /// Return a duplicate of this Reaction object with new equilibrium constant function.
-    auto withEquilibriumConstantFn(const EquilibriumConstantFn& fn) const -> Reaction;
-
     /// Return a duplicate of this Reaction object with new reaction rate function.
     auto withRateFn(const ReactionRateFn& fn) const -> Reaction;
 
@@ -72,11 +64,23 @@ public:
     /// Return the equation of the reaction.
     auto equation() const -> const ReactionEquation&;
 
-    /// Return the equilibrium constant function of the reaction.
-    auto equilibriumConstantFn() const -> const EquilibriumConstantFn&;
-
     /// Return the rate function of the reaction.
     auto rateFn() const -> const ReactionRateFn&;
+
+    /// Calculate the complete set of thermodynamic properties of the reaction.
+    /// @param T The temperature for the calculation (in K)
+    /// @param P The pressure for the calculation (in Pa)
+    auto props(real T, real P) const -> ReactionProps;
+
+    /// Calculate the complete set of thermodynamic properties of the reaction.
+    /// @param T The temperature for the calculation
+    /// @param unitT The temperature unit for the calculation
+    /// @param P The pressure for the calculation
+    /// @param unitP The pressure unit for the calculation
+    auto props(real T, Chars unitT, real P, Chars unitP) const -> ReactionProps;
+
+    /// Calculate the rate of the reaction for given conditions of chemical properties.
+    auto rate(const ChemicalProps& props) const -> real;
 
 private:
     struct Impl;
