@@ -21,6 +21,9 @@
 #include <tabulate/table.hpp>
 using namespace tabulate;
 
+// Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
+
 namespace Reaktoro {
 
 auto operator<<(std::ostream& out, const ReactionProps& props) -> std::ostream&
