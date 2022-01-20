@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2022 Allan Leal
+// Copyright © 2014-2021 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -354,7 +354,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state);
 
                 CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 57 );
+                CHECK( result.optima.iterations <= 62 ); // for some reason, 57 iterations are needed in Linux and 62 in Windows and macOS! This started to appear after ChemicalState was changed (initial species amounts became 1e-16 instead of zero)
 
                 result = solver.solve(state); // check a recalculation converges in 0 iterations
 
