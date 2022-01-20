@@ -40,6 +40,9 @@ using Index = std::size_t;
 /// The type that represents a collection of indices.
 using Indices = std::vector<Index>;
 
+/// Convenient alias for `const char*`.
+using Chars = const char*;
+
 /// Convenient alias for `std::string`.
 using String = std::string;
 
