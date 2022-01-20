@@ -395,6 +395,9 @@ map<string, TemperatureUnit> temperatureUnitsMap =
     {"celsius"    , {1, 0, "degC"}},
     {"fahrenheit" , {1, 0, "degF"}},
     {"rankine"    , {1, 0, "degR"}}
+    {"C"          , {1, 0, "degC"}},
+    {"F"          , {1, 0, "degF"}},
+    {"R"          , {1, 0, "degR"}}
 };
 
 double toKelvin(double value, const string& from)
