@@ -17,6 +17,9 @@
 
 #pragma once
 
+// C++ includes
+#include <iostream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 
@@ -70,5 +73,8 @@ struct SpeciesThermoProps
     /// @param sprops The primary standard thermodynamic properties of a chemical species.
     SpeciesThermoProps(const real& T, const real& P, const StandardThermoProps& sprops);
 };
+
+/// Output a SpeciesThermoProps object to an output stream.
+auto operator<<(std::ostream& out, const SpeciesThermoProps& props) -> std::ostream&;
 
 } // namespace Reaktoro
