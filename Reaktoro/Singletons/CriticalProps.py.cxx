@@ -56,6 +56,7 @@ void exportCriticalProps(py::module& m)
         .def_static("find", &CriticalProps::find)
         .def_static("get", py::overload_cast<const String&>(&CriticalProps::get))
         .def_static("get", py::overload_cast<const StringList&>(&CriticalProps::get))
+        .def("__len__", &CriticalProps::size)
         .def("__getitem__", [](const CriticalProps& self, Index i) { return self.data()[i]; }, py::return_value_policy::reference)
         .def("__iter__", [](const CriticalProps& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         ;
