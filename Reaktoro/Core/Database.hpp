@@ -93,7 +93,16 @@ public:
     /// Return all species in the database with given aggregate state.
     auto speciesWithAggregateState(AggregateState option) const -> SpeciesList;
 
+    /// Return an element with given symbol in the database.
+    /// @warning An exception is thrown if no element with given symbol exists.
+    auto element(const String& symbol) const -> const Element&;
+
+    /// Return a species with given name in the database.
+    /// @warning An exception is thrown if no species with given name exists.
+    auto species(const String& name) const -> const Species&;
+
     /// Construct a reaction with given equation.
+    /// @warning An exception is thrown if the reaction has an inexistent species in the database.
     auto reaction(const String& equation) const -> Reaction;
 
     /// Return the attached data to this database whose type is known at runtime only.
