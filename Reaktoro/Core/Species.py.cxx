@@ -51,6 +51,7 @@ void exportSpecies(py::module& m)
         .def("attachedData", &Species::attachedData)
         .def("molarMass", &Species::molarMass)
         .def("standardThermoProps", &Species::standardThermoProps)
-        .def("props", &Species::props)
+        .def("props", py::overload_cast<real, real>(&Species::props, py::const_))
+        .def("props", py::overload_cast<real, Chars, real, Chars>(&Species::props, py::const_))
         ;
 }

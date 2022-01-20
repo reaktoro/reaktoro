@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 
 namespace Reaktoro {
@@ -297,6 +298,13 @@ auto Species::standardThermoProps(real T, real P) const -> StandardThermoProps
 auto Species::props(real T, real P) const -> SpeciesThermoProps
 {
     return SpeciesThermoProps(T, P, standardThermoProps(T, P));
+}
+
+auto Species::props(real T, Chars unitT, real P, Chars unitP) const -> SpeciesThermoProps
+{
+    T = units::convert(T, unitT, "K");
+    P = units::convert(P, unitP, "Pa");
+    return props(T, P);
 }
 
 auto operator<(const Species& lhs, const Species& rhs) -> bool

@@ -184,6 +184,14 @@ public:
     /// @return The complete set of standard thermodynamic properties of the species.
     auto props(real T, real P) const -> SpeciesThermoProps;
 
+    /// Calculate the complete set of standard thermodynamic properties of the species.
+    /// @param T The temperature for the calculation
+    /// @param unitT The temperature unit for the calculation
+    /// @param P The pressure for the calculation
+    /// @param unitP The pressure unit for the calculation
+    /// @return The complete set of standard thermodynamic properties of the species.
+    auto props(real T, Chars unitT, real P, Chars unitP) const -> SpeciesThermoProps;
+
 private:
     struct Impl;
 
