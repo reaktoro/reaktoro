@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
+#include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
@@ -91,6 +92,9 @@ public:
 
     /// Return all species in the database with given aggregate state.
     auto speciesWithAggregateState(AggregateState option) const -> SpeciesList;
+
+    /// Construct a reaction with given equation.
+    auto reaction(const String& equation) const -> Reaction;
 
     /// Return the attached data to this database whose type is known at runtime only.
     auto attachedData() const -> const Any&;
