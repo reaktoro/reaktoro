@@ -28,4 +28,5 @@ void exportParseUtils(py::module& m)
     m.def("parseNumberStringPairs", parseNumberStringPairs);
     m.def("parseChemicalFormula", parseChemicalFormula);
     m.def("parseElectricCharge", parseElectricCharge);
+    m.def("parseReactionEquation", parseReactionEquation);
 }

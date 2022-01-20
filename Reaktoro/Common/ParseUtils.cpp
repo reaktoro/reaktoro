@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 
@@ -243,6 +244,51 @@ auto parseChemicalFormula(const String& formula) -> Pairs<String, double>
 auto parseElectricCharge(const String& formula) -> double
 {
     return detail::parseElectricCharge(formula);
+}
+
+auto parseReactionEquation(const String& equation) -> Pairs<String, double>
+{
+    // Split the reaction equation into two words: reactants and products
+    auto two_words = split(equation, "=");
+
+    // Assert the equation has a single equal sign `=`
+    errorif(two_words.size() != 2,
+        "Cannot parse the reaction equation `" +  equation + "`. ",
+        "Expecting an equation with a single equal sign `=` separating "
+        "reactants from products.");
+
+    // The reactants and products as string
+    const auto& reactants_str = two_words[0];
+    const auto& products_str = two_words[1];
+
+    // Split the string representing the reactants and products at each `+` sign
+    auto reactants = split(reactants_str, " ");
+    auto products = split(products_str, " ");
+
+    // The pairs of species names and stoichiometric coefficients
+    Pairs<String, double> pairs;
+
+    // Iterave over all strings representing pair number and species name in the reactants
+    for(auto word : reactants)
+    {
+        if(word == "+") continue;
+        auto pair = split(word, "*");
+        auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
+        auto species = pair.size() == 2 ? pair[1] : pair[0];
+        pairs.emplace_back(species, -number); // negative sign for reactants
+    }
+
+    // Iterave over all strings representing pair number and species name in the products
+    for(auto word : products)
+    {
+        if(word == "+") continue;
+        auto pair = split(word, "*");
+        auto number = pair.size() == 2 ? tofloat(pair[0]) : 1.0;
+        auto species = pair.size() == 2 ? pair[1] : pair[0];
+        pairs.emplace_back(species, number); // positive sign for products
+    }
+
+    return pairs;
 }
 
 } // namespace Reaktoro

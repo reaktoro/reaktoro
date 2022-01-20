@@ -34,6 +34,4 @@ void exportReactionEquation(py::module& m)
         .def("coefficients", &ReactionEquation::coefficients)
         .def("coefficient", &ReactionEquation::coefficient)
         ;
-
-    m.def("parseReactionEquation", parseReactionEquation);
 }

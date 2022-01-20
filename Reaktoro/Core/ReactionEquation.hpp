@@ -101,17 +101,5 @@ auto operator==(const ReactionEquation& lhs, const ReactionEquation& rhs) -> boo
 /// Output a ReactionEquation object
 auto operator<<(std::ostream& out, const ReactionEquation& equation) -> std::ostream&;
 
-/// Parse a formatted string representing a reaction equation.
-/// Below are examples of formatted strings representing reaction equations.
-/// ~~~
-/// auto pairs1 = parseReactionEquation("Calcite + H+ = Ca++ + HCO3-");
-/// auto pairs2 = parseReactionEquation("CO2(g) + H2O(l) = H+ + HCO3-");
-/// auto pairs3 = parseReactionEquation("Dolomite + 2*H+ = Ca++ + Mg++ + 2*HCO3-");
-/// ~~~
-/// Note that unity stoichiometric coefficients can be ommited from the
-/// equation. The operator `*` must be used when this is not the case.
-/// @return The species names and their stoichiometric coefficients
-auto parseReactionEquation(const String& equation) -> Pairs<String, double>;
-
 } // namespace Reaktoro
 

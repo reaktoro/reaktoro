@@ -24,7 +24,6 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
