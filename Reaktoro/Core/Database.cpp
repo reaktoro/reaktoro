@@ -28,6 +28,7 @@ CMRC_DECLARE(ReaktoroDatabases);
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
 
 namespace Reaktoro {
@@ -103,6 +104,16 @@ struct Database::Impl
 
         // Add the new species in the group of species with same aggregate state
         species_with_aggregate_state[newspecies.aggregateState()].push_back(newspecies);
+    }
+
+    /// Construct a reaction with given equation.
+    auto reaction(const String& equation) const -> Reaction
+    {
+        const auto pairs = parseReactionEquation(equation);
+        Pairs<Species, double> reactants;
+        for(const auto [name, coeff] : pairs)
+            reactants.emplace_back(species.get(name), coeff);
+        return Reaction().withEquation(reactants);
     }
 };
 
@@ -193,6 +204,11 @@ auto Database::speciesWithAggregateState(AggregateState option) const -> Species
     if(it == pimpl->species_with_aggregate_state.end())
         return {};
     return it->second;
+}
+
+auto Database::reaction(const String& equation) const -> Reaction
+{
+    return pimpl->reaction(equation);
 }
 
 auto Database::attachedData() const -> const Any&
