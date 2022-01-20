@@ -77,4 +77,21 @@ struct SpeciesThermoProps
 /// Output a SpeciesThermoProps object to an output stream.
 auto operator<<(std::ostream& out, const SpeciesThermoProps& props) -> std::ostream&;
 
+/// Return the addition of two SpeciesThermoProps objects.
+/// @warning The two objects must have same temperature and pressure, otherwise an exception is thrown.
+auto operator+(const SpeciesThermoProps& l, const SpeciesThermoProps& r) -> SpeciesThermoProps;
+
+/// Return the subtraction of two SpeciesThermoProps objects.
+/// @warning The two objects must have same temperature and pressure, otherwise an exception is thrown.
+auto operator-(const SpeciesThermoProps& l, const SpeciesThermoProps& r) -> SpeciesThermoProps;
+
+/// Return the multiplication of a scalar and a SpeciesThermoProps object.
+auto operator*(double l, const SpeciesThermoProps& r) -> SpeciesThermoProps;
+
+/// Return the multiplication of a SpeciesThermoProps object and a scalar.
+auto operator*(const SpeciesThermoProps& l, double r) -> SpeciesThermoProps;
+
+/// Return the division of a SpeciesThermoProps object by a scalar.
+auto operator/(const SpeciesThermoProps& l, double r) -> SpeciesThermoProps;
+
 } // namespace Reaktoro

@@ -79,4 +79,87 @@ auto operator<<(std::ostream& out, const SpeciesThermoProps& props) -> std::ostr
     return out;
 }
 
+auto operator+(const SpeciesThermoProps& l, const SpeciesThermoProps& r) -> SpeciesThermoProps
+{
+    errorif(l.T != r.T, "Expecting identical temperatures when adding two SpeciesThermoProps objects.");
+    errorif(l.P != r.P, "Expecting identical pressures when adding two SpeciesThermoProps objects.");
+
+    return SpeciesThermoProps{
+        l.T,
+        l.P,
+        l.G0  + r.G0,
+        l.H0  + r.H0,
+        l.V0  + r.V0,
+        l.VT0 + r.VT0,
+        l.VP0 + r.VP0,
+        l.Cp0 + r.Cp0,
+        l.Cv0 + r.Cv0,
+        l.U0  + r.U0,
+        l.S0  + r.S0,
+        l.A0  + r.A0,
+    };
+}
+
+auto operator-(const SpeciesThermoProps& l, const SpeciesThermoProps& r) -> SpeciesThermoProps
+{
+    errorif(l.T != r.T, "Expecting identical temperatures when subtracting two SpeciesThermoProps objects.");
+    errorif(l.P != r.P, "Expecting identical pressures when subtracting two SpeciesThermoProps objects.");
+
+    return SpeciesThermoProps{
+        l.T,
+        l.P,
+        l.G0  - r.G0,
+        l.H0  - r.H0,
+        l.V0  - r.V0,
+        l.VT0 - r.VT0,
+        l.VP0 - r.VP0,
+        l.Cp0 - r.Cp0,
+        l.Cv0 - r.Cv0,
+        l.U0  - r.U0,
+        l.S0  - r.S0,
+        l.A0  - r.A0,
+    };
+}
+
+auto operator*(double l, const SpeciesThermoProps& r) -> SpeciesThermoProps
+{
+    return SpeciesThermoProps{
+        r.T,
+        r.P,
+        r.G0  * l,
+        r.H0  * l,
+        r.V0  * l,
+        r.VT0 * l,
+        r.VP0 * l,
+        r.Cp0 * l,
+        r.Cv0 * l,
+        r.U0  * l,
+        r.S0  * l,
+        r.A0  * l,
+    };
+}
+
+auto operator*(const SpeciesThermoProps& l, double r) -> SpeciesThermoProps
+{
+    return r * l;
+}
+
+auto operator/(const SpeciesThermoProps& l, double r) -> SpeciesThermoProps
+{
+    return SpeciesThermoProps{
+        l.T,
+        l.P,
+        l.G0  / r,
+        l.H0  / r,
+        l.V0  / r,
+        l.VT0 / r,
+        l.VP0 / r,
+        l.Cp0 / r,
+        l.Cv0 / r,
+        l.U0  / r,
+        l.S0  / r,
+        l.A0  / r,
+    };
+}
+
 } // namespace Reaktoro
