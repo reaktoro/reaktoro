@@ -206,4 +206,18 @@ TEST_CASE("Testing parseReactionEquation method", "[ParseUtils]")
     REQUIRE( equation.at(2).second == -2.0         );
     REQUIRE( equation.at(3).second ==  1.0         );
     REQUIRE( equation.at(4).second ==  2.0         );
+
+    equation = parseReactionEquation("CaCO3(s)");
+
+    REQUIRE( equation.size() == 1                );
+    REQUIRE( equation.at(0).first  == "CaCO3(s)" );
+    REQUIRE( equation.at(0).second == -1.0       );
+
+    equation = parseReactionEquation("2*CaCO3(s) + 3*H+");
+
+    REQUIRE( equation.size() == 2                );
+    REQUIRE( equation.at(0).first  == "CaCO3(s)" );
+    REQUIRE( equation.at(1).first  == "H+"       );
+    REQUIRE( equation.at(0).second == -2.0       );
+    REQUIRE( equation.at(1).second == -3.0       );
 }
