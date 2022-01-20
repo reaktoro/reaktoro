@@ -20,8 +20,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 
 using namespace Reaktoro;

@@ -168,3 +168,42 @@ TEST_CASE("Testing parseElectricCharge method", "[ParseUtils]")
     CHECK( parseElectricCharge("CO3-2(aq)") == -2 );
     CHECK( parseElectricCharge("CO3[2-](aq)") == -2 );
 }
+
+TEST_CASE("Testing parseReactionEquation method", "[ParseUtils]")
+{
+    Pairs<String, double> equation;
+
+    equation = parseReactionEquation("H2O = H+ + OH-");
+
+    REQUIRE( equation.size() == 3            );
+    REQUIRE( equation.at(0).first  == "H2O"  );
+    REQUIRE( equation.at(1).first  == "H+"   );
+    REQUIRE( equation.at(2).first  == "OH-"  );
+    REQUIRE( equation.at(0).second == -1.0   );
+    REQUIRE( equation.at(1).second ==  1.0   );
+    REQUIRE( equation.at(2).second ==  1.0   );
+
+    equation = parseReactionEquation("CaCl2 = Ca++ + 2*Cl-");
+
+    REQUIRE( equation.size() == 3             );
+    REQUIRE( equation.at(0).first  == "CaCl2" );
+    REQUIRE( equation.at(1).first  == "Ca++"  );
+    REQUIRE( equation.at(2).first  == "Cl-"   );
+    REQUIRE( equation.at(0).second == -1.0    );
+    REQUIRE( equation.at(1).second ==  1.0    );
+    REQUIRE( equation.at(2).second ==  2.0    );
+
+    equation = parseReactionEquation("Ca++ + Mg++ + 2*HCO3- = CaMg(CO3)2 + 2*H+");
+
+    REQUIRE( equation.size() == 5                  );
+    REQUIRE( equation.at(0).first  == "Ca++"       );
+    REQUIRE( equation.at(1).first  == "Mg++"       );
+    REQUIRE( equation.at(2).first  == "HCO3-"      );
+    REQUIRE( equation.at(3).first  == "CaMg(CO3)2" );
+    REQUIRE( equation.at(4).first  == "H+"         );
+    REQUIRE( equation.at(0).second == -1.0         );
+    REQUIRE( equation.at(1).second == -1.0         );
+    REQUIRE( equation.at(2).second == -2.0         );
+    REQUIRE( equation.at(3).second ==  1.0         );
+    REQUIRE( equation.at(4).second ==  2.0         );
+}

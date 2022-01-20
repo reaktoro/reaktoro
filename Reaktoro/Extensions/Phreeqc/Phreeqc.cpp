@@ -27,7 +27,6 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
