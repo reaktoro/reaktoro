@@ -152,6 +152,37 @@ TEST_CASE("Testing Database class", "[Database]")
     REQUIRE_NOTHROW( db.speciesWithAggregateState(AggregateState::Solid).index("NaCl(s)")   );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: Database::element
+    //-------------------------------------------------------------------------
+    REQUIRE( db.element("C").name() == "Carbon" );
+    REQUIRE_THROWS( db.element("Xz") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: Database::species
+    //-------------------------------------------------------------------------
+    REQUIRE( db.species("CO2(aq)").name() == "CO2(aq)" );
+    REQUIRE_THROWS( db.species("XYZZ") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: Database::reaction
+    //-------------------------------------------------------------------------
+    Reaction reaction;
+
+    reaction = db.reaction("H2O(aq) = H+(aq) + OH-(aq)");
+
+    REQUIRE( reaction.equation().coefficient("H2O(aq)") == -1.0 );
+    REQUIRE( reaction.equation().coefficient("H+(aq)")  ==  1.0 );
+    REQUIRE( reaction.equation().coefficient("OH-(aq)") ==  1.0 );
+
+    reaction = db.reaction("CaMg(CO3)2(s) + 2*H+(aq) = Ca++(aq) + Mg++(aq) + 2*HCO3-(aq)");
+
+    REQUIRE( reaction.equation().coefficient("CaMg(CO3)2(s)") == -1.0 );
+    REQUIRE( reaction.equation().coefficient("H+(aq)")        == -2.0 );
+    REQUIRE( reaction.equation().coefficient("Ca++(aq)")      ==  1.0 );
+    REQUIRE( reaction.equation().coefficient("Mg++(aq)")      ==  1.0 );
+    REQUIRE( reaction.equation().coefficient("HCO3-(aq)")     ==  2.0 );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: Database::addSpecies
     //-------------------------------------------------------------------------
     db.addSpecies( Species("Fe(s)").withName("Iron")   );
