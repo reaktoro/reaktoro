@@ -106,7 +106,7 @@ auto activityModelSurfaceComplexationGainesThomas(const SpeciesList& species, Ac
     const auto num_species = species.size();
 
     // The equivalent numbers (absolute values of charges) of the surface complexation species
-    ArrayXd ze = abs(surface.charges());
+    ArrayXd ze = surface.equivalentsNumbers();
 
     // The state of the complexation surface
     ComplexationSurfaceState surface_state;
