@@ -206,6 +206,16 @@ auto Database::speciesWithAggregateState(AggregateState option) const -> Species
     return it->second;
 }
 
+auto Database::element(const String& symbol) const -> const Element&
+{
+    return elements().getWithSymbol(symbol);
+}
+
+auto Database::species(const String& name) const -> const Species&
+{
+    return species().getWithName(name);
+}
+
 auto Database::reaction(const String& equation) const -> Reaction
 {
     return pimpl->reaction(equation);
