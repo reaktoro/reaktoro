@@ -40,5 +40,6 @@ void exportSpeciesThermoProps(py::module& m)
         .def_readwrite("U0" , &SpeciesThermoProps::U0)
         .def_readwrite("S0" , &SpeciesThermoProps::S0)
         .def_readwrite("A0" , &SpeciesThermoProps::A0)
+        .def("__repr__", [](const SpeciesThermoProps& self) { std::stringstream ss; ss << self; return ss.str(); })
         ;
 }
