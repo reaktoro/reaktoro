@@ -90,6 +90,12 @@ public:
     /// Construct an ComplexationSurface instance with given species.
     explicit ComplexationSurface(const SpeciesList& species);
 
+    // Initialize charges of the surface complexation species.
+    auto initializeCharges() -> void;
+
+    // Initialize equivalent numbers of the surface complexation species.
+    auto initializeEquivalentNumbers() -> void;
+
     /// Return a deep copy of this ComplexationSurface object.
     auto clone() const -> ComplexationSurface;
 
@@ -107,7 +113,13 @@ public:
     auto species() const -> const SpeciesList&;
 
     /// Return charges of the surface complexation species.
-    auto charges() -> ArrayXdConstRef;
+    auto charges() -> ArrayXd;
+
+    /// Return equivalent numbers of surface complexation species.
+    auto equivalentsNumbers() -> ArrayXd;
+
+    /// Return equivalent number of provided species.
+    auto exchangerEquivalentsNumber(const Species& species) -> real;
 
     /// Return the mole fractions of the surface complexation species.
     auto moleFractions() const -> ArrayXr;
@@ -167,6 +179,12 @@ private:
 
     /// Mineral species.
     Species mineral;
+
+    /// The charges of the complexation surface species.
+    ArrayXr z;
+
+    /// The equivalent numbers of the complexation surface species.
+    ArrayXr ze;
 
     // Map of the surface complexation sites.
     std::map<std::string, ComplexationSurfaceSite> surface_sites;

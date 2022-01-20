@@ -33,7 +33,6 @@ ComplexationSurface::ComplexationSurface(const String& name)
 {}
 
 ComplexationSurface::ComplexationSurface(const SpeciesList& species)
-: species_list(species)
 {
     // Initialize the surface name from the given species list
     if(species.size() > 0)
@@ -41,40 +40,65 @@ ComplexationSurface::ComplexationSurface(const SpeciesList& species)
         // Get the name of the first species
         auto full_name = species[0].name();
         // Take the substring of the full name till the '_' symbol (PHREEQC convention)
-        surface_name = species[0].name().substr(full_name.find("_") + 1);
+        surface_name = species[0].name().substr(0, full_name.find("_"));
     }
 
-    // Initialize the list of surface sites
-    auto site = ComplexationSurfaceSite();
-    Index index = 0;
-    for(auto s : species)
-    {
-        if((s.name().find("_s") != std::string::npos) && (s.charge() == 0))
-        {
-            // Add a new site indicated with a site_tag "_s" (PHREEQC convention)
-            site = addSite(s.name(), "_s");
-            sites_number ++;
-        }
-        else if((s.name().find("_w") != std::string::npos) && (s.charge() == 0))
-        {
-            // Add a new site indicated with a site_tag "_w" (PHREEQC convention)
-            site = addSite(s.name(), "_w");
-            sites_number ++;
-        }
-        else if( ((s.name().find("_w") != std::string::npos) && (s.charge() != 0)) ||
-                 ((s.name().find("_s") != std::string::npos) && (s.charge() != 0)))
-        {
-            // Add a sorbed species to the earlier added site
-            site.addSorptionSpecies(s, index);
-        }
-        else if(s.charge() == 0)
-        {
-            addSite(s.name(), "");
-            sites_number = 1;
-        }
-        index++;
-    }
+    // Add species parsing the info about the sites
+    addSurfaceSpecies(species);
 }
+
+auto ComplexationSurface::initializeCharges() -> void
+{
+    // The number of sorption species on the surface site
+    const auto num_species = species_list.size();
+
+    // Charges of the sorption species on the surface complexation site
+    z = ArrayXd::Zero(species_list.size());
+
+    // Initialize charges of the sorption species on the surface complexation site
+    for(int i = 0; i < num_species; ++i)
+        z[i] = species_list[i].charge();
+}
+
+// Initialize equivalence numbers (the charge of ionic bond) for the surface complexation species.
+auto ComplexationSurface::initializeEquivalentNumbers() -> void
+{
+    // The number of sorption species on the surface
+    const auto num_species = species_list.size();
+
+    // Charges of the sorption species on the surface complexation
+    ze = ArrayXd::Zero(species_list.size());
+
+    // Initialize charges of the sorption species on the surface complexation site
+    for(auto i = 0; i < num_species; ++i)
+        ze[i] = exchangerEquivalentsNumber(species_list[i]);
+}
+
+/// Return equivalence number of provided species.
+auto ComplexationSurface::exchangerEquivalentsNumber(const Species& species) -> real
+{
+    // Run through the elements of the current species and return the coefficient of the exchanger
+    for(auto [element, coeff] : species.elements())
+    {
+
+        //std::cout << element.symbol() << std::endl;
+
+        // Loop over the names of the existing sites to find a matching one
+        for(auto [key, site] : surface_sites)
+        {
+            //std::cout << site.name() << std::endl;
+            if(element.symbol() == site.name())
+                return coeff;
+        }
+
+
+    }
+
+    // If none of the elements contained in species coincide with the name of the sites
+    errorif(true, "Could not get information about the exchanger equivalents number. "
+                  "Ensure the surface complexation phase contains correct species")
+}
+
 
 auto ComplexationSurface::clone() const -> ComplexationSurface
 {
@@ -102,20 +126,15 @@ auto ComplexationSurface::species() const -> const SpeciesList&
     return species_list;
 }
 
-/// Initialize the array of species' charges.
-auto ComplexationSurface::charges() -> ArrayXdConstRef
+auto ComplexationSurface::charges() -> ArrayXd
 {
-    // The number of sorption species on the surface site
-    const auto num_species = species_list.size();
-
-    // Charges of the sorption species on the surface complexation site
-    ArrayXd z = ArrayXd::Zero(species_list.size());
-
-    // Initialize charges of the sorption species on the surface complexation site
-    for(int i = 0; i < num_species; ++i)
-        z[i] = species_list[i].charge();
-
     return z;
+}
+
+// Return equivalence numbers for the surface complexation species.
+auto ComplexationSurface::equivalentsNumbers() -> ArrayXd
+{
+    return ze;
 }
 
 // Return the mole fractions of the species on complexation.
@@ -243,6 +262,10 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
         index++;
     }
 
+    // Initialize charges and equivalents
+    initializeCharges();
+    initializeEquivalentNumbers();
+
     return *this;
 }
 
@@ -312,8 +335,8 @@ auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> Comple
         error(surface_sites[site_tag].specificSurfaceArea() == 0.0,
                   "The specific surface area of the site " + site_name + " should be initialized.");
 
-        // If previous sites were already added and the current site's mass is not specified,
-        // initialize mass of the current site with the values of the earlier added sites
+        // If previous sites were already added and the current site's specific surface area is not specified,
+        // initialize specific surface area of the current site with the values of the earlier added sites
         if(!surface_sites.empty() && surface_sites[site_tag].mass() == 0.0)
         {
             auto mass = surface_sites[site_tags[0]].mass();
@@ -322,17 +345,17 @@ auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> Comple
         // Check if the mass of the site is initialized
         error(surface_sites[site_tag].mass() == 0.0,
               "The mass of the site " + site_name + " should be initialized.");
-
     }
     else
     {
         // The surface site with provided tag already exists,
-        // but the specific area and mass of this site is not initialized
+        // but the specific area, mass, and amount of this site is not initialized
         if (surface_sites.find(site_tag)->second.specificSurfaceArea() == 0.0)
             surface_sites[site_tag].setSpecificSurfaceArea(site.specificSurfaceArea());
         if (surface_sites.find(site_tag)->second.mass() == 0.0)
             surface_sites[site_tag].setMass(site.mass());
-
+        if (surface_sites.find(site_tag)->second.amount() == 0.0)
+            surface_sites[site_tag].setAmount(site.amount());
     }
     return surface_sites[site_tag];
 }
