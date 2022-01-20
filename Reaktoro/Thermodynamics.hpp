@@ -50,6 +50,7 @@
 #include <Reaktoro/Thermodynamics/Surface/ActivityModelSurfaceComplexation.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeProps.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceProps.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 
 /// @defgroup Thermodynamics Thermodynamics
