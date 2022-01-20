@@ -22,7 +22,6 @@
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
-#include <Reaktoro/Common/Constants.hpp>
 
 namespace Reaktoro {
 
@@ -90,7 +89,7 @@ auto ComplexationSurface::name() const -> String
 
 auto ComplexationSurface::potential() const -> real
 {
-    return state().potential;
+    return state().psi;
 }
 
 auto ComplexationSurface::species(Index idx) const -> const Species&
@@ -128,22 +127,27 @@ auto ComplexationSurface::moleFractions() const -> ArrayXr
 /// Return the complexation surface charge density.
 auto ComplexationSurface::surfaceChargeDensity(ArrayXrConstRef x, ArrayXrConstRef z) const -> real
 {
-    real sigma = 0.0;
+    // Auxiliary constants
     const auto F = faradayConstant;
 
+    // Calculate the surface charge density site-wise
+    real sigma = 0.0;
     for (const auto& [tag, site] : surface_sites)
         sigma += F * (z(site.indicesSorptionSpecies())*x(site.indicesSorptionSpecies())).sum() / site.specificSurfaceArea();
+
+//    // TODO: check is the surface charge density is calculated site-wise or from the total surface area?
+//    real As = 0.0;
+//    for (const auto& [tag, site] : surface_sites)
+//        As += site.specificSurfaceArea();
+//    real sigma_ = F * (z*x).sum() / As;
+
     return sigma;
 }
 
 /// Return the complexation surface charge.
 auto ComplexationSurface::surfaceCharge(ArrayXrConstRef x, ArrayXrConstRef z) const -> real
 {
-    real Z = 0.0;
-
-    for (const auto& [tag, site] : surface_sites)
-        Z += (z(site.indicesSorptionSpecies())*x(site.indicesSorptionSpecies())).sum();
-    return Z;
+    return (z*x).sum();
 }
 
 /// Return the specific surface area.
@@ -175,11 +179,11 @@ auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> Complexati
     surface_state.T = T;
     surface_state.P = P;
     surface_state.x = x;
-    surface_state.z = charges();
     surface_state.As = specificSurfaceArea();
+    surface_state.mass = mass();
+    surface_state.z = charges();
     surface_state.Z = surfaceCharge(x, surface_state.z);
     surface_state.sigma = surfaceChargeDensity(x, surface_state.z);
-    surface_state.mass = mass();
 
     return surface_state;
 }
@@ -256,8 +260,10 @@ auto ComplexationSurface::setMineral(const String& mineral_name) -> Complexation
 
 auto ComplexationSurface::addSite(const String& site_name, const String& site_tag) -> ComplexationSurfaceSite&
 {
+    // Check if no site with the tag `site_tag` exist, add the site
     if(surface_sites.find(site_tag) == surface_sites.end())
     {
+        // Create a new site with a given site name and tag
         auto site = ComplexationSurfaceSite(site_name, site_tag);
         site.setSurfaceName(surface_name);
 
@@ -271,6 +277,62 @@ auto ComplexationSurface::addSite(const String& site_name, const String& site_ta
         }
         surface_sites[site_tag] = site;
         site_tags.emplace_back(site_tag);
+    }
+    return surface_sites[site_tag];
+}
+
+auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> ComplexationSurfaceSite&
+{
+    auto site_tag = site.tag();
+    auto site_name = site.name();
+
+    // Check if the name of the site is initialized
+    error(site_name.empty(), "The name of the site should be initialized.");
+    // Check if the name of the site's tag is initialized
+    error(site_tag.empty(), "The tag of the site should be initialized.");
+
+    // Check if no site with the tag `site_tag` exist, add the site
+    if(surface_sites.find(site_tag) == surface_sites.end())
+    {
+        // Add site into the map with key site_tag
+        surface_sites[site_tag] = site;
+        // Initialize the name of the surface during the addition of the site
+        surface_sites[site_tag].setSurfaceName(surface_name);
+        // Store the site_tag in the list of the tags
+        site_tags.emplace_back(site_tag);
+
+        // If previous sites were already added and the current site's specific surface area is not specified,
+        // initialize specific surface area of the current site with the values of the earlier added sites
+        if(!surface_sites.empty() && surface_sites[site_tag].specificSurfaceArea() == 0.0)
+        {
+            auto ssa = surface_sites[site_tags[0]].specificSurfaceArea();
+            surface_sites[site_tag].setSpecificSurfaceArea(ssa, "m2/kg");
+        }
+        // Check if the specific surface area of the site is initialized
+        error(surface_sites[site_tag].specificSurfaceArea() == 0.0,
+                  "The specific surface area of the site " + site_name + " should be initialized.");
+
+        // If previous sites were already added and the current site's mass is not specified,
+        // initialize mass of the current site with the values of the earlier added sites
+        if(!surface_sites.empty() && surface_sites[site_tag].mass() == 0.0)
+        {
+            auto mass = surface_sites[site_tags[0]].mass();
+            surface_sites[site_tag].setMass(mass, "kg");
+        }
+        // Check if the mass of the site is initialized
+        error(surface_sites[site_tag].mass() == 0.0,
+              "The mass of the site " + site_name + " should be initialized.");
+
+    }
+    else
+    {
+        // The surface site with provided tag already exists,
+        // but the specific area and mass of this site is not initialized
+        if (surface_sites.find(site_tag)->second.specificSurfaceArea() == 0.0)
+            surface_sites[site_tag].setSpecificSurfaceArea(site.specificSurfaceArea());
+        if (surface_sites.find(site_tag)->second.mass() == 0.0)
+            surface_sites[site_tag].setMass(site.mass());
+
     }
     return surface_sites[site_tag];
 }
@@ -293,44 +355,23 @@ auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::o
     //	  6.000e+01  specific area, m2/kg
     //	  2.670e+02  m2 for   4.450e+00 g
 
-    // Auxiliary variables
-    const auto F = faradayConstant;
-    const auto R = universalGasConstant;
-
     std::cout << "Surface: " << surface.name() << std::endl;
-    std::cout << "\t charge, eq           : " << surface.state().Z << std::endl;
-    std::cout << "\t sigma, C/m2          : " << surface.state().sigma << std::endl;
-    std::cout << "\t potential, V         : " << surface.state().potential << std::endl;
-    std::cout << "\t -F*psi/RT            : " << - F * surface.state().potential / R / surface.state().T << std::endl;
-    std::cout << "\t exp(-F*psi/RT)       : " << exp(- F * surface.state().potential / R / surface.state().T) << std::endl;
     std::cout << "\t specific area, m2/kg : " << surface.specificSurfaceArea() << std::endl;
     std::cout << "\t mass, kg             : " << surface.mass() << std::endl;
     std::cout << "\t # of sites           : " << surface.sites().size() << std::endl;
-
-    // 	  2.500e-05  moles
-    //	                                   Mole                     Log
-    //	Species               Moles    Fraction    Molality    Molality
-    //
-    //	Hfo_sOH           1.147e-05       0.459   1.147e-05      -4.940
-    //	Hfo_sOHCa+2       1.005e-05       0.402   1.005e-05      -4.998
-    //	Hfo_sOH2+         1.754e-06       0.070   1.754e-06      -5.756
-    //	Hfo_sO-           1.719e-06       0.069   1.719e-06      -5.765
-    //	Hfo_sOCd+         9.469e-10       0.000   9.469e-10      -9.024
 
     for(const auto& [tag, site] : surface.sites())
     {
         std::cout << "site: " << site.name() << std::endl;
         std::cout << "\t amount       : " << site.amount() << std::endl;
+        std::cout << "\t ssa          : " << site.specificSurfaceArea() << std::endl;
+        std::cout << "\t mass         : " << site.mass() << std::endl;
         std::cout << "\t # of species : " << site.sorptionSpecies().size() << std::endl;
-        std::cout << "\t :: # :: Species    Mole Fractions" << std::endl;
+        std::cout << "\t :: index :: Species" << std::endl;
+
         for(auto i : site.indicesSorptionSpecies())
-        {
-//            std::cout << "\t :: " << i << " :: "
-//            << surface.species()[i].name() << "    "
-//            << surface.moleFractions()[i] << std::endl;
-            std::cout << "\t :: " << i << " :: "
-                      << surface.species()[i].name() << std::endl;
-        }
+            std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << std::endl;
+
     }
     return out;
 }

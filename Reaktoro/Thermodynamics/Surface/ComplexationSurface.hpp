@@ -23,6 +23,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
 
@@ -32,6 +33,18 @@ namespace Reaktoro {
 /// @see ComplexationComposition
 struct ComplexationSurfaceState
 {
+    /// Return the surface complexation potential for given ionic strength of the neighboring phase
+    auto potential(real I) -> void
+    {
+        // Auxiliary variables
+        const auto F = faradayConstant;
+        const auto R = universalGasConstant;
+
+        // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
+        const auto y = sigma/(0.1174*sqrt(I));
+        psi = 2*R*T/F*log(y + sqrt(1 + y*y));
+    }
+
     /// The temperature of the solute/gas mixture on the surface (in K).
     real T;
 
@@ -56,9 +69,8 @@ struct ComplexationSurfaceState
     // The surface mass in (kg).
     real mass;
 
-    // The surface potential in (Volt) defined only knowing the information on the ionic strength of neighboring phase.
-    real potential = 0.0;
-
+    // The surface potential (Volt).
+    real psi = 0.0;
 };
 
 /// A type used to describe an complexation surface.
@@ -133,8 +145,11 @@ public:
     /// Set the mineral this surface belong to
     auto setMineral(const String& mineral) -> ComplexationSurface&;
 
-    // Add new site to the surface.
+    // Add new site (with a given site name and tag) to the surface.
     auto addSite(const String& site, const String& site_tag) -> ComplexationSurfaceSite&;
+
+    // Add new site to the surface.
+    auto addSite(const ComplexationSurfaceSite& site) -> ComplexationSurfaceSite&;
 
     /// Output this ComplexationSurface instance to a stream.
     auto output(std::ostream& out) const -> void;
