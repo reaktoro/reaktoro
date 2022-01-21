@@ -32,6 +32,11 @@ void exportWaterUtils(py::module& m)
     m.def("waterVaporDensityWagnerPruss", waterVaporDensityWagnerPruss);
     m.def("waterPressureHGK", waterPressureHGK);
     m.def("waterPressureWagnerPruss", waterPressureWagnerPruss);
+    m.def("waterSaturationPressureWagnerPruss", waterSaturationPressureWagnerPruss);
+    m.def("waterSaturationLiquidDensityWagnerPruss", waterSaturationLiquidDensityWagnerPruss);
+    m.def("waterSaturationVapourDensityWagnerPruss", waterSaturationVapourDensityWagnerPruss);
+
+    // DEPRECATED METHODS (THROWS EXCEPTION INDICATING METHOD NAME CORRECTION TO THE ONES ABOVE)
     m.def("waterSaturatedPressureWagnerPruss", waterSaturatedPressureWagnerPruss);
     m.def("waterSaturatedLiquidDensityWagnerPruss", waterSaturatedLiquidDensityWagnerPruss);
     m.def("waterSaturatedVapourDensityWagnerPruss", waterSaturatedVapourDensityWagnerPruss);

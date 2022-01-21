@@ -133,7 +133,7 @@ auto waterPressureWagnerPruss(real T, real D) -> real
     return waterPressure(T, D, waterHelmholtzPropsHGK);
 }
 
-auto waterSaturatedPressureWagnerPruss(real T) -> real
+auto waterSaturationPressureWagnerPruss(real T) -> real
 {
     const double a1 = -7.85951783;
     const double a2 =  1.84408259;
@@ -155,7 +155,7 @@ auto waterSaturatedPressureWagnerPruss(real T) -> real
     return Pcr * exp(Tcr/T * (a1*t + a2*t15 + a3*t30 + a4*t35 + a5*t40 + a6*t75));
 }
 
-auto waterSaturatedLiquidDensityWagnerPruss(real T) -> real
+auto waterSaturationLiquidDensityWagnerPruss(real T) -> real
 {
     const double b1 =  1.99274064;
     const double b2 =  1.09965342;
@@ -178,7 +178,7 @@ auto waterSaturatedLiquidDensityWagnerPruss(real T) -> real
     return Dcr * (1 + b1*t13 + b2*t23 + b3*t53 + b4*t163 + b5*t433 + b6*t1103);
 }
 
-auto waterSaturatedVapourDensityWagnerPruss(real T) -> real
+auto waterSaturationVapourDensityWagnerPruss(real T) -> real
 {
     const double c1 = -2.03150240;
     const double c2 = -2.68302940;
@@ -200,6 +200,21 @@ auto waterSaturatedVapourDensityWagnerPruss(real T) -> real
     const auto t716 = t376 * t186 * t86 * t86;
 
     return Dcr * exp(Tcr/T * (c1*t26 + c2*t46 + c3*t86 + c4*t186 + c5*t376 + c6*t716));
+}
+
+auto waterSaturatedPressureWagnerPruss(real T) -> real
+{
+    errorif(true, "waterSaturatedPressureWagnerPruss has been renamed to waterSaturationPressureWagnerPruss")
+}
+
+auto waterSaturatedLiquidDensityWagnerPruss(real T) -> real
+{
+    errorif(true, "waterSaturatedLiquidDensityWagnerPruss has been renamed to waterSaturationLiquidDensityWagnerPruss")
+}
+
+auto waterSaturatedVapourDensityWagnerPruss(real T) -> real
+{
+    errorif(true, "waterSaturatedVapourDensityWagnerPruss has been renamed to waterSaturationVapourDensityWagnerPruss")
 }
 
 } // namespace Reaktoro

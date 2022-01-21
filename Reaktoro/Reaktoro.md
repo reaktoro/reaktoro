@@ -116,9 +116,9 @@ want to read about.
 - @ref Reaktoro::waterVaporDensityWagnerPruss
 - @ref Reaktoro::waterPressureHGK
 - @ref Reaktoro::waterPressureWagnerPruss
-- @ref Reaktoro::waterSaturatedPressureWagnerPruss
-- @ref Reaktoro::waterSaturatedLiquidDensityWagnerPruss
-- @ref Reaktoro::waterSaturatedVapourDensityWagnerPruss
+- @ref Reaktoro::waterSaturationPressureWagnerPruss
+- @ref Reaktoro::waterSaturationLiquidDensityWagnerPruss
+- @ref Reaktoro::waterSaturationVapourDensityWagnerPruss
 - @ref Reaktoro::waterElectroPropsJohnsonNorton
 - @ref Reaktoro::waterThermoPropsHGK
 - @ref Reaktoro::waterThermoPropsWagnerPruss
