@@ -28,5 +28,6 @@ void exportEquilibriumOptions(py::module& m)
         .def(py::init<>())
         .def_readwrite("optima", &EquilibriumOptions::optima)
         .def_readwrite("epsilon", &EquilibriumOptions::epsilon)
+        .def_readwrite("warmstart", &EquilibriumOptions::warmstart)
         ;
 }
