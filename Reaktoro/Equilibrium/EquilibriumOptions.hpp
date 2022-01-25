@@ -62,9 +62,9 @@ struct EquilibriumOptions
 
     /// The boolean flag that indicates if warm-start strategy should be used
     /// when possible. Setting this flag to true will cause equilibrium
-    /// calculations to use the currect chemical state as an initial guess to
+    /// calculations to use the correct chemical state as an initial guess to
     /// the equilibrium calculation. If the current chemical state is detected
-    /// to be uninitiallized (e.g., all species with zero molar amounts), then
+    /// to be uninitialized (e.g., all species with zero molar amounts), then
     /// cold-start is inevitably used. In this case, a first estimate of a
     /// initial guess will be done using a simplex algorithm, which in most
     /// cases generates a chemical state that works well as initial guess for

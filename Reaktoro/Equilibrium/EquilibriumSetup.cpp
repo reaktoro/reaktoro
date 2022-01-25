@@ -23,7 +23,6 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
