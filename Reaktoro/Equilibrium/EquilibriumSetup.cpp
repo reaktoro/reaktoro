@@ -198,7 +198,7 @@ struct EquilibriumSetup::Impl
         p = pp;
         w = ww;
 
-        props.update(n, p, w);
+        props.update(n, p, w, options.use_ideal_activity_models);
 
         updateF();
         updateGibbsEnergy(); // let this after updateF because of update in mu performed by updateF
@@ -398,6 +398,9 @@ struct EquilibriumSetup::Impl
 
     auto useIdealModelForGradWrtVariableN(Index i) -> bool
     {
+        if(options.use_ideal_activity_models)
+            return true;
+
         switch(options.hessian)
         {
         case GibbsHessian::Exact:          return false;
