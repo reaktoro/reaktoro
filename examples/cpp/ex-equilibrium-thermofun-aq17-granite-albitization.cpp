@@ -61,14 +61,15 @@ int main()
     // Define equilibrium solver
     EquilibriumOptions opts;
 
+    // Create equilibrium solver
     EquilibriumSolver solver(system);
 
-   // Define temperature and pressure
-//    double T = 400.0; // in Celsius
-//    double P = 1e3; // in bar
+    // Create the result of the equilibrium calculations
+    EquilibriumResult res;
 
-    double T = 25.0; // in Celsius
-    double P = 1.0; // in bar
+   // Define temperature and pressure
+    double T = 400.0; // in Celsius
+    double P = 1e3; // in bar
 
     std::cout << "T = " << T << std::endl;
     std::cout << "P = " << P << std::endl;
@@ -76,45 +77,18 @@ int main()
     // Initialize the amount of elements in the system
     Index E = system.elements().size();
 
-    // Define initial equilibrium state for the granite calculations
-    ChemicalState stategranite(system);
-    stategranite.temperature(T, "celsius");
-    stategranite.pressure(P, "bar");
-
-    // -------------------------------------------------------------------------------------------- //
-    // Pure granite
-    // -------------------------------------------------------------------------------------------- //
-
-    // Define granite element amounts
-    // GEMS input:
-    //    Al    e   	4.2074828
-    //    Cl    e   	1.00E-09
-    //    H     h   	1.00E-09
-    //    K     e   	1.178394
-    //    Na    e   	2.0200391
-    //    O     o   	30.125894
-    //    Si    e   	11.107727
-    ArrayXr bgranite(E + 1);
-    // H, O, Na, Al, Si, Cl, K
-    bgranite << 1.00e-09, 30.125894, 2.0200391, 4.2074828, 11.107727, 1.00e-09, 1.178394, 0.0;
-
-    // Equilibrate the initial state with given conditions and component amounts
-    opts.optima.output.active = false;
-    solver.setOptions(opts);
-    auto res = solver.solve(stategranite, bgranite);
-    std::cout << "res (granite) = " << res.optima.succeeded << std::endl;
-
-    // Output the chemical state to a console
-    stategranite.output("state-aq17-granite.txt");
+    // Define initial equilibrium state for the equilibrium calculations
+    ChemicalState initialstate(system);
+    initialstate.temperature(T, "celsius");
+    initialstate.pressure(P, "bar");
+    initialstate.set("H2O@", 1.0, "kg");
 
     // -------------------------------------------------------------------------------------------- //
     // Mix of granite and fluid
     // -------------------------------------------------------------------------------------------- //
 
     // Define initial equilibrium state for the granite-fluid mix calculations
-    ChemicalState stategranitefluid(system);
-    stategranitefluid.temperature(T, "celsius");
-    stategranitefluid.pressure(P, "bar");
+    ChemicalState stategranitefluid = initialstate;
 
     // Define granite-fluid element amounts (mixed granit/fluid 0.2 mass ratio)
     // GEMS input:
@@ -141,9 +115,7 @@ int main()
     // -------------------------------------------------------------------------------------------- //
 
     // Define initial equilibrium state for the fluid calculations
-    ChemicalState statefluid(system);
-    statefluid.temperature(T, "celsius");
-    statefluid.pressure(P, "bar");
+    ChemicalState statefluid = initialstate;
 
     // Define granite element amounts
     // GEMS input:
@@ -159,8 +131,6 @@ int main()
     bfluid << 104.59826, 52.299035, 0.98929196, 1.00e-09, 1.00e-09, 0.98929196, 1.00e-09, 0.0;
 
     // Equilibrate the initial state with given conditions and component amounts
-    opts.optima.output.active = false;
-    solver.setOptions(opts);
     res = solver.solve(statefluid, bfluid);
     std::cout << "res (fluid) = " << res.optima.succeeded << std::endl;
 
