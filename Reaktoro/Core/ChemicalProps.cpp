@@ -838,7 +838,10 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
     table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
 
+    auto old_locale = std::locale::global(std::locale("C")); // This locale logic is needed to avoid UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa0 in position ...
     out << table;
+    std::locale::global(old_locale);
+
     return out;
 }
 
