@@ -58,8 +58,9 @@ int main()
     specs.charge();
     specs.openTo("Cl-");
 
-    // Define equilibrium solver
+    // Define equilibrium solver and its result
     EquilibriumSolver solver(specs);
+    EquilibriumResult res;
 
     // Define initial state of the rock
     ChemicalState rockstate(system);
@@ -88,7 +89,8 @@ int main()
     rockcond.charge(0.0, "mol"); // to make sure the mixture is neutral
 
     // Equilibrate the initial state with given conditions and component amounts
-    solver.solve(rockstate, rockcond);
+    res = solver.solve(rockstate, rockcond);
+    std::cout << "res (rockstate) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
     rockstate.output("state-mines16-rock.txt");
@@ -116,7 +118,8 @@ int main()
     fluidcond.charge(0.0, "mol"); // to make sure the mixture is neutral
 
     // Equilibrate the initial state with given conditions and component amounts
-    solver.solve(fluidstate, fluidcond);
+    res = solver.solve(fluidstate, fluidcond);
+    std::cout << "res (fluidstate) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
     fluidstate.output("state-mines16-fluid.txt");
