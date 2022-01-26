@@ -60,7 +60,7 @@ struct EquilibriumOptions
     /// The value multiplied by `epsilon` to compute the logarithm barrier penalty parameter @eq{\tau}.
     double logarithm_barrier_factor = 1.0;
 
-    /// The boolean flag that indicates if warm-start strategy should be used
+    /// The flag indicating if warm-start strategy should be used
     /// when possible. Setting this flag to true will cause equilibrium
     /// calculations to use the currect chemical state as an initial guess to
     /// the equilibrium calculation. If the current chemical state is detected
@@ -70,6 +70,9 @@ struct EquilibriumOptions
     /// cases generates a chemical state that works well as initial guess for
     /// all equilibrium algorithms.
     bool warmstart = true;
+
+    /// The flag indicating if ideal activity models should be used in the calculations.
+    bool use_ideal_activity_models = false;
 
     /// The calculation mode of the Hessian of the Gibbs energy function
     GibbsHessian hessian = GibbsHessian::PartiallyExact;
