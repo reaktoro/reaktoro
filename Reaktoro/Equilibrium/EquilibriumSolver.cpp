@@ -133,6 +133,13 @@ struct EquilibriumSolver::Impl
         optsolver.setOptions(options.optima);
     }
 
+    /// Refresh EquilibriumSolver content.
+    auto refresh() -> void
+    {
+        // Refresh optima state
+        optstate = Optima::State(optdims);
+    }
+
     /// Update the optimization problem before a new equilibrium calculation.
     auto updateOptProblem(const ChemicalState& state0, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0)
     {
@@ -481,6 +488,11 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
 auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 {
     pimpl->setOptions(options);
+}
+
+auto EquilibriumSolver::refresh() -> void
+{
+    pimpl->refresh();
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
