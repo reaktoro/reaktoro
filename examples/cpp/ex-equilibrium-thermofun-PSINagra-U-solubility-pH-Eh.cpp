@@ -55,8 +55,9 @@ int main()
     specs.pressure();
     specs.pH();
 
-    // Define equilibrium solver
+    // Define equilibrium solver and its result
     EquilibriumSolver solver(specs);
+    EquilibriumResult res;
 
     // Define temperature and pressure
     double T = 25.0; // in Celsius
@@ -98,7 +99,8 @@ int main()
                         1e-5, 0.0;
 
     // Equilibrate the initial state with given conditions and component amounts
-    solver.solve(solutionstate_pc, conditions, portlandcementb);
+    res = solver.solve(solutionstate_pc, conditions, portlandcementb);
+    std::cout << "res (OrdinaryPortlandCement-PoreWater) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
     solutionstate_pc.output("state-psinagra1207-portlandcement-pH6.txt");
@@ -114,8 +116,8 @@ int main()
     solutionstate_bc.setSpeciesMass("H3PO4@", 1e-5, "g");
     solutionstate_bc.setSpeciesMass("SO2@",   1e-1, "g");
 
-    // Define element amounts for OrdinaryPortlandCement-PoreWater
-    // GEMS input (OrdinaryPortlandCement-PoreWater 1 kg):
+    // Define element amounts for Boda-Caly-pore-water 1 kg
+    // GEMS input (Boda-Caly-pore-water 1 kg 1 kg):
     //    C     e   	0.00061
     //    Ca    e   	0.00311
     //    Cl    e   	0.023787
@@ -131,8 +133,9 @@ int main()
                 0.0, 0.0, 0.0, 0.0019, 0.023787, 0.00018, 0.00311,
                 0.0, 1e-5, 0.0;
 
-     // Equilibrate the initial state with given conditions and component amounts
-     solver.solve(solutionstate_bc, conditions, bodycalyb);
+    // Equilibrate the initial state with given conditions and component amounts
+    res = solver.solve(solutionstate_bc, conditions, bodycalyb);
+    std::cout << "res (Boda-Caly-pore-water) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
     solutionstate_bc.output("state-psinagra1207-bodycaly-pH6.txt");
