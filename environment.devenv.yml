@@ -6,7 +6,7 @@ channels:
   - conda-forge
 
 dependencies:
-  - autodiff
+  - autodiff=0.6.5
   - catch2
   - ccache  # [unix]
   - clangxx_osx-64=11.1.0  # [osx]
@@ -24,7 +24,7 @@ dependencies:
   - nlohmann_json
   - numpy
   - openlibm
-  - optima=0.2.3
+  - optima=0.2.5
   - pandas
   - phreeqc4rkt
   - pip
