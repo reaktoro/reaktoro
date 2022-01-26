@@ -101,6 +101,20 @@ def qi_values_dtu(species_names):
     return qi_values
 
 
+def test_species_id_map_setup():
+    """
+    Test if the species id map can be properly set and retrieved.
+    """
+    bips_species_id_map = {
+        "Na+": 0,
+        "Cl-": 1,
+    }
+
+    uniquac_params = rkt.EUNIQUACParams()
+    uniquac_params.bipsSpeciesIds(bips_species_id_map)
+    assert uniquac_params.bipsSpeciesIds() == bips_species_id_map
+
+
 def test_euniquac_params_DTU_values_initialization(ri_values_dtu, qi_values_dtu):
     """
     Test if ri and qi DTU default parameters are properly initialized and stored.
@@ -229,6 +243,7 @@ def test_uij_bips_setup():
 
     uij_0_stored = euniquac_params.uij_0()
     uij_T_stored = euniquac_params.uij_T()
+    assert euniquac_params.bipsSpeciesIds() == bips_species_id_map
     assert np.allclose(uij_0_stored, uij_0_custom)
     assert np.allclose(uij_T_stored, uij_T_custom)
     assert euniquac_params.uij_0("Na+", "Na+") == 1.0
@@ -237,3 +252,37 @@ def test_uij_bips_setup():
     assert euniquac_params.uij_T("Na+", "Na+") == 4.0
     assert euniquac_params.uij_T("Na+", "Cl-") == 5.0
     assert euniquac_params.uij_T("Cl-", "Cl-") == 6.0
+
+
+def test_bips_values_update():
+    """
+    Test if energy BIPs can be modified after a first setup.
+    """
+    uij_0_custom = np.array([
+        [1.0, 2.0],
+        [2.0, 3.0],
+    ])
+    uij_T_custom = np.array([
+        [4.0, 5.0],
+        [5.0, 6.0],
+    ])
+    bips_species_id_map = {
+        "Na+": 0,
+        "Cl-": 1,
+    }
+
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.set_uij_bips(uij_0_custom, uij_T_custom, bips_species_id_map)
+
+    euniquac_params.uij_0("Na+", "Cl-", 3.5)
+    assert euniquac_params.uij_0("Na+", "Cl-") == 3.5
+    assert euniquac_params.uij_0("Cl-", "Na+") == 3.5
+
+    euniquac_params.uij_T("Na+", "Cl-", 1.5)
+    assert euniquac_params.uij_T("Na+", "Cl-") == 1.5
+    assert euniquac_params.uij_T("Cl-", "Na+") == 1.5
+
+    euniquac_params.uij_0("Na+", "Na+", 2.5)
+    euniquac_params.uij_T("Na+", "Na+", 2.5)
+    assert euniquac_params.uij_0("Na+", "Na+") == 2.5
+    assert euniquac_params.uij_T("Na+", "Na+") == 2.5
