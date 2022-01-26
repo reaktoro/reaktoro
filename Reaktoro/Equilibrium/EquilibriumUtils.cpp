@@ -40,4 +40,31 @@ auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> Equ
     return solver.solve(state);
 }
 
+auto equilibrate(Material& material) -> Tuple<ChemicalState, EquilibriumResult>
+{
+    EquilibriumOptions options;
+    return equilibrate(material, options);
+}
+
+auto equilibrate(Material& material, const EquilibriumOptions& options) -> Tuple<ChemicalState, EquilibriumResult>
+{
+    ChemicalState state(material.system());
+
+    EquilibriumOptions opts(options);
+
+    EquilibriumSolver solver(state.system());
+
+    opts.use_ideal_activity_models = true; // force ideal activity models for the first computation
+    solver.setOptions(opts);
+
+    auto result = solver.solve(state);
+
+    opts.use_ideal_activity_models = options.use_ideal_activity_models; // for the second computation, use what user wants (maybe ideal model again, in which case the calculation below will converge immediately).
+    solver.setOptions(opts);
+
+    result += solver.solve(state);
+
+    return {state, result};
+}
+
 } // namespace Reaktoro
