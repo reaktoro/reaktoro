@@ -87,6 +87,9 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimization calculations.
     Optima::Solver optsolver;
 
+    // The result of the equilibrium solver.
+    EquilibriumResult result;
+
     /// Construct a Impl instance with given EquilibriumConditions object.
     Impl(const EquilibriumSpecs& specs)
     : system(specs.system()), specs(specs), dims(specs), setup(specs)
@@ -127,13 +130,6 @@ struct EquilibriumSolver::Impl
 
         // Pass along the options used for the calculation to Optima::Solver object
         optsolver.setOptions(options.optima);
-    }
-
-    /// Refresh EquilibriumSolver content.
-    auto refresh() -> void
-    {
-        // Refresh optima state
-        optstate = Optima::State(optdims);
     }
 
     /// Update the optimization problem before a new equilibrium calculation.
@@ -237,7 +233,7 @@ struct EquilibriumSolver::Impl
     auto updateOptState(const ChemicalState& state0)
     {
         // Allocate memory if needed
-        if(optstate.dims.x != dims.Nx)
+        if((optstate.dims.x != dims.Nx) or (!result.optima.succeeded))
             optstate = Optima::State(optdims);
 
         // Set species amounts in x = (n, q) to that from the chemical state
@@ -395,8 +391,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
     {
-        EquilibriumResult result;
-
         updateOptProblem(state, conditions, restrictions, b0);
         updateOptState(state);
 
@@ -432,8 +426,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXrConstRef b0) -> EquilibriumResult
     {
-        EquilibriumResult result;
-
         updateOptProblem(state, conditions, restrictions, b0);
         updateOptState(state);
 
@@ -470,11 +462,6 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
 auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 {
     pimpl->setOptions(options);
-}
-
-auto EquilibriumSolver::refresh() -> void
-{
-    pimpl->refresh();
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
