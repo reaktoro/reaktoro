@@ -33,14 +33,6 @@ int main()
     // Define Thermofun database
     ThermoFunDatabase db("cemdata18");
 
-//    for (auto dbi : db.species()) {
-//        if (dbi.name() == "ettringite" or dbi.name() == "Tob-II" or dbi.name() == "C3AFS0.84H4.32")
-//        {
-//            std::cout << dbi.name() << std::endl;
-//            getchar();
-//        }
-//    }
-
     // Define aqueous phase
     AqueousPhase solution(speciate("H O K Na S Si Ca Mg Al C Cl"));
 
@@ -52,9 +44,9 @@ int main()
     solution.setActivityModel(ActivityModelDebyeHuckel(params));
 
     // Define minerals
-    MineralPhases minerals("Lim Cal Portlandite Gbs Gp Corundum Periclase Fe2O3 Na2O K2O "
-                           "monocarbonate hemicarbonate hydrotalcite "
-                           "Fe-monosulph05 Fe-monosulphate");
+    MineralPhases minerals("Lim Cal Portlandite Gbs Gp Corundum Periclase Fe2O3 Na2O K2O");
+//    MineralPhases minerals("Lim Cal Portlandite Gbs Gp Corundum Periclase Fe2O3 Na2O K2O "
+//                           "monocarbonate hemicarbonate hydrotalcite");
     // Note: C4AsH14, C4Ac0.5H12, C4AcH11 are not found
 
     //SolidPhase solidphase_caldol("Calcite Dolomite");
@@ -69,13 +61,14 @@ int main()
     SolidPhase solidphase_CSHQ("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH");
 
     // Define chemical system by providing database, aqueous phase, and minerals
-    ChemicalSystem system(db, solution, minerals,
-                          solidphase_C3AFS084H,
-                          solidphase_ettringite_Al,
-                          solidphase_monosulphate_Fe,
-                          solidphase_ettringite,
-                          solidphase_OH_SO4_AFm,
-                          solidphase_CSHQ);
+    ChemicalSystem system(db, solution, minerals);
+//    ChemicalSystem system(db, solution, minerals,
+//                          solidphase_C3AFS084H,
+//                          solidphase_ettringite_Al,
+//                          solidphase_monosulphate_Fe,
+//                          solidphase_ettringite,
+//                          solidphase_OH_SO4_AFm,
+//                          solidphase_CSHQ);
     // Note: adding phase `solidphase_CO3_SO4_AFt` causes error Assertion failed: (values.minCoeff() >= 0.0), function setSpeciesAmounts while calling `solver.solve(state, conditions);` below
 
     // Specify conditions to be satisfied at chemical equilibrium
@@ -84,7 +77,11 @@ int main()
     specs.pressure();
 
     // Define equilibrium solver
+    EquilibriumOptions opts;
+
+    // Define equilibrium solver and its result
     EquilibriumSolver solver(specs);
+    EquilibriumResult res;
 
     // Define initial equilibrium state
     ChemicalState state(system);
@@ -110,10 +107,13 @@ int main()
     conditions.pressure(P, "bar");
 
     // Equilibrate the initial state with given conditions and component amounts
-    solver.solve(state, conditions);
+    opts.optima.output.active = true;
+    solver.setOptions(opts);
+    res = solver.solve(state, conditions);
+    std::cout << "res (cemdata18) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
-    state.output("state-cemdata.txt");
+    state.output("state-cemdata18.txt");
 
     return 0;
 }
