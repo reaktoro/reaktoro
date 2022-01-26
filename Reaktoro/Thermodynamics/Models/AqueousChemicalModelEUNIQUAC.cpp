@@ -586,7 +586,9 @@ auto EUNIQUACParams::uij_0(
     // TODO: implement exception handling when species names are unavailable
     const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
     const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
+    // Energy BIPs are symmetric in E-UNIQUAC
     pimpl->constant_coeff_bips(first_species_id, second_species_id) = value;
+    pimpl->constant_coeff_bips(second_species_id, first_species_id) = value;
 }
 
 auto EUNIQUACParams::uij_T(
@@ -597,7 +599,9 @@ auto EUNIQUACParams::uij_T(
     // TODO: implement exception handling when species names are unavailable
     const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
     const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
+    // Energy BIPs are symmetric in E-UNIQUAC
     pimpl->linear_coeff_bips(first_species_id, second_species_id) = value;
+    pimpl->linear_coeff_bips(second_species_id, first_species_id) = value;
 }
 
 auto EUNIQUACParams::bips_species_id_map(const std::map<std::string, int>& species_id_map) -> void
