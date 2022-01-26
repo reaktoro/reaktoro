@@ -583,6 +583,10 @@ auto EUNIQUACParams::uij_0(
     const std::string& second_species_name,
     double value) -> void
 {
+    Assert(!pimpl->bips_species_id_map.empty(),
+        "Energy BIPs uij_0 cannot be set.",
+        "The species id map should be provided before the BIPs initialization.");
+
     // TODO: implement exception handling when species names are unavailable
     const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
     const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
@@ -596,6 +600,10 @@ auto EUNIQUACParams::uij_T(
     const std::string& second_species_name,
     double value) -> void
 {
+    Assert(!pimpl->bips_species_id_map.empty(),
+        "Energy BIPs uij_T cannot be set.",
+        "The species id map should be provided before the BIPs initialization.");
+
     // TODO: implement exception handling when species names are unavailable
     const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
     const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
