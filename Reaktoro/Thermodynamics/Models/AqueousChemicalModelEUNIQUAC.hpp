@@ -67,18 +67,16 @@ public:
 
     auto uij_0() const -> MatrixXd;
 
-    // TODO: enable setters
-//    /// Set zeroth order energetic BIP values (Uij_0)
-//    auto uij_0(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+    /// Set zeroth order energetic BIP values (Uij_0)
+    auto uij_0(const std::string& first_species_name, const std::string& second_species_name, double value) -> void;
 
     /// Get first order energetic BIP values (Uij_T)
     auto uij_T(const std::string& first_species_name, const std::string& second_species_name) const -> double;
 
     auto uij_T() const -> MatrixXd;
 
-    // TODO: enable setters
-//    /// Set first order energetic BIP values (Uij_T)
-//    auto uij_T(const std::map<std::string, std::string>& species_pair_names, double value) -> void;
+    /// Set first order energetic BIP values (Uij_T)
+    auto uij_T(const std::string& first_species_name, const std::string& second_species_name, double value) -> void;
 
     /// Set both uij_0 and uij_T given an species id map.
     auto set_uij_bips(
@@ -90,6 +88,8 @@ public:
     auto setDTUvalues() -> void;
 
     auto bips_species_id_map() const -> std::map<std::string, int>;
+
+    auto bips_species_id_map(const std::map<std::string, int>& species_id_map) -> void;
 
 private:
     struct Impl;

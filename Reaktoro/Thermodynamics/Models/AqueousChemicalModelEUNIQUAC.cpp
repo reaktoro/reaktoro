@@ -577,4 +577,31 @@ auto EUNIQUACParams::bips_species_id_map() const -> std::map<std::string, int>
 {
     return pimpl->bips_species_id_map;
 }
+
+auto EUNIQUACParams::uij_0(
+    const std::string& first_species_name,
+    const std::string& second_species_name,
+    double value) -> void
+{
+    // TODO: implement exception handling when species names are unavailable
+    const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
+    const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
+    pimpl->constant_coeff_bips(first_species_id, second_species_id) = value;
+}
+
+auto EUNIQUACParams::uij_T(
+    const std::string& first_species_name,
+    const std::string& second_species_name,
+    double value) -> void
+{
+    // TODO: implement exception handling when species names are unavailable
+    const auto first_species_id = pimpl->bips_species_id_map.at(first_species_name);
+    const auto second_species_id = pimpl->bips_species_id_map.at(second_species_name);
+    pimpl->linear_coeff_bips(first_species_id, second_species_id) = value;
+}
+
+auto EUNIQUACParams::bips_species_id_map(const std::map<std::string, int>& species_id_map) -> void
+{
+    pimpl->bips_species_id_map = species_id_map;
+}
 }  // namespace Reaktoro
