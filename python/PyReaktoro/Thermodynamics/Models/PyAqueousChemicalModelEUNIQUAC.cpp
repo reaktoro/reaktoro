@@ -27,23 +27,28 @@ namespace Reaktoro {
 
 void exportAqueousChemicalModelEUNIQUAC(py::module& m)
 {
-    auto ri1 = static_cast<void(EUNIQUACParams::*)(const std::string&,double)>(&EUNIQUACParams::ri);
+    auto ri1 = static_cast<void(EUNIQUACParams::*)(const std::string&, double)>(&EUNIQUACParams::ri);
     auto ri2 = static_cast<void(EUNIQUACParams::*)(const std::map<std::string, double>&)>(&EUNIQUACParams::ri);
     auto ri3 = static_cast<double(EUNIQUACParams::*)(const std::string&) const>(&EUNIQUACParams::ri);
     auto ri4 = static_cast<std::map<std::string, double>(EUNIQUACParams::*)() const>(&EUNIQUACParams::ri);
 
-    auto qi1 = static_cast<void(EUNIQUACParams::*)(const std::string&,double)>(&EUNIQUACParams::qi);
+    auto qi1 = static_cast<void(EUNIQUACParams::*)(const std::string&, double)>(&EUNIQUACParams::qi);
     auto qi2 = static_cast<void(EUNIQUACParams::*)(const std::map<std::string, double>&)>(&EUNIQUACParams::qi);
     auto qi3 = static_cast<double(EUNIQUACParams::*)(const std::string&) const>(&EUNIQUACParams::qi);
     auto qi4 = static_cast<std::map<std::string, double>(EUNIQUACParams::*)() const>(&EUNIQUACParams::qi);
 
     auto uij_0_1 = static_cast<double(EUNIQUACParams::*)(const std::string&, const std::string&) const>(&EUNIQUACParams::uij_0);
     auto uij_0_2 = static_cast<MatrixXd(EUNIQUACParams::*)() const>(&EUNIQUACParams::uij_0);
+    auto uij_0_3 = static_cast<void(EUNIQUACParams::*)(const std::string&, const std::string&, double)>(&EUNIQUACParams::uij_0);
 
     auto uij_T_1 = static_cast<double(EUNIQUACParams::*)(const std::string&, const std::string&) const>(&EUNIQUACParams::uij_T);
     auto uij_T_2 = static_cast<MatrixXd(EUNIQUACParams::*)() const>(&EUNIQUACParams::uij_T);
+    auto uij_T_3 = static_cast<void(EUNIQUACParams::*)(const std::string&, const std::string&, double)>(&EUNIQUACParams::uij_T);
 
     auto uij_1 = static_cast<void(EUNIQUACParams::*)(const MatrixXd&, const MatrixXd&, const std::map<std::string, int>&)>(&EUNIQUACParams::set_uij_bips);
+
+    auto bips_id_map_1 = static_cast<std::map<std::string, int>(EUNIQUACParams::*)() const>(&EUNIQUACParams::bips_species_id_map);
+    auto bips_id_map_2 = static_cast<void(EUNIQUACParams::*)(const std::map<std::string, int>&)>(&EUNIQUACParams::bips_species_id_map);
 
     py::class_<EUNIQUACParams>(m, "EUNIQUACParams")
         .def(py::init<>())
@@ -57,10 +62,13 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
         .def("qi", qi4)
         .def("uij_0", uij_0_1)
         .def("uij_0", uij_0_2)
+        .def("uij_0", uij_0_3)
         .def("uij_T", uij_T_1)
         .def("uij_T", uij_T_2)
+        .def("uij_T", uij_T_3)
         .def("set_uij_bips", uij_1)
-        .def("bipsSpeciesIds", &EUNIQUACParams::bips_species_id_map)
+        .def("bipsSpeciesIds", bips_id_map_1)
+        .def("bipsSpeciesIds", bips_id_map_2)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
         ;
 }
