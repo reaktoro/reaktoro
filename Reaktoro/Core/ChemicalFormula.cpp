@@ -138,6 +138,11 @@ ChemicalFormula::operator Pairs<String, double>() const
     return pimpl->elements;
 }
 
+auto operator<<(std::ostream& out, const ChemicalFormula& formula) -> std::ostream&
+{
+    return out << formula.str();
+}
+
 auto operator<(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool
 {
     return lhs.str() < rhs.str();
