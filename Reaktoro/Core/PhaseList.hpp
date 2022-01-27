@@ -40,6 +40,9 @@ public:
     /// Return the internal collection of Phase objects.
     auto data() const -> const Vec<Phase>&;
 
+    /// Return true if there are no phases in the collection.
+    auto empty() const -> bool;
+
     /// Return the number of phases in the collection.
     auto size() const -> Index;
 
