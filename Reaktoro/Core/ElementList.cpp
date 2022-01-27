@@ -45,6 +45,11 @@ auto ElementList::data() const -> const Vec<Element>&
     return m_elements;
 }
 
+auto ElementList::empty() const -> bool
+{
+    return m_elements.empty();
+}
+
 auto ElementList::size() const -> Index
 {
     return m_elements.size();
