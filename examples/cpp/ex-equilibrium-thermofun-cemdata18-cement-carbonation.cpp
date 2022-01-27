@@ -44,30 +44,19 @@ int main()
     solution.setActivityModel(ActivityModelDebyeHuckel(params));
 
     // Define minerals
-    MineralPhases minerals("Lim Cal Portlandite Gbs Gp Corundum Periclase Fe2O3 Na2O K2O");
-//    MineralPhases minerals("Lim Cal Portlandite Gbs Gp Corundum Periclase Fe2O3 Na2O K2O "
-//                           "monocarbonate hemicarbonate hydrotalcite");
-    // Note: C4AsH14, C4Ac0.5H12, C4AcH11 are not found
-    
+    MineralPhases minerals("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag "
+                           "C2S C3A C3S C4AF Lim Gp Brc K2SO4 K2O Na2SO4 Na2O");
+    // Calcite, Hydrotalcite, Portlandite, Hemicarbonate, Monocarbonate, SiO2(am), Ferrihydrite, Gibbsite, Magnetite
+
     // Define solid phases
-    SolidPhase solidphase_C3AFS084H("C3FS0.84H4.32 C3AFS0.84H4.32");
-    SolidPhase solidphase_ettringite_Al("ettringite Fe-ettringite");
-    SolidPhase solidphase_monosulphate_Fe("Fe-monosulph05 Fe-monosulphate");
-    SolidPhase solidphase_ettringite("ettringite ettringite30");
-    SolidPhase solidphase_OH_SO4_AFm("C4AH19 monosulphate14");
-    SolidPhase solidphase_CO3_SO4_AFt("tricarboalu03 ettringite03_ss");
-    SolidPhase solidphase_CSHQ("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH");
+    SolidPhase solidphase_C3AFS084H("C3FS0.84H4.32 C3AFS0.84H4.32"); // AlFeSi-hydrogarnet_ss
+    SolidPhase solidphase_ettringite("ettringite ettringite30"); // Ettrignite_ss
+    SolidPhase solidphase_OH_SO4_AFm("C4AH13 monosulphate12"); // Monosulfate_ss
+    SolidPhase solidphase_CSHQ("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH"); // CSH_ss
 
     // Define chemical system by providing database, aqueous phase, and minerals
-    ChemicalSystem system(db, solution, minerals);
-//    ChemicalSystem system(db, solution, minerals,
-//                          solidphase_C3AFS084H,
-//                          solidphase_ettringite_Al,
-//                          solidphase_monosulphate_Fe,
-//                          solidphase_ettringite,
-//                          solidphase_OH_SO4_AFm,
-//                          solidphase_CSHQ);
-    // Note: adding phase `solidphase_CO3_SO4_AFt` causes error Assertion failed: (values.minCoeff() >= 0.0), function setSpeciesAmounts while calling `solver.solve(state, conditions);` below
+    //ChemicalSystem system(db, solution, minerals);
+    ChemicalSystem system(db, solution, minerals, solidphase_C3AFS084H, solidphase_ettringite, solidphase_OH_SO4_AFm, solidphase_CSHQ);
 
     // Specify conditions to be satisfied at chemical equilibrium
     EquilibriumSpecs specs(system);
@@ -83,17 +72,21 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.setSpeciesMass("H2O@",     63.9, "g");
-    state.setSpeciesMass("Corundum",  4.9, "g"); // Al2O3
-    state.setSpeciesMass("Lim",      63.9, "g"); // CaO
-    state.setSpeciesMass("Fe2O3",     3.2, "g");
-    state.setSpeciesMass("K2O",      0.78, "g");
-    state.setSpeciesMass("Periclase", 1.8, "g"); // MgO
-    state.setSpeciesMass("Na2O",     0.42, "g");
-    state.setSpeciesMass("O2@",     2.145, "g"); // 1.0 (provided for O2) + 0.5*2.29 (provided for SO3)
-    state.setSpeciesMass("SO2@",     2.29, "g");
-    state.setSpeciesMass("SiO2@",    20.1, "g");
-    state.setSpeciesMass("Ca(CO3)@",  0.1, "g");
+    state.setSpeciesMass("H2O@", 40, "g"); // water // water/binder = 0.4, 40g water per 100g of cement clinker
+    // clinker phases
+    state.setSpeciesMass("C2S", 9.70, "g"); // belite
+    state.setSpeciesMass("C3A", 7.72, "g"); // aluminate
+    state.setSpeciesMass("C3S", 67.31, "g"); // alite
+    state.setSpeciesMass("C4AF", 8.14, "g"); // ferrite
+    // additional
+//    state.setSpeciesMass("Cal", 0.10, "g"); // calcite
+//    state.setSpeciesMass("Lim", 0.93, "g"); // lime
+    state.setSpeciesMass("Gp", 3.13, "g"); // gypsum
+//    state.setSpeciesMass("Brc", 1.31, "g"); // brucit
+//    state.setSpeciesMass("K2SO4", 1.34, "g"); // potasium-sulfate
+//    state.setSpeciesMass("K2O", 0.05, "g"); // potasium oxide
+//    state.setSpeciesMass("Na2SO4", 0.21, "g"); // sodium sulfate
+//    state.setSpeciesMass("Na2O", 0.05, "g"); // sodium oxide
 
     // Define temperature and pressure
     double T = 20.0; // in Celsius
@@ -105,8 +98,8 @@ int main()
     conditions.pressure(P, "bar");
 
     // Equilibrate the initial state with given conditions and component amounts
-    opts.optima.output.active = true;
-    solver.setOptions(opts);
+//    opts.optima.output.active = true;
+//    solver.setOptions(opts);
     res = solver.solve(state, conditions);
     std::cout << "res (cemdata18) = " << res.optima.succeeded << std::endl;
 
