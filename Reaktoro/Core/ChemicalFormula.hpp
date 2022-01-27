@@ -84,6 +84,9 @@ private:
     SharedPtr<Impl> pimpl;
 };
 
+/// Output a ChemicalFormula object
+auto operator<<(std::ostream& out, const ChemicalFormula& formula) -> std::ostream&;
+
 /// Compare two ChemicalFormula objects for less than
 auto operator<(const ChemicalFormula& lhs, const ChemicalFormula& rhs) -> bool;
 
