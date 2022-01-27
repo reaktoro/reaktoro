@@ -42,6 +42,9 @@ public:
     /// Return the internal collection of Element objects.
     auto data() const -> const Vec<Element>&;
 
+    /// Return true if there are no elements in the collection.
+    auto empty() const -> bool;
+
     /// Return the number of elements in the collection.
     auto size() const -> Index;
 
