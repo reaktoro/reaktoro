@@ -56,7 +56,11 @@ int main()
 
     // Define chemical system by providing database, aqueous phase, and minerals
     //ChemicalSystem system(db, solution, minerals);
-    ChemicalSystem system(db, solution, minerals, solidphase_C3AFS084H, solidphase_ettringite, solidphase_OH_SO4_AFm, solidphase_CSHQ);
+    ChemicalSystem system(db, solution, minerals,
+                          solidphase_C3AFS084H,
+                          solidphase_ettringite,
+                          solidphase_OH_SO4_AFm,
+                          solidphase_CSHQ);
 
     // Specify conditions to be satisfied at chemical equilibrium
     EquilibriumSpecs specs(system);
@@ -77,12 +81,12 @@ int main()
     state.setSpeciesMass("C2S", 9.70, "g"); // belite
     state.setSpeciesMass("C3A", 7.72, "g"); // aluminate
     state.setSpeciesMass("C3S", 67.31, "g"); // alite
-    state.setSpeciesMass("C4AF", 8.14, "g"); // ferrite
+    state.setSpeciesMass("C4AF", 8.14, "g"); // ferrite, (CaO)4(Al2O3)(Fe|3|2O3)
     // additional
-//    state.setSpeciesMass("Cal", 0.10, "g"); // calcite
-//    state.setSpeciesMass("Lim", 0.93, "g"); // lime
-    state.setSpeciesMass("Gp", 3.13, "g"); // gypsum
-//    state.setSpeciesMass("Brc", 1.31, "g"); // brucit
+    state.setSpeciesMass("Gp", 3.13, "g"); // gypsum, CaSO4(H2O)2
+//    state.setSpeciesMass("Cal", 0.10, "g"); // calcite, CaCO3
+//    state.setSpeciesMass("Lim", 0.93, "g"); // lime, CaO
+//    state.setSpeciesMass("Brc", 1.31, "g"); // brucite, Mg(OH)2
 //    state.setSpeciesMass("K2SO4", 1.34, "g"); // potasium-sulfate
 //    state.setSpeciesMass("K2O", 0.05, "g"); // potasium oxide
 //    state.setSpeciesMass("Na2SO4", 0.21, "g"); // sodium sulfate
