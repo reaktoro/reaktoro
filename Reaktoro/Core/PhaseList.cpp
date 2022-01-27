@@ -41,6 +41,11 @@ auto PhaseList::data() const -> const Vec<Phase>&
     return m_phases;
 }
 
+auto PhaseList::empty() const -> bool
+{
+    return m_phases.empty();
+}
+
 auto PhaseList::size() const -> Index
 {
     return m_phases.size();
