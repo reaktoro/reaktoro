@@ -59,10 +59,10 @@ state0.set("Na2CO3:7H2O",   0.00, "mol")
 state0.set("CO2"        , 100.00, "mol")
 
 # Explanation of the issues:
-num_ppco2s = 17; initialize = False # everything is converging for all the temperatures (if state is NOT initialized in the loop)
+#num_ppco2s = 17; initialize = False # everything is converging for all the temperatures (if state is NOT initialized in the loop)
 #num_ppco2s = 17; initialize = True # ppCO2 = -2.375 does not converge (if state is initialized in the loop)
-#num_ppco2s = 71; initialize = False # starting from ppCO2 = -1.9, does not converge for T = 50C
-#num_ppco2s = 71; initialize = True # BUT! only for ppCO2 = -2.3, does not converge for T = 50C (if state is initialized in the loop)
+#num_ppco2s = 71; initialize = False # ppCO2 = -1.9 and -2.0, does not converge for T = 50C
+num_ppco2s = 71; initialize = True # ppCO2 = -2.3 and -2.4, does not converge for T = 50C (if state is initialized in the loop)
 
 co2ppressures = np.flip(np.linspace(-5.0, 2.0, num=num_ppco2s))
 
