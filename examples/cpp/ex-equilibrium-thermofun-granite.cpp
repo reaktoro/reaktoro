@@ -72,25 +72,22 @@ int main()
     conditions.temperature(T, "celsius");
     conditions.pressure(P, "bar");
 
-    // Define initial equilibrium state
+    // Define initial equilibrium state of 100 g of granite and 20 g of water
     ChemicalState state(system);
-    // Define initial solution amount
-    state.setSpeciesAmount("H2O@", 55.51, "mol");
-    state.setSpeciesAmount("NaCl@", 0.27, "mol");
-    state.setSpeciesAmount("KCl@", 0.03, "mol");
 
-    // Define initial granite composition
-    state.setSpeciesAmount("Quartz"    , 168.126, "mol"); //
-    state.setSpeciesAmount("Microcline", 17.8099, "mol"); // K-Feldspar, K(AlSi3)O8 + 8 * H2O = K+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
-    state.setSpeciesAmount("Albite"    , 19.937 , "mol"); // Na(AlSi3)O8 + 8 * H2O = Na+ + Al(OH)4- + 6 * H2O + 3 * SiO2(aq)
-    state.setSpeciesAmount("Muscovite" , 2.15255, "mol"); // KAl2(AlSi3)O10(OH)2 = 1K+ + 3 * Al+++ - 10 * H+ + 6 * H2O + 3 * SiO2(aq)
+    // Define initial solution amount
+    state.set("H2O@" , 20, "g");
+    state.set("NaCl@", 0.315, "g");
+    state.set("KCl@" , 0.045, "g");
+
+    // Define initial composition of granite (100g)
+    state.set("Quartz"    , 35, "g"); // 35% of granite
+    state.set("Microcline", 17, "g"); // 17% of granite
+    state.set("Albite"    , 29, "g"); // 29% of granite
+    state.set("Muscovite" , 19, "g"); // 19% of granite
 
     // Initialize the amount of elements in the system
     Index E = system.elements().size();
-
-    ArrayXr bgranite = ArrayXr::Zero(E + 1);
-    bgranite.head(E) = state.elementAmounts();
-    std::cout << "bgranite = " << bgranite.transpose() << std::endl;
 
     EquilibriumOptions opts;
     opts.optima.output.active = false;
