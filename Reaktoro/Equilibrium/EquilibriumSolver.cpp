@@ -233,7 +233,7 @@ struct EquilibriumSolver::Impl
     auto updateOptState(const ChemicalState& state0)
     {
         // Allocate memory if needed
-        if((optstate.dims.x != dims.Nx) or (!result.optima.succeeded))
+        if((optstate.dims.x != dims.Nx) || (!result.optima.succeeded))
             optstate = Optima::State(optdims);
 
         // Set species amounts in x = (n, q) to that from the chemical state
