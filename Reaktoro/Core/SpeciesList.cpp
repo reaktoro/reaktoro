@@ -51,6 +51,11 @@ auto SpeciesList::data() const -> const Vec<Species>&
     return m_species;
 }
 
+auto SpeciesList::empty() const -> bool
+{
+    return m_species.empty();
+}
+
 auto SpeciesList::size() const -> Index
 {
     return m_species.size();
