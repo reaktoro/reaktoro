@@ -100,9 +100,6 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     // The molar mass of water
     const double Mw = waterMolarMass;
 
-    // The number of moles of water per kg
-    const double nwo = 1/Mw;
-
     // The number of species in the mixture
     const Index num_species = mixture.numSpecies();
 
@@ -178,8 +175,11 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         ln_m = log(m);
         sqrtI = sqrt(I);
         const double b = 1.5;
-        auto A_parameter = calculateFittedDebyeHuckelParameterA(T);
-//        auto A_parameter = calculateDebyeHuckelParameterA(T, epsilon, rho);
+        ThermoScalar A_parameter;
+        if (params.useDebyeHuckelGenericParameterA())
+            A_parameter = calculateDebyeHuckelParameterA(T, epsilon, rho);
+        else
+            A_parameter = calculateFittedDebyeHuckelParameterA(T);
 
         // Loop over all charged species in the mixture
         for(Index i = 0; i < num_charged_species; ++i)
@@ -365,6 +365,9 @@ struct EUNIQUACParams::Impl
     /// Matrix to store first order energetic BIP values (Uij_t)
     MatrixXd linear_coeff_bips;
 
+    /// Set if Debye-Huckel solvent A-parameter is the fitted expression or the general is used instead.
+    bool useGeneralDebyeHuckelParameterA;
+
     Impl()
     {
     }
@@ -374,6 +377,7 @@ EUNIQUACParams::EUNIQUACParams()
     : pimpl(new Impl())
 {
     setDTUvalues();
+    pimpl->useGeneralDebyeHuckelParameterA = false;
 }
 
 auto EUNIQUACParams::setDTUvalues() -> void
@@ -1441,5 +1445,30 @@ auto EUNIQUACParams::uij_T(
 auto EUNIQUACParams::bips_species_id_map(const std::map<std::string, int>& species_id_map) -> void
 {
     pimpl->bips_species_id_map = species_id_map;
+}
+
+auto EUNIQUACParams::setDebyeHuckelGenericParameterA() -> void
+{
+    pimpl->useGeneralDebyeHuckelParameterA = true;
+}
+
+auto EUNIQUACParams::addNewSpeciesParameters(
+    const std::string& species_name,
+    double qi_value,
+    double ri_value,
+    const std::map<std::string, double>& u_0_values,
+    const std::map<std::string, double>& u_T_values) -> void
+{
+    auto& species_id_map = pimpl->bips_species_id_map;
+    Assert(species_id_map.find(species_name) == species_id_map.end(),
+        "The species E-UNIQUAC parameters are already defined.",
+        "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
+
+    auto num_species = species_id_map.size();
+}
+
+auto EUNIQUACParams::useDebyeHuckelGenericParameterA() const -> bool
+{
+    return pimpl->useGeneralDebyeHuckelParameterA;
 }
 }  // namespace Reaktoro

@@ -94,6 +94,20 @@ public:
 
     auto bips_species_id_map(const std::map<std::string, int>& species_id_map) -> void;
 
+    /// Set if the Debye-Huckel term should use the generic expression for solvent A-parameter.
+    auto setDebyeHuckelGenericParameterA() -> void;
+
+    auto useDebyeHuckelGenericParameterA() const -> bool;
+
+    /// Add E-UNIQUAC parameters for a new species. This is a convenient function the expand the
+    /// built-in E-UNIQUAC parameters setup.
+    auto addNewSpeciesParameters(
+        const std::string& species_name,
+        double qi_value,
+        double ri_value,
+        const std::map<std::string, double>& u_0_values,
+        const std::map<std::string, double>& u_T_values) -> void;
+
 private:
     struct Impl;
 
