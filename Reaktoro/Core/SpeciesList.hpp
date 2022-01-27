@@ -46,6 +46,9 @@ public:
     /// Return the internal collection of Species objects.
     auto data() const -> const Vec<Species>&;
 
+    /// Return true if there are no species in the collection.
+    auto empty() const -> bool;
+
     /// Return the number of species in the collection.
     auto size() const -> Index;
 
