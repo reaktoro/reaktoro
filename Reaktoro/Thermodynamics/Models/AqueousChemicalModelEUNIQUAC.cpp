@@ -336,27 +336,12 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ==============================================================================
         // ========== Calculate activities from activities coefficients =================
         // ==============================================================================
-        // TODO: check the correct way to compute water activity
-        for (Index i = 0; i < num_charged_species; ++i)
-        {
-            const Index ispecies = icharged_species[i];
-            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
-        }
 
-        for (Index i = 0; i < num_neutral_species; ++i)
-        {
-            const Index ispecies = ineutral_species[i];
-            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
-        }
+        // Set the activities of the neutral and charged solutes (molality scale)
+        ln_a = ln_g + log(m);
 
         // Finalize the computation of the activity of water (in mole fraction scale)
         ln_a[iwater] = ln_g[iwater] + ln_xw;
-
-//        for (Index i = 0; i < num_species; ++i)
-//            ln_a[i] = ln_g[i] + ln_m[i];
-
-        // Finalize the computation of the activity of water (in mole fraction scale)
-//        ln_a[iwater] *= -1.0/nwo;
 
     };
 
@@ -484,6 +469,847 @@ auto EUNIQUACParams::setDTUvalues() -> void
         {0.96, 0, 13.296, 2.7217, 0, 11.636, 8.6656, 0, 0, 0, -1.2033, 1.2824}
     };
     pimpl->linear_coeff_bips = uij_T_DTU;
+}
+
+auto EUNIQUACParams::setVillafafilaGarcia2006() -> void
+{
+    // Define the species id map to retrieve species indices in BIP matrices
+    pimpl->bips_species_id_map = {
+        {"H2O(l)", 0},
+        {"CO2(aq)", 1},
+        {"Na+", 2},
+        {"H+", 3},
+        {"Ba++", 4},
+        {"Ca++", 5},
+        {"Sr++", 6},
+        {"Mg++", 7},
+        {"OH-", 8},
+        {"Cl-", 9},
+        {"SO4--", 10},
+        {"CO3--", 11},
+        {"HCO3-", 12}
+    };
+
+    // Volume fraction parameters
+    pimpl->ri_values = {
+        {"H2O(l)", 0.92},
+        {"CO2(aq)", 0.75},
+        {"Na+", 1.40},
+        {"H+", 0.14},
+        {"Ba++", 15.67},
+        {"Ca++", 3.87},
+        {"Sr++", 7.14},
+        {"Mg++", 5.41},
+        {"OH-", 9.40},
+        {"Cl-", 10.39},
+        {"SO4--", 12.79},
+        {"CO3--", 10.83},
+        {"HCO3-", 8.08}
+    };
+
+    // Surface area parameters
+    pimpl->qi_values = {
+        {"H2O(l)", 1.4},
+        {"CO2(aq)", 2.45},
+        {"Na+", 1.2},
+        {"H+", 1e-16},
+        {"Ba++", 14.48},
+        {"Ca++", 1.48},
+        {"Sr++", 12.89},
+        {"Mg++", 2.54},
+        {"OH-", 8.88},
+        {"Cl-", 10.20},
+        {"SO4--", 12.44},
+        {"CO3--", 10.77},
+        {"HCO3-", 8.68}
+    };
+
+    // Initialize the BIPs as zero matrices to be filled
+    const auto& id_map = pimpl->bips_species_id_map;
+    auto num_species = pimpl->bips_species_id_map.size();
+    MatrixXd uij_0;
+    MatrixXd uij_T;
+    uij_0.setZero(num_species, num_species);
+    uij_T.setZero(num_species, num_species);
+
+    // Auxiliary variables
+    std::string species_name_1, species_name_2;
+    double bip_value;
+
+    // Auxiliary function to define BIPs symmetrically
+    auto set_bip = [] (
+        MatrixXd& bips,
+        const std::map<std::string, int>& id_map,
+        const std::string& species_1,
+        const std::string& species_2,
+        double value) -> void {
+        auto id_species_1 = id_map.at(species_1);
+        auto id_species_2 = id_map.at(species_2);
+        bips(id_species_1, id_species_2) = value;
+        bips(id_species_2, id_species_1) = value;
+    };
+
+    // ====================================================================
+    // Zeroth order energetic BIP values (Uij_0)
+    // ====================================================================
+    // Water
+    species_name_1 = "H2O(l)";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "CO2(aq)";
+    bip_value = 8.83825;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "H+";
+    bip_value = 1e4;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Na+";
+    bip_value = 733.2863;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ca++";
+    bip_value = 496.3523;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = -0.3786;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = 543.11;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = -2.04282;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 600.4952;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1523.393;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 752.8792;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 361.3877;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 577.0502;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // CO2
+
+    species_name_1 = "CO2(aq)";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 302.25);
+
+    species_name_2 = "H+";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Na+";
+    bip_value = 172.39;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ca++";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = -100.7;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = -581.2;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1613.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 1942.4;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 526.31;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // H+
+
+    species_name_1 = "H+";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Na+";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ca++";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 1e10;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // Na+
+
+    species_name_1 = "Na+";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Ca++";
+    bip_value = -100.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 779.1;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = -103.9;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = -70.956;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 1398.1;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1443.2;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 845.14;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 547.95;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 1101.9;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // Ca++
+
+    species_name_1 = "Ca++";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Ba++";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = -402.78;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 155.2324;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 164.6378;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1805.59;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 1258.103;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // Ba++
+
+    species_name_1 = "Ba++";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Sr++";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 628.529;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1403.17;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // Sr++
+
+    species_name_1 = "Sr++";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Mg++";
+    bip_value = -400.58;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 1895.88;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // Mg++
+
+    species_name_1 = "Mg++";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "OH-";
+    bip_value = 736.42;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 2049.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 1407.21;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 100.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 100.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // OH-
+
+    species_name_1 = "OH-";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 1562.88);
+
+    species_name_2 = "Cl-";
+    bip_value = 1895.52;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 1225.67;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 1588.03;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 2500.0;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // Cl-
+
+    species_name_1 = "Cl-";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 2214.81);
+
+    species_name_2 = "SO4--";
+    bip_value = 2036.06;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 2724.94;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 1736.62;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // SO4--
+
+    species_name_1 = "SO4--";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 1265.83);
+
+    species_name_2 = "CO3--";
+    bip_value = 1216.76;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 990.48;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // CO3--
+
+    species_name_1 = "CO3--";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 1458.344);
+
+    species_name_2 = "HCO3-";
+    bip_value = 800.0081;
+    set_bip(uij_0, id_map, species_name_1, species_name_2, bip_value);
+
+    // HCO3-
+
+    species_name_1 = "HCO3-";
+    set_bip(uij_0, id_map, species_name_1, species_name_1, 771.038);
+
+    pimpl->constant_coeff_bips = uij_0;
+
+    // ====================================================================
+    // First order energetic BIP values (Uij_T)
+    // ====================================================================
+    // Water
+    species_name_1 = "H2O(l)";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "CO2(aq)";
+    bip_value = 0.86293;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "H+";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Na+";
+    bip_value = 0.48719;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ca++";
+    bip_value = -8.0654;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 0.58244;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = 1.2742;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = -3.5542;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 8.5455;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 14.631;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 9.4905;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 3.3516;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = -0.38795;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // CO2
+
+    species_name_1 = "CO2(aq)";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.3587);
+
+    species_name_2 = "H+";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Na+";
+    bip_value = -0.436;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ca++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = -2.855;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 15.015;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 4.7896;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = -3.734;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // H+
+
+    species_name_1 = "H+";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Na+";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ca++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // Na+
+
+    species_name_1 = "Na+";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Ca++";
+    bip_value = -4.656;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Ba++";
+    bip_value = 2.338;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = -0.62;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 1.3394;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 20.278;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 15.635;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 11.681;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 3.782;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 1.829;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // Ca++
+
+    species_name_1 = "Ca++";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Ba++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Sr++";
+    bip_value = -4.2533;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 5.1921;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 3.6084;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 11.14;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 50.446;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // Ba++
+
+    species_name_1 = "Ba++";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Sr++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Mg++";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 14.89;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // Sr++
+
+    species_name_1 = "Sr++";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "Mg++";
+    bip_value = -1.437;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "OH-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 15.689;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 10;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // Mg++
+
+    species_name_1 = "Mg++";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 0.0);
+
+    species_name_2 = "OH-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "Cl-";
+    bip_value = 12.132;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 2.2791;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 1.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 1,0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // OH-
+
+    species_name_1 = "OH-";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 5.6169);
+
+    species_name_2 = "Cl-";
+    bip_value = 13.628;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "SO4--";
+    bip_value = 8.5902;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 2.7496;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 0.0;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // Cl-
+
+    species_name_1 = "Cl-";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 14.436);
+
+    species_name_2 = "SO4--";
+    bip_value = 12.407;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "CO3--";
+    bip_value = 5.7267;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 14.035;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // SO4--
+
+    species_name_1 = "SO4--";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, 8.3194);
+
+    species_name_2 = "CO3--";
+    bip_value = 7.0067;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    species_name_2 = "HCO3-";
+    bip_value = 6.9646;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // CO3--
+
+    species_name_1 = "CO3--";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, -1.3448);
+
+    species_name_2 = "HCO3-";
+    bip_value = 1.7241;
+    set_bip(uij_T, id_map, species_name_1, species_name_2, bip_value);
+
+    // HCO3-
+
+    species_name_1 = "HCO3-";
+    set_bip(uij_T, id_map, species_name_1, species_name_1, -0.0198);
+
+    pimpl->linear_coeff_bips = uij_T;
 }
 
 auto EUNIQUACParams::ri(const std::string& name) const -> double

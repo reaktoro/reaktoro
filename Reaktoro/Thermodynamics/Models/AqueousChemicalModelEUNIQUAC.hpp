@@ -87,6 +87,9 @@ public:
     /// Set E-UNIQUAC parameters values according to DTU values
     auto setDTUvalues() -> void;
 
+    /// Set E-UNIQUAC parameters values according to Villafáfila-García et al. (2006) values
+    auto setVillafafilaGarcia2006() -> void;
+
     auto bips_species_id_map() const -> std::map<std::string, int>;
 
     auto bips_species_id_map(const std::map<std::string, int>& species_id_map) -> void;

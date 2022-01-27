@@ -70,6 +70,7 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
         .def("bipsSpeciesIds", bips_id_map_1)
         .def("bipsSpeciesIds", bips_id_map_2)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
+        .def("setVillafafilaGarcia2006", &EUNIQUACParams::setVillafafilaGarcia2006)
         ;
 }
 
