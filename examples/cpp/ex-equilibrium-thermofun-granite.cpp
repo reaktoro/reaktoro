@@ -22,7 +22,7 @@
 //   • Svetlana Kyas (27 September 2021)
 //
 // and since revised by:
-//   •
+//   • G. Dan Miron (28 January 2022)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -34,12 +34,18 @@ int main()
     ThermoFunDatabase db("aq17");
 
     // Define list of aqueous species
-    StringList selected_species = "H2O@ H+ OH- Cl- HCl@ Na+ NaOH@ NaHSiO3@ NaCl@ NaAl(OH)4@ "
+    StringList selected_species = "H2O@ H+ OH- Cl- HCl@ Na+ NaOH@ NaHSiO3@ NaCl@ NaAl(OH)4@ SiO2@ HSiO3- "
                                   "K+ KOH@ KCl@ KAlO2@ Al+3 AlOH+2 Al(OH)2+ Al(OH)3@ Al(OH)4-";
 
     // Define aqueous phase
     AqueousPhase solution(selected_species);
-    solution.setActivityModel(ActivityModelHKF());
+
+    // Set up a and b parameters for ionic species (NaCl, b = 0.064, a = 3.72)
+    ActivityModelDebyeHuckelParams params;
+    params.aiondefault = 3.72;
+    params.biondefault = 0.064;
+    params.bneutraldefault = 0.064;
+    solution.setActivityModel(ActivityModelDebyeHuckel(params));
 
     // Define minerals
     MineralPhases minerals("Quartz Diaspore Gibbsite Andalusite Kyanite "
@@ -75,10 +81,9 @@ int main()
     // Define initial equilibrium state of 100 g of granite and 20 g of water
     ChemicalState state(system);
 
-    // Define initial solution amount
+    // Define initial solution amount 1 NaCl m/Kg 
     state.set("H2O@" , 20, "g");
-    state.set("NaCl@", 0.315, "g");
-    state.set("KCl@" , 0.045, "g");
+    state.set("NaCl@", 0.02, "mol");
 
     // Define initial composition of granite (100g)
     state.set("Quartz"    , 35, "g"); // 35% of granite
@@ -100,5 +105,13 @@ int main()
     std::cout << state << std::endl;
 
     std::cout << "res = " << res.optima.succeeded << std::endl;
+    
+    ChemicalProps props(state);
+    props.output("props.txt");
+
+    AqueousProps aprops(state);
+    aprops.output("aprops.txt");
+    
+    
     return 0;
 }
