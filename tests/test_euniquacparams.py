@@ -286,3 +286,57 @@ def test_bips_values_update():
     euniquac_params.uij_T("Na+", "Na+", 2.5)
     assert euniquac_params.uij_0("Na+", "Na+") == 2.5
     assert euniquac_params.uij_T("Na+", "Na+") == 2.5
+
+
+def test_add_new_species_params():
+    uij_0_custom = np.array([
+        [1.0, 2.0],
+        [2.0, 3.0],
+    ])
+    uij_T_custom = np.array([
+        [4.0, 5.0],
+        [5.0, 6.0],
+    ])
+    bips_species_id_map = {
+        "Na+": 0,
+        "Cl-": 1,
+    }
+
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.set_uij_bips(uij_0_custom, uij_T_custom, bips_species_id_map)
+
+    # New "dummy" addition. Be careful to add a species that can be handled internally by Reaktoro
+    new_species_name = "K+"
+    q_value = 2.0
+    r_value = 1.0
+    new_uij_0_values = {"Na+": 3.5}
+    new_uij_T_values = {"Cl-": -2.5}
+    euniquac_params.addNewSpeciesParameters(
+        new_species_name,
+        q_value,
+        r_value,
+        new_uij_0_values,
+        new_uij_T_values
+    )
+
+    # Check if all previous values are untouched
+    assert euniquac_params.uij_0("Na+", "Na+") == 1.0
+    assert euniquac_params.uij_0("Na+", "Cl-") == 2.0
+    assert euniquac_params.uij_0("Cl-", "Cl-") == 3.0
+    assert euniquac_params.uij_T("Na+", "Na+") == 4.0
+    assert euniquac_params.uij_T("Na+", "Cl-") == 5.0
+    assert euniquac_params.uij_T("Cl-", "Cl-") == 6.0
+
+    # Check the new values between the new species and the ones already defined (for uij_0)
+    default_u0_value = 2500.0
+    assert euniquac_params.uij_0("Na+", new_species_name) == 3.5
+    assert euniquac_params.uij_0(new_species_name, "Na+") == 3.5
+    assert euniquac_params.uij_0("Cl-", new_species_name) == default_u0_value
+    assert euniquac_params.uij_0(new_species_name, "Cl-") == default_u0_value
+
+    # Check the new values between the new species and the ones already defined (for uij_T)
+    default_uT_value = 0.0
+    assert euniquac_params.uij_T("Cl-", new_species_name) == -2.5
+    assert euniquac_params.uij_T(new_species_name, "Cl-") == -2.5
+    assert euniquac_params.uij_T("Na+", new_species_name) == default_uT_value
+    assert euniquac_params.uij_T(new_species_name, "Na+") == default_uT_value
