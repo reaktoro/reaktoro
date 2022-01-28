@@ -61,6 +61,11 @@ public:
     /// Return the electric charge of the chemical formula.
     auto charge() const -> double;
 
+    /// Return the molar mass of the chemical formula (in kg/mol).
+    /// @warning An error is thrown if the formula contains symbols that do not
+    /// exist in the periodic table.
+    auto molarMass() const -> double;
+
     /// Return true if another chemical formula is equivalent to this one.
     /// Two chemical formulas are equivalent if they have the same elemental
     /// composition. Consider `Ca++` and `Ca+2` for example. These two formulas

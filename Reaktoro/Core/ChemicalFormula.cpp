@@ -19,7 +19,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
 
 namespace Reaktoro {
 
@@ -68,6 +71,20 @@ struct ChemicalFormula::Impl
                 return element.second;
         return 0.0;
     }
+
+    /// Return the molar mass of the chemical formula (in kg/mol).
+    auto molarMass() const -> double
+    {
+        double res = 0.0;
+        for(auto const& [symbol, coeff] : elements)
+        {
+            const auto element = Elements::withSymbol(symbol);
+            errorif(!element.has_value(), "While computing the molar mass of substance with chemical formula `", formula, "`, I encountered symbol `", symbol, "` that does not exist in the periodic table.");
+            res += coeff * element.value().molarMass();
+        }
+        res -= charge * molarMassElectron;
+        return res;
+    }
 };
 
 ChemicalFormula::ChemicalFormula()
@@ -114,6 +131,11 @@ auto ChemicalFormula::coefficient(const String& symbol) const -> double
 auto ChemicalFormula::charge() const -> double
 {
     return pimpl->charge;
+}
+
+auto ChemicalFormula::molarMass() const -> double
+{
+    return pimpl->molarMass();
 }
 
 auto ChemicalFormula::equivalent(const ChemicalFormula& other) const -> bool
