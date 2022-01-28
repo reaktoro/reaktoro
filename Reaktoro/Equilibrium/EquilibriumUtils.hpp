@@ -17,14 +17,11 @@
 
 #pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
-class Material;
+class EquilibriumRestrictions;
 struct EquilibriumOptions;
 struct EquilibriumResult;
 
@@ -32,24 +29,11 @@ struct EquilibriumResult;
 /// The calculation is performed with fixed temperature and pressure obtained
 /// from the chemical state, and the chemical system is closed, so chemical
 /// elements and electric charge are conserved.
+///@{
 auto equilibrate(ChemicalState& state) -> EquilibriumResult;
-
-/// Perform a chemical equilibrium calculation on a given chemical state.
-/// The calculation is performed with fixed temperature and pressure obtained
-/// from the chemical state, and the chemical system is closed, so chemical
-/// elements and electric charge are conserved.
 auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult;
-
-/// Perform a chemical equilibrium calculation on a given material.
-/// The calculation is performed with fixed temperature (25 °C) and pressure (1
-/// bar), and the chemical system is closed, so chemical elements and electric
-/// charge composing the material are conserved.
-auto equilibrate(Material& material) -> Tuple<ChemicalState, EquilibriumResult>;
-
-/// Perform a chemical equilibrium calculation on a given material.
-/// The calculation is performed with fixed temperature (25 °C) and pressure (1
-/// bar), and the chemical system is closed, so chemical elements and electric
-/// charge composing the material are conserved.
-auto equilibrate(Material& material, const EquilibriumOptions& options) -> Tuple<ChemicalState, EquilibriumResult>;
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options) -> EquilibriumResult;
+///@}
 
 } // namespace Reaktoro
