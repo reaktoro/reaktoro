@@ -15,6 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <Reaktoro/pybind11.hxx>
 
-#include <Reaktoro/Utils/Material.hpp>
+void exportMaterial(py::module& m);
+
+void exportUtils(py::module& m)
+{
+    exportMaterial(m);
+}
