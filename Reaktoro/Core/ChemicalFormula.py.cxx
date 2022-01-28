@@ -47,6 +47,7 @@ void exportChemicalFormula(py::module& m)
         .def("coefficients", &ChemicalFormula::coefficients)
         .def("coefficient", &ChemicalFormula::coefficient)
         .def("charge", &ChemicalFormula::charge)
+        .def("molarMass", &ChemicalFormula::molarMass)
         .def("equivalent", equivalent1)  // pybind11 does not support overloading both static and instance methods
         // .def_static("equivalent", equivalent2)
         .def(py::self == py::self)

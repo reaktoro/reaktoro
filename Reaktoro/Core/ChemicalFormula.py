@@ -25,6 +25,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("H2O")
     assert formula.str()             == "H2O"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.01801528)
     assert len(formula.elements())   == 2
     assert formula.coefficient("H")  == 2
     assert formula.coefficient("O")  == 1
@@ -37,6 +38,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("CaCO3")
     assert formula.str()             == "CaCO3"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.1000872)
     assert len(formula.elements())   == 3
     assert formula.coefficient("C")  == 1
     assert formula.coefficient("Ca") == 1
@@ -50,6 +52,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("HCO3-")
     assert formula.str()             == "HCO3-"
     assert formula.charge()          == -1
+    assert formula.molarMass()       ==  pytest.approx(0.0610176886)
     assert len(formula.elements())   == 3
     assert formula.coefficient("C")  == 1
     assert formula.coefficient("H")  == 1
@@ -62,6 +65,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("H+")
     assert formula.str()             == "H+"
     assert formula.charge()          == 1
+    assert formula.molarMass()       == pytest.approx(0.0010073914)
     assert len(formula.elements())   == 1
     assert formula.coefficient("H")  == 1
     assert formula.equivalent("H+(aq)")
@@ -70,6 +74,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("e-")
     assert formula.str()             == "e-"
     assert formula.charge()          == -1
+    assert formula.molarMass()       ==  pytest.approx(5.4857990888e-07)
     assert len(formula.elements())   == 0
     assert formula.equivalent("e-(aq)")
     assert formula.equivalent("e[-]")
@@ -77,6 +82,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Na+")
     assert formula.str()             == "Na+"
     assert formula.charge()          == 1
+    assert formula.molarMass()       == pytest.approx(0.0229892194)
     assert len(formula.elements())   == 1
     assert formula.coefficient("Na") == 1
     assert formula.equivalent("Na+(aq)")
@@ -87,6 +93,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Cl-")
     assert formula.str()             == "Cl-"
     assert formula.charge()          == -1
+    assert formula.molarMass()       ==  pytest.approx(0.0354532486)
     assert len(formula.elements())   == 1
     assert formula.coefficient("Cl") == 1
     assert formula.equivalent("Cl[-](aq)")
@@ -96,6 +103,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("CO3--")
     assert formula.str()             == "CO3--"
     assert formula.charge()          == -2
+    assert formula.molarMass()       ==  pytest.approx(0.0600102972)
     assert len(formula.elements())   == 2
     assert formula.coefficient("C")  == 1
     assert formula.coefficient("O")  == 3
@@ -106,6 +114,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Fe+++")
     assert formula.str()             == "Fe+++"
     assert formula.charge()          == 3
+    assert formula.molarMass()       == pytest.approx(0.0558453543)
     assert len(formula.elements())   == 1
     assert formula.coefficient("Fe") == 1
     assert formula.equivalent("Fe+++(aq)")
@@ -117,6 +126,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("(CaMg)(CO3)2")
     assert formula.str()             == "(CaMg)(CO3)2"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.1844014)
     assert len(formula.elements())   == 4
     assert formula.coefficient("C")  == 2
     assert formula.coefficient("Ca") == 1
@@ -130,6 +140,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("CH3COOH")
     assert formula.str()             == "CH3COOH"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.06005256)
     assert len(formula.elements())   == 3
     assert formula.coefficient("C")  == 2
     assert formula.coefficient("H")  == 4
@@ -141,6 +152,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Al2.5Si0.5O4.75")
     assert formula.str()             == "Al2.5Si0.5O4.75"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.1574937475)
     assert len(formula.elements())   == 3
     assert formula.coefficient("Al") == 2.5
     assert formula.coefficient("Si") == 0.5
@@ -151,6 +163,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Fe4Al18Si7.5O48H4")
     assert formula.str()             == "Fe4Al18Si7.5O48H4"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(1.691699912)
     assert len(formula.elements())   == 5
     assert formula.coefficient("Fe") == 4
     assert formula.coefficient("Al") == 18
@@ -163,6 +176,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Mg4Al18Si7.5O48H4")
     assert formula.str()             == "Mg4Al18Si7.5O48H4"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(1.565531912)
     assert len(formula.elements())   == 5
     assert formula.coefficient("Mg") == 4
     assert formula.coefficient("Al") == 18
@@ -174,6 +188,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Mn4Al18Si7.5O48H4")
     assert formula.str()             == "Mn4Al18Si7.5O48H4"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(1.688064112)
     assert len(formula.elements())   == 5
     assert formula.coefficient("Mn") == 4
     assert formula.coefficient("Al") == 18
@@ -184,6 +199,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Ca0.5Al1Si2O6")
     assert formula.str()             == "Ca0.5Al1Si2O6"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.199187939)
     assert len(formula.elements())   == 4
     assert formula.coefficient("Ca") == 0.5
     assert formula.coefficient("Al") == 1
@@ -193,6 +209,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("K0.5Fe5Al2Si8O30.5H12.5")
     assert formula.str()             == "K0.5Fe5Al2Si8O30.5H12.5"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(1.078012178)
     assert len(formula.elements())   == 6
     assert formula.coefficient("K")  == 0.5
     assert formula.coefficient("Fe") == 5
@@ -204,6 +221,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("K0.5Mg5Al2Si8O30.5H12.5")
     assert formula.str()             == "K0.5Mg5Al2Si8O30.5H12.5"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.920302178)
     assert len(formula.elements())   == 6
     assert formula.coefficient("K")  == 0.5
     assert formula.coefficient("Mg") == 5
@@ -215,6 +233,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Mg3.5Al9Si1.5O20")
     assert formula.str()             == "Mg3.5Al9Si1.5O20"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.690017601)
     assert len(formula.elements())   == 4
     assert formula.coefficient("Mg") == 3.5
     assert formula.coefficient("Al") == 9
@@ -224,6 +243,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Fe3.5Al9Si1.5O20")
     assert formula.str()             == "Fe3.5Al9Si1.5O20"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.800414601)
     assert len(formula.elements())   == 4
     assert formula.coefficient("Fe") == 3.5
     assert formula.coefficient("Al") == 9
@@ -233,6 +253,7 @@ def testChemicalFormula():
     formula = ChemicalFormula("Fe0.875S1")
     assert formula.str()             == "Fe0.875S1"
     assert formula.charge()          == 0
+    assert formula.molarMass()       == pytest.approx(0.080932125)
     assert len(formula.elements())   == 2
     assert formula.coefficient("Fe") == 0.875
     assert formula.coefficient("S")  == 1
