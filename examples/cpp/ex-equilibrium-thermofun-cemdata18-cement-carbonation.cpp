@@ -22,7 +22,7 @@
 //   • Svetlana Kyas (27 September August 2021)
 //
 // and since revised by:
-//   •
+//   • G. Dan Miron (28 January 2022)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -84,13 +84,15 @@ int main()
     state.setSpeciesMass("C4AF", 8.14, "g"); // ferrite, (CaO)4(Al2O3)(Fe|3|2O3)
     // additional
     state.setSpeciesMass("Gp", 3.13, "g"); // gypsum, CaSO4(H2O)2
-//    state.setSpeciesMass("Cal", 0.10, "g"); // calcite, CaCO3
-//    state.setSpeciesMass("Lim", 0.93, "g"); // lime, CaO
-//    state.setSpeciesMass("Brc", 1.31, "g"); // brucite, Mg(OH)2
-//    state.setSpeciesMass("K2SO4", 1.34, "g"); // potasium-sulfate
-//    state.setSpeciesMass("K2O", 0.05, "g"); // potasium oxide
-//    state.setSpeciesMass("Na2SO4", 0.21, "g"); // sodium sulfate
-//    state.setSpeciesMass("Na2O", 0.05, "g"); // sodium oxide
+    state.setSpeciesMass("Cal", 0.10, "g"); // calcite, CaCO3
+    state.setSpeciesMass("Lim", 0.93, "g"); // lime, CaO
+    state.setSpeciesMass("Brc", 1.31, "g"); // brucite, Mg(OH)2
+    state.setSpeciesMass("K2SO4", 1.34, "g"); // potasium-sulfate
+    state.setSpeciesMass("K2O", 0.05, "g"); // potasium oxide
+    state.setSpeciesMass("Na2SO4", 0.21, "g"); // sodium sulfate
+    state.setSpeciesMass("Na2O", 0.05, "g"); // sodium oxide
+    
+    state.setSpeciesMass("O2@", 0.15, "g"); // Oxygen to stabilize the system 
 
     // Define temperature and pressure
     double T = 20.0; // in Celsius
@@ -109,6 +111,12 @@ int main()
 
     // Output the chemical state to a console
     state.output("state-cemdata18.txt");
+    
+        ChemicalProps props(state);
+    props.output("props.txt");
+
+    AqueousProps aprops(state);
+    aprops.output("aprops.txt");
 
     return 0;
 }
