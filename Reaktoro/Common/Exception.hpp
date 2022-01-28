@@ -98,7 +98,7 @@ template<typename... Args>
 auto warning(bool condition, Args... items) -> void
 {
     if(condition)
-        std::cerr << "\033[1;33m***WARNING*** " << str(items...) << "\n\033[0m";
+        std::cerr << "\033[1;33m***WARNING*** " << Reaktoro::str(items...) << "\n\033[0m";
 }
 
 /// Raise a runtime error if condition is true.
@@ -106,7 +106,7 @@ template<typename... Args>
 auto error(bool condition, Args... items) -> void
 {
     if(condition)
-        throw std::runtime_error(str("\033[1;31m***ERROR*** ", str(items...), "\n\033[0m"));
+        throw std::runtime_error(Reaktoro::str("\033[1;31m***ERROR*** ", Reaktoro::str(items...), "\n\033[0m"));
 }
 
 /// Define a macro to print a warning messageif condition is true.
@@ -118,7 +118,7 @@ auto error(bool condition, Args... items) -> void
 #define warningif(condition, ...) \
     { \
         if((condition)) { \
-            std::cerr << "\033[1;33m***WARNING***\n" << str(__VA_ARGS__) << "\n\033[0m"; \
+            std::cerr << "\033[1;33m***WARNING***\n" << Reaktoro::str(__VA_ARGS__) << "\n\033[0m"; \
         } \
     }
 
@@ -131,7 +131,7 @@ auto error(bool condition, Args... items) -> void
 #define errorif(condition, ...) \
     { \
         if((condition)) { \
-            throw std::runtime_error(str("\033[1;31m***ERROR***\n", str(__VA_ARGS__), "\n\033[0m")); \
+            throw std::runtime_error(Reaktoro::str("\033[1;31m***ERROR***\n", Reaktoro::str(__VA_ARGS__), "\n\033[0m")); \
         } \
     }
 
