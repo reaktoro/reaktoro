@@ -42,20 +42,20 @@ auto molarMasses(const SpeciesList& species) -> ArrayXd;
 /// @param unit The quantity unit of the species.
 auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, const String& unit) -> real;
 
-/// Resolve the index of a element in a chemical system with given either a element symbol or its index itself.
+/// Resolve the index of an element in a chemical system with given element symbol or its index.
 auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index;
 
-/// Resolve the index of a species in a chemical system with given either a species name or its index itself.
+/// Resolve the index of a species in a chemical system with given species name or its index.
 auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index;
 
-/// Resolve the index of a phase in a chemical system with given either a phase name or its index itself.
+/// Resolve the index of a phase in a chemical system with given phase name or its index.
 auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index;
 
-/// Resolve the index of a element in a phase with given either a element symbol or its index itself.
+/// Resolve the index of an element in a phase with given element symbol or its index.
 auto resolveElementIndex(const Phase& phase, StringOrIndex element) -> Index;
 
-/// Resolve the index of a element in a phase with given either a element symbol or its index itself.
-auto resolveSpeciesIndex(const Phase& phase, StringOrIndex element) -> Index;
+/// Resolve the index of a species in a phase with given species name or its index.
+auto resolveSpeciesIndex(const Phase& phase, StringOrIndex species) -> Index;
 
 /// Convert a StringOrIndex value to a string.
 auto stringfy(StringOrIndex value) -> String;
