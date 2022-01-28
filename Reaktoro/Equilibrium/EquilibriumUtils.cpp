@@ -22,6 +22,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 
@@ -30,26 +31,24 @@ namespace Reaktoro {
 auto equilibrate(ChemicalState& state) -> EquilibriumResult
 {
     EquilibriumOptions options;
-    return equilibrate(state, options);
+    EquilibriumRestrictions restrictions(state.system());
+    return equilibrate(state, restrictions, options);
 }
 
 auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    EquilibriumSolver solver(state.system());
-    solver.setOptions(options);
-    return solver.solve(state);
+    EquilibriumRestrictions restrictions(state.system());
+    return equilibrate(state, restrictions, options);
 }
 
-auto equilibrate(Material& material) -> Tuple<ChemicalState, EquilibriumResult>
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult
 {
     EquilibriumOptions options;
-    return equilibrate(material, options);
+    return equilibrate(state, restrictions, options);
 }
 
-auto equilibrate(Material& material, const EquilibriumOptions& options) -> Tuple<ChemicalState, EquilibriumResult>
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options) -> EquilibriumResult
 {
-    ChemicalState state(material.system());
-
     EquilibriumOptions opts(options);
 
     EquilibriumSolver solver(state.system());
@@ -59,12 +58,16 @@ auto equilibrate(Material& material, const EquilibriumOptions& options) -> Tuple
 
     auto result = solver.solve(state);
 
+    // Skip the second computation if the first one using ideal activity models has already failed.
+    if(result.optima.succeeded == false)
+        return result;
+
     opts.use_ideal_activity_models = options.use_ideal_activity_models; // for the second computation, use what user wants (maybe ideal model again, in which case the calculation below will converge immediately).
     solver.setOptions(opts);
 
-    result += solver.solve(state);
+    result += solver.solve(state, restrictions);
 
-    return {state, result};
+    return result;
 }
 
 } // namespace Reaktoro
