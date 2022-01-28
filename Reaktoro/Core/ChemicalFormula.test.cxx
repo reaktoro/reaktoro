@@ -29,6 +29,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("H2O");
     CHECK( formula.str()             == "H2O" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.01801528) );
     CHECK( formula.elements().size() == 2 );
     CHECK( formula.coefficient("H")  == 2 );
     CHECK( formula.coefficient("O")  == 1 );
@@ -41,6 +42,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("CaCO3");
     CHECK( formula.str()             == "CaCO3" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.1000872) );
     CHECK( formula.elements().size() == 3 );
     CHECK( formula.coefficient("C")  == 1 );
     CHECK( formula.coefficient("Ca") == 1 );
@@ -54,6 +56,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("HCO3-");
     CHECK( formula.str()             == "HCO3-" );
     CHECK( formula.charge()          == -1 );
+    CHECK( formula.molarMass()       ==  Approx(0.0610176886) );
     CHECK( formula.elements().size() == 3 );
     CHECK( formula.coefficient("C")  == 1 );
     CHECK( formula.coefficient("H")  == 1 );
@@ -66,6 +69,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("H+");
     CHECK( formula.str()             == "H+" );
     CHECK( formula.charge()          == 1 );
+    CHECK( formula.molarMass()       == Approx(0.0010073914) );
     CHECK( formula.elements().size() == 1 );
     CHECK( formula.coefficient("H")  == 1 );
     CHECK( formula.equivalent("H+(aq)") );
@@ -74,6 +78,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("e-");
     CHECK( formula.str()             == "e-" );
     CHECK( formula.charge()          == -1 );
+    CHECK( formula.molarMass()       ==  Approx(5.4857990888e-07) );
     CHECK( formula.elements().size() == 0 );
     CHECK( formula.equivalent("e-(aq)") );
     CHECK( formula.equivalent("e[-]") );
@@ -81,6 +86,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Na+");
     CHECK( formula.str()             == "Na+" );
     CHECK( formula.charge()          == 1 );
+    CHECK( formula.molarMass()       == Approx(0.0229892194) );
     CHECK( formula.elements().size() == 1 );
     CHECK( formula.coefficient("Na") == 1 );
     CHECK( formula.equivalent("Na+(aq)") );
@@ -91,6 +97,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Cl-");
     CHECK( formula.str()             == "Cl-" );
     CHECK( formula.charge()          == -1 );
+    CHECK( formula.molarMass()       ==  Approx(0.0354532486) );
     CHECK( formula.elements().size() == 1 );
     CHECK( formula.coefficient("Cl") == 1 );
     CHECK( formula.equivalent("Cl[-](aq)") );
@@ -100,6 +107,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("CO3--");
     CHECK( formula.str()             == "CO3--" );
     CHECK( formula.charge()          == -2 );
+    CHECK( formula.molarMass()       ==  Approx(0.0600102972) );
     CHECK( formula.elements().size() == 2 );
     CHECK( formula.coefficient("C")  == 1 );
     CHECK( formula.coefficient("O")  == 3 );
@@ -110,6 +118,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe+++");
     CHECK( formula.str()             == "Fe+++" );
     CHECK( formula.charge()          == 3 );
+    CHECK( formula.molarMass()       == Approx(0.0558453543) );
     CHECK( formula.elements().size() == 1 );
     CHECK( formula.coefficient("Fe") == 1 );
     CHECK( formula.equivalent("Fe+++(aq)") );
@@ -121,6 +130,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("(CaMg)(CO3)2");
     CHECK( formula.str()             == "(CaMg)(CO3)2" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.1844014) );
     CHECK( formula.elements().size() == 4 );
     CHECK( formula.coefficient("C")  == 2 );
     CHECK( formula.coefficient("Ca") == 1 );
@@ -134,6 +144,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("CH3COOH");
     CHECK( formula.str()             == "CH3COOH" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.06005256) );
     CHECK( formula.elements().size() == 3 );
     CHECK( formula.coefficient("C")  == 2 );
     CHECK( formula.coefficient("H")  == 4 );
@@ -145,6 +156,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Al2.5Si0.5O4.75");
     CHECK( formula.str()             == "Al2.5Si0.5O4.75" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.1574937475) );
     CHECK( formula.elements().size() == 3 );
     CHECK( formula.coefficient("Al") == 2.5 );
     CHECK( formula.coefficient("Si") == 0.5 );
@@ -155,6 +167,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe4Al18Si7.5O48H4");
     CHECK( formula.str()             == "Fe4Al18Si7.5O48H4" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(1.691699912) );
     CHECK( formula.elements().size() == 5 );
     CHECK( formula.coefficient("Fe") == 4 );
     CHECK( formula.coefficient("Al") == 18 );
@@ -167,6 +180,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Mg4Al18Si7.5O48H4");
     CHECK( formula.str()             == "Mg4Al18Si7.5O48H4" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(1.565531912) );
     CHECK( formula.elements().size() == 5 );
     CHECK( formula.coefficient("Mg") == 4 );
     CHECK( formula.coefficient("Al") == 18 );
@@ -178,6 +192,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Mn4Al18Si7.5O48H4");
     CHECK( formula.str()             == "Mn4Al18Si7.5O48H4" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(1.688064112) );
     CHECK( formula.elements().size() == 5 );
     CHECK( formula.coefficient("Mn") == 4 );
     CHECK( formula.coefficient("Al") == 18 );
@@ -188,6 +203,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Ca0.5Al1Si2O6");
     CHECK( formula.str()             == "Ca0.5Al1Si2O6" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.199187939) );
     CHECK( formula.elements().size() == 4 );
     CHECK( formula.coefficient("Ca") == 0.5 );
     CHECK( formula.coefficient("Al") == 1 );
@@ -197,6 +213,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("K0.5Fe5Al2Si8O30.5H12.5");
     CHECK( formula.str()             == "K0.5Fe5Al2Si8O30.5H12.5" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(1.078012178) );
     CHECK( formula.elements().size() == 6 );
     CHECK( formula.coefficient("K")  == 0.5 );
     CHECK( formula.coefficient("Fe") == 5 );
@@ -208,6 +225,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("K0.5Mg5Al2Si8O30.5H12.5");
     CHECK( formula.str()             == "K0.5Mg5Al2Si8O30.5H12.5" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.920302178) );
     CHECK( formula.elements().size() == 6 );
     CHECK( formula.coefficient("K")  == 0.5 );
     CHECK( formula.coefficient("Mg") == 5 );
@@ -219,6 +237,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Mg3.5Al9Si1.5O20");
     CHECK( formula.str()             == "Mg3.5Al9Si1.5O20" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.690017601) );
     CHECK( formula.elements().size() == 4 );
     CHECK( formula.coefficient("Mg") == 3.5 );
     CHECK( formula.coefficient("Al") == 9 );
@@ -228,6 +247,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe3.5Al9Si1.5O20");
     CHECK( formula.str()             == "Fe3.5Al9Si1.5O20" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.800414601) );
     CHECK( formula.elements().size() == 4 );
     CHECK( formula.coefficient("Fe") == 3.5 );
     CHECK( formula.coefficient("Al") == 9 );
@@ -237,6 +257,7 @@ TEST_CASE("Testing ChemicalFormula class", "[ChemicalFormula]")
     formula = ChemicalFormula("Fe0.875S1");
     CHECK( formula.str()             == "Fe0.875S1" );
     CHECK( formula.charge()          == 0 );
+    CHECK( formula.molarMass()       == Approx(0.080932125) );
     CHECK( formula.elements().size() == 2 );
     CHECK( formula.coefficient("Fe") == 0.875 );
     CHECK( formula.coefficient("S")  == 1 );
