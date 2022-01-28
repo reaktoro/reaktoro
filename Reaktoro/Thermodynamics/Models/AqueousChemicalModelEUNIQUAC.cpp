@@ -1460,11 +1460,67 @@ auto EUNIQUACParams::addNewSpeciesParameters(
     const std::map<std::string, double>& u_T_values) -> void
 {
     auto& species_id_map = pimpl->bips_species_id_map;
+    auto& qi_map = pimpl->qi_values;
+    auto& ri_map = pimpl->ri_values;
+
+    // Assert that the new species is not defined in the species map, qi and ri maps
     Assert(species_id_map.find(species_name) == species_id_map.end(),
         "The species E-UNIQUAC parameters are already defined.",
         "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
 
-    auto num_species = species_id_map.size();
+    Assert(qi_map.find(species_name) == qi_map.end(),
+        "The species E-UNIQUAC parameters are already defined.",
+        "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
+
+    Assert(ri_map.find(species_name) == ri_map.end(),
+        "The species E-UNIQUAC parameters are already defined.",
+        "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
+
+    auto num_species = (int) species_id_map.size();
+    auto id_new_species = num_species;
+    species_id_map[species_name] = id_new_species;
+    qi_map[species_name] = qi_value;
+    ri_map[species_name] = ri_value;
+
+    // Now we expand the BIPs matrices by one row and one column, both uninitialized at the end of each
+    // dimension.
+    auto& uij_0_matrix = pimpl->constant_coeff_bips;
+    auto& uij_T_matrix = pimpl->linear_coeff_bips;
+    uij_0_matrix.conservativeResize(num_species + 1, num_species + 1);
+    uij_T_matrix.conservativeResize(num_species + 1, num_species + 1);
+
+    // Adding new energy BIPs values, with j the index of existing species already stored
+    double default_u_0_value = 2500.0;
+    double default_u_T_value = 0.0;
+    for (const auto& species_j_name_and_id: species_id_map)
+    {
+        const auto& species_j_name = species_j_name_and_id.first;
+        auto species_j_id = species_j_name_and_id.second;
+
+        // Add new uij_0 value, if provided. Otherwise, set it as the default value.
+        bool has_uij_0_value = u_0_values.find(species_j_name) != u_0_values.end();
+        if (has_uij_0_value) {
+            auto new_uij_0 = u_0_values.at(species_j_name);
+            uij_0_matrix(id_new_species, species_j_id) = new_uij_0;
+            uij_0_matrix(species_j_id, id_new_species) = new_uij_0;
+        }
+        else {
+            uij_0_matrix(id_new_species, species_j_id) = default_u_0_value;
+            uij_0_matrix(species_j_id, id_new_species) = default_u_0_value;
+        }
+
+        // Add new uij_T value, if provided. Otherwise, set it as the default value.
+        bool has_uij_T_value = u_T_values.find(species_j_name) != u_T_values.end();
+        if (has_uij_T_value) {
+            auto new_uij_T = u_T_values.at(species_j_name);
+            uij_T_matrix(id_new_species, species_j_id) = new_uij_T;
+            uij_T_matrix(species_j_id, id_new_species) = new_uij_T;
+        }
+        else {
+            uij_T_matrix(id_new_species, species_j_id) = default_u_T_value;
+            uij_T_matrix(species_j_id, id_new_species) = default_u_T_value;
+        }
+    }
 }
 
 auto EUNIQUACParams::useDebyeHuckelGenericParameterA() const -> bool
