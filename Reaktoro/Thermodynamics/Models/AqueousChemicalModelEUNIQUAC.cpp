@@ -1406,6 +1406,30 @@ auto EUNIQUACParams::set_uij_bips(
     pimpl->bips_species_id_map = species_id_map;
     pimpl->constant_coeff_bips = uij_0_values;
     pimpl->linear_coeff_bips = uij_T_values;
+
+    // Guarantee that only the provided species in uij BIPs are used in qi and ri parameters
+    std::map<std::string, double> new_qi_map, new_ri_map;
+    const auto& old_qi_map = pimpl->qi_values;
+    const auto& old_ri_map = pimpl->ri_values;
+    for (const auto& species_and_id : species_id_map)
+    {
+        const auto& species_name = species_and_id.first;
+        Assert(old_qi_map.find(species_name) != old_qi_map.end(),
+            "The species set for u_ij BIPs has unknown E-UNIQUAC q_i parameters.",
+            "One of the species while setting u_ij BIPs is lacking the q_i value.");
+
+        Assert(old_ri_map.find(species_name) != old_ri_map.end(),
+            "The species set for u_ij BIPs has unknown E-UNIQUAC r_i parameters.",
+            "One of the species while setting u_ij BIPs is lacking the r_i value.");
+
+        auto old_qi_value = old_qi_map.at(species_name);
+        new_qi_map[species_name] = old_qi_value;
+        auto old_ri_value = old_ri_map.at(species_name);
+        new_ri_map[species_name] = old_ri_value;
+    }
+
+    pimpl->qi_values = new_qi_map;
+    pimpl->ri_values = new_ri_map;
 }
 
 auto EUNIQUACParams::uij_0() const -> MatrixXd
@@ -1481,15 +1505,18 @@ auto EUNIQUACParams::addNewSpeciesParameters(
     // Assert that the new species is not defined in the species map, qi and ri maps
     Assert(species_id_map.find(species_name) == species_id_map.end(),
         "The species E-UNIQUAC parameters are already defined.",
-        "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
+        "The function addNewSpeciesParameters() is exclusive to add species which do not have any E-UNIQUAC "
+        "parameters defined.");
 
     Assert(qi_map.find(species_name) == qi_map.end(),
         "The species E-UNIQUAC parameters are already defined.",
-        "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
+        "The function addNewSpeciesParameters() is exclusive to add species which do not have any E-UNIQUAC "
+        "parameters defined.");
 
     Assert(ri_map.find(species_name) == ri_map.end(),
         "The species E-UNIQUAC parameters are already defined.",
-        "Please provide E-UNIQUAC parameters for a species which is not already defined internally.");
+        "The function addNewSpeciesParameters() is exclusive to add species which do not have any E-UNIQUAC "
+        "parameters defined.");
 
     auto num_species = (int) species_id_map.size();
     auto id_new_species = num_species;

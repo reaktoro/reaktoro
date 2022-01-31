@@ -305,7 +305,7 @@ def test_add_new_species_params():
     euniquac_params = rkt.EUNIQUACParams()
     euniquac_params.set_uij_bips(uij_0_custom, uij_T_custom, bips_species_id_map)
 
-    # New "dummy" addition. Be careful to add a species that can be handled internally by Reaktoro
+    # New "dummy" addition. Be careful to add a species that can be handled internally by Reaktoro.
     new_species_name = "K+"
     q_value = 2.0
     r_value = 1.0
