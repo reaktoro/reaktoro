@@ -337,8 +337,23 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ========== Calculate activities from activities coefficients =================
         // ==============================================================================
 
-        // Set the activities of the neutral and charged solutes (molality scale)
-        ln_a = ln_g + log(m);
+        for (Index i = 0; i < num_charged_species; ++i)
+        {
+            const Index ispecies = icharged_species[i];
+            // Convert activity coefficients to molality scale
+            ln_g[ispecies] = ln_g[ispecies] + ln_xw;
+            // Activities in molality scale
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+        }
+
+        for (Index i = 0; i < num_neutral_species; ++i)
+        {
+            const Index ispecies = ineutral_species[i];
+            // Convert activity coefficients to molality scale
+            ln_g[ispecies] = ln_g[ispecies] + ln_xw;
+            // Activities in molality scale
+            ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
+        }
 
         // Finalize the computation of the activity of water (in mole fraction scale)
         ln_a[iwater] = ln_g[iwater] + ln_xw;
