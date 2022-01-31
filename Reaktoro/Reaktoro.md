@@ -127,6 +127,7 @@ want to read about.
 
 ## Worth checking classes and methods
 
+- @ref Reaktoro::Material
 - @ref Reaktoro::ElementList
 - @ref Reaktoro::PhaseList
 - @ref Reaktoro::SpeciesList
