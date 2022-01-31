@@ -316,7 +316,7 @@ TEST_CASE("Testing equilibrium capabilities in Material class", "[Material]")
 
     SupcrtDatabase db("supcrtbl");
 
-    AqueousPhase solution(speciate("H O Na Cl Ca C Mg Si"), exclude("organics"));
+    AqueousPhase solution(speciate("H O Na Cl Ca C Mg Si"), exclude("organic"));
     solution.setActivityModel(chain(ActivityModelHKF(), ActivityModelDrummond("CO2")));
 
     GaseousPhase gases("H2O(g) CO2(g) O2(g) CH4(g)");
@@ -360,21 +360,25 @@ TEST_CASE("Testing equilibrium capabilities in Material class", "[Material]")
     //-------------------------------------------------------------------------
     mix = brine.with(1.0, "kg") + rock.with(1.0, "kg");
 
+    const ArrayXr bmix = mix.componentAmounts(); // the amounts of elements/charge in mix material
+
     ChemicalState state(system);
 
     state = mix.equilibrate();
 
     CHECK( mix.result().optima.succeeded );
-    CHECK( mix.result().optima.iterations == 43 );
+    CHECK( mix.result().optima.iterations == 48 );
 
     CHECK( state.temperature() == Approx(25.0 + 273.15) );
     CHECK( state.pressure() == Approx(1.0 * 1e5) );
+    CHECK( state.componentAmounts().isApprox(bmix) ); // ensure computed state has element/charge amounts equal to those in mix material
 
     state = mix.equilibrate(60.0, "celsius", 10.0, "bar");
 
     CHECK( mix.result().optima.succeeded );
-    CHECK( mix.result().optima.iterations == 42 );
+    CHECK( mix.result().optima.iterations == 47 );
 
     CHECK( state.temperature() == Approx(60.0 + 273.15) );
     CHECK( state.pressure() == Approx(10.0 * 1e5) );
+    CHECK( state.componentAmounts().isApprox(bmix) ); // ensure computed state has element/charge amounts equal to those in mix material
 }
