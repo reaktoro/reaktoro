@@ -391,8 +391,8 @@ auto activityModelDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuck
             // Update the sigma parameter of the current ion
             const real sigma = (aions[i] != 0.0) ? 3.0*pow(Lambda - 1, -3) * ((Lambda - 1)*(Lambda - 3) + 2*log(Lambda)) : real(2.0);
 
-            // Calculate the ln activity coefficient of the current charged species
-            ln_g[ispecies] = ln10 * (-A*z*z*sqrtI/Lambda + bions[i]*I);
+            // Calculate the ln activity coefficient of the current charged species (in molal scale)
+            ln_g[ispecies] = ln10 * (-A*z*z*sqrtI/Lambda + bions[i]*I) + ln_xw;
 
             // Calculate the ln activity of the current charged species
             ln_a[ispecies] = ln_g[ispecies] + ln_m[ispecies];
