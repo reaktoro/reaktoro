@@ -212,6 +212,9 @@ auto computeLocalMinimumPressureAlongIsotherm(double a, double b, double e, doub
 
         const auto dV = -f/J;
 
+        if(V == b && dV < 0.0)
+            return NaN; // if V = b and dV is negative, consider supercritical (no local minimum for V > b)
+
         V += dV;
 
         const auto P = RT/(V - b) - a/((V + e*b)*(V + s*b));
