@@ -49,6 +49,12 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
 
 auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options) -> EquilibriumResult
 {
+    const ArrayXd b0 = state.componentAmounts();
+    return equilibrate(state, restrictions, options, b0);
+}
+
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options, ArrayXdConstRef b0) -> EquilibriumResult
+{
     EquilibriumOptions opts(options);
 
     EquilibriumSolver solver(state.system());
@@ -56,7 +62,7 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
     opts.use_ideal_activity_models = true; // force ideal activity models for the first computation
     solver.setOptions(opts);
 
-    auto result = solver.solve(state);
+    auto result = solver.solve(state, restrictions, b0);
 
     // Skip the second computation if the first one using ideal activity models has already failed.
     if(result.optima.succeeded == false)
@@ -65,7 +71,7 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
     opts.use_ideal_activity_models = options.use_ideal_activity_models; // for the second computation, use what user wants (maybe ideal model again, in which case the calculation below will converge immediately).
     solver.setOptions(opts);
 
-    result += solver.solve(state, restrictions);
+    result += solver.solve(state, restrictions, b0);
 
     return result;
 }
