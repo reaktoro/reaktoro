@@ -17,6 +17,9 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Common/Matrix.hpp>
+
 namespace Reaktoro {
 
 // Forward declarations
@@ -34,6 +37,7 @@ auto equilibrate(ChemicalState& state) -> EquilibriumResult;
 auto equilibrate(ChemicalState& state, const EquilibriumOptions& options) -> EquilibriumResult;
 auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options) -> EquilibriumResult;
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options, ArrayXdConstRef b0) -> EquilibriumResult;
 ///@}
 
 } // namespace Reaktoro

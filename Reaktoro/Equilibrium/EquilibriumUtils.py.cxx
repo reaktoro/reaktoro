@@ -21,6 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
@@ -30,4 +31,7 @@ void exportEquilibriumUtils(py::module& m)
 {
     m.def("equilibrate", py::overload_cast<ChemicalState&>(equilibrate));
     m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumOptions&>(equilibrate));
+    m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&>(equilibrate));
+    m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&, const EquilibriumOptions&>(equilibrate));
+    m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&, const EquilibriumOptions&, ArrayXdConstRef>(equilibrate));
 }
