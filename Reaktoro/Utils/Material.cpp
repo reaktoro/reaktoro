@@ -31,6 +31,7 @@ using namespace tabulate;
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 
 namespace Reaktoro {
@@ -304,8 +305,15 @@ auto Material::equilibrate(double T, Chars unitT, double P, Chars unitP, const E
     T = units::convert(T, unitT, "K");
     P = units::convert(P, unitP, "Pa");
 
+    // Construct a suitable initial chemical state for the equilibrium calculation
     ChemicalState state = initialState(T, P);
-    m_result = Reaktoro::equilibrate(state, restrictions, options);
+
+    // Get the amounts of elements and charge in the material
+    const auto b0 = componentAmounts();
+
+    // Finally, perform the equilibrium calculation enforcing element/charge amounts in b0
+    m_result = Reaktoro::equilibrate(state, restrictions, options, b0);
+
     return state;
 }
 
