@@ -78,18 +78,18 @@ TEST_CASE("Testing ActivityModelDuanSun", "[ActivityModelDuanSun]")
         ActivityModel fn = ActivityModelDuanSun("CO2")(species);
         fn(props, {T, P, x});
 
-        CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
-        CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
-        CHECK( exp(props.ln_g[2])  == Approx(0.5772424599) ); // OH-
-        CHECK( exp(props.ln_g[3])  == Approx(0.7363279956) ); // Na+
-        CHECK( exp(props.ln_g[4])  == Approx(0.6080001197) ); // Cl-
-        CHECK( exp(props.ln_g[5])  == Approx(0.2501338902) ); // Ca++
-        CHECK( exp(props.ln_g[6])  == Approx(0.6538562298) ); // HCO3-
-        CHECK( exp(props.ln_g[7])  == Approx(0.1827801645) ); // CO3--
-        CHECK( exp(props.ln_g[8])  == Approx(1.1585365027) ); // CO2
-        CHECK( exp(props.ln_g[9])  == Approx(1.2735057287) ); // NaCl
-        CHECK( exp(props.ln_g[10]) == Approx(1.2735057287) ); // HCl
-        CHECK( exp(props.ln_g[11]) == Approx(1.2735057287) ); // NaOH
+        CHECK( exp(props.ln_g[0])  == Approx(0.927569) ); // H2O
+        CHECK( exp(props.ln_g[1])  == Approx(0.725919) ); // H+
+        CHECK( exp(props.ln_g[2])  == Approx(0.564033) ); // OH-
+        CHECK( exp(props.ln_g[3])  == Approx(0.719478) ); // Na+
+        CHECK( exp(props.ln_g[4])  == Approx(0.594087) ); // Cl-
+        CHECK( exp(props.ln_g[5])  == Approx(0.244410) ); // Ca++
+        CHECK( exp(props.ln_g[6])  == Approx(0.638893) ); // HCO3-
+        CHECK( exp(props.ln_g[7])  == Approx(0.178597) ); // CO3--
+        CHECK( exp(props.ln_g[8])  == Approx(1.158540) ); // CO2
+        CHECK( exp(props.ln_g[9])  == Approx(1.273510) ); // NaCl
+        CHECK( exp(props.ln_g[10]) == Approx(1.273510) ); // HCl
+        CHECK( exp(props.ln_g[11]) == Approx(1.273510) ); // NaOH
 
         checkActivities(x, props);
     }
@@ -99,18 +99,18 @@ TEST_CASE("Testing ActivityModelDuanSun", "[ActivityModelDuanSun]")
         ActivityModel fn = ActivityModelDuanSun("NaCl")(species);
         fn(props, {T, P, x});
 
-        CHECK( exp(props.ln_g[0])  == Approx(0.9269890137) ); // H2O
-        CHECK( exp(props.ln_g[1])  == Approx(0.7429198411) ); // H+
-        CHECK( exp(props.ln_g[2])  == Approx(0.5772424599) ); // OH-
-        CHECK( exp(props.ln_g[3])  == Approx(0.7363279956) ); // Na+
-        CHECK( exp(props.ln_g[4])  == Approx(0.6080001197) ); // Cl-
-        CHECK( exp(props.ln_g[5])  == Approx(0.2501338902) ); // Ca++
-        CHECK( exp(props.ln_g[6])  == Approx(0.6538562298) ); // HCO3-
-        CHECK( exp(props.ln_g[7])  == Approx(0.1827801645) ); // CO3--
-        CHECK( exp(props.ln_g[8])  == Approx(1.2735057287) ); // CO2
-        CHECK( exp(props.ln_g[9])  == Approx(1.1585365027) ); // NaCl
-        CHECK( exp(props.ln_g[10]) == Approx(1.2735057287) ); // HCl
-        CHECK( exp(props.ln_g[11]) == Approx(1.2735057287) ); // NaOH
+        CHECK( exp(props.ln_g[0])  == Approx(0.927569) ); // H2O
+        CHECK( exp(props.ln_g[1])  == Approx(0.725919) ); // H+
+        CHECK( exp(props.ln_g[2])  == Approx(0.564033) ); // OH-
+        CHECK( exp(props.ln_g[3])  == Approx(0.719478) ); // Na+
+        CHECK( exp(props.ln_g[4])  == Approx(0.594087) ); // Cl-
+        CHECK( exp(props.ln_g[5])  == Approx(0.244410) ); // Ca++
+        CHECK( exp(props.ln_g[6])  == Approx(0.638893) ); // HCO3-
+        CHECK( exp(props.ln_g[7])  == Approx(0.178597) ); // CO3--
+        CHECK( exp(props.ln_g[8])  == Approx(1.273510) ); // CO2
+        CHECK( exp(props.ln_g[9])  == Approx(1.158540) ); // NaCl
+        CHECK( exp(props.ln_g[10]) == Approx(1.273510) ); // HCl
+        CHECK( exp(props.ln_g[11]) == Approx(1.273510) ); // NaOH
 
         checkActivities(x, props);
     }
