@@ -40,7 +40,7 @@ void exportMaterial(py::module& m)
         .def("scaleAmount", &Material::scaleAmount)
         .def("scaleMass", &Material::scaleMass)
         .def("scale", &Material::scale)
-        .def("with", &Material::with)
+        // .def("with", &Material::with)  // with is a keyword in Python
         .def("system", &Material::system)
         .def("substances", &Material::substances, return_internal_ref)
         .def("species", &Material::species, return_internal_ref)
@@ -60,6 +60,8 @@ void exportMaterial(py::module& m)
         .def("equilibrate", py::overload_cast<double, Chars, double, Chars, EquilibriumRestrictions const&, EquilibriumOptions const&>(&Material::equilibrate))
         .def("result", &Material::result, return_internal_ref)
         .def("initialState", &Material::initialState)
+        .def("__call__", [](const Material& self, double value, Chars unit) { return self(value, unit); })
         .def("__repr__", [](const Material& self) { std::stringstream ss; ss << self; return ss.str(); })
+        .def(py::self + py::self)
         ;
 }

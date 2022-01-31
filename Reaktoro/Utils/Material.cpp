@@ -179,7 +179,7 @@ auto Material::scale(double value, Chars unit) -> void
         "I encountered your given unit `", unit, "` that is neither convertible to mol nor kg.")
 }
 
-auto Material::with(double value, Chars unit) -> Material
+auto Material::with(double value, Chars unit) const -> Material
 {
     Material copy(*this);
     copy.scale(value, unit);
@@ -372,6 +372,11 @@ auto Material::initialState(double T, double P) const -> ChemicalState
         state.add(ispecies, species_amount, "mol"); // use add to accumulate in case there were substances above with same formula as this species
 
     return state;
+}
+
+auto Material::operator()(double value, Chars unit) const -> Material
+{
+    return with(value, unit);
 }
 
 auto operator+(const Material& l, const Material& r) -> Material

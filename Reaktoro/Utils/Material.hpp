@@ -131,7 +131,7 @@ public:
     /// Return a copy of this material with scaled amount or mass.
     /// @param value The desired amount or mass of the copied material
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    auto with(double value, Chars unit) -> Material;
+    auto with(double value, Chars unit) const -> Material;
 
     /// Return the underlying chemical system in this material.
     auto system() const -> const ChemicalSystem&;
@@ -194,6 +194,11 @@ public:
     /// @param T The temperature for the initial chemical state (in K)
     /// @param P The pressure for the initial chemical state (in Pa)
     auto initialState(double T, double P) const -> ChemicalState;
+
+    /// Return a copy of this material with scaled amount or mass (equivalent to @ref with).
+    /// @param value The desired amount or mass of the copied material
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    auto operator()(double value, Chars unit) const -> Material;
 
 private:
     /// The chemical system associated to this material.
