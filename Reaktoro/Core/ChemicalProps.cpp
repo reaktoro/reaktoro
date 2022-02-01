@@ -795,7 +795,7 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", str(props.temperature()), "K" });
-    table.add_row({ "Pressure", str(props.pressure()), "Pa" });
+    table.add_row({ "Pressure", str(props.pressure()*1e-5), "bar" });
     table.add_row({ "Volume", str(props.volume()), "m3" });
     table.add_row({ "Gibbs Energy", str(props.gibbsEnergy()), "J" });
     table.add_row({ "Enthalpy", str(props.enthalpy()), "J" });

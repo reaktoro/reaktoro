@@ -31,7 +31,7 @@ auto operator<<(std::ostream& out, const ReactionProps& props) -> std::ostream&
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", str(props.T), "K" });
-    table.add_row({ "Pressure", str(props.P), "Pa" });
+    table.add_row({ "Pressure", str(props.P*1e-5), "bar" });
     table.add_row({ "Equilibrium Constant (log base 10)", str(props.lgK), "-" });
     table.add_row({ "Delta Standard Gibbs Energy", str(props.dG0), "J/mol" });
     table.add_row({ "Delta Standard Enthalpy", str(props.dH0), "J/mol" });

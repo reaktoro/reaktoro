@@ -792,7 +792,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", str(state.temperature()), "K" });
-    table.add_row({ "Pressure", str(state.pressure()), "Pa" });
+    table.add_row({ "Pressure", str(state.pressure()*1e-5), "bar" });
     table.add_row({ "Charge:", str(state.charge()), "mol" });
 
     table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
