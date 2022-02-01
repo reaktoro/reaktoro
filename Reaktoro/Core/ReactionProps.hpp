@@ -46,10 +46,10 @@ struct ReactionProps
     /// The change in standard molar volume @f$\Delta V^{\circ}@f$ in the reaction (in m3/mol).
     real dV0;
 
-    /// The change in temperature derivative of the standard molar volume @f$\Delta \partial V^{\circ}/\partial T@f$ in the reaction (in m³/(mol·K)).
+    /// The change in temperature derivative of the standard molar volume @f$\partial \Delta V^{\circ}/\partial T@f$ in the reaction (in m³/(mol·K)).
     real dVT0;
 
-    /// The change in pressure derivative of the standard molar volume @f$\Delta \partial V^{\circ}/\partial P@f$ in the reaction (in m³/(mol·Pa)).
+    /// The change in pressure derivative of the standard molar volume @f$\partial \Delta V^{\circ}/\partial P@f$ in the reaction (in m³/(mol·Pa)).
     real dVP0;
 
     /// The change in standard molar isobaric heat capacity @f$\Delta C_{P}^{\circ}@f$ in the reaction (in J/(mol·K)).
