@@ -152,6 +152,17 @@ auto stringfy(StringOrIndex value) -> String
     return std::visit([&](auto&& arg) { return stringfyAux(arg); }, value);
 }
 
+auto assembleFormulaVector(const Species& species, const ElementList& elements) -> VectorXd
+{
+    const auto num_elements = elements.size();
+    const auto num_components = num_elements + 1;
+    VectorXd A(num_components);
+    for(auto j = 0; j < num_elements; ++j)
+        A[j] = species.elements().coefficient(elements[j].symbol());
+    A[num_elements] = species.charge();
+    return A;
+}
+
 auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd
 {
     const auto num_elements = elements.size();
