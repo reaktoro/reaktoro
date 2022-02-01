@@ -69,13 +69,13 @@ public:
     auto elementMolality(const StringOrIndex& symbol) const -> real;
 
     /// Return the molality concentrations of the elements in  (in molal).
-    auto elementMolalities() const -> VectorXr;
+    auto elementMolalities() const -> ArrayXr;
 
     /// Return the molality of an aqueous solute species (in molal).
     auto speciesMolality(const StringOrIndex& name) const -> real;
 
     /// Return the molality concentrations of the species (in molal).
-    auto speciesMolalities() const -> VectorXr;
+    auto speciesMolalities() const -> ArrayXr;
 
     /// Return the effective ionic strength of the aqueous phase (in molal). Equivalent to @ref ionicStrengthEffective.
     auto ionicStrength() const -> real;
@@ -136,9 +136,17 @@ public:
     /// of species obtained with @ref saturationSpecies.
     auto saturationIndexLg(const StringOrIndex& species) const -> real;
 
+    /// Return the saturation indices of all non-aqueous species.
+    /// These non-aqueous species can be obtained with @ref saturationSpecies.
+    auto saturationIndices() const -> ArrayXr;
+
     /// Return the saturation indices of all non-aqueous species (in natural log).
     /// These non-aqueous species can be obtained with @ref saturationSpecies.
-    auto saturationIndicesLn() const -> VectorXr;
+    auto saturationIndicesLn() const -> ArrayXr;
+
+    /// Return the saturation indices of all non-aqueous species (in log base 10).
+    /// These non-aqueous species can be obtained with @ref saturationSpecies.
+    auto saturationIndicesLg() const -> ArrayXr;
 
     /// Return the underlying Phase object for the aqueous phase.
     auto phase() const -> const Phase&;
