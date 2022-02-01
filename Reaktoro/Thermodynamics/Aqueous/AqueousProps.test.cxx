@@ -49,27 +49,42 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
 
     SECTION("Testing correct initialization of the `AqueousProps` instance")
     {
-        CHECK( phase.species().size()   == 19           );
-        CHECK( phase.elements().size()  == num_elements );
-        CHECK( phase.species(0).name()  == "H2O(aq)"    );
-        CHECK( phase.species(1).name()  == "H+(aq)"     );
-        CHECK( phase.species(2).name()  == "OH-(aq)"    );
-        CHECK( phase.species(3).name()  == "H2(aq)"     );
-        CHECK( phase.species(4).name()  == "O2(aq)"     );
-        CHECK( phase.species(5).name()  == "Na+(aq)"    );
-        CHECK( phase.species(6).name()  == "Cl-(aq)"    );
-        CHECK( phase.species(7).name()  == "NaCl(aq)"   );
-        CHECK( phase.species(8).name()  == "HCl(aq)"    );
-        CHECK( phase.species(9).name()  == "NaOH(aq)"   );
-        CHECK( phase.species(10).name() == "Ca++(aq)"   );
-        CHECK( phase.species(11).name() == "Mg++(aq)"   );
-        CHECK( phase.species(12).name() == "CO2(aq)"    );
-        CHECK( phase.species(13).name() == "HCO3-(aq)"  );
-        CHECK( phase.species(14).name() == "CO3--(aq)"  );
-        CHECK( phase.species(15).name() == "CaCl2(aq)"  );
-        CHECK( phase.species(16).name() == "MgCl2(aq)"  );
-        CHECK( phase.species(17).name() == "SiO2(aq)"   );
-        CHECK( phase.species(18).name() == "e-(aq)"     );
+        CHECK( aqprops.phase().species().size()   == 19           );
+        CHECK( aqprops.phase().elements().size()  == num_elements );
+        CHECK( aqprops.phase().species(0).name()  == "H2O(aq)"    );
+        CHECK( aqprops.phase().species(1).name()  == "H+(aq)"     );
+        CHECK( aqprops.phase().species(2).name()  == "OH-(aq)"    );
+        CHECK( aqprops.phase().species(3).name()  == "H2(aq)"     );
+        CHECK( aqprops.phase().species(4).name()  == "O2(aq)"     );
+        CHECK( aqprops.phase().species(5).name()  == "Na+(aq)"    );
+        CHECK( aqprops.phase().species(6).name()  == "Cl-(aq)"    );
+        CHECK( aqprops.phase().species(7).name()  == "NaCl(aq)"   );
+        CHECK( aqprops.phase().species(8).name()  == "HCl(aq)"    );
+        CHECK( aqprops.phase().species(9).name()  == "NaOH(aq)"   );
+        CHECK( aqprops.phase().species(10).name() == "Ca++(aq)"   );
+        CHECK( aqprops.phase().species(11).name() == "Mg++(aq)"   );
+        CHECK( aqprops.phase().species(12).name() == "CO2(aq)"    );
+        CHECK( aqprops.phase().species(13).name() == "HCO3-(aq)"  );
+        CHECK( aqprops.phase().species(14).name() == "CO3--(aq)"  );
+        CHECK( aqprops.phase().species(15).name() == "CaCl2(aq)"  );
+        CHECK( aqprops.phase().species(16).name() == "MgCl2(aq)"  );
+        CHECK( aqprops.phase().species(17).name() == "SiO2(aq)"   );
+        CHECK( aqprops.phase().species(18).name() == "e-(aq)"     );
+
+        const auto saturation_species = aqprops.saturationSpecies();
+
+        CHECK( saturation_species.size() == 11 );
+        CHECK( saturation_species[0].name()  == "CO2(g)"        );
+        CHECK( saturation_species[1].name()  == "O2(g)"         );
+        CHECK( saturation_species[2].name()  == "H2(g)"         );
+        CHECK( saturation_species[3].name()  == "H2O(g)"        );
+        CHECK( saturation_species[4].name()  == "CH4(g)"        );
+        CHECK( saturation_species[5].name()  == "CO(g)"         );
+        CHECK( saturation_species[6].name()  == "NaCl(s)"       );
+        CHECK( saturation_species[7].name()  == "CaCO3(s)"      );
+        CHECK( saturation_species[8].name()  == "MgCO3(s)"      );
+        CHECK( saturation_species[9].name()  == "CaMg(CO3)2(s)" );
+        CHECK( saturation_species[10].name() == "SiO2(s)"       );
     }
 
     const real T = 25.0; // celsius
@@ -120,6 +135,28 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.elementMolality("Si") == Approx(55.5085) );
         CHECK( aqprops.elementMolality("Cl") == Approx(388.559) );
         CHECK( aqprops.elementMolality("Ca") == Approx(111.017) );
+
+        const auto lnOmega = aqprops.saturationIndicesLn();
+
+        CHECK( lnOmega[0]  == Approx(-51.83840) );
+        CHECK( lnOmega[1]  == Approx(-127.9270) );
+        CHECK( lnOmega[2]  == Approx(-130.9040) );
+        CHECK( lnOmega[3]  == Approx( 8790.670) );
+        CHECK( lnOmega[4]  == Approx(-189.5370) );
+        CHECK( lnOmega[5]  == Approx( 0.842462) );
+        CHECK( lnOmega[6]  == Approx(-136.0330) );
+        CHECK( lnOmega[7]  == Approx(-136.0330) );
+        CHECK( lnOmega[8]  == Approx(-136.0330) );
+        CHECK( lnOmega[9]  == Approx(-265.6700) );
+        CHECK( lnOmega[10] == Approx(-136.0330) );
+
+        CHECK( aqprops.saturationIndexLn(5) == Approx(0.842462) );
+        CHECK( aqprops.saturationIndexLg(5) == Approx(0.842462/ln10) );
+        CHECK( aqprops.saturationIndex(5)   == Approx(exp(0.842462)) );
+
+        CHECK( aqprops.saturationIndexLn("CO(g)") == Approx(0.842462) );
+        CHECK( aqprops.saturationIndexLg("CO(g)") == Approx(0.842462/ln10) );
+        CHECK( aqprops.saturationIndex("CO(g)")   == Approx(exp(0.842462)) );
     }
 
     SECTION("Testing when state is a brine")
