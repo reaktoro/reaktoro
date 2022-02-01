@@ -274,7 +274,7 @@ struct AqueousProps::Impl
         const auto R = echelonizer.R();
         const auto Rb = R.topRows(ib.size());
         const VectorXr ub = u(ib);
-        lambda = -Rb.transpose() * ub;
+        lambda = Rb.transpose() * ub;
     }
 
     auto update(const ChemicalProps& sysprops) -> void
