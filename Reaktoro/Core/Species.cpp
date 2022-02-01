@@ -46,6 +46,13 @@ auto defaultStandardThermoModel() -> StandardThermoModel
     };
 }
 
+// Return the species name followed by its chemical formula (if name does not contain formula).
+auto speciesNameFormula(String const& name, String const& formula) -> String
+{
+    const auto name_contains_formula = name.find(formula) != String::npos;
+    return name_contains_formula ? name : name + " :: " + formula;
+}
+
 } // namespace detail
 
 struct Species::Impl
@@ -55,6 +62,9 @@ struct Species::Impl
 
     /// The chemical formula of the species such as `H2O`, `O2`, `H+`, `CO3--`, `CaMg(CO3)2`.
     String formula;
+
+    /// The name of the species and its chemical formula if name does not contain it (e.g., `Calcite :: CaCO3`).
+    String repr;
 
     /// The name of the underlying substance such as `H2O`, `WATER`, `CARBON-MONOXIDE`, `CO2`.
     String substance;
@@ -88,6 +98,7 @@ struct Species::Impl
     Impl(const ChemicalFormula& formula)
     : name(formula),
       formula(detail::removeSuffix(formula)),
+      repr(formula),
       substance(detail::removeSuffix(formula)),
       elements(formula.elements()),
       charge(formula.charge()),
@@ -115,6 +126,7 @@ struct Species::Impl
             "cannot be both initialized.")
         name = attribs.name;
         formula = detail::removeSuffix(attribs.formula);
+        repr = detail::speciesNameFormula(name, formula);
         substance = attribs.substance.empty() ? formula : attribs.substance;
         elements = attribs.elements;
         charge = attribs.charge;
@@ -157,6 +169,7 @@ auto Species::withName(String name) const -> Species
 {
     Species copy = clone();
     copy.pimpl->name = std::move(name);
+    copy.pimpl->repr = detail::speciesNameFormula(copy.pimpl->name, copy.pimpl->formula);
     return copy;
 }
 
@@ -164,6 +177,7 @@ auto Species::withFormula(String formula) const -> Species
 {
     Species copy = clone();
     copy.pimpl->formula = std::move(formula);
+    copy.pimpl->repr = detail::speciesNameFormula(copy.pimpl->name, copy.pimpl->formula);
     return copy;
 }
 
@@ -239,6 +253,11 @@ auto Species::name() const -> String
 auto Species::formula() const -> ChemicalFormula
 {
     return ChemicalFormula(pimpl->formula, pimpl->elements, pimpl->charge);
+}
+
+auto Species::repr() const -> String
+{
+    return pimpl->repr;
 }
 
 auto Species::substance() const -> String
