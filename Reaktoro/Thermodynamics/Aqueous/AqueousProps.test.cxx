@@ -24,6 +24,7 @@
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
+#include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
 
 using namespace Reaktoro;
 
@@ -135,6 +136,16 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.elementMolality("Si") == Approx(55.5085) );
         CHECK( aqprops.elementMolality("Cl") == Approx(388.559) );
         CHECK( aqprops.elementMolality("Ca") == Approx(111.017) );
+
+        // Set activity model of gases to that of Peng-Robinson. Expected
+        // values below for lnOmega correspond to this option, and not to the
+        // default option of ideal gas activity model!
+        aqprops.setActivityModel("CO2(g)", ActivityModelPengRobinson());
+        aqprops.setActivityModel("O2(g)" , ActivityModelPengRobinson());
+        aqprops.setActivityModel("H2(g)" , ActivityModelPengRobinson());
+        aqprops.setActivityModel("H2O(g)", ActivityModelPengRobinson());
+        aqprops.setActivityModel("CH4(g)", ActivityModelPengRobinson());
+        aqprops.setActivityModel("CO(g)" , ActivityModelPengRobinson());
 
         const auto lnOmega = aqprops.saturationIndicesLn();
 

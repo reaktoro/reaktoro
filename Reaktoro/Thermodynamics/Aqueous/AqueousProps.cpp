@@ -32,7 +32,6 @@ using namespace tabulate;
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -42,7 +41,6 @@ using namespace tabulate;
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -62,12 +60,12 @@ auto indexAqueousPhase(const ChemicalSystem& system) -> Index
     return idx;
 }
 
-// Return a chemical potential function for a fluid species using a given activity model.
-auto chemicalPotentialModelFluidSpecies(Species const& species, ActivityModelGenerator const& generator) -> Fn<real(real, real)>
+// Return a chemical potential function for a species using a given activity model.
+auto chemicalPotentialModel(Species const& species, ActivityModelGenerator const& generator) -> Fn<real(real, real)>
 {
     const auto activitymodel = generator({species}); // TODO: Use .withMemoization() here to avoid full recomputations when same T and P are given.
     const auto R = universalGasConstant;
-    const auto x = ArrayXr{{1.0}}; // mole fraction of species in a pure phase = 1.0
+    const auto x = ArrayXr{{1.0}}; // the mole fraction of the single species in a pure phase
     auto actprops = ActivityProps::create(1);
 
     return [=](real T, real P) mutable -> real
@@ -79,14 +77,12 @@ auto chemicalPotentialModelFluidSpecies(Species const& species, ActivityModelGen
     };
 }
 
-// Return a default chemical potential function for a fluid species using
-// Peng-Robinson activity model. This chemical potential model assumes the
-// species constitute a pure gas phase (containing just a single gaseous
-// species). For gases, even pure phases cannot be considered as ideal phases.
-// Thus, Peng-Robinson model is assumed instead.
+// Return a default chemical potential function for a fluid species using ideal
+// activity model. This chemical potential model assumes the species constitute
+// a pure ideal gas phase (containing just a single gaseous species).
 auto defaultChemicalPotentialModelFluidSpecies(Species const& species) -> Fn<real(real, real)>
 {
-    return chemicalPotentialModelFluidSpecies(species, ActivityModelPengRobinson());
+    return chemicalPotentialModel(species, ActivityModelIdealGas());
 }
 
 // Return a default chemical potential function for a solid species using ideal
