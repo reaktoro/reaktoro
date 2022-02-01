@@ -28,6 +28,8 @@ class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class Phase;
+class Species;
+class SpeciesList;
 
 /// The chemical properties of an aqueous phase.
 class AqueousProps
@@ -104,6 +106,39 @@ public:
     /// derived from the charge balance condition, and equivalent to the
     /// standard formula of total alkalinity.
     auto alkalinity() const -> real;
+
+    /// Return the non-aqueous species that could be formed from the aqueous solution.
+    /// This method returns, for example, gaseous and mineral species that
+    /// could form when the aqueous solution is saturated with respect to them.
+    auto saturationSpecies() const -> SpeciesList;
+
+    /// Return the saturation index of a given species.
+    /// @param species The name or index of the non-aqueous species
+    /// @note The index of the species should be determined with respect to the
+    /// list of species returned by @ref saturationSpecies.
+    /// @warning An error is thrown if the species does not exist in the list
+    /// of species obtained with @ref saturationSpecies.
+    auto saturationIndex(const StringOrIndex& species) const -> real;
+
+    /// Return the saturation index of a given species (in natural log).
+    /// @param species The name or index of the non-aqueous species
+    /// @note The index of the species should be determined with respect to the
+    /// list of species returned by @ref saturationSpecies.
+    /// @warning An error is thrown if the species does not exist in the list
+    /// of species obtained with @ref saturationSpecies.
+    auto saturationIndexLn(const StringOrIndex& species) const -> real;
+
+    /// Return the saturation index of a given species (in log base 10).
+    /// @param species The name or index of the non-aqueous species
+    /// @note The index of the species should be determined with respect to the
+    /// list of species returned by @ref saturationSpecies.
+    /// @warning An error is thrown if the species does not exist in the list
+    /// of species obtained with @ref saturationSpecies.
+    auto saturationIndexLg(const StringOrIndex& species) const -> real;
+
+    /// Return the saturation indices of all non-aqueous species (in natural log).
+    /// These non-aqueous species can be obtained with @ref saturationSpecies.
+    auto saturationIndicesLn() const -> VectorXr;
 
     /// Return the underlying Phase object for the aqueous phase.
     auto phase() const -> const Phase&;
