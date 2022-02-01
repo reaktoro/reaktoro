@@ -169,16 +169,16 @@ public:
     SpeciesList(InputIterator begin, InputIterator end) : m_species(begin, end) {}
 
     /// Return begin const iterator of this SpeciesList instance (for STL compatibility reasons).
-    auto begin() const { return data().begin(); }
+    auto begin() const { return m_species.begin(); }
 
     /// Return begin iterator of this SpeciesList instance (for STL compatibility reasons).
-    auto begin() { return data().begin(); }
+    auto begin() { return m_species.begin(); }
 
     /// Return end const iterator of this SpeciesList instance (for STL compatibility reasons).
-    auto end() const { return data().end(); }
+    auto end() const { return m_species.end(); }
 
     /// Return end iterator of this SpeciesList instance (for STL compatibility reasons).
-    auto end() { return data().end(); }
+    auto end() { return m_species.end(); }
 
     /// Append a new Species at the back of the container (for STL compatibility reasons).
     auto push_back(const Species& species) -> void { append(species); }

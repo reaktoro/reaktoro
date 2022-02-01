@@ -128,16 +128,16 @@ public:
     PhaseList(InputIterator begin, InputIterator end) : m_phases(begin, end) {}
 
     /// Return begin const iterator of this PhaseList instance (for STL compatibility reasons).
-    auto begin() const { return data().begin(); }
+    auto begin() const { return m_phases.begin(); }
 
     /// Return begin iterator of this PhaseList instance (for STL compatibility reasons).
-    auto begin() { return data().begin(); }
+    auto begin() { return m_phases.begin(); }
 
     /// Return end const iterator of this PhaseList instance (for STL compatibility reasons).
-    auto end() const { return data().end(); }
+    auto end() const { return m_phases.end(); }
 
     /// Return end iterator of this PhaseList instance (for STL compatibility reasons).
-    auto end() { return data().end(); }
+    auto end() { return m_phases.end(); }
 
     /// Append a new Phase at the back of the container (for STL compatibility reasons).
     auto push_back(const Phase& species) -> void { append(species); }
