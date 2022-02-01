@@ -205,6 +205,11 @@ struct AqueousProps::Impl
         // Collect the non-aqueous species from the database that contains the elements in the aqueous phase
         nonaqueous = remove(species_same_elements, RKT_LAMBDA(x, x.aggregateState() == AggregateState::Aqueous));
 
+        // Ensure non-aqueous species are sorted by aggregate state (gases, solids, etc)
+        std::sort(nonaqueous.begin(), nonaqueous.end(),
+            [](auto l, auto r)
+                { return l.aggregateState() < r.aggregateState(); });
+
         // Assemble the formula matrices of the aqueous and non-aqueous species w.r.t. elements in the aqueous phase
         Aaqs = detail::assembleFormulaMatrix(phase.species(), phase.elements());
         Anon = detail::assembleFormulaMatrix(nonaqueous, phase.elements());
