@@ -333,19 +333,19 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Element Amounts:" });
     for(auto i = 0; i < elements.size(); ++i)
-        table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "mole" });
+        table.add_row({ ":: " + elements[i].symbol(), strsci(ne[i]), "mol" });
     table.add_row({ "Species Amounts:" });
     for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].name(), str(ns[i]), "mole" });
+        table.add_row({ ":: " + species[i].repr(), strsci(ns[i]), "mol" });
     table.add_row({ "Equivalents:" });
     for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].name(), str(eq[i]), "eq" });
+        table.add_row({ ":: " + species[i].repr(), strfix(eq[i]), "eq" });
     table.add_row({ "Equivalent Fractions:" });
     for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].name(), str(beta[i]), "" });
+        table.add_row({ ":: " + species[i].repr(), strfix(beta[i]), "" });
     table.add_row({ "Activity Coefficients (log base 10):" });
     for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].name(), str(log10g[i]), "" });
+        table.add_row({ ":: " + species[i].repr(), strfix(log10g[i]), "" });
 
     auto i = 0;
     for(auto& row : table)
