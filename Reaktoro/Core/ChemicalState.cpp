@@ -791,12 +791,12 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ "Temperature", str(state.temperature()), "K" });
-    table.add_row({ "Pressure", str(state.pressure()*1e-5), "bar" });
-    table.add_row({ "Charge:", str(state.charge()), "mol" });
+    table.add_row({ "Temperature", strfix(state.temperature()), "K" });
+    table.add_row({ "Pressure", strfix(state.pressure()*1e-5), "bar" });
+    table.add_row({ "Charge:", strsci(state.charge()), "mol" });
 
-    table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
-    table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
+    table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), strsci(b[i]), "mol" });
+    table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(n[i]), "mol" });
 
     auto i = 0;
     for(auto& row : table)
