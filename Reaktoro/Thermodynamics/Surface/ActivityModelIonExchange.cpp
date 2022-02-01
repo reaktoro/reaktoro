@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Singletons/Elements.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
