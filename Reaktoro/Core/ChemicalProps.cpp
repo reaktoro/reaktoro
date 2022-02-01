@@ -794,32 +794,32 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ "Temperature", str(props.temperature()), "K" });
-    table.add_row({ "Pressure", str(props.pressure()*1e-5), "bar" });
-    table.add_row({ "Volume", str(props.volume()), "m3" });
-    table.add_row({ "Gibbs Energy", str(props.gibbsEnergy()), "J" });
-    table.add_row({ "Enthalpy", str(props.enthalpy()), "J" });
-    table.add_row({ "Entropy", str(props.entropy()), "J/K" });
-    table.add_row({ "Internal Energy", str(props.internalEnergy()), "J" });
-    table.add_row({ "Helmholtz Energy", str(props.helmholtzEnergy()), "J" });
-    table.add_row({ "Charge", str(props.charge()), "mol" });
+    table.add_row({ "Temperature", strfix(props.temperature()), "K" });
+    table.add_row({ "Pressure", strfix(props.pressure()*1e-5), "bar" });
+    table.add_row({ "Volume", strsci(props.volume()), "m3" });
+    table.add_row({ "Gibbs Energy", strfix(props.gibbsEnergy()), "J" });
+    table.add_row({ "Enthalpy", strfix(props.enthalpy()), "J" });
+    table.add_row({ "Entropy", strfix(props.entropy()), "J/K" });
+    table.add_row({ "Internal Energy", strfix(props.internalEnergy()), "J" });
+    table.add_row({ "Helmholtz Energy", strfix(props.helmholtzEnergy()), "J" });
+    table.add_row({ "Charge", strsci(props.charge()), "mol" });
 
-    table.add_row({ "Element Amount:" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), str(b[i]), "mol" });
-    table.add_row({ "Species Amount:" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(n[i]), "mol" });
-    table.add_row({ "Mole Fraction:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(x[i]), "mol/mol" });
-    table.add_row({ "Activity Coefficient:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(exp(lng[i])), "-" });
-    table.add_row({ "Activity:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(exp(lna[i])), "-" });
-    table.add_row({ "lg(Activity):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(lna[i]/ln10), "-" });
-    table.add_row({ "ln(Activity):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(lna[i]), "-" });
-    table.add_row({ "Chemical Potential:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(mu[i]), "J/mol" });
-    table.add_row({ "Standard Volume:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(V0[i]), "m3/mol" });
-    table.add_row({ "Standard Gibbs Energy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(G0[i]), "J/mol" });
-    table.add_row({ "Standard Enthalpy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(H0[i]), "J/mol" });
-    table.add_row({ "Standard Entropy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(S0[i]), "J/(mol*K)" });
-    table.add_row({ "Standard Internal Energy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(U0[i]), "J/mol" });
-    table.add_row({ "Standard Helmholtz Energy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(A0[i]), "J/mol" });
-    table.add_row({ "Standard Heat Capacity (constant P):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cp0[i]), "J/(mol*K)" });
-    table.add_row({ "Standard Heat Capacity (constant V):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].name(), str(Cv0[i]), "J/(mol*K)" });
+    table.add_row({ "Element Amount:" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), strsci(b[i]), "mol" });
+    table.add_row({ "Species Amount:" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(n[i]), "mol" });
+    table.add_row({ "Mole Fraction:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(x[i]), "mol/mol" });
+    table.add_row({ "Activity Coefficient:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(exp(lng[i])), "-" });
+    table.add_row({ "Activity:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(exp(lna[i])), "-" });
+    table.add_row({ "lg(Activity):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(lna[i]/ln10), "-" });
+    table.add_row({ "ln(Activity):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(lna[i]), "-" });
+    table.add_row({ "Chemical Potential:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(mu[i]), "J/mol" });
+    table.add_row({ "Standard Volume:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(V0[i]), "m3/mol" });
+    table.add_row({ "Standard Gibbs Energy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(G0[i]), "J/mol" });
+    table.add_row({ "Standard Enthalpy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(H0[i]), "J/mol" });
+    table.add_row({ "Standard Entropy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(S0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Internal Energy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(U0[i]), "J/mol" });
+    table.add_row({ "Standard Helmholtz Energy (formation):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(A0[i]), "J/mol" });
+    table.add_row({ "Standard Heat Capacity (constant P):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(Cp0[i]), "J/(mol*K)" });
+    table.add_row({ "Standard Heat Capacity (constant V):", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strfix(Cv0[i]), "J/(mol*K)" });
 
     auto i = 0;
     for(auto& row : table)
