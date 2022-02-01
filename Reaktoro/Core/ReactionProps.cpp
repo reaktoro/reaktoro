@@ -30,19 +30,19 @@ auto operator<<(std::ostream& out, const ReactionProps& props) -> std::ostream&
 {
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ "Temperature", str(props.T), "K" });
-    table.add_row({ "Pressure", str(props.P*1e-5), "bar" });
-    table.add_row({ "Equilibrium Constant (log base 10)", str(props.lgK), "-" });
-    table.add_row({ "Delta Standard Gibbs Energy", str(props.dG0), "J/mol" });
-    table.add_row({ "Delta Standard Enthalpy", str(props.dH0), "J/mol" });
-    table.add_row({ "Delta Standard Volume", str(props.dV0), "m3/mol" });
-    table.add_row({ "Delta Standard Volume (Temperature Derivative)", str(props.dVT0), "m3/(mol*K)" });
-    table.add_row({ "Delta Standard Volume (Pressure Derivative)", str(props.dVP0), "m3/(mol*Pa)" });
-    table.add_row({ "Delta Standard Isobaric Heat Capacity", str(props.dCp0), "J/(mol*K)" });
-    table.add_row({ "Delta Standard Isochoric Heat Capacity", str(props.dCv0), "J/(mol*K)" });
-    table.add_row({ "Delta Standard Internal Energy", str(props.dU0), "J/mol" });
-    table.add_row({ "Delta Standard Entropy", str(props.dS0), "J/(mol*K)" });
-    table.add_row({ "Delta Standard Helmholtz Energy", str(props.dA0), "J/mol" });
+    table.add_row({ "Temperature", strfix(props.T), "K" });
+    table.add_row({ "Pressure", strfix(props.P*1e-5), "bar" });
+    table.add_row({ "Equilibrium Constant (log base 10)", strfix(props.lgK), "-" });
+    table.add_row({ "Delta Standard Gibbs Energy", strfix(props.dG0), "J/mol" });
+    table.add_row({ "Delta Standard Enthalpy", strfix(props.dH0), "J/mol" });
+    table.add_row({ "Delta Standard Volume", strsci(props.dV0), "m3/mol" });
+    table.add_row({ "Delta Standard Volume (Temperature Derivative)", strsci(props.dVT0), "m3/(mol*K)" });
+    table.add_row({ "Delta Standard Volume (Pressure Derivative)", strsci(props.dVP0), "m3/(mol*Pa)" });
+    table.add_row({ "Delta Standard Isobaric Heat Capacity", strfix(props.dCp0), "J/(mol*K)" });
+    table.add_row({ "Delta Standard Isochoric Heat Capacity", strfix(props.dCv0), "J/(mol*K)" });
+    table.add_row({ "Delta Standard Internal Energy", strfix(props.dU0), "J/mol" });
+    table.add_row({ "Delta Standard Entropy", strfix(props.dS0), "J/(mol*K)" });
+    table.add_row({ "Delta Standard Helmholtz Energy", strfix(props.dA0), "J/mol" });
 
     auto i = 0;
     for(auto& row : table)
