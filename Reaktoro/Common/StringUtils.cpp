@@ -25,8 +25,21 @@
 
 namespace Reaktoro {
 
+static int __precision = 4;
+
+auto precision(int precision) -> void
+{
+    __precision = precision;
+}
+
+auto precision() -> int
+{
+    return __precision;
+}
+
 auto strfix(double num, int precision) -> std::string
 {
+    precision = precision < 0 ? __precision : precision;
     std::ostringstream ss;
     ss << std::fixed << std::setprecision(precision) << num;
     return ss.str();
@@ -34,6 +47,7 @@ auto strfix(double num, int precision) -> std::string
 
 auto strsci(double num, int precision) -> std::string
 {
+    precision = precision < 0 ? __precision : precision;
     std::ostringstream ss;
     ss << std::scientific << std::setprecision(precision) << num;
     return ss.str();
