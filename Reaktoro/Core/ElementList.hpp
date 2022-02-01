@@ -112,16 +112,16 @@ public:
     ElementList(InputIterator begin, InputIterator end) : m_elements(begin, end) {}
 
     /// Return begin const iterator of this ElementList instance (for STL compatibility reasons).
-    auto begin() const { return data().begin(); }
+    auto begin() const { return m_elements.begin(); }
 
     /// Return begin iterator of this ElementList instance (for STL compatibility reasons).
-    auto begin() { return data().begin(); }
+    auto begin() { return m_elements.begin(); }
 
     /// Return end const iterator of this ElementList instance (for STL compatibility reasons).
-    auto end() const { return data().end(); }
+    auto end() const { return m_elements.end(); }
 
     /// Return end iterator of this ElementList instance (for STL compatibility reasons).
-    auto end() { return data().end(); }
+    auto end() { return m_elements.end(); }
 
     /// Append a new Element at the back of the container (for STL compatibility reasons).
     auto push_back(const Element& elements) -> void { append(elements); }
