@@ -556,24 +556,24 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     assert(elements.size() == me.size());
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ "Temperature", str(props.temperature()), "K" });
-    table.add_row({ "Pressure", str(props.pressure()), "Pa" });
-    table.add_row({ "Ionic Strength (Effect.)", str(props.ionicStrength()), "molal" });
-    table.add_row({ "Ionic Strength (Stoich.)", str(props.ionicStrengthStoichiometric()), "molal" });
-    table.add_row({ "pH", str(props.pH()), "" });
-    table.add_row({ "pE", str(props.pE()), "" });
-    table.add_row({ "Eh", str(props.Eh()), "V" });
+    table.add_row({ "Temperature", strfix(props.temperature()), "K" });
+    table.add_row({ "Pressure", strfix(props.pressure()*1e-5), "bar" });
+    table.add_row({ "Ionic Strength (Effective)", strfix(props.ionicStrength()), "molal" });
+    table.add_row({ "Ionic Strength (Stoichiometric)", strfix(props.ionicStrengthStoichiometric()), "molal" });
+    table.add_row({ "pH", strfix(props.pH()), "" });
+    table.add_row({ "pE", strfix(props.pE()), "" });
+    table.add_row({ "Eh", strfix(props.Eh()), "V" });
     table.add_row({ "Element Molality:" });
     for(auto i = 0; i < elements.size(); ++i)
         if(elements[i].symbol() != "H" && elements[i].symbol() != "O")
-            table.add_row({ ":: " + elements[i].symbol(), str(me[i]), "molal" });
+            table.add_row({ ":: " + elements[i].symbol(), strsci(me[i]), "molal" });
     table.add_row({ "Species Molality:" });
     for(auto i = 0; i < species.size(); ++i)
         if(species[i].formula().str() != "H2O")
-            table.add_row({ ":: " + species[i].name(), str(ms[i]), "molal" });
+            table.add_row({ ":: " + species[i].repr(), strsci(ms[i]), "molal" });
     table.add_row({ "Saturation Indices (log base 10):" });
     for(auto [i, species] : enumerate(props.saturationSpecies()))
-        table.add_row({ ":: " + species.name(), str(lgOmega[i]), "-" });
+        table.add_row({ ":: " + species.repr(), strfix(((lgOmega[i] + 1000)) - 1000), "-" }); // + 1000 - 1000 as a trick to transform -1e15 into 0.0
 
     auto i = 0;
     for(auto& row : table)
