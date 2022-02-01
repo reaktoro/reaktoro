@@ -45,18 +45,18 @@ auto operator<<(std::ostream& out, const SpeciesThermoProps& props) -> std::ostr
 {
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ "Temperature", str(props.T), "K" });
-    table.add_row({ "Pressure", str(props.P*1e-5), "bar" });
-    table.add_row({ "Standard Gibbs Energy", str(props.G0), "J/mol" });
-    table.add_row({ "Standard Enthalpy", str(props.H0), "J/mol" });
-    table.add_row({ "Standard Volume", str(props.V0), "m3/mol" });
-    table.add_row({ "Standard Volume (Temperature Derivative)", str(props.VT0), "m3/(mol*K)" });
-    table.add_row({ "Standard Volume (Pressure Derivative)", str(props.VP0), "m3/(mol*Pa)" });
-    table.add_row({ "Standard Isobaric Heat Capacity", str(props.Cp0), "J/(mol*K)" });
-    table.add_row({ "Standard Isochoric Heat Capacity", str(props.Cv0), "J/(mol*K)" });
-    table.add_row({ "Standard Internal Energy", str(props.U0), "J/mol" });
-    table.add_row({ "Standard Entropy", str(props.S0), "J/(mol*K)" });
-    table.add_row({ "Standard Helmholtz Energy", str(props.A0), "J/mol" });
+    table.add_row({ "Temperature", strfix(props.T), "K" });
+    table.add_row({ "Pressure", strfix(props.P*1e-5), "bar" });
+    table.add_row({ "Standard Gibbs Energy", strfix(props.G0), "J/mol" });
+    table.add_row({ "Standard Enthalpy", strfix(props.H0), "J/mol" });
+    table.add_row({ "Standard Volume", strsci(props.V0), "m3/mol" });
+    table.add_row({ "Standard Volume (Temperature Derivative)", strsci(props.VT0), "m3/(mol*K)" });
+    table.add_row({ "Standard Volume (Pressure Derivative)", strsci(props.VP0), "m3/(mol*Pa)" });
+    table.add_row({ "Standard Isobaric Heat Capacity", strfix(props.Cp0), "J/(mol*K)" });
+    table.add_row({ "Standard Isochoric Heat Capacity", strfix(props.Cv0), "J/(mol*K)" });
+    table.add_row({ "Standard Internal Energy", strfix(props.U0), "J/mol" });
+    table.add_row({ "Standard Entropy", strfix(props.S0), "J/(mol*K)" });
+    table.add_row({ "Standard Helmholtz Energy", strfix(props.A0), "J/mol" });
 
     auto i = 0;
     for(auto& row : table)
