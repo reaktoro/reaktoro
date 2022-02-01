@@ -116,7 +116,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         // Check values of aqueous properties
         CHECK( aqprops.pressure()                    == Approx(P*1e5)        );
         CHECK( aqprops.temperature()                 == Approx(T + 273.15)   );
-        CHECK( aqprops.Eh()                          == Approx(-0.000671794) );
+        CHECK( aqprops.Eh()                          == Approx(0.000671794)  );
         CHECK( aqprops.pH()                          == Approx(-0.0205718)   );
         CHECK( aqprops.ionicStrength()               == Approx(499.576)      );
         CHECK( aqprops.ionicStrengthEffective()      == Approx(499.576)      );
@@ -138,17 +138,17 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
 
         const auto lnOmega = aqprops.saturationIndicesLn();
 
-        CHECK( lnOmega[0]  == Approx(-0.020911400) );
-        CHECK( lnOmega[1]  == Approx(-0.051605400) );
-        CHECK( lnOmega[2]  == Approx(-0.052806200) );
-        CHECK( lnOmega[3]  == Approx( 3.546120000) );
-        CHECK( lnOmega[4]  == Approx(-0.076458200) );
-        CHECK( lnOmega[5]  == Approx( 0.000339846) );
-        CHECK( lnOmega[6]  == Approx(-0.054875200) );
-        CHECK( lnOmega[7]  == Approx(-0.054875200) );
-        CHECK( lnOmega[8]  == Approx(-0.054875200) );
-        CHECK( lnOmega[9]  == Approx(-0.107170000) );
-        CHECK( lnOmega[10] == Approx(-0.054875200) );
+        CHECK( lnOmega[0]  == Approx(0.031383400) );
+        CHECK( lnOmega[1]  == Approx(0.052984200) );
+        CHECK( lnOmega[2]  == Approx(0.051783300) );
+        CHECK( lnOmega[3]  == Approx(3.703000000) );
+        CHECK( lnOmega[4]  == Approx(0.080426100) );
+        CHECK( lnOmega[5]  == Approx(0.000339846) );
+        CHECK( lnOmega[6]  == Approx(0.049714300) );
+        CHECK( lnOmega[7]  == Approx(0.049714300) );
+        CHECK( lnOmega[8]  == Approx(0.049714300) );
+        CHECK( lnOmega[9]  == Approx(0.102009000) );
+        CHECK( lnOmega[10] == Approx(0.049714300) );
 
         CHECK( aqprops.saturationIndexLn(5) == Approx(0.000339846) );
         CHECK( aqprops.saturationIndexLg(5) == Approx(0.000339846/ln10) );
@@ -178,7 +178,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.pressure()                    == Approx(P*1e5)        );
         CHECK( aqprops.temperature()                 == Approx(T + 273.15)   );
         CHECK( aqprops.ionicStrength()               == Approx(27.2725)      );
-        CHECK( aqprops.Eh()                          == Approx(-0.000754246) );
+        CHECK( aqprops.Eh()                          == Approx(0.000754246)  );
         CHECK( aqprops.pH()                          == Approx(-0.0605375)   );
         CHECK( aqprops.ionicStrengthEffective()      == Approx(27.2725)      );
         CHECK( aqprops.ionicStrengthStoichiometric() == Approx(27.273)       );
