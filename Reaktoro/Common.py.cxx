@@ -23,6 +23,7 @@ void exportInterpolationUtils(py::module& m);
 void exportMemoization(py::module& m);
 void exportParseUtils(py::module& m);
 void exportStringList(py::module& m);
+void exportStringUtils(py::module& m);
 void exportUnits(py::module& m);
 void exportYAML(py::module& m);
 
@@ -33,6 +34,7 @@ void exportCommon(py::module& m)
     exportMemoization(m);
     exportParseUtils(m);
     exportStringList(m);
+    exportStringUtils(m);
     exportUnits(m);
     exportYAML(m);
 }
