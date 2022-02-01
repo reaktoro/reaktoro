@@ -72,6 +72,9 @@ auto stringfy(StringOrIndex value) -> String;
 /// Assemble the formula matrix of the list of `species` with respect to given `elements`.
 auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
 
+/// Assemble the formula matrix of the list of `species` with respect to given `elements`.
+auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
+
 // Extract names of the species from the species' list
 auto extractNames(const SpeciesList& list) -> Strings;
 
