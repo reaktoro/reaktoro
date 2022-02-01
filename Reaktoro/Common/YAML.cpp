@@ -28,7 +28,7 @@ namespace {
 /// This is needed to avoid certain issues with pugixml related to how decimal numbers are represented in different languages.
 struct ChangeLocale
 {
-    const String old_locale;
+    const std::string old_locale;
 
     explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
     {

@@ -18,22 +18,16 @@
 #pragma once
 
 // C++ includes
-#include <algorithm>
-#include <cctype>
-#include <cstdlib>
 #include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
 
-// Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-
 namespace Reaktoro {
 namespace internal {
 
 template<typename T>
-auto operator<<(std::ostream& out, const Vec<T>& values) -> std::ostream&
+auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream&
 {
     for(auto i = 0; i < values.size(); ++i)
         out << ((i == 0) ? "" : ", ") << values[i];
@@ -41,13 +35,13 @@ auto operator<<(std::ostream& out, const Vec<T>& values) -> std::ostream&
 }
 
 template <typename Arg>
-auto stringfy(std::stringstream& ss, const String& sep, const Arg& item) -> void
+auto stringfy(std::ostringstream& ss, const std::string& sep, const Arg& item) -> void
 {
     ss << item;
 }
 
 template <typename Arg, typename... Args>
-auto stringfy(std::stringstream& ss, const String& sep, const Arg& item, Args... items) -> void
+auto stringfy(std::ostringstream& ss, const std::string& sep, const Arg& item, Args... items) -> void
 {
     ss << item << sep;
     stringfy(ss, sep, items...);
@@ -57,119 +51,58 @@ auto stringfy(std::stringstream& ss, const String& sep, const Arg& item, Args...
 
 /// Concatenate the arguments into a string using a given separator string.
 template <typename... Args>
-auto stringfy(const String& sep, Args... items) -> String
+auto stringfy(const std::string& sep, Args... items) -> std::string
 {
-    std::stringstream ss;
+    std::ostringstream ss;
     internal::stringfy(ss, sep, items...);
     return ss.str();
 }
 
 /// Concatenate the arguments into a string without any separator string.
 template <typename... Args>
-auto str(Args... items) -> String
+auto str(Args... items) -> std::string
 {
     return stringfy("", items...);
 }
 
+/// Return a string representation for a number in fixed format.
+auto strfix(double num, int precision = 6) -> std::string;
+
+/// Return a string representation for a number in scientific format.
+auto strsci(double num, int precision = 6) -> std::string;
+
 /// Return a new string where `substr` occurrences are replaced by `newsubstr`.
-inline auto replace(String original, String substr, String newsubstr) -> String
-{
-    if(substr.empty()) return original;
-    auto pos = original.find(substr);
-    while(pos != String::npos)
-    {
-        original.replace(pos, substr.size(), newsubstr);
-        pos = original.find(substr, pos + newsubstr.size());
-    }
-    return original;
-}
+auto replace(std::string original, std::string substr, std::string newsubstr) -> std::string;
 
 /// Return a string with lower case characters.
-inline auto lowercase(String str) -> String
-{
-    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-    return str;
-}
+auto lowercase(std::string str) -> std::string;
 
 /// Return a string with upper case characters.
-inline auto uppercase(String str) -> String
-{
-    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-    return str;
-}
+auto uppercase(std::string str) -> std::string;
 
 /// Trim the string from start (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto trimleft(String str) -> String
-{
-    str.erase(str.begin(), std::find_if(str.begin(), str.end(),
-        [](unsigned char ch) { return !std::isspace(ch); }));
-    return str;
-}
+auto trimleft(std::string str) -> std::string;
 
 /// Trim the string from end (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto trimright(String str) -> String
-{
-    str.erase(std::find_if(str.rbegin(), str.rend(),
-        [](unsigned char ch) { return !std::isspace(ch); }).base(), str.end());
-    return str;
-}
+auto trimright(std::string str) -> std::string;
 
 /// Trim the string from both ends (taken from http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring)
-inline auto trim(String str) -> String
-{
-    return trimleft(trimright(str));
-}
+auto trim(std::string str) -> std::string;
 
 /// Split the string on every occurrence of the specified delimiters and apply a transform function.
-inline auto split(const String& str, const String& delims, std::function<String(String)> transform) -> Strings
-{
-    Strings words;
-    std::size_t start = 0, end = 0;
-    while(end != String::npos)
-    {
-        end = str.find_first_of(delims, start);
-        String word = str.substr(start, end - start);
-        if(word != "") words.push_back(transform ? transform(word) : word);
-        start = end + 1;
-    }
-    return words;
-}
+auto split(const std::string& str, const std::string& delims, std::function<std::string(std::string)> transform) -> std::vector<std::string>;
 
 /// Split the string on every occurrence of the specified delimiters
-inline auto split(const String& str, const String& delims = " ") -> Strings
-{
-    return split(str, delims, {});
-}
+auto split(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>;
 
 /// Join several strings into one.
-inline auto join(const Strings& strs, String sep = " ") -> String
-{
-    String res;
-    for(auto i = 0; i < strs.size(); ++i)
-        res += (i == 0 ? "" : sep) + strs[i];
-    return res;
-}
+auto join(const std::vector<std::string>& strs, std::string sep = " ") -> std::string;
 
 /// Convert the string into a floating point number
-inline auto tofloat(const String& str) -> double
-{
-    return atof(str.c_str());
-}
+auto tofloat(const std::string& str) -> double;
 
 /// Return a list of words with duplicate names converted to unique ones.
-inline auto makeunique(Strings words, String suffix) -> Strings
-{
-    const auto size = words.size();
-    for(auto i = 1; i < size; ++i)
-    {
-        auto uniqueword = words[i];
-        for(auto j = 0; j < i; ++j)
-            if(uniqueword == words[j])
-                uniqueword += suffix;
-        words[i] = uniqueword;
-    }
-    return words;
-}
+auto makeunique(std::vector<std::string> words, std::string suffix) -> std::vector<std::string>;
 
 } // namespace Reaktoro
 

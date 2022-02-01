@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 using namespace Reaktoro;
 
