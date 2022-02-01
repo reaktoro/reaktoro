@@ -51,6 +51,7 @@ TEST_CASE("Testing Species class", "[Species]")
     {
         CHECK( species.name() == "AB2C3+2(aq)" );
         CHECK( species.formula() == "AB2C3+2" );
+        CHECK( species.repr() == "AB2C3+2(aq)" );
         CHECK( species.substance() == "AB2C3+2" );
         CHECK( species.elements().size() == 3 );
         CHECK( species.elements().coefficient("A") == 1 );
@@ -120,6 +121,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("H2O");
         CHECK(species.name() == "H2O");
         CHECK(species.formula() == "H2O");
+        CHECK(species.repr() == "H2O");
         CHECK(species.substance() == "H2O");
         CHECK(species.charge() == 0);
         CHECK(species.molarMass() == Approx(0.01801528));
@@ -129,9 +131,24 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK(species.elements().coefficient("O") == 1);
         CHECK(species.tags().empty());
 
+        species = Species("CaCO3(s)").withName("Calcite");
+        CHECK(species.name() == "Calcite");
+        CHECK(species.formula() == "CaCO3");
+        CHECK(species.repr() == "Calcite :: CaCO3");
+        CHECK(species.substance() == "CaCO3");
+        CHECK(species.aggregateState() == AggregateState::Solid);
+        CHECK(species.charge() == 0);
+        CHECK(species.molarMass() == Approx(0.1000869));
+        CHECK(species.elements().size() == 3);
+        CHECK(species.elements().coefficient("C") == 1);
+        CHECK(species.elements().coefficient("Ca") == 1);
+        CHECK(species.elements().coefficient("O") == 3);
+        CHECK(species.tags().empty());
+
         species = Species("Na+").withName("Na+(aq)").withTags({"aqueous", "cation", "charged"});
         CHECK(species.name() == "Na+(aq)");
         CHECK(species.formula() == "Na+");
+        CHECK(species.repr() == "Na+(aq)");
         CHECK(species.substance() == "Na+");
         CHECK(species.charge() == 1);
         CHECK(species.molarMass() == Approx(0.0229892194));
@@ -146,6 +163,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("Cl-").withName("Cl-(aq)").withTags({"aqueous", "anion", "charged"});
         CHECK(species.name() == "Cl-(aq)");
         CHECK(species.formula() == "Cl-");
+        CHECK(species.repr() == "Cl-(aq)");
         CHECK(species.substance() == "Cl-");
         CHECK(species.charge() == -1);
         CHECK(species.molarMass() == Approx(0.035453));
@@ -160,6 +178,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("CO3--").withName("CO3--(aq)").withTags({"aqueous", "anion", "charged"});
         CHECK(species.name() == "CO3--(aq)");
         CHECK(species.formula() == "CO3--");
+        CHECK(species.repr() == "CO3--(aq)");
         CHECK(species.substance() == "CO3--");
         CHECK(species.charge() == -2);
         CHECK(species.molarMass() == Approx(0.0600102972));
@@ -175,6 +194,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("CaCO3(aq)");
         CHECK(species.name() == "CaCO3(aq)");
         CHECK(species.formula() == "CaCO3");
+        CHECK(species.repr() == "CaCO3(aq)");
         CHECK(species.substance() == "CaCO3");
         CHECK(species.aggregateState() == AggregateState::Aqueous);
         CHECK(species.charge() == 0);
@@ -188,6 +208,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("H+").withName("H+(aq)");
         CHECK(species.name() == "H+(aq)");
         CHECK(species.formula() == "H+");
+        CHECK(species.repr() == "H+(aq)");
         CHECK(species.substance() == "H+");
         CHECK(species.charge() == 1);
         CHECK(species.molarMass() == Approx(0.0010073914));
@@ -199,6 +220,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("HCO3-").withTags({"aqueous"});
         CHECK(species.name() == "HCO3-");
         CHECK(species.formula() == "HCO3-");
+        CHECK(species.repr() == "HCO3-");
         CHECK(species.substance() == "HCO3-");
         CHECK(species.charge() == -1);
         CHECK(species.molarMass() == Approx(0.0610176886));
@@ -213,6 +235,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("Fe+++").withTags({"aqueous", "cation", "charged", "iron"});
         CHECK(species.name() == "Fe+++");
         CHECK(species.formula() == "Fe+++");
+        CHECK(species.repr() == "Fe+++");
         CHECK(species.substance() == "Fe+++");
         CHECK(species.charge() == 3);
         CHECK(species.molarMass() == Approx(0.0558453543));
@@ -234,6 +257,7 @@ TEST_CASE("Testing Species class", "[Species]")
         species = Species("AaBb2+");
         CHECK(species.name() == "AaBb2+");
         CHECK(species.formula() == "AaBb2+");
+        CHECK(species.repr() == "AaBb2+");
         CHECK(species.substance() == "AaBb2+");
         CHECK(species.charge() == 1);
         CHECK(species.molarMass() == Approx(0.0499994514));
@@ -273,6 +297,7 @@ TEST_CASE("Testing Species class", "[Species]")
 
             CHECK(species.name() == "CO3--");
             CHECK(species.formula() == "CO3--");
+            CHECK(species.repr() == "CO3--");
             CHECK(species.substance() == "CARBONATE");
             CHECK(species.elements().size() == 2);
             CHECK(species.elements().coefficient("C") == 1);
@@ -308,6 +333,7 @@ TEST_CASE("Testing Species class", "[Species]")
 
             CHECK(species.name() == "H2O(aq)");
             CHECK(species.formula() == "H2O");
+            CHECK(species.repr() == "H2O(aq)");
             CHECK(species.substance() == "H2O");
             CHECK(species.elements().size() == 2);
             CHECK(species.elements().coefficient("H") == 2);
