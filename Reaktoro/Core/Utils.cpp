@@ -47,104 +47,89 @@ auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real val
     else return units::convert(value, unit, "mol"); // from some amount unit to mol
 }
 
-auto resolveElementIndexAux(const ChemicalSystem& system, Index index) -> Index
+auto resolveElementIndexAux(const ElementList& elementlist, Index index) -> Index
 {
     return index;
 }
 
-auto resolveElementIndexAux(const ChemicalSystem& system, int index) -> Index
+auto resolveElementIndexAux(const ElementList& elementlist, int index) -> Index
 {
     return index;
 }
 
-auto resolveElementIndexAux(const ChemicalSystem& system, const String& symbol) -> Index
+auto resolveElementIndexAux(const ElementList& elementlist, const String& symbol) -> Index
 {
-    return system.elements().index(symbol);
+    return elementlist.index(symbol);
+}
+
+auto resolveElementIndex(const ElementList& elementlist, StringOrIndex element) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolveElementIndexAux(elementlist, arg); }, element);
 }
 
 auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index
 {
-    return std::visit([&](auto&& arg) { return resolveElementIndexAux(system, arg); }, element);
-}
-
-auto resolveElementIndexAux(const Phase& phase, Index index) -> Index
-{
-    return index;
-}
-
-auto resolveElementIndexAux(const Phase& phase, int index) -> Index
-{
-    return index;
-}
-
-auto resolveElementIndexAux(const Phase& phase, const String& symbol) -> Index
-{
-    return phase.elements().index(symbol);
+    return resolveElementIndex(system.elements(), element);
 }
 
 auto resolveElementIndex(const Phase& phase, StringOrIndex element) -> Index
 {
-    return std::visit([&](auto&& arg) { return resolveElementIndexAux(phase, arg); }, element);
+    return resolveElementIndex(phase.elements(), element);
 }
 
-auto resolveSpeciesIndexAux(const Phase& phase, Index index) -> Index
+auto resolveSpeciesIndexAux(const SpeciesList& specieslist, Index index) -> Index
 {
     return index;
 }
 
-auto resolveSpeciesIndexAux(const Phase& phase, int index) -> Index
+auto resolveSpeciesIndexAux(const SpeciesList& specieslist, int index) -> Index
 {
     return index;
 }
 
-auto resolveSpeciesIndexAux(const Phase& phase, const String& name) -> Index
+auto resolveSpeciesIndexAux(const SpeciesList& specieslist, const String& name) -> Index
 {
-    return phase.species().index(name);
+    return specieslist.index(name);
 }
 
-auto resolveSpeciesIndex(const Phase& phase, StringOrIndex element) -> Index
+auto resolveSpeciesIndex(const SpeciesList& specieslist, StringOrIndex species) -> Index
 {
-    return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(phase, arg); }, element);
-}
-
-auto resolveSpeciesIndexAux(const ChemicalSystem& system, Index index) -> Index
-{
-    return index;
-}
-
-auto resolveSpeciesIndexAux(const ChemicalSystem& system, int index) -> Index
-{
-    return index;
-}
-
-auto resolveSpeciesIndexAux(const ChemicalSystem& system, const String& name) -> Index
-{
-    return system.species().index(name);
+    return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(specieslist, arg); }, species);
 }
 
 auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index
 {
-return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(system, arg); }, species);
+    return resolveSpeciesIndex(system.species(), species);
 }
 
-auto resolvePhaseIndexAux(const ChemicalSystem& system, Index index) -> Index
+auto resolveSpeciesIndex(const Phase& phase, StringOrIndex species) -> Index
+{
+    return resolveSpeciesIndex(phase.species(), species);
+}
+
+auto resolvePhaseIndexAux(const PhaseList& phaselist, Index index) -> Index
 {
     return index;
 }
 
-auto resolvePhaseIndexAux(const ChemicalSystem& system, int index) -> Index
+auto resolvePhaseIndexAux(const PhaseList& phaselist, int index) -> Index
 {
     return index;
 }
 
-auto resolvePhaseIndexAux(const ChemicalSystem& system, const String& name) -> Index
+auto resolvePhaseIndexAux(const PhaseList& phaselist, const String& name) -> Index
 {
-    return system.phases().index(name);
+    return phaselist.index(name);
+}
+
+auto resolvePhaseIndex(const PhaseList& phaselist, StringOrIndex phase) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(phaselist, arg); }, phase);
 }
 
 auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index
 {
-    return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(system, arg); }, phase);
+    return resolvePhaseIndex(system.phases(), phase);
 }
 
 auto stringfyAux(Index index) -> String
