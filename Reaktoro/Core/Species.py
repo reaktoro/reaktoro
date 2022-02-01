@@ -39,6 +39,7 @@ def testSpecies():
 
     assert species.name() == "AB2C3+2(aq)"
     assert species.formula().equivalent("AB2C3+2")
+    assert species.repr() == "AB2C3+2(aq)"
     assert species.substance() == "AB2C3+2"
     assert species.elements().size() == 3
     assert species.elements().coefficient("A") == 1
@@ -51,6 +52,7 @@ def testSpecies():
     species = Species("CO3--").withName("CO3--(aq)").withTags(["aqueous", "anion", "charged"])
     assert species.name() == "CO3--(aq)"
     assert species.formula().equivalent("CO3--")
+    assert species.repr() == "CO3--(aq)"
     assert species.substance() == "CO3--"
     assert species.charge() == -2
     assert species.molarMass() == pytest.approx(0.0600102972)
