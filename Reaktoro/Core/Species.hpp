@@ -145,6 +145,9 @@ public:
     /// Return the chemical formula of the species.
     auto formula() const -> ChemicalFormula;
 
+    /// Return the name of the species and its chemical formula if name does not contain it (e.g., `Calcite :: CaCO3`).
+    auto repr() const -> String;
+
     /// Return the name of the underlying substance of the species if provided, otherwise, its formula without any suffix.
     auto substance() const -> String;
 
