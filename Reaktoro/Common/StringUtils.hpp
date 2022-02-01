@@ -65,11 +65,21 @@ auto str(Args... items) -> std::string
     return stringfy("", items...);
 }
 
+/// Set the global precision used when converting floating-point numbers to string.
+auto precision(int precision) -> void;
+
+/// Return the precision used when converting floating-point numbers to string.
+auto precision() -> int;
+
 /// Return a string representation for a number in fixed format.
-auto strfix(double num, int precision = 6) -> std::string;
+/// @param num The number to be converted to a string
+/// @param precision The precision in the conversion (negative value results in global precision using method @ref precision)
+auto strfix(double num, int precision = -1) -> std::string;
 
 /// Return a string representation for a number in scientific format.
-auto strsci(double num, int precision = 6) -> std::string;
+/// @param num The number to be converted to a string
+/// @param precision The precision in the conversion (negative value results in global precision using method @ref precision)
+auto strsci(double num, int precision = -1) -> std::string;
 
 /// Return a new string where `substr` occurrences are replaced by `newsubstr`.
 auto replace(std::string original, std::string substr, std::string newsubstr) -> std::string;
