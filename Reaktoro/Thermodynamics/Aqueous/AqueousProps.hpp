@@ -18,8 +18,9 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
@@ -52,6 +53,11 @@ public:
 
     /// Assign a AqueousProps object to this object.
     auto operator=(AqueousProps other) -> AqueousProps&;
+
+    /// Set an activity model for a non-aqueous species that will be used in the calculation of its saturation index.
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
+    /// @param generator The activity model generator to be assigned for the non-aqueous species.
+    auto setActivityModel(const StringOrIndex& species, const ActivityModelGenerator& generator) -> void;
 
     /// Update the aqueous properties with given chemical state of the system.
     auto update(const ChemicalState& state) -> void;
@@ -113,27 +119,15 @@ public:
     auto saturationSpecies() const -> SpeciesList;
 
     /// Return the saturation index of a given species.
-    /// @param species The name or index of the non-aqueous species
-    /// @note The index of the species should be determined with respect to the
-    /// list of species returned by @ref saturationSpecies.
-    /// @warning An error is thrown if the species does not exist in the list
-    /// of species obtained with @ref saturationSpecies.
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
     auto saturationIndex(const StringOrIndex& species) const -> real;
 
     /// Return the saturation index of a given species (in natural log).
-    /// @param species The name or index of the non-aqueous species
-    /// @note The index of the species should be determined with respect to the
-    /// list of species returned by @ref saturationSpecies.
-    /// @warning An error is thrown if the species does not exist in the list
-    /// of species obtained with @ref saturationSpecies.
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
     auto saturationIndexLn(const StringOrIndex& species) const -> real;
 
     /// Return the saturation index of a given species (in log base 10).
-    /// @param species The name or index of the non-aqueous species
-    /// @note The index of the species should be determined with respect to the
-    /// list of species returned by @ref saturationSpecies.
-    /// @warning An error is thrown if the species does not exist in the list
-    /// of species obtained with @ref saturationSpecies.
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
     auto saturationIndexLg(const StringOrIndex& species) const -> real;
 
     /// Return the saturation indices of all non-aqueous species.

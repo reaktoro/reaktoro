@@ -243,6 +243,16 @@ struct AqueousProps::Impl
         update(props);
     }
 
+    auto setActivityModel(const StringOrIndex& species, const ActivityModelGenerator& generator) -> void
+    {
+        const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
+        errorif(i >= nonaqueous.size(), "It was not possible to set the activity model "
+            "of species with name or index `", detail::stringfy(species), "` because "
+            "there is no such species in the list of species returned by method "
+            "AqueousProps::saturationSpecies.");
+        chemical_potential_models[i] = chemicalPotentialModel(nonaqueous[i], generator);
+    }
+
     auto update(const ChemicalState& state) -> void
     {
         const auto T = state.temperature();
@@ -417,6 +427,11 @@ auto AqueousProps::operator=(AqueousProps other) -> AqueousProps&
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto AqueousProps::setActivityModel(const StringOrIndex& species, const ActivityModelGenerator& generator) -> void
+{
+    pimpl->setActivityModel(species, generator);
 }
 
 auto AqueousProps::update(const ChemicalState& state) -> void
