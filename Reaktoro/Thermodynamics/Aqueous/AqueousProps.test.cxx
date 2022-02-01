@@ -138,25 +138,25 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
 
         const auto lnOmega = aqprops.saturationIndicesLn();
 
-        CHECK( lnOmega[0]  == Approx(-51.83840) );
-        CHECK( lnOmega[1]  == Approx(-127.9270) );
-        CHECK( lnOmega[2]  == Approx(-130.9040) );
-        CHECK( lnOmega[3]  == Approx( 8790.670) );
-        CHECK( lnOmega[4]  == Approx(-189.5370) );
-        CHECK( lnOmega[5]  == Approx( 0.842462) );
-        CHECK( lnOmega[6]  == Approx(-136.0330) );
-        CHECK( lnOmega[7]  == Approx(-136.0330) );
-        CHECK( lnOmega[8]  == Approx(-136.0330) );
-        CHECK( lnOmega[9]  == Approx(-265.6700) );
-        CHECK( lnOmega[10] == Approx(-136.0330) );
+        CHECK( lnOmega[0]  == Approx(-0.020911400) );
+        CHECK( lnOmega[1]  == Approx(-0.051605400) );
+        CHECK( lnOmega[2]  == Approx(-0.052806200) );
+        CHECK( lnOmega[3]  == Approx( 3.546120000) );
+        CHECK( lnOmega[4]  == Approx(-0.076458200) );
+        CHECK( lnOmega[5]  == Approx( 0.000339846) );
+        CHECK( lnOmega[6]  == Approx(-0.054875200) );
+        CHECK( lnOmega[7]  == Approx(-0.054875200) );
+        CHECK( lnOmega[8]  == Approx(-0.054875200) );
+        CHECK( lnOmega[9]  == Approx(-0.107170000) );
+        CHECK( lnOmega[10] == Approx(-0.054875200) );
 
-        CHECK( aqprops.saturationIndexLn(5) == Approx(0.842462) );
-        CHECK( aqprops.saturationIndexLg(5) == Approx(0.842462/ln10) );
-        CHECK( aqprops.saturationIndex(5)   == Approx(exp(0.842462)) );
+        CHECK( aqprops.saturationIndexLn(5) == Approx(0.000339846) );
+        CHECK( aqprops.saturationIndexLg(5) == Approx(0.000339846/ln10) );
+        CHECK( aqprops.saturationIndex(5)   == Approx(exp(0.000339846)) );
 
-        CHECK( aqprops.saturationIndexLn("CO(g)") == Approx(0.842462) );
-        CHECK( aqprops.saturationIndexLg("CO(g)") == Approx(0.842462/ln10) );
-        CHECK( aqprops.saturationIndex("CO(g)")   == Approx(exp(0.842462)) );
+        CHECK( aqprops.saturationIndexLn("CO(g)") == Approx(0.000339846) );
+        CHECK( aqprops.saturationIndexLg("CO(g)") == Approx(0.000339846/ln10) );
+        CHECK( aqprops.saturationIndex("CO(g)")   == Approx(exp(0.000339846)) );
     }
 
     SECTION("Testing when state is a brine")

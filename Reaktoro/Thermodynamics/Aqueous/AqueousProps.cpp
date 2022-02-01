@@ -30,6 +30,7 @@ using namespace tabulate;
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ActivityModel.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -298,7 +299,7 @@ struct AqueousProps::Impl
         return Aaqs.row(idx) * m;
     }
 
-    auto elementMolalities() const -> VectorXr
+    auto elementMolalities() const -> ArrayXr
     {
         const auto E = phase.elements().size();
         const auto& m = aqstate.m.matrix();
@@ -311,7 +312,7 @@ struct AqueousProps::Impl
         return aqstate.m[idx];
     }
 
-    auto speciesMolalities() const -> VectorXr
+    auto speciesMolalities() const -> ArrayXr
     {
         return aqstate.m;
     }
@@ -366,21 +367,24 @@ struct AqueousProps::Impl
             "AqueousProps::saturationSpecies.");
         const auto T = temperature();
         const auto P = pressure();
+        const auto RT = universalGasConstant * T;
         const auto ui = chemical_potential_models[i](T, P);
         const auto li = Anon.col(i).dot(lambda);
-        const auto lnOmegai = li - ui;
+        const auto lnOmegai = (li - ui)/RT;
         return lnOmegai;
     }
 
-    auto saturationIndicesLn() const -> VectorXr
+    auto saturationIndicesLn() const -> ArrayXr
     {
         const auto T = temperature();
         const auto P = pressure();
+        const auto RT = universalGasConstant * T;
         const auto num_nonaqueous = nonaqueous.size();
-        VectorXr lnOmega(num_nonaqueous);
+        ArrayXr lnOmega(num_nonaqueous);
         lnOmega = Anon.transpose() * lambda;
         for(auto i = 0; i < num_nonaqueous; ++i)
             lnOmega[i] -= chemical_potential_models[i](T, P);
+        lnOmega /= RT;
         return lnOmega;
     }
 };
@@ -435,7 +439,7 @@ auto AqueousProps::elementMolality(const StringOrIndex& symbol) const -> real
     return pimpl->elementMolality(symbol);
 }
 
-auto AqueousProps::elementMolalities() const -> VectorXr
+auto AqueousProps::elementMolalities() const -> ArrayXr
 {
     return pimpl->elementMolalities();
 }
@@ -445,7 +449,7 @@ auto AqueousProps::speciesMolality(const StringOrIndex& name) const -> real
     return pimpl->speciesMolality(name);
 }
 
-auto AqueousProps::speciesMolalities() const -> VectorXr
+auto AqueousProps::speciesMolalities() const -> ArrayXr
 {
     return pimpl->speciesMolalities();
 }
@@ -505,9 +509,19 @@ auto AqueousProps::saturationIndexLg(const StringOrIndex& species) const -> real
     return pimpl->saturationIndexLn(species) / ln10;
 }
 
-auto AqueousProps::saturationIndicesLn() const -> VectorXr
+auto AqueousProps::saturationIndices() const -> ArrayXr
+{
+    return saturationIndicesLn().exp();
+}
+
+auto AqueousProps::saturationIndicesLn() const -> ArrayXr
 {
     return pimpl->saturationIndicesLn();
+}
+
+auto AqueousProps::saturationIndicesLg() const -> ArrayXr
+{
+    return saturationIndicesLn() / ln10;
 }
 
 auto AqueousProps::phase() const -> const Phase&
@@ -532,6 +546,7 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     const auto species = props.phase().species();
     const auto ms = props.speciesMolalities();
     const auto me = props.elementMolalities();
+    const auto lgOmega = props.saturationIndicesLg();
     assert(species.size() == ms.size());
     assert(elements.size() == me.size());
     Table table;
@@ -551,6 +566,9 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     for(auto i = 0; i < species.size(); ++i)
         if(species[i].formula().str() != "H2O")
             table.add_row({ ":: " + species[i].name(), str(ms[i]), "molal" });
+    table.add_row({ "Saturation Indices (log base 10):" });
+    for(auto [i, species] : enumerate(props.saturationSpecies()))
+        table.add_row({ ":: " + species.name(), str(lgOmega[i]), "-" });
 
     auto i = 0;
     for(auto& row : table)
