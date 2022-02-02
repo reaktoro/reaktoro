@@ -137,17 +137,38 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.elementMolality("Cl") == Approx(388.559) );
         CHECK( aqprops.elementMolality("Ca") == Approx(111.017) );
 
-        // Set activity model of gases to that of Peng-Robinson. Expected
-        // values below for lnOmega correspond to this option, and not to the
-        // default option of ideal gas activity model!
-        aqprops.setActivityModel("CO2(g)", ActivityModelPengRobinson());
-        aqprops.setActivityModel("O2(g)" , ActivityModelPengRobinson());
-        aqprops.setActivityModel("H2(g)" , ActivityModelPengRobinson());
-        aqprops.setActivityModel("H2O(g)", ActivityModelPengRobinson());
-        aqprops.setActivityModel("CH4(g)", ActivityModelPengRobinson());
-        aqprops.setActivityModel("CO(g)" , ActivityModelPengRobinson());
+        // Check saturation indices of the non-aqueous species
+        auto lnOmega = aqprops.saturationIndicesLn();
 
-        const auto lnOmega = aqprops.saturationIndicesLn();
+        CHECK( lnOmega[0]  == Approx(-1.474090) );
+        CHECK( lnOmega[1]  == Approx(-1.447940) );
+        CHECK( lnOmega[2]  == Approx(-1.447940) );
+        CHECK( lnOmega[3]  == Approx(-1.421790) );
+        CHECK( lnOmega[4]  == Approx(-1.421790) );
+        CHECK( lnOmega[5]  == Approx(-1.500230) );
+        CHECK( lnOmega[6]  == Approx(-9.050290) );
+        CHECK( lnOmega[7]  == Approx(-9.050290) );
+        CHECK( lnOmega[8]  == Approx(-9.050290) );
+        CHECK( lnOmega[9]  == Approx( 0.102009) );
+        CHECK( lnOmega[10] == Approx(-9.050290) );
+
+        // Set activity model of gases to that of Peng-Robinson and for solids,
+        // ideal model. Note: the reason the saturation indices below for
+        // solids differ from those above is because the mock chemical system
+        // does consider unit activities for the solid species!
+        aqprops.setActivityModel("CO2(g)"       , ActivityModelPengRobinson());
+        aqprops.setActivityModel("O2(g)"        , ActivityModelPengRobinson());
+        aqprops.setActivityModel("H2(g)"        , ActivityModelPengRobinson());
+        aqprops.setActivityModel("H2O(g)"       , ActivityModelPengRobinson());
+        aqprops.setActivityModel("CH4(g)"       , ActivityModelPengRobinson());
+        aqprops.setActivityModel("CO(g)"        , ActivityModelPengRobinson());
+        aqprops.setActivityModel("NaCl(s)"      , ActivityModelIdealSolution(StateOfMatter::Solid));
+        aqprops.setActivityModel("CaCO3(s)"     , ActivityModelIdealSolution(StateOfMatter::Solid));
+        aqprops.setActivityModel("MgCO3(s)"     , ActivityModelIdealSolution(StateOfMatter::Solid));
+        aqprops.setActivityModel("CaMg(CO3)2(s)", ActivityModelIdealSolution(StateOfMatter::Solid));
+        aqprops.setActivityModel("SiO2(s)"      , ActivityModelIdealSolution(StateOfMatter::Solid));
+
+        lnOmega = aqprops.saturationIndicesLn();
 
         CHECK( lnOmega[0]  == Approx(0.031383400) );
         CHECK( lnOmega[1]  == Approx(0.052984200) );
