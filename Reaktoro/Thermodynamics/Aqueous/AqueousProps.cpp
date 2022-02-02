@@ -60,16 +60,19 @@ auto indexAqueousPhase(const ChemicalSystem& system) -> Index
     return idx;
 }
 
-// Return a chemical potential function for a species using a given activity model.
-auto chemicalPotentialModel(Species const& species, ActivityModelGenerator const& generator) -> Fn<real(real, real)>
+// Return a chemical potential function for a non-aqueous species using a given
+// activity model. Note: this method is relevant for computation of saturation indices.
+auto chemicalPotentialModel(Species const& species, ActivityModelGenerator const& generator) -> Fn<real(ChemicalProps const&)>
 {
     const auto activitymodel = generator({species}); // TODO: Use .withMemoization() here to avoid full recomputations when same T and P are given.
     const auto R = universalGasConstant;
     const auto x = ArrayXr{{1.0}}; // the mole fraction of the single species in a pure phase
     auto actprops = ActivityProps::create(1);
 
-    return [=](real T, real P) mutable -> real
+    return [=](ChemicalProps const& props) mutable -> real
     {
+        const auto T = props.temperature();
+        const auto P = props.pressure();
         activitymodel(actprops, {T, P, x}); // evaluate the activity model
         const auto G0 = species.standardThermoProps(T, P).G0;
         const auto ln_a = actprops.ln_a[0];
@@ -77,46 +80,51 @@ auto chemicalPotentialModel(Species const& species, ActivityModelGenerator const
     };
 }
 
-// Return a default chemical potential function for a fluid species using ideal
-// activity model. This chemical potential model assumes the species constitute
-// a pure ideal gas phase (containing just a single gaseous species).
-auto defaultChemicalPotentialModelFluidSpecies(Species const& species) -> Fn<real(real, real)>
+// Return a default chemical potential function for a non-aqueous species. If
+// the species exists in the given chemical system, then the chemical potential
+// model reuses the available chemical potential in the `ChemicalProps` object
+// provided as an argument to the model function. If not, the standard Gibbs
+// energy `G0` of the species is computed and used as chemical potential. If
+// the species is a gas, then `G0 + RT*ln(Pbar)` is used instead. This default
+// behavior implies that the species constitute a pure ideal gas or solid
+// phase. Note: this method is relevant for computation of saturation indices.
+auto defaultChemicalPotentialModel(Species const& species, ChemicalSystem const& system) -> Fn<real(ChemicalProps const&)>
 {
-    return chemicalPotentialModel(species, ActivityModelIdealGas());
-}
+    const auto numspecies = system.species().size();
+    const auto ispecies = system.species().find(species.name());
 
-// Return a default chemical potential function for a solid species using ideal
-// activity model for solid solutions. This chemical potential model assumes
-// the species constitute a pure solid phase (containing just a single solid
-// species). In this case, an ideal model coincides with the fact that the
-// activity of a pure solid is one and its chemical potential is identical to
-// its standard chemical potential.
-auto defaultChemicalPotentialModelSolidSpecies(Species const& species) -> Fn<real(real, real)>
-{
-    return [=](real T, real P)
-    {
-        return species.standardThermoProps(T, P).G0;
-    };
-}
-
-// Return a default chemical potential function for a chemical species.
-auto defaultChemicalPotentialModel(Species const& species) -> Fn<real(real, real)>
-{
-    switch(species.aggregateState())
-    {
-    case AggregateState::Gas:
-    case AggregateState::Liquid:
-    case AggregateState::Fluid:
-        return defaultChemicalPotentialModelFluidSpecies(species);
-    default:
-        return defaultChemicalPotentialModelSolidSpecies(species);
-    }
+    // Case I: when species exists in the chemical system
+    if(ispecies < numspecies)
+        return [=](ChemicalProps const& props) -> real
+        {
+            return props.speciesChemicalPotential(ispecies);
+        };
+    // Case II: when species is a gas and it does not exist in the chemical system
+    else if(species.aggregateState() == AggregateState::Gas)
+        return [=](ChemicalProps const& props) -> real
+        {
+            const auto T = props.temperature();
+            const auto P = props.pressure();
+            const auto Pbar = P*1e-5; // from Pa to bar
+            const auto RT = universalGasConstant * T;
+            const auto G0 = species.standardThermoProps(T, P).G0;
+            return G0 + RT*log(Pbar);
+        };
+    // Case III: when species is not a gas and it does not exist in the chemical system
+    else
+        return [=](ChemicalProps const& props) -> real
+        {
+            const auto T = props.temperature();
+            const auto P = props.pressure();
+            const auto G0 = species.standardThermoProps(T, P).G0;
+            return G0;
+        };
 }
 
 // Return a vector with default chemical potential functions for every given chemical species.
-auto defaultChemicalPotentialModels(SpeciesList const& nonaqueous) -> Vec<Fn<real(real, real)>>
+auto defaultChemicalPotentialModels(SpeciesList const& nonaqueous, ChemicalSystem const& system) -> Vec<Fn<real(ChemicalProps const&)>>
 {
-    return vectorize(nonaqueous, RKT_LAMBDA(x, defaultChemicalPotentialModel(x)));
+    return vectorize(nonaqueous, RKT_LAMBDA(x, defaultChemicalPotentialModel(x, system)));
 }
 
 } // namespace
@@ -135,14 +143,14 @@ struct AqueousProps::Impl
     /// The phase as an aqueous solution.
     const AqueousMixture aqsolution;
 
-    /// The index of the aqueous solvent species H2O
+    /// The index of the aqueous solvent species H2O in the aqueous phase (not in the system!)
     const Index iH2O;
 
-    /// The index of the aqueous solute species H+
+    /// The index of the aqueous solute species H+ in the aqueous phase (not in the system!)
     const Index iH;
 
-    /// The chemical properties of the aqueous phase.
-    ChemicalPropsPhase props;
+    /// The chemical properties of the system.
+    ChemicalProps props;
 
     /// The state of the aqueous solution.
     AqueousMixtureState aqstate;
@@ -166,24 +174,17 @@ struct AqueousProps::Impl
     Optima::Echelonizer echelonizer;
 
     // The chemical potential models for the non-aqueous species (as if they were pure phases) for the computation of their saturation indices.
-    Vec<Fn<real(real, real)>> chemical_potential_models;
-
-    /// The extra properties and data produced during the evaluation of the aqueous phase activity model.
-    Map<String, Any> extra;
+    Vec<Fn<real(ChemicalProps const&)>> chemical_potential_models;
 
     Impl(const ChemicalSystem& system)
     : system(system),
       iphase(indexAqueousPhase(system)),
       phase(system.phase(iphase)),
-      props(phase),
+      props(system),
       aqsolution(phase.species()),
       iH2O(phase.species().findWithFormula("H2O")),
       iH(phase.species().findWithFormula("H+"))
     {
-        assert(phase.species().size() > 0);
-        assert(phase.species().size() == props.phase().species().size());
-        assert(phase.species().size() == aqsolution.species().size());
-
         const auto size = phase.species().size();
 
         error(iH2O >= size, "Cannot create AqueousProps object for phase ", phase.name(), " "
@@ -211,7 +212,7 @@ struct AqueousProps::Impl
         Anon = detail::assembleFormulaMatrix(nonaqueous, phase.elements());
 
         // Initialize the chemical potential models for the non-aqueous species, as if they were pure phases
-        chemical_potential_models = defaultChemicalPotentialModels(nonaqueous);
+        chemical_potential_models = defaultChemicalPotentialModels(nonaqueous, system);
 
         // Initialize the aqueous state properties
         aqstate.T = NaN;
@@ -227,14 +228,14 @@ struct AqueousProps::Impl
         echelonizer.compute(Aaqs);
     }
 
-    Impl(const ChemicalSystem& system, const ChemicalState& state)
-    : Impl(system)
+    Impl(ChemicalState const& state)
+    : Impl(state.system())
     {
         update(state);
     }
 
-    Impl(const ChemicalSystem& system, const ChemicalProps& props)
-    : Impl(system)
+    Impl(ChemicalProps const& props)
+    : Impl(props.system())
     {
         update(props);
     }
@@ -251,46 +252,37 @@ struct AqueousProps::Impl
 
     auto update(const ChemicalState& state) -> void
     {
-        const auto T = state.temperature();
-        const auto P = state.pressure();
-        const auto n = state.speciesAmounts();
-        const auto ifirst = system.phases().numSpeciesUntilPhase(iphase);
-        const auto size = phase.species().size();
-        props.update(T, P, n.segment(ifirst, size), extra);
+        props.update(state);
         update(props);
     }
 
-    auto update(const ChemicalPropsPhase& aqprops) -> void
+    auto update(const ChemicalProps& cprops) -> void
     {
         // Auxiliary variables
-        const auto& T = aqprops.temperature();
-        const auto& P = aqprops.pressure();
-        const auto& x = aqprops.speciesMoleFractions();
+        auto const& aqprops = cprops.phaseProps(iphase);
+        auto const& T = aqprops.temperature();
+        auto const& P = aqprops.pressure();
+        auto const& x = aqprops.speciesMoleFractions();
 
         // Update the internal properties of the aqueous phase
-        props = aqprops;
+        props = cprops;
 
         // Update the internal aqueous state object
         aqstate = aqsolution.state(T, P, x);
 
         // Update auxiliary vector naq to be used in the echelonization below
-        naq = props.speciesAmounts();
+        naq = aqprops.speciesAmounts();
 
         // Update the echelon form and also the list of basic species
         echelonizer.updateWithPriorityWeights(naq);
 
         // Compute chemical potentials of the elements in the aqueous phase
-        const auto u = props.speciesChemicalPotentials();
+        const auto u = aqprops.speciesChemicalPotentials();
         const auto ib = echelonizer.indicesBasicVariables();
         const auto R = echelonizer.R();
         const auto Rb = R.topRows(ib.size());
         const VectorXr ub = u(ib);
         lambda = Rb.transpose() * ub;
-    }
-
-    auto update(const ChemicalProps& sysprops) -> void
-    {
-        update(sysprops.phaseProps(iphase));
     }
 
     auto temperature() const -> real
@@ -340,7 +332,8 @@ struct AqueousProps::Impl
 
     auto pH() const -> real
     {
-        const auto ln_aH = props.speciesActivitiesLn()[iH];
+        auto const& aqprops = props.phaseProps(iphase);
+        auto const& ln_aH = aqprops.speciesActivitiesLn()[iH];
         return -ln_aH/ln10;
     }
 
@@ -376,10 +369,8 @@ struct AqueousProps::Impl
             "saturation index of species with name or index `", detail::stringfy(species), "` "
             "because there is no such species in the list of species returned by method "
             "AqueousProps::saturationSpecies.");
-        const auto T = temperature();
-        const auto P = pressure();
-        const auto RT = universalGasConstant * T;
-        const auto ui = chemical_potential_models[i](T, P);
+        const auto RT = universalGasConstant * props.temperature();
+        const auto ui = chemical_potential_models[i](props);
         const auto li = Anon.col(i).dot(lambda);
         const auto lnOmegai = (li - ui)/RT;
         return lnOmegai;
@@ -387,14 +378,12 @@ struct AqueousProps::Impl
 
     auto saturationIndicesLn() const -> ArrayXr
     {
-        const auto T = temperature();
-        const auto P = pressure();
-        const auto RT = universalGasConstant * T;
+        const auto RT = universalGasConstant * props.temperature();
         const auto num_nonaqueous = nonaqueous.size();
         ArrayXr lnOmega(num_nonaqueous);
         lnOmega = Anon.transpose() * lambda;
         for(auto i = 0; i < num_nonaqueous; ++i)
-            lnOmega[i] -= chemical_potential_models[i](T, P);
+            lnOmega[i] -= chemical_potential_models[i](props);
         lnOmega /= RT;
         return lnOmega;
     }
@@ -405,11 +394,11 @@ AqueousProps::AqueousProps(const ChemicalSystem& system)
 {}
 
 AqueousProps::AqueousProps(const ChemicalState& state)
-: pimpl(new Impl(state.system(), state))
+: pimpl(new Impl(state))
 {}
 
-AqueousProps::AqueousProps(const ChemicalProps& props)
-: pimpl(new Impl(props.system(), props))
+AqueousProps::AqueousProps(ChemicalProps const& props)
+: pimpl(new Impl(props))
 {}
 
 AqueousProps::AqueousProps(const AqueousProps& other)
@@ -435,7 +424,7 @@ auto AqueousProps::update(const ChemicalState& state) -> void
     pimpl->update(state);
 }
 
-auto AqueousProps::update(const ChemicalProps& props) -> void
+auto AqueousProps::update(ChemicalProps const& props) -> void
 {
     pimpl->update(props);
 }
