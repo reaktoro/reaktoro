@@ -62,6 +62,12 @@ struct ChemicalState::Impl
     /// The amounts of the chemical species (in mol)
     ArrayXr n;
 
+    /// The phase pairs (as phase indices) for which surface areas have been set.
+    Pairs<Index, Index> surfaces;
+
+    /// The surface areas for the existing interphase surfaces.
+    Vec<real> surface_areas;
+
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
     : system(system), equilibrium(system), props(system)
@@ -321,7 +327,71 @@ struct ChemicalState::Impl
             Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).mass(); });
         const auto& factor = current_solid_mass > 0.0 ? mass / current_solid_mass : real(0.0);
         const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
-        scaleSpeciesAmounts(factor, isolidspecies);
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
+    // --------------------------------------------------------------------------------------------
+
+    auto setSurfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
+    {
+        errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
+        value = units::convert(value, unit, "m2");
+        const auto isurface = surfaceIndex(phase1, phase2);
+        if(isurface < surfaces.size())
+            surface_areas[isurface] = value;
+        else
+        {
+            using std::min;
+            using std::max;
+            const auto iphase1 = detail::resolvePhaseIndex(system, phase1);
+            const auto iphase2 = detail::resolvePhaseIndex(system, phase2);
+            surfaces.emplace_back(min(iphase1, iphase2), max(iphase1, iphase2)); // ensure pair of indices are ordered!
+            surface_areas.push_back(value);
+        }
+    }
+
+    auto setSurfaceArea(Index isurface, real value, Chars unit) -> void
+    {
+        errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
+        errorif(isurface >= surfaces.size(), "The given surface index,", isurface, ", is out of bounds. There are only ", surfaces.size(), " surfaces specified so far with method ChemicalState::setSurfaceArea(phase1, phase2, value, unit).");
+        value = units::convert(value, unit, "m2");
+        surface_areas[isurface] = value;
+    }
+
+    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real
+    {
+        const auto isurface = surfaceIndex(phase1, phase2);
+        errorif(isurface >= surfaces.size(), "No surface area has yet been set for the phase pair `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "`. Use method ChemicalState::setSurfaceArea(phase1, phase2, value, unit) to create this surface.");
+        return surface_areas[isurface];
+    }
+
+    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
+    {
+        setSurfaceArea(phase1, phase2, value, unit);
+    }
+
+    auto surfaceArea(Index isurface) const -> real
+    {
+        errorif(isurface >= surfaces.size(), "The given surface index,", isurface, ", is out of bounds. There are only ", surfaces.size(), " surfaces specified so far with method ChemicalState::setSurfaceArea(phase1, phase2, value, unit).");
+        return surface_areas[isurface];
+    }
+
+    auto surfaceAreas() const -> ArrayXrConstRef
+    {
+        return ArrayXr::Map(surface_areas.data(), surface_areas.size());
+    }
+
+    auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
+    {
+        const auto iphase1 = detail::resolvePhaseIndex(system, phase1);
+        const auto iphase2 = detail::resolvePhaseIndex(system, phase2);
+        const auto numphases = system.phases().size();
+        errorif(iphase1 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase1), "`.");
+        errorif(iphase2 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase2), "`.");
+        errorif(iphase1 == iphase2, "Expecting distinct phase names or indices, but got `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "`.");
+        const auto pair = iphase1 < iphase2 ? Pair<Index,Index>{iphase1, iphase2} : Pair<Index,Index>{iphase2, iphase1};
+        const auto isurface = index(surfaces, pair);
+        return isurface;
     }
 };
 
@@ -477,44 +547,48 @@ auto ChemicalState::scaleSolidMass(real value, String unit) -> void
     pimpl->scaleSolidMass(value, unit);
 }
 
-auto ChemicalState::system() const -> const ChemicalSystem&
+// --------------------------------------------------------------------------------------------
+// METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::setSurfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
 {
-    return pimpl->system;
+    pimpl->setSurfaceArea(phase1, phase2, value, unit);
 }
 
-auto ChemicalState::temperature() const -> real
+auto ChemicalState::setSurfaceArea(Index isurface, real value, Chars unit) -> void
 {
-    return pimpl->T;
+    pimpl->setSurfaceArea(isurface, value, unit);
 }
 
-auto ChemicalState::pressure() const -> real
+auto ChemicalState::surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
 {
-    return pimpl->P;
+    pimpl->surfaceArea(phase1, phase2, value, unit);
 }
 
-auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
+auto ChemicalState::surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real
 {
-    return pimpl->n;
+    return pimpl->surfaceArea(phase1, phase2);
 }
 
-auto ChemicalState::speciesAmountsInPhase(StringOrIndex phase) const -> ArrayXrConstRef
+auto ChemicalState::surfaceArea(Index isurface) const -> real
 {
-    return pimpl->speciesAmountsInPhase(phase);
+    return pimpl->surfaceArea(isurface);
 }
 
-auto ChemicalState::componentAmounts() const -> ArrayXr
+auto ChemicalState::surfaceAreas() const -> ArrayXrConstRef
 {
-    return pimpl->componentAmounts();
+    return pimpl->surfaceAreas();
 }
 
-auto ChemicalState::elementAmounts() const -> ArrayXr
+auto ChemicalState::surfaces() const -> const Pairs<Index, Index>&
 {
-    return pimpl->elementAmounts();
+    return pimpl->surfaces;
 }
 
-auto ChemicalState::charge() const -> real
+auto ChemicalState::surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
 {
-    return pimpl->charge();
+    return pimpl->surfaceIndex(phase1, phase2);
 }
 
 auto ChemicalState::speciesAmount(StringOrIndex species) const -> real
