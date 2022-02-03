@@ -45,7 +45,7 @@ public:
     /// Specify an initial temperature condition for the chemical system.
     /// @param value The initial temperature of the system.
     /// @param unit The temperature unit (must be convertible to K).
-    auto startWithTemperature(real value, String unit) -> void;
+    auto startWithTemperature(real value, Chars unit) -> void;
 
     /// Specify an initial pressure condition for the chemical system.
     /// @param value The initial pressure of the system.
@@ -54,7 +54,7 @@ public:
     /// Specify an initial pressure condition for the chemical system.
     /// @param value The initial pressure of the system.
     /// @param unit The pressure unit (must be convertible to Pa).
-    auto startWithPressure(real value, String unit) -> void;
+    auto startWithPressure(real value, Chars unit) -> void;
 
     /// Specify an initial condition for the species amounts.
     /// @param n The array with the initial amounts of the species (in mol).
@@ -64,13 +64,13 @@ public:
     /// @param value The amount or mass value of the species.
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
     /// @warning An error is thrown if the chemical system has no species with name @p species.
-    auto startWith(String species, real value, String unit) -> void;
+    auto startWith(String species, real value, Chars unit) -> void;
 
     /// Specify an initial condition for the abundance of a chemical species.
     /// @param ispecies The index of the species in the chemical system.
     /// @param value The amount or mass value of the species.
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    auto startWith(Index ispecies, real value, String unit) -> void;
+    auto startWith(Index ispecies, real value, Chars unit) -> void;
 
     /// Specify an initial condition for temperature, pressure, and species amounts with a given chemical state.
     /// @note This method overwrites all previous `startWith`, `startWithTemperature`,

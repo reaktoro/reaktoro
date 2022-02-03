@@ -51,7 +51,7 @@ auto EquilibriumProblem::startWithTemperature(real value) -> void
     m_initial_temperature = value;
 }
 
-auto EquilibriumProblem::startWithTemperature(real value, String unit) -> void
+auto EquilibriumProblem::startWithTemperature(real value, Chars unit) -> void
 {
     auto converted = units::convert(value, unit, "K");
     errorif(converted <= 0.0, "EquilibriumProblem::startWithTemperature requires a positive temperature value in K, but the given value was ", value, " ", unit);
@@ -64,20 +64,20 @@ auto EquilibriumProblem::startWithPressure(real value) -> void
     m_initial_pressure = value;
 }
 
-auto EquilibriumProblem::startWithPressure(real value, String unit) -> void
+auto EquilibriumProblem::startWithPressure(real value, Chars unit) -> void
 {
     auto converted = units::convert(value, unit, "K");
     errorif(converted <= 0.0, "EquilibriumProblem::startWithPressure requires a positive pressure value in Pa, but the given value was ", value, " ", unit);
     m_initial_pressure = converted;
 }
 
-auto EquilibriumProblem::startWith(String species, real value, String unit) -> void
+auto EquilibriumProblem::startWith(String species, real value, Chars unit) -> void
 {
     const auto ispecies = system().species().index(species);
     startWith(ispecies, value, unit);
 }
 
-auto EquilibriumProblem::startWith(Index ispecies, real value, String unit) -> void
+auto EquilibriumProblem::startWith(Index ispecies, real value, Chars unit) -> void
 {
     const auto size = system().species().size();
     errorif(ispecies >= size, "EquilibriumProblem::startWith requires a valid species index (got index ", ispecies, ", which is greater or equal than the number of species", size, ")");
