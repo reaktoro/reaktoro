@@ -192,35 +192,48 @@ public:
     /// @param unit The mass unit
     auto scaleFluidMass(real value, String unit) -> void;
 
-    /// Scale the total mass of solids in the system by adjusting the masses of solid phases equally.
-    /// @param value The new total mass of solids in the system
-    /// @param unit The mass unit
-    auto scaleSolidMass(real value, String unit) -> void;
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
+    // --------------------------------------------------------------------------------------------
 
-    /// Return the underlying chemical system for this chemical state.
-    auto system() const -> const ChemicalSystem&;
+    /// Set the surface area between two phases.
+    /// @param phase1 The name or index of a phase.
+    /// @param phase2 The name or index of the other phase.
+    /// @param value The surface area between these two phases.
+    /// @param unit The unit of the surface area (must be convertible to m2).
+    auto setSurfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void;
 
-    /// Return the temperature in the chemical state (in K).
-    auto temperature() const -> real;
+    /// Set the surface area between two phases with given surface index.
+    /// @param isurface The index of the surface.
+    /// @param value The surface area between these two phases.
+    /// @param unit The unit of the surface area (must be convertible to m2).
+    auto setSurfaceArea(Index isurface, real value, Chars unit) -> void;
 
-    /// Return the pressure in the chemical state (in Pa).
-    auto pressure() const -> real;
+    /// Set the surface area between two phases.
+    /// @param phase1 The name or index of a phase.
+    /// @param phase2 The name or index of the phase interfacing with the previous one.
+    /// @param value The surface area value.
+    /// @param unit The unit of the surface area (must be convertible to m2).
+    /// @note This method is equivalent to ChemicalState::setSurfaceArea
+    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void;
 
-    /// Return the amounts of the species in the chemical state (in mol).
-    auto speciesAmounts() const -> ArrayXrConstRef;
+    /// @param phase2 The name or index of the phase interfacing with the previous one.
+    /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
+    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real;
 
-    /// Return the amounts of the species from a phase in the chemical state (in mol).
-    /// @param phase The name or index of the phase in the system.
-    auto speciesAmountsInPhase(StringOrIndex phase) const -> ArrayXrConstRef;
+    /// Return the surface area between two phases with given surface index (in m2).
+    /// @param isurface The index of the surface between two phases.
+    auto surfaceArea(Index isurface) const -> real;
 
-    /// Return the amounts of the elements and charge in the chemical state (in mol).
-    auto componentAmounts() const -> ArrayXr;
+    /// Return the areas of all specified surfaces.
+    auto surfaceAreas() const -> ArrayXrConstRef;
 
-    /// Return the amounts of the elements in the chemical state (in mol).
-    auto elementAmounts() const -> ArrayXr;
+    /// Return the phase pairs for which the surface area has been defined.
+    /// @see surfaceArea, setSurfaceArea
+    auto surfaces() const -> const Pairs<Index, Index>&;
 
-    /// Return the electric charge in the chemical state (in mol).
-    auto charge() const -> real;
+    /// Return the index of the surface between given pair of phases or number of surfaces if not found.
+    auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index;
 
     /// Return the amount of a species in the chemical state (in mol).
     /// @param species The name or index of the species in the system.
