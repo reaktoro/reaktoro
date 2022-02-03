@@ -50,13 +50,13 @@ public:
     /// @param ispecies The index of the species.
     /// @param value The upper bound value of the species amount/mass.
     /// @param unit The unit of the upper bound value (must be convertible to mol or kg).
-    auto cannotIncreaseAbove(Index ispecies, double value, String unit="mol") -> void;
+    auto cannotIncreaseAbove(Index ispecies, double value, Chars unit="mol") -> void;
 
     /// Prevent the amount/mass of a species from increasing above a value during the chemical equilibrium calculation.
     /// @param species The name of the species.
     /// @param value The upper bound value of the species amount/mass.
     /// @param unit The unit of the upper bound value (must be convertible to mol or kg).
-    auto cannotIncreaseAbove(String species, double value, String unit="mol") -> void;
+    auto cannotIncreaseAbove(String species, double value, Chars unit="mol") -> void;
 
     /// Prevent the amount of a species from decreasing during the chemical equilibrium calculation.
     /// @param ispecies The index of the species.
@@ -70,13 +70,13 @@ public:
     /// @param ispecies The index of the species.
     /// @param value The lower bound value of the species amount/mass.
     /// @param unit The unit of the lower bound value (must be convertible to mol or kg).
-    auto cannotDecreaseBelow(Index ispecies, double value, String unit="mol") -> void;
+    auto cannotDecreaseBelow(Index ispecies, double value, Chars unit="mol") -> void;
 
     /// Prevent the amount/mass of a species from decreasing below a value during the chemical equilibrium calculation.
     /// @param species The name of the species.
     /// @param value The lower bound value of the species amount/mass.
     /// @param unit The unit of the lower bound value (must be convertible to mol or kg).
-    auto cannotDecreaseBelow(String species, double value, String unit="mol") -> void;
+    auto cannotDecreaseBelow(String species, double value, Chars unit="mol") -> void;
 
     /// Remove any previously set increase/decrease restriction on the amount of a species.
     /// @param ispecies The index of the species whose amount is now allowed to change without bounds.
