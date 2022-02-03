@@ -952,7 +952,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     {
         table.add_row({ "Surface Areas:", "", "" });
             for(auto [k, pair] : enumerate(surfaces))
-                table.add_row({ ":: " + phases[pair.first].name() + ":" + phases[pair.second].name(), strfix(surface_areas[k]), "m2" });
+                table.add_row({ ":: " + phases[pair.first].name() + " : " + phases[pair.second].name(), strfix(surface_areas[k]), "m2" });
     }
 
     auto i = 0;
