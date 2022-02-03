@@ -164,7 +164,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK( state.speciesMass(idx("CaCO3(s)")) == 0.007 );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::charge()
+    // TESTING METHOD: ChemicalState::charge
     //-------------------------------------------------------------------------
     state.setSpeciesAmounts(1e-16);
     state.set("H2O(aq)", 1.0, "kg");
@@ -175,7 +175,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK( state.charge() == Approx(2.0) );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scaleSpeciesAmounts()
+    // TESTING METHOD: ChemicalState::scaleSpeciesAmounts
     //-------------------------------------------------------------------------
     ChemicalState scaled(system);
     scaled = ChemicalState(state);
@@ -184,7 +184,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scaleSpeciesAmounts(-1.0) );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scaleSpeciesAmountsInPhase()
+    // TESTING METHOD: ChemicalState::scaleSpeciesAmountsInPhase
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
     scaled.scaleSpeciesAmountsInPhase(0, 3.0);
@@ -195,7 +195,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scaleSpeciesAmountsInPhase("XYZ", -1.0) );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scaleVolume()
+    // TESTING METHOD: ChemicalState::scaleVolume
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
     scaled.scaleVolume(1.2, "m3");
@@ -204,7 +204,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scaleVolume(-1.2, "m3") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scalePhaseVolume()
+    // TESTING METHOD: ChemicalState::scalePhaseVolume
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
     scaled.scalePhaseVolume("AqueousPhase", 1.2, "m3");
@@ -213,7 +213,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scalePhaseVolume("AqueousPhase", -1.2, "m3") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scaleMass()
+    // TESTING METHOD: ChemicalState::scaleMass
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
     scaled.scaleMass(1.2, "kg");
@@ -222,7 +222,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scaleMass(-1.2, "kg") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scalePhaseMass()
+    // TESTING METHOD: ChemicalState::scalePhaseMass
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
     scaled.scalePhaseMass("AqueousPhase", 1.2, "kg");
@@ -231,7 +231,93 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scalePhaseMass("AqueousPhase", -1.2, "kg") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::props()
+    // TESTING METHODS: ChemicalState::setSurfaceArea,surfaceArea
+    //-------------------------------------------------------------------------
+
+    // There are no surface areas yet, so the calls below should raise an error
+    CHECK_THROWS( state.surfaceArea("AqueousPhase", "GaseousPhase") );
+    CHECK_THROWS( state.surfaceArea("AqueousPhase", 1)              );
+    CHECK_THROWS( state.surfaceArea(0, "GaseousPhase")              );
+    CHECK_THROWS( state.surfaceArea(0, 1)                           );
+    CHECK_THROWS( state.surfaceArea(0)                              );
+
+    // Create the first surface between aqueous and gaseous phase and set its value
+    state.setSurfaceArea("AqueousPhase", "GaseousPhase", 12, "cm2");
+
+    CHECK( state.surfaceArea("AqueousPhase", "GaseousPhase") == Approx(0.0012) );
+    CHECK( state.surfaceArea("GaseousPhase", "AqueousPhase") == Approx(0.0012) );
+    CHECK( state.surfaceArea("AqueousPhase", 1)              == Approx(0.0012) );
+    CHECK( state.surfaceArea(1, "AqueousPhase")              == Approx(0.0012) );
+    CHECK( state.surfaceArea("GaseousPhase", 0)              == Approx(0.0012) );
+    CHECK( state.surfaceArea(0, "GaseousPhase")              == Approx(0.0012) );
+    CHECK( state.surfaceArea(0, 1)                           == Approx(0.0012) );
+    CHECK( state.surfaceArea(1, 0)                           == Approx(0.0012) );
+    CHECK( state.surfaceArea(0)                              == Approx(0.0012) );
+
+    // Update the surface area between aqueous and gaseous phase, but change the order of phases
+    state.setSurfaceArea("GaseousPhase", "AqueousPhase", 19, "cm2");
+
+    CHECK( state.surfaceArea("AqueousPhase", "GaseousPhase") == Approx(0.0019) );
+    CHECK( state.surfaceArea("GaseousPhase", "AqueousPhase") == Approx(0.0019) );
+    CHECK( state.surfaceArea("AqueousPhase", 1)              == Approx(0.0019) );
+    CHECK( state.surfaceArea(1, "AqueousPhase")              == Approx(0.0019) );
+    CHECK( state.surfaceArea("GaseousPhase", 0)              == Approx(0.0019) );
+    CHECK( state.surfaceArea(0, "GaseousPhase")              == Approx(0.0019) );
+    CHECK( state.surfaceArea(0, 1)                           == Approx(0.0019) );
+    CHECK( state.surfaceArea(1, 0)                           == Approx(0.0019) );
+    CHECK( state.surfaceArea(0)                              == Approx(0.0019) );
+
+    // Create the second surface between aqueous and gaseous phase and set its value
+    state.surfaceArea("Halite", "AqueousPhase", 0.27, "m2");
+
+    CHECK( state.surfaceArea("AqueousPhase", "Halite") == Approx(0.27) );
+    CHECK( state.surfaceArea("Halite", "AqueousPhase") == Approx(0.27) );
+    CHECK( state.surfaceArea("AqueousPhase", 2)        == Approx(0.27) );
+    CHECK( state.surfaceArea(2, "AqueousPhase")        == Approx(0.27) );
+    CHECK( state.surfaceArea("Halite", 0)              == Approx(0.27) );
+    CHECK( state.surfaceArea(0, "Halite")              == Approx(0.27) );
+    CHECK( state.surfaceArea(0, 2)                     == Approx(0.27) );
+    CHECK( state.surfaceArea(2, 0)                     == Approx(0.27) );
+    CHECK( state.surfaceArea(1)                        == Approx(0.27) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::surfaceAreas
+    //-------------------------------------------------------------------------
+
+    CHECK( state.surfaceAreas().isApprox(ArrayXr{{0.0019, 0.27}}) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::surfaces
+    //-------------------------------------------------------------------------
+
+    CHECK( state.surfaces() == Pairs<Index, Index>{{0, 1}, {0, 2}} );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::surfaceIndex
+    //-------------------------------------------------------------------------
+
+    CHECK( state.surfaceIndex("AqueousPhase", "GaseousPhase") == 0 );
+    CHECK( state.surfaceIndex("GaseousPhase", "AqueousPhase") == 0 );
+    CHECK( state.surfaceIndex("AqueousPhase", 1)              == 0 );
+    CHECK( state.surfaceIndex(1, "AqueousPhase")              == 0 );
+    CHECK( state.surfaceIndex("GaseousPhase", 0)              == 0 );
+    CHECK( state.surfaceIndex(0, "GaseousPhase")              == 0 );
+    CHECK( state.surfaceIndex(0, 1)                           == 0 );
+    CHECK( state.surfaceIndex(1, 0)                           == 0 );
+
+    CHECK( state.surfaceIndex("AqueousPhase", "Halite") == 1 );
+    CHECK( state.surfaceIndex("Halite", "AqueousPhase") == 1 );
+    CHECK( state.surfaceIndex("AqueousPhase", 2)        == 1 );
+    CHECK( state.surfaceIndex(2, "AqueousPhase")        == 1 );
+    CHECK( state.surfaceIndex("Halite", 0)              == 1 );
+    CHECK( state.surfaceIndex(0, "Halite")              == 1 );
+    CHECK( state.surfaceIndex(0, 2)                     == 1 );
+    CHECK( state.surfaceIndex(2, 0)                     == 1 );
+
+    CHECK( state.surfaceIndex("AqueousPhase", "Quartz") == state.surfaces().size() ); // this surface was not created!
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::props
     //-------------------------------------------------------------------------
     state.props().update(state);
     CHECK(  state.props().temperature() == state.temperature() );
