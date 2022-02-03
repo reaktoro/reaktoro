@@ -40,7 +40,7 @@ auto molarMasses(const SpeciesList& species) -> ArrayXd;
 /// @param ispecies The index of the species in the chemical system.
 /// @param value The quantity value of the species.
 /// @param unit The quantity unit of the species.
-auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, const String& unit) -> real;
+auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, Chars unit) -> real;
 
 /// Resolve the index of an element in a list of elements with given element symbol or its index.
 auto resolveElementIndex(const ElementList& elementlist, StringOrIndex element) -> Index;

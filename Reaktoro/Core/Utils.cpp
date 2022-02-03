@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
@@ -33,7 +34,7 @@ auto molarMasses(const SpeciesList& species) -> ArrayXd
     return molar_masses;
 }
 
-auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, const String& unit) -> real
+auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, Chars unit) -> real
 {
     if(unit == "mol")
         return value;
@@ -44,7 +45,9 @@ auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real val
         value = units::convert(value, unit, "kg"); // from some mass unit to kg
         return value / molarmass; // from kg to mol
     }
-    else return units::convert(value, unit, "mol"); // from some amount unit to mol
+    else if(units::convertible(unit, "mol"))
+        return units::convert(value, unit, "mol"); // from some amount unit to mol
+    else errorif("Provided unit `", unit, "` should be convertible to mol or kg.");
 }
 
 auto resolveElementIndexAux(const ElementList& elementlist, Index index) -> Index
