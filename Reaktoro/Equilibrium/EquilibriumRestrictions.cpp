@@ -52,7 +52,7 @@ auto EquilibriumRestrictions::cannotIncrease(String species) -> void
     cannotIncrease(ispecies);
 }
 
-auto EquilibriumRestrictions::cannotIncreaseAbove(Index ispecies, double value, String unit) -> void
+auto EquilibriumRestrictions::cannotIncreaseAbove(Index ispecies, double value, Chars unit) -> void
 {
     const auto numspecies = system().species().size();
     errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
@@ -61,7 +61,7 @@ auto EquilibriumRestrictions::cannotIncreaseAbove(Index ispecies, double value, 
     species_cannot_increase_above.insert_or_assign(ispecies, value);
 }
 
-auto EquilibriumRestrictions::cannotIncreaseAbove(String species, double value, String unit) -> void
+auto EquilibriumRestrictions::cannotIncreaseAbove(String species, double value, Chars unit) -> void
 {
     const auto ispecies = system().species().indexWithName(species);
     cannotIncreaseAbove(ispecies, value, unit);
@@ -81,7 +81,7 @@ auto EquilibriumRestrictions::cannotDecrease(String species) -> void
     cannotDecrease(ispecies);
 }
 
-auto EquilibriumRestrictions::cannotDecreaseBelow(Index ispecies, double value, String unit) -> void
+auto EquilibriumRestrictions::cannotDecreaseBelow(Index ispecies, double value, Chars unit) -> void
 {
     const auto numspecies = system().species().size();
     errorif(ispecies >= numspecies, "Given species index `", ispecies, "` is out of bounds (number of species is ", numspecies, ").");
@@ -90,7 +90,7 @@ auto EquilibriumRestrictions::cannotDecreaseBelow(Index ispecies, double value, 
     species_cannot_decrease_below.insert_or_assign(ispecies, value);
 }
 
-auto EquilibriumRestrictions::cannotDecreaseBelow(String species, double value, String unit) -> void
+auto EquilibriumRestrictions::cannotDecreaseBelow(String species, double value, Chars unit) -> void
 {
     const auto ispecies = system().species().indexWithName(species);
     cannotDecreaseBelow(ispecies, value, unit);
