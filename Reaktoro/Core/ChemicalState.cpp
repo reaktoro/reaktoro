@@ -29,6 +29,7 @@ using namespace tabulate;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -930,10 +931,13 @@ auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
 
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 {
-    const auto n = state.speciesAmounts();
-    const auto b = state.elementAmounts();
-    const auto species = state.system().species();
-    const auto elements = state.system().elements();
+    const auto& n = state.speciesAmounts();
+    const auto& b = state.elementAmounts();
+    const auto& phases = state.system().phases();
+    const auto& species = state.system().species();
+    const auto& elements = state.system().elements();
+    const auto& surfaces = state.surfaces();
+    const auto& surface_areas = state.surfaceAreas();
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
@@ -943,6 +947,13 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
 
     table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), strsci(b[i]), "mol" });
     table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(n[i]), "mol" });
+
+    if(state.surfaces().size())
+    {
+        table.add_row({ "Surface Areas:", "", "" });
+            for(auto [k, pair] : enumerate(surfaces))
+                table.add_row({ ":: " + phases[pair.first].name() + ":" + phases[pair.second].name(), strfix(surface_areas[k]), "m2" });
+    }
 
     auto i = 0;
     for(auto& row : table)
