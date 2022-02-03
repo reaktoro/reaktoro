@@ -77,60 +77,34 @@ struct ChemicalState::Impl
 
     auto temperature(real val) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive temperature value, ", val, "K, in a ChemicalState object.");
+        errorif(val <= 0.0, "Expecting a non-positive temperature value, but got ", val, " K.");
         T = val;
     }
 
-    auto temperature(real val, String unit) -> void
+    auto temperature(real val, Chars unit) -> void
     {
         temperature(units::convert(val, unit, "K"));
     }
 
     auto pressure(real val) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive pressure value, ", val, "Pa, in a ChemicalState object.");
+        errorif(val <= 0.0, "Expecting a non-positive pressure value, but got ", val, " Pa.");
         P = val;
     }
 
-    auto pressure(real val, String unit) -> void
+    auto pressure(real val, Chars unit) -> void
     {
-        error(val <= 0.0, "Cannot set a non-positive pressure "
-            "value, ", val, unit, ", in a ChemicalState object.");
+        errorif(val <= 0.0, "Expecting a non-positive pressure value, but got ", val, " ", unit, ".");
         pressure(units::convert(val, unit, "Pa"));
     }
 
-    auto add(String species, real value, String unit) -> void
-    {
-        const auto ispecies = system.species().index(species);
-        add(ispecies, value, unit);
-    }
-
-    auto add(Index ispecies, real value, String unit) -> void
-    {
-        const auto size = system.species().size();
-        errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
-        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
-        n[ispecies] += amount;
-    }
-
-    auto set(String species, real value, String unit) -> void
-    {
-        const auto ispecies = system.species().index(species);
-        set(ispecies, value, unit);
-    }
-
-    auto set(Index ispecies, real value, String unit) -> void
-    {
-        const auto size = system.species().size();
-        errorif(ispecies >= size, "Given species index (", ispecies, ") is out-of-bounds (number of species is ", size, ").");
-        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
-        n[ispecies] = amount;
-    }
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR SETTING THE AMOUNT OR MASS OF SPECIES
+    // --------------------------------------------------------------------------------------------
 
     auto setSpeciesAmounts(real val) -> void
     {
-        error(val < 0.0, "Cannot set a negative species "
-            "amount, ", val, " mol, in a ChemicalState object.");
+        errorif(val < 0.0, "It is not possible to set a negative species amount.");
         n.fill(val);
     }
 
@@ -148,36 +122,67 @@ struct ChemicalState::Impl
         n = values;
     }
 
-    auto setSpeciesAmount(Index ispecies, real amount) -> void
+    auto setSpeciesAmount(const StringOrIndex& species, real amount, Chars unit) -> void
     {
-        assert(ispecies < system.species().size());
-        assert(amount >= 0.0);
-        n[ispecies] = amount;
-    }
-
-    auto setSpeciesAmount(StringOrIndex species, real amount, String unit) -> void
-    {
-        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount);
+        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species));
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
         n[ispecies] = units::convert(amount, unit, "mol");
     }
 
-    auto setSpeciesMass(StringOrIndex species, real mass, String unit) -> void
+    auto setSpeciesMass(const StringOrIndex& species, real mass, Chars unit) -> void
     {
-        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species));
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
         n[ispecies] = units::convert(mass, unit, "kg") / system.species(ispecies).molarMass();
     }
 
-    auto speciesAmountsInPhase(StringOrIndex phase) const -> ArrayXrConstRef
+    auto set(const StringOrIndex& species, real value, Chars unit) -> void
+    {
+        errorif(value < 0.0, "Expecting a non-negative amount/mass value, but got ", value, " ", unit);
+        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto numspecies = system.species().size();
+        errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
+        n[ispecies] = amount;
+    }
+
+    auto add(const StringOrIndex& species, real value, Chars unit) -> void
+    {
+        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto numspecies = system.species().size();
+        errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
+        n[ispecies] += amount;
+        errorif(n[ispecies] < 0.0, "It is not possible to add a negative species amount (", value, " ", unit, ") that produces a negative amount for the species.");
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR GETTING THE AMOUNT OR MASS OF SPECIES, ELEMENTS, AND CHARGE
+    // --------------------------------------------------------------------------------------------
+
+    auto speciesAmountsInPhase(const StringOrIndex& phase) const -> ArrayXrConstRef
     {
         const auto iphase = detail::resolvePhaseIndex(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
         const auto start = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = system.phase(iphase).species().size();
         return n.segment(start, size);
+    }
+
+    auto speciesAmount(const StringOrIndex& species) const -> real
+    {
+        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        return n[ispecies];
+    }
+
+    auto speciesMass(const StringOrIndex& species) const -> real
+    {
+        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        return n[ispecies] * system.species(ispecies).molarMass();
     }
 
     auto componentAmounts() const -> ArrayXr
@@ -198,19 +203,9 @@ struct ChemicalState::Impl
         return (Az * n.matrix())[0];
     }
 
-    auto speciesAmount(StringOrIndex species) const -> real
-    {
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species));
-        return n[ispecies];
-    }
-
-    auto speciesMass(StringOrIndex species) const -> real
-    {
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species));
-        return n[ispecies] * system.species(ispecies).molarMass();
-    }
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE AMOUNTS OF SPECIES IN THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
 
     auto scaleSpeciesAmounts(double scalar) -> void
     {
@@ -218,13 +213,13 @@ struct ChemicalState::Impl
         n *= scalar;
     }
 
-    auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
+    auto scaleSpeciesAmounts(double scalar, ArrayXlConstRef indices) -> void
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
         n(indices) *= scalar;
     }
 
-    auto scaleSpeciesAmountsInPhase(StringOrIndex phase, double scalar) -> void
+    auto scaleSpeciesAmountsInPhase(const StringOrIndex& phase, double scalar) -> void
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
         const auto iphase = detail::resolvePhaseIndex(system, phase);
@@ -234,9 +229,13 @@ struct ChemicalState::Impl
         n.segment(start, size) *= scalar;
     }
 
-    auto scaleVolume(real volume, String unit) -> void
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
+
+    auto scaleVolume(real volume, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
         props.update(T, P, n);
         const auto current_volume = props.volume();
@@ -244,9 +243,9 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
-    auto scalePhaseVolume(StringOrIndex phase, real volume, String unit) -> void
+    auto scalePhaseVolume(const StringOrIndex& phase, real volume, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
         const auto iphase = detail::resolvePhaseIndex(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
@@ -256,9 +255,9 @@ struct ChemicalState::Impl
         scaleSpeciesAmountsInPhase(iphase, scalar);
     }
 
-    auto scaleFluidVolume(real volume, String unit) -> void
+    auto scaleFluidVolume(real volume, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
         props.update(T, P, n);
         const auto ifluidphases = props.indicesPhasesWithFluidState();
@@ -266,12 +265,12 @@ struct ChemicalState::Impl
             Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).volume(); });
         const auto& factor = current_fluid_volume > 0.0 ? volume / current_fluid_volume : real(0.0);
         const auto& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
-        scaleSpeciesAmounts(factor, ifluidspecies);
+        n(ifluidspecies) *= factor;
     }
 
-    auto scaleSolidVolume(real volume, String unit) -> void
+    auto scaleSolidVolume(real volume, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume);
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
         props.update(T, P, n);
         const auto isolidphases = props.indicesPhasesWithSolidState();
@@ -279,12 +278,16 @@ struct ChemicalState::Impl
             Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).volume(); });
         const auto& factor = current_solid_volume > 0.0 ? volume / current_solid_volume : real(0.0);
         const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
-        scaleSpeciesAmounts(factor, isolidspecies);
+        n(isolidspecies) *= factor;
     }
 
-    auto scaleMass(real mass, String unit) -> void
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE MASS OF THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
+
+    auto scaleMass(real mass, Chars unit) -> void
     {
-        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
         props.update(T, P, n);
         const auto current_mass = props.mass();
@@ -292,9 +295,9 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
-    auto scalePhaseMass(StringOrIndex phase, real mass, String unit) -> void
+    auto scalePhaseMass(const StringOrIndex& phase, real mass, Chars unit) -> void
     {
-        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
         const auto iphase = detail::resolvePhaseIndex(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
@@ -304,9 +307,9 @@ struct ChemicalState::Impl
         scaleSpeciesAmountsInPhase(iphase, scalar);
     }
 
-    auto scaleFluidMass(real mass, String unit) -> void
+    auto scaleFluidMass(real mass, Chars unit) -> void
     {
-        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
         props.update(T, P, n);
         const auto ifluidphases = props.indicesPhasesWithFluidState();
@@ -314,12 +317,12 @@ struct ChemicalState::Impl
             Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).mass(); });
         const auto& factor = current_fluid_mass > 0.0 ? mass / current_fluid_mass : real(0.0);
         const auto& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
-        scaleSpeciesAmounts(factor, ifluidspecies);
+        n(ifluidspecies) *= factor;
     }
 
-    auto scaleSolidMass(real mass, String unit) -> void
+    auto scaleSolidMass(real mass, Chars unit) -> void
     {
-        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass);
+        errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
         props.update(T, P, n);
         const auto isolidphases = props.indicesPhasesWithSolidState();
@@ -327,6 +330,8 @@ struct ChemicalState::Impl
             Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).mass(); });
         const auto& factor = current_solid_mass > 0.0 ? mass / current_solid_mass : real(0.0);
         const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
+        n(isolidspecies) *= factor;
+    }
 
     // --------------------------------------------------------------------------------------------
     // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
@@ -412,14 +417,47 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
     return *this;
 }
 
+// --------------------------------------------------------------------------------------------
+// METHODS FOR SETTING/GETTING TEMPERATURE
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::setTemperature(real value) -> void
+{
+    pimpl->temperature(value);
+}
+
+auto ChemicalState::setTemperature(real value, Chars unit) -> void
+{
+    pimpl->temperature(value, unit);
+}
+
 auto ChemicalState::temperature(real value) -> void
 {
     pimpl->temperature(value);
 }
 
-auto ChemicalState::temperature(real value, String unit) -> void
+auto ChemicalState::temperature(real value, Chars unit) -> void
 {
     pimpl->temperature(value, unit);
+}
+
+auto ChemicalState::temperature() const -> real
+{
+    return pimpl->T;
+}
+
+// --------------------------------------------------------------------------------------------
+// METHODS FOR SETTING/GETTING PRESSURE
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::setPressure(real value) -> void
+{
+    pimpl->pressure(value);
+}
+
+auto ChemicalState::setPressure(real value, Chars unit) -> void
+{
+    pimpl->pressure(value, unit);
 }
 
 auto ChemicalState::pressure(real value) -> void
@@ -427,50 +465,19 @@ auto ChemicalState::pressure(real value) -> void
     pimpl->pressure(value);
 }
 
-auto ChemicalState::pressure(real value, String unit) -> void
+auto ChemicalState::pressure(real value, Chars unit) -> void
 {
     pimpl->pressure(value, unit);
 }
 
-auto ChemicalState::add(String species, real value, String unit) -> void
+auto ChemicalState::pressure() const -> real
 {
-    pimpl->add(species, value, unit);
+    return pimpl->P;
 }
 
-auto ChemicalState::add(Index ispecies, real value, String unit) -> void
-{
-    pimpl->add(ispecies, value, unit);
-}
-
-auto ChemicalState::set(String species, real value, String unit) -> void
-{
-    pimpl->set(species, value, unit);
-}
-
-auto ChemicalState::set(Index ispecies, real value, String unit) -> void
-{
-    pimpl->set(ispecies, value, unit);
-}
-
-auto ChemicalState::setTemperature(real value) -> void
-{
-    pimpl->temperature(value);
-}
-
-auto ChemicalState::setTemperature(real value, String unit) -> void
-{
-    pimpl->temperature(value, unit);
-}
-
-auto ChemicalState::setPressure(real value) -> void
-{
-    pimpl->pressure(value);
-}
-
-auto ChemicalState::setPressure(real value, String unit) -> void
-{
-    pimpl->pressure(value, unit);
-}
+// --------------------------------------------------------------------------------------------
+// METHODS FOR SETTING THE AMOUNT OR MASS OF SPECIES
+// --------------------------------------------------------------------------------------------
 
 auto ChemicalState::setSpeciesAmounts(real value) -> void
 {
@@ -487,62 +494,128 @@ auto ChemicalState::setSpeciesAmounts(ArrayXdConstRef n) -> void
     pimpl->setSpeciesAmounts(n);
 }
 
-auto ChemicalState::setSpeciesAmount(StringOrIndex species, real amount, String unit) -> void
+auto ChemicalState::set(const StringOrIndex& species, real value, Chars unit) -> void
+{
+    pimpl->set(species, value, unit);
+}
+
+auto ChemicalState::add(const StringOrIndex& species, real value, Chars unit) -> void
+{
+    pimpl->add(species, value, unit);
+}
+
+auto ChemicalState::setSpeciesAmount(const StringOrIndex& species, real amount, Chars unit) -> void
 {
     pimpl->setSpeciesAmount(species, amount, unit);
 }
 
-auto ChemicalState::setSpeciesMass(StringOrIndex species, real mass, String unit) -> void
+auto ChemicalState::setSpeciesMass(const StringOrIndex& species, real mass, Chars unit) -> void
 {
     pimpl->setSpeciesMass(species, mass, unit);
 }
+
+// --------------------------------------------------------------------------------------------
+// METHODS FOR GETTING THE AMOUNT OR MASS OF SPECIES, ELEMENTS, AND CHARGE
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
+{
+    return pimpl->n;
+}
+
+auto ChemicalState::speciesAmountsInPhase(const StringOrIndex& phase) const -> ArrayXrConstRef
+{
+    return pimpl->speciesAmountsInPhase(phase);
+}
+
+auto ChemicalState::speciesAmount(const StringOrIndex& species) const -> real
+{
+    return pimpl->speciesAmount(species);
+}
+
+auto ChemicalState::speciesMass(const StringOrIndex& species) const -> real
+{
+    return pimpl->speciesMass(species);
+}
+
+auto ChemicalState::componentAmounts() const -> ArrayXr
+{
+    return pimpl->componentAmounts();
+}
+
+auto ChemicalState::elementAmounts() const -> ArrayXr
+{
+    return pimpl->elementAmounts();
+}
+
+auto ChemicalState::charge() const -> real
+{
+    return pimpl->charge();
+}
+
+// --------------------------------------------------------------------------------------------
+// METHODS TO SCALE THE AMOUNTS OF SPECIES IN THE SYSTEM OR PART OF IT
+// --------------------------------------------------------------------------------------------
 
 auto ChemicalState::scaleSpeciesAmounts(real scalar) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar);
 }
 
-auto ChemicalState::scaleSpeciesAmountsInPhase(StringOrIndex phase, real scalar) -> void
+auto ChemicalState::scaleSpeciesAmounts(real scalar, ArrayXlConstRef indices) -> void
+{
+    pimpl->scaleSpeciesAmounts(scalar, indices);
+}
+
+auto ChemicalState::scaleSpeciesAmountsInPhase(const StringOrIndex& phase, real scalar) -> void
 {
     pimpl->scaleSpeciesAmountsInPhase(phase, scalar);
 }
 
-auto ChemicalState::scaleVolume(real value, String unit) -> void
+// --------------------------------------------------------------------------------------------
+// METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::scaleVolume(real value, Chars unit) -> void
 {
     pimpl->scaleVolume(value, unit);
 }
 
-auto ChemicalState::scalePhaseVolume(StringOrIndex phase, real value, String unit) -> void
+auto ChemicalState::scalePhaseVolume(const StringOrIndex& phase, real value, Chars unit) -> void
 {
     pimpl->scalePhaseVolume(phase, value, unit);
 }
 
-auto ChemicalState::scaleFluidVolume(real value, String unit) -> void
+auto ChemicalState::scaleFluidVolume(real value, Chars unit) -> void
 {
     pimpl->scaleFluidVolume(value, unit);
 }
 
-auto ChemicalState::scaleSolidVolume(real value, String unit) -> void
+auto ChemicalState::scaleSolidVolume(real value, Chars unit) -> void
 {
     pimpl->scaleSolidVolume(value, unit);
 }
 
-auto ChemicalState::scaleMass(real value, String unit) -> void
+// --------------------------------------------------------------------------------------------
+// METHODS TO SCALE THE MASS OF THE SYSTEM OR PART OF IT
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::scaleMass(real value, Chars unit) -> void
 {
     pimpl->scaleMass(value, unit);
 }
 
-auto ChemicalState::scalePhaseMass(StringOrIndex phase, real value, String unit) -> void
+auto ChemicalState::scalePhaseMass(const StringOrIndex& phase, real value, Chars unit) -> void
 {
     pimpl->scalePhaseMass(phase, value, unit);
 }
 
-auto ChemicalState::scaleFluidMass(real value, String unit) -> void
+auto ChemicalState::scaleFluidMass(real value, Chars unit) -> void
 {
     pimpl->scaleFluidMass(value, unit);
 }
 
-auto ChemicalState::scaleSolidMass(real value, String unit) -> void
+auto ChemicalState::scaleSolidMass(real value, Chars unit) -> void
 {
     pimpl->scaleSolidMass(value, unit);
 }
@@ -591,14 +664,13 @@ auto ChemicalState::surfaceIndex(const StringOrIndex& phase1, const StringOrInde
     return pimpl->surfaceIndex(phase1, phase2);
 }
 
-auto ChemicalState::speciesAmount(StringOrIndex species) const -> real
-{
-    return pimpl->speciesAmount(species);
-}
+// --------------------------------------------------------------------------------------------
+// MISCELLANEOUS METHODS
+// --------------------------------------------------------------------------------------------
 
-auto ChemicalState::speciesMass(StringOrIndex species) const -> real
+auto ChemicalState::system() const -> const ChemicalSystem&
 {
-    return pimpl->speciesMass(species);
+    return pimpl->system;
 }
 
 auto ChemicalState::props() const -> const ChemicalProps&

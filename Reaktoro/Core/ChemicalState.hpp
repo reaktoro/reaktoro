@@ -59,138 +59,194 @@ public:
     /// Assign a ChemicalState instance to this instance.
     auto operator=(ChemicalState other) -> ChemicalState&;
 
-    /// Set the temperature of the chemical state.
-    /// @param value The temperature value (in K).
-    auto temperature(real value) -> void;
-
-    /// Set the temperature of the chemical state with given unit.
-    /// @param value The temperature value.
-    /// @param unit The temperature unit (convertible to K).
-    auto temperature(real value, String unit) -> void;
-
-    /// Set the pressure of the chemical state.
-    /// @param value The pressure value (in Pa).
-    auto pressure(real value) -> void;
-
-    /// Set the pressure of the chemical state with given unit.
-    /// @param value The pressure value.
-    /// @param unit The pressure unit (convertible to Pa).
-    auto pressure(real value, String unit) -> void;
-
-    /// Add a specified amount or mass of a chemical species in the chemical state.
-    /// @param species The name of the species in the chemical system.
-    /// @param value The amount or mass value of the added species.
-    /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    /// @warning An error is thrown if the chemical system has no species with name @p species.
-    auto add(String species, real value, String unit) -> void;
-
-    /// Add a specified amount or mass of a chemical species in the chemical state.
-    /// @param ispecies The index of the species in the chemical system.
-    /// @param value The amount or mass value of the added species.
-    /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    auto add(Index ispecies, real value, String unit) -> void;
-
-    /// Set a specified amount or mass of a chemical species in the chemical state.
-    /// @param species The name of the species in the chemical system.
-    /// @param value The amount or mass value of the added species.
-    /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    /// @warning An error is thrown if the chemical system has no species with name @p species.
-    auto set(String species, real value, String unit) -> void;
-
-    /// Set a specified amount or mass of a chemical species in the chemical state.
-    /// @param ispecies The index of the species in the chemical system.
-    /// @param value The amount or mass value of the added species.
-    /// @param unit The amount or mass unit (must be convertible to mol or kg).
-    auto set(Index ispecies, real value, String unit) -> void;
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR SETTING/GETTING TEMPERATURE
+    // --------------------------------------------------------------------------------------------
 
     /// Set the temperature of the chemical state.
     /// @param value The temperature value (in K).
-    /// @note This method is equivalent to ChemicalState::temperature(real)
     auto setTemperature(real value) -> void;
 
     /// Set the temperature of the chemical state with given unit.
     /// @param value The temperature value.
-    /// @param unit The temperature unit (convertible to K).
-    /// @note This method is equivalent to ChemicalState::temperature(real, String)
-    auto setTemperature(real value, String unit) -> void;
+    /// @param unit The temperature unit (must be convertible to K).
+    auto setTemperature(real value, Chars unit) -> void;
+
+    /// Set the temperature of the chemical state.
+    /// @param value The temperature value (in K).
+    /// @note This method is equivalent to ChemicalState::setTemperature(real)
+    auto temperature(real value) -> void;
+
+    /// Set the temperature of the chemical state with given unit.
+    /// @param value The temperature value.
+    /// @param unit The temperature unit (must be convertible to K).
+    /// @note This method is equivalent to ChemicalState::setTemperature(real, String)
+    auto temperature(real value, Chars unit) -> void;
+
+    /// Return the temperature in the chemical state (in K).
+    auto temperature() const -> real;
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR SETTING/GETTING PRESSURE
+    // --------------------------------------------------------------------------------------------
 
     /// Set the pressure of the chemical state.
     /// @param value The pressure value (in Pa).
-    /// @note This method is equivalent to ChemicalState::pressure(real)
     auto setPressure(real value) -> void;
 
     /// Set the pressure of the chemical state with given unit.
     /// @param value The pressure value.
-    /// @param unit The pressure unit (convertible to Pa).
-    /// @note This method is equivalent to ChemicalState::pressure(real, String)
-    auto setPressure(real value, String unit) -> void;
+    /// @param unit The pressure unit (must be convertible to Pa).
+    auto setPressure(real value, Chars unit) -> void;
+
+    /// Set the pressure of the chemical state.
+    /// @param value The pressure value (in Pa).
+    /// @note This method is equivalent to ChemicalState::setPressure(real)
+    auto pressure(real value) -> void;
+
+    /// Set the pressure of the chemical state with given unit.
+    /// @param value The pressure value.
+    /// @param unit The pressure unit (must be convertible to Pa).
+    /// @note This method is equivalent to ChemicalState::setPressure(real, String)
+    auto pressure(real value, Chars unit) -> void;
+
+    /// Return the pressure in the chemical state (in Pa).
+    auto pressure() const -> real;
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR SETTING THE AMOUNT OR MASS OF SPECIES
+    // --------------------------------------------------------------------------------------------
 
     /// Set the amounts of all species in the chemical state to a common value (in mol).
     auto setSpeciesAmounts(real value) -> void;
 
-    /// Set the amounts of the species in the chemical state (in mol).
+    /// Set the amounts of the species in the chemical state with given array (in mol).
     auto setSpeciesAmounts(ArrayXrConstRef n) -> void;
 
-    /// Set the amounts of the species in the chemical state (in mol).
+    /// Set the amounts of the species in the chemical state with given array (in mol).
     auto setSpeciesAmounts(ArrayXdConstRef n) -> void;
 
-    /// Set the amount of a species in the system.
-    /// @param species The name or index of the species in the system.
-    /// @param amount The new amount of the species
-    /// @param unit The amount unit
-    auto setSpeciesAmount(StringOrIndex species, real amount, String unit) -> void;
+    /// Set the amount of a specific species in the system.
+    /// @param species The name or index of the species.
+    /// @param amount The amount of the species
+    /// @param unit The amount unit (must be convertible to mol)
+    auto setSpeciesAmount(const StringOrIndex& species, real amount, Chars unit) -> void;
 
-    /// Set the mass of a species in the system.
-    /// @param species The name or index of the species in the system.
-    /// @param mass The new mass of the species
-    /// @param unit The mass unit
-    auto setSpeciesMass(StringOrIndex species, real mass, String unit) -> void;
+    /// Set the mass of a specific species in the system.
+    /// @param species The name or index of the species.
+    /// @param mass The mass of the species
+    /// @param unit The mass unit (must be convertible to kg)
+    auto setSpeciesMass(const StringOrIndex& species, real mass, Chars unit) -> void;
 
-    /// Scale the amounts of every species by a given scalar.
+    /// Set the amount or mass of a chemical species in the chemical state.
+    /// @param species The name or index of the species.
+    /// @param value The amount or mass value of the species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    /// @warning An error is thrown if the chemical system has no species with name `species`.
+    auto set(const StringOrIndex& species, real value, Chars unit) -> void;
+
+    /// Add a specified amount or mass of a chemical species in the chemical state.
+    /// @param species The name or index of the species in the chemical system.
+    /// @param value The amount or mass value of the added species.
+    /// @param unit The amount or mass unit (must be convertible to mol or kg).
+    /// @warning An error is thrown if the chemical system has no species with name `species`.
+    auto add(const StringOrIndex& species, real value, Chars unit) -> void;
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS FOR GETTING THE AMOUNT OR MASS OF SPECIES, ELEMENTS, AND CHARGE
+    // --------------------------------------------------------------------------------------------
+
+    /// Return the amounts of the species in the chemical state (in mol).
+    auto speciesAmounts() const -> ArrayXrConstRef;
+
+    /// Return the amounts of the species from a phase in the chemical state (in mol).
+    /// @param phase The name or index of the phase in the system.
+    auto speciesAmountsInPhase(const StringOrIndex& phase) const -> ArrayXrConstRef;
+
+    /// Return the amount of a species in the chemical state (in mol).
+    /// @param species The name or index of the species.
+    auto speciesAmount(const StringOrIndex& species) const -> real;
+
+    /// Return the mass of a species in the chemical state (in kg).
+    /// @param species The name or index of the species.
+    auto speciesMass(const StringOrIndex& species) const -> real;
+
+    /// Return the amounts of the elements and charge in the chemical state (in mol).
+    auto componentAmounts() const -> ArrayXr;
+
+    /// Return the amounts of the elements in the chemical state (in mol).
+    auto elementAmounts() const -> ArrayXr;
+
+    /// Return the electric charge in the chemical state (in mol).
+    auto charge() const -> real;
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE AMOUNTS OF SPECIES IN THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
+
+    /// Scale the amounts of every species by a given factor.
     /// @param scalar The scale factor
     auto scaleSpeciesAmounts(real scalar) -> void;
 
-    /// Scale the amounts of the species in a phase by a given scalar.
+    /// Scale the amounts of the species with given indices.
+    /// @param scalar The scale factor
+    /// @param indices The indices of the species
+    auto scaleSpeciesAmounts(real scalar, ArrayXlConstRef indices) -> void;
+
+    /// Scale the amounts of the species in a phase by a given factor.
     /// @param phase The name or index of the phase in the system.
     /// @param scalar The scale factor
-    auto scaleSpeciesAmountsInPhase(StringOrIndex phase, real scalar) -> void;
+    auto scaleSpeciesAmountsInPhase(const StringOrIndex& phase, real scalar) -> void;
 
-    /// Scale the volume of the system by adjusting the amounts of its species equally.
-    /// @param value The new volume of the system
-    /// @param unit The volume unit
-    auto scaleVolume(real value, String unit) -> void;
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
 
-    /// Scale the volume of a phase by adjusting the amounts of its species equally.
+    /// Scale the volume of the system to a new value.
+    /// @param volume The new volume of the system
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scaleVolume(real volume, Chars unit) -> void;
+
+    /// Scale the volume of a phase to a new value.
     /// @param phase The name or index of the phase in the system.
-    /// @param value The new volume of the phase
-    /// @param unit The volume unit
-    auto scalePhaseVolume(StringOrIndex phase, real value, String unit) -> void;
+    /// @param volume The new volume of the phase
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scalePhaseVolume(const StringOrIndex& phase, real volume, Chars unit) -> void;
 
-    /// Scale the total volume of fluids in the system by adjusting the volumes of fluid phases equally.
-    /// @param value The new total volume of fluids in the system
-    /// @param unit The volume unit
-    auto scaleFluidVolume(real value, String unit) -> void;
+    /// Scale the total volume of fluids in the system to a new value.
+    /// @param volume The new total volume of fluids in the system
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scaleFluidVolume(real volume, Chars unit) -> void;
 
-    /// Scale the total volume of solids in the system by adjusting the volumes of solid phases equally.
-    /// @param value The new total volume of solids in the system
-    /// @param unit The volume unit
-    auto scaleSolidVolume(real value, String unit) -> void;
+    /// Scale the total volume of solids in the system to a new value.
+    /// @param volume The new total volume of solids in the system
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scaleSolidVolume(real volume, Chars unit) -> void;
 
-    /// Scale the mass of the system by adjusting the amounts of its species equally.
-    /// @param value The new mass of the system
-    /// @param unit The mass unit
-    auto scaleMass(real value, String unit) -> void;
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE MASS OF THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
 
-    /// Scale the mass of a phase by adjusting the amounts of its species equally.
+    /// Scale the mass of the system to a new value.
+    /// @param mass The new mass of the system
+    /// @param unit The mass unit (must be convertible to kg)
+    auto scaleMass(real mass, Chars unit) -> void;
+
+    /// Scale the mass of a phase to a new value.
     /// @param phase The name or index of the phase in the system.
-    /// @param value The new mass of the phase
-    /// @param unit The mass unit
-    auto scalePhaseMass(StringOrIndex phase, real value, String unit) -> void;
+    /// @param mass The new mass of the phase
+    /// @param unit The mass unit (must be convertible to kg)
+    auto scalePhaseMass(const StringOrIndex& phase, real mass, Chars unit) -> void;
 
-    /// Scale the total mass of fluids in the system by adjusting the masses of fluid phases equally.
-    /// @param value The new total mass of fluids in the system
-    /// @param unit The mass unit
-    auto scaleFluidMass(real value, String unit) -> void;
+    /// Scale the total mass of fluids in the system to a new value.
+    /// @param mass The new total mass of fluids in the system
+    /// @param unit The mass unit (must be convertible to kg)
+    auto scaleFluidMass(real mass, Chars unit) -> void;
+
+    /// Scale the total mass of solids in the system to a new value.
+    /// @param mass The new total mass of solids in the system
+    /// @param unit The mass unit (must be convertible to kg)
+    auto scaleSolidMass(real mass, Chars unit) -> void;
 
     // --------------------------------------------------------------------------------------------
     // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
@@ -235,13 +291,12 @@ public:
     /// Return the index of the surface between given pair of phases or number of surfaces if not found.
     auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index;
 
-    /// Return the amount of a species in the chemical state (in mol).
-    /// @param species The name or index of the species in the system.
-    auto speciesAmount(StringOrIndex species) const -> real;
+    // --------------------------------------------------------------------------------------------
+    // MISCELLANEOUS METHODS
+    // --------------------------------------------------------------------------------------------
 
-    /// Return the mass of a species in the chemical state (in kg).
-    /// @param species The name or index of the species in the system.
-    auto speciesMass(StringOrIndex species) const -> real;
+    /// Return the underlying chemical system for this chemical state.
+    auto system() const -> const ChemicalSystem&;
 
     /// Return the chemical properties of the system. For performance reasons,
     /// the stored chemical properties are not updated at every change in the
