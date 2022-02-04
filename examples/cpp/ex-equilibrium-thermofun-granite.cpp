@@ -64,9 +64,6 @@ int main()
     EquilibriumSolver solver(specs);
 
     // Define temperature and pressure
-//    double T = 300.0; // in Celsius
-//    double P = Reaktoro::waterSaturatedPressureWagnerPruss(T + 273.15).val() * 1e-5; // is Psat of water at the T = 300
-
     double T = 400.0; // in Celsius
     double P = 1e3; // in bar
 
@@ -91,27 +88,20 @@ int main()
     state.set("Albite"    , 29, "g"); // 29% of granite
     state.set("Muscovite" , 19, "g"); // 19% of granite
 
-    // Initialize the amount of elements in the system
-    Index E = system.elements().size();
-
-    EquilibriumOptions opts;
-    opts.optima.output.active = false;
-
     // Equilibrate the initial state with given conditions
-    solver.setOptions(opts);
     auto res = solver.solve(state, conditions);
+    std::cout << "res (granite) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
-    std::cout << state << std::endl;
+    state.output("state-granite.txt");
 
-    std::cout << "res = " << res.optima.succeeded << std::endl;
-    
+    // Output the chemical properties to a text-file
     ChemicalProps props(state);
     props.output("props.txt");
 
+    // Output the aqueous properties to a text-file
     AqueousProps aprops(state);
     aprops.output("aprops.txt");
-    
-    
+
     return 0;
 }
