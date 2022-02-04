@@ -78,21 +78,20 @@ int main()
     ChemicalState state(system);
     state.setSpeciesMass("H2O@", 40, "g"); // water // water/binder = 0.4, 40g water per 100g of cement clinker
     // clinker phases
-    state.setSpeciesMass("C2S", 9.70, "g"); // belite
-    state.setSpeciesMass("C3A", 7.72, "g"); // aluminate
-    state.setSpeciesMass("C3S", 67.31, "g"); // alite
-    state.setSpeciesMass("C4AF", 8.14, "g"); // ferrite, (CaO)4(Al2O3)(Fe|3|2O3)
+    state.setSpeciesMass("C2S" ,  9.70, "g"); // belite
+    state.setSpeciesMass("C3A" ,  7.72, "g"); // aluminate
+    state.setSpeciesMass("C3S" , 67.31, "g"); // alite
+    state.setSpeciesMass("C4AF",  8.14, "g"); // ferrite, (CaO)4(Al2O3)(Fe|3|2O3)
     // additional
-    state.setSpeciesMass("Gp", 3.13, "g"); // gypsum, CaSO4(H2O)2
-    state.setSpeciesMass("Cal", 0.10, "g"); // calcite, CaCO3
-    state.setSpeciesMass("Lim", 0.93, "g"); // lime, CaO
-    state.setSpeciesMass("Brc", 1.31, "g"); // brucite, Mg(OH)2
-    state.setSpeciesMass("K2SO4", 1.34, "g"); // potasium-sulfate
-    state.setSpeciesMass("K2O", 0.05, "g"); // potasium oxide
+    state.setSpeciesMass("Gp"    , 3.13, "g"); // gypsum, CaSO4(H2O)2
+    state.setSpeciesMass("Cal"   , 0.10, "g"); // calcite, CaCO3
+    state.setSpeciesMass("Lim"   , 0.93, "g"); // lime, CaO
+    state.setSpeciesMass("Brc"   , 1.31, "g"); // brucite, Mg(OH)2
+    state.setSpeciesMass("K2SO4" , 1.34, "g"); // potasium-sulfate
+    state.setSpeciesMass("K2O"   , 0.05, "g"); // potasium oxide
     state.setSpeciesMass("Na2SO4", 0.21, "g"); // sodium sulfate
-    state.setSpeciesMass("Na2O", 0.05, "g"); // sodium oxide
-    
-    state.setSpeciesMass("O2@", 0.15, "g"); // Oxygen to stabilize the system 
+    state.setSpeciesMass("Na2O"  , 0.05, "g"); // sodium oxide
+    state.setSpeciesMass("O2@"   , 0.15, "g"); // oxygen to stabilize the system
 
     // Define temperature and pressure
     double T = 20.0; // in Celsius
@@ -104,17 +103,17 @@ int main()
     conditions.pressure(P, "bar");
 
     // Equilibrate the initial state with given conditions and component amounts
-//    opts.optima.output.active = true;
-//    solver.setOptions(opts);
     res = solver.solve(state, conditions);
     std::cout << "res (cemdata18) = " << res.optima.succeeded << std::endl;
 
-    // Output the chemical state to a console
+    // Output the chemical state to a text-file
     state.output("state-cemdata18.txt");
-    
-        ChemicalProps props(state);
+
+    // Output the chemical properties to a text-file
+    ChemicalProps props(state);
     props.output("props.txt");
 
+    // Output the aqueous properties to a text-file
     AqueousProps aprops(state);
     aprops.output("aprops.txt");
 
