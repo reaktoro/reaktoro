@@ -426,6 +426,7 @@ public:
         setName("SolidPhase");
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Solid);
+        setAdditionalAggregateStates({AggregateState::CrystallineSolid});
         setActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
         setIdealActivityModel(ActivityModelIdealSolution(StateOfMatter::Solid));
     }
