@@ -32,6 +32,7 @@ void exportReactiveTransportSolver(py::module& m)
 {
     py::class_<ReactiveTransportSolver>(m, "ReactiveTransportSolver")
         .def(py::init<const ChemicalSystem&>())
+        .def(py::init<const ReactionSystem&, const Partition&>())
         .def(py::init<const Partition&>())
         .def("setOptions", &ReactiveTransportSolver::setOptions)
         .def("setMesh", &ReactiveTransportSolver::setMesh)
