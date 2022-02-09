@@ -5942,6 +5942,105 @@
       ]
     },
     {
+      "name": "SO2,aq",
+      "symbol": "SO2@",
+      "formula": "S|4|O2@",
+      "formula_charge": 0,
+      "aggregate_state": {
+        "4": "AS_AQUEOUS"
+      },
+      "class_": {
+        "2": "SC_AQSOLUTE"
+      },
+      "Tst": 298.15,
+      "Pst": 100000,
+      "TPMethods": [
+        {
+          "method": {
+            "3": "solute_hkf88_reaktoro"
+          },
+          "eos_hkf_coeffs": {
+            "values": [
+              0.69502002000809,
+              918.90002441406,
+              2.1382999420166,
+              -31589,
+              31.21010017395,
+              64578,
+              -24610,
+              0
+            ],
+            "units": [
+              "cal/(mol*bar)",
+              "cal/mol",
+              "(cal*K)/mol",
+              "cal/(mol*K)",
+              "(cal*K)/mol",
+              "cal/mol"
+            ],
+            "names": [
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "c1",
+              "c2",
+              "wref"
+            ]
+          }
+        }
+      ],
+      "sm_heat_capacity_p": {
+        "values": [
+          194.8698425293
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_gibbs_energy": {
+        "values": [
+          -301164
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_enthalpy": {
+        "values": [
+          -322980
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_entropy_abs": {
+        "values": [
+          161.91999816894
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_volume": {
+        "values": [
+          3.8575992584228
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/bar"
+        ]
+      },
+      "datasources": [
+        "Slop98_dat:1998:data:           "
+      ]
+    },
+    {
       "name": "SO3-2",
       "symbol": "SO3-2",
       "formula": "S|4|O3-2",
@@ -20763,6 +20862,551 @@
       "datasources": [
         "Robie_Hem:1995:pap:",
         "AUG20_GEMS:2001:dat:            "
+      ]
+    },
+    {
+      "name": "Corundum (cor)",
+      "symbol": "Corundum",
+      "formula": "Al2O3",
+      "formula_charge": 0,
+      "aggregate_state": {
+        "3": "AS_CRYSTAL"
+      },
+      "class_": {
+        "0": "SC_COMPONENT"
+      },
+      "Tst": 298.15,
+      "Pst": 100000,
+      "TPMethods": [
+        {
+          "method": {
+            "0": "cp_ft_equation"
+          },
+          "limitsTP": {
+            "range": true,
+            "lowerT": 273.15,
+            "upperT": 2273.15
+          },
+          "m_heat_capacity_ft_coeffs": {
+            "values": [
+              139.5,
+              0.0058900001458824,
+              -2460600,
+              -589.20001220703,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "units": [
+              "J/(mol*K)",
+              "J/(mol*K^2)",
+              "(J*K)/mol",
+              "J/(mol*K^0.5)",
+              "J/(mol*K^3)",
+              "J/(mol*K^4)",
+              "J/(mol*K^5)",
+              "(J*K^2)/mol",
+              "J/mol",
+              "J/(mol*K^1.5)",
+              "J/(mol*K)"
+            ],
+            "names": [
+              "a0",
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "a5",
+              "a6",
+              "a7",
+              "a8",
+              "a9",
+              "a10"
+            ]
+          }
+        },
+        {
+          "method": {
+            "38": "mv_eos_murnaghan_hp98"
+          }
+        }
+      ],
+      "sm_heat_capacity_p": {
+        "values": [
+          79.452911376953
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_gibbs_energy": {
+        "values": [
+          -1581808
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_enthalpy": {
+        "values": [
+          -1675250
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_entropy_abs": {
+        "values": [
+          50.900001525879
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_volume": {
+        "values": [
+          2.558000087738
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/bar"
+        ]
+      },
+      "m_compressibility": {
+        "values": [
+          2520
+        ],
+        "units": [
+          "1e-05/K"
+        ]
+      },
+      "m_expansivity": {
+        "values": [
+          0.000041899998905137
+        ],
+        "units": [
+          "kbar"
+        ]
+      },
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
+    },
+    {
+      "name": "Periclase (per)",
+      "symbol": "Periclase",
+      "formula": "MgO",
+      "formula_charge": 0,
+      "aggregate_state": {
+        "3": "AS_CRYSTAL"
+      },
+      "class_": {
+        "0": "SC_COMPONENT"
+      },
+      "Tst": 298.15,
+      "Pst": 100000,
+      "TPMethods": [
+        {
+          "method": {
+            "0": "cp_ft_equation"
+          },
+          "limitsTP": {
+            "range": true,
+            "lowerT": 273.15,
+            "upperT": 2273.15
+          },
+          "m_heat_capacity_ft_coeffs": {
+            "values": [
+              60.5,
+              0.00036199999158271,
+              -535800,
+              -299.20001220703,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "units": [
+              "J/(mol*K)",
+              "J/(mol*K^2)",
+              "(J*K)/mol",
+              "J/(mol*K^0.5)",
+              "J/(mol*K^3)",
+              "J/(mol*K^4)",
+              "J/(mol*K^5)",
+              "(J*K^2)/mol",
+              "J/mol",
+              "J/(mol*K^1.5)",
+              "J/(mol*K)"
+            ],
+            "names": [
+              "a0",
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "a5",
+              "a6",
+              "a7",
+              "a8",
+              "a9",
+              "a10"
+            ]
+          }
+        },
+        {
+          "method": {
+            "38": "mv_eos_murnaghan_hp98"
+          }
+        }
+      ],
+      "sm_heat_capacity_p": {
+        "values": [
+          37.252655029297
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_gibbs_energy": {
+        "values": [
+          -569299
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_enthalpy": {
+        "values": [
+          -601600
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_entropy_abs": {
+        "values": [
+          26.89999961853
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_volume": {
+        "values": [
+          1.125
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/bar"
+        ]
+      },
+      "m_compressibility": {
+        "values": [
+          1650
+        ],
+        "units": [
+          "1e-05/K"
+        ]
+      },
+      "m_expansivity": {
+        "values": [
+          0.000061999999161344
+        ],
+        "units": [
+          "kbar"
+        ]
+      },
+      "datasources": [
+        "[1998HOL/POW]"
+      ]
+    },
+    {
+      "name": "Fe2O3 solid",
+      "symbol": "Fe2O3",
+      "formula": "Fe|3|2O3",
+      "formula_charge": 0,
+      "aggregate_state": {
+        "3": "AS_CRYSTAL"
+      },
+      "class_": {
+        "0": "SC_COMPONENT"
+      },
+      "Tst": 298.15,
+      "Pst": 100000,
+      "TPMethods": [
+        {
+          "method": {
+            "0": "cp_ft_equation"
+          },
+          "limitsTP": {
+            "range": true,
+            "lowerT": 273.15,
+            "upperT": 949.99997558594
+          },
+          "m_heat_capacity_ft_coeffs": {
+            "values": [
+              98.282157897949,
+              0.077822402119636,
+              -1485320,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "units": [
+              "J/(mol*K)",
+              "J/(mol*K^2)",
+              "(J*K)/mol",
+              "J/(mol*K^0.5)",
+              "J/(mol*K^3)",
+              "J/(mol*K^4)",
+              "J/(mol*K^5)",
+              "(J*K^2)/mol",
+              "J/mol",
+              "J/(mol*K^1.5)",
+              "J/(mol*K)"
+            ],
+            "names": [
+              "a0",
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "a5",
+              "a6",
+              "a7",
+              "a8",
+              "a9",
+              "a10"
+            ]
+          },
+          "m_phase_trans_props": {
+            "values": [
+              949.99997558594,
+              0.7046737074852,
+              669.44000244141,
+              0,
+              0
+            ],
+            "units": [
+              "K",
+              "J/(mol*K)",
+              "J/mol",
+              "J/bar",
+              "K/bar"
+            ],
+            "names": [
+              "Temperature",
+              "dS",
+              "dH",
+              "dV",
+              "dT/dP"
+            ]
+          }
+        },
+        {
+          "method": {
+            "0": "cp_ft_equation"
+          },
+          "limitsTP": {
+            "range": true,
+            "lowerT": 949.99997558594,
+            "upperT": 1049.9999755859
+          },
+          "m_heat_capacity_ft_coeffs": {
+            "values": [
+              150.62399291992,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "units": [
+              "J/(mol*K)",
+              "J/(mol*K^2)",
+              "(J*K)/mol",
+              "J/(mol*K^0.5)",
+              "J/(mol*K^3)",
+              "J/(mol*K^4)",
+              "J/(mol*K^5)",
+              "(J*K^2)/mol",
+              "J/mol",
+              "J/(mol*K^1.5)",
+              "J/(mol*K)"
+            ],
+            "names": [
+              "a0",
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "a5",
+              "a6",
+              "a7",
+              "a8",
+              "a9",
+              "a10"
+            ]
+          },
+          "m_phase_trans_props": {
+            "values": [
+              1049.9999755859,
+              0,
+              0,
+              0,
+              0
+            ],
+            "units": [
+              "K",
+              "J/(mol*K)",
+              "J/mol",
+              "J/bar",
+              "K/bar"
+            ],
+            "names": [
+              "Temperature",
+              "dS",
+              "dH",
+              "dV",
+              "dT/dP"
+            ]
+          }
+        },
+        {
+          "method": {
+            "0": "cp_ft_equation"
+          },
+          "limitsTP": {
+            "range": true,
+            "lowerT": 1049.9999755859,
+            "upperT": 2500.0000976563
+          },
+          "m_heat_capacity_ft_coeffs": {
+            "values": [
+              110.93000030518,
+              0.032046999782324,
+              5430000,
+              0,
+              -0.000009190000128001,
+              9.014999857726e-10,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "units": [
+              "J/(mol*K)",
+              "J/(mol*K^2)",
+              "(J*K)/mol",
+              "J/(mol*K^0.5)",
+              "J/(mol*K^3)",
+              "J/(mol*K^4)",
+              "J/(mol*K^5)",
+              "(J*K^2)/mol",
+              "J/mol",
+              "J/(mol*K^1.5)",
+              "J/(mol*K)"
+            ],
+            "names": [
+              "a0",
+              "a1",
+              "a2",
+              "a3",
+              "a4",
+              "a5",
+              "a6",
+              "a7",
+              "a8",
+              "a9",
+              "a10"
+            ]
+          }
+        },
+        {
+          "method": {
+            "34": "mv_constant"
+          }
+        }
+      ],
+      "sm_heat_capacity_p": {
+        "values": [
+          104.77590942383
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_gibbs_energy": {
+        "values": [
+          -745401
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_enthalpy": {
+        "values": [
+          -827260
+        ],
+        "units": [
+          "J/mol"
+        ]
+      },
+      "sm_entropy_abs": {
+        "values": [
+          87.61296081543
+        ],
+        "units": [
+          "J/(mol*K)"
+        ]
+      },
+      "sm_volume": {
+        "values": [
+          3.0274000167847
+        ],
+        "errors": [
+          0
+        ],
+        "units": [
+          "J/bar"
+        ]
+      },
+      "datasources": [
+        "Slop98_dat:1998:data:"
       ]
     },
     {
