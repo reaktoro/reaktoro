@@ -41,7 +41,7 @@ int main()
     solution.setActivityModel(chain(
             ActivityModelHKF(),
             ActivityModelDrummond("CO2")
-            ));
+    ));
 
     // Define minerals
     MineralPhases minerals(speciate(selected_elements));
