@@ -37,6 +37,7 @@ TEST_CASE("Testing ReactionThermoModelPressureCorrection class", "[ReactionTherm
     const auto dG0x = (P - Pref) * dV0; // expected dG0 at (T, P)
     const auto dH0x = (P - Pref) * dV0; // expected dH0 at (T, P)
 
-    CHECK( rprops.dG0 == Approx(dG0x) );
-    CHECK( rprops.dH0 == Approx(dH0x) );
+    CHECK( rprops.dG0  == Approx(dG0x) );
+    CHECK( rprops.dH0  == Approx(dH0x) );
+    CHECK( rprops.dCp0 == 0.0 );
 }
