@@ -51,7 +51,7 @@ TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelCons
 
     CHECK( rprops.dG0 == Approx(dG0x) );
     CHECK( rprops.dH0 == Approx(dH0x) );
-    CHECK( rprops.dCp00 == 0.0 );
+    CHECK( rprops.dCp0 == 0.0 );
 
     //======================================================================
     // Test method Model::params()
