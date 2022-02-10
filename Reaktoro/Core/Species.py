@@ -101,6 +101,7 @@ def testSpecies():
         props = ReactionThermoProps()
         props.dG0 = T + P
         props.dH0 = T - P
+        props.dCp0 = T * P
         return props
 
     species = species.withFormationReaction(
@@ -112,3 +113,4 @@ def testSpecies():
 
     assert species.props(T, P).G0[0] == species.reaction().createStandardThermoModel()(T, P).G0[0]
     assert species.props(T, P).H0[0] == species.reaction().createStandardThermoModel()(T, P).H0[0]
+    assert species.props(T, P).Cp0[0] == species.reaction().createStandardThermoModel()(T, P).Cp0[0]
