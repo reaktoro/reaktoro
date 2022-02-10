@@ -3,8 +3,8 @@ name: osx
 on:
   push:
     branches:
+      - main
       - master
-      - v2.0-preview
 
   pull_request:
 
