@@ -46,21 +46,29 @@ TEST_CASE("Testing ReactionThermoModelGemsLgK class", "[ReactionThermoModelGemsL
 
     const auto R = universalGasConstant;
 
-    const auto lgK   = A0 + A1*T + A2/T + A3*log(T) + A4/(T*T) + A5*(T*T) + A6/sqrt(T);
-    const auto lgK_T = A1 - A2/(T*T) + A3/T - 2*A4/(T*T*T) + 2*A5*T - 0.5*A6/(T*sqrt(T));
+    const auto T05 = sqrt(T);
+    const auto T15 = T*T05;
+    const auto T25 = T*T15;
 
-    const auto lnK   = ln10 * lgK;
-    const auto lnK_T = ln10 * lgK_T;
+    const auto lgK    = A0 + A1*T + A2/T + A3*log(T) + A4/(T*T) + A5*(T*T) + A6/T05;
+    const auto lgK_T  = A1 - A2/(T*T) + A3/T - 2*A4/(T*T*T) + 2*A5*T - 0.5*A6/T15;
+    const auto lgK_TT = 2*A2/(T*T*T) - A3/(T*T) + 6*A4/(T*T*T*T) + 2*A5 + 0.75*A6/T25;
+
+    const auto lnK    = ln10 * lgK;
+    const auto lnK_T  = ln10 * lgK_T;
+    const auto lnK_TT = ln10 * lgK_TT;
 
     const auto dE = dV0 * (P - Pr);
 
-    const auto dG0x = -R*T*lnK + dE;     // expected dG0 at (T, P)
-    const auto dH0x =  R*T*T*lnK_T + dE; // expected dH0 at (T, P)
+    const auto dG0x  = -R*T*lnK + dE;             // expected dG0 at (T, P)
+    const auto dH0x  =  R*T*T*lnK_T + dE;         // expected dH0 at (T, P)
+    const auto dCp0x =  2*R*T*lnK_T + R*T*T*lnK_TT; // expected dCp0 at (T, P)
 
     ReactionThermoProps rprops = model({T, P, dV0});
 
-    CHECK( rprops.dG0 == Approx(dG0x) );
-    CHECK( rprops.dH0 == Approx(dH0x) );
+    CHECK( rprops.dG0  == Approx(dG0x)  );
+    CHECK( rprops.dH0  == Approx(dH0x)  );
+    CHECK( rprops.dCp0 == Approx(dCp0x) );
 
     //======================================================================
     // Test method Model::params()
