@@ -42,6 +42,10 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     const auto dH0_D = 234.5;
     const auto dH0_E = 345.6;
 
+    const auto dCp0_C =   0.0;
+    const auto dCp0_D = 345.6;
+    const auto dCp0_E = 457.7;
+
     const auto V0_C = 16.324;
     const auto V0_D = 17.435;
     const auto V0_E = 18.546;
@@ -72,8 +76,9 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
                 .withReactionThermoModel(
                     [=](ReactionThermoProps& res, ReactionThermoArgs args) {
                         const auto& [T, P, dV0] = args;
-                        res.dG0 = -R*T*ln10*lgK_D;
-                        res.dH0 = dH0_D;
+                        res.dG0  = -R*T*ln10*lgK_D;
+                        res.dH0  = dH0_D;
+                        res.dCp0 = dCp0_D;
                         return res;
                     })
             );
@@ -87,8 +92,9 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
                 .withReactionThermoModel(
                     [=](ReactionThermoProps& res, ReactionThermoArgs args) {
                         const auto& [T, P, dV0] = args;
-                        res.dG0 = -R*T*ln10*lgK_E;
-                        res.dH0 = dH0_E;
+                        res.dG0  = -R*T*ln10*lgK_E;
+                        res.dH0  = dH0_E;
+                        res.dCp0 = dCp0_E;
                         return res;
                     })
             );
@@ -153,9 +159,16 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     const auto H0_D = H0_B + 3*H0_C + dH0_D;
     const auto H0_E = H0_C - 2*H0_D + dH0_E;
 
+    const auto Cp0_A = 0.0;
+    const auto Cp0_B = 0.0;
+    const auto Cp0_C = Cp0_A + 2*Cp0_B + dCp0_C;
+    const auto Cp0_D = Cp0_B + 3*Cp0_C + dCp0_D;
+    const auto Cp0_E = Cp0_C - 2*Cp0_D + dCp0_E;
+
     // Convenient functions that evaluate a reaction thermo prop at given temperature and pressure
-    auto G0 = [](auto reaction, auto T, auto P) { return reaction.createStandardThermoModel()(T, P).G0; };
-    auto H0 = [](auto reaction, auto T, auto P) { return reaction.createStandardThermoModel()(T, P).H0; };
+    auto G0  = [](auto reaction, auto T, auto P) { return reaction.createStandardThermoModel()(T, P).G0;  };
+    auto H0  = [](auto reaction, auto T, auto P) { return reaction.createStandardThermoModel()(T, P).H0;  };
+    auto Cp0 = [](auto reaction, auto T, auto P) { return reaction.createStandardThermoModel()(T, P).Cp0; };
 
     REQUIRE( G0(C.reaction(), T, P)  == Approx(G0_C) );
     REQUIRE( G0(D.reaction(), T, P)  == Approx(G0_D) );
@@ -164,4 +177,8 @@ TEST_CASE("Testing FormationReaction class", "[FormationReaction]")
     REQUIRE( H0(C.reaction(), T, P)  == Approx(H0_C) );
     REQUIRE( H0(D.reaction(), T, P)  == Approx(H0_D) );
     REQUIRE( H0(E.reaction(), T, P)  == Approx(H0_E) );
+
+    REQUIRE( Cp0(C.reaction(), T, P)  == Approx(Cp0_C) );
+    REQUIRE( Cp0(D.reaction(), T, P)  == Approx(Cp0_D) );
+    REQUIRE( Cp0(E.reaction(), T, P)  == Approx(Cp0_E) );
 }
