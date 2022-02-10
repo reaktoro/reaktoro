@@ -59,6 +59,9 @@ auto lgK(const PhreeqcDatabase& db, real T, real P, const String& name) -> real;
 /// Calculate the actual enthalpy of formation reaction of a product species with given name.
 auto dH0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real;
 
+/// Calculate the actual isobaric heat capacity of formation reaction of a product species with given name.
+auto dCp0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real;
+
 /// Calculate the actual standard molar Gibbs energies of species with given name.
 auto G0(const PhreeqcDatabase& db, real T, real P, String name) -> real;
 
@@ -507,22 +510,22 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         CHECK(propsT0P0.G0  == Approx(-95213.7)    );
         CHECK(propsT0P0.H0  == Approx(-24010.3)    );
         CHECK(propsT0P0.V0  == Approx(3.44329e-05) );
-        CHECK(propsT0P0.Cp0 == Approx(0.0)         );
+        CHECK(propsT0P0.Cp0 == Approx(657.168)     );
 
         CHECK(propsT1P0.G0  == Approx(-113039)     );
         CHECK(propsT1P0.H0  == Approx(12124.6)     );
         CHECK(propsT1P0.V0  == Approx(3.77425e-05) );
-        CHECK(propsT1P0.Cp0 == Approx(0.0)         );
+        CHECK(propsT1P0.Cp0 == Approx(574.514)     );
 
         CHECK(propsT0P1.G0  == Approx(-95161)    );
         CHECK(propsT0P1.H0  == Approx(-23957.6)    );
         CHECK(propsT0P1.V0  == Approx(3.44286e-05) );
-        CHECK(propsT0P1.Cp0 == Approx(0.0)         );
+        CHECK(propsT0P1.Cp0 == Approx(657.168)     );
 
         CHECK(propsT1P1.G0  == Approx(-112978)     );
         CHECK(propsT1P1.H0  == Approx(12185.4)     );
         CHECK(propsT1P1.V0  == Approx(3.77222e-05) );
-        CHECK(propsT1P1.Cp0 == Approx(0.0)         );
+        CHECK(propsT1P1.Cp0 == Approx(574.514)     );
     }
 
     {
@@ -538,22 +541,22 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
         CHECK(propsT0P0.G0  == Approx(-48402.9) );
         CHECK(propsT0P0.H0  == Approx(9608.99)  );
         CHECK(propsT0P0.V0  == Approx(3.69e-05) );
-        CHECK(propsT0P0.Cp0 == Approx(0.0)      );
+        CHECK(propsT0P0.Cp0 == Approx(295.096)     );
 
         CHECK(propsT1P0.G0  == Approx(-62078.3) );
         CHECK(propsT1P0.H0  == Approx(32690.1)  );
         CHECK(propsT1P0.V0  == Approx(3.69e-05) );
-        CHECK(propsT1P0.Cp0 == Approx(0.0)      );
+        CHECK(propsT1P0.Cp0 == Approx(474.274)     );
 
         CHECK(propsT0P1.G0  == Approx(-48347.9) );
         CHECK(propsT0P1.H0  == Approx(9664.07)  );
         CHECK(propsT0P1.V0  == Approx(3.69e-05) );
-        CHECK(propsT0P1.Cp0 == Approx(0.0)      );
+        CHECK(propsT0P1.Cp0 == Approx(295.096)     );
 
         CHECK(propsT1P1.G0  == Approx(-62017.7) );
         CHECK(propsT1P1.H0  == Approx(32750.7)  );
         CHECK(propsT1P1.V0  == Approx(3.69e-05) );
-        CHECK(propsT1P1.Cp0 == Approx(0.0)      );
+        CHECK(propsT1P1.Cp0 == Approx(474.274)     );
     }
 }
 
@@ -561,7 +564,7 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
 // AUXILIARY FUNCTIONS: DEFINITION
 //=================================================================================================
 
-auto evalReactionThermoProps(const Species& species, real T, real P)
+auto evalReactionThermoProps(const Species& species, real T, real P) -> ReactionThermoProps
 {
     const auto dV0 = 0.0;
     return species.reaction().reactionThermoModel()({T, P, dV0});
@@ -581,6 +584,13 @@ auto dH0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
     const auto species = db.species().get(name);
     const auto dH0 = evalReactionThermoProps(species, T, P).dH0;
     return dH0;
+}
+
+auto dCp0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
+{
+    const auto species = db.species().get(name);
+    const auto dCp0 = evalReactionThermoProps(species, T, P).dCp0;
+    return dCp0;
 }
 
 auto G0(const PhreeqcDatabase& db, real T, real P, String name) -> real
