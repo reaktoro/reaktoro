@@ -33,6 +33,11 @@ auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other, const Therm
     converted.H0  = other.enthalpy.val;
     converted.V0  = other.volume.val * 1.0e-05; // from J/bar to m3/mol
     converted.Cp0 = other.heat_capacity_cp.val;
+
+    // Reaktoro expects zero standard molar volumes for gases.
+    if(substance.aggregateState() == ThermoFun::AggregateState::GAS)
+        converted.V0 = 0.0;
+
     return converted;
 }
 
@@ -76,7 +81,6 @@ struct ThermoFunEngine::Impl
         return convertProps(props, substance);
     }
 };
-
 
 ThermoFunEngine::ThermoFunEngine(const ThermoFun::Database& database)
 : pimpl(new Impl(database))
