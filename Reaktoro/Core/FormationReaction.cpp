@@ -89,15 +89,17 @@ struct FormationReaction::Impl
             // Compute finally the standard thermodynamic properties of the product species
             StandardThermoProps props;
 
-            props.V0 = V0p;
-            props.G0 = rxnprops.dG0; // G0 = dG0 + sum(vr * G0r)
-            props.H0 = rxnprops.dH0; // H0 = dH0 + sum(vr * H0r)
+            props.V0  = V0p;
+            props.G0  = rxnprops.dG0;  // G0  = ΔG0  + sum(vr * G0r)
+            props.H0  = rxnprops.dH0;  // H0  = ΔH0  + sum(vr * H0r)
+            props.Cp0 = rxnprops.dCp0; // Cp0 = ΔCp0 + sum(vr * Cp0r)
             for(auto i = 0; i < num_reactants; ++i)
             {
                 const auto& coeff = reactants[i].second;
                 const auto& reactantprops = reactants_props[i];
-                props.G0 += coeff * reactantprops.G0;
-                props.H0 += coeff * reactantprops.H0;
+                props.G0  += coeff * reactantprops.G0;
+                props.H0  += coeff * reactantprops.H0;
+                props.Cp0 += coeff * reactantprops.Cp0;
             }
             return props;
         };
