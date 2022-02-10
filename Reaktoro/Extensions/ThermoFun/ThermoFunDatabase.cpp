@@ -38,9 +38,16 @@ namespace {
 /// Return the standard thermodynamic property function of a species with given name.
 auto createStandardThermoModel(const ThermoFunEngine& engine, const String& species) -> StandardThermoModel
 {
+    const auto& substances = engine.database().mapSubstances();
+    const auto it = substances.find(species);
+
+    errorif(it == substances.end(), "Expecting a species name that exists in the ThermoFun database, but got `", species, "` instead.");
+
+    const auto substance = it->second;
+
     return [=](real T, real P) -> StandardThermoProps
     {
-        return engine.props(T, P, species);
+        return engine.props(T, P, substance);
     };
 }
 
