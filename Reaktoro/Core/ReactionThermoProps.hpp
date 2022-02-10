@@ -33,10 +33,13 @@ namespace Reaktoro {
 struct ReactionThermoProps
 {
     /// The standard molar Gibbs energy change @f$\Delta G^{\circ}@f$ of the reaction (in J/mol).
-    real dG0 = {};
+    real dG0;
 
     /// The standard molar enthalpy change @f$\Delta H^{\circ}@f$ of the reaction (in J/mol).
-    real dH0 = {};
+    real dH0;
+
+    /// The standard molar isobaric heat capacity change @f$\Delta C_{P}^{\circ}@f$ of the reaction (in J/(mol·K)).
+    real dCp0;
 };
 
 /// The arguments in a ReactionThermoModel function object.
