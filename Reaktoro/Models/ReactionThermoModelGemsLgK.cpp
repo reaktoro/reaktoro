@@ -51,14 +51,18 @@ auto ReactionThermoModelGemsLgK(const ReactionThermoModelParamsGemsLgK& params) 
         // Unpack the model parameters
         const auto& [A0, A1, A2, A3, A4, A5, A6, Pr] = params;
 
+        const auto dVT0 = 0.0; // TODO: Consider dVT0 in ReactionThermoArgs
+
         const auto R = universalGasConstant;
         const auto T2 = T*T;
         const auto T3 = T*T2;
         const auto T05 = sqrt(T);
-        const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
+        const auto dE = dV0 * (P - Pr);  // delta energy (in J/mol)
+        const auto dET = dVT0 * (P - Pr);
 
-        props.dG0 = -R*T * (A0 + A1*T + A2/T + A3*log(T) + A4/T2 + A5*T2 + A6/T05)*ln10 + dE;
-        props.dH0 = R * (A1*T2 - A2 + A3*T - 2*A4/T + 2*A5*T3 - 0.5*A6*T05)*ln10 + dE;
+        props.dG0  = -R*T * (A0 + A1*T + A2/T + A3*log(T) + A4/T2 + A5*T2 + A6/T05)*ln10 + dE;
+        props.dH0  = R * (A1*T2 - A2 + A3*T - 2*A4/T + 2*A5*T3 - 0.5*A6*T05)*ln10 + dE;
+        props.dCp0 = R * (2*A1*T + A3 + 2*A4/T2 + 6*A5*T2 - 0.25*A6/T05)*ln10 + dET;
     };
 
     return ReactionThermoModel(evalfn, extractParams(params), createModelSerializer(params));
