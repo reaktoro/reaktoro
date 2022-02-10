@@ -118,7 +118,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     props = species.standardThermoProps(T, P);
     CHECK( props.G0  == Approx(-3.943510e+05) );
     CHECK( props.H0  == Approx(-3.935472e+05) );
-    CHECK( props.V0  == Approx( 2.466434e-02) );
+    CHECK( props.V0  == Approx(0.00000000000) );
     CHECK( props.VT0 == Approx(0.00000000000) );
     CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx( 3.710812e+01) );
