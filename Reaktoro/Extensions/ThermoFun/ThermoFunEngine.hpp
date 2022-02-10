@@ -22,7 +22,7 @@
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 // Forward declaration of ThermoFun classes
-namespace ThermoFun { class Database; }
+namespace ThermoFun { class Database; class Substance; }
 
 namespace Reaktoro {
 
@@ -39,6 +39,9 @@ public:
 
     /// Return the standard thermodynamic properties of a chemical species with given name.
     auto props(const real& T, const real& P, const String& species) const -> StandardThermoProps;
+
+    /// Return the standard thermodynamic properties of a chemical species with given ThermoFun::Substance object.
+    auto props(const real& T, const real& P, const ThermoFun::Substance& substance) const -> StandardThermoProps;
 
 private:
     struct Impl;
