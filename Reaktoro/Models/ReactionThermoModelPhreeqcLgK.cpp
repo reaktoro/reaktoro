@@ -51,12 +51,16 @@ auto ReactionThermoModelPhreeqcLgK(const ReactionThermoModelParamsPhreeqcLgK& pa
         // Unpack the model parameters
         const auto& [A1, A2, A3, A4, A5, A6, Pr] = params;
 
+        const auto dVT0 = 0.0; // TODO: Consider dVT0 in ReactionThermoArgs
+
         const auto R = universalGasConstant;
         const auto T2 = T*T;
         const auto T3 = T*T2;
         const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
-        props.dG0 = -R*T * (A1 + A2*T + A3/T + A4*log10(T) + A5/T2 + A6*T2)*ln10 + dE;
-        props.dH0 = R * (A2*T2 - A3 + A4*T/ln10 - 2*A5/T + 2*A6*T3)*ln10 + dE;
+        const auto dET = dVT0 * (P - Pr);
+        props.dG0  = -R*T * (A1 + A2*T + A3/T + A4*log10(T) + A5/T2 + A6*T2)*ln10 + dE;
+        props.dH0  = R * (A2*T2 - A3 + A4*T/ln10 - 2*A5/T + 2*A6*T3)*ln10 + dE;
+        props.dCp0 = R * (2*A2*T + A4/ln10 + 2*A5/T2 + 6*A6*T2)*ln10 + dET;
     };
 
     return ReactionThermoModel(evalfn, extractParams(params), createModelSerializer(params));

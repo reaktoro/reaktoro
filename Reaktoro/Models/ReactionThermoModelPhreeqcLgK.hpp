@@ -49,27 +49,32 @@ struct ReactionThermoModelParamsPhreeqcLgK
 
 /// Return a function that calculates thermodynamic properties of a reaction using PHREEQC's analytical expression.
 ///
-/// In this model, the equilibrium constant of the reaction
-/// is computed at a given temperature with:
+/// In this model, the equilibrium constant of the reaction is computed at a given temperature with:
 ///
-/// @eqc{\log_{10}K=A_{1}+A_{2}T+A_{3}T^{-1}+A_{4}\log_{10}T+A_{5}T^{-2}+A_{6}T^{2},}
+/// @eqc{\lg K(T)=A_{1}+A_{2}T+A_{3}T^{-1}+A_{4}\log_{10}T+A_{5}T^{-2}+A_{6}T^{2},}
 ///
-/// where @eq{A_i} are given coefficients. From this model, we can calculate
-/// the standard Gibbs energy of reaction using:
+/// where @eq{A_i} are given coefficients.
 ///
-/// @eqc{\Delta G^{\circ}=-RT\left(A_{1}+A_{2}T+A_{3}T^{-1}+A_{4}\log_{10}T+A_{5}T^{-2}+A_{6}T^{2}\right)\ln_{10}+\Delta V^{\circ}(P-P_{\mathrm{r}})}
+/// The standard Gibbs energy of reaction is computed using:
 ///
-/// and the standard enthalpy of reaction using:
+/// @eqc{\Delta G^{\circ}(T,P)=-RT\left(A_{1}+A_{2}T+A_{3}T^{-1}+A_{4}\log_{10}T+A_{5}T^{-2}+A_{6}T^{2}\right)\ln_{10}+\Delta V^{\circ}(P-P_{\mathrm{r}}),}
 ///
-/// @eqc{\Delta H^{\circ}=R\left(A_{2}T^{2}-A_{3}+\frac{A_{4}}{\ln10}T-2A_{5}T^{-1}+2A_{6}T^{3}\right)\ln_{10}+\Delta V^{\circ}(P-P_{\mathrm{r}}),}
+/// the standard enthalpy of reaction using:
 ///
-/// considering that:
+/// @eqc{\Delta H^{\circ}(T,P)=R\left(A_{2}T^{2}-A_{3}+\frac{A_{4}}{\ln10}T-2A_{5}T^{-1}+2A_{6}T^{3}\right)\ln_{10}+\Delta V^{\circ}(P-P_{\mathrm{r}}),}
 ///
-/// @eqc{\Delta G^{\circ}=-RT\ln K+\Delta V^{\circ}(P-P_{\mathrm{r}})}
+/// and the standard isobaric heat capacity of reaction using:
 ///
-/// and
+/// @eqc{\Delta C_{P}^{\circ}(T,P)=R\left(2A_{2}T+\frac{A_{4}}{\ln10}+2A_{5}T^{-2}+6A_{6}T^{2}\right)\ln_{10}+\Delta V_{T}^{\circ}(P-P_{\mathrm{r}}),}
 ///
-/// @eqc{\Delta H^{\circ}\equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)=RT^{2}\frac{\partial\ln K}{\partial T}+\Delta V^{\circ}(P-P_{\mathrm{r}}).}
+/// where we have considered the following thermodynamic relations:
+///
+/// @eqc{\begin{align*} \Delta G^{\circ} & \equiv-RT\ln K,\vphantom{\left(-\frac{\Delta G^{\circ}}{T}\right)}\\ \Delta H^{\circ} & \equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)_{P}=RT^{2}\frac{\partial\ln K}{\partial T},\\ \Delta C_{P}^{\circ} & \equiv\left(\dfrac{\partial\Delta H^{\circ}}{\partial T}\right)_{P}. \end{align*}}
+///
+/// Note that a pressure correction is introduced above, where @eq{\Delta V^{\circ}}
+/// is the change of standard molar volume of the reaction at @eq{T} and @eq{P},
+/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure. @eq{\Delta V^{\circ}_T}
+/// is the temperature derivative of @eq{\Delta V^{\circ}} at constant pressure.
 ///
 /// Reference:
 /// - Parkhurst, D.L., Appelo, C.A.J. (2013). Description of input and examples
