@@ -38,20 +38,28 @@ struct ReactionThermoModelParamsConstLgK
 ///
 /// @eqc{\lg K(T)=\lg K_{\mathrm{r}},}
 ///
-/// where @eq{\lg K_{\mathrm{r}}} is a given equilibrium constant at a
-/// reference temperature and pressure.
+/// where @eq{\lg K_{\mathrm{r}}} is a given equilibrium constant at a reference temperature and pressure.
 ///
 /// The standard Gibbs energy of the reaction is computed using:
 ///
-/// @eqc{\Delta G^{\circ}(T,P)=-RT\ln K_{\mathrm{r}}+\Delta V^{\circ}(P-P_{\mathrm{r}})}
+/// @eqc{\Delta G^{\circ}(T,P)=-RT\ln K_{\mathrm{r}}+\Delta V^{\circ}(P-P_{\mathrm{r}}),}
 ///
-/// while the standard enthalpy of the reaction is:
+/// the standard enthalpy of the reaction using:
 ///
 /// @eqc{\Delta H^{\circ}(T,P)=\Delta V^{\circ}(P-P_{\mathrm{r}}).}
 ///
+/// and the standard isobaric heat capacity of reaction using:
+///
+/// @eqc{\Delta C_{P}^{\circ}(T, P) = \Delta V^{\circ}_T(P-P_{\mathrm{r}}),}
+///
+/// where we have considered the following thermodynamic relations:
+///
+/// @eqc{\begin{align*} \Delta G^{\circ} & \equiv-RT\ln K,\vphantom{\left(-\frac{\Delta G^{\circ}}{T}\right)}\\ \Delta H^{\circ} & \equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)_{P}=RT^{2}\frac{\partial\ln K}{\partial T},\\ \Delta C_{P}^{\circ} & \equiv\left(\dfrac{\partial\Delta H^{\circ}}{\partial T}\right)_{P}. \end{align*}}
+///
 /// Note that a pressure correction is introduced above, where @eq{\Delta V^{\circ}}
 /// is the change of standard molar volume of the reaction at @eq{T} and @eq{P},
-/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure.
+/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure. @eq{\Delta V^{\circ}_T}
+/// is the temperature derivative of @eq{\Delta V^{\circ}} at constant pressure.
 auto ReactionThermoModelConstLgK(const ReactionThermoModelParamsConstLgK& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro

@@ -58,6 +58,7 @@ auto ReactionThermoModelConstLgK(const ReactionThermoModelParamsConstLgK& params
 
         props.dG0 = -RT*lnKr + dE;
         props.dH0 = dE;
+        props.dCp0 = 0.0;
     };
 
     return ReactionThermoModel(evalfn, extractParams(params), createModelSerializer(params));
