@@ -87,7 +87,8 @@ TEST_CASE("Testing Species class", "[Species]")
                 2.0*T*P, // H0
                 3.0*T*P, // V0
                 4.0*T*P, // Cp0
-                5.0*T*P, // Cv0
+                5.0*T*P, // VT0
+                6.0*T*P, // VP0
             };
         });
 
@@ -95,6 +96,8 @@ TEST_CASE("Testing Species class", "[Species]")
         CHECK( species.standardThermoProps(T, P).H0  == Approx(2.0*T*P) );
         CHECK( species.standardThermoProps(T, P).V0  == Approx(3.0*T*P) );
         CHECK( species.standardThermoProps(T, P).Cp0 == Approx(4.0*T*P) );
+        CHECK( species.standardThermoProps(T, P).VT0 == Approx(5.0*T*P) );
+        CHECK( species.standardThermoProps(T, P).VP0 == Approx(6.0*T*P) );
 
         const auto R1 = Species().withName("R1").withStandardGibbsEnergy(0.0);
         const auto R2 = Species().withName("R2").withStandardGibbsEnergy(0.0);
@@ -108,12 +111,14 @@ TEST_CASE("Testing Species class", "[Species]")
                         const auto& [T, P, dV0] = args;
                         props.dG0 = T + P;
                         props.dH0 = T - P;
+                        props.dCp0 = T * P;
                         return props;
                     })
             );
 
         CHECK( species.standardThermoProps(T, P).G0 == species.reaction().createStandardThermoModel()(T, P).G0 );
         CHECK( species.standardThermoProps(T, P).H0 == species.reaction().createStandardThermoModel()(T, P).H0 );
+        CHECK( species.standardThermoProps(T, P).Cp0 == species.reaction().createStandardThermoModel()(T, P).Cp0 );
     }
 
     SECTION("Testing automatic construction of chemical species with given chemical formula")
