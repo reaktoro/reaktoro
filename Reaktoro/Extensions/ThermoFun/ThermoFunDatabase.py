@@ -87,7 +87,7 @@ def testThermoFunDatabase():
     props = species.standardThermoProps(T, P)
     assert props.G0[0]  == pytest.approx(-3.943510e+05)
     assert props.H0[0]  == pytest.approx(-3.935472e+05)
-    assert props.V0[0]  == pytest.approx( 2.466434e-02)
+    assert props.V0[0]  == pytest.approx( 0.0000000000)
     assert props.Cp0[0] == pytest.approx( 3.710812e+01)
 
     #-------------------------------------------------------------------
