@@ -26,7 +26,7 @@
 namespace Reaktoro {
 namespace {
 
-auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other) -> StandardThermoProps
+auto convertProps(const ThermoFun::ThermoPropertiesSubstance& other, const ThermoFun::Substance& substance) -> StandardThermoProps
 {
     StandardThermoProps converted;
     converted.G0  = other.gibbs_energy.val;
@@ -57,17 +57,23 @@ struct ThermoFunEngine::Impl
     /// Return the standard thermodynamic properties of a chemical species with given name.
     auto props(const real& T, const real& P, const String& species) const -> StandardThermoProps
     {
+        auto const& substances = database.mapSubstances();
+        const auto it = substances.find(species);
+
+        errorif(it == substances.end(), "Expecting a species name that exists in the ThermoFun database, but got `", species, "` instead.");
+
+        const auto substance = it->second;
+
+        return props(T, P, substance);
+    }
+
+    /// Return the standard thermodynamic properties of a chemical species with given ThermoFun::Substance object.
+    auto props(const real& T, const real& P, const ThermoFun::Substance& substance) const -> StandardThermoProps
+    {
         double Tval = T.val();
         double Pval = P.val();
-
-        if(database.containsSubstance(species))
-        {
-            const auto props = engine.thermoPropertiesSubstance(Tval, Pval, species);
-            return convertProps(props);
-        }
-        error("Cannot evaluate the standard thermodynamic properties of species with "
-            "name ", species, " because it is know available in the ThermoFun database.");
-        return {};
+        const auto props = engine.thermoPropertiesSubstance(Tval, Pval, substance);
+        return convertProps(props, substance);
     }
 };
 
@@ -84,6 +90,11 @@ auto ThermoFunEngine::database() const -> const ThermoFun::Database&
 auto ThermoFunEngine::props(const real& T, const real& P, const String& species) const -> StandardThermoProps
 {
     return pimpl->props(T, P, species);
+}
+
+auto ThermoFunEngine::props(const real& T, const real& P, const ThermoFun::Substance& substance) const -> StandardThermoProps
+{
+    return pimpl->props(T, P, substance);
 }
 
 } // namespace Reaktoro
