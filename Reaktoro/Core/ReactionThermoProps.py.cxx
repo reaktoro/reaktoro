@@ -27,8 +27,9 @@ void exportReactionThermoProps(py::module& m)
 {
     py::class_<ReactionThermoProps>(m, "ReactionThermoProps")
         .def(py::init<>())
-        .def_readwrite("dG0", &ReactionThermoProps::dG0)
-        .def_readwrite("dH0", &ReactionThermoProps::dH0)
+        .def_readwrite("dG0" , &ReactionThermoProps::dG0 , "The standard molar Gibbs energy change of the reaction (in J/mol)")
+        .def_readwrite("dH0" , &ReactionThermoProps::dH0 , "The standard molar enthalpy change of the reaction (in J/mol)")
+        .def_readwrite("dCp0", &ReactionThermoProps::dCp0, "The standard molar isobaric heat capacity change of the reaction (in J/(mol·K))")
         ;
 
     py::class_<ReactionThermoArgs>(m, "ReactionThermoArgs")
