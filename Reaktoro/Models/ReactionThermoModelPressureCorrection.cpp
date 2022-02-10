@@ -32,6 +32,7 @@ auto ReactionThermoModelPressureCorrection(Param Pr) -> ReactionThermoModel
         const auto dE = (P - Pr) * dV0; // delta energy (in J/mol)
         props.dG0 += dE;
         props.dH0 += dE;
+        props.dCp0 += 0.0; // TODO: Consider adding (P - Pr) * ΔVT0 in the future, taking into account temperature derivative of dV0.
     };
 
     Vec<Param> params = { Pr };

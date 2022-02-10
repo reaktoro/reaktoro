@@ -24,15 +24,15 @@ namespace Reaktoro {
 
 /// Return a function that calculates pressure correction for standard Gibbs energy and enthalpy a reaction.
 ///
-/// In this model, the standard Gibbs energy and enthalpy of reaction are computed using:
+/// In this model, the standard Gibbs energy, enthalpy, and isobatic heat capacity of reaction are computed using:
 ///
 /// @eqc{\Delta G^{\circ}=\Delta G_{\mathrm{base}}^{\circ}+\Delta V^{\circ}(P-P_{r})}
 /// @eqc{\Delta H^{\circ}=\Delta H_{\mathrm{base}}^{\circ}+\Delta V^{\circ}(P-P_{r})}
+/// @eqc{\Delta C_P^{\circ}=\Delta C_{P,\mathrm{base}}^{\circ}}
 ///
-/// where @eq{\Delta G_{\mathrm{base}}^{\circ}} and @eq{\Delta H_{\mathrm{base}}^{\circ}}
-/// denote standard properties computed using a given base thermodynamic model
-/// function of the reaction.
-///
+/// where @eq{\Delta G_{\mathrm{base}}^{\circ}}, @eq{\Delta H_{\mathrm{base}}^{\circ}},
+/// and @eq{\Delta C_{P,\mathrm{base}}^{\circ}} denote standard properties computed using
+/// a given base thermodynamic model function of the reaction.
 /// @param Pr The reference pressure for the pressure correction (in Pa).
 auto ReactionThermoModelPressureCorrection(Param Pr) -> ReactionThermoModel;
 
