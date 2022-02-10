@@ -53,8 +53,9 @@ TEST_CASE("Testing ReactionThermoModelVantHoff class", "[ReactionThermoModelVant
 
     ReactionThermoProps rprops = model({T, P, dV0});
 
-    CHECK( rprops.dG0 == Approx(dG0x) );
-    CHECK( rprops.dH0 == Approx(dH0x) );
+    CHECK( rprops.dG0  == Approx(dG0x) );
+    CHECK( rprops.dH0  == Approx(dH0x) );
+    CHECK( rprops.dCp0 == 0.0 );
 
     //======================================================================
     // Test method Model::params()

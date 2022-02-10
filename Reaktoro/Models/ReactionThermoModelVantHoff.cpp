@@ -51,13 +51,17 @@ auto ReactionThermoModelVantHoff(const ReactionThermoModelParamsVantHoff& params
         // Unpack the model parameters
         const auto& [lgKr, dHr, Tr, Pr] = params;
 
+        const auto dVT0 = 0.0; // TODO: Consider dVT0 in ReactionThermoArgs
+
         const auto R = universalGasConstant;
         const auto RT = R*T;
         const auto lnKr = lgKr * ln10;
         const auto lnK = lnKr - dHr * (Tr - T)/(RT*Tr);
         const auto dE = dV0 * (P - Pr); // delta energy (in J/mol)
+        const auto dET = dVT0 * (P - Pr); // delta energy (in J/mol)
         props.dG0 = -RT * lnK + dE;
         props.dH0 = dHr + dE;
+        props.dCp0 = dET;
     };
 
     return ReactionThermoModel(evalfn, extractParams(params), createModelSerializer(params));

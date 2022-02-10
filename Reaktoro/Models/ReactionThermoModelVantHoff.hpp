@@ -40,24 +40,33 @@ struct ReactionThermoModelParamsVantHoff
 
 /// Return a function that calculates thermodynamic properties of a reaction using van't Hoff's model.
 ///
-/// In this model, the equilibrium constant of the reaction
-/// is computed at a given temperature with:
+/// In this model, the equilibrium constant of the reaction is computed at a given temperature with:
 ///
-/// @eqc{\ln K=\ln K_{\mathrm{r}}-\frac{\Delta H_{\mathrm{r}}^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{T_{\mathrm{r}}}\right),}
+/// @eqc{\ln K(T)=\ln K_{\mathrm{r}}-\frac{\Delta H_{\mathrm{r}}^{\circ}}{R}\left(\frac{1}{T}-\frac{1}{T_{\mathrm{r}}}\right),}
 ///
 /// where @eq{\ln K_{\mathrm{r}}} and @eq{\Delta H_{\mathrm{r}}^{\circ}} are the equilibrium constant and
-/// enthalpy of reaction at reference temperature @eq{T_\mathrm{r}}. From this model, we can calculate
-/// the standard Gibbs energy of reaction using:
+/// enthalpy of reaction at reference temperature @eq{T_\mathrm{r}}.
 ///
-/// @eqc{\Delta G^{\circ}=-RT\ln K_{\mathrm{r}}+\Delta V^{\circ}(P-P_{\mathrm{r}})}
+/// The standard Gibbs energy of reaction is computed using:
 ///
-/// while the standard enthalpy of reaction is:
+/// @eqc{\Delta G^{\circ}(T, P)=-RT\ln K_{\mathrm{r}}+\Delta V^{\circ}(P-P_{\mathrm{r}}),}
 ///
-/// @eqc{\Delta H^{\circ}=\Delta H_{\mathrm{r}}^{\circ}+\Delta V^{\circ}(P-P_{\mathrm{r}}).}
+/// the standard enthalpy of the reaction using:
+///
+/// @eqc{\Delta H^{\circ}(T, P)=\Delta H_{\mathrm{r}}^{\circ}+\Delta V^{\circ}(P-P_{\mathrm{r}}).}
+///
+/// and the standard isobaric heat capacity of reaction using:
+///
+/// @eqc{\Delta C_{P}^{\circ}(T, P) = \Delta V^{\circ}_T(P-P_{\mathrm{r}}),}
+///
+/// where we have considered the following thermodynamic relations:
+///
+/// @eqc{\begin{align*} \Delta G^{\circ} & \equiv-RT\ln K,\vphantom{\left(-\frac{\Delta G^{\circ}}{T}\right)}\\ \Delta H^{\circ} & \equiv T^{2}\frac{\partial}{\partial T}\left(-\frac{\Delta G^{\circ}}{T}\right)_{P}=RT^{2}\frac{\partial\ln K}{\partial T},\\ \Delta C_{P}^{\circ} & \equiv\left(\dfrac{\partial\Delta H^{\circ}}{\partial T}\right)_{P}. \end{align*}}
 ///
 /// Note that a pressure correction is introduced above, where @eq{\Delta V^{\circ}}
 /// is the change of standard molar volume of the reaction at @eq{T} and @eq{P},
-/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure.
+/// with @eq{P_{\mathrm{r}}} denoting a given reference pressure. @eq{\Delta V^{\circ}_T}
+/// is the temperature derivative of @eq{\Delta V^{\circ}} at constant pressure.
 auto ReactionThermoModelVantHoff(const ReactionThermoModelParamsVantHoff& params) -> ReactionThermoModel;
 
 } // namespace Reaktoro
