@@ -34,33 +34,36 @@ int main()
     ThermoFunDatabase db("cemdata18");
 
     // Define aqueous phase
-    AqueousPhase solution(speciate("H O K Na S Si Ca Mg Al C Cl"));
+    AqueousPhase aq_solution(speciate("H O K Na S Si Ca Mg Al C Cl"));
 
-    // Set up a and b parameters for the ionic species (KOH, b = 0.123, a = 3.67)
+    // Define gas phase
+    GaseousPhase gaseous(speciate("H O C"));
+
+    // Here we define the activity model used to calculate the activity coefficients of the aqueous species
+    // Set up a and b parameters for KOH background electrolyte b = 0.123, a = 3.67
     ActivityModelDebyeHuckelParams params;
     params.aiondefault = 3.67;
     params.biondefault = 0.123;
     params.bneutraldefault = 0.123;
-    solution.setActivityModel(ActivityModelDebyeHuckel(params));
+    aq_solution.setActivityModel(ActivityModelDebyeHuckel(params));
 
-    // Define minerals
-    MineralPhases minerals("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag "
-                           "C2S C3A C3S C4AF Lim Gp Brc K2SO4 K2O Na2SO4 Na2O");
+    // Define pure mineral phases
     // Calcite, Hydrotalcite, Portlandite, Hemicarbonate, Monocarbonate, SiO2(am), Ferrihydrite, Gibbsite, Magnetite
+    MineralPhases pure_minerals("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag");
+    
 
-    // Define solid phases
-    SolidPhase solidphase_C3AFS084H("C3FS0.84H4.32 C3AFS0.84H4.32"); // AlFeSi-hydrogarnet_ss
-    SolidPhase solidphase_ettringite("ettringite ettringite30"); // Ettrignite_ss
-    SolidPhase solidphase_OH_SO4_AFm("C4AH13 monosulphate12"); // Monosulfate_ss
-    SolidPhase solidphase_CSHQ("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH"); // CSH_ss
+    // Define ideal solid-solution phases
+    SolidPhase ss_C3AFS084H("C3FS0.84H4.32 C3AFS0.84H4.32"); // ss_AlFeSi-hydrogarnet
+    SolidPhase ss_ettringite("ettringite ettringite30"); // ss_Ettrignite_ss
+    SolidPhase ss_OH_SO4_AFm("C4AH13 monosulphate12"); // ss_Monosulfate_ss
+    SolidPhase ss_CSHQ("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH"); // ss_C-S-H
 
-    // Define chemical system by providing database, aqueous phase, and minerals
-    //ChemicalSystem system(db, solution, minerals);
-    ChemicalSystem system(db, solution, minerals,
-                          solidphase_C3AFS084H,
-                          solidphase_ettringite,
-                          solidphase_OH_SO4_AFm,
-                          solidphase_CSHQ);
+    // Define chemical system by providing the database, aqueous phase, minerals phases (pure and solid solutions)
+    ChemicalSystem system(db, aq_solution, pure_minerals, gaseous,
+                          ss_C3AFS084H,
+                          ss_ettringite,
+                          ss_OH_SO4_AFm,
+                          ss_CSHQ);
 
     // Specify conditions to be satisfied at chemical equilibrium
     EquilibriumSpecs specs(system);
@@ -76,22 +79,35 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.setSpeciesMass("H2O@", 40, "g"); // water // water/binder = 0.4, 40g water per 100g of cement clinker
-    // clinker phases
-    state.setSpeciesMass("C2S" ,  9.70, "g"); // belite
-    state.setSpeciesMass("C3A" ,  7.72, "g"); // aluminate
-    state.setSpeciesMass("C3S" , 67.31, "g"); // alite
-    state.setSpeciesMass("C4AF",  8.14, "g"); // ferrite, (CaO)4(Al2O3)(Fe|3|2O3)
-    // additional
-    state.setSpeciesMass("Gp"    , 3.13, "g"); // gypsum, CaSO4(H2O)2
-    state.setSpeciesMass("Cal"   , 0.10, "g"); // calcite, CaCO3
-    state.setSpeciesMass("Lim"   , 0.93, "g"); // lime, CaO
-    state.setSpeciesMass("Brc"   , 1.31, "g"); // brucite, Mg(OH)2
-    state.setSpeciesMass("K2SO4" , 1.34, "g"); // potasium-sulfate
-    state.setSpeciesMass("K2O"   , 0.05, "g"); // potasium oxide
-    state.setSpeciesMass("Na2SO4", 0.21, "g"); // sodium sulfate
-    state.setSpeciesMass("Na2O"  , 0.05, "g"); // sodium oxide
-    state.setSpeciesMass("O2@"   , 0.15, "g"); // oxygen to stabilize the system
+
+    // We define the materials for our equilibirum recipe
+    // Cement clinker composition from XRF as given in Lothenbach et al., (2008) recalculated for 100g
+    Material cement_clinker(system);
+    cement_clinker.add("SiO2",  20.47, "g");
+    cement_clinker.add("CaCO3", 0.00, "g");
+    cement_clinker.add("CaO", 65.7, "g");
+    cement_clinker.add("Al2O3", 4.9, "g");
+    cement_clinker.add("Fe2O3", 3.2, "g");
+    cement_clinker.add("K2O", 0.79, "g");
+    cement_clinker.add("Na2O", 0.42, "g");
+    cement_clinker.add("MgO", 1.8, "g");
+    cement_clinker.add("SO3", 2.29, "g");
+    cement_clinker.add("CO2", 0.26, "g");
+    cement_clinker.add("O2", 0.15, "g");
+    
+    // Water
+    Material water(system);
+    water.add("H2O", 1000.0, "g");
+    
+    // We make a cement mix of 0.5 water/binder 
+    Material cement_mix(system);
+    cement_mix = cement_clinker(100.0, "g") + water(50.0, "g");
+    
+    // And we equilibrate our cement mix
+    state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar");
+    
+    // Output the chemical state to a text-file
+    state.output("state-cemdata18_1.txt");
 
     // Define temperature and pressure
     double T = 20.0; // in Celsius
@@ -107,7 +123,7 @@ int main()
     std::cout << "res (cemdata18) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a text-file
-    state.output("state-cemdata18.txt");
+    state.output("state-cemdata18_2.txt");
 
     // Output the chemical properties to a text-file
     ChemicalProps props(state);
