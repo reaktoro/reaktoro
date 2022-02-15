@@ -72,6 +72,7 @@ int main()
 
     // Define equilibrium solver
     EquilibriumOptions opts;
+    opts.optima.output.active = true;
 
     // Define equilibrium solver and its result
     EquilibriumSolver solver(specs);
@@ -80,7 +81,7 @@ int main()
     // Define initial equilibrium state
     ChemicalState state(system);
 
-    // We define the materials for our equilibirum recipe
+    // We define the materials for our equilibrium recipe
     // Cement clinker composition from XRF as given in Lothenbach et al., (2008) recalculated for 100g
     Material cement_clinker(system);
     cement_clinker.add("SiO2",  20.47, "g");
@@ -104,8 +105,11 @@ int main()
     cement_mix = cement_clinker(100.0, "g") + water(50.0, "g");
     
     // And we equilibrate our cement mix
-    state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar");
-    
+    //state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar");
+    state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts);
+    res = cement_mix.result();
+    std::cout << "res (cemdata18, run with material) = " << res.optima.succeeded << std::endl;
+
     // Output the chemical state to a text-file
     state.output("state-cemdata18_1.txt");
 
@@ -119,8 +123,9 @@ int main()
     conditions.pressure(P, "bar");
 
     // Equilibrate the initial state with given conditions and component amounts
+    solver.setOptions(opts);
     res = solver.solve(state, conditions);
-    std::cout << "res (cemdata18) = " << res.optima.succeeded << std::endl;
+    std::cout << "res (cemdata18, run with solver) = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a text-file
     state.output("state-cemdata18_2.txt");
