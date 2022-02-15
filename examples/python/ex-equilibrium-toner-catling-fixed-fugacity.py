@@ -47,6 +47,7 @@ solver = EquilibriumSolver(specs)
 
 opts = EquilibriumOptions()
 opts.epsilon = 1e-13
+opts.optima.output.active = True
 solver.setOptions(opts)
 
 state0 = ChemicalState(system)
@@ -85,11 +86,14 @@ def equilibrate(ppCO2, state):
         state.set("Na2CO3:7H2O",   0.00, "mol")
         state.set("CO2"        , 100.00, "mol")
 
+    #opts = EquilibriumOptions()
+    #opts.optima.output.active = False
+    #solver.setOptions(opts)
     res = solver.solve(state, conditions)
 
     if not res.optima.succeeded:
-        print(f"The optimization solver hasn't converged for T = {T} C and ppCO2 = {ppCO2}")
-        return math.nan, math.nan, math.nan
+        #print(f"The optimization solver hasn't converged for T = {T} C and ppCO2 = {ppCO2}")
+        return math.nan, math.nan, math.nan, res.optima.succeeded
 
     props.update(state)
     aprops.update(state)
@@ -98,17 +102,28 @@ def equilibrate(ppCO2, state):
     mCO3 = state.speciesAmount("CO3-2")[0]
     mHCO3 = state.speciesAmount("HCO3-")[0]
 
-    return ph, mCO3, mHCO3
+    return ph, mCO3, mHCO3, res.optima.succeeded
 
-print(f' ppCO2     pH      CO3-2      HCO3-')
+print(f'     ppCO2  succeeded         pH      CO3-2      HCO3-')
 for i in range(0, num_ppco2s):
-    state = state0
-    result = equilibrate(co2ppressures[i], state)
-    data[i, 0] = co2ppressures[i]
-    data[i, 1] = result[0]
-    data[i, 2] = result[1]
-    data[i, 3] = result[2]
-    print(f'{co2ppressures[i]:8.4f} {result[0]:6.2f} {result[1]:6.4e} {result[2]:6.4e}')
+
+    if (co2ppressures[i] < -2.1) and (co2ppressures[i] >= -2.5):
+    #if True:
+        state = state0
+        result = equilibrate(co2ppressures[i], state)
+        data[i, 0] = co2ppressures[i]
+        data[i, 1] = result[0]
+        data[i, 2] = result[1]
+        data[i, 3] = result[2]
+        print(f'{co2ppressures[i]:8.4e} {result[3]:10d} {result[0]:6.4e} {result[1]:6.4e} {result[2]:6.4e}')
+
+    # state = state0
+    # result = equilibrate(co2ppressures[i], state)
+    # data[i, 0] = co2ppressures[i]
+    # data[i, 1] = result[0]
+    # data[i, 2] = result[1]
+    # data[i, 3] = result[2]
+    # print(f'{co2ppressures[i]:8.4f} {result[3]} {result[0]:6.4e} {result[1]:6.4e} {result[2]:6.4e}')
 
 np.savetxt(results_folder + '/m-data.txt', data)
 np.savetxt(results_folder + '/m-pH.txt', data[:, 1])
