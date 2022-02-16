@@ -8,7 +8,7 @@ set_and_check(REAKTORO_INSTALL_CONFIGDIR "@PACKAGE_REAKTORO_INSTALL_CONFIGDIR@")
 list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 
 # Find all dependencies below.
-find_package(Boost REQUIRED)
+# find_package(Boost REQUIRED)
 find_package(nlohmann_json 3.6.1 REQUIRED)
 
 # Find ThermoFun library

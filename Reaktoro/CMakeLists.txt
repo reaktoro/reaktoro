@@ -41,10 +41,13 @@ target_include_directories(Reaktoro
     PRIVATE ${REAKTORO_THIRDPARTY_INCLUDE_PATH})
 
 # Link Reaktoro library against external dependencies
+#target_link_libraries(Reaktoro
+#    PRIVATE ${THIRDPARTY_LIBS}
+#    PRIVATE nlohmann_json::nlohmann_json
+#    PUBLIC Boost::boost)
 target_link_libraries(Reaktoro
-    PRIVATE ${THIRDPARTY_LIBS}
-    PRIVATE nlohmann_json::nlohmann_json
-    PUBLIC Boost::boost)
+        PRIVATE ${THIRDPARTY_LIBS}
+        PRIVATE nlohmann_json::nlohmann_json)
 
 if(REAKTORO_USE_OPENLIBM)
     configure_target_to_use_openlibm(Reaktoro)
