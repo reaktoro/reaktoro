@@ -109,6 +109,12 @@ public:
     /// Return the number of species over all phases up to the one with given index.
     auto numSpeciesUntilPhase(Index iphase) const -> Index;
 
+    /// Return the indices of the phases with a single species.
+    auto indicesPhasesArePure() const -> Indices;
+
+    /// Return the indices of the phases with more than one species.
+    auto indicesPhasesAreSolution() const -> Indices;
+
     /// Return the indices of the species in the given phases.
     auto indicesSpeciesInPhases(const Indices& iphases) const -> Indices;
 
