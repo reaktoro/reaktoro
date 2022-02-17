@@ -294,6 +294,16 @@ TEST_CASE("Testing PhaseList", "[PhaseList]")
     REQUIRE( phases.numSpeciesUntilPhase(5) == 8 + 6 + 1 + 1 + 1 );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::indicesPhasesArePure
+    //-------------------------------------------------------------------------
+    REQUIRE( phases.indicesPhasesArePure() == Indices{2, 3, 4} );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: PhaseList::indicesPhasesAreSolution
+    //-------------------------------------------------------------------------
+    REQUIRE( phases.indicesPhasesAreSolution() == Indices{0, 1} );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: PhaseList::indicesSpeciesInPhases
     //-------------------------------------------------------------------------
     REQUIRE( phases.indicesSpeciesInPhases({0}) == Indices{0, 1, 2, 3, 4, 5, 6, 7} );

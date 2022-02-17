@@ -182,6 +182,24 @@ auto PhaseList::numSpeciesUntilPhase(Index iphase) const -> Index
     return sum;
 }
 
+auto PhaseList::indicesPhasesArePure() const -> Indices
+{
+    Indices iphases;
+    for(auto&& [i, phase] : enumerate(m_phases))
+        if(phase.species().size() == 1)
+            iphases.push_back(i);
+    return iphases;
+}
+
+auto PhaseList::indicesPhasesAreSolution() const -> Indices
+{
+    Indices iphases;
+    for(auto&& [i, phase] : enumerate(m_phases))
+        if(phase.species().size() > 1)
+            iphases.push_back(i);
+    return iphases;
+}
+
 auto PhaseList::indicesSpeciesInPhases(const Indices& iphases) const -> Indices
 {
     Indices res;
