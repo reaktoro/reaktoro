@@ -1547,8 +1547,12 @@ auto EUNIQUACParams::addNewSpeciesParameters(
             uij_0_matrix(species_j_id, id_new_species) = new_uij_0;
         }
         else {
-            uij_0_matrix(id_new_species, species_j_id) = default_u_0_value;
-            uij_0_matrix(species_j_id, id_new_species) = default_u_0_value;
+            if (id_new_species == species_j_id)
+                uij_0_matrix(id_new_species, species_j_id) = 0.0;
+            else {
+                uij_0_matrix(id_new_species, species_j_id) = default_u_0_value;
+                uij_0_matrix(species_j_id, id_new_species) = default_u_0_value;
+            }
         }
 
         // Add new uij_T value, if provided. Otherwise, set it as the default value.

@@ -329,6 +329,7 @@ def test_add_new_species_params():
 
     # Check the new values between the new species and the ones already defined (for uij_0)
     default_u0_value = 2500.0
+    assert euniquac_params.uij_0(new_species_name, new_species_name) == 0.0
     assert euniquac_params.uij_0("Na+", new_species_name) == 3.5
     assert euniquac_params.uij_0(new_species_name, "Na+") == 3.5
     assert euniquac_params.uij_0("Cl-", new_species_name) == default_u0_value
@@ -340,3 +341,4 @@ def test_add_new_species_params():
     assert euniquac_params.uij_T(new_species_name, "Cl-") == -2.5
     assert euniquac_params.uij_T("Na+", new_species_name) == default_uT_value
     assert euniquac_params.uij_T(new_species_name, "Na+") == default_uT_value
+    assert euniquac_params.uij_T(new_species_name, new_species_name) == default_uT_value
