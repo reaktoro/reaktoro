@@ -87,6 +87,9 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimization calculations.
     Optima::Solver optsolver;
 
+    // The equilibrium result
+    EquilibriumResult result;
+
     /// Construct a Impl instance with given EquilibriumConditions object.
     Impl(const EquilibriumSpecs& specs)
     : system(specs.system()), specs(specs), dims(specs), setup(specs)
@@ -230,7 +233,7 @@ struct EquilibriumSolver::Impl
     auto updateOptState(const ChemicalState& state0)
     {
         // Allocate memory if needed
-        if(optstate.dims.x != dims.Nx)
+        if( (optstate.dims.x != dims.Nx) || (!result.optima.succeeded))
             optstate = Optima::State(optdims);
 
         // Set species amounts in x = (n, q) to that from the chemical state
@@ -388,8 +391,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult
     {
-        EquilibriumResult result;
-
         updateOptProblem(state, conditions, restrictions, b0);
         updateOptState(state);
 
