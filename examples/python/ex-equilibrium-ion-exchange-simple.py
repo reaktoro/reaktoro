@@ -66,5 +66,6 @@ print("I  = %f mol/kgw" % aqprops.ionicStrength()[0])
 print("pH = %f" % aqprops.pH()[0])
 print("pE = %f" % aqprops.pE()[0])
 
-exprops = IonExchangeProps(state)
+exprops = IonExchangeProps(system)
+exprops.update(state)
 print(exprops)
