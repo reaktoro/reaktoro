@@ -339,7 +339,7 @@ auto operator<<(std::ostream& out, const IonExchangeProps& props) -> std::ostrea
         table.add_row({ ":: " + species[i].repr(), strsci(ns[i]), "mol" });
     table.add_row({ "Equivalents:" });
     for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].repr(), strfix(eq[i]), "eq" });
+        table.add_row({ ":: " + species[i].repr(), strsci(eq[i]), "eq" });
     table.add_row({ "Equivalent Fractions:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].repr(), strfix(beta[i]), "" });
