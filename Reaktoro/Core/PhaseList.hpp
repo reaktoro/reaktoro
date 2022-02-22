@@ -115,6 +115,12 @@ public:
     /// Return the indices of the phases with more than one species.
     auto indicesPhasesAreSolution() const -> Indices;
 
+    /// Return the indices of the species in phases with a single species.
+    auto indicesSpeciesInPurePhases() const -> Indices;
+
+    /// Return the indices of the species in phases with more than one species.
+    auto indicesSpeciesInSolutionPhases() const -> Indices;
+
     /// Return the indices of the species in the given phases.
     auto indicesSpeciesInPhases(const Indices& iphases) const -> Indices;
 

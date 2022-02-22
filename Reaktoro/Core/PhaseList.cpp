@@ -200,6 +200,35 @@ auto PhaseList::indicesPhasesAreSolution() const -> Indices
     return iphases;
 }
 
+auto PhaseList::indicesSpeciesInPurePhases() const -> Indices
+{
+    Indices ispecies;
+    auto offset = 0;
+    for(const auto& phase : m_phases)
+    {
+        const auto size = phase.species().size();
+        if(size == 1)
+            ispecies.push_back(offset);
+        offset += size;
+    }
+    return ispecies;
+}
+
+auto PhaseList::indicesSpeciesInSolutionPhases() const -> Indices
+{
+    Indices ispecies;
+    auto offset = 0;
+    for(const auto& phase : m_phases)
+    {
+        const auto size = phase.species().size();
+        if(size > 1)
+            for(auto i = 0; i < size; ++i)
+                ispecies.push_back(offset + i);
+        offset += size;
+    }
+    return ispecies;
+}
+
 auto PhaseList::indicesSpeciesInPhases(const Indices& iphases) const -> Indices
 {
     Indices res;
