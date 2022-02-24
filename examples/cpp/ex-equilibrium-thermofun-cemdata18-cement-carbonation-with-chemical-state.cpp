@@ -43,6 +43,9 @@ int main()
     params.bneutraldefault = 0.123;
     solution.setActivityModel(ActivityModelDebyeHuckel(params));
 
+    // Define gas phase
+    GaseousPhase gaseous(speciate("H O C"));
+
     // Define minerals
     MineralPhases minerals("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag "
                            "C2S C3A C3S C4AF Lim Gp Brc K2SO4 K2O Na2SO4 Na2O");
@@ -56,7 +59,7 @@ int main()
 
     // Define chemical system by providing database, aqueous phase, and minerals
     //ChemicalSystem system(db, solution, minerals);
-    ChemicalSystem system(db, solution, minerals,
+    ChemicalSystem system(db, solution, minerals, gaseous,
                           solidphase_C3AFS084H,
                           solidphase_ettringite,
                           solidphase_OH_SO4_AFm,
