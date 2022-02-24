@@ -36,7 +36,7 @@ auto molarMasses(const SpeciesList& species) -> ArrayXd
 
 auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, Chars unit) -> real
 {
-    if(unit == "mol")
+    if(strcmp(unit, "mol") == 0)
         return value;
 
     if(units::convertible(unit, "kg"))
