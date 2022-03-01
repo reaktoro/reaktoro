@@ -237,31 +237,31 @@ plt.grid()
 plt.savefig(f'phases-AlFeSi-hydrogarnet-vs-caco2.png', bbox_inches='tight')
 plt.close()
 
-# plt.figure()
-# plt.xlabel("Mass of CaCO3 [g]")
-# plt.ylabel("Phases amounts [mol]")
-#
-# plt.plot(array_mCaCO3, phase_ss_C3AFS084H, label="ss_AlFeSi-hydrogarnet", color=colors[0])
-# plt.plot(array_mCaCO3, phase_ss_CSHQ, label="ss_C-S-H", color=colors[3])
-#
-# plt.legend(loc="best")
-# plt.grid()
-# plt.savefig(f'phases-AlFeSi-hydrogarnet-C-S-H-vs-caco2.png', bbox_inches='tight')
-# plt.close()
+plt.figure()
+plt.xlabel("Mass of CaCO3 [g]")
+plt.ylabel("Phases amounts [mol]")
+
+plt.plot(array_mCaCO3, phase_ss_C3AFS084H, label="ss_AlFeSi-hydrogarnet", color=colors[0])
+plt.plot(array_mCaCO3, phase_ss_CSHQ, label="ss_C-S-H", color=colors[3])
+
+plt.legend(loc="best")
+plt.grid()
+plt.savefig(f'phases-AlFeSi-hydrogarnet-C-S-H-vs-caco2.png', bbox_inches='tight')
+plt.close()
 
 
-# plt.figure()
-# plt.xlabel("Mass of CaCO3 [g]")
-# plt.ylabel("Phases amounts [mol]")
-#
-# plt.plot(array_mCaCO3, phase_ss_ettringite, label="ss_Ettrignite_ss", color=colors[1])
-#
-# plt.legend(loc="best")
-# plt.grid()
-# plt.savefig(f'phases-Ettrignite-vs-caco2.png', bbox_inches='tight')
-# plt.close()
-#
-#
+plt.figure()
+plt.xlabel("Mass of CaCO3 [g]")
+plt.ylabel("Phases amounts [mol]")
+
+plt.plot(array_mCaCO3, phase_ss_ettringite, label="ss_Ettrignite_ss", color=colors[1])
+
+plt.legend(loc="best")
+plt.grid()
+plt.savefig(f'phases-Ettrignite-vs-caco2.png', bbox_inches='tight')
+plt.close()
+
+
 plt.figure()
 plt.xlabel("Mass of CaCO3 [g]")
 plt.ylabel("Phases amounts [mol]")
@@ -285,31 +285,30 @@ plt.grid()
 plt.savefig(f'phases-calcite-vs-caco2.png', bbox_inches='tight')
 plt.close()
 
+plt.figure()
+plt.xlabel("Mass of CaCO3 [g]")
+plt.ylabel("Phases amounts [mol]")
 
-# plt.figure()
-# plt.xlabel("Mass of CaCO3 [g]")
-# plt.ylabel("Phases amounts [mol]")
-#
-# plt.plot(array_mCaCO3, phase_hydrotalcite, label="Hydrotalcite", color=colors[4])
-#
-# plt.legend(loc="best")
-# plt.grid()
-# #plt.show()
-# plt.savefig(f'phases-hydrotalcite-vs-caco2.png', bbox_inches='tight')
-# plt.close()
-#
-#
-# plt.figure()
-# plt.xlabel("Mass of CaCO3 [g]")
-# plt.ylabel("Phases amounts [mol]")
-#
-# plt.plot(array_mCaCO3, phase_monocarbonate, label="Monocarbonate", color=colors[5])
-#
-# plt.legend(loc="best")
-# plt.grid()
-# #plt.show()
-# plt.savefig(f'phases-monocarbonate-vs-caco2.png', bbox_inches='tight')
-# plt.close()
+plt.plot(array_mCaCO3, phase_hydrotalcite, label="Hydrotalcite", color=colors[4])
+
+plt.legend(loc="best")
+plt.grid()
+#plt.show()
+plt.savefig(f'phases-hydrotalcite-vs-caco2.png', bbox_inches='tight')
+plt.close()
+
+
+plt.figure()
+plt.xlabel("Mass of CaCO3 [g]")
+plt.ylabel("Phases amounts [mol]")
+
+plt.plot(array_mCaCO3, phase_monocarbonate, label="Monocarbonate", color=colors[5])
+
+plt.legend(loc="best")
+plt.grid()
+#plt.show()
+plt.savefig(f'phases-monocarbonate-vs-caco2.png', bbox_inches='tight')
+plt.close()
 
 plt.figure()
 plt.xlabel("Mass of CaCO3 [g]")
