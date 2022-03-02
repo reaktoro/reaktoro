@@ -81,6 +81,7 @@ def plot_rt_kinetic_dolomitization(folder, x, nsteps, dt, output_quantities_map)
 
     # Plot all result files
     files = sorted(os.listdir(folder))
+
     Parallel(n_jobs=16)(delayed(plotfile_rt_kinetic_dolomitization)(folder, file, x, nsteps, dt, output_quantities_map) for file in files)
     # Create videos for the figures
     ffmpegstr = 'ffmpeg -y -r 30 -i figures-' + folder + '/{0}/%0' + str(ndigits) + 'd.png -codec:v mpeg4 -flags:v +qscale -global_quality:v 0 videos-' + folder + '/{0}.mp4'
