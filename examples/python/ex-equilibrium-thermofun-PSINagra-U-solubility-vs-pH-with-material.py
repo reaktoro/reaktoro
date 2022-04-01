@@ -73,11 +73,12 @@ nU = np.zeros((len(pHs), species_list.size()))
 # H3PO4@ 1e-5 mol
 # CO2@ 0.1 g
  # UO2(SO4)@ 1e-5 mol.
-state = rkt.ChemicalState(system)
-state.set("H2O@"     , 1e3,  "g")
-state.set("CO2@"     , 1e-1, "g")
-state.set("H3PO4@"   , 1e-5, "mol")
-state.set("UO2(SO4)@", 1e-5, "mol")
+
+# Define solution for now without P and S
+solution = rkt.Material(system)
+solution.add("H2O", 1000.0, "g")
+solution.add("CO2", 1e-5, "mol")
+solution.add("UO2(OH)2", 1e-5, "mol")
 
 # Aqueous properties of the chemical state
 aprops = rkt.AqueousProps(system)
@@ -97,12 +98,17 @@ props = rkt.ChemicalProps(system)
 #       "   %n((UO2)3(OH)5+)" \
 #       "   %n((UO2)4(OH)7+)")
 
+opts = rkt.EquilibriumOptions()
+opts.optima.output.active = False
+opts.epsilon = 1e-13
+
 for i in range(0, len(pHs)):
 
     # Set the value of pH for the current equilibrium calculations
     conditions.pH(pHs[i])
 
     # Equilibrate the initial state with given conditions and component amounts
+    state = solution.equilibrate(T, "celsius", P, "bar", opts)
     res = solver.solve(state, conditions)
 
     if not res.optima.succeeded:
@@ -124,6 +130,9 @@ for i in range(0, len(pHs)):
 import matplotlib.pyplot as plt
 colors = ['C1', 'C2', 'C3', 'C4', 'C5', 'C7', 'C8', 'C9', 'C0', 'darkblue', 'darkgreen']
 
+# missing species UO2(OH)3-, UO2(OH)4-2, (UO2)3(CO3)6-6, UO2(CO3)3-4, UO2(CO3)3-5, UO2CO3(aq), (UO2)3O(OH)2HCO3+
+# I don't know which of these species form in significant amount
+# on the U % vs pH the sum of species at each pH = 100%, otherwise we miss some species.
 species_set_high = rkt.SpeciesList("UO2+2 UO2OH+ UO2CO3@ " \
                                    "UO2(CO3)3-4 UO2(CO3)2-2")
 indices_high = [0, 1, 3, 6, 7]
@@ -131,9 +140,12 @@ species_set_low = rkt.SpeciesList("UO2(OH)2@ (UO2)3CO3(OH)3+ (UO2)2(OH)+3 " \
                                    "(UO2)2(OH)2+2 (UO2)3(OH)5+ (UO2)4(OH)7+")
 indices_low = [2, 4, 5, 8, 9, 10]
 
+# the plots should have
+
 plt.figure()
 plt.xlabel("pH")
 plt.ylabel("U(VI) Speciation, %")
+plt.ylim(0,100) # Y should be from 0 to 100 - if the sum of species is not 100 at given pH than something is wrong, we miss species from sampling
 
 for j in indices_high:
     plt.plot(pHs, nU[:, j], label=species_list[j].name(), color=colors[j])
@@ -155,3 +167,4 @@ plt.grid()
 #plt.show()
 plt.savefig(f'U-vs-pH-low-P-{P}.png', bbox_inches='tight')
 plt.close()
+
