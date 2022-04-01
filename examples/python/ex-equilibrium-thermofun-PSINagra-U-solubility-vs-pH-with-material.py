@@ -47,6 +47,7 @@ specs = rkt.EquilibriumSpecs(system)
 specs.temperature()
 specs.pressure()
 specs.pH()
+specs.fugacity("CO2(g)")
 
 # Define equilibrium solver
 solver = rkt.EquilibriumSolver(specs)
@@ -77,7 +78,7 @@ nU = np.zeros((len(pHs), species_list.size()))
 # Define solution for now without P and S
 solution = rkt.Material(system)
 solution.add("H2O", 1000.0, "g")
-solution.add("CO2", 1e-5, "mol")
+#solution.add("CO2", 1e-5, "mol")
 solution.add("UO2(OH)2", 1e-5, "mol")
 
 # Aqueous properties of the chemical state
@@ -106,6 +107,7 @@ for i in range(0, len(pHs)):
 
     # Set the value of pH for the current equilibrium calculations
     conditions.pH(pHs[i])
+    conditions.fugacity("CO2(g)", 0.01, "bar")
 
     # Equilibrate the initial state with given conditions and component amounts
     state = solution.equilibrate(T, "celsius", P, "bar", opts)
