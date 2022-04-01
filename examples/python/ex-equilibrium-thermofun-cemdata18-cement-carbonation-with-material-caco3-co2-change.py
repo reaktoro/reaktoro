@@ -22,9 +22,10 @@
 #   • Svetlana Kyas (24 February 2022)
 #
 # and since revised by:
-#   •
+#   • G.D. Miron (1 April 2022)
 # -----------------------------------------------------------------------------
 
+import sys
 from reaktoro import *
 import numpy as np
 import math
@@ -93,15 +94,25 @@ opts.epsilon = 1e-13
 
 # We define the materials for our equilibrium recipe
 # Cement clinker composition from XRF as given in Lothenbach et al., (2008) recalculated for 100g
+cement_clinker = Material(system)
+cement_clinker.add("SiO2" , 20.47, "g")
+cement_clinker.add("CaO"  , 65.70, "g")
+cement_clinker.add("Al2O3",  4.90, "g")
+cement_clinker.add("Fe2O3",  3.20, "g")
+cement_clinker.add("K2O"  ,  0.79, "g")
+cement_clinker.add("Na2O" ,  0.42, "g")
+cement_clinker.add("MgO"  ,  1.80, "g")
+cement_clinker.add("SO3"  ,  2.29, "g")
+cement_clinker.add("CO2"  ,  0.26, "g")
+cement_clinker.add("O2"   ,  0.15, "g")
+
 # Define water
 water = Material(system)
 water.add("H2O", 1000.0, "g")
 
-mCaCO3 = 00.00
-mCaO = 65.70
-
-d_CaCO3 = 1.0
-d_CO2   = 1.0
+# Define calcite
+calcite = Material(system)
+calcite.add("CaCO3", 1, "g")
 
 steps_num = 50
 
@@ -134,26 +145,15 @@ amount_CSHQJenD       = math.nan * np.ones(steps_num)
 amount_KSiOH          = math.nan * np.ones(steps_num)
 amount_NaSiOH         = math.nan * np.ones(steps_num)
 
+# we simulate the addition of calcite at the expense of clinker in the cement mix
 for i in range(0, steps_num):
 
-    cement_clinker = Material(system)
-    cement_clinker.add("SiO2" , 20.47, "g")
-    cement_clinker.add("CaCO3", mCaCO3, "g")
-    cement_clinker.add("CaO"  , mCaO, "g")
-    cement_clinker.add("Al2O3",  4.90, "g")
-    cement_clinker.add("Fe2O3",  3.20, "g")
-    cement_clinker.add("K2O"  ,  0.79, "g")
-    cement_clinker.add("Na2O" ,  0.42, "g")
-    cement_clinker.add("MgO"  ,  1.80, "g")
-    cement_clinker.add("SO3"  ,  2.29, "g")
-    cement_clinker.add("CO2"  ,  0.26, "g")
-    cement_clinker.add("O2"   ,  0.15, "g")
-
-    # Define a cement mix of 0.5 water/binder
+    # Define a cement mix of 0.5 water/binder 
+    # at each step calcite is added at the expense of clinker
     cement_mix = Material(system)
-    cement_mix = cement_clinker(100.0, "g") + water(50.0, "g")
+    cement_mix = cement_clinker(100.0 - i, "g") + calcite(i, "g") + water(50.0, "g")
 
-    print(f"Calculations with m(CaCO3) = {mCaCO3} g and m(CaO) = {mCaO} g:")
+    print(f"Calculations with %(CaCO3) = {i} and %(clinker) = {100-i} g:")
 
     # Equilibrate cement mix
     state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts)
@@ -176,22 +176,23 @@ for i in range(0, steps_num):
     aprops.update(state)
 
     if res.optima.succeeded:
-        array_mCaCO3[i] = mCaCO3
+        array_mCaCO3[i] = i
 
-        phase_ss_C3AFS084H[i] = props.phaseProps("ss_AlFeSi-hydrogarnet").amount()[0]
-        phase_ss_ettringite[i] = props.phaseProps("ss_Ettrignite_ss").amount()[0]
-        phase_ss_OH_SO4_AFm[i] = props.phaseProps("ss_Monosulfate_ss").amount()[0]
-        phase_ss_CSHQ[i] = props.phaseProps("ss_C-S-H").amount()[0]
+        # collecting phase volumes in cm3
+        phase_ss_C3AFS084H[i] = props.phaseProps("ss_AlFeSi-hydrogarnet").volume()[0]*1e5
+        phase_ss_ettringite[i] = props.phaseProps("ss_Ettrignite_ss").volume()[0]*1e5
+        phase_ss_OH_SO4_AFm[i] = props.phaseProps("ss_Monosulfate_ss").volume()[0]*1e5
+        phase_ss_CSHQ[i] = props.phaseProps("ss_C-S-H").volume()[0]*1e5
 
-        phase_Cal[i] = props.phaseProps("Cal").amount()[0]
-        phase_hydrotalcite[i] = props.phaseProps("hydrotalcite").amount()[0]
-        phase_Portlandite[i] = props.phaseProps("Portlandite").amount()[0]
-        phase_hemicarbonate[i] = props.phaseProps("hemicarbonate").amount()[0]
-        phase_monocarbonate[i] = props.phaseProps("monocarbonate").amount()[0]
-        phase_AmorSl[i] = props.phaseProps("Amor-Sl").amount()[0]
-        phase_FeOOHmic[i] = props.phaseProps("FeOOHmic").amount()[0]
-        phase_Gbs[i] = props.phaseProps("Gbs").amount()[0]
-        phase_Mag[i] = props.phaseProps("Mag").amount()[0]
+        phase_Cal[i] = props.phaseProps("Cal").volume()[0]*1e5
+        phase_hydrotalcite[i] = props.phaseProps("hydrotalcite").volume()[0]*1e5
+        phase_Portlandite[i] = props.phaseProps("Portlandite").volume()[0]*1e5
+        phase_hemicarbonate[i] = props.phaseProps("hemicarbonate").volume()[0]*1e5
+        phase_monocarbonate[i] = props.phaseProps("monocarbonate").volume()[0]*1e5
+        phase_AmorSl[i] = props.phaseProps("Amor-Sl").volume()[0]*1e5
+        phase_FeOOHmic[i] = props.phaseProps("FeOOHmic").volume()[0]*1e5
+        phase_Gbs[i] = props.phaseProps("Gbs").volume()[0]*1e5
+        phase_Mag[i] = props.phaseProps("Mag").volume()[0]*1e5
 
         amount_C3FS084H432[i] = state.speciesAmount("C3FS0.84H4.32")[0]
         amount_C3AFS084H432[i] = state.speciesAmount("C3AFS0.84H4.32")[0]
@@ -205,12 +206,6 @@ for i in range(0, steps_num):
         amount_CSHQJenD[i] = state.speciesAmount("CSHQ-JenD")[0]
         amount_KSiOH[i] = state.speciesAmount("KSiOH")[0]
         amount_NaSiOH[i] = state.speciesAmount("NaSiOH")[0]
-
-    #cement_clinker.add("CaCO3",   d_CaCO3, "g")
-    #cement_clinker.add("CaO"  ,  -d_CO2  , "g")
-
-    mCaCO3 += d_CaCO3
-    mCaO -= d_CO2
 
 print("phase_ss_C3AFS084H : ", phase_ss_C3AFS084H)
 print("phase_ss_ettringite : ", phase_ss_ettringite)
@@ -323,3 +318,5 @@ plt.grid()
 #plt.show()
 plt.savefig(f'phases-monocarbonate-hydrotalcite-Ettrignite-vs-caco2.png', bbox_inches='tight')
 plt.close()
+
+
