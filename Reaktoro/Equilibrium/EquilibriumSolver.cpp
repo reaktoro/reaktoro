@@ -88,7 +88,7 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimization calculations.
     Optima::Solver optsolver;
 
-    /// The equilibrium result
+    /// The result of the equilibrium calculation
     EquilibriumResult result;
 
     /// The array stream used to clean up autodiff seed values from the last ChemicalProps update step.
@@ -241,7 +241,7 @@ struct EquilibriumSolver::Impl
     auto updateOptState(const ChemicalState& state0)
     {
         // Allocate memory if needed
-        if( (optstate.dims.x != dims.Nx) || (!result.optima.succeeded))
+        if((optstate.dims.x != dims.Nx) or (!result.optima.succeeded))
             optstate = Optima::State(optdims);
 
         // Set species amounts in x = (n, q) to that from the chemical state
@@ -450,8 +450,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult
     {
-        EquilibriumResult result;
-
         updateOptProblem(state, conditions, restrictions, b0);
         updateOptState(state);
 
@@ -488,11 +486,6 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
 auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
 {
     pimpl->setOptions(options);
-}
-
-auto EquilibriumSolver::refresh() -> void
-{
-    pimpl->refresh();
 }
 
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult

@@ -54,9 +54,6 @@ public:
     /// Assign a copy of an EquilibriumSolver object to this.
     auto operator=(EquilibriumSolver other) -> EquilibriumSolver&;
 
-    /// Refresh EquilibriumSolver
-    auto refresh() -> void;
-
     /// Set the options of the equilibrium solver.
     auto setOptions(const EquilibriumOptions& options) -> void;
 
