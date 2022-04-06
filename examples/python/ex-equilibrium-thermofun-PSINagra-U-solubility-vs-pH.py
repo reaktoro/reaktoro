@@ -25,133 +25,95 @@
 #   • G.D. Miron (1 April 2022)
 # -----------------------------------------------------------------------------
 
-import reaktoro as rkt
+from reaktoro import *
 import numpy as np
-import math
 
-# Define Thermofun database
-db = rkt.ThermoFunDatabase ("psinagra-12-07")
+# Define the Thermofun database
+db = ThermoFunDatabase ("psinagra-12-07")
 
-# Define aqueous phase
-solution = rkt.AqueousPhase(rkt.speciate("C Cl H O P S U"))
-solution.setActivityModel(rkt.chain(
-    rkt.ActivityModelHKF(),
-    rkt.ActivityModelDrummond("CO2")
+# Define the aqueous phase
+solution = AqueousPhase(speciate("C Cl H O P S U"))
+solution.setActivityModel(chain(
+    ActivityModelHKF(),
+    ActivityModelDrummond("CO2")
 ))
 
-# Define chemical system by providing database, aqueous phase, and minerals
-system = rkt.ChemicalSystem(db, solution)
+# Define chemical system by providing database and aqueous phase
+system = ChemicalSystem(db, solution)
 
 # Specify conditions to be satisfied at chemical equilibrium
-specs = rkt.EquilibriumSpecs(system)
+specs = EquilibriumSpecs(system)
 specs.temperature()
 specs.pressure()
 specs.pH()
+specs.fugacity("CO2(g)")
 
-# Define equilibrium solver
-solver = rkt.EquilibriumSolver(specs)
+# Define conditions to be satisfied at the chemical equilibrium state
+conditions = EquilibriumConditions(specs)
+conditions.temperature(25.0, "celsius")
+conditions.pressure(1.0, "bar")
+conditions.fugacity("CO2(g)", 0.01, "bar")
 
-# Define temperature and pressure
-T = 25.0 # in Celsius
-P = 1.0 # in bar
-#P = 0.01 # in bar
+# Define the equilibrium solver and its options
+solver = EquilibriumSolver(specs)
+opts = EquilibriumOptions()
 
-# Define conditions to be satisfied at chemical equilibrium
-conditions = rkt.EquilibriumConditions(specs)
-conditions.temperature(T, "celsius")
-conditions.pressure(P, "bar")
-
-#pHs = np.array([5, 6, 7, 8, 9, 10])
-pHs = np.linspace(5, 10, num=41)
-species_list = rkt.SpeciesList("UO2+2 UO2OH+ UO2(OH)2@ UO2CO3@ (UO2)3CO3(OH)3+ (UO2)2(OH)+3 "
-                               "UO2(CO3)3-4 UO2(CO3)2-2 (UO2)2(OH)2+2 (UO2)3(OH)5+ (UO2)4(OH)7+")
-bU = 0.0
-nU = np.zeros((len(pHs), species_list.size()))
-
-# Define initial equilibrium state with the following recipe:
-# 1000 g H2O
-# H3PO4@ 1e-5 mol
-# CO2@ 0.1 g
- # UO2(SO4)@ 1e-5 mol.
-state = rkt.ChemicalState(system)
+# Define initial equilibrium state
+state = ChemicalState(system)
 state.set("H2O@"     , 1e3,  "g")
-state.set("CO2@"     , 1e-1, "g")
-state.set("H3PO4@"   , 1e-5, "mol")
-state.set("UO2(SO4)@", 1e-5, "mol")
+state.set("UO2(OH)2@", 1e-5, "mol")
 
-# Aqueous properties of the chemical state
-aprops = rkt.AqueousProps(system)
-props = rkt.ChemicalProps(system)
+# Calculate the amount of uranium element
+prop = ChemicalProps(state)
+bU = prop.elementAmount("U")[0]
 
-# Output the header of the table
-# print("   pH  success" \
-#       "          %n(UO2+2)" \
-#       "         %n(UO2OH+)" \
-#       "      %n(UO2(OH)2@)" \
-#       "        %n(UO2CO3@)" \
-#       "%n((UO2)3CO3(OH)3+)" \
-#       "   %n((UO2)2(OH)+3)" \
-#       "    %n(UO2(CO3)3-4)" \
-#       "    %n(UO2(CO3)2-2)" \
-#       "  %n((UO2)2(OH)2+2)" \
-#       "   %n((UO2)3(OH)5+)" \
-#       "   %n((UO2)4(OH)7+)")
+# Defined an auxiliary array of pH values
+pHs = np.linspace(5, 10, num=61)
 
-for i in range(0, len(pHs)):
+# Create list of species names, list of Species objects, and auxiliary amounts array
+species_list_str = "UO2+2 UO2OH+ UO2(OH)2@ UO2CO3@ (UO2)3CO3(OH)3+ (UO2)2(OH)+3 " \
+                   "UO2(CO3)3-4 UO2(CO3)2-2 (UO2)2(OH)2+2 (UO2)3(OH)5+ (UO2)4(OH)7+"
+species_list = SpeciesList(species_list_str)
+percentages = np.zeros(species_list.size())
+amounts = np.zeros(species_list.size())
+
+# Define dataframe to collect amount of the selected species
+import pandas as pd
+columns = ["pH"] + ["amount_" + name for name in species_list_str.split()] + ["perc_" + name for name in species_list_str.split()]
+df = pd.DataFrame(columns=columns)
+
+for pH in pHs:
 
     # Set the value of pH for the current equilibrium calculations
-    conditions.pH(pHs[i])
+    conditions.pH(pH)
 
     # Equilibrate the initial state with given conditions and component amounts
     res = solver.solve(state, conditions)
 
-    if not res.optima.succeeded:
-        nU[i, :] = math.nan * np.ones(species_list.size())
-    else:
-        # Update aqueous properties
-        aprops.update(state)
-        props.update(state)
+    # If the equilibrium calculations didn't succeed, continue to the next condition
+    if not res.optima.succeeded: continue
 
-        # Calculate U(VI) Speciation, %
-        bU = props.elementAmount("U")[0]
-        #print(f"{pHs[i]:6.2f}    {res.optima.succeeded}", end = " ")
-        for j in range(0, species_list.size()):#species in species_list:
-            nU[i, j] = state.speciesAmount(species_list[j].name())[0] / bU * 100
-            #print(f"{nU[i, j]:18.2e}", end=' ')
-        #print("")
+    # Otherwise, calculate U(VI) Speciation, %
+    for j in range(0, species_list.size()):#species in species_list:
+        amounts[j] = float(state.speciesAmount(species_list[j].name()))
+        percentages[j] = float(state.speciesAmount(species_list[j].name())) / bU * 100
+    # Update dataframe with obtained values
+    df.loc[len(df)] = np.concatenate([[pH], amounts, percentages])
 
 
 import matplotlib.pyplot as plt
-colors = ['C1', 'C2', 'C3', 'C4', 'C5', 'C7', 'C8', 'C9', 'C0', 'darkblue', 'darkgreen']
-
-species_set_high = rkt.SpeciesList("UO2+2 UO2OH+ UO2CO3@ " \
-                                   "UO2(CO3)3-4 UO2(CO3)2-2")
-indices_high = [0, 1, 3, 6, 7]
-species_set_low = rkt.SpeciesList("UO2(OH)2@ (UO2)3CO3(OH)3+ (UO2)2(OH)+3 " \
-                                   "(UO2)2(OH)2+2 (UO2)3(OH)5+ (UO2)4(OH)7+")
-indices_low = [2, 4, 5, 8, 9, 10]
+colors = ['teal', 'darkred', 'indigo', 'coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
 
 plt.figure()
 plt.xlabel("pH")
 plt.ylabel("U(VI) Speciation, %")
 
-for j in indices_high:
-    plt.plot(pHs, nU[:, j], label=species_list[j].name(), color=colors[j])
+species_list = species_list_str.split()
+ax = df.plot(x="pH", y="perc_UO2+2", color=colors[0], label=species_list[0])
 
+for species, color in zip(species_list[1:-1], colors[1:-1]):
+    df.plot(x="pH", y="perc_"+species, ax=ax, color=color, label=species)
 plt.legend(loc="best")
 plt.grid()
-#plt.show()
-plt.savefig(f'U-vs-pH-high-P-{P}.png', bbox_inches='tight')
-plt.close()
-plt.figure()
-plt.xlabel("pH")
-plt.ylabel("U(VI) Speciation, %")
-
-for j in indices_low:
-    plt.plot(pHs, nU[:, j], label=species_list[j].name(), color=colors[j])
-
-plt.legend(loc="best")
-plt.grid()
-#plt.show()
-plt.savefig(f'U-vs-pH-low-P-{P}.png', bbox_inches='tight')
+plt.savefig(f'U-vs-pH.png', bbox_inches='tight')
 plt.close()
