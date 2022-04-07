@@ -49,15 +49,18 @@ gaseous = GaseousPhase(speciate("H O C"))
 # Define minerals phases
 minerals = MineralPhases("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag ")
 
-# Define solid phases
-ss_C3AFS084H  = SolidPhase("C3FS0.84H4.32 C3AFS0.84H4.32") # AlFeSi-hydrogarnet_ss
-ss_ettringite = SolidPhase("ettringite ettringite30") # Ettrignite_ss
-ss_OH_SO4_AFm = SolidPhase("C4AH13 monosulphate12") # Monosulfate_ss
-ss_CSHQ       = SolidPhase("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH") # CSH_ss
-ss_C3AFS084H.setName("ss_AlFeSi-hydrogarnet")
-ss_ettringite.setName("ss_Ettrignite_ss")
-ss_OH_SO4_AFm.setName("ss_Monosulfate_ss")
-ss_CSHQ.setName("ss_C-S-H")
+# Define AlFeSi-hydrogarnet solid phase
+ss_C3AFS084H  = SolidPhase("C3FS0.84H4.32 C3AFS0.84H4.32")
+ss_C3AFS084H.setName("ss_C3AFS084H")
+# Define Ettrignite solid phase
+ss_ettringite = SolidPhase("ettringite ettringite30")
+ss_ettringite.setName("ss_Ettrignite")
+# Define Monosulfate solid phase
+ss_OH_SO4_AFm = SolidPhase("C4AH13 monosulphate12")
+ss_OH_SO4_AFm.setName("ss_Monosulfate")
+# Define CSH solid phase
+ss_CSHQ = SolidPhase("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH")
+ss_CSHQ.setName("ss_CSHQ")
 
 # Define chemical system by providing database, aqueous phase, minerals, and solid solutions
 system = ChemicalSystem(db, solution, minerals, gaseous,
@@ -65,25 +68,16 @@ system = ChemicalSystem(db, solution, minerals, gaseous,
                         ss_ettringite,
                         ss_OH_SO4_AFm,
                         ss_CSHQ)
-# # Print out species in cemdata18-thermofun.json:
-# for phase in system.phases():
-#     print(phase.name())
-#
-# input()
 
 # Specify conditions to be satisfied at chemical equilibrium
 specs = EquilibriumSpecs(system)
 specs.temperature()
 specs.pressure()
 
-# Define temperature and pressure
-T = 20.0 # in Celsius
-P = 1.0 # in bar
-
 # Define conditions to be satisfied at chemical equilibrium
 conditions = EquilibriumConditions(specs)
-conditions.temperature(T, "celsius")
-conditions.pressure(P, "bar")
+conditions.temperature(20.0, "celsius")
+conditions.pressure(1.0, "bar")
 
 props = ChemicalProps(system)
 aprops = AqueousProps(system)
@@ -114,52 +108,49 @@ water.add("H2O", 1000.0, "g")
 calcite = Material(system)
 calcite.add("CaCO3", 1, "g")
 
-steps_num = 50
+import numpy as np
+# Create list of species and phases names, list of Species objects, and auxiliary amounts array
+phases_list_str = "ss_C3AFS084H ss_Ettrignite ss_Monosulfate ss_CSHQ " \
+                  "Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag".split()
+volume = np.zeros(len(phases_list_str))
 
-array_mCaCO3 = np.zeros(steps_num)
+# Define dataframe to collect amount of the selected species
+import pandas as pd
+columns = ["CaCO3"] \
+          + ["volume_perc_" + name for name in phases_list_str]
+df = pd.DataFrame(columns=columns)
 
-phase_ss_C3AFS084H  = math.nan * np.ones(steps_num)
-phase_ss_ettringite = math.nan * np.ones(steps_num)
-phase_ss_OH_SO4_AFm = math.nan * np.ones(steps_num)
-phase_ss_CSHQ       = math.nan * np.ones(steps_num)
-phase_Cal           = math.nan * np.ones(steps_num)
-phase_hydrotalcite  = math.nan * np.ones(steps_num)
-phase_Portlandite   = math.nan * np.ones(steps_num)
-phase_hemicarbonate = math.nan * np.ones(steps_num)
-phase_monocarbonate = math.nan * np.ones(steps_num)
-phase_AmorSl        = math.nan * np.ones(steps_num)
-phase_FeOOHmic      = math.nan * np.ones(steps_num)
-phase_Gbs           = math.nan * np.ones(steps_num)
-phase_Mag           = math.nan * np.ones(steps_num)
+# Volume in cm3
+total_volume = float(props.volume()) *1e5
 
-amount_C3FS084H432    = math.nan * np.ones(steps_num)
-amount_C3AFS084H432   = math.nan * np.ones(steps_num)
-amount_ettringite     = math.nan * np.ones(steps_num)
-amount_ettringite30   = math.nan * np.ones(steps_num)
-amount_C4AH13         = math.nan * np.ones(steps_num)
-amount_monosulphate12 = math.nan * np.ones(steps_num)
-amount_CSHQTobD       = math.nan * np.ones(steps_num)
-amount_CSHQTobH       = math.nan * np.ones(steps_num)
-amount_CSHQJenH       = math.nan * np.ones(steps_num)
-amount_CSHQJenD       = math.nan * np.ones(steps_num)
-amount_KSiOH          = math.nan * np.ones(steps_num)
-amount_NaSiOH         = math.nan * np.ones(steps_num)
+# Number of steps
+steps_num = 19
 
-# we simulate the addition of calcite at the expense of clinker in the cement mix
-for i in range(0, steps_num):
+import numpy as np
+# Create list of species and phases names, list of Species objects, and auxiliary amounts array
+phases_list_str = "ss_C3AFS084H ss_Ettrignite ss_Monosulfate ss_CSHQ " \
+                  "Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag".split()
+volume = np.zeros(len(phases_list_str))
 
-    # Define a cement mix of 0.5 water/binder 
-    # at each step calcite is added at the expense of clinker
+# Define dataframe to collect amount of the selected species
+import pandas as pd
+columns = ["CaCO3"] \
+          + ["volume_perc_" + name for name in phases_list_str]
+df = pd.DataFrame(columns=columns)
+
+# Number of steps
+steps_num = 19
+
+# We simulate the addition of calcite at the expense of clinker in the cement mix
+for i in range(1, steps_num):
+
+    # Define a cement mix of 0.5 water/binder at each step calcite is added at the expense of clinker
     cement_mix = Material(system)
-    cement_mix = cement_clinker(100.0 - i, "g") + calcite(i, "g") + water(50.0, "g")
-
-    print(f"Calculations with %(CaCO3) = {i} and %(clinker) = {100-i} g:")
+    cement_mix = cement_clinker(100.0-i, "g") + calcite(i, "g") + water(50.0, "g")
 
     # Equilibrate cement mix
     state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts)
     res = cement_mix.result()
-    print("res (cemdata18, run with material) = ", res.optima.succeeded)
-    #state.output("python-state-cemdata18_1.txt")
 
     if not res.optima.succeeded:
         # Define equilibrium solver
@@ -168,155 +159,23 @@ for i in range(0, steps_num):
         # Equilibrate the resulting chemical state with equilibrium solver
         solver.setOptions(opts)
         res = solver.solve(state, conditions)
-        print("res (cemdata18, run with solver) = ", res.optima.succeeded)
-        #state.output("python-state-cemdata18_2.txt")
+
+        if not res.optima.succeeded: continue
 
     # Update chemical and aqueous properties to a file
     props.update(state)
     aprops.update(state)
 
-    if res.optima.succeeded:
-        array_mCaCO3[i] = i
+    for j in range(0, len(phases_list_str)):
+        # Collecting volume in cm3
+        volume[j] = float(props.phaseProps(phases_list_str[j]).volume())
+    volume_perc = volume / float(props.volume()) * 100
 
-        # collecting phase volumes in cm3
-        phase_ss_C3AFS084H[i] = props.phaseProps("ss_AlFeSi-hydrogarnet").volume()[0]*1e5
-        phase_ss_ettringite[i] = props.phaseProps("ss_Ettrignite_ss").volume()[0]*1e5
-        phase_ss_OH_SO4_AFm[i] = props.phaseProps("ss_Monosulfate_ss").volume()[0]*1e5
-        phase_ss_CSHQ[i] = props.phaseProps("ss_C-S-H").volume()[0]*1e5
+    # Update dataframe with obtained values
+    df.loc[len(df)] = np.concatenate([[i], volume_perc])
 
-        phase_Cal[i] = props.phaseProps("Cal").volume()[0]*1e5
-        phase_hydrotalcite[i] = props.phaseProps("hydrotalcite").volume()[0]*1e5
-        phase_Portlandite[i] = props.phaseProps("Portlandite").volume()[0]*1e5
-        phase_hemicarbonate[i] = props.phaseProps("hemicarbonate").volume()[0]*1e5
-        phase_monocarbonate[i] = props.phaseProps("monocarbonate").volume()[0]*1e5
-        phase_AmorSl[i] = props.phaseProps("Amor-Sl").volume()[0]*1e5
-        phase_FeOOHmic[i] = props.phaseProps("FeOOHmic").volume()[0]*1e5
-        phase_Gbs[i] = props.phaseProps("Gbs").volume()[0]*1e5
-        phase_Mag[i] = props.phaseProps("Mag").volume()[0]*1e5
-
-        amount_C3FS084H432[i] = state.speciesAmount("C3FS0.84H4.32")[0]
-        amount_C3AFS084H432[i] = state.speciesAmount("C3AFS0.84H4.32")[0]
-        amount_ettringite[i] = state.speciesAmount("ettringite")[0]
-        amount_ettringite30[i] = state.speciesAmount("ettringite30")[0]
-        amount_C4AH13[i] = state.speciesAmount("C4AH13")[0]
-        amount_monosulphate12[i] = state.speciesAmount("monosulphate12")[0]
-        amount_CSHQTobD[i] = state.speciesAmount("CSHQ-TobD")[0]
-        amount_CSHQTobH[i] = state.speciesAmount("CSHQ-TobH")[0]
-        amount_CSHQJenH[i] = state.speciesAmount("CSHQ-JenH")[0]
-        amount_CSHQJenD[i] = state.speciesAmount("CSHQ-JenD")[0]
-        amount_KSiOH[i] = state.speciesAmount("KSiOH")[0]
-        amount_NaSiOH[i] = state.speciesAmount("NaSiOH")[0]
-
-print("phase_ss_C3AFS084H : ", phase_ss_C3AFS084H)
-print("phase_ss_ettringite : ", phase_ss_ettringite)
-print("phase_ss_OH_SO4_AFm : ", phase_ss_OH_SO4_AFm)
-print("phase_ss_CSHQ : ", phase_ss_CSHQ)
-
-print("phase_Cal : ", phase_Cal)
-print("phase_hydrotalcite : ", phase_hydrotalcite)
-print("phase_hemicarbonate : ", phase_hemicarbonate)
-print("phase_monocarbonate : ", phase_monocarbonate)
-
-
-import matplotlib.pyplot as plt
-colors = ['C1', 'C2', 'C3', 'C4', 'C5', 'C7', 'C8', 'C9', 'C0', 'darkblue', 'darkgreen']
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_ss_C3AFS084H, label="ss_AlFeSi-hydrogarnet", color=colors[0])
-
-plt.legend(loc="best")
-plt.grid()
-plt.savefig(f'phases-AlFeSi-hydrogarnet-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_ss_C3AFS084H, label="ss_AlFeSi-hydrogarnet", color=colors[0])
-plt.plot(array_mCaCO3, phase_ss_CSHQ, label="ss_C-S-H", color=colors[3])
-
-plt.legend(loc="best")
-plt.grid()
-plt.savefig(f'phases-AlFeSi-hydrogarnet-C-S-H-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_ss_ettringite, label="ss_Ettrignite_ss", color=colors[1])
-
-plt.legend(loc="best")
-plt.grid()
-plt.savefig(f'phases-Ettrignite-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_ss_CSHQ, label="ss_C-S-H", color=colors[3])
-
-plt.legend(loc="best")
-plt.grid()
-plt.savefig(f'phases-CSH-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_Cal, label="Calcite", color=colors[2])
-
-plt.legend(loc="best")
-plt.grid()
-#plt.show()
-plt.savefig(f'phases-calcite-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_hydrotalcite, label="Hydrotalcite", color=colors[4])
-
-plt.legend(loc="best")
-plt.grid()
-#plt.show()
-plt.savefig(f'phases-hydrotalcite-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_monocarbonate, label="Monocarbonate", color=colors[5])
-
-plt.legend(loc="best")
-plt.grid()
-#plt.show()
-plt.savefig(f'phases-monocarbonate-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-plt.figure()
-plt.xlabel("Mass of CaCO3 [g]")
-plt.ylabel("Phases amounts [mol]")
-
-plt.plot(array_mCaCO3, phase_monocarbonate, label="Monocarbonate", color=colors[5])
-plt.plot(array_mCaCO3, phase_hydrotalcite, label="Hydrotalcite", color=colors[4])
-plt.plot(array_mCaCO3, phase_ss_ettringite, label="ss_Ettrignite_ss", color=colors[1])
-
-plt.legend(loc="best")
-plt.grid()
-#plt.show()
-plt.savefig(f'phases-monocarbonate-hydrotalcite-Ettrignite-vs-caco2.png', bbox_inches='tight')
-plt.close()
-
-
+# Plot selected dataframe columns
+volume_names = ["Cal", "hydrotalcite", "Portlandite", "ss_CSHQ", "ss_C3AFS084H", "ss_Ettrignite", "monocarbonate"]
+ax = df.plot.area(x='CaCO3', y=["volume_perc_" + name for name in volume_names], label=volume_names, colormap="Set2")
+ax.set_xlim(2.0, 10.0)
+ax.figure.savefig('phase-volume-vs-caco3.png')
