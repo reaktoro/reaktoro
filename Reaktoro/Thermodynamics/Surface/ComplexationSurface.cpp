@@ -19,8 +19,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
 
 namespace Reaktoro {
@@ -63,6 +64,7 @@ auto ComplexationSurface::initializeCharges() -> void
 // Initialize equivalence numbers (the charge of ionic bond) for the surface complexation species.
 auto ComplexationSurface::initializeEquivalentNumbers() -> void
 {
+    // TODO: figure out the equivalence number for Hfo_sOH, is it 0 or 1.
     // The number of sorption species on the surface
     const auto num_species = species_list.size();
 
@@ -72,6 +74,10 @@ auto ComplexationSurface::initializeEquivalentNumbers() -> void
     // Initialize charges of the sorption species on the surface complexation site
     for(auto i = 0; i < num_species; ++i)
         ze[i] = exchangerEquivalentsNumber(species_list[i]);
+
+    ze = abs(z);
+
+    std::cout << "ze = " << ze.transpose() << std::endl;
 }
 
 /// Return equivalence number of provided species.
@@ -80,25 +86,22 @@ auto ComplexationSurface::exchangerEquivalentsNumber(const Species& species) -> 
     // Run through the elements of the current species and return the coefficient of the exchanger
     for(auto [element, coeff] : species.elements())
     {
-
-        //std::cout << element.symbol() << std::endl;
-
+//        std::cout << "element = " << element.symbol() << std::endl;
+//        std::cout << "coeff = "<< coeff << std::endl;
         // Loop over the names of the existing sites to find a matching one
         for(auto [key, site] : surface_sites)
         {
-            //std::cout << site.name() << std::endl;
+//            std::cout << "key = " << key << std::endl;
+//            std::cout << "site = " << site.name() << std::endl;
             if(element.symbol() == site.name())
                 return coeff;
         }
-
-
     }
 
     // If none of the elements contained in species coincide with the name of the sites
     errorif(true, "Could not get information about the exchanger equivalents number. "
                   "Ensure the surface complexation phase contains correct species")
 }
-
 
 auto ComplexationSurface::clone() const -> ComplexationSurface
 {
@@ -144,23 +147,11 @@ auto ComplexationSurface::moleFractions() const -> ArrayXr
 }
 
 /// Return the complexation surface charge density.
-auto ComplexationSurface::surfaceChargeDensity(ArrayXrConstRef x, ArrayXrConstRef z) const -> real
-{
+auto ComplexationSurface::surfaceChargeDensity(ArrayXrConstRef x, ArrayXrConstRef z) const -> real {
     // Auxiliary constants
     const auto F = faradayConstant;
 
-    // Calculate the surface charge density site-wise
-    real sigma = 0.0;
-    for (const auto& [tag, site] : surface_sites)
-        sigma += F * (z(site.indicesSorptionSpecies())*x(site.indicesSorptionSpecies())).sum() / site.specificSurfaceArea();
-
-//    // TODO: check is the surface charge density is calculated site-wise or from the total surface area?
-//    real As = 0.0;
-//    for (const auto& [tag, site] : surface_sites)
-//        As += site.specificSurfaceArea();
-//    real sigma_ = F * (z*x).sum() / As;
-
-    return sigma;
+    return F * (z*x).sum() / specific_surface_area;
 }
 
 /// Return the complexation surface charge.
@@ -172,19 +163,13 @@ auto ComplexationSurface::surfaceCharge(ArrayXrConstRef x, ArrayXrConstRef z) co
 /// Return the specific surface area.
 auto ComplexationSurface::specificSurfaceArea() const -> real
 {
-    real ssa = 0;
-    for(const auto& [tag, site] : surface_sites)
-        ssa += site.specificSurfaceArea();
-    return ssa;
+    return specific_surface_area;
 }
 
 /// Return the mass.
 auto ComplexationSurface::mass() const -> real
 {
-    real mass = 0;
-    for(const auto& [tag, site] : surface_sites)
-        mass += site.mass();
-    return mass;
+    return surface_mass;
 }
 
 /// Return the list of surface sites.
@@ -217,49 +202,43 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
     // Initialize surface's species list
     species_list = species;
 
+    std::cout << "Species of ComplexationSurface:" << std::endl;
+    for (auto s : species)
+        std::cout << s.name() << " ";
+    std::cout << std::endl;
+
     // Initialize the list of surface sites
     auto site = ComplexationSurfaceSite();
 
     Index index = 0;
-    String aux_tag;
+    String tag;
 
     for(auto s : species)
     {
         // Fetch phreeqc species from the `attachedData` field of the species
         const auto phreeqc_species = std::any_cast<const PhreeqcSpecies*>(s.attachedData());
 
-        if((phreeqc_species->primary != nullptr) && (phreeqc_species->name == phreeqc_species->primary->s->name))
+        // Get the position of strong or weak sites tag
+        auto pos_s = s.name().find("_s");
+        auto pos_w = s.name().find("_w");
+
+        // Initialize tag based on the name of the species
+        if(pos_s != std::string::npos)
+            tag = "_s";
+        else if(pos_w != std::string::npos)
+            tag = "_w";
+
+        // If the species representing a master species of some site
+        if((phreeqc_species->primary != nullptr) &&
+           (phreeqc_species->name == phreeqc_species->primary->s->name) &&
+           (surface_sites.find(tag) == surface_sites.end())) // if the site with 'tag' tag doesn't exist
         {
-            if( (s.name().find("_s") != std::string::npos) && (surface_sites.find("_s") == surface_sites.end()))
-            {
-                // Add a new site indicated with a site_tag "_s" (PHREEQC convention)
-                site = addSite(surface_name + "_s", "_s");
-                sites_number ++;
-                aux_tag = "_s";
-            }
-            else if( (s.name().find("_w") != std::string::npos) && (surface_sites.find("_w") == surface_sites.end()) )
-            {
-                // Add a new site indicated with a site_tag "_w" (PHREEQC convention)
-                site = addSite(surface_name + "_w", "_w");
-                sites_number ++;
-                aux_tag = "_w";
-            }
-            else if( (s.name().find("_s") == std::string::npos) || (s.name().find("_w") == std::string::npos))
-            {
-                site = addSite(s.name(), "");
-                sites_number = 1;
-                aux_tag = "";
-            }
-            surface_sites[aux_tag].addSorptionSpecies(s, index);
+            // Add a new site indicated with a site_tag "_s" (PHREEQC convention)
+            site = addSite(surface_name + tag, tag);
+            sites_number++;
         }
-        else
-        {
-            // Add a sorbed species to the earlier added site
-            if( (s.name().find("_w") != std::string::npos) ||
-                (s.name().find("_s") != std::string::npos) )
-                surface_sites[aux_tag].addSorptionSpecies(s, index);
-        }
-        index++;
+        // Add the species to the list of sorption species of a site with a tag 'tag'
+        surface_sites[tag].addSorptionSpecies(s, index++);
     }
 
     // Initialize charges and equivalents
@@ -281,23 +260,31 @@ auto ComplexationSurface::setMineral(const String& mineral_name) -> Complexation
     return *this;
 }
 
+// Set the specific surface site surface area (in m2/kg).
+auto ComplexationSurface::setSpecificSurfaceArea(double value, String unit) -> ComplexationSurface&
+{
+    specific_surface_area = units::convert(value, unit, "m2/kg");
+    return *this;
+}
+
+// Set the mass of the solid (in kg).
+auto ComplexationSurface::setMass(double value, String unit) -> ComplexationSurface&
+{
+    surface_mass = units::convert(value, unit, "kg");
+    return *this;
+}
+
 auto ComplexationSurface::addSite(const String& site_name, const String& site_tag) -> ComplexationSurfaceSite&
 {
+    error(site_name.find(site_tag) == std::string::npos,
+          "Provided site name " + site_name + " doesn't contain a specified site tag " + site_tag);
+
     // Check if no site with the tag `site_tag` exist, add the site
     if(surface_sites.find(site_tag) == surface_sites.end())
     {
         // Create a new site with a given site name and tag
         auto site = ComplexationSurfaceSite(site_name, site_tag);
         site.setSurfaceName(surface_name);
-
-        // If previous sites were already added copy their specific surface area and mass
-        if(!surface_sites.empty())
-        {
-            auto ssa = surface_sites[site_tags[0]].specificSurfaceArea();
-            auto mass = surface_sites[site_tags[0]].mass();
-            site.setSpecificSurfaceArea(ssa, "m2/kg");
-            site.setMass(mass, "kg");
-        }
         surface_sites[site_tag] = site;
         site_tags.emplace_back(site_tag);
     }
@@ -323,40 +310,8 @@ auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> Comple
         surface_sites[site_tag].setSurfaceName(surface_name);
         // Store the site_tag in the list of the tags
         site_tags.emplace_back(site_tag);
-
-        // If previous sites were already added and the current site's specific surface area is not specified,
-        // initialize specific surface area of the current site with the values of the earlier added sites
-        if(!surface_sites.empty() && surface_sites[site_tag].specificSurfaceArea() == 0.0)
-        {
-            auto ssa = surface_sites[site_tags[0]].specificSurfaceArea();
-            surface_sites[site_tag].setSpecificSurfaceArea(ssa, "m2/kg");
-        }
-        // Check if the specific surface area of the site is initialized
-        error(surface_sites[site_tag].specificSurfaceArea() == 0.0,
-                  "The specific surface area of the site " + site_name + " should be initialized.");
-
-        // If previous sites were already added and the current site's specific surface area is not specified,
-        // initialize specific surface area of the current site with the values of the earlier added sites
-        if(!surface_sites.empty() && surface_sites[site_tag].mass() == 0.0)
-        {
-            auto mass = surface_sites[site_tags[0]].mass();
-            surface_sites[site_tag].setMass(mass, "kg");
-        }
-        // Check if the mass of the site is initialized
-        error(surface_sites[site_tag].mass() == 0.0,
-              "The mass of the site " + site_name + " should be initialized.");
     }
-    else
-    {
-        // The surface site with provided tag already exists,
-        // but the specific area, mass, and amount of this site is not initialized
-        if (surface_sites.find(site_tag)->second.specificSurfaceArea() == 0.0)
-            surface_sites[site_tag].setSpecificSurfaceArea(site.specificSurfaceArea());
-        if (surface_sites.find(site_tag)->second.mass() == 0.0)
-            surface_sites[site_tag].setMass(site.mass());
-        if (surface_sites.find(site_tag)->second.amount() == 0.0)
-            surface_sites[site_tag].setAmount(site.amount());
-    }
+
     return surface_sites[site_tag];
 }
 
@@ -369,16 +324,7 @@ auto ComplexationSurface::output(std::ostream& out) const -> void
 /// Output a ComplexationSurface object to an output stream.
 auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::ostream&
 {
-    // Hfo
-    //	  2.383e-05  Surface charge, eq
-    //	  8.611e-03  sigma, C/m2
-    //	  5.681e-02  psi, V
-    //	 -2.211e+00  -F*psi/RT
-    //	  1.096e-01  exp(-F*psif/RT)
-    //	  6.000e+01  specific area, m2/kg
-    //	  2.670e+02  m2 for   4.450e+00 g
-
-    std::cout << "Surface: " << surface.name() << std::endl;
+    std::cout << "SURFACE: " << surface.name() << std::endl;
     std::cout << "\t specific area, m2/kg : " << surface.specificSurfaceArea() << std::endl;
     std::cout << "\t mass, kg             : " << surface.mass() << std::endl;
     std::cout << "\t # of sites           : " << surface.sites().size() << std::endl;

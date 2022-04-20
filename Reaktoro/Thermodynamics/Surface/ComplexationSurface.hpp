@@ -157,6 +157,12 @@ public:
     /// Set the mineral this surface belong to
     auto setMineral(const String& mineral) -> ComplexationSurface&;
 
+    // Set the specific surface area (in m2/kg).
+    auto setSpecificSurfaceArea(double value, String unit = "m2/kg") -> ComplexationSurface&;
+
+    // Set the mass of the solid (in kg).
+    auto setMass(double value, String unit = "kg") -> ComplexationSurface&;
+
     // Add new site (with a given site name and tag) to the surface.
     auto addSite(const String& site, const String& site_tag) -> ComplexationSurfaceSite&;
 
@@ -179,6 +185,12 @@ private:
 
     /// Mineral species.
     Species mineral;
+
+    /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg
+    real specific_surface_area;
+
+    /// The solid mass (kg)
+    real surface_mass;
 
     /// The charges of the complexation surface species.
     ArrayXr z;
