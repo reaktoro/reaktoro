@@ -26,19 +26,13 @@ auto ActivityModelIdealSurfaceComplexation() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        // Create the complexation surface
-        ComplexationSurface surface(species);
-
-//        // The numbers of exchanger's equivalents for exchange species
-//        ArrayXd ze = surface.ze();
-
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
-//            // Fetch species fractions for the activity model evaluation
-//            const auto x = args.x;
-//
-//            // Calculate ln of activities of ion exchange species as the ln of equivalent fractions
-//            props.ln_a = (x*ze/(x*ze).sum()).log();
+            // The arguments for the activity model evaluation
+            const auto& [T, P, x] = args;
+
+            // Calculate ln of activities of surfaces species as the ln of molar fractions
+            props.ln_a = x.log();
         };
 
         return fn;
