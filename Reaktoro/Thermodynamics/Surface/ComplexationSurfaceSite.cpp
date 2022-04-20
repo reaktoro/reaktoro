@@ -22,9 +22,6 @@
 
 namespace Reaktoro {
 
-ComplexationSurfaceSite::ComplexationSurfaceSite()
-{}
-
 ComplexationSurfaceSite::ComplexationSurfaceSite(const String& name)
 : site_name(name)
 {}
@@ -54,7 +51,7 @@ auto ComplexationSurfaceSite::specificSurfaceArea() const -> real
 // Get the mass of the surface site (in kg).
 auto ComplexationSurfaceSite::mass() const -> real
 {
-    return site_mass;
+    return surface_mass;
 }
 
 // Get the amount of the surface site (in mol).
@@ -115,24 +112,10 @@ auto ComplexationSurfaceSite::setAmount(double value, String unit) -> Complexati
     return *this;
 }
 
-// Set the specific surface site surface area (in m2/kg).
-auto ComplexationSurfaceSite::setSpecificSurfaceArea(double value, String unit) -> ComplexationSurfaceSite&
-{
-    specific_surface_area = units::convert(value, unit, "m2/kg");
-    return *this;
-}
-
-// Set the mass of the solid (in kg).
-auto ComplexationSurfaceSite::setMass(double value, String unit) -> ComplexationSurfaceSite&
-{
-    site_mass = units::convert(value, unit, "kg");
-    return *this;
-}
-
 // Set the density of the solid (in kg).
 auto ComplexationSurfaceSite::setDensity(double value, String unit) -> ComplexationSurfaceSite&
 {
-    site_mass = units::convert(value, unit, "sites/nm2");
+    site_density = units::convert(value, unit, "sites/nm2");
     return *this;
 }
 

@@ -29,7 +29,17 @@ class ComplexationSurfaceSite
 {
 public:
     /// Default constructor of ComplexationSurfaceSite class
-    ComplexationSurfaceSite();
+    ComplexationSurfaceSite() = default;
+
+    /// Copy constructor of ComplexationSurfaceSite class
+    ComplexationSurfaceSite(const ComplexationSurfaceSite& other) = default;
+    /// Copy assigment operator of ComplexationSurfaceSite class
+    ComplexationSurfaceSite& operator=(const ComplexationSurfaceSite& other) = default;
+
+    /// Move constructor of ComplexationSurfaceSite class
+    ComplexationSurfaceSite(ComplexationSurfaceSite&& other) = default;
+    /// Move assigment operator of ComplexationSurfaceSite class
+    ComplexationSurfaceSite& operator=(ComplexationSurfaceSite&& other) = default;
 
     /// Construct an ComplexationSurfaceSite instance with given name.
     ComplexationSurfaceSite(const String& name);
@@ -70,12 +80,6 @@ public:
     // Set the amount of surface site.
     auto setAmount(double value, String unit = "mol") -> ComplexationSurfaceSite&;
 
-    // Set the specific surface site surface area (in m2/kg).
-    auto setSpecificSurfaceArea(double value, String unit = "m2/kg") -> ComplexationSurfaceSite&;
-
-    // Set the mass of the solid (in kg).
-    auto setMass(double value, String unit = "kg") -> ComplexationSurfaceSite&;
-
     // Set the density of surface site (in sites/m2).
     auto setDensity(double value, String unit = "sites/m2") -> ComplexationSurfaceSite&;
 
@@ -90,12 +94,6 @@ private:
     /// The site density (sites/nm2, 1e9*sites/m2)
     real site_density;
 
-    /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg
-    real specific_surface_area;
-
-    /// The solid mass (kg)
-    real site_mass;
-
     /// The name of the surface site
     String site_name;
 
@@ -104,6 +102,12 @@ private:
 
     /// The tag of the surface site
     String site_tag;
+
+    /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg
+    real specific_surface_area;
+
+    /// The solid mass (kg)
+    real surface_mass;
 
     /// The species that can be sorbed on this site
     SpeciesList sorption_species;
