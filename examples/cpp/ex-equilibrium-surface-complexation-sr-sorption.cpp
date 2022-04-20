@@ -36,30 +36,53 @@ int main()
     auto dbphreeqc = PhreeqcDatabase("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueous_phase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2 Sr+2 Cd+2");
+    AqueousPhase aqueous_phase(speciate("H O Cl Ca Sr"));
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
+
+//    Hfo_sOH           1.126e-05       0.450   1.126e-05      -4.949
+//    Hfo_sOHCa+2       1.034e-05       0.413   1.034e-05      -4.986
+//    Hfo_sOH2+         1.714e-06       0.069   1.714e-06      -5.766
+//    Hfo_sO-           1.693e-06       0.068   1.693e-06      -5.771
+//    Hfo_sOHSr+2       1.134e-11       0.000   1.134e-11     -10.945
+//
+//    Hfo_wOH           7.666e-04       0.767   7.666e-04      -3.115
+//    Hfo_wOH2+         1.167e-04       0.117   1.167e-04      -3.933
+//    Hfo_wO-           1.153e-04       0.115   1.153e-04      -3.938
+//    Hfo_wOCa+         1.364e-06       0.001   1.364e-06      -5.865
+//    Hfo_wOSr+         2.542e-13       0.000   2.542e-13     -12.595
+//    Hfo_wOSrOH        3.108e-16       0.000   3.108e-16     -15.508
+
+
     // Define ion exchange species list
-    String list_str = "Hfo_sOH Hfo_sOCd+ Hfo_sOHSr+2 Hfo_wOH Hfo_wOCd+ Hfo_wOSr+ Hfo_wOSrOH";
+    String list_str = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOHSr+2 "
+                      "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOSr+ Hfo_wOSrOH";
     SpeciesList slist = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
     SpeciesList list = slist.withNames(StringList(list_str));
 
     // Create complexation surface
     ComplexationSurface surface_Hfo("Hfo");
-    surface_Hfo.setSpecificSurfaceArea(1e3, "m2/g")
-               .setMass(0.33, "g");
+    surface_Hfo.setSpecificSurfaceArea(60, "m2/g")
+               .setMass(4.45, "g");
 
+//    SURFACE 1
+//    Hfo_w  1e-3  60   4.45
+//    Hfo_s  2.5e-5
+//
     // Defined strong site of the complexation surface
-    surface_Hfo.addSite("Hfo_s", "_s").setAmount(1.0, "mol");
+    surface_Hfo.addSite("Hfo_w", "_w")
+               .setAmount(1e-3, "mol");
+
 
     // Defined weak site of the complexation surface
-    ComplexationSurfaceSite site_Hfo_w;
-    site_Hfo_w.setName("Hfo_w")
-              .setAmount(1.0, "mol");
-    surface_Hfo.addSite(site_Hfo_w);
+    ComplexationSurfaceSite site_Hfo_s;
+    site_Hfo_s.setName("Hfo_s")
+        .setAmount(0.025e-3, "mol");
+    surface_Hfo.addSite(site_Hfo_s);
 
-    // Add species to the surface and corresponding sites
     surface_Hfo.addSurfaceSpecies(list);
+
+    std::cout << surface_Hfo << std::endl;
 
     // Add specified surface as parameters for the activity model for the complexation surface
     ActivityModelSurfaceComplexationParams params;
@@ -69,8 +92,6 @@ int main()
     SurfaceComplexationPhase complexation_phase_Hfo(list_str);
     complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params));
     //complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationGainesThomas(params));
-
-    std::cout << surface_Hfo << std::endl;
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo);
@@ -83,7 +104,14 @@ int main()
     solutionstate.setTemperature(T, "celsius");
     solutionstate.setPressure(P, "bar");
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-    solutionstate.setSpeciesAmount("Sr+2"  , 1.00, "mmol");
+//    Ca     1
+//    Cl     2
+//    Sr     1e-006
+    solutionstate.setSpeciesAmount("Cl-"  , 2e+0, "mmol");
+    solutionstate.setSpeciesAmount("Ca+2"  , 1e+0, "mmol");
+    solutionstate.setSpeciesAmount("Sr+2"  , 1e-6, "mmol");
+//    Hfo_w 1e-3 60 4.45 # 1e-3mol weak site, 60m2/g s.spec, 4.45g ferrihyd
+//    Hfo_s 0.025e-3 # 0.025e-3mol strong site
     solutionstate.setSpeciesAmount("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     solutionstate.setSpeciesAmount("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 

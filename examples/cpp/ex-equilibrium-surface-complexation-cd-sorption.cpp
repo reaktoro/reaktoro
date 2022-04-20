@@ -36,29 +36,36 @@ int main()
     auto dbphreeqc = PhreeqcDatabase("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueous_phase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2 Sr+2 Cd+2");
+    AqueousPhase aqueous_phase(speciate("H O Cl Ca Cd"));
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
     // Define ion exchange species list
-    String list_str = "Hfo_sOH Hfo_sOCd+ Hfo_sOHSr+2 Hfo_wOH Hfo_wOCd+ Hfo_wOSr+ Hfo_wOSrOH";
+    String list_str = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOCd+ "
+                      "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOCd+";
     SpeciesList slist = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
     SpeciesList list = slist.withNames(StringList(list_str));
 
     // Create complexation surface
     ComplexationSurface surface_Hfo("Hfo");
-    surface_Hfo.setSpecificSurfaceArea(1e3, "m2/g")
-               .setMass(0.33, "g");
+    surface_Hfo.setSpecificSurfaceArea(60, "m2/g")
+               .setMass(4.45, "g");
 
-    // Defined strong site of the complexation surface
-    surface_Hfo.addSite("Hfo_s", "_s").setAmount(1.0, "mol");
+//    SURFACE 		1
+//    #2790 ppm Fe /55.85 = 50 mmol/kg*89 =4.45g "Ferrihyd"/kg
+//    Hfo_w 1e-3 60 4.45 # 1e-3mol weak site, 60m2/g s.spec, 4.45g ferrihyd
+//    Hfo_s 0.025e-3 # 0.025e-3mol strong site
+//    -equil  1
 
     // Defined weak site of the complexation surface
-    ComplexationSurfaceSite site_Hfo_w;
-    site_Hfo_w.setName("Hfo_w")
-              .setAmount(1.0, "mol");
-    surface_Hfo.addSite(site_Hfo_w);
+    surface_Hfo.addSite("Hfo_w", "_w")
+               .setAmount(1e-3, "mol");
 
-    // Add species to the surface and corresponding sites
+    // Defined weak site of the complexation surface
+    ComplexationSurfaceSite site_Hfo_s;
+    site_Hfo_s.setName("Hfo_s")
+              .setAmount(0.025e-3, "mol");
+    surface_Hfo.addSite(site_Hfo_s);
+
     surface_Hfo.addSurfaceSpecies(list);
 
     // Add specified surface as parameters for the activity model for the complexation surface
@@ -72,6 +79,38 @@ int main()
 
     std::cout << surface_Hfo << std::endl;
 
+    //    Hfo
+//    2.844e-05  Surface charge, eq
+//    1.028e-02  sigma, C/m�
+//    6.416e-02  psi, V
+//   -2.497e+00  -F*psi/RT
+//    8.231e-02  exp(-F*psi/RT)
+//    6.000e+01  specific area, m�/g
+//    2.670e+02  m� for   4.450e+00 g
+//
+//
+//        Hfo_s
+//    2.500e-05  moles
+//    Mole                     Log
+//    Species               Moles    Fraction    Molality    Molality
+//
+//    Hfo_sOH           1.385e-05       0.554   1.385e-05      -4.858
+//    Hfo_sOHCa+2       6.925e-06       0.277   6.925e-06      -5.160
+//    Hfo_sOH2+         2.223e-06       0.089   2.223e-06      -5.653
+//    Hfo_sO-           1.977e-06       0.079   1.977e-06      -5.704
+//    Hfo_sOCd+         2.297e-08       0.001   2.297e-08      -7.639
+//
+//    Hfo_w
+//    1.000e-03  moles
+//    Mole                     Log
+//    Species               Moles    Fraction    Molality    Molality
+//
+//    Hfo_wOH           7.668e-04       0.767   7.668e-04      -3.115
+//    Hfo_wOH2+         1.231e-04       0.123   1.231e-04      -3.910
+//    Hfo_wO-           1.094e-04       0.109   1.094e-04      -3.961
+//    Hfo_wOCa+         7.049e-07       0.001   7.049e-07      -6.152
+//    Hfo_wOCd+         5.301e-10       0.000   5.301e-10      -9.276
+
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo);
 
@@ -83,7 +122,14 @@ int main()
     solutionstate.setTemperature(T, "celsius");
     solutionstate.setPressure(P, "bar");
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-    solutionstate.setSpeciesAmount("Sr+2"  , 1.00, "mmol");
+//    Ca     1
+//    Cd   1e-006
+//    Cl      2
+    solutionstate.setSpeciesAmount("Cl-"  , 2e+0, "mmol");
+    solutionstate.setSpeciesAmount("Ca+2"  , 1e+0, "mmol");
+    solutionstate.setSpeciesAmount("Cd+2"  , 1e-6, "mmol");
+//    Hfo_w 1e-3 60 4.45 # 1e-3mol weak site, 60m2/g s.spec, 4.45g ferrihyd
+//    Hfo_s 0.025e-3 # 0.025e-3mol strong site
     solutionstate.setSpeciesAmount("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     solutionstate.setSpeciesAmount("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 
