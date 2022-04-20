@@ -85,12 +85,12 @@ struct ComplexationSurfaceProps::Impl
     /// The extra properties and data produced during the evaluation of the complexation surface phase activity model.
     Map<String, Any> extra;
 
-    Impl(const ChemicalSystem& system)
+    Impl(const ComplexationSurface& surface, const ChemicalSystem& system)
     : system(system),
       iphase(indexComplexationSurfacePhase(system)),
       phase(system.phase(iphase)),
       props(phase),
-      complexation_surface(phase.species())
+      complexation_surface(surface)
     {
         assert(phase.species().size() > 0);
         assert(phase.species().size() == props.phase().species().size());
@@ -99,14 +99,14 @@ struct ComplexationSurfaceProps::Impl
         Aex = detail::assembleFormulaMatrix(phase.species(), phase.elements());
     }
 
-    Impl(const ChemicalSystem& system, const ChemicalState& state)
-    : Impl(system)
+    Impl(const ComplexationSurface& surface, const ChemicalSystem& system, const ChemicalState& state)
+    : Impl(surface, system)
     {
         update(state);
     }
 
-    Impl(const ChemicalSystem& system, const ChemicalProps& props)
-    : Impl(system)
+    Impl(const ComplexationSurface& surface, const ChemicalSystem& system, const ChemicalProps& props)
+    : Impl(surface, system)
     {
         update(props);
     }
@@ -211,16 +211,16 @@ struct ComplexationSurfaceProps::Impl
 
 };
 
-ComplexationSurfaceProps::ComplexationSurfaceProps(const ChemicalSystem& system)
-: pimpl(new Impl(system))
+ComplexationSurfaceProps::ComplexationSurfaceProps(const ComplexationSurface& surface, const ChemicalSystem& system)
+: pimpl(new Impl(surface, system))
 {}
 
-ComplexationSurfaceProps::ComplexationSurfaceProps(const ChemicalState& state)
-: pimpl(new Impl(state.system(), state))
+ComplexationSurfaceProps::ComplexationSurfaceProps(const ComplexationSurface& surface, const ChemicalState& state)
+: pimpl(new Impl(surface, state.system(), state))
 {}
 
-ComplexationSurfaceProps::ComplexationSurfaceProps(const ChemicalProps& props)
-: pimpl(new Impl(props.system(), props))
+ComplexationSurfaceProps::ComplexationSurfaceProps(const ComplexationSurface& surface, const ChemicalProps& props)
+: pimpl(new Impl(surface, props.system(), props))
 {}
 
 ComplexationSurfaceProps::ComplexationSurfaceProps(const ComplexationSurfaceProps& other)

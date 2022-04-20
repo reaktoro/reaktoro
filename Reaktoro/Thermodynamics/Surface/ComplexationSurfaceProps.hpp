@@ -29,19 +29,20 @@ class ChemicalState;
 class ChemicalSystem;
 class Phase;
 class ComplexationSurfaceState;
+class ComplexationSurface;
 
 /// The chemical properties of an aqueous phase.
 class ComplexationSurfaceProps
 {
 public:
     /// Construct an uninitialized ComplexationSurfaceProps object with given chemical system.
-    explicit ComplexationSurfaceProps(const ChemicalSystem& system);
+    explicit ComplexationSurfaceProps(const ComplexationSurface& surface, const ChemicalSystem& system);
 
     /// Construct an ComplexationSurfaceProps object with given chemical state of the system.
-    explicit ComplexationSurfaceProps(const ChemicalState& state);
+    explicit ComplexationSurfaceProps(const ComplexationSurface& surface, const ChemicalState& state);
 
     /// Construct an ComplexationSurfaceProps object with given chemical properties of the system.
-    explicit ComplexationSurfaceProps(const ChemicalProps& props);
+    explicit ComplexationSurfaceProps(const ComplexationSurface& surface, const ChemicalProps& props);
 
     /// Construct a copy of a ComplexationSurfaceProps object.
     ComplexationSurfaceProps(const ComplexationSurfaceProps& other);
