@@ -151,7 +151,7 @@ auto ComplexationSurface::surfaceChargeDensity(ArrayXrConstRef x, ArrayXrConstRe
     // Auxiliary constants
     const auto F = faradayConstant;
 
-    return F * (z*x).sum() / specific_surface_area;
+    return F * (z*x).sum() / (ssa*surface_mass);
 }
 
 /// Return the complexation surface charge.
@@ -163,7 +163,7 @@ auto ComplexationSurface::surfaceCharge(ArrayXrConstRef x, ArrayXrConstRef z) co
 /// Return the specific surface area.
 auto ComplexationSurface::specificSurfaceArea() const -> real
 {
-    return specific_surface_area;
+    return ssa;
 }
 
 /// Return the mass.
@@ -263,7 +263,7 @@ auto ComplexationSurface::setMineral(const String& mineral_name) -> Complexation
 // Set the specific surface site surface area (in m2/kg).
 auto ComplexationSurface::setSpecificSurfaceArea(double value, String unit) -> ComplexationSurface&
 {
-    specific_surface_area = units::convert(value, unit, "m2/kg");
+    ssa = units::convert(value, unit, "m2/kg");
     return *this;
 }
 

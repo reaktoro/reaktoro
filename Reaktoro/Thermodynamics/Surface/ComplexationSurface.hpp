@@ -187,7 +187,7 @@ private:
     Species mineral;
 
     /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg
-    real specific_surface_area;
+    real ssa;
 
     /// The solid mass (kg)
     real surface_mass;
