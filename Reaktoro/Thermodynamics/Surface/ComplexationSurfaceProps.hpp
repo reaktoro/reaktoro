@@ -77,11 +77,32 @@ public:
     /// Return the fraction of an complexation surface species.
     auto speciesFraction(const StringOrIndex& name) const -> real;
 
+    /// Return the base-10 logarithms of the species' activity on the complexation surface.
+    auto speciesActivitiesLg() const -> ArrayXr;
+
+    /// Return the base-10 logarithm of the species; activity on the complexation surface.
+    auto speciesActivityLg(const StringOrIndex& name) const -> real;
+
     // Return the complexation surface state.
     auto complexationSurfaceState() const -> ComplexationSurfaceState;
 
+    // Return the complexation surface.
+    auto complexationSurface() const -> ComplexationSurface;
+
+    // Return the surface charge.
+    auto surfaceCharge() const -> real;
+
+    // Return the surface charge density.
+    auto surfaceChargeDensity(real Z) const -> real;
+
+    // Return the surface potential.
+    auto potential(real I, real Z, real sigma) const -> real ;
+
     /// Return the underlying Phase object for the complexation surface phase.
     auto phase() const -> const Phase&;
+
+    /// Return the underlying Phase object for the complexation surface phase.
+    auto extra() const -> const Map<String, Any>&;
 
     /// Output the properties of the exchange phase to a stream.
     auto output(std::ostream& out) const -> void;
