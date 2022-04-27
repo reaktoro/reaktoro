@@ -450,7 +450,8 @@ def test_euniquac_fallback_missing_species_fallback():
     problem.setPressure(1.0, "atm")
     
     problem.add("H2O", 1, "kg")
-    problem.add(mineral_name, 100, "mol") # excess quantity
+    problem.add("NaCl", 0.1, "mol")
+    problem.add(mineral_name, 10, "mol") # excess quantity
 
     state = rkt.equilibrate(problem)
 
@@ -458,8 +459,44 @@ def test_euniquac_fallback_missing_species_fallback():
     pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
     mol_species = state.speciesAmounts()
 
-    assert False
-    # assert np.isclose(solubility, 6189.990199851658)
-    # assert np.isclose(pH, 8.001947880191114)
-    # expected_mols = [5.55084350e+01, 5.20522014e-08, 5.20522014e-08, 6.18999020e+00, 6.18999020e+00, 9.38100098e+01]
-    # np.testing.assert_array_almost_equal(mol_species, expected_mols)
+    assert np.isclose(solubility,  0.10278223633476395, 1e-1)
+    assert np.isclose(pH, 6.726597777002442, 1e-3)
+    expected_mols = [
+        5.55084348e+01, 2.48292415e-07, 6.64015320e-08, 1.00000000e-01, 
+        1.00000000e-01, 1.81890883e-07, 1.02600345e-04, 9.99989722e+00
+    ]
+    np.testing.assert_array_almost_equal(mol_species, expected_mols, decimal=2)
+
+def test_euniquac_fallback_add_phase_with_elements():
+    """
+    Test if the E-UNIQUAC with fallback modifications with missing species case Quartz
+    """
+
+    mineral_name = 'Barite'
+
+    # Create Euniquac
+    editor = rkt.ChemicalEditor()
+    editor.addMineralPhase(mineral_name)
+    # aqueous_phase = editor.addAqueousPhase(list_aqueous_species)
+    aqueous_phase = editor.addAqueousPhaseWithElementsOf("H O Na Ca K Sr Mg Ba Cl S")
+
+    euniquac_params = rkt.EUNIQUACParams()
+    editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
+    system_euniquac = rkt.ChemicalSystem(editor)
+
+
+    problem = rkt.EquilibriumProblem(system_euniquac)
+    problem.setTemperature(25.0, "celsius")
+    problem.setPressure(1.0, "atm")
+    
+    problem.add("H2O", 1, "kg")
+    problem.add("NaCl", 0.1, "mol")
+    problem.add(mineral_name, 10, "mol") # excess quantity
+
+    state = rkt.equilibrate(problem)
+
+    solubility = state.elementAmountInPhase('Ba', 'Aqueous')*1e3
+    pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
+    mol_species = state.speciesAmounts()
+
+    print(solubility)

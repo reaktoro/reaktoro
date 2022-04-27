@@ -113,6 +113,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
 
     // The index of the water species
     const Index iwater = mixture.indexWater();
+    const AqueousSpecies& water_species = mixture.species(iwater);
+    const auto water_species_name = water_species.name();
 
     // The electrical charges of the charged species only
     const Vector charges = mixture.chargesChargedSpecies();
@@ -122,17 +124,33 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     std::vector<double> qi_values;  // Surface area parameter
 
     // Get index of species with known parameters
+    Index waterIndexInKnowns;
     Indices indexSpeciesWithParams;  // Index of Species with known parameters
+    // std::vector<AqueousSpecies> speciesWithParams;
     std::vector<std::string> speciesNames = mixture.namesSpecies();
     auto idMaps = params.bips_species_id_map();
+    Assert(idMaps.find(water_species_name) != idMaps.end(),
+            "The e-uniquac parameter set is missing Water.",
+            "Water is required in e-uniquac parameter set");
 
+    Index countKnowns = 0;
     for ( const auto &name : speciesNames ) {
         // std::cout << pairsBips.first << "\n";
         if (idMaps.count(name)) {
-            indexSpeciesWithParams.push_back(mixture.indexSpecies(name));
+            const auto indexKnownSpecies = mixture.indexSpecies(name);
+            indexSpeciesWithParams.push_back(indexKnownSpecies);
+            // speciesWithParams.push_back(mixture.species(indexKnownSpecies));
+            if (name == water_species_name)
+                waterIndexInKnowns = countKnowns;
+            countKnowns++; 
         }
     }
     const Index num_species_known = indexSpeciesWithParams.size();
+
+    // Assert(std::count(indexSpeciesWithParams.begin(), indexSpeciesWithParams.end(), "H2O(l)"),
+    //         "The e-uniquac parameter set is missing Water.",
+    //         "Water is required in e-uniquac parameter set");
+    
 
     // Collect the UNIQUAC parameters r_i and q_i of the all species
     // for (Index i = 0; i < num_species; ++i)
@@ -236,8 +254,6 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ==============================================================================
 
         // Retrieve water parameters
-        const AqueousSpecies& water_species = mixture.species(iwater);
-        const auto water_species_name = water_species.name();
         const auto r_w = params.ri(water_species_name);
         const auto q_w = params.qi(water_species_name);
 
@@ -361,7 +377,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             // Calculate species residual UNIQUAC activity coeff at infinite dilution.
             // This is necessary to convert the residual contribution to unsymmetrical
             // convention.
-            auto ln_g_residual_inf = q_i * (1.0 - std::log(psi(iwater, i)) - psi(i, iwater));
+            auto ln_g_residual_inf = q_i * (1.0 - std::log(psi(waterIndexInKnowns, i)) - psi(i, waterIndexInKnowns));
 
             // Assemble the unsymmetrical residual UNIQUAC contribution
             ln_g[i_index] += ln_g_residual_sym - ln_g_residual_inf;
