@@ -99,6 +99,11 @@ public:
 
     auto useDebyeHuckelGenericParameterA() const -> bool;
 
+    /// Set if using only the long range contribution for species with missing e-uniquac parameters
+    auto setLongRangeOnlyForSpeciesMissingParameters() -> void;
+
+    auto useLongRangeOnlyForSpeciesMissingParameters() const -> bool;
+
     /// Add E-UNIQUAC parameters for a new species. This is a convenient function the expand the
     /// built-in E-UNIQUAC parameters setup.
     auto addNewSpeciesParameters(

@@ -121,24 +121,43 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     std::vector<double> ri_values;  // Volume fraction parameter
     std::vector<double> qi_values;  // Surface area parameter
 
+    // Get index of species with known parameters
+    Indices indexSpeciesWithParams;  // Index of Species with known parameters
+    std::vector<std::string> speciesNames = mixture.namesSpecies();
+    auto idMaps = params.bips_species_id_map();
+
+    for ( const auto &name : speciesNames ) {
+        // std::cout << pairsBips.first << "\n";
+        if (idMaps.count(name)) {
+            indexSpeciesWithParams.push_back(mixture.indexSpecies(name));
+        }
+    }
+    const Index num_species_known = indexSpeciesWithParams.size();
+
     // Collect the UNIQUAC parameters r_i and q_i of the all species
-    for (Index i = 0; i < num_species; ++i)
+    // for (Index i = 0; i < num_species; ++i)
+    for (const auto& index : indexSpeciesWithParams)
     {
-        const AqueousSpecies& species = mixture.species(i);
+        const AqueousSpecies& species = mixture.species(index);
         ri_values.push_back(params.ri(species.name()));
         qi_values.push_back(params.qi(species.name()));
     }
 
     // Build enthalpic BIP matrices for mixture species in the phase
-    MatrixXd u_0(num_species, num_species);  // constant enthalpic BIPs term
-    MatrixXd u_T(num_species, num_species);  // linear enthalpic BIPs term
-    for (Index i = 0; i < num_species; ++i)
+    MatrixXd u_0(num_species_known, num_species_known);  // constant enthalpic BIPs term
+    MatrixXd u_T(num_species_known, num_species_known);  // linear enthalpic BIPs term
+    // for (Index i = 0; i < num_species; ++i)
+    // for (const auto& i : indexSpeciesWithParams)
+    for (Index i = 0; i < num_species_known; ++i)
     {
-        const AqueousSpecies& ispecies = mixture.species(i);
+        const auto i_index = indexSpeciesWithParams[i];
+        const AqueousSpecies& ispecies = mixture.species(i_index);
         const auto& ispecies_name = ispecies.name();
-        for (Index j = 0; j < num_species; ++j)
+        // for (Index j = 0; j < num_species; ++j)
+        for (Index j = 0; j < num_species_known; ++j)
         {
-            const AqueousSpecies& jspecies = mixture.species(j);
+            const auto j_index = indexSpeciesWithParams[j];
+            const AqueousSpecies& jspecies = mixture.species(j_index);
             const auto& jspecies_name = jspecies.name();
             const auto& u_ij_0 = params.uij_0(ispecies_name, jspecies_name);
             const auto& u_ij_T = params.uij_T(ispecies_name, jspecies_name);
@@ -225,14 +244,18 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // First, the auxiliary denominator of phi and theta are computed
         double phi_denominator = 0.0;
         double theta_denominator = 0.0;
-        for (Index i = 0; i < num_species; ++i)
+        // for (Index i = 0; i < num_species; ++i)
+        // for (const auto& i : indexSpeciesWithParams)
+        for (Index i = 0; i < num_species_known; ++i)
         {
+            const auto i_index = indexSpeciesWithParams[i];
+
             // Retrieve UNIQUAC species parameters
             const auto r_i = ri_values[i];
             const auto q_i = qi_values[i];
 
             // Sum up the charged species i contribution to phi denominator
-            const auto xi = x[i];
+            const auto xi = x[i_index];
             phi_denominator += xi.val * r_i;
             theta_denominator += xi.val * q_i;
         }
@@ -240,10 +263,14 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // Compute UNIQUAC combinatorial contribution to all species
         std::vector<double> theta;  // to store theta_i values
         std::vector<double> phi;  // to store phi_i values
-        for(Index i = 0; i < num_species; ++i)
+        // for(Index i = 0; i < num_species; ++i)
+        // for(const auto& i : indexSpeciesWithParams)
+        for(Index i = 0; i < num_species_known; ++i)
         {
+            const auto i_index = indexSpeciesWithParams[i];
+
             // Get species mol fraction
-            const auto xi = x[i];
+            const auto xi = x[i_index];
 
             // Retrieve UNIQUAC species parameters
             const auto r_i = ri_values[i];
@@ -275,7 +302,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             ln_g_combinatorial_inf += -5.0 * q_i * (std::log(ri_rw / qi_qw) + 1.0 - ri_rw / qi_qw);
 
             // Finally, the unsymmetrical combinatorial UNIQUAC contribution
-            ln_g[i] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
+            ln_g[i_index] += ln_g_combinatorial_sym - ln_g_combinatorial_inf;
         }
 
         // ==============================================================================
@@ -283,40 +310,47 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         // ==============================================================================
 
         // Calculate u_ij temperature dependent BIPs. Please note: this is a symmetric matrix.
-        MatrixXd u(num_species, num_species);
-        for (Index i = 0; i < num_species; ++i)
-            for (Index j = 0; j < num_species; ++j)
+        MatrixXd u(num_species_known, num_species_known);
+        // Note that the temperature T must be given in Kelvin
+        const double T_ref = 298.15;
+
+        // for (Index i = 0; i < num_species; ++i)
+        //     for (Index j = 0; j < num_species; ++j)
+        for (Index i = 0; i < num_species_known; ++i)
+            for (Index j = 0; j < num_species_known; ++j)
             {
                 const auto& u_ij_0 = u_0(i, j);
                 const auto& u_ij_T = u_T(i, j);
-                // Note that the temperature T must be given in Kelvin
-                const double T_ref = 298.15;
                 u(i, j) = u_ij_0 + u_ij_T * (T.val - T_ref);
             }
 
         // Calculate the enthalpic psi BIPs
-        MatrixXd psi(num_species, num_species);
-        for (Index i = 0; i < num_species; ++i)
-            for (Index j = 0; j < num_species; ++j)
+        MatrixXd psi(num_species_known, num_species_known);
+        for (Index i = 0; i < num_species_known; ++i)
+            for (Index j = 0; j < num_species_known; ++j)
                 psi(i, j) = std::exp(-(u(i, j) - u(j, j)) / T.val);
 
         // Calculate UNIQUAC residual contributions to all species
-        for (Index i = 0; i < num_species; ++i)
+        // for (Index i = 0; i < num_species; ++i)
+        for (Index i = 0; i < num_species_known; ++i)
         {
+
+            const auto i_index = indexSpeciesWithParams[i];
+
             // Retrieve UNIQUAC species q_i parameter
             const auto q_i = qi_values[i];
 
             // Calculate auxiliary summation (theta_l * psi_li product, i index is fixed)
             double theta_psi_product = 0.0;
-            for (Index l = 0; l < num_species; ++l)
+            for (Index l = 0; l < num_species_known; ++l)
                 theta_psi_product += theta[l] * psi(l, i);
 
             // Calculate another auxiliary summation (normalized theta_j * psi_ij product)
             double normalized_theta_psi_product = 0.0;
-            for (Index j = 0; j < num_species; ++j)
+            for (Index j = 0; j < num_species_known; ++j)
             {
                 double denominator = 0.0;
-                for (Index l = 0; l < num_species; ++l)
+                for (Index l = 0; l < num_species_known; ++l)
                     denominator += theta[l] * psi(l, j);
                 normalized_theta_psi_product += theta[j] * psi(i, j) / denominator;
             }
@@ -330,7 +364,7 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
             auto ln_g_residual_inf = q_i * (1.0 - std::log(psi(iwater, i)) - psi(i, iwater));
 
             // Assemble the unsymmetrical residual UNIQUAC contribution
-            ln_g[i] += ln_g_residual_sym - ln_g_residual_inf;
+            ln_g[i_index] += ln_g_residual_sym - ln_g_residual_inf;
         }
 
         // ==============================================================================
@@ -382,6 +416,9 @@ struct EUNIQUACParams::Impl
 
     /// Set if Debye-Huckel solvent A-parameter is the fitted expression or the general is used instead.
     bool useGeneralDebyeHuckelParameterA;
+
+    /// Set if using only the long range contribution for species with missing e-uniquac parameters
+    bool useLongRangeOnlyForSpeciesMissingParameters;
 
     Impl()
     {
@@ -1491,6 +1528,11 @@ auto EUNIQUACParams::setDebyeHuckelGenericParameterA() -> void
     pimpl->useGeneralDebyeHuckelParameterA = true;
 }
 
+auto EUNIQUACParams::setLongRangeOnlyForSpeciesMissingParameters() -> void
+{
+    pimpl->useLongRangeOnlyForSpeciesMissingParameters = true;
+}
+
 auto EUNIQUACParams::addNewSpeciesParameters(
     const std::string& species_name,
     double qi_value,
@@ -1573,4 +1615,10 @@ auto EUNIQUACParams::useDebyeHuckelGenericParameterA() const -> bool
 {
     return pimpl->useGeneralDebyeHuckelParameterA;
 }
+
+auto EUNIQUACParams::useLongRangeOnlyForSpeciesMissingParameters() const -> bool
+{
+    return pimpl->useLongRangeOnlyForSpeciesMissingParameters;
+}
+
 }  // namespace Reaktoro

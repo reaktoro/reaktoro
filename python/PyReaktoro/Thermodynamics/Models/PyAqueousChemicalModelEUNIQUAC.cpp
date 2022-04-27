@@ -71,6 +71,7 @@ void exportAqueousChemicalModelEUNIQUAC(py::module& m)
         .def("bipsSpeciesIds", bips_id_map_2)
         .def("addNewSpeciesParameters", &EUNIQUACParams::addNewSpeciesParameters)
         .def("setDebyeHuckelGenericParameterA", &EUNIQUACParams::setDebyeHuckelGenericParameterA)
+        .def("setLongRangeOnlyForSpeciesMissingParameters", &EUNIQUACParams::setLongRangeOnlyForSpeciesMissingParameters)
         .def("setDTUvalues", &EUNIQUACParams::setDTUvalues)
         .def("setVillafafilaGarcia2006", &EUNIQUACParams::setVillafafilaGarcia2006)
         ;

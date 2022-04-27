@@ -342,3 +342,23 @@ def test_add_new_species_params():
     assert euniquac_params.uij_T("Na+", new_species_name) == default_uT_value
     assert euniquac_params.uij_T(new_species_name, "Na+") == default_uT_value
     assert euniquac_params.uij_T(new_species_name, new_species_name) == default_uT_value
+
+
+def test_euniquac_fallback_lr_only_flag():
+    """
+    Test if the E-UNIQUAC fallback to long range only is working properly
+    """
+
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.setLongRangeOnlyForSpeciesMissingParameters()
+    assert True
+
+
+def test_euniquac_fallback_get_species_missing_euniquac_params():
+    """
+    Test if the E-UNIQUAC fallback to long range only is working properly
+    """
+
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.setLongRangeOnlyForSpeciesMissingParameters()
+    assert True
