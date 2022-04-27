@@ -362,3 +362,52 @@ def test_euniquac_fallback_get_species_missing_euniquac_params():
     euniquac_params = rkt.EUNIQUACParams()
     euniquac_params.setLongRangeOnlyForSpeciesMissingParameters()
     assert True
+
+def test_euniquac_fallback_all_species_are_known_match_previous_results():
+    """
+    Test if the E-UNIQUAC with fallback modifications but with all species
+    with known q, r and bips match the previous results
+    """
+
+    list_aqueous_species = [
+        "H2O(l)",
+        "H+",
+        "OH-",
+        "Na+",
+        'Cl-',
+    ]
+    gas_species = []
+
+    mineral_name = 'Halite'
+
+    # Create Euniquac
+    editor = rkt.ChemicalEditor()
+    editor.addMineralPhase(mineral_name)
+    aqueous_phase = editor.addAqueousPhase(list_aqueous_species)
+
+    if len(gas_species):
+        gas_phase = editor.addGaseousPhase(gas_species)
+        gas_phase.setChemicalModelSoaveRedlichKwong()
+
+    euniquac_params = rkt.EUNIQUACParams()
+    editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
+    system_euniquac = rkt.ChemicalSystem(editor)
+
+
+    problem = rkt.EquilibriumProblem(system_euniquac)
+    problem.setTemperature(25.0, "celsius")
+    problem.setPressure(1.0, "atm")
+    
+    problem.add("H2O", 1, "kg")
+    problem.add(mineral_name, 100, "mol") # excess quantity
+
+    state = rkt.equilibrate(problem)
+
+    solubility = state.elementAmountInPhase('Na', 'Aqueous')*1e3
+    pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
+    mol_species = state.speciesAmounts
+
+    assert np.isclose(solubility, 7305.134115874772)
+    assert np.isclose(pH, 8.001947888594076)
+    expected_mols = [6.55084350e+01, 6.14295491e-08, 6.14295491e-08, 7.30513412e+00, 7.30513412e+00, 9.26948659e+01]
+    assert np.testing.assert_array_almost_equal(mol_species, expected_mols)
