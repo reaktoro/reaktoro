@@ -405,9 +405,61 @@ def test_euniquac_fallback_all_species_are_known_match_previous_results():
 
     solubility = state.elementAmountInPhase('Na', 'Aqueous')*1e3
     pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
-    mol_species = state.speciesAmounts
+    mol_species = state.speciesAmounts()
 
-    assert np.isclose(solubility, 7305.134115874772)
-    assert np.isclose(pH, 8.001947888594076)
-    expected_mols = [6.55084350e+01, 6.14295491e-08, 6.14295491e-08, 7.30513412e+00, 7.30513412e+00, 9.26948659e+01]
-    assert np.testing.assert_array_almost_equal(mol_species, expected_mols)
+    assert np.isclose(solubility, 6189.990199851658)
+    assert np.isclose(pH, 8.001947880191114)
+    expected_mols = [5.55084350e+01, 5.20522014e-08, 5.20522014e-08, 6.18999020e+00, 6.18999020e+00, 9.38100098e+01]
+    np.testing.assert_array_almost_equal(mol_species, expected_mols)
+
+
+def test_euniquac_fallback_missing_species_fallback():
+    """
+    Test if the E-UNIQUAC with fallback modifications with missing species case Quartz
+    """
+
+    list_aqueous_species = [
+        "H2O(l)",
+        "H+",
+        "OH-",
+        "Na+",
+        'Cl-',
+        'HSiO3-', 
+        'SiO2(aq)',
+    ]
+    gas_species = []
+
+    mineral_name = 'Quartz'
+
+    # Create Euniquac
+    editor = rkt.ChemicalEditor()
+    editor.addMineralPhase(mineral_name)
+    aqueous_phase = editor.addAqueousPhase(list_aqueous_species)
+
+    if len(gas_species):
+        gas_phase = editor.addGaseousPhase(gas_species)
+        gas_phase.setChemicalModelSoaveRedlichKwong()
+
+    euniquac_params = rkt.EUNIQUACParams()
+    editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
+    system_euniquac = rkt.ChemicalSystem(editor)
+
+
+    problem = rkt.EquilibriumProblem(system_euniquac)
+    problem.setTemperature(25.0, "celsius")
+    problem.setPressure(1.0, "atm")
+    
+    problem.add("H2O", 1, "kg")
+    problem.add(mineral_name, 100, "mol") # excess quantity
+
+    state = rkt.equilibrate(problem)
+
+    solubility = state.elementAmountInPhase('Si', 'Aqueous')*1e3
+    pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
+    mol_species = state.speciesAmounts()
+
+    assert False
+    # assert np.isclose(solubility, 6189.990199851658)
+    # assert np.isclose(pH, 8.001947880191114)
+    # expected_mols = [5.55084350e+01, 5.20522014e-08, 5.20522014e-08, 6.18999020e+00, 6.18999020e+00, 9.38100098e+01]
+    # np.testing.assert_array_almost_equal(mol_species, expected_mols)
