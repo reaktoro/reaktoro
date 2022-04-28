@@ -481,6 +481,7 @@ def test_euniquac_fallback_add_phase_with_elements():
     aqueous_phase = editor.addAqueousPhaseWithElementsOf("H O Na Ca K Sr Mg Ba Cl S")
 
     euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.setVillafafilaGarcia2006() #very important!
     editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
     system_euniquac = rkt.ChemicalSystem(editor)
 

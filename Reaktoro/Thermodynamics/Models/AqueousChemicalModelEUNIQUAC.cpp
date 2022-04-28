@@ -23,6 +23,8 @@
 #include <Reaktoro/Thermodynamics/Mixtures/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 
+#include <Reaktoro/Thermodynamics/Models/AqueousChemicalModelDebyeHuckel.hpp>
+
 namespace Reaktoro {
 
 /// Sanity check free function to verify if BIPs matrices have proper dimensions.
@@ -147,9 +149,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     }
     const Index num_species_known = indexSpeciesWithParams.size();
 
-    // Assert(std::count(indexSpeciesWithParams.begin(), indexSpeciesWithParams.end(), "H2O(l)"),
-    //         "The e-uniquac parameter set is missing Water.",
-    //         "Water is required in e-uniquac parameter set");
+    const auto bdotParams = DebyeHuckelParams();
+    const auto modelLongRange = aqueousChemicalModelDebyeHuckel(mixture, bdotParams);
     
 
     // Collect the UNIQUAC parameters r_i and q_i of the all species
@@ -188,8 +189,8 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     ChemicalScalar xw, ln_xw, sqrtI;
     ChemicalVector ln_m;
 
-    // Define the intermediate chemical model function of the aqueous mixture
-    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    // Long range model as e-uniquac
+    PhaseChemicalModel modelLongRangeThomsen = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
         auto state = mixture.state(T, P, n);
@@ -248,6 +249,73 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         auto inner_term = 1.0 + b_sqrtI - 1.0 / (1.0 + b_sqrtI) - 2.0 * log(1 + b_sqrtI);
         auto constant_term = Mw * 2.0 * A_parameter / (b * b * b);
         ln_g[iwater] = constant_term * inner_term;
+    };
+
+    // Define the intermediate chemical model function of the aqueous mixture
+    PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
+    {
+        // Evaluate the state of the aqueous mixture
+        auto state = mixture.state(T, P, n);
+
+        // ==============================================================================
+        // ================ Long-range contribution =====================================
+        // ==============================================================================
+        const auto& I = state.Ie;           // ionic strength
+        const auto& x = state.x;            // mole fractions of the species
+        const auto& m = state.m;            // molalities of the species
+        const auto& rho = state.rho;         // density in units of kg/m3
+        const auto& epsilon = state.epsilon; // dielectric constant
+
+        // Auxiliary references
+        auto& ln_g = res.ln_activity_coefficients;
+        auto& ln_a = res.ln_activities;
+
+        xw = x[iwater];
+        ln_xw = log(xw);
+        ln_m = log(m);
+
+        // sqrtI = sqrt(I);
+        // const double b = 1.5;
+        // ThermoScalar A_parameter;
+        // if (params.useDebyeHuckelGenericParameterA())
+        //     A_parameter = calculateDebyeHuckelParameterA(T, epsilon, rho);
+        // else
+        //     A_parameter = calculateFittedDebyeHuckelParameterA(T);
+
+        // // Loop over all charged species in the mixture
+        // for(Index i = 0; i < num_charged_species; ++i)
+        // {
+        //     // The index of the current charged species
+        //     const Index ispecies = icharged_species[i];
+
+        //     // The electrical charge of the charged species
+        //     const auto z = charges[i];
+
+        //     // Calculate the ln activity coefficient of the current charged species
+        //     auto numerator = -z * z * A_parameter * sqrtI;
+        //     auto denominator = 1.0 + b * sqrtI;
+        //     ln_g[ispecies] = numerator / denominator;
+        // }
+
+        // // Loop over all neutral species in the mixture
+        // for(Index i = 0; i < num_neutral_species; ++i)
+        // {
+        //     // The index of the current neutral species
+        //     const Index ispecies = ineutral_species[i];
+
+        //     // Calculate the DH ln activity coefficient of the current neutral species
+        //     ln_g[ispecies] = 0.0;
+        // }
+
+        // // Computing the water activity coefficient
+        // auto b_sqrtI = b * sqrtI;
+        // auto inner_term = 1.0 + b_sqrtI - 1.0 / (1.0 + b_sqrtI) - 2.0 * log(1 + b_sqrtI);
+        // auto constant_term = Mw * 2.0 * A_parameter / (b * b * b);
+        // ln_g[iwater] = constant_term * inner_term;
+
+        // Calculate long range
+        // modelLongRangeThomsen(res, T, P, n);
+        modelLongRange(res, T, P, n);
 
         // ==============================================================================
         // ================ Combinatorial contribution ==================================
