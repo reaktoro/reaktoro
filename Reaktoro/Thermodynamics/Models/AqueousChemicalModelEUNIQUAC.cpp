@@ -149,10 +149,6 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     }
     const Index num_species_known = indexSpeciesWithParams.size();
 
-    const auto bdotParams = DebyeHuckelParams();
-    const auto modelLongRange = aqueousChemicalModelDebyeHuckel(mixture, bdotParams);
-    
-
     // Collect the UNIQUAC parameters r_i and q_i of the all species
     // for (Index i = 0; i < num_species; ++i)
     for (const auto& index : indexSpeciesWithParams)
@@ -189,7 +185,9 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
     ChemicalScalar xw, ln_xw, sqrtI;
     ChemicalVector ln_m;
 
-    // Long range model as e-uniquac
+    // Define the Long range chemical model accordingly to Thomsen's e-uniquac formulation
+    // TODO: Place in separated file as a regular factory of model function? 
+    // (similar to aqueousChemicalModelEUNIQUAC or aqueousChemicalModelDebyeHuckel)
     PhaseChemicalModel modelLongRangeThomsen = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
         // Evaluate the state of the aqueous mixture
@@ -251,6 +249,21 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         ln_g[iwater] = constant_term * inner_term;
     };
 
+    PhaseChemicalModel modelLongRange;
+    const auto longRangeModelType = params.useLongRangeModelType();
+
+    // Set the long range model to calculate the long range contribution in the final ln γ
+    switch(longRangeModelType)
+    {
+    case LongRangeModelType::DH_Thomsen:
+        modelLongRange = modelLongRangeThomsen;
+        break;
+    case LongRangeModelType::DH_Phreeqc:
+        const auto bdotParams = DebyeHuckelParams();
+        modelLongRange = aqueousChemicalModelDebyeHuckel(mixture, bdotParams);
+        break;
+    }
+
     // Define the intermediate chemical model function of the aqueous mixture
     PhaseChemicalModel model = [=](PhaseChemicalModelResult& res, Temperature T, Pressure P, VectorConstRef n) mutable
     {
@@ -274,48 +287,24 @@ auto aqueousChemicalModelEUNIQUAC(const AqueousMixture& mixture, const EUNIQUACP
         ln_xw = log(xw);
         ln_m = log(m);
 
-        // sqrtI = sqrt(I);
-        // const double b = 1.5;
-        // ThermoScalar A_parameter;
-        // if (params.useDebyeHuckelGenericParameterA())
-        //     A_parameter = calculateDebyeHuckelParameterA(T, epsilon, rho);
-        // else
-        //     A_parameter = calculateFittedDebyeHuckelParameterA(T);
-
-        // // Loop over all charged species in the mixture
-        // for(Index i = 0; i < num_charged_species; ++i)
-        // {
-        //     // The index of the current charged species
-        //     const Index ispecies = icharged_species[i];
-
-        //     // The electrical charge of the charged species
-        //     const auto z = charges[i];
-
-        //     // Calculate the ln activity coefficient of the current charged species
-        //     auto numerator = -z * z * A_parameter * sqrtI;
-        //     auto denominator = 1.0 + b * sqrtI;
-        //     ln_g[ispecies] = numerator / denominator;
-        // }
-
-        // // Loop over all neutral species in the mixture
-        // for(Index i = 0; i < num_neutral_species; ++i)
-        // {
-        //     // The index of the current neutral species
-        //     const Index ispecies = ineutral_species[i];
-
-        //     // Calculate the DH ln activity coefficient of the current neutral species
-        //     ln_g[ispecies] = 0.0;
-        // }
-
-        // // Computing the water activity coefficient
-        // auto b_sqrtI = b * sqrtI;
-        // auto inner_term = 1.0 + b_sqrtI - 1.0 / (1.0 + b_sqrtI) - 2.0 * log(1 + b_sqrtI);
-        // auto constant_term = Mw * 2.0 * A_parameter / (b * b * b);
-        // ln_g[iwater] = constant_term * inner_term;
-
-        // Calculate long range
-        // modelLongRangeThomsen(res, T, P, n);
+        // Calculate long range contribution
         modelLongRange(res, T, P, n);
+
+        if (params.useConvertLongRangeToMolScale()) {
+            // Convert activity coefficients to molality scale
+            // Activities will be recalculated later
+            for (Index i = 0; i < num_charged_species; ++i)
+            {
+                const Index ispecies = icharged_species[i];
+                ln_g[ispecies] = ln_g[ispecies] - ln_xw;
+            }
+
+            for (Index i = 0; i < num_neutral_species; ++i)
+            {
+                const Index ispecies = ineutral_species[i];
+                ln_g[ispecies] = ln_g[ispecies] - ln_xw;
+            }
+        }
 
         // ==============================================================================
         // ================ Combinatorial contribution ==================================
@@ -501,8 +490,14 @@ struct EUNIQUACParams::Impl
     /// Set if Debye-Huckel solvent A-parameter is the fitted expression or the general is used instead.
     bool useGeneralDebyeHuckelParameterA;
 
-    /// Set if using only the long range contribution for species with missing e-uniquac parameters
-    bool useLongRangeOnlyForSpeciesMissingParameters;
+    /// Set the long range model for e-uniquac model
+    LongRangeModelType longRangeModelType;
+
+    /// Internal Flag to indicate if the long range model output is in already molality scale
+    /// To reuse the reaktoro activity model structure, the γ calculated by DH_Phreeqc model, for instance,
+    /// will be converted to mol fraction scale. This is because the E-UNIQUAC model will convert from mol scale
+    /// to molality scale at the end.
+    bool convertLongRangeToMolScale = false;
 
     Impl()
     {
@@ -514,6 +509,7 @@ EUNIQUACParams::EUNIQUACParams()
 {
     setDTUvalues();
     pimpl->useGeneralDebyeHuckelParameterA = false;
+    setLongRangeModelType(LongRangeModelType::DH_Thomsen);
 }
 
 auto EUNIQUACParams::setDTUvalues() -> void
@@ -1612,9 +1608,9 @@ auto EUNIQUACParams::setDebyeHuckelGenericParameterA() -> void
     pimpl->useGeneralDebyeHuckelParameterA = true;
 }
 
-auto EUNIQUACParams::setLongRangeOnlyForSpeciesMissingParameters() -> void
+auto EUNIQUACParams::useDebyeHuckelGenericParameterA() const -> bool
 {
-    pimpl->useLongRangeOnlyForSpeciesMissingParameters = true;
+    return pimpl->useGeneralDebyeHuckelParameterA;
 }
 
 auto EUNIQUACParams::addNewSpeciesParameters(
@@ -1695,14 +1691,33 @@ auto EUNIQUACParams::addNewSpeciesParameters(
     }
 }
 
-auto EUNIQUACParams::useDebyeHuckelGenericParameterA() const -> bool
+auto EUNIQUACParams::setLongRangeModelType(const LongRangeModelType& _longRangeModelType) -> void
 {
-    return pimpl->useGeneralDebyeHuckelParameterA;
+    pimpl->longRangeModelType = _longRangeModelType;
+    switch(_longRangeModelType)
+    {
+    case LongRangeModelType::DH_Thomsen:
+        pimpl->convertLongRangeToMolScale = false;
+        break;
+    case LongRangeModelType::DH_Phreeqc:
+        pimpl->convertLongRangeToMolScale = true;
+        break;
+    }
 }
 
-auto EUNIQUACParams::useLongRangeOnlyForSpeciesMissingParameters() const -> bool
+auto EUNIQUACParams::useLongRangeModelType() const -> LongRangeModelType
 {
-    return pimpl->useLongRangeOnlyForSpeciesMissingParameters;
+    return pimpl->longRangeModelType;
+}
+
+auto EUNIQUACParams::setConvertLongRangeToMolScale() -> void
+{
+    pimpl->convertLongRangeToMolScale = true;
+}
+
+auto EUNIQUACParams::useConvertLongRangeToMolScale() const -> bool
+{
+    return pimpl->convertLongRangeToMolScale;
 }
 
 }  // namespace Reaktoro

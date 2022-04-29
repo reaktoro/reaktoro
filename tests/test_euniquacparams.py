@@ -152,18 +152,18 @@ def test_euniquac_params_DTU_values_initialization(ri_values_dtu, qi_values_dtu)
     assert species_id_stored == bips_species_id_map_dtu
 
     uij_0_dtu = np.array([
-        [0,      1e5,     733.286, 535.023, 54.0297, 1523.39, 752.879, 602.252, 998.92, 600.495, 328.141,  118.702],
-        [1e5,     0,       1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10],
-        [733.286, 1.0E+10, 0,       -46.194, 375.977, 1443.23, 845.135, 469.488, 797.474, 1398.14, 476.956, 980.982],
-        [535.023, 1.0E+10, -46.194, 0,       184.288, 1465.18, 913.824, 445.673, 818.568, 1805.75, 1370.57, 1123.44],
-        [54.0297, 1.0E+10, 375.977, 184.288, 0,       1385.31, 677.178, 418.886, 807.246, 2500,    0,       0],
-        [1523.39, 1.0E+10, 1443.23, 1465.18, 1385.31, 2214.81, 2036.06, 0,       2175.02, 1895.52, 2372.94, 2014.18],
+        [0, 1e5, 733.286, 535.023, 54.0297, 1523.39, 752.879, 602.252, 998.92, 600.495, 328.141, 118.702],
+        [1e5, 0, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10, 1.0E+10],
+        [733.286, 1.0E+10, 0, -46.194, 375.977, 1443.23, 845.135, 469.488, 797.474, 1398.14, 476.956, 980.982],
+        [535.023, 1.0E+10, -46.194, 0, 184.288, 1465.18, 913.824, 445.673, 818.568, 1805.75, 1370.57, 1123.44],
+        [54.0297, 1.0E+10, 375.977, 184.288, 0, 1385.31, 677.178, 418.886, 807.246, 2500, 0, 0],
+        [1523.39, 1.0E+10, 1443.23, 1465.18, 1385.31, 2214.81, 2036.06, 0, 2175.02, 1895.52, 2372.94, 2014.18],
         [752.879, 1.0E+10, 845.135, 913.824, 677.178, 2036.06, 1265.83, 1004.16, 1757.79, 1225.67, 1158.91, 956.609],
-        [602.252, 1.0E+10, 469.488, 445.673, 418.886, 0,       1004.16, 822.989, 0,       2500,    2500,     2500],
-        [998.92,  1.0E+10, 797.474, 818.568, 807.246, 2175.02, 1757.79, 0,       2753.71, 1379.95, 0,       0,],
-        [600.495, 1.0E+10, 1398.14, 1805.75, 2500,    1895.52, 1225.67, 2500,    1379.95, 1562.88, 1339.04, 2500],
-        [328.141, 1.0E+10, 476.956, 1370.57, 0,       2372.94, 1158.91, 2500,    0,       1339.04, 1065.97, 565.786],
-        [118.702, 1.0E+10, 980.982, 1123.44, 0,       2014.18, 956.609, 2500,    0,       2500,    565.786, 253.461],
+        [602.252, 1.0E+10, 469.488, 445.673, 418.886, 0, 1004.16, 822.989, 0, 2500, 2500, 2500],
+        [998.92, 1.0E+10, 797.474, 818.568, 807.246, 2175.02, 1757.79, 0, 2753.71, 1379.95, 0, 0, ],
+        [600.495, 1.0E+10, 1398.14, 1805.75, 2500, 1895.52, 1225.67, 2500, 1379.95, 1562.88, 1339.04, 2500],
+        [328.141, 1.0E+10, 476.956, 1370.57, 0, 2372.94, 1158.91, 2500, 0, 1339.04, 1065.97, 565.786],
+        [118.702, 1.0E+10, 980.982, 1123.44, 0, 2014.18, 956.609, 2500, 0, 2500, 565.786, 253.461],
     ])
     uij_0_stored = euniquac_params.uij_0()
     assert np.allclose(uij_0_stored, uij_0_dtu)
@@ -310,7 +310,7 @@ def test_add_new_species_params():
     q_value = 2.0
     r_value = 1.0
     new_uij_0_values = {"Na+": 3.5}
-    new_uij_T_values = {"Cl-": -2.5}
+    new_uij_T_values = {"Cl-":-2.5}
     euniquac_params.addNewSpeciesParameters(
         new_species_name,
         q_value,
@@ -344,24 +344,15 @@ def test_add_new_species_params():
     assert euniquac_params.uij_T(new_species_name, new_species_name) == default_uT_value
 
 
-def test_euniquac_fallback_lr_only_flag():
+def test_euniquac_longrange_model_options():
     """
-    Test if the E-UNIQUAC fallback to long range only is working properly
-    """
-
-    euniquac_params = rkt.EUNIQUACParams()
-    euniquac_params.setLongRangeOnlyForSpeciesMissingParameters()
-    assert True
-
-
-def test_euniquac_fallback_get_species_missing_euniquac_params():
-    """
-    Test if the E-UNIQUAC fallback to long range only is working properly
+    Test if the option for long range model is working properly
     """
 
     euniquac_params = rkt.EUNIQUACParams()
-    euniquac_params.setLongRangeOnlyForSpeciesMissingParameters()
-    assert True
+    euniquac_params.setLongRangeModelType(rkt.LongRangeModelType.DH_Phreeqc)
+    assert True  # As the interval value (not necessary) is not exposed in the API I cannot assert
+
 
 def test_euniquac_fallback_all_species_are_known_match_previous_results():
     """
@@ -393,17 +384,16 @@ def test_euniquac_fallback_all_species_are_known_match_previous_results():
     editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
     system_euniquac = rkt.ChemicalSystem(editor)
 
-
     problem = rkt.EquilibriumProblem(system_euniquac)
     problem.setTemperature(25.0, "celsius")
     problem.setPressure(1.0, "atm")
-    
+
     problem.add("H2O", 1, "kg")
-    problem.add(mineral_name, 100, "mol") # excess quantity
+    problem.add(mineral_name, 100, "mol")  # excess quantity
 
     state = rkt.equilibrate(problem)
 
-    solubility = state.elementAmountInPhase('Na', 'Aqueous')*1e3
+    solubility = state.elementAmountInPhase('Na', 'Aqueous') * 1e3
     pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
     mol_species = state.speciesAmounts()
 
@@ -424,7 +414,7 @@ def test_euniquac_fallback_missing_species_fallback():
         "OH-",
         "Na+",
         'Cl-',
-        'HSiO3-', 
+        'HSiO3-',
         'SiO2(aq)',
     ]
     gas_species = []
@@ -444,32 +434,33 @@ def test_euniquac_fallback_missing_species_fallback():
     editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
     system_euniquac = rkt.ChemicalSystem(editor)
 
-
     problem = rkt.EquilibriumProblem(system_euniquac)
     problem.setTemperature(25.0, "celsius")
     problem.setPressure(1.0, "atm")
-    
+
     problem.add("H2O", 1, "kg")
     problem.add("NaCl", 0.1, "mol")
-    problem.add(mineral_name, 10, "mol") # excess quantity
+    problem.add(mineral_name, 10, "mol")  # excess quantity
 
     state = rkt.equilibrate(problem)
 
-    solubility = state.elementAmountInPhase('Si', 'Aqueous')*1e3
+    solubility = state.elementAmountInPhase('Si', 'Aqueous') * 1e3
     pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
     mol_species = state.speciesAmounts()
 
-    assert np.isclose(solubility,  0.10278223633476395, 1e-1)
+    assert np.isclose(solubility, 0.10278223633476395, 1e-1)
     assert np.isclose(pH, 6.726597777002442, 1e-3)
     expected_mols = [
-        5.55084348e+01, 2.48292415e-07, 6.64015320e-08, 1.00000000e-01, 
+        5.55084348e+01, 2.48292415e-07, 6.64015320e-08, 1.00000000e-01,
         1.00000000e-01, 1.81890883e-07, 1.02600345e-04, 9.99989722e+00
     ]
     np.testing.assert_array_almost_equal(mol_species, expected_mols, decimal=2)
 
-def test_euniquac_fallback_add_phase_with_elements():
+
+def test_euniquac_fallback_add_aqueous_phase_with_elements():
     """
-    Test if the E-UNIQUAC with fallback modifications with missing species case Quartz
+    Test if the E-UNIQUAC with fallback modifications with missing species case Barite
+    with many species
     """
 
     mineral_name = 'Barite'
@@ -481,23 +472,63 @@ def test_euniquac_fallback_add_phase_with_elements():
     aqueous_phase = editor.addAqueousPhaseWithElementsOf("H O Na Ca K Sr Mg Ba Cl S")
 
     euniquac_params = rkt.EUNIQUACParams()
-    euniquac_params.setVillafafilaGarcia2006() #very important!
+    euniquac_params.setVillafafilaGarcia2006()  # very important!
     editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
     system_euniquac = rkt.ChemicalSystem(editor)
-
 
     problem = rkt.EquilibriumProblem(system_euniquac)
     problem.setTemperature(25.0, "celsius")
     problem.setPressure(1.0, "atm")
-    
+
     problem.add("H2O", 1, "kg")
     problem.add("NaCl", 0.1, "mol")
-    problem.add(mineral_name, 10, "mol") # excess quantity
+    problem.add(mineral_name, 10, "mol")
 
     state = rkt.equilibrate(problem)
 
-    solubility = state.elementAmountInPhase('Ba', 'Aqueous')*1e3
+    solubility = state.elementAmountInPhase('Ba', 'Aqueous') * 1e3
     pH = rkt.ChemicalProperty.pH(system_euniquac)(state.properties()).val
     mol_species = state.speciesAmounts()
+    # Question: No assert here is needed, just want to run without raising exception (due to convergence)
 
-    print(solubility)
+
+def test_euniquac_with_longrange_as_bdot_equals_bdot_when_only_unknown_species():
+    """
+    Test if output of euniquac with long range as B-dot is equal to the
+    original B-dot (DebyeHuckel) output when the species are all unkowns for e-uniquac
+    """
+
+    list_aqueous_species = [
+        "H2O(l)",
+        'HSiO3-',
+        'SiO2(aq)',
+    ]
+
+    mineral_name = 'Quartz'
+
+    # Create Euniquac
+    editor = rkt.ChemicalEditor()
+    editor.addMineralPhase(mineral_name)
+    aqueous_phase = editor.addAqueousPhase(list_aqueous_species)
+
+    euniquac_params = rkt.EUNIQUACParams()
+    euniquac_params.setLongRangeModelType(rkt.LongRangeModelType.DH_Phreeqc)
+
+    editor.aqueousPhase().setChemicalModelEUNIQUAC(euniquac_params)
+    system_euniquac = rkt.ChemicalSystem(editor)
+
+    problem = rkt.EquilibriumProblem(system_euniquac)
+    problem.setTemperature(25.0, "celsius")
+    problem.setPressure(1.0, "atm")
+
+    problem.add("H2O", 1, "kg")
+    problem.add('Quartz', 10, "mol")  # excess quantity
+
+    state = rkt.equilibrate(problem)
+
+    solubility = state.elementAmountInPhase('Si', 'Aqueous') * 1e3
+    mol_species = state.speciesAmounts()
+
+    assert(np.isclose(solubility, 0.10016713283821646))
+    expected_mols = [5.55084351e+01, 1.00000000e-20, 1.00167133e-04, 9.99989983e+00]
+    np.testing.assert_array_almost_equal(mol_species, expected_mols, decimal=6)

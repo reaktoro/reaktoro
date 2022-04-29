@@ -31,6 +31,12 @@ namespace Reaktoro {
 class AqueousMixture;
 class EUNIQUACParams;
 
+/// A type to define the possible long range models. 
+enum class LongRangeModelType
+{
+    DH_Thomsen, DH_Phreeqc, HKF
+};
+
 /// Return an equation of state for an aqueous phase based on the E-UNIQUAC activity model.
 /// @param mixture The aqueous mixture instance
 /// @param params The parameters for the E-UNIQUAC activity model.
@@ -99,10 +105,13 @@ public:
 
     auto useDebyeHuckelGenericParameterA() const -> bool;
 
-    /// Set if using only the long range contribution for species with missing e-uniquac parameters
-    auto setLongRangeOnlyForSpeciesMissingParameters() -> void;
+    auto setLongRangeModelType(const LongRangeModelType& longRangeModelType) -> void;
 
-    auto useLongRangeOnlyForSpeciesMissingParameters() const -> bool;
+    auto useLongRangeModelType() const -> LongRangeModelType;
+
+    auto setConvertLongRangeToMolScale() -> void;
+
+    auto useConvertLongRangeToMolScale() const -> bool;
 
     /// Add E-UNIQUAC parameters for a new species. This is a convenient function the expand the
     /// built-in E-UNIQUAC parameters setup.
