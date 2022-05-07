@@ -28,8 +28,10 @@
 
 from reaktoro import *
 import numpy as np
+from pathlib import Path
 
-db = PhreeqcDatabase.fromFile("../examples/resources/phreeqc-rk-isotherm.dat")
+filepath = Path(__file__).parent.parent/"resources/phreeqc-rk-isotherm.dat"
+db = PhreeqcDatabase.fromFile(str(filepath))
 
 # Define an aqueous phase
 solution = AqueousPhase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2")

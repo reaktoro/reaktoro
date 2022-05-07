@@ -50,16 +50,16 @@ specs.pH()
 
 solver = EquilibriumSolver(specs)
 
+state = ChemicalState(system)
+state.set("H2O@", 1.0, "kg")
+state.set("Na+",  1.0, "mol")
+state.set("Cl-",  1.0, "mol")
+state.set("CO2", 10.0, "mol")
 conditions = EquilibriumConditions(specs)
 conditions.temperature(60.0, "celsius")
 conditions.pressure(100.0, "bar")
 conditions.pH(4.0)
-conditions.startWith("H2O@", 1.0, "kg")
-conditions.startWith("Na+",  1.0, "mol")
-conditions.startWith("Cl-",  1.0, "mol")
-conditions.startWith("CO2", 10.0, "mol")
 
-state = ChemicalState(system)
 
 solver.solve(state, conditions)
 
