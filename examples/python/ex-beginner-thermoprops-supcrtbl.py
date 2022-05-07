@@ -30,8 +30,8 @@ from reaktoro import *
 from matplotlib import pyplot as plt
 import numpy as npy
 
-db_bl = Database("supcrtbl.yaml")
-db_98 = Database("supcrt98.yaml")
+db_bl = SupcrtDatabase("supcrtbl")
+db_98 = SupcrtDatabase("supcrt98")
 
 H2Og_bl = db_bl.species().get("H2O(g)")
 H2Og_98 = db_98.species().get("H2O(g)")

@@ -29,7 +29,7 @@
 from reaktoro import *
 
 # Initialize a thermodynamic database
-db = Database("supcrt98.yaml")
+db = SupcrtDatabase("supcrt98")
 
 # Create an aqueous phase automatically selecting all species with provided elements
 aqueousphase = AqueousPhase(speciate("H O Na Cl"))
