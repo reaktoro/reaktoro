@@ -106,11 +106,19 @@ public:
     /// Return the amount of electric charge in the system (in mol).
     auto charge() const -> real;
 
+    /// Return the amount of electric charge in a phase of the system (in mol).
+    /// @param phase The name or index of the phase in the system.
+    auto chargeInPhase(StringOrIndex phase) const -> real;
+
+    /// Return the amount of electric charge among a group of species in the system (in mol).
+    /// @param indices The indices of the species in the system.
+    auto chargeAmongSpecies(ArrayXlConstRef indices) const -> real;
+
     /// Return the amount of an element in the system (in mol).
     /// @param element The symbol or index of the element in the system.
     auto elementAmount(StringOrIndex element) const -> real;
 
-    /// Return the amount of an element in the system (in mol).
+    /// Return the amount of an element in a phase of the system (in mol).
     /// @param element The symbol or index of the element in the system.
     /// @param phase The name or index of the phase in the system.
     auto elementAmountInPhase(StringOrIndex element, StringOrIndex phase) const -> real;
