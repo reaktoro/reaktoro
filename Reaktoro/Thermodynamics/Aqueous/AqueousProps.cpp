@@ -295,6 +295,16 @@ struct AqueousProps::Impl
         return props.pressure();
     }
 
+    auto waterAmount() const -> real
+    {
+        return props.speciesAmount(iH2O);
+    }
+
+    auto waterMass() const -> real
+    {
+        return props.speciesMass(iH2O);
+    }
+
     auto elementMolality(const StringOrIndex& symbol) const -> real
     {
         const auto idx = detail::resolveElementIndex(phase, symbol);
@@ -437,6 +447,16 @@ auto AqueousProps::temperature() const -> real
 auto AqueousProps::pressure() const -> real
 {
     return pimpl->pressure();
+}
+
+auto AqueousProps::waterAmount() const -> real
+{
+    return pimpl->waterAmount();
+}
+
+auto AqueousProps::waterMass() const -> real
+{
+    return pimpl->waterMass();
 }
 
 auto AqueousProps::elementMolality(const StringOrIndex& symbol) const -> real

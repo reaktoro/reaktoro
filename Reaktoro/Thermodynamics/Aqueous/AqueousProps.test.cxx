@@ -45,8 +45,11 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
     const auto& aqspecies = phase.species();
     const auto& aqelements = phase.elements();
 
+    const auto iH2O = aqspecies.indexWithFormula("H2O");
+
     auto num_species = species.size();
     auto num_elements = elements.size();
+
 
     SECTION("Testing correct initialization of the `AqueousProps` instance")
     {
@@ -214,6 +217,10 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.pH()                          == Approx(-0.0605375)   );
         CHECK( aqprops.ionicStrengthEffective()      == Approx(27.2725)      );
         CHECK( aqprops.ionicStrengthStoichiometric() == Approx(27.273)       );
+
+        // Check water properties
+        CHECK( aqprops.waterAmount() == Approx(state.speciesAmount(iH2O))  );
+        CHECK( aqprops.waterMass()   == Approx(state.speciesMass(iH2O))    );
 
         // Check molalities of all species
         CHECK( aqprops.speciesMolality("H2O(aq)"  ) == Approx(55.5085)     );
