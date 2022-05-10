@@ -208,6 +208,25 @@ auto ChemicalProps::charge() const -> real
     return (Acharge * n.matrix()).sum();
 }
 
+auto ChemicalProps::chargeInPhase(StringOrIndex phase) const -> real
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto offset = msystem.phases().numSpeciesUntilPhase(iphase);
+    const auto length = msystem.phase(iphase).species().size();
+    const auto Az = msystem.formulaMatrixCharge();
+    const auto np = n.matrix().segment(offset, length);
+    const auto Azp = Az.row(0).segment(offset, length);
+    return Azp * np;
+}
+
+auto ChemicalProps::chargeAmongSpecies(ArrayXlConstRef indices) const -> real
+{
+    const auto Az = msystem.formulaMatrixCharge();
+    const auto Azi = Az.row(0)(indices);
+    const auto ni = n(indices).matrix();
+    return Azi * ni;
+}
+
 auto ChemicalProps::elementAmount(StringOrIndex element) const -> real
 {
     const auto ielement = detail::resolveElementIndex(msystem, element);
