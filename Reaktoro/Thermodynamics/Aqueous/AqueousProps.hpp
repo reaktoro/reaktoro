@@ -71,6 +71,12 @@ public:
     /// Return the pressure of the aqueous phase (in Pa).
     auto pressure() const -> real;
 
+    /// Return the amount of solvent water in the aqueous phase (in mol).
+    auto waterAmount() const -> real;
+
+    /// Return the mass of solvent water in the aqueous phase (in kg).
+    auto waterMass() const -> real;
+
     /// Return the molality of an element (in molal).
     auto elementMolality(const StringOrIndex& symbol) const -> real;
 
