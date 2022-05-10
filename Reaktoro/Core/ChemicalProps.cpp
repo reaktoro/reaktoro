@@ -305,6 +305,31 @@ auto ChemicalProps::elementAmountsAmongSpecies(ArrayXlConstRef indices) const ->
     return (Ai * ni).array();
 }
 
+auto ChemicalProps::componentAmounts() const -> ArrayXr
+{
+    const auto A = msystem.formulaMatrix();
+    return (A * n.matrix()).array();
+}
+
+auto ChemicalProps::componentAmountsInPhase(StringOrIndex phase) const -> ArrayXr
+{
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto offset = msystem.phases().numSpeciesUntilPhase(iphase);
+    const auto length = msystem.phase(iphase).species().size();
+    const auto A = msystem.formulaMatrix();
+    const auto Ap = A.middleCols(offset, length);
+    const auto np = n.matrix().segment(offset, length);
+    return (Ap * np).array();
+}
+
+auto ChemicalProps::componentAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr
+{
+    const auto A = msystem.formulaMatrix();
+    const auto Ai = A(Eigen::all, indices);
+    const auto ni = n(indices).matrix();
+    return (Ai * ni).array();
+}
+
 auto ChemicalProps::speciesAmount(StringOrIndex species) const -> real
 {
     const auto ispecies = detail::resolveSpeciesIndex(msystem, species);
