@@ -16,8 +16,7 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // pybind11 includes
-#include <pybind11/pybind11.h>
-namespace py = pybind11;
+#include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
 #include "Class.hpp" // Replate with #include <Reaktoro/Module/Class.hpp>
