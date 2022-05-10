@@ -191,7 +191,7 @@ public:
     /// Scale the amounts of the species with given indices.
     /// @param scalar The scale factor
     /// @param indices The indices of the species
-    auto scaleSpeciesAmounts(real scalar, ArrayXlConstRef indices) -> void;
+    auto scaleSpeciesAmounts(real scalar, const Indices& indices) -> void;
 
     /// Scale the amounts of the species in a phase by a given factor.
     /// @param phase The name or index of the phase in the system.

@@ -219,7 +219,7 @@ auto ChemicalProps::chargeInPhase(StringOrIndex phase) const -> real
     return Azp * np;
 }
 
-auto ChemicalProps::chargeAmongSpecies(ArrayXlConstRef indices) const -> real
+auto ChemicalProps::chargeAmongSpecies(const Indices& indices) const -> real
 {
     const auto Az = msystem.formulaMatrixCharge();
     const auto Azi = Az.row(0)(indices);
@@ -246,7 +246,7 @@ auto ChemicalProps::elementAmountInPhase(StringOrIndex element, StringOrIndex ph
     return Aep * np;
 }
 
-auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real
+auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, const Indices& indices) const -> real
 {
     const auto ielement = detail::resolveElementIndex(msystem, element);
     const auto A = msystem.formulaMatrixElements();
@@ -272,7 +272,7 @@ auto ChemicalProps::elementMassInPhase(StringOrIndex element, StringOrIndex phas
     return amount * molarmass;
 }
 
-auto ChemicalProps::elementMassAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real
+auto ChemicalProps::elementMassAmongSpecies(StringOrIndex element, const Indices& indices) const -> real
 {
     const auto ielement = detail::resolveElementIndex(msystem, element);
     const auto molarmass = msystem.element(ielement).molarMass();
@@ -297,7 +297,7 @@ auto ChemicalProps::elementAmountsInPhase(StringOrIndex phase) const -> ArrayXr
     return (Ap * np).array();
 }
 
-auto ChemicalProps::elementAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr
+auto ChemicalProps::elementAmountsAmongSpecies(const Indices& indices) const -> ArrayXr
 {
     const auto A = msystem.formulaMatrixElements();
     const auto Ai = A(Eigen::all, indices);
@@ -322,7 +322,7 @@ auto ChemicalProps::componentAmountsInPhase(StringOrIndex phase) const -> ArrayX
     return (Ap * np).array();
 }
 
-auto ChemicalProps::componentAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr
+auto ChemicalProps::componentAmountsAmongSpecies(const Indices& indices) const -> ArrayXr
 {
     const auto A = msystem.formulaMatrix();
     const auto Ai = A(Eigen::all, indices);

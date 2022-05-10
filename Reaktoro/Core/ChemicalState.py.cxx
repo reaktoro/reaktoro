@@ -65,7 +65,7 @@ void exportChemicalState(py::module& m)
         .def("charge", &ChemicalState::charge)
 
         .def("scaleSpeciesAmounts", py::overload_cast<real>(&ChemicalState::scaleSpeciesAmounts))
-        .def("scaleSpeciesAmounts", py::overload_cast<real, ArrayXlConstRef>(&ChemicalState::scaleSpeciesAmounts))
+        .def("scaleSpeciesAmounts", py::overload_cast<real, const Indices&>(&ChemicalState::scaleSpeciesAmounts))
         .def("scaleSpeciesAmountsInPhase", &ChemicalState::scaleSpeciesAmountsInPhase)
 
         .def("scaleVolume", &ChemicalState::scaleVolume)

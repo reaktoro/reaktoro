@@ -528,24 +528,24 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( props.chargeInPhase(1) == Approx(z1) );
         CHECK( props.chargeInPhase("SomeGas") == Approx(z0) );
         CHECK( props.chargeInPhase("SomeSolid") == Approx(z1) );
-        CHECK( props.chargeAmongSpecies(ArrayXl{{0, 1}}) == Approx(z0) );
-        CHECK( props.chargeAmongSpecies(ArrayXl{{2}}) == Approx(z1) );
+        CHECK( props.chargeAmongSpecies({0, 1}) == Approx(z0) );
+        CHECK( props.chargeAmongSpecies({2}) == Approx(z1) );
 
         CHECK( props.elementAmounts().matrix().isApprox(be) );
         CHECK( props.elementAmountsInPhase(0).matrix().isApprox(be0) );
         CHECK( props.elementAmountsInPhase(1).matrix().isApprox(be1) );
         CHECK( props.elementAmountsInPhase("SomeGas").matrix().isApprox(be0) );
         CHECK( props.elementAmountsInPhase("SomeSolid").matrix().isApprox(be1) );
-        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{0, 1}}).matrix().isApprox(be0) );
-        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{2}}).matrix().isApprox(be1) );
+        CHECK( props.elementAmountsAmongSpecies({0, 1}).matrix().isApprox(be0) );
+        CHECK( props.elementAmountsAmongSpecies({2}).matrix().isApprox(be1) );
 
         CHECK( props.componentAmounts().matrix().isApprox(b) );
         CHECK( props.componentAmountsInPhase(0).matrix().isApprox(b0) );
         CHECK( props.componentAmountsInPhase(1).matrix().isApprox(b1) );
         CHECK( props.componentAmountsInPhase("SomeGas").matrix().isApprox(b0) );
         CHECK( props.componentAmountsInPhase("SomeSolid").matrix().isApprox(b1) );
-        CHECK( props.componentAmountsAmongSpecies(ArrayXl{{0, 1}}).matrix().isApprox(b0) );
-        CHECK( props.componentAmountsAmongSpecies(ArrayXl{{2}}).matrix().isApprox(b1) );
+        CHECK( props.componentAmountsAmongSpecies({0, 1}).matrix().isApprox(b0) );
+        CHECK( props.componentAmountsAmongSpecies({2}).matrix().isApprox(b1) );
 
         CHECK( props.elementAmount("H")  == Approx(b[idxElement("H")]) );
         CHECK( props.elementAmount("O")  == Approx(b[idxElement("O")]) );

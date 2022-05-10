@@ -112,7 +112,7 @@ public:
 
     /// Return the amount of electric charge among a group of species in the system (in mol).
     /// @param indices The indices of the species in the system.
-    auto chargeAmongSpecies(ArrayXlConstRef indices) const -> real;
+    auto chargeAmongSpecies(const Indices& indices) const -> real;
 
     /// Return the amount of an element in the system (in mol).
     /// @param element The symbol or index of the element in the system.
@@ -126,7 +126,7 @@ public:
     /// Return the amount of an element among a group of species in the system (in mol).
     /// @param element The symbol or index of the element in the system.
     /// @param indices The indices of the species in the system.
-    auto elementAmountAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real;
+    auto elementAmountAmongSpecies(StringOrIndex element, const Indices& indices) const -> real;
 
     /// Return the mass of an element in the system (in kg).
     /// @param element The symbol or index of the element in the system.
@@ -140,7 +140,7 @@ public:
     /// Return the mass of an element among a group of species in the system (in kg).
     /// @param element The symbol or index of the element in the system.
     /// @param indices The indices of the species in the system.
-    auto elementMassAmongSpecies(StringOrIndex element, ArrayXlConstRef indices) const -> real;
+    auto elementMassAmongSpecies(StringOrIndex element, const Indices& indices) const -> real;
 
     /// Return the amounts of the elements in the system (in mol).
     auto elementAmounts() const -> ArrayXr;
@@ -151,7 +151,7 @@ public:
 
     /// Return the amounts of the elements among a group of species in the system (in mol).
     /// @param indices The indices of the species in the system.
-    auto elementAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr;
+    auto elementAmountsAmongSpecies(const Indices& indices) const -> ArrayXr;
 
     /// Return the amounts of the conservative components (elements and charge) in the system (in mol).
     auto componentAmounts() const -> ArrayXr;
@@ -162,7 +162,7 @@ public:
 
     /// Return the amounts of the conservative components (elements and charge) among a group of species in the system (in mol).
     /// @param indices The indices of the species in the system.
-    auto componentAmountsAmongSpecies(ArrayXlConstRef indices) const -> ArrayXr;
+    auto componentAmountsAmongSpecies(const Indices& indices) const -> ArrayXr;
 
     /// Return the amount of a species in the system (in mol).
     /// @param species The name or index of the species in the system.

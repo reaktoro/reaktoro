@@ -214,7 +214,7 @@ struct ChemicalState::Impl
         n *= scalar;
     }
 
-    auto scaleSpeciesAmounts(double scalar, ArrayXlConstRef indices) -> void
+    auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
         n(indices) *= scalar;
@@ -563,7 +563,7 @@ auto ChemicalState::scaleSpeciesAmounts(real scalar) -> void
     pimpl->scaleSpeciesAmounts(scalar);
 }
 
-auto ChemicalState::scaleSpeciesAmounts(real scalar, ArrayXlConstRef indices) -> void
+auto ChemicalState::scaleSpeciesAmounts(real scalar, const Indices& indices) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar, indices);
 }
