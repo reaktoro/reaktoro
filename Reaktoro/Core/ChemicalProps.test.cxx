@@ -504,15 +504,20 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
 
         props.update(T, P, n);
 
+        const auto A  = system.formulaMatrix();
         const auto Ae = system.formulaMatrixElements();
         const auto Az = system.formulaMatrixCharge();
 
         const auto idxElement = [&](auto symbol) { return system.elements().index(symbol); };
         const auto idxSpecies = [&](auto name) { return system.species().index(name); };
 
-        const VectorXr b = Ae * n.matrix();                       // element amounts in the system
-        const VectorXr b0 = Ae.leftCols(2) * n.head(2).matrix();  // element amounts in phase 0: H2O(g) CO2(g)
-        const VectorXr b1 = Ae.rightCols(1) * n.tail(1).matrix(); // element amounts in phase 1: CaCO3(s)
+        const VectorXr b = A * n.matrix();                       // element and charge amounts in the system
+        const VectorXr b0 = A.leftCols(2) * n.head(2).matrix();  // element and charge amounts in phase 0: H2O(g) CO2(g)
+        const VectorXr b1 = A.rightCols(1) * n.tail(1).matrix(); // element and charge amounts in phase 1: CaCO3(s)
+
+        const VectorXr be = Ae * n.matrix();                       // element amounts in the system
+        const VectorXr be0 = Ae.leftCols(2) * n.head(2).matrix();  // element amounts in phase 0: H2O(g) CO2(g)
+        const VectorXr be1 = Ae.rightCols(1) * n.tail(1).matrix(); // element amounts in phase 1: CaCO3(s)
 
         const real z  = dot(Az.row(0), n.matrix());                       // charge in the system
         const real z0 = dot(Az.row(0).leftCols(2), n.head(2).matrix());   // charge in phase 0: H2O(g) CO2(g)
@@ -526,13 +531,21 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( props.chargeAmongSpecies(ArrayXl{{0, 1}}) == Approx(z0) );
         CHECK( props.chargeAmongSpecies(ArrayXl{{2}}) == Approx(z1) );
 
-        CHECK( props.elementAmounts().matrix().isApprox(b) );
-        CHECK( props.elementAmountsInPhase(0).matrix().isApprox(b0) );
-        CHECK( props.elementAmountsInPhase(1).matrix().isApprox(b1) );
-        CHECK( props.elementAmountsInPhase("SomeGas").matrix().isApprox(b0) );
-        CHECK( props.elementAmountsInPhase("SomeSolid").matrix().isApprox(b1) );
-        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{0, 1}}).matrix().isApprox(b0) );
-        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{2}}).matrix().isApprox(b1) );
+        CHECK( props.elementAmounts().matrix().isApprox(be) );
+        CHECK( props.elementAmountsInPhase(0).matrix().isApprox(be0) );
+        CHECK( props.elementAmountsInPhase(1).matrix().isApprox(be1) );
+        CHECK( props.elementAmountsInPhase("SomeGas").matrix().isApprox(be0) );
+        CHECK( props.elementAmountsInPhase("SomeSolid").matrix().isApprox(be1) );
+        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{0, 1}}).matrix().isApprox(be0) );
+        CHECK( props.elementAmountsAmongSpecies(ArrayXl{{2}}).matrix().isApprox(be1) );
+
+        CHECK( props.componentAmounts().matrix().isApprox(b) );
+        CHECK( props.componentAmountsInPhase(0).matrix().isApprox(b0) );
+        CHECK( props.componentAmountsInPhase(1).matrix().isApprox(b1) );
+        CHECK( props.componentAmountsInPhase("SomeGas").matrix().isApprox(b0) );
+        CHECK( props.componentAmountsInPhase("SomeSolid").matrix().isApprox(b1) );
+        CHECK( props.componentAmountsAmongSpecies(ArrayXl{{0, 1}}).matrix().isApprox(b0) );
+        CHECK( props.componentAmountsAmongSpecies(ArrayXl{{2}}).matrix().isApprox(b1) );
 
         CHECK( props.elementAmount("H")  == Approx(b[idxElement("H")]) );
         CHECK( props.elementAmount("O")  == Approx(b[idxElement("O")]) );

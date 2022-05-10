@@ -171,7 +171,7 @@ public:
     /// @param species The name or index of the species.
     auto speciesMass(const StringOrIndex& species) const -> real;
 
-    /// Return the amounts of the elements and charge in the chemical state (in mol).
+    /// Return the amounts of the conservative components (elements and charge) in the chemical state (in mol).
     auto componentAmounts() const -> ArrayXr;
 
     /// Return the amounts of the elements in the chemical state (in mol).
