@@ -53,6 +53,25 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
     return equilibrate(state, restrictions, options, b0);
 }
 
+auto equilibrate(ChemicalState& state, ArrayXdConstRef b0) -> EquilibriumResult
+{
+    EquilibriumOptions options;
+    EquilibriumRestrictions restrictions(state.system());
+    return equilibrate(state, restrictions, options, b0);
+}
+
+auto equilibrate(ChemicalState& state, const EquilibriumOptions& options, ArrayXdConstRef b0) -> EquilibriumResult
+{
+    EquilibriumRestrictions restrictions(state.system());
+    return equilibrate(state, restrictions, options, b0);
+}
+
+auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult
+{
+    EquilibriumOptions options;
+    return equilibrate(state, restrictions, options, b0);
+}
+
 auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictions, const EquilibriumOptions& options, ArrayXdConstRef b0) -> EquilibriumResult
 {
     EquilibriumOptions opts(options);

@@ -33,5 +33,9 @@ void exportEquilibriumUtils(py::module& m)
     m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumOptions&>(equilibrate));
     m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&>(equilibrate));
     m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&, const EquilibriumOptions&>(equilibrate));
+
+    m.def("equilibrate", py::overload_cast<ChemicalState&, ArrayXdConstRef>(equilibrate));
+    m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumOptions&, ArrayXdConstRef>(equilibrate));
+    m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&, ArrayXdConstRef>(equilibrate));
     m.def("equilibrate", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&, const EquilibriumOptions&, ArrayXdConstRef>(equilibrate));
 }
