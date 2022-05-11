@@ -17,6 +17,15 @@
 
 #pragma once
 
+//----------------------------------------------------------------------------------------------------------------
+// Add defines above to allow pybind11 packages produced with different compilers/versions to be used together.
+// https://github.com/pybind/pybind11/pull/2602
+//----------------------------------------------------------------------------------------------------------------
+#define PYBIND11_COMPILER_TYPE ""
+#define PYBIND11_STDLIB ""
+#define PYBIND11_BUILD_ABI ""
+//----------------------------------------------------------------------------------------------------------------
+
 // pybind11 includes
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
