@@ -113,15 +113,12 @@ struct EquilibriumSolver::Impl
         // Initialize the names of the primal and dual variables
         if(options.optima.output.active)
         {
-            // Use `n` instead of `x` to name the variables
-            options.optima.output.xprefix = "n";
-
             // Define some auxiliary references to the variables names
             auto& xnames = options.optima.output.xnames;
 
             // Initialize the names of the variables corresponding to the species
             for(auto species : system.species())
-                xnames.push_back(species.name());
+                xnames.push_back("n[" + species.name() + "]");
 
             // Initialize the names of the variables corresponding to the implicit titrants
             for(auto titrant : specs.namesTitrantsImplicit())
