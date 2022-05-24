@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
+// Copyright © 2014-2022 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -27,17 +27,20 @@ namespace Reaktoro {
 /// A type used to describe the site of a complexation surface.
 class ComplexationSurfaceSite
 {
+
 public:
     /// Default constructor of ComplexationSurfaceSite class
     ComplexationSurfaceSite() = default;
 
     /// Copy constructor of ComplexationSurfaceSite class
     ComplexationSurfaceSite(const ComplexationSurfaceSite& other) = default;
+
     /// Copy assigment operator of ComplexationSurfaceSite class
     ComplexationSurfaceSite& operator=(const ComplexationSurfaceSite& other) = default;
 
     /// Move constructor of ComplexationSurfaceSite class
     ComplexationSurfaceSite(ComplexationSurfaceSite&& other) = default;
+
     /// Move assigment operator of ComplexationSurfaceSite class
     ComplexationSurfaceSite& operator=(ComplexationSurfaceSite&& other) = default;
 
@@ -62,10 +65,10 @@ public:
     /// Return the amount of the surface site (in mol).
     auto amount() const -> real;
 
-    // Return sorption species.
+    // Return the sorption species.
     auto sorptionSpecies() const -> SpeciesList;
 
-    // Return indices of the sorption species.
+    // Return the indices of the sorption species.
     auto indicesSorptionSpecies() const -> Indices;
 
     // Set the name of the surface site.
@@ -88,19 +91,19 @@ public:
 
 private:
 
-    /// The site amount (mol)
+    /// The site amount (mol).
     real site_amount;
 
-    /// The site density (sites/nm2, 1e9*sites/m2)
+    /// The site density (sites/nm2, 1e9*sites/m2).
     real site_density;
 
-    /// The name of the surface site
+    /// The name of the surface site.
     String site_name;
 
-    /// The name of the surface
+    /// The name of the surface.
     String surface_name;
 
-    /// The tag of the surface site
+    /// The tag of the surface site.
     String site_tag;
 
     /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg
