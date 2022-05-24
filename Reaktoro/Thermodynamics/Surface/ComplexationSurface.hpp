@@ -41,7 +41,8 @@ struct ComplexationSurfaceState
 
         // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
         const auto y = sigma/(0.1174*sqrt(I));
-        psi = 2*R*T/F*log(y + sqrt(1 + y*y));
+        const auto arcsinhy = log(y + sqrt(1 + y*y));
+        psi = 2*R*T*arcsinhy/F;
     }
 
     /// The temperature of the solute/gas mixture on the surface (in K).
@@ -123,9 +124,6 @@ public:
     /// Return equivalent numbers of surface complexation species.
     auto equivalentsNumbers() -> ArrayXd;
 
-    /// Return equivalent number of provided species.
-    auto equivalentsNumber(const Species& species) -> real;
-
     /// Return the mole fractions of the surface complexation species.
     auto moleFractions() const -> ArrayXr;
 
@@ -157,10 +155,10 @@ public:
     auto setMineral(const String& mineral) -> ComplexationSurface&;
 
     // Set the specific surface area (in m2/kg).
-    auto setSpecificSurfaceArea(double value, String unit = "m2/kg") -> ComplexationSurface&;
+    auto setSpecificSurfaceArea(double value, const String& unit = "m2/kg") -> ComplexationSurface&;
 
     // Set the mass of the solid (in kg).
-    auto setMass(double value, String unit = "kg") -> ComplexationSurface&;
+    auto setMass(double value, const String& unit = "kg") -> ComplexationSurface&;
 
     // Add new site (with a given site name and tag) to the surface.
     auto addSite(const String& site, const String& site_tag) -> ComplexationSurfaceSite&;
@@ -182,7 +180,7 @@ private:
     /// The surface name.
     String surface_name;
 
-    /// THe mineral species.
+    /// The mineral species.
     Species mineral;
 
     /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg

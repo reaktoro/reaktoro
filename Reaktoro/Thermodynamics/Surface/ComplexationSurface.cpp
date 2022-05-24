@@ -36,7 +36,7 @@ ComplexationSurface::ComplexationSurface(const String& name)
 ComplexationSurface::ComplexationSurface(const SpeciesList& species)
 {
     // Initialize the surface name from the given species list
-    if(species.size() > 0)
+    if(!species.empty())
     {
         // Get the name of the first species
         auto full_name = species[0].name();
@@ -48,6 +48,13 @@ ComplexationSurface::ComplexationSurface(const SpeciesList& species)
     addSurfaceSpecies(species);
 }
 
+auto ComplexationSurface::clone() const -> ComplexationSurface
+{
+    ComplexationSurface copy = *this;
+    return copy;
+}
+
+// Initialize charges for the surface complexation species.
 auto ComplexationSurface::initializeCharges() -> void
 {
     const auto charges = vectorize(species_list, RKT_LAMBDA(x, x.charge()));
@@ -57,52 +64,7 @@ auto ComplexationSurface::initializeCharges() -> void
 // Initialize equivalence numbers (the charge of ionic bond) for the surface complexation species.
 auto ComplexationSurface::initializeEquivalentNumbers() -> void
 {
-    // The number of sorption species on the surface
-    const auto num_species = species_list.size();
-
-    // Charges of the sorption species on the surface complexation
-    ze = ArrayXd::Zero(species_list.size());
-
-    // Initialize charges of the sorption species on the surface complexation site
-    for(auto i = 0; i < num_species; ++i)
-        ze[i] = equivalentsNumber(species_list[i]);
-
-    std::cout << "ze (via equivalence logic) = " << ze.transpose() << std::endl;
-
-    ze = abs(z - ArrayXd::Ones(species_list.size()));
-    std::cout << "ze (charge - 1) = " << ze.transpose() << std::endl;
-
-//    ze = abs(z);
-//    std::cout << "ze (charge - 1) = " << ze.transpose() << std::endl;
-}
-
-/// Return equivalence number of provided species.
-auto ComplexationSurface::equivalentsNumber(const Species& species) -> real
-{
-    // Run through the elements of the current species and return the coefficient of the exchanger
-    for(auto [element, coeff] : species.elements())
-    {
-//        std::cout << "element = " << element.symbol() << std::endl;
-//        std::cout << "coeff = "<< coeff << std::endl;
-        // Loop over the names of the existing sites to find a matching one
-        for(auto [key, site] : surface_sites)
-        {
-//            std::cout << "key = " << key << std::endl;
-//            std::cout << "site = " << site.name() << std::endl;
-            if(element.symbol() == site.name())
-                return coeff;
-        }
-    }
-
-    // If none of the elements contained in species coincide with the name of the sites
-    errorif(true, "Could not get information about the exchanger equivalents number. "
-                  "Ensure the surface complexation phase contains correct species")
-}
-
-auto ComplexationSurface::clone() const -> ComplexationSurface
-{
-    ComplexationSurface copy = *this;
-    return copy;
+    ze = ArrayXd::Ones(species_list.size());
 }
 
 // Return the surface complexation name.
@@ -232,7 +194,7 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
            (surface_sites.find(tag) == surface_sites.end())) // if the site with 'tag' tag doesn't exist
         {
             // Add a new site indicated with a site_tag "_s" (PHREEQC convention)
-            site = addSite(surface_name + tag, tag);
+            addSite(surface_name + tag, tag);
         }
         // Add the species to the list of sorption species of a site with a tag 'tag'
         surface_sites[tag].addSorptionSpecies(s, index++);
@@ -260,14 +222,14 @@ auto ComplexationSurface::setMineral(const String& mineral_name) -> Complexation
 }
 
 // Set the specific surface site surface area (in m2/kg).
-auto ComplexationSurface::setSpecificSurfaceArea(double value, String unit) -> ComplexationSurface&
+auto ComplexationSurface::setSpecificSurfaceArea(double value, const String& unit) -> ComplexationSurface&
 {
     ssa = units::convert(value, unit, "m2/kg");
     return *this;
 }
 
 // Set the mass of the solid (in kg).
-auto ComplexationSurface::setMass(double value, String unit) -> ComplexationSurface&
+auto ComplexationSurface::setMass(double value, const String& unit) -> ComplexationSurface&
 {
     surface_mass = units::convert(value, unit, "kg");
     return *this;
@@ -333,8 +295,6 @@ auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::o
     {
         std::cout << "site: " << site.name() << std::endl;
         std::cout << "\t amount       : " << site.amount() << std::endl;
-        std::cout << "\t ssa          : " << site.specificSurfaceArea() << std::endl;
-        std::cout << "\t mass         : " << site.mass() << std::endl;
         std::cout << "\t # of species : " << site.sorptionSpecies().size() << std::endl;
         std::cout << "\t :: index :: Species" << std::endl;
 
