@@ -74,8 +74,8 @@ int main()
 
     // Define surface complexation phase and set an activity model
     SurfaceComplexationPhase complexation_phase_Hfo(list_str);
-    complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params));
-    //complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationGainesThomas(params));
+    //complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params));
+    complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationGainesThomas(params));
 
     std::cout << surface_Hfo << std::endl;
 
