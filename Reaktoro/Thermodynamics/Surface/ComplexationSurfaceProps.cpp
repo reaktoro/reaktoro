@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
+// Copyright © 2014-2022x Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -140,7 +140,7 @@ struct ComplexationSurfaceProps::Impl
         {
             // Export aqueous mixture state via `extra` data member
             const auto& state = std::any_cast<AqueousMixtureState>(extra["DiffusiveLayerState"]);
-            surface_state.potential(state.Ie);
+            surface_state.updatePotential(state.Ie);
 
             // Exit the function without evaluating the next if
             return;
@@ -149,7 +149,7 @@ struct ComplexationSurfaceProps::Impl
         {
             // Export aqueous mixture state via `extra` data member
             const auto& state = std::any_cast<AqueousMixtureState>(extra["AqueousMixtureState"]);
-            surface_state.potential(state.Ie);
+            surface_state.updatePotential(state.Ie);
         }
     }
 
@@ -230,20 +230,27 @@ struct ComplexationSurfaceProps::Impl
         // Auxiliary constants
         const auto F = faradayConstant;
 
-        return F * Z / surface.specificSurfaceArea() / surface.mass();
+        return F*Z/surface.specificSurfaceArea()/surface.mass();
     }
 
     /// Return the surface complexation potential for given ionic strength of the neighboring phase
-    auto potential(real I, real Z, real sigma) const -> real
+    auto potential(real I, real sigma) const -> real
     {
         // Auxiliary variables
         const auto F = faradayConstant;
         const auto R = universalGasConstant;
+        const auto T = surface_state.T;
 
-        // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
+        // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2),
+        // y = sigma/(0.1174*sqrt(I)) = sinh(F*potential/R/T/2), and
         const auto y = sigma/(0.1174*sqrt(I));
-        const auto lna = log(y + sqrt(1 + y*y));
-        return 2*R*surface_state.T*lna/F;
+
+        // Approximation of the arcsinh
+        const auto arcsinhy = log(y + sqrt(1 + y*y));
+
+        // arcsinh(y) = F*potential/R/T/2
+        // potential = 2*R*T*arcsinh(y)/F
+        return 2*R*T*arcsinhy/F;
     }
 };
 
@@ -342,9 +349,9 @@ auto ComplexationSurfaceProps::surfaceChargeDensity(real Z) const -> real
     return pimpl->surfaceChargeDensity(Z);
 }
 
-auto ComplexationSurfaceProps::potential(real I, real Z, real sigma) const -> real
+auto ComplexationSurfaceProps::potential(real I, real sigma) const -> real
 {
-    return pimpl->potential(I, Z, sigma);
+    return pimpl->potential(I, sigma);
 }
 
 auto ComplexationSurfaceProps::phase() const -> const Phase&
@@ -377,6 +384,7 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     const auto ns = props.speciesAmounts();
     const auto x = props.speciesFractions();
     const auto log10a = props.speciesActivitiesLg();
+    const auto z = props.complexationSurface().charges();
 
     // Auxiliary variables
     const auto F = faradayConstant;
@@ -386,28 +394,49 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     assert(species.size() == ns.size());
     assert(elements.size() == ne.size());
 
+    auto I = 0.0;
     // Export aqueous mixture state via `extra` data member
-    const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState"));
-    const auto I = aqstate.Ie;
+    if (props.extra().at("DiffusiveLayerState").has_value())
+    {
+        const auto &aqstate = std::any_cast<AqueousMixtureState>(props.extra().at("DiffusiveLayerState"));
+        I = aqstate.Ie;
+    }
+    else if (props.extra().at("AqueousMixtureState").has_value())
+    {
+        const auto &aqstate = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState"));
+        I = aqstate.Ie;
+    }
 
     const auto T = props.complexationSurfaceState().T;
     const auto Z = props.surfaceCharge();
     const auto sigma = props.surfaceChargeDensity(Z);
-    const auto psi = props.potential(I, Z, sigma);
-    // psi = 2 * lna_{Hfo} * T * R / F
-    const auto lna_surface = props.speciesActivityLg(props.complexationSurface().sites()["_s"].name() + "OH");
-    const auto psi_ = 2 * T * R * lna_surface / F;
+    const auto psi = props.potential(I, sigma);
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ ":: Z     (charge)"        , str(props.surfaceCharge()), "eq" });
     table.add_row({ ":: sigma (charge density)", str(props.surfaceChargeDensity(Z)), "C/m2" });
     table.add_row({ ":: psi   (potential) "    , str(psi), "Volt" });
-    table.add_row({ ":: -F*psi/(R*T)"          , str(- F * psi / R / props.complexationSurfaceState().T), "" });
-    table.add_row({ ":: exp(-F*psi/(R*T))"     , str(exp(- F * psi / R / props.complexationSurfaceState().T)), "" });
+    table.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F * psi / R / props.complexationSurfaceState().T), "" });
+    table.add_row({ ":: :: exp(-F*psi/(R*T))"  , str(exp(- F * psi / R / props.complexationSurfaceState().T)), "" });
     table.add_row({ ":: As    (specific area)" , str(props.complexationSurfaceState().As), "m2/kg" });
     table.add_row({ ":: mass  (mass)"          , str(props.complexationSurfaceState().mass), "kg" });
 
+//    for(const auto& [tag, site] : props.complexationSurface().sites())
+//    {
+//        auto indx = site.indicesSorptionSpecies();
+//        auto charge = (ns(indx) * z(indx)).sum();
+//
+//        std::cout << "site: " << site.name() << std::endl;
+//        std::cout << "\t amount       : " << site.amount() << std::endl;
+//        std::cout << "\t Z            : " << charge << std::endl;
+//        std::cout << "\t # of species : " << site.sorptionSpecies().size() << std::endl;
+//        std::cout << "\t :: index :: Species    :: Amounts" << std::endl;
+//
+//        for(auto i : indx)
+//            std::cout << "\t :: " << i << "     :: " << props.complexationSurface().species()[i].name() << "\t " << ns[i]<< std::endl;
+//
+//    }
     table.add_row({ "Element Amounts:" });
     for(auto i = 0; i < elements.size(); ++i)
         table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "mole" });
@@ -420,18 +449,6 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     table.add_row({ "Activity Coefficients (log base 10):" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].repr(), strfix(log10a[i]), "" });
-
-    // TODO: figure out how surface complexation species are considered and how is molality calculated?
-    //  Site amount:
-    // 	  2.500e-05  moles
-    //	                                   Mole                     Log
-    //	Species               Moles    Fraction    Molality    Molality
-    //
-    //	Hfo_sOH           1.147e-05       0.459   1.147e-05      -4.940
-    //	Hfo_sOHCa+2       1.005e-05       0.402   1.005e-05      -4.998
-    //	Hfo_sOH2+         1.754e-06       0.070   1.754e-06      -5.756
-    //	Hfo_sO-           1.719e-06       0.069   1.719e-06      -5.765
-    //	Hfo_sOCd+         9.469e-10       0.000   9.469e-10      -9.024
 
     auto i = 0;
     for(auto& row : table)
