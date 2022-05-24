@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
+// Copyright © 2014-2022 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ ComplexationSurface::ComplexationSurface(const SpeciesList& species)
     {
         // Get the name of the first species
         auto full_name = species[0].name();
-        // Take the substring of the full name till the '_' symbol (PHREEQC convention)
+        // Assign a surface name with a substring of the full name till the '_' symbol (PHREEQC convention)
         surface_name = species[0].name().substr(0, full_name.find("_"));
     }
 
@@ -50,21 +50,13 @@ ComplexationSurface::ComplexationSurface(const SpeciesList& species)
 
 auto ComplexationSurface::initializeCharges() -> void
 {
-    // The number of sorption species on the surface site
-    const auto num_species = species_list.size();
-
-    // Charges of the sorption species on the surface complexation site
-    z = ArrayXd::Zero(species_list.size());
-
-    // Initialize charges of the sorption species on the surface complexation site
-    for(int i = 0; i < num_species; ++i)
-        z[i] = species_list[i].charge();
+    const auto charges = vectorize(species_list, RKT_LAMBDA(x, x.charge()));
+    z = ArrayXd::Map(charges.data(), charges.size());
 }
 
 // Initialize equivalence numbers (the charge of ionic bond) for the surface complexation species.
 auto ComplexationSurface::initializeEquivalentNumbers() -> void
 {
-    // TODO: figure out the equivalence number for Hfo_sOH, is it 0 or 1.
     // The number of sorption species on the surface
     const auto num_species = species_list.size();
 
@@ -73,15 +65,19 @@ auto ComplexationSurface::initializeEquivalentNumbers() -> void
 
     // Initialize charges of the sorption species on the surface complexation site
     for(auto i = 0; i < num_species; ++i)
-        ze[i] = exchangerEquivalentsNumber(species_list[i]);
+        ze[i] = equivalentsNumber(species_list[i]);
 
-    ze = abs(z);
+    std::cout << "ze (via equivalence logic) = " << ze.transpose() << std::endl;
 
-    std::cout << "ze = " << ze.transpose() << std::endl;
+    ze = abs(z - ArrayXd::Ones(species_list.size()));
+    std::cout << "ze (charge - 1) = " << ze.transpose() << std::endl;
+
+//    ze = abs(z);
+//    std::cout << "ze (charge - 1) = " << ze.transpose() << std::endl;
 }
 
 /// Return equivalence number of provided species.
-auto ComplexationSurface::exchangerEquivalentsNumber(const Species& species) -> real
+auto ComplexationSurface::equivalentsNumber(const Species& species) -> real
 {
     // Run through the elements of the current species and return the coefficient of the exchanger
     for(auto [element, coeff] : species.elements())
@@ -109,26 +105,31 @@ auto ComplexationSurface::clone() const -> ComplexationSurface
     return copy;
 }
 
+// Return the surface complexation name.
 auto ComplexationSurface::name() const -> String
 {
     return surface_name;
 }
 
+// Return the potential of the surface complexation.
 auto ComplexationSurface::potential() const -> real
 {
     return state().psi;
 }
 
+// Return species of the surface complexation with a given index.
 auto ComplexationSurface::species(Index idx) const -> const Species&
 {
     return species_list[idx];
 }
 
+// Return species of the surface complexation.
 auto ComplexationSurface::species() const -> const SpeciesList&
 {
     return species_list;
 }
 
+// Return charges for the surface complexation species.
 auto ComplexationSurface::charges() -> ArrayXd
 {
     return z;
@@ -147,11 +148,9 @@ auto ComplexationSurface::moleFractions() const -> ArrayXr
 }
 
 /// Return the complexation surface charge density.
-auto ComplexationSurface::surfaceChargeDensity(ArrayXrConstRef x, ArrayXrConstRef z) const -> real {
-    // Auxiliary constants
-    const auto F = faradayConstant;
-
-    return F * (z*x).sum() / (ssa*surface_mass);
+auto ComplexationSurface::surfaceChargeDensity(real Z) const -> real
+{
+    return faradayConstant*Z/(ssa*surface_mass);
 }
 
 /// Return the complexation surface charge.
@@ -166,7 +165,7 @@ auto ComplexationSurface::specificSurfaceArea() const -> real
     return ssa;
 }
 
-/// Return the mass.
+/// Return the surface mass.
 auto ComplexationSurface::mass() const -> real
 {
     return surface_mass;
@@ -178,6 +177,7 @@ auto ComplexationSurface::sites() const -> std::map<std::string, ComplexationSur
     return surface_sites;
 }
 
+/// Return complexation surface state updated for the figen temperature, pressure, and fractions.
 auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceState
 {
     surface_state.T = T;
@@ -187,29 +187,27 @@ auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> Complexati
     surface_state.mass = mass();
     surface_state.z = charges();
     surface_state.Z = surfaceCharge(x, surface_state.z);
-    surface_state.sigma = surfaceChargeDensity(x, surface_state.z);
+    surface_state.sigma = surfaceChargeDensity(surface_state.Z);
 
     return surface_state;
 }
 
+/// Return complexation surface state.
 auto ComplexationSurface::state() const -> ComplexationSurfaceState
 {
     return surface_state;
 }
 
+/// Add list of species forming as the result of sorption on complexation surface.
 auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> ComplexationSurface&
 {
     // Initialize surface's species list
     species_list = species;
 
-    std::cout << "Species of ComplexationSurface:" << std::endl;
-    for (auto s : species)
-        std::cout << s.name() << " ";
-    std::cout << std::endl;
-
     // Initialize the list of surface sites
     auto site = ComplexationSurfaceSite();
 
+    // Auxiliary variables
     Index index = 0;
     String tag;
 
@@ -235,25 +233,26 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
         {
             // Add a new site indicated with a site_tag "_s" (PHREEQC convention)
             site = addSite(surface_name + tag, tag);
-            sites_number++;
         }
         // Add the species to the list of sorption species of a site with a tag 'tag'
         surface_sites[tag].addSorptionSpecies(s, index++);
     }
 
-    // Initialize charges and equivalents
+    // Initialize charges and equivalent numbers
     initializeCharges();
     initializeEquivalentNumbers();
 
     return *this;
 }
 
+/// Set the name of the surface.
 auto ComplexationSurface::setName(const String& name) -> ComplexationSurface&
 {
     surface_name = name;
     return *this;
 }
 
+// Set the mineral associated with the complexation surface.
 auto ComplexationSurface::setMineral(const String& mineral_name) -> ComplexationSurface&
 {
     mineral = Species(mineral_name);
@@ -274,25 +273,28 @@ auto ComplexationSurface::setMass(double value, String unit) -> ComplexationSurf
     return *this;
 }
 
+// Add new site (with a given site name and tag) to the surface.
 auto ComplexationSurface::addSite(const String& site_name, const String& site_tag) -> ComplexationSurfaceSite&
 {
+    // Check that provided site name contains the site tag
     error(site_name.find(site_tag) == std::string::npos,
           "Provided site name " + site_name + " doesn't contain a specified site tag " + site_tag);
 
-    // Check if no site with the tag `site_tag` exist, add the site
+    // If no site with the tag `site_tag` exist, add the site
     if(surface_sites.find(site_tag) == surface_sites.end())
     {
         // Create a new site with a given site name and tag
         auto site = ComplexationSurfaceSite(site_name, site_tag);
         site.setSurfaceName(surface_name);
         surface_sites[site_tag] = site;
-        site_tags.emplace_back(site_tag);
     }
     return surface_sites[site_tag];
 }
 
+// Add the complexation surface site
 auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> ComplexationSurfaceSite&
 {
+    // Fetch the site tag and name from the given site object
     auto site_tag = site.tag();
     auto site_name = site.name();
 
@@ -308,8 +310,6 @@ auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> Comple
         surface_sites[site_tag] = site;
         // Initialize the name of the surface during the addition of the site
         surface_sites[site_tag].setSurfaceName(surface_name);
-        // Store the site_tag in the list of the tags
-        site_tags.emplace_back(site_tag);
     }
 
     return surface_sites[site_tag];
@@ -340,7 +340,6 @@ auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::o
 
         for(auto i : site.indicesSorptionSpecies())
             std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << std::endl;
-
     }
     return out;
 }
