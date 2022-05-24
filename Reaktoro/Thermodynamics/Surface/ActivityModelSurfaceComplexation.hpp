@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2021 Allan Leal
+// Copyright © 2014-2022 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -31,16 +31,25 @@ struct ActivityModelSurfaceComplexationParams
     ComplexationSurface surface;
 };
 
-/// The parameters in the Diffuse Double Layer (DDL) model for the diffusive double layer solution between complexation
+// The parameters in the Diffuse Double Layer (DDL) model for the diffusive double layer solution between complexation
 /// surface and aqueous solution.
 /// @ingroup ActivityModels
-struct ActivityModelSurfaceComplexationDDLParams
+struct ActivityModelDDLParams
 {
     /// The default value of the enrichment factor in the Donnan pore space.
-    real enrichment_factor_dll = 1.0;
+    real enr_dll = 1e+0; // TODO: influence the results quite a lot, figure out why
+    // (e.g., enr = 1e-2, puts all the amounts to the DDL species)
 
     /// The diffusive double layer thickness.
     real thickness = 1e-8;
+};
+
+/// The parameters in the Diffuse Double Layer (DDL) model for the diffusive double layer solution between complexation
+/// surface and aqueous solution.
+/// @ingroup ActivityModels
+struct ActivityModelDDLDonnanParams
+{
+    ActivityModelDDLParams ddl;
 
     /// The Debye length of the diffusive double layer.
     real debye_lengths = 1.0;
@@ -50,40 +59,54 @@ struct ActivityModelSurfaceComplexationDDLParams
 
     /// The viscosity.
     real viscosity = 1.0;
-
-    /// The complexation surface.
-    ComplexationSurface surface;
 };
 
 /// Return the activity model for surface complexation assuming not encountering electrostatic effects.
 /// @ingroup ActivityModels
 auto ActivityModelSurfaceComplexationNoDDL(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
 
+/// Return the activity model for surface complexation encountering electrostatic effects with the Diffuse Double Layer
+///// (DDL).
+/// @ingroup ActivityModels
+auto ActivityModelSurfaceComplexationWithDDL(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
+
 /// Return the activity model for surface complexation assuming not encountering electrostatic effects.
 /// @ingroup ActivityModels
 auto ActivityModelSurfaceComplexationGainesThomas(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
 
-/// Return the activity model for surface complexation encountering electrostatic effects with the Diffuse Double Layer
-/// (DDL) and assuming default parameters for it.
+/// Return the activity model for the Diffuse Double Layer (DDL) and assuming default parameters for it.
 /// @ingroup ActivityModels
-auto ActivityModelSurfaceComplexationDDL() -> ActivityModelGenerator;
+auto ActivityModelDDL() -> ActivityModelGenerator;
 
-/// Return the activity model for surface complexation encountering electrostatic effects with the Diffuse Double Layer
-/// (DDL) and providing parameters of it.
+/// Return the activity model for the Diffuse Double Layer (DDL) and providing parameters of it.
 /// @ingroup ActivityModels
-auto ActivityModelSurfaceComplexationDDL(ActivityModelSurfaceComplexationDDLParams params) -> ActivityModelGenerator;
+auto ActivityModelDDL(ActivityModelDDLParams params) -> ActivityModelGenerator;
 
 //=====================================================================================================================
 /// @page PageActivityModelSurfaceComplexationDDL Diffuse Double Layer (DDL) activity model
 ///
-/// The Diffuse Double Layer (DDL) model (from Dzombak & Morel, 1990), the Gouy-Chapman Diffuse Layer
-/// Apparent equilibrium constant Kapp (the value of which is dependent on the surface charge) is calculated with
-/// a *coulombic correction* used by Dzombak and Morel (1990), i.e.,
-/// K_{app} = K_{int} \exp{\Delta Z F \Psi /RT},
-/// where \Delta Z is the change in the charge of the surface species due to
-/// sorption reactions, \Psi is the surface potential in volts, F is the Faraday
-/// constant (96,485 C/mol), R is the molar gas constant (8.314 j/mol.K)
+/// The Diffuse Double Layer (DDL) model (from Dzombak & Morel, 1990), the Gouy-Chapman Diffuse Layer.
+/// Apparent equilibrium constant @eq{K_{app}} (the value of which is dependent on the surface charge) is calculated
+/// with a *coulombic correction* used by Dzombak and Morel (1990), i.e.,
+/// @eqc{K_{app} = K_{int}\exp{\dfrac{{\Delta}ZF\Psi}{RT}}, }
+/// where @eq{\Delta Z} is the change in the charge of the surface species due to
+/// sorption reactions, @eq{\Psi} is the surface potential in volts, F is the Faraday
+/// constant (96,485 C/mol), R is the molar gas constant (8.314 J/(mol*K))
 /// and T is the absolute temperature in K.
+///
+/// The surface potential @eq{\Psi} (volt) is defined via the charge density @eq{\sigma} (C/m2) via the relation
+/// @eqc{\sigma = 0.1174 I^{1⁄2} \sinh(\dfrac{F\Psi}{2RT}),}
+/// where \eq{\arcsinh(y) = \ln(y+(y^2+1)^{1⁄2})} and
+/// @eq{I} is the ionic strength.
+///
+/// The charge density of the surface is denoted by @eqc{\sigma} (C/m2) and defined as
+/// @eqc{\sigma = \dfrac{FZ}{A_s m},}
+/// where
+/// @eq{F} is the Faraday constant (96,485 C/mol),
+/// @eq{Z = \sum_{j}x_{j}z_{j}}}} is the surface charge (eq), defined as sum of the species molalities multiplied
+/// by the the corresponding charge,
+/// @eq{A_s} is specific surface area (m2/kg),
+/// @eq{m} is the solid concentration in (kg).
 ///
 //=====================================================================================================================
 
