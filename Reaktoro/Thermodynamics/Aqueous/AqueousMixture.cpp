@@ -229,6 +229,7 @@ struct AqueousMixture::Impl
         state.P = P;
         state.rho = rho(T, P);
         state.epsilon = epsilon(T, P);
+        state.z  = z;
         state.m  = molalities(x);
         state.ms = stoichiometricMolalities(state.m);
         state.Ie = effectiveIonicStrength(state.m);

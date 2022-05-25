@@ -55,8 +55,10 @@ auto indexAqueousPhase(const ChemicalSystem& system) -> Index
         "created will correspond to the first aqueous phase found.");
     const auto idx = system.phases().findWithAggregateState(AggregateState::Aqueous);
     error(idx >= system.phases().size(),
-        "Could not create an AqueousProps object because there is no "
-        "phase in the system with aggregate state value AggregateState::Aqueous.");
+        "Could not find the phase with the aggregate state AggregateState::Aqueous.");
+    const auto idx_name = system.phases().findWithName("AqueousPhase");
+    error(idx_name >= system.phases().size(),
+          "Could not find the phase AqueousPhase.");
     return idx;
 }
 
@@ -223,6 +225,7 @@ struct AqueousProps::Impl
         aqstate.Is = NaN;
         aqstate.m.setConstant(size, NaN);
         aqstate.ms.setConstant(size, NaN);
+        aqstate.z.setConstant(size, NaN);
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
@@ -328,6 +331,11 @@ struct AqueousProps::Impl
     auto speciesMolalities() const -> ArrayXr
     {
         return aqstate.m;
+    }
+
+    auto speciesCharges() const -> ArrayXr
+    {
+        return aqstate.z;
     }
 
     auto ionicStrength() const -> real
@@ -479,6 +487,11 @@ auto AqueousProps::speciesMolalities() const -> ArrayXr
     return pimpl->speciesMolalities();
 }
 
+auto AqueousProps::speciesCharges() const -> ArrayXr
+{
+    return pimpl->speciesCharges();
+}
+
 auto AqueousProps::ionicStrength() const -> real
 {
     return pimpl->ionicStrength();
@@ -571,6 +584,7 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     const auto species = props.phase().species();
     const auto ms = props.speciesMolalities();
     const auto me = props.elementMolalities();
+    const auto z = props.speciesCharges();
     const auto lgOmega = props.saturationIndicesLg();
     assert(species.size() == ms.size());
     assert(elements.size() == me.size());
@@ -583,6 +597,7 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     table.add_row({ "pH", strfix(props.pH()), "" });
     table.add_row({ "pE", strfix(props.pE()), "" });
     table.add_row({ "Eh", strfix(props.Eh()), "V" });
+    table.add_row({ "Z", strfix((z*ms).sum()), "eq" });
     table.add_row({ "Element Molality:" });
     for(auto i = 0; i < elements.size(); ++i)
         if(elements[i].symbol() != "H" && elements[i].symbol() != "O")
