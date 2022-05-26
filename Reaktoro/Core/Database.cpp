@@ -113,6 +113,39 @@ struct Database::Impl
         Pairs<Species, double> reactants;
         for(const auto [name, coeff] : pairs)
             reactants.emplace_back(species.get(name), coeff);
+        
+        // Check electroneutrality and conservation of mass for reaction by summing charge and moles of each element across all species
+        std::map <std::string, double> amounts;
+        amounts["charge"] = 0;
+        for (const auto& [species, species_coeff] : reactants)
+        {
+            amounts["charge"] += species.charge() * species_coeff;
+            const ElementalComposition& formula = species.elements();
+            Strings elements = formula.symbols();
+            std::vector<double> element_coeffs = formula.coefficients();
+
+            for (int i=0; i!=elements.size(); i++) {
+                std::string element = elements[i];
+                double element_coeff = element_coeffs[i]; 
+                if (amounts.find(element) != amounts.end()) {
+                    amounts[element] += species_coeff * element_coeff;
+                } else {
+                    amounts[element] = species_coeff * element_coeff;
+                }
+            }
+        }
+
+        for (auto const& [key, val] : amounts)
+        {
+            if (key == "charge") {
+                double net_charge = val; 
+                errorif(net_charge != 0, "Electroneutrality not attained for reaction.")
+            } else {
+                double net_amount = val;
+                errorif(net_amount != 0, "Conservation of mass not attained for reaction.")
+            }
+
+        }
         return Reaction().withEquation(reactants);
     }
 };
