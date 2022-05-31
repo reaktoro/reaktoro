@@ -7,7 +7,7 @@ channels:
 
 dependencies:
   - autodiff>=0.6.8
-  - catch2
+  - catch2=2
   - ccache  # [unix]
   - clangxx_osx-64  # [osx]
   - clcache  # [win]
