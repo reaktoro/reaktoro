@@ -23,25 +23,28 @@
 
 namespace Reaktoro {
 
-/// The parameters for the surface complexation activity model.
-/// @ingroup ActivityModels
-struct ActivityModelSurfaceComplexationParams
-{
-    /// The complexation surface.
-    ComplexationSurface surface;
-};
-
 // The parameters in the Diffuse Double Layer (DDL) model for the diffusive double layer solution between complexation
 /// surface and aqueous solution.
 /// @ingroup ActivityModels
 struct ActivityModelDDLParams
 {
     /// The default value of the enrichment factor in the Donnan pore space.
-    real enr_dll = 1e+0; // TODO: influence the results quite a lot, figure out why
+    real enr = 1e+0; // TODO: influence the results quite a lot, figure out why
     // (e.g., enr = 1e-2, puts all the amounts to the DDL species)
 
     /// The diffusive double layer thickness.
     real thickness = 1e-8;
+};
+
+/// The parameters for the surface complexation activity model.
+/// @ingroup ActivityModels
+struct ActivityModelSurfaceComplexationParams
+{
+    /// The complexation surface.
+    ComplexationSurface surface;
+
+    // The double layer.
+    ActivityModelDDLParams ddl;
 };
 
 /// The parameters in the Diffuse Double Layer (DDL) model for the diffusive double layer solution between complexation

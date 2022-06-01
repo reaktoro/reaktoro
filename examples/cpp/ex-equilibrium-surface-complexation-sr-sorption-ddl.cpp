@@ -93,7 +93,8 @@ int main()
     //ddl_Hfo.named("DoubleLayerPhase");
     // Set the activity model governing the DDL phase
     ActivityModelDDLParams params_dll;
-    ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
+    //ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
+    ddl_Hfo.setActivityModel(ActivityModelDDL(params_dll));
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo, ddl_Hfo);
@@ -128,8 +129,11 @@ int main()
     ComplexationSurfaceProps surface_props(surface_Hfo, state);
     std::cout << surface_props << std::endl;
 
-    ChemicalProps props(state);
-    std::cout <<"DDL element amounts:" << props.elementAmountsInPhase("DoubleLayerPhase").transpose() << std::endl;
+//    ChemicalProps props(state);
+//    std::cout <<"DDL element amounts:" << props.elementAmountsInPhase("DoubleLayerPhase").transpose() << std::endl;
+
+    DoubleLayerProps dlprops(state);
+    std::cout << "dlprops: \n" << dlprops << std::endl;
 
     return 0;
 }
