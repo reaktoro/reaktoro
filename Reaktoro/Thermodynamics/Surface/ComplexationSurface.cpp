@@ -298,7 +298,7 @@ auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::o
         std::cout << "\t # of species : " << site.sorptionSpecies().size() << std::endl;
         std::cout << "\t :: index :: Species" << std::endl;
 
-        for(auto i : site.indicesSorptionSpecies())
+        for(auto i : site.sorptionSpeciesIndices())
             std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << std::endl;
     }
     return out;

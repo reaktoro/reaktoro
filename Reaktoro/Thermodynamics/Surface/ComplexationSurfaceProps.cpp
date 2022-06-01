@@ -424,7 +424,7 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
 
 //    for(const auto& [tag, site] : props.complexationSurface().sites())
 //    {
-//        auto indx = site.indicesSorptionSpecies();
+//        auto indx = site.sorptionSpeciesIndices();
 //        auto charge = (ns(indx) * z(indx)).sum();
 //
 //        std::cout << "site: " << site.name() << std::endl;

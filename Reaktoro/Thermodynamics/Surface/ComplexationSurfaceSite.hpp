@@ -69,7 +69,7 @@ public:
     auto sorptionSpecies() const -> SpeciesList;
 
     // Return the indices of the sorption species.
-    auto indicesSorptionSpecies() const -> Indices;
+    auto sorptionSpeciesIndices() const -> Indices;
 
     // Set the name of the surface site.
     auto setName(String name) -> ComplexationSurfaceSite&;
