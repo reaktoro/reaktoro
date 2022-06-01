@@ -28,6 +28,7 @@ class ChemicalSystem;
 class ElementList;
 class Phase;
 class PhaseList;
+class Reaction;
 class SpeciesList;
 
 namespace detail {
@@ -83,6 +84,12 @@ auto extractNames(const ElementList& list) -> Strings;
 
 // Extract names of the phases from the phases' list
 auto extractNames(const PhaseList& list) -> Strings;
+
+// Return true if given reaction is stoichiometrically balanced in terms of electric charge.
+auto isChargeBalanced(const Reaction& reaction) -> bool;
+
+// Return true if given reaction is stoichiometrically balanced in terms of elements.
+auto isElementBalanced(const Reaction& reaction) -> bool;
 
 } // namespace detail
 } // namespace Reaktoro
