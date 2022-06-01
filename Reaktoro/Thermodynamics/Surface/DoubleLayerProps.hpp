@@ -32,7 +32,7 @@ class Phase;
 class Species;
 class SpeciesList;
 
-/// The chemical properties of an aqueous phase.
+/// The chemical properties of an double layer phase.
 class DoubleLayerProps
 {
 public:
@@ -60,10 +60,10 @@ public:
     /// Update the double layer properties with given chemical properties of the system.
     auto update(const ChemicalProps& props) -> void;
 
-    /// Return the temperature of the aqueous phase (in K).
+    /// Return the temperature of the double layer phase (in K).
     auto temperature() const -> real;
 
-    /// Return the pressure of the aqueous phase (in Pa).
+    /// Return the pressure of the double layer phase (in Pa).
     auto pressure() const -> real;
 
     /// Return the molality of an element (in molal).
@@ -80,6 +80,12 @@ public:
 
     /// Return the charges of the species.
     auto speciesCharges() const -> ArrayXr;
+
+    /// Return the amounts of the species.
+    auto speciesAmounts() const -> ArrayXr;
+
+    /// Return the mole fractions of the species.
+    auto speciesMoleFractions() const -> ArrayXr;
 
     /// Return the effective ionic strength of the double layer phase (in molal). Equivalent to @ref ionicStrengthEffective.
     auto ionicStrength() const -> real;
@@ -99,13 +105,13 @@ public:
     /// Return the reduction potential of the double layer phase (in V).
     auto Eh() const -> real;
 
-    /// Return the underlying Phase object for the aqueous phase.
+    /// Return the underlying Phase object for the double layer phase.
     auto phase() const -> const Phase&;
 
-    /// Output the properties of the aqueous phase to a stream.
+    /// Output the properties of the double layer phase to a stream.
     auto output(std::ostream& out) const -> void;
 
-    /// Output the properties of the aqueous phase to a file.
+    /// Output the properties of the double layer phase to a file.
     auto output(const String& filename) const -> void;
 
 private:
