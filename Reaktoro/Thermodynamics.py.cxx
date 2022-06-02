@@ -62,6 +62,11 @@ void exportActivityModelIonExchange(py::module& m);
 void exportIonExchangeSurface(py::module& m);
 void exportIonExchangeProps(py::module& m);
 
+void exportActivityModelSurfaceComplexation(py::module& m);
+void exportComplexationSurface(py::module& m);
+void exportComplexationSurfaceSite(py::module& m);
+void exportComplexationSurfaceProps(py::module& m);
+void exportDoubleLayerProps(py::module& m);
 
 void exportThermodynamics(py::module& m)
 {
@@ -108,4 +113,10 @@ void exportThermodynamics(py::module& m)
     exportActivityModelIonExchange(m);
     exportIonExchangeSurface(m);
     exportIonExchangeProps(m);
+
+    exportActivityModelSurfaceComplexation(m);
+    exportComplexationSurface(m);
+    exportComplexationSurfaceSite(m);
+    exportComplexationSurfaceProps(m);
+    exportDoubleLayerProps(m);
 }

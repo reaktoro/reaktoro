@@ -63,7 +63,7 @@ auto ComplexationSurfaceSite::amount() const -> real
 // Return sorption species.
 auto ComplexationSurfaceSite::sorptionSpecies() const -> SpeciesList
 {
-    return species;
+    return sorption_species;
 }
 
 // Return indices of the sorption species.

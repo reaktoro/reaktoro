@@ -81,11 +81,17 @@ public:
     /// Return the charges of the species.
     auto speciesCharges() const -> ArrayXr;
 
-    /// Return the amounts of the species.
+    /// Return the amounts of the species (in moles).
     auto speciesAmounts() const -> ArrayXr;
 
-    /// Return the mole fractions of the species.
+    /// Return the amount of an double layer species (in moles).
+    auto speciesAmount(const StringOrIndex& name) const -> real;
+
+    /// Return the mole fractions of the species (in moles).
     auto speciesMoleFractions() const -> ArrayXr;
+
+    /// Return the mole fractions of an double layer species (in moles).
+    auto speciesMoleFraction(const StringOrIndex& name) const -> real;
 
     /// Return the effective ionic strength of the double layer phase (in molal). Equivalent to @ref ionicStrengthEffective.
     auto ionicStrength() const -> real;

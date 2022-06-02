@@ -240,9 +240,21 @@ struct DoubleLayerProps::Impl
         return nddl;
     }
 
+    auto speciesAmount(const StringOrIndex& name) const -> real
+    {
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        return nddl[idx];
+    }
+
     auto speciesMoleFractions() const -> ArrayXr
     {
         return xddl;
+    }
+
+    auto speciesMoleFraction(const StringOrIndex& name) const -> real
+    {
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        return xddl[idx];
     }
 
     auto ionicStrength() const -> real
@@ -358,9 +370,19 @@ auto DoubleLayerProps::speciesAmounts() const -> ArrayXr
     return pimpl->speciesAmounts();
 }
 
+auto DoubleLayerProps::speciesAmount(const StringOrIndex& symbol) const -> real
+{
+    return pimpl->speciesAmount(symbol);
+}
+
 auto DoubleLayerProps::speciesMoleFractions() const -> ArrayXr
 {
     return pimpl->speciesMoleFractions();
+}
+
+auto DoubleLayerProps::speciesMoleFraction(const StringOrIndex& symbol) const -> real
+{
+    return pimpl->speciesAmount(symbol);
 }
 
 auto DoubleLayerProps::ionicStrength() const -> real
