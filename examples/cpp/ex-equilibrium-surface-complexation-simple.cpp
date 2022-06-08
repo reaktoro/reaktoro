@@ -41,8 +41,8 @@ int main()
 
     // Define ion exchange species list
     String list_str = "Hfo_sOH Hfo_sOCd+ Hfo_sOHSr+2 Hfo_wOH Hfo_wOCd+ Hfo_wOSr+ Hfo_wOSrOH";
-    SpeciesList slist = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
-    SpeciesList list = slist.withNames(StringList(list_str));
+    SpeciesList all_species = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
+    SpeciesList list = all_species.withNames(StringList(list_str));
 
     // Create complexation surface
     ComplexationSurface surface_Hfo("Hfo");
@@ -80,8 +80,8 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setTemperature(T, "celsius");
-    solutionstate.setPressure(P, "bar");
+    solutionstate.temperature(T, "celsius");
+    solutionstate.pressure(P, "bar");
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
     solutionstate.setSpeciesAmount("Sr+2"  , 1.00, "mmol");
     solutionstate.setSpeciesAmount("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
@@ -98,6 +98,7 @@ int main()
 
     AqueousProps aprops(solutionstate);
     std::cout << "pH = " << aprops.pH() << std::endl;
+    std::cout << "I = " << aprops.ionicStrength() << std::endl;
 
     ComplexationSurfaceProps surface_props(surface_Hfo, solutionstate);
     std::cout << surface_props << std::endl;

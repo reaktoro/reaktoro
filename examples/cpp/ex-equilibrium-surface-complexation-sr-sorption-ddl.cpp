@@ -80,17 +80,17 @@ int main()
 
     std::cout << surface_Hfo << std::endl;
 
-    // Define surface complexation phase and set an activity model
-    SurfaceComplexationPhase complexation_phase_Hfo(detail::extractNames(surface_Hfo.species()));
-
     // Set the activity model for the complexation surface
     ActivityModelSurfaceComplexationParams params;
     params.surface = surface_Hfo;
+
+    // Define surface complexation phase and set an activity model
+    SurfaceComplexationPhase complexation_phase_Hfo(detail::extractNames(surface_Hfo.species()));
     complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationWithDDL(params));
 
     // Define the DDL phase
     DoubleLayerPhase ddl_Hfo(speciate("H O Cl Ca Sr"));
-    //ddl_Hfo.named("DoubleLayerPhase");
+    ddl_Hfo.named("DoubleLayerPhase");
     // Set the activity model governing the DDL phase
     ActivityModelDDLParams params_dll;
     //ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));

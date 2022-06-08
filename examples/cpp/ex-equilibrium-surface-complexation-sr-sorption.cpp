@@ -101,19 +101,19 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setTemperature(T, "celsius");
-    solutionstate.setPressure(P, "bar");
-    solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
+    solutionstate.temperature(T, "celsius");
+    solutionstate.pressure(P, "bar");
+    solutionstate.set("H2O"    , 1.00, "kg");
 //    Ca     1
 //    Cl     2
 //    Sr     1e-006
-    solutionstate.setSpeciesAmount("Cl-"  , 2e+0, "mmol");
-    solutionstate.setSpeciesAmount("Ca+2"  , 1e+0, "mmol");
-    solutionstate.setSpeciesAmount("Sr+2"  , 1e-6, "mmol");
+    solutionstate.set("Cl-"  , 2e+0, "mmol");
+    solutionstate.set("Ca+2"  , 1e+0, "mmol");
+    solutionstate.set("Sr+2"  , 1e-6, "mmol");
 //    Hfo_w 1e-3 60 4.45 # 1e-3mol weak site, 60m2/g s.spec, 4.45g ferrihyd
 //    Hfo_s 0.025e-3 # 0.025e-3mol strong site
-    solutionstate.setSpeciesAmount("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
-    solutionstate.setSpeciesAmount("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
+    solutionstate.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
+    solutionstate.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
