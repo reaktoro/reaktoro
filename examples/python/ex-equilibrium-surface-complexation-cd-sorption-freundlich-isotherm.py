@@ -119,21 +119,28 @@ def equilibrate(mCd):
 
       return massCd_aq, massCd_surf
 
-print(f" Input m(Cd), mg  Sorbed m(Cd), mg  Dissolved m(Cd), mg")
+print(f" Input m(Cd), mg  Sorbed m(Cd), mg  Dissolved m(Cd), mg Kd=sI/cI [-]")
 for mCd in mCds:
 
       result = equilibrate(mCd)
       mCdaq.append(result[0])
       mCdsurf.append(result[1])
 
-      print(f"{mCd:16.2f} {mCdsurf[-1]:17.4e} {mCdaq[-1]:20.4e}")
+      print(f"{mCd:16.2f} {mCdsurf[-1]:17.4e} {mCdaq[-1]:20.4e} {mCdsurf[-1]/mCdaq[-1]:12.4f}")
 
 from matplotlib import pyplot as plt
-plt.plot(mCdaq, mCdsurf, label=f"Cd sorbed (mg)")
-plt.legend(loc="best")
+plt.plot(mCdaq, mCdsurf)
 plt.title(r"Freundlich sorption isotherm for Cd$^{+2}$")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel('Sorbed mass of Cd [mg]')
 plt.grid()
 plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass.png")
+plt.close()
+
+plt.plot(mCdaq, np.array(mCdsurf) / np.array(mCdaq))
+plt.title(r"Distribution coefficient of Freundlich sorption isotherm for Cd$^{+2}$")
+plt.xlabel('Dissolved mass of Cd [mg]')
+plt.ylabel(r'K$_d$ = s$_I$ / c$_I$ [-]')
+plt.grid()
+plt.savefig("distribution-coeff-vs-dissolved-cd-mass.png")
 plt.close()
