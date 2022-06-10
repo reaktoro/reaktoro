@@ -133,17 +133,15 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
         // Auxiliary constant references properties
         real I;
 
-//        // Calculate the stoichiometric ionic strength if the DDL State has been already evaluated
-//        if (props.extra["DiffusiveLayerState"].has_value())
-//        {
-//            // Export ddl state via `extra` data member
-//            const auto& ddlstate = std::any_cast<AqueousMixtureState>(props.extra["DiffusiveLayerState"]);
-//
-//            // Fetch the stoichiometric ionic strength
-//            I = ddlstate.Is;
-//            std::cout << "I (ddl) for the surface complexation = " << I << std::endl;
-//
-//        }
+        // Calculate the stoichiometric ionic strength if the DDL State has been already evaluated
+        if (props.extra["DiffusiveLayerState"].has_value())
+        {
+            // Export ddl state via `extra` data member
+            const auto& ddlstate = std::any_cast<AqueousMixtureState>(props.extra["DiffusiveLayerState"]);
+
+            // Fetch the stoichiometric ionic strength
+            I = ddlstate.Is;
+        }
         // Otherwise, calculate the stoichiometric ionic strength if the Aqueous State has been already evaluated
         if (props.extra["AqueousMixtureState"].has_value())
         {
@@ -152,35 +150,11 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
 
             // Fetch the stoichiometric ionic strength
             I = aqstate.Is;
-//            std::cout << "I (solution) = " << I << std::endl;
-
-//            // Evaluate surface complexation potential provided new ionic state
-//            surface_state.updatePotential(I);
-            auto tmp_power = -aqstate.z*F*surface_state.psi/R/T;
-            auto tmp_correction = exp(tmp_power);
-//            std::cout << "surface_state.sigma = " << surface_state.sigma << std::endl;
-//            std::cout << "surface_state.psi = " << surface_state.psi << std::endl;
-//            std::cout << "F*surface_state.psi/R/T = " << F*surface_state.psi/R/T << std::endl;
-//            std::cout << "-aqstate.z*F*surface_state.psi/R/T = " << tmp_power.transpose() << std::endl;
-//            std::cout << "exp(-aqstate.z*F*surface_state.psi/R/T) = " << tmp_correction.transpose() << std::endl;
-//
-            I = 0.5 * (aqstate.z * aqstate.z * aqstate.m * tmp_correction).sum();
-//            std::cout << "I (corrected with coulombic factor) = " << I << std::endl;
-//            getchar();
         }
-
 
         // Export the surface complexation and its state via the `extra` data member
         props.extra["ComplexationSurfaceState"] = surface_state;
         props.extra["ComplexationSurface"] = surface;
-
-//        std::cout << "--------------------------------" << std::endl;
-//        std::cout << "ComplexationSurfaceState saved: " << std::endl;
-//        std::cout << "x " << surface_state.x.transpose() << std::endl;
-//        std::cout << "z " << surface_state.z.transpose() << std::endl;
-//        std::cout << "Z " << surface_state.Z << std::endl;
-//        std::cout << "sigma " << surface_state.sigma << std::endl;
-//        std::cout << "--------------------------------" << std::endl;
 
         // Auxiliary variables
         const auto sqrtI = sqrt(I);
@@ -189,6 +163,15 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
 
         // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
         ln_g = ln10*(-Agamma*z*z*sqrtI/(1 + sqrtI) - 0.3*I);
+
+        // Auxiliary variables
+        const auto sigma = surface_state.sigma;
+        surface_state.updatePotential(I);
+        const auto psi = surface_state.psi;
+        //const kappa = -2.29*pow(I, 0.5)
+        //const auto psi = sigma/kappa; //  constant capacitance model
+
+        ln_g = z*F*psi/(R*T);
 
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
@@ -264,15 +247,6 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
     // Create the aqueous ddl_mixture
     AqueousMixture ddl_mixture(species);
 
-//    // The molar mass of water
-//    const auto Mw = waterMolarMass;
-//
-//    // The number of moles of water per kg
-//    const auto nwo = 1.0/Mw;
-//
-//    // The index of the water species
-//    const auto iwater = ddl_mixture.indexWater();
-
     // The number of all species and surface complexation species in the current exchange phase only
     const auto num_species = species.size();
 
@@ -299,11 +273,7 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
         // cD = c*enr,
         // where c   is the concentration of the species in the aqueous solution and
         //       enr is the enrichment factor.
-        //ln_a = log(params.enr) + log(ddl_state.m);
-
-//        const auto xw = x[iwater];
-//        const auto ln_xw = log(xw);
-//        ln_a[iwater] = nwo * (1 - xw)/xw;;
+        ln_a = log(params.enr) + log(ddl_state.m);
 
         ArrayXr z_aq = ArrayXr::Zero(num_species);
         ArrayXr z    = ArrayXr::Zero(num_species);
@@ -324,11 +294,6 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
 
             const auto& aq_mix = std::any_cast<AqueousMixture>(props.extra["AqueousMixture"]);
             z_aq = aq_mix.charges();
-//            const auto& species_aq = aq_mix.species();
-////            std::cout << "m_aq   = " << aq_state.m.transpose() << std::endl;
-////            std::cout << "z_aq   = " << z_aq.transpose() << std::endl;
-////            std::cout << "Zaq   = " << (z_aq * aq_state.m).sum() << std::endl;
-            Zaq = (z_aq * aq_state.m).sum();
         }
         if (props.extra["ComplexationSurfaceState"].has_value())
         {
@@ -336,39 +301,14 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
             auto surf_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
 
             // Update complexation surface potential with the DDL ionic strength
-            surf_state.updatePotential(ddl_state.Ie);
+            // surf_state.updatePotential(ddl_state.Ie);
 
             // Auxiliary constant references properties of the surface
-            z = surf_state.z;        // the charges of the surface species
-            Z = surf_state.Z;
             psi = surf_state.psi;
-//            std::cout << "x_surf = " << surf_state.x.transpose() << std::endl;
-//            std::cout << "z_surf = " << surf_state.z.transpose() << std::endl;
-//            std::cout << "(z_surf * x_surf).sum() = " << (surf_state.z * surf_state.x).sum() << std::endl;
-//            std::cout << "---------------------------------" << std::endl;
-//            std::cout << "Z      = " << Z << std::endl;
-//            std::cout << "Zaq    = " << Zaq << std::endl;
-//            std::cout << "deltaZ = " << (Zaq-Z) << std::endl;
-//
+
             // Update activity coefficient using the coulombic correction factor
-            // TODO: still not clear how it is done
-            //ln_g = Z*F*psi/(R*T) * ArrayXr::Ones(num_species); // p. 20, SRK Consulting course, Z is the "change of the surface species due to the sorption"
-            //ln_g = -z*F*psi/(R*T);
-            //ln_g = z_aq*F*psi/(R*T); // p. 223, PHREEQC documentation (number of species in DDL = number of species in aq.sol.)
-            //ln_g = -(Z-Zaq)*F*psi/(R*T) * ArrayXr::Ones(num_species);
+            ln_g = -z_aq*F*psi/(R*T); // p. 223, PHREEQC documentation (number of species in DDL = number of species in aq.sol.)
         }
-
-//        auto deltaZ = Zaq-Z;
-//        // Calculate the lng according to the formula g = exp(-z*F*psi/R/T)
-//        std::cout << "Zaq = " << Zaq << std::endl;
-//        std::cout << "Zsurf   = " << Z << std::endl;
-//        std::cout << "deltaZ         = " << deltaZ << std::endl;
-
-//        // Finalize the computation of the activity of water (in mole fraction scale)
-//        ln_a[iwater] *= -1.0/nwo;
-//
-//        // Set the activity coefficient of water (mole fraction scale)
-//        ln_g[iwater] = ln_a[iwater] - ln_xw;
 
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
