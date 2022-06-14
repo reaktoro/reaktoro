@@ -73,7 +73,6 @@ int main()
     surface_Hfo.addSite("Hfo_w", "_w")
                .setAmount(1e-3, "mol");
 
-
     // Defined weak site of the complexation surface
     ComplexationSurfaceSite site_Hfo_s;
     site_Hfo_s.setName("Hfo_s")
@@ -95,22 +94,14 @@ int main()
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo);
 
-    const auto T = 25.0; // temperature in celsius
-    const auto P = 1.0;  // pressure in bar
-
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.temperature(T, "celsius");
-    solutionstate.pressure(P, "bar");
+    solutionstate.temperature(25.0, "celsius");
+    solutionstate.pressure(1.0, "bar");
     solutionstate.set("H2O"    , 1.00, "kg");
-//    Ca     1
-//    Cl     2
-//    Sr     1e-006
     solutionstate.set("Cl-"  , 2e+0, "mmol");
     solutionstate.set("Ca+2"  , 1e+0, "mmol");
     solutionstate.set("Sr+2"  , 1e-6, "mmol");
-//    Hfo_w 1e-3 60 4.45 # 1e-3mol weak site, 60m2/g s.spec, 4.45g ferrihyd
-//    Hfo_s 0.025e-3 # 0.025e-3mol strong site
     solutionstate.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     solutionstate.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 

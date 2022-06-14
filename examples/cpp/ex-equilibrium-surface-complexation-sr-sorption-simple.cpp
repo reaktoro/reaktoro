@@ -76,27 +76,18 @@ int main()
     // Define surface complexation phase and set an activity model
     SurfaceComplexationPhase complexation_phase_Hfo(list_str);
     complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params));
-    //complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationGainesThomas(params));
 
     std::cout << surface_Hfo << std::endl;
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo);
 
-    const auto T = 25.0; // temperature in celsius
-    const auto P = 1.0;  // pressure in bar
-
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setTemperature(T, "celsius");
-    solutionstate.setPressure(P, "bar");
+    solutionstate.setTemperature(25.0, "celsius");
+    solutionstate.setPressure(1.0, "bar");
     solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-//    Sr     1e-006
     solutionstate.setSpeciesAmount("Sr+2"  , 1e-6, "mmol");
-//    Hfo_w 1e-3 60 4.45 # 1e-3mol weak site, 60m2/g s.spec, 4.45g ferrihyd
-//    Hfo_s 0.025e-3 # 0.025e-3mol strong site
-//    solutionstate.setSpeciesAmount("Hfo_wOH"  , 1e-3, "mol");
-//    solutionstate.setSpeciesAmount("Hfo_sOH"  , 0.025e-3, "mol");
     solutionstate.setSpeciesAmount("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     solutionstate.setSpeciesAmount("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 
