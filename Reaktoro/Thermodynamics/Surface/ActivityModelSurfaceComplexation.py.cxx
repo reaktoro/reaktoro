@@ -27,7 +27,6 @@ void exportActivityModelSurfaceComplexation(py::module& m)
 {
     m.def("ActivityModelSurfaceComplexationNoDDL", ActivityModelSurfaceComplexationNoDDL);
     m.def("ActivityModelSurfaceComplexationWithDDL", ActivityModelSurfaceComplexationWithDDL);
-    m.def("ActivityModelSurfaceComplexationGainesThomas", ActivityModelSurfaceComplexationGainesThomas);
     m.def("ActivityModelDDL", ActivityModelDDL());
     m.def("ActivityModelDDL", py::overload_cast<ActivityModelDDLParams>(ActivityModelDDL));
 

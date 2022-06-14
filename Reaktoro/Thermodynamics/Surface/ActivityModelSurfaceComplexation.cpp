@@ -21,7 +21,6 @@
 #include <Reaktoro/Singletons/Elements.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 
@@ -133,15 +132,6 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
         // Auxiliary constant references properties
         real I;
 
-        // Calculate the stoichiometric ionic strength if the DDL State has been already evaluated
-        if (props.extra["DiffusiveLayerState"].has_value())
-        {
-            // Export ddl state via `extra` data member
-            const auto& ddlstate = std::any_cast<AqueousMixtureState>(props.extra["DiffusiveLayerState"]);
-
-            // Fetch the stoichiometric ionic strength
-            I = ddlstate.Is;
-        }
         // Otherwise, calculate the stoichiometric ionic strength if the Aqueous State has been already evaluated
         if (props.extra["AqueousMixtureState"].has_value())
         {
@@ -152,92 +142,22 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
             I = aqstate.Is;
         }
 
-        // Export the surface complexation and its state via the `extra` data member
-        props.extra["ComplexationSurfaceState"] = surface_state;
-        props.extra["ComplexationSurface"] = surface;
-
-        // Auxiliary variables
-        const auto sqrtI = sqrt(I);
-        const auto ln10 = log(10);
-        const auto Agamma = 0.5095; // the Debye-Huckel parameter
-
-        // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
-        ln_g = ln10*(-Agamma*z*z*sqrtI/(1 + sqrtI) - 0.3*I);
-
         // Auxiliary variables
         const auto sigma = surface_state.sigma;
         surface_state.updatePotential(I);
         const auto psi = surface_state.psi;
-        //const kappa = -2.29*pow(I, 0.5)
-        //const auto psi = sigma/kappa; //  constant capacitance model
 
+        // Export the surface complexation and its state via the `extra` data member
+        props.extra["ComplexationSurfaceState"] = surface_state;
+        props.extra["ComplexationSurface"] = surface;
+
+        // Calculate ln of gamma according to the coulombic correction, Appelo etal (2005), (7.44), p. 334
         ln_g = z*F*psi/(R*T);
 
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
     };
 
-    return fn;
-}
-
-/// Return the SurfaceComplexationActivityModel object assuming no electrostatic effects and the Gaines-Thomas convention
-/// for the activities calculation.
-auto activityModelSurfaceComplexationGainesThomas(const SpeciesList& species, ActivityModelSurfaceComplexationParams params) -> ActivityModel
-{
-    // Create the complexation surface
-    ComplexationSurface surface = params.surface;
-
-    // The number of surface complexation species in the current phase
-    const auto num_species = surface.species().size();
-
-    // The equivalent numbers (absolute values of charges) of the surface complexation species
-    ArrayXd ze = surface.equivalentsNumbers();
-
-    // The state of the complexation surface
-    ComplexationSurfaceState surface_state;
-
-    // Define the activity model function of the surface complexation phase
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
-    {
-        // The arguments for the activity model evaluation
-        const auto& [T, P, x] = args;
-
-        // Evaluate the state of the surface complexation
-        surface_state = surface.state(T, P, x);
-
-        // Export the surface complexation and its state via the `extra` data member
-        props.extra["ComplexationSurfaceState"] = surface_state;
-        props.extra["ComplexationSurface"] = surface;
-
-        // Auxiliary references
-        auto& ln_g = props.ln_g;
-        auto& ln_a = props.ln_a;
-
-        // Calculate ln of activities of surfaces species as the ln of equivalent fractions
-        ln_a = (x*ze/(x*ze).sum()).log();
-
-        // Initialized the ln of activity coefficients of the surface complexation species
-        ln_g = ArrayXr::Zero(num_species);
-
-        // Calculate Davies and Debye-Huckel parameters only if the AqueousPhase has been already evaluated
-        if (props.extra["AqueousMixtureState"].has_value())
-        {
-            // Export aqueous mixture state via `extra` data member
-            const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
-
-            // Auxiliary constant references properties and variables
-            const auto I = aqstate.Is;            // the stoichiometric ionic strength
-            const auto sqrtI = sqrt(I);
-            const auto ln10 = log(10);
-            const auto Agamma = 0.5095; // the Debye-Huckel parameter
-
-            // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
-            ln_g = ln10*(-Agamma*ze*ze*sqrtI/(1 + sqrtI) - 0.3*I);
-        }
-
-        // Add the correction introduced by the activity coefficients
-        ln_a += ln_g;
-    };
     return fn;
 }
 
@@ -269,17 +189,9 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
         auto& ln_g = props.ln_g;
         auto& ln_a = props.ln_a;
 
-        // Calculate ln(a) of the DDL layer species, according to the formula:
-        // cD = c*enr,
-        // where c   is the concentration of the species in the aqueous solution and
-        //       enr is the enrichment factor.
-        ln_a = log(params.enr) + log(ddl_state.m);
-
+        real I = 0;
         ArrayXr z_aq = ArrayXr::Zero(num_species);
-        ArrayXr z    = ArrayXr::Zero(num_species);
         real psi;
-        real Zaq = 0;
-        real Z   = 0;
 
         if (props.extra["AqueousMixtureState"].has_value())
         {
@@ -290,23 +202,30 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
             // cD = c*enr,
             // where c   is the concentration of the species in the aqueous solution and
             //       enr is the enrichment factor.
-            ln_a = log(params.enr) + log(aq_state.m);
+            ln_a = log(aq_state.m);
 
-            const auto& aq_mix = std::any_cast<AqueousMixture>(props.extra["AqueousMixture"]);
-            z_aq = aq_mix.charges();
+            const auto& aqmix = std::any_cast<AqueousMixture>(props.extra["AqueousMixture"]);
+            const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+
+            // Fetch the charges ionic species in the solution
+            z_aq = aqmix.charges();
+
+            // Fetch the stoichiometric ionic strength
+            I = aqstate.Is;
         }
+
         if (props.extra["ComplexationSurfaceState"].has_value())
         {
             // Export surface complexation ddl_state via `extra` data member
             auto surf_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
 
             // Update complexation surface potential with the DDL ionic strength
-            // surf_state.updatePotential(ddl_state.Ie);
+            surf_state.updatePotential(I);
 
             // Auxiliary constant references properties of the surface
             psi = surf_state.psi;
 
-            // Update activity coefficient using the coulombic correction factor
+            // Update activity coefficient using the coulombic correction factor, Appelo etal (2005), (6.47), p. 289
             ln_g = -z_aq*F*psi/(R*T); // p. 223, PHREEQC documentation (number of species in DDL = number of species in aq.sol.)
         }
 
@@ -331,14 +250,6 @@ auto ActivityModelSurfaceComplexationWithDDL(ActivityModelSurfaceComplexationPar
     return [=](const SpeciesList& surface_species)
     {
         return detail::activityModelSurfaceComplexationWithDDL(surface_species, params);
-    };
-}
-
-auto ActivityModelSurfaceComplexationGainesThomas(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator
-{
-    return [=](const SpeciesList& surface_species)
-    {
-        return detail::activityModelSurfaceComplexationGainesThomas(surface_species, params);
     };
 }
 
