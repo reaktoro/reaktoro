@@ -168,6 +168,7 @@ auto ChemicalProps::phaseProps(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
         nsum[iphase],
         msum[iphase],
         x.segment(begin, size),
+        z.segment(begin, size),
         G0.segment(begin, size),
         H0.segment(begin, size),
         V0.segment(begin, size),

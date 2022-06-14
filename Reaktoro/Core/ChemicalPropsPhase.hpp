@@ -48,6 +48,9 @@ struct ChemicalPropsPhaseBaseData
     /// The mole fractions of the species in the phase (in mol/mol).
     TypeOp<ArrayXr> x;
 
+    /// The charges of the species in the phase.
+    TypeOp<ArrayXr> z;
+
     /// The standard molar Gibbs energies of formation of the species in the phase (in J/mol)
     TypeOp<ArrayXr> G0;
 
@@ -266,6 +269,18 @@ public:
     auto speciesAmounts() const -> ArrayXrConstRef
     {
         return mdata.n;
+    }
+
+    /// Return the charges of the species in the phase.
+    auto charges() const -> ArrayXrConstRef
+    {
+        return mdata.z;
+    }
+
+    /// Return the charge of the phase (in mol).
+    auto charge() const -> real
+    {
+        return (mdata.z * mdata.n).sum();
     }
 
     /// Return the mole fractions of the species in the phase.

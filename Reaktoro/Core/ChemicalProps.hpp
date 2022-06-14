@@ -470,6 +470,9 @@ private:
     /// The mole fractions of the species in the system (in mol/mol).
     ArrayXr x;
 
+    /// The charges of the species in the system.
+    ArrayXr z;
+
     /// The standard molar Gibbs energies of formation of the species in the system (in J/mol).
     ArrayXr G0;
 
