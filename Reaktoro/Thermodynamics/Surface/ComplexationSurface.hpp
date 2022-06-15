@@ -41,7 +41,7 @@ struct ComplexationSurfaceState
 
         // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
         const auto y = sigma/(0.1174*sqrt(I));
-        const auto arcsinhy = log(y + sqrt(1 + y*y));
+        const auto arcsinhy = std::asinh(y[0]);
         psi = 2*R*T*arcsinhy/F;
     }
 
@@ -70,7 +70,7 @@ struct ComplexationSurfaceState
     real mass;
 
     // The surface potential (Volt).
-    real psi = 0.0;
+    real psi;
 };
 
 /// A type used to describe a complexation surface.
