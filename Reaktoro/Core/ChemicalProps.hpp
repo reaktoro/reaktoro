@@ -259,6 +259,9 @@ public:
     /// Return the amounts of the species in the system (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef;
 
+    /// Return the charges of the species in the system.
+    auto speciesCharges() const -> ArrayXrConstRef;
+
     /// Return the masses of the species in the system (in kg).
     auto speciesMasses() const -> ArrayXr;
 
