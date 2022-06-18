@@ -40,7 +40,7 @@ int main()
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
     // Define ion exchange species list
-    String list_str = "Hfo_sOH Hfo_sOCd+ Hfo_sOHSr+2 Hfo_wOH Hfo_wOCd+ Hfo_wOSr+ Hfo_wOSrOH";
+    String list_str = "Hfo_sOH Hfo_sOCd+ Hfo_wOH Hfo_wOCd+";
     SpeciesList all_species = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
     SpeciesList list = all_species.withNames(StringList(list_str));
 
