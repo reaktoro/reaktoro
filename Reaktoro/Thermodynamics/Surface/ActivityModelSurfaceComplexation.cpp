@@ -207,12 +207,17 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
             auto surf_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
 
             // Calculate the potential decay in the double layer
-            const auto x = params.thickness/2;
-            const auto psi = surf_state.psi * exp(-x/(3.09*sqrt(I)));
+            //const auto x = params.thickness/2;
+            //const auto psi = surf_state.psi * exp(-x/(3.09*sqrt(I)));
+            const auto psi = surf_state.psi;
 
             // Update activity coefficient using the coulombic correction factor, Appelo etal (2005):
             // (6.47), p. 289, or (7.66), p. 349
             ln_g = -z*F*psi/(R*T); // p. 223, PHREEQC documentation (number of species in DDL = number of species in aq.sol.)
+
+//            const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
+//            std::cout << ", sigma    = " << surf_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
+
         }
 
         // Add the correction introduced by the activity coefficients
