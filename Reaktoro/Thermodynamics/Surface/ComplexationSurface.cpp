@@ -109,10 +109,10 @@ auto ComplexationSurface::moleFractions() const -> ArrayXr
     return surface_state.x;
 }
 
-/// Return the complexation surface charge density.
-auto ComplexationSurface::surfaceChargeDensity(real Z) const -> real
+/// Return the surface sigma.
+auto ComplexationSurface::surfaceSigma(real charge) const -> real
 {
-    return faradayConstant*Z/(ssa*surface_mass);
+    return faradayConstant*charge/(ssa*surface_mass);
 }
 
 /// Return the complexation surface charge.
@@ -148,8 +148,8 @@ auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> Complexati
     surface_state.As = specificSurfaceArea();
     surface_state.mass = mass();
     surface_state.z = charges();
-    surface_state.Z = surfaceCharge(x, surface_state.z);
-    surface_state.sigma = surfaceChargeDensity(surface_state.Z);
+    surface_state.charge = surfaceCharge(x, surface_state.z);
+    surface_state.sigma = surfaceSigma(surface_state.charge);
 
     return surface_state;
 }

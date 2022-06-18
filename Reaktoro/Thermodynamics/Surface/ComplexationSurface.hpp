@@ -58,9 +58,9 @@ struct ComplexationSurfaceState
     ArrayXr z;
 
     /// The complexation surface charge (eq).
-    real Z;
+    real charge;
 
-    /// The surface charge density (C/m2).
+    /// The surface sigma (C/m2).
     real sigma;
 
     // The surface area in (m2/kg).
@@ -82,8 +82,8 @@ class ComplexationSurface
     /// Return the complexation surface charge.
     auto surfaceCharge(ArrayXrConstRef x, ArrayXrConstRef z) const -> real;
 
-    // Return the complexation surface charge density.
-    auto surfaceChargeDensity(real Z) const -> real;
+    // Return the complexation surface sigma.
+    auto surfaceSigma(real charge) const -> real;
 
     // Initialize charges of the surface complexation species.
     auto initializeCharges() -> void;
