@@ -120,26 +120,26 @@ int main()
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
-    specs.openTo("Cl-");
+    //specs.openTo("Cl-");
 
-    // Add custom defined constraint on the aqueous phase charge
-    auto idxAqueousPhaseCharge = specs.addInput("aqueousPhaseCharge");
+//    // Add custom defined constraint on the aqueous phase charge
+//    auto idxAqueousPhaseCharge = specs.addInput("aqueousPhaseCharge");
+//
+//    ConstraintEquation chargeConstraint;
+//    chargeConstraint.id = "AqueousPhaseCharge";
+//    chargeConstraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+//    {
+//        return props.phaseProps("AqueousPhase").charge() - w[idxAqueousPhaseCharge];
+//    };
+//    specs.addConstraint(chargeConstraint);
 
-    ConstraintEquation chargeConstraint;
-    chargeConstraint.id = "AqueousPhaseCharge";
-    chargeConstraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
-    {
-        return props.phaseProps("AqueousPhase").charge() - w[idxAqueousPhaseCharge];
-    };
-    //        return props.phaseProps("SurfaceComplexationPhase").charge()
-//               - props.phaseProps("DoubleLayerPhase").charge() - w[idxBalanceCharge];
-
-    specs.addConstraint(chargeConstraint);
+//    //        return props.phaseProps("SurfaceComplexationPhase").charge()
+////               - props.phaseProps("DoubleLayerPhase").charge() - w[idxBalanceCharge];
 
     EquilibriumConditions conditions(specs);
     conditions.temperature(T, "celsius");
     conditions.pressure(P, "bar");
-    conditions.set("aqueousPhaseCharge", 0.0);
+    //conditions.set("aqueousPhaseCharge", 0.0);
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(specs);
@@ -153,7 +153,7 @@ int main()
     state.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     state.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
     // Set tiny amount of water in the DDL
-    state.set("H2O!", 1e-3, "kg");
+    //state.set("H2O!", 1e-3, "kg");
     //state.charge();
 
     // Define equilibrium solver and equilibrate given initial state
