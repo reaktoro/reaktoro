@@ -48,9 +48,6 @@ struct ChemicalPropsPhaseBaseData
     /// The mole fractions of the species in the phase (in mol/mol).
     TypeOp<ArrayXr> x;
 
-    /// The charges of the species in the phase.
-    TypeOp<ArrayXr> z;
-
     /// The standard molar Gibbs energies of formation of the species in the phase (in J/mol)
     TypeOp<ArrayXr> G0;
 
@@ -139,7 +136,7 @@ struct ChemicalPropsPhaseBaseData
     template<template<typename> typename OtherTypeOp>
     operator ChemicalPropsPhaseBaseData<OtherTypeOp>() const
     {
-        return { T, P, n, nsum, msum, x, z, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 
     /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
@@ -269,18 +266,6 @@ public:
     auto speciesAmounts() const -> ArrayXrConstRef
     {
         return mdata.n;
-    }
-
-    /// Return the charges of the species in the phase.
-    auto charges() const -> ArrayXrConstRef
-    {
-        return mdata.z;
-    }
-
-    /// Return the charge of the phase (in mol).
-    auto charge() const -> real
-    {
-        return (mdata.z * mdata.n).sum();
     }
 
     /// Return the mole fractions of the species in the phase.
@@ -639,7 +624,6 @@ private:
         auto& nsum = mdata.nsum;
         auto& msum = mdata.msum;
         auto& x    = mdata.x;
-        auto& z    = mdata.z;
         auto& G0   = mdata.G0;
         auto& H0   = mdata.H0;
         auto& V0   = mdata.V0;
@@ -694,10 +678,6 @@ private:
         if(nsum == 0.0)
             x = (N == 1) ? 1.0 : 0.0;
         else x = n / nsum;
-
-        // Compute the charges of the species
-        const auto charges = vectorize(mphase.species(), RKT_LAMBDA(x, x.charge()));
-        z = ArrayXd::Map(charges.data(), charges.size());
 
         // Ensure there are no zero mole fractions
         error(x.minCoeff() == 0.0, "Could not compute the chemical properties of phase ",

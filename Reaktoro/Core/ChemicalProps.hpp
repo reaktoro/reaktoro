@@ -259,9 +259,6 @@ public:
     /// Return the amounts of the species in the system (in mol).
     auto speciesAmounts() const -> ArrayXrConstRef;
 
-    /// Return the charges of the species in the system.
-    auto speciesCharges() const -> ArrayXrConstRef;
-
     /// Return the masses of the species in the system (in kg).
     auto speciesMasses() const -> ArrayXr;
 
@@ -472,9 +469,6 @@ private:
 
     /// The mole fractions of the species in the system (in mol/mol).
     ArrayXr x;
-
-    /// The charges of the species in the system.
-    ArrayXr z;
 
     /// The standard molar Gibbs energies of formation of the species in the system (in J/mol).
     ArrayXr G0;

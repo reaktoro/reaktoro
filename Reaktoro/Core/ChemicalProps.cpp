@@ -44,7 +44,6 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     nsum = ArrayXr::Zero(K);
     msum = ArrayXr::Zero(K);
     x    = ArrayXr::Zero(N);
-    z    = ArrayXr::Zero(N);
     G0   = ArrayXr::Zero(N);
     H0   = ArrayXr::Zero(N);
     V0   = ArrayXr::Zero(N);
@@ -169,7 +168,6 @@ auto ChemicalProps::phaseProps(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
         nsum[iphase],
         msum[iphase],
         x.segment(begin, size),
-        z.segment(begin, size),
         G0.segment(begin, size),
         H0.segment(begin, size),
         V0.segment(begin, size),
@@ -473,11 +471,6 @@ auto ChemicalProps::speciesStandardHeatCapacityConstV(StringOrIndex species) con
 auto ChemicalProps::speciesAmounts() const -> ArrayXrConstRef
 {
     return n;
-}
-
-auto ChemicalProps::speciesCharges() const -> ArrayXrConstRef
-{
-    return z;
 }
 
 auto ChemicalProps::speciesMasses() const -> ArrayXr
@@ -831,7 +824,6 @@ auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
     const auto b   = props.elementAmounts();
     const auto n   = props.speciesAmounts();
     const auto x   = props.speciesMoleFractions();
-    const auto z   = props.speciesCharges();
     const auto lng = props.speciesActivityCoefficientsLn();
     const auto lna = props.speciesActivitiesLn();
     const auto mu  = props.speciesChemicalPotentials();
