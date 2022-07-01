@@ -188,7 +188,7 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
 
         if (props.extra["AqueousMixtureState"].has_value())
         {
-            // Export surface complexation ddl_state via `extra` data member
+            // Export aqueous state via `extra` data member
             const auto& aq_state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
 
             // Calculate ln(a) = ln(m) of the DDL layer species
@@ -197,13 +197,11 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
 
             // Fetch the ionic strength of the solution
             I = aq_state.Is;
-
-            //std::cout << "I = " << I << ", DDL model aq. phase charge = " << (z*aq_state.m).sum() << std::endl;
         }
 
         if (props.extra["ComplexationSurfaceState"].has_value())
         {
-            // Export surface complexation ddl_state via `extra` data member
+            // Export surface complexation state via `extra` data member
             auto surf_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
 
             // Calculate the potential decay in the double layer
@@ -215,9 +213,12 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
             // (6.47), p. 289, or (7.66), p. 349
             ln_g = -z*F*psi/(R*T); // p. 223, PHREEQC documentation (number of species in DDL = number of species in aq.sol.)
 
-//            const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
-//            std::cout << ", sigma    = " << surf_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
-
+            if(params.output)
+            {
+                // Output the surface and DDL charges
+                const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
+                std::cout << "sigma = " << surf_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
+            }
         }
 
         // Add the correction introduced by the activity coefficients

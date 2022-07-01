@@ -36,7 +36,7 @@ int main()
     auto dbphreeqc = PhreeqcDatabase("phreeqc.dat");
 
     // Define an aqueous phase
-    auto elements = "H O Cl Ca Sr Al";
+    auto elements = "H O Cl Ca Sr";
     AqueousPhase aqueous_phase(speciate(elements));
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
@@ -94,6 +94,8 @@ int main()
     ddl_Hfo.named("DoubleLayerPhase");
     // Set the activity model governing the DDL phase
     ActivityModelDDLParams params_dll;
+    //params_dll.output = true;
+
     //ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
     ddl_Hfo.setActivityModel(ActivityModelDDL(params_dll));
 
@@ -114,47 +116,68 @@ int main()
     statex.set("Cl-"  , 2e+0, "mmol");
     statex.set("Ca+2" , 1e+0, "mmol");
 
-    ChemicalProps props(statex);
-    std::cout << "aq. phase charge = " << props.phaseProps("AqueousPhase").charge() << std::endl;
-
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
     //specs.openTo("Cl-");
+    //specs.openTo("O2");
+    //specs.openTo("Al+3");
 
 //    // Add custom defined constraint on the aqueous phase charge
-//    auto idxAqueousPhaseCharge = specs.addInput("aqueousPhaseCharge");
+//    auto idxSurfaceDLLChargeBalance = specs.addInput("surfaceDLLChargeBalance");
 //
-//    ConstraintEquation chargeConstraint;
-//    chargeConstraint.id = "AqueousPhaseCharge";
-//    chargeConstraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
+//    ConstraintEquation chargeBalanceConstraint;
+//    chargeBalanceConstraint.id = "AqueousPhaseCharge";
+//    chargeBalanceConstraint.fn = [=](const ChemicalProps& props, VectorXrConstRef w)
 //    {
-//        return props.phaseProps("AqueousPhase").charge() - w[idxAqueousPhaseCharge];
+//        auto extra = props.extra();
+//        // Export surface complexation ddl_state via `extra` data member
+//        auto surf_state = std::any_cast<ComplexationSurfaceState>(extra["ComplexationSurfaceState"]);
+//        // Export surface complexation ddl_state via `extra` data member
+//        auto aq_state = std::any_cast<AqueousMixtureState>(extra["AqueousMixtureState"]);
+//
+//        // Fetch the ionic strength of the solution
+//        const auto F = faradayConstant;
+//        const auto R = universalGasConstant;
+//        const auto I = aq_state.Is;
+//        const auto psi = surf_state.psi;
+//        const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
+//
+//        return surf_state.sigma - sigma_DL - w[idxSurfaceDLLChargeBalance];
 //    };
-//    specs.addConstraint(chargeConstraint);
-
-//    //        return props.phaseProps("SurfaceComplexationPhase").charge()
-////               - props.phaseProps("DoubleLayerPhase").charge() - w[idxBalanceCharge];
+//    specs.addConstraint(chargeBalanceConstraint);
 
     EquilibriumConditions conditions(specs);
     conditions.temperature(T, "celsius");
     conditions.pressure(P, "bar");
-    //conditions.set("aqueousPhaseCharge", 0.0);
+    //conditions.set("surfaceDLLChargeBalance", 0.0);
 
     // Define equilibrium solver and equilibrate given initial state
+    EquilibriumOptions opts;
+    opts.optima.output.active = true;
+
     EquilibriumSolver solver(specs);
+    solver.setOptions(opts);
 
     // Define initial equilibrium state
     ChemicalState state(system);
     state.set("H2O", 1.00, "kg");
-    state.set("Cl-"  , 2e+0, "mmol");
+    state.set("Cl-"  , 2e+0 + 2e-6, "mmol"); // + 1e-6 is to balance the charge of Sr+2
     state.set("Ca+2"  , 1e+0, "mmol");
     state.set("Sr+2"  , 1e-6, "mmol");
     state.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     state.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
+
     // Set tiny amount of water in the DDL
     //state.set("H2O!", 1e-3, "kg");
     //state.charge();
+
+    std::cout << "*******************************************" << std::endl;
+    std::cout << "Before equilibration: " << std::endl;
+    std::cout << "*******************************************" << std::endl;
+    ChemicalProps props(state);
+    std::cout << "aq.phase charge = " << props.chargeInPhase("AqueousPhase") << std::endl;
+    std::cout << "state   = \n" << state << std::endl;
 
     // Define equilibrium solver and equilibrate given initial state
     auto res = solver.solve(state, conditions);
@@ -172,7 +195,7 @@ int main()
     std::cout << surface_props << std::endl;
 
     props.update(state);
-    std::cout << "as. phase charge = " << props.phaseProps("AqueousPhase").charge() << std::endl;
+    std::cout << "as. phase charge = " <<  props.chargeInPhase("AqueousPhase") << std::endl;
 
     DoubleLayerProps dlprops(state);
     std::cout << "dlprops: \n" << dlprops << std::endl;

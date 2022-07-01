@@ -34,6 +34,9 @@ struct ActivityModelDDLParams
 
     /// The diffusive double layer thickness.
     real thickness = 1e-8;
+
+    // Output option
+    bool output = false;
 };
 
 /// The parameters for the surface complexation activity model.
