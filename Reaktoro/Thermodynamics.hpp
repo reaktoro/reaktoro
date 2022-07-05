@@ -53,6 +53,8 @@
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceProps.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 #include <Reaktoro/Thermodynamics/Surface/DoubleLayerProps.hpp>
+#include <Reaktoro/Thermodynamics/Surface/DoubleLayer.hpp>
+
 
 /// @defgroup Thermodynamics Thermodynamics
 /// This is the thermodynamics module in Reaktoro, in which various thermodynamic models and related concepts are implemented.

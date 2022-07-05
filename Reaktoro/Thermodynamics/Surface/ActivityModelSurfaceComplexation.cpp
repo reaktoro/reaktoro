@@ -22,6 +22,7 @@
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/DoubleLayer.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 
 namespace Reaktoro {
@@ -132,11 +133,6 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
             // Fetch the stoichiometric ionic strength
             const auto I = aqstate.Is;
             surface_state.updatePotential(I);
-
-//            std::cout << "sigma  = " << surface_state.sigma
-//                      << ", y = " << surface_state.sigma/(0.1174*sqrt(I))
-//                      << ", I = " << I
-//                      << ", Surface model charge(AqPhase) = " << (aqstate.z*aqstate.m).sum() << std::endl;
         }
 
         // Export the surface complexation and its state via the `extra` data member
@@ -160,13 +156,13 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
 auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params) -> ActivityModel
 {
     // Create the aqueous ddl_mixture
-    AqueousMixture ddl_mixture(species);
+    DoubleLayer ddl_mixture(species);
 
     // The array of the ionic species charges
     ArrayXr z = ddl_mixture.charges();
 
     // The ddl_state of the aqueous ddl_mixture
-    AqueousMixtureState ddl_state;
+    DoubleLayerState ddl_state;
 
     // Define the activity model function of the surface complexation phase
     ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
@@ -221,9 +217,11 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
             }
         }
 
+
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
     };
+
     return fn;
 }
 
