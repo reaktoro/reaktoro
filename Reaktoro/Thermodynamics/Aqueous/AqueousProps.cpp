@@ -49,10 +49,10 @@ namespace {
 auto indexAqueousPhase(const ChemicalSystem& system) -> Index
 {
     const auto aqueous_phases = system.phases().withAggregateState(AggregateState::Aqueous);
-    warning(aqueous_phases.size() > 1,
-        "While creating an AqueousProps object, it has been detected ",
-        "more than one aqueous phase in the system. The AqueousProps object "
-        "created will correspond to the first aqueous phase found.");
+//    warning(aqueous_phases.size() > 1,
+//        "While creating an AqueousProps object, it has been detected ",
+//        "more than one aqueous phase in the system. The AqueousProps object "
+//        "created will correspond to the first aqueous phase found.");
     const auto idx = system.phases().findWithAggregateState(AggregateState::Aqueous);
     error(idx >= system.phases().size(),
         "Could not find the phase with the aggregate state AggregateState::Aqueous.");
