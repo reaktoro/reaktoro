@@ -79,7 +79,7 @@ int main()
 
     surface_Hfo.addSurfaceSpecies(species_list);
 
-    std::cout << surface_Hfo << std::endl;
+    //std::cout << surface_Hfo << std::endl;
 
     // Set the activity model for the complexation surface
     ActivityModelSurfaceComplexationParams params;
@@ -94,7 +94,7 @@ int main()
     ddl_Hfo.named("DoubleLayerPhase");
     // Set the activity model governing the DDL phase
     ActivityModelDDLParams params_dll;
-    //params_dll.output = true;
+    params_dll.output = true;
 
     //ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
     ddl_Hfo.setActivityModel(ActivityModelDDL(params_dll));
@@ -154,23 +154,28 @@ int main()
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumOptions opts;
-    opts.optima.output.active = true;
+    opts.optima.output.active = false;
 
     EquilibriumSolver solver(specs);
     solver.setOptions(opts);
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.set("H2O", 1.00, "kg");
+    state.set("H2O"  , 1.00, "kg");
     state.set("Cl-"  , 2e+0 + 2e-6, "mmol"); // + 1e-6 is to balance the charge of Sr+2
-    state.set("Ca+2"  , 1e+0, "mmol");
-    state.set("Sr+2"  , 1e-6, "mmol");
+    state.set("Ca+2" , 1e+0, "mmol");
+    state.set("Sr+2" , 1e-6, "mmol");
+    // Set amounts of the surface species in the chemical state
     state.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     state.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 
     // Set tiny amount of water in the DDL
     //state.set("H2O!", 1e-3, "kg");
-    //state.charge();
+//    double scale = 1e-6;
+//    state.set("H2O!"  , scale*1.00, "kg");
+//    state.set("Cl-!"  , scale*(2e+0 + 2e-6), "mmol"); // + 1e-6 is to balance the charge of Sr+2
+//    state.set("Ca+2!" , scale*1e+0, "mmol");
+//    state.set("Sr+2!" , scale*1e-6, "mmol");
 
     std::cout << "*******************************************" << std::endl;
     std::cout << "Before equilibration: " << std::endl;
@@ -192,7 +197,7 @@ int main()
     std::cout << "aqprops: \n" << aprops << std::endl;
 
     ComplexationSurfaceProps surface_props(surface_Hfo, state);
-    std::cout << surface_props << std::endl;
+    std::cout << "surface_props: \n" << surface_props << std::endl;
 
     props.update(state);
     std::cout << "as. phase charge = " <<  props.chargeInPhase("AqueousPhase") << std::endl;
