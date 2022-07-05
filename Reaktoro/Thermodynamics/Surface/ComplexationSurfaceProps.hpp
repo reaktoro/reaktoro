@@ -89,11 +89,11 @@ public:
     // Return the complexation surface.
     auto complexationSurface() const -> ComplexationSurface;
 
-    // Return the surface charge.
-    auto surfaceCharge() const -> real;
+    // Return the sum of species charges.
+    auto Z() const -> real;
 
-    // Return the surface charge density.
-    auto surfaceChargeDensity(real Z) const -> real;
+    // Return the surface charge.
+    auto charge(real Z) const -> real;
 
     // Return the surface potential.
     auto potential(real I, real sigma) const -> real ;

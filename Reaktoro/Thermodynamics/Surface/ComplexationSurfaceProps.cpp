@@ -56,6 +56,10 @@ auto indexComplexationSurfacePhase(const ChemicalSystem& system) -> Index
 
 } // namespace
 
+// Auxiliary constants
+const auto F = faradayConstant;
+const auto R = universalGasConstant;
+
 struct ComplexationSurfaceProps::Impl
 {
     /// The chemical system to which the complexation surface phase belongs.
@@ -219,17 +223,14 @@ struct ComplexationSurfaceProps::Impl
     }
 
     /// Return the complexation surface charge.
-    auto surfaceCharge() const -> real
+    auto Z() const -> real
     {
         return (surface_state.z*nex).sum();
     }
 
     /// Return the complexation surface charge density.
-    auto surfaceChargeDensity(real Z) const -> real
+    auto charge(real Z) const -> real
     {
-        // Auxiliary constants
-        const auto F = faradayConstant;
-
         return F*Z/surface.specificSurfaceArea()/surface.mass();
     }
 
@@ -237,8 +238,6 @@ struct ComplexationSurfaceProps::Impl
     auto potential(real I, real sigma) const -> real
     {
         // Auxiliary variables
-        const auto F = faradayConstant;
-        const auto R = universalGasConstant;
         const auto T = surface_state.T;
 
         // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2),
@@ -339,14 +338,14 @@ auto ComplexationSurfaceProps::complexationSurface() const -> ComplexationSurfac
     return pimpl->surface;
 }
 
-auto ComplexationSurfaceProps::surfaceCharge() const -> real
+auto ComplexationSurfaceProps::Z() const -> real
 {
-    return pimpl->surfaceCharge();
+    return pimpl->Z();
 }
 
-auto ComplexationSurfaceProps::surfaceChargeDensity(real Z) const -> real
+auto ComplexationSurfaceProps::charge(real Z) const -> real
 {
-    return pimpl->surfaceChargeDensity(Z);
+    return pimpl->charge(Z);
 }
 
 auto ComplexationSurfaceProps::potential(real I, real sigma) const -> real
@@ -384,59 +383,36 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     const auto ns = props.speciesAmounts();
     const auto x = props.speciesFractions();
     const auto log10a = props.speciesActivitiesLg();
-    const auto z = props.complexationSurface().charges();
-
-    // Auxiliary variables
-    const auto F = faradayConstant;
-    const auto R = universalGasConstant;
 
     // Check if the size of the species' and elements' data containers are the same
     assert(species.size() == ns.size());
     assert(elements.size() == ne.size());
 
-    auto I = 0.0;
-    // Export aqueous mixture state via `extra` data member
-    if (props.extra().at("DiffusiveLayerState").has_value())
-    {
-        const auto &aqstate = std::any_cast<AqueousMixtureState>(props.extra().at("DiffusiveLayerState"));
-        I = aqstate.Ie;
-    }
-    else if (props.extra().at("AqueousMixtureState").has_value())
-    {
-        const auto &aqstate = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState"));
-        I = aqstate.Ie;
-    }
-
+    // Fetch auxiliary properties
     const auto T = props.complexationSurfaceState().T;
-    const auto Z = props.surfaceCharge();
-    const auto sigma = props.surfaceChargeDensity(Z);
-    const auto psi = props.potential(I, sigma);
+    const auto Z = props.Z();
+    const auto sigma = props.complexationSurfaceState().sigma;
+    const auto psi = props.complexationSurfaceState().psi;
+
+//    // TODO: how does PHREEQC calculates it?
+//    auto I = 0.0;
+//    // Export aqueous mixture state via `extra` data member
+//    if (props.extra().at("AqueousMixtureState").has_value())
+//        I = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState")).Ie;
+//    // Update charge and potential with Z calculate via amount of species
+//    const auto sigma = props.charge(Z);
+//    const auto psi = props.potential(I, sigma);
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ ":: Z     (charge)"        , str(props.surfaceCharge()), "eq" });
-    table.add_row({ ":: sigma (charge density)", str(props.surfaceChargeDensity(Z)), "C/m2" });
+    table.add_row({ ":: Z     (total charge)"   , str(props.Z()), "eq" });
+    table.add_row({ ":: sigma (charge)"        , str(sigma), "C/m2" });
     table.add_row({ ":: psi   (potential) "    , str(psi), "Volt" });
-    table.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F * psi / R / props.complexationSurfaceState().T), "" });
-    table.add_row({ ":: :: exp(-F*psi/(R*T))"  , str(exp(- F * psi / R / props.complexationSurfaceState().T)), "" });
+    table.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F*psi/R/T), "" });
+    table.add_row({ ":: :: exp(-F*psi/(R*T))"  , str(exp(- F*psi/R/T)), "" });
     table.add_row({ ":: As    (specific area)" , str(props.complexationSurfaceState().As), "m2/kg" });
     table.add_row({ ":: mass  (mass)"          , str(props.complexationSurfaceState().mass), "kg" });
 
-//    for(const auto& [tag, site] : props.complexationSurface().sites())
-//    {
-//        auto indx = site.sorptionSpeciesIndices();
-//        auto charge = (ns(indx) * z(indx)).sum();
-//
-//        std::cout << "site: " << site.name() << std::endl;
-//        std::cout << "\t amount       : " << site.amount() << std::endl;
-//        std::cout << "\t Z            : " << charge << std::endl;
-//        std::cout << "\t # of species : " << site.sorptionSpecies().size() << std::endl;
-//        std::cout << "\t :: index :: Species    :: Amounts" << std::endl;
-//
-//        for(auto i : indx)
-//            std::cout << "\t :: " << i << "     :: " << props.complexationSurface().species()[i].name() << "\t " << ns[i]<< std::endl;
-//
-//    }
     table.add_row({ "Element Amounts:" });
     for(auto i = 0; i < elements.size(); ++i)
         table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "mole" });
@@ -454,8 +430,7 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     for(auto& row : table)
     {
         if(i >= 2)  // apply from the third row
-            table[i]
-                    .format()
+            table[i].format()
                     .border_top("")
                     .column_separator("")
                     .corner_top_left("")
