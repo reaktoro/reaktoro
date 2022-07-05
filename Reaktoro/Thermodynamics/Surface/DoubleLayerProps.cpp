@@ -33,14 +33,13 @@ using namespace tabulate;
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -56,6 +55,10 @@ auto indexDoubleLayerPhase(const ChemicalSystem& system) -> Index
 }
 
 } // namespace
+
+// Auxiliary constants
+const auto F = faradayConstant;
+const auto R = universalGasConstant;
 
 struct DoubleLayerProps::Impl
 {
@@ -205,6 +208,21 @@ struct DoubleLayerProps::Impl
         return props.pressure();
     }
 
+    auto charge() const -> real
+    {
+        // Export aqueous state via `extra` data member
+        auto extra = props.extra();
+        const auto& aq_state = std::any_cast<AqueousMixtureState>(extra["AqueousMixtureState"]);
+        auto surf_state = std::any_cast<ComplexationSurfaceState>(extra["ComplexationSurfaceState"]);
+
+        // Fetch auxiliary properties
+        const auto I = aq_state.Is;
+        const auto psi = surf_state.psi;
+        const auto T = props.temperature();
+
+        return -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
+    }
+
     auto elementMolality(const StringOrIndex& symbol) const -> real
     {
         const auto idx = detail::resolveElementIndex(phase, symbol);
@@ -279,17 +297,14 @@ struct DoubleLayerProps::Impl
         const auto T = props.temperature();
         const auto E = phase.elements().size();
         const auto lambdaZ = lambda[E];
-        const auto RT = universalGasConstant * T;
-        const auto res = lambdaZ/(RT*ln10);
+        const auto res = lambdaZ/(R*T*ln10);
         return res;
     }
 
     auto Eh() const -> real
     {
         const auto T = props.temperature();
-        const auto RT = universalGasConstant * T;
-        const auto F = faradayConstant;
-        const auto res = ln10*RT/F*pE();
+        const auto res = ln10*R*T/F*pE();
         return res;
     }
 
@@ -338,6 +353,11 @@ auto DoubleLayerProps::temperature() const -> real
 auto DoubleLayerProps::pressure() const -> real
 {
     return pimpl->pressure();
+}
+
+auto DoubleLayerProps::charge() const -> real
+{
+    return pimpl->charge();
 }
 
 auto DoubleLayerProps::elementMolality(const StringOrIndex& symbol) const -> real
@@ -447,6 +467,8 @@ auto operator<<(std::ostream& out, const DoubleLayerProps& props) -> std::ostrea
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", strfix(props.temperature()), "K" });
     table.add_row({ "Pressure", strfix(props.pressure()*1e-5), "bar" });
+    table.add_row({ "Charge", str(props.charge()), "C/m2" });
+
     table.add_row({ "Species Amounts:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].repr(), strsci(ns[i]), "moles" });

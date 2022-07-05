@@ -66,6 +66,9 @@ public:
     /// Return the pressure of the double layer phase (in Pa).
     auto pressure() const -> real;
 
+    /// Return the charge of the double layer phase (in C/m2).
+    auto charge() const -> real;
+
     /// Return the molality of an element (in molal).
     auto elementMolality(const StringOrIndex& symbol) const -> real;
 
