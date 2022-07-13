@@ -19,96 +19,163 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (4 February 2022)
+#   • Svetlana Kyas (24 February 2022)
 #
 # and since revised by:
-#   •
+#   • G.D. Miron (1 April 2022)
 # -----------------------------------------------------------------------------
 
-import reaktoro as rkt
+import sys
+from reaktoro import *
+import numpy as np
+import math
 
 # Define Thermofun database
-db = rkt.ThermoFunDatabase("cemdata18")
+db = ThermoFunDatabase("cemdata18")
 
-# Print out species in cemdata18-thermofun.json:
-for species in db.species():
-    print(species.name())
-
-solution = rkt.AqueousPhase(rkt.speciate("H O K Na S Si Ca Mg Al C Cl"))
+solution = AqueousPhase(speciate("H O K Na S Si Ca Mg Al C Cl"))
 
 # Set up a and b parameters for the ionic species (KOH, b = 0.123, a = 3.67)
-params = rkt.ActivityModelDebyeHuckelParams()
+params = ActivityModelDebyeHuckelParams()
 params.aiondefault = 3.67
 params.biondefault = 0.123
 params.bneutraldefault = 0.123
 
-solution.setActivityModel(rkt.ActivityModelDebyeHuckel(params))
+solution.setActivityModel(ActivityModelDebyeHuckel(params))
+
+# Define gas phase
+gaseous = GaseousPhase(speciate("H O C"))
 
 # Define minerals phases
-minerals = rkt.MineralPhases("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag "
-                             "C2S C3A C3S C4AF Lim Gp Brc K2SO4 K2O Na2SO4 Na2O")
+minerals = MineralPhases("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag ")
 
-# Define solid phases
-solidphase_C3AFS084H  = rkt.SolidPhase("C3FS0.84H4.32 C3AFS0.84H4.32") # AlFeSi-hydrogarnet_ss
-solidphase_ettringite = rkt.SolidPhase("ettringite ettringite30") # Ettrignite_ss
-solidphase_OH_SO4_AFm = rkt.SolidPhase("C4AH13 monosulphate12") # Monosulfate_ss
-solidphase_CSHQ       = rkt.SolidPhase("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH") # CSH_ss
+# Define AlFeSi-hydrogarnet solid phase
+ss_C3AFS084H  = SolidPhase("C3FS0.84H4.32 C3AFS0.84H4.32")
+ss_C3AFS084H.setName("ss_C3AFS084H")
+# Define Ettrignite solid phase
+ss_ettringite = SolidPhase("ettringite ettringite30")
+ss_ettringite.setName("ss_Ettrignite")
+# Define Monosulfate solid phase
+ss_OH_SO4_AFm = SolidPhase("C4AH13 monosulphate12")
+ss_OH_SO4_AFm.setName("ss_Monosulfate")
+# Define CSH solid phase
+ss_CSHQ = SolidPhase("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH")
+ss_CSHQ.setName("ss_CSHQ")
 
 # Define chemical system by providing database, aqueous phase, minerals, and solid solutions
-system = rkt.ChemicalSystem(db, solution, minerals,
-                            solidphase_C3AFS084H,
-                            solidphase_ettringite,
-                            solidphase_OH_SO4_AFm,
-                            solidphase_CSHQ)
+system = ChemicalSystem(db, solution, minerals, gaseous,
+                        ss_C3AFS084H,
+                        ss_ettringite,
+                        ss_OH_SO4_AFm,
+                        ss_CSHQ)
 
 # Specify conditions to be satisfied at chemical equilibrium
-specs = rkt.EquilibriumSpecs(system)
+specs = EquilibriumSpecs(system)
 specs.temperature()
 specs.pressure()
 
-# Define equilibrium solver
-solver = rkt.EquilibriumSolver(specs)
-
-# Define initial equilibrium state
-state = rkt.ChemicalState(system)
-state.setSpeciesMass("H2O@", 40, "g") # water # water/binder = 0.4, 40g water per 100g of cement clinker
-# clinker phases
-state.setSpeciesMass("C2S" ,  9.70, "g") # belite
-state.setSpeciesMass("C3A" ,  7.72, "g") # aluminate
-state.setSpeciesMass("C3S" , 67.31, "g") # alite
-state.setSpeciesMass("C4AF",  8.14, "g") # ferrite, (CaO)4(Al2O3)(Fe|3|2O3)
-# additional
-state.setSpeciesMass("Gp"    , 3.13, "g") # gypsum, CaSO4(H2O)2
-state.setSpeciesMass("Cal"   , 0.10, "g") # calcite, CaCO3
-state.setSpeciesMass("Lim"   , 0.93, "g") # lime, CaO
-state.setSpeciesMass("Brc"   , 1.31, "g") # brucite, Mg(OH)2
-state.setSpeciesMass("K2SO4" , 1.34, "g") # potasium-sulfate
-state.setSpeciesMass("K2O"   , 0.05, "g") # potasium oxide
-state.setSpeciesMass("Na2SO4", 0.21, "g") # sodium sulfate
-state.setSpeciesMass("Na2O"  , 0.05, "g") # sodium oxide
-state.setSpeciesMass("O2@"   , 0.15, "g") # oxygen to stabilize the system
-
-# Define temperature and pressure
-T = 20.0 # in Celsius
-P = 1.0 # in bar
-
 # Define conditions to be satisfied at chemical equilibrium
-conditions = rkt.EquilibriumConditions(specs)
-conditions.temperature(T, "celsius")
-conditions.pressure(P, "bar")
+conditions = EquilibriumConditions(specs)
+conditions.temperature(20.0, "celsius")
+conditions.pressure(1.0, "bar")
 
-# Equilibrate the initial state with given conditions and component amounts
-res = solver.solve(state, conditions)
-print("res (cemdata18) = ", res.optima.succeeded)
+props = ChemicalProps(system)
+aprops = AqueousProps(system)
 
-# Output the chemical state to a file
-state.output("state-cemdata18.txt")
+opts = EquilibriumOptions()
+opts.optima.output.active = False
+opts.epsilon = 1e-13
 
-# Output chemical properties to a file
-props = rkt.ChemicalProps (state)
-props.output("props.txt")
+# We define the materials for our equilibrium recipe
+# Cement clinker composition from XRF as given in Lothenbach et al., (2008) recalculated for 100g
+cement_clinker = Material(system)
+cement_clinker.add("SiO2" , 20.47, "g")
+cement_clinker.add("CaO"  , 65.70, "g")
+cement_clinker.add("Al2O3",  4.90, "g")
+cement_clinker.add("Fe2O3",  3.20, "g")
+cement_clinker.add("K2O"  ,  0.79, "g")
+cement_clinker.add("Na2O" ,  0.42, "g")
+cement_clinker.add("MgO"  ,  1.80, "g")
+cement_clinker.add("SO3"  ,  2.29, "g")
+cement_clinker.add("CO2"  ,  0.26, "g")
+cement_clinker.add("O2"   ,  0.15, "g")
 
-# Output aqueous properties to a file
-aprops = rkt.AqueousProps (state)
-aprops.output("aprops.txt")
+# Define water
+water = Material(system)
+water.add("H2O", 1000.0, "g")
 
+# Define calcite
+calcite = Material(system)
+calcite.add("CaCO3", 1, "g")
+
+import numpy as np
+# Create list of species and phases names, list of Species objects, and auxiliary amounts array
+phases_list_str = "ss_C3AFS084H ss_Ettrignite ss_Monosulfate ss_CSHQ " \
+                  "Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag".split()
+volume = np.zeros(len(phases_list_str))
+
+# Define dataframe to collect amount of the selected species
+import pandas as pd
+columns = ["CaCO3"] \
+          + ["volume_perc_" + name for name in phases_list_str]
+df = pd.DataFrame(columns=columns)
+
+# Volume in cm3
+total_volume = float(props.volume()) *1e5
+
+# Number of steps
+steps_num = 19
+
+import numpy as np
+# Create list of species and phases names, list of Species objects, and auxiliary amounts array
+phases_list_str = "ss_C3AFS084H ss_Ettrignite ss_Monosulfate ss_CSHQ " \
+                  "Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag".split()
+volume = np.zeros(len(phases_list_str))
+
+# Define dataframe to collect amount of the selected species
+import pandas as pd
+columns = ["CaCO3"] \
+          + ["volume_perc_" + name for name in phases_list_str]
+df = pd.DataFrame(columns=columns)
+
+# Number of steps
+steps_num = 19
+
+# We simulate the addition of calcite at the expense of clinker in the cement mix
+for i in range(1, steps_num):
+
+    # Define a cement mix of 0.5 water/binder at each step calcite is added at the expense of clinker
+    cement_mix = Material(system)
+    cement_mix = cement_clinker(100.0-i, "g") + calcite(i, "g") + water(50.0, "g")
+
+    # Equilibrate cement mix
+    state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts)
+    res = cement_mix.result()
+
+    if not res.optima.succeeded:
+        # Define equilibrium solver
+        solver = EquilibriumSolver(specs)
+
+        # Equilibrate the resulting chemical state with equilibrium solver
+        solver.setOptions(opts)
+        res = solver.solve(state, conditions)
+
+        if not res.optima.succeeded: continue
+
+    # Update chemical and aqueous properties to a file
+    props.update(state)
+    aprops.update(state)
+
+    for j in range(0, len(phases_list_str)):
+        # Collecting volume in cm3
+        volume[j] = float(props.phaseProps(phases_list_str[j]).volume())
+    volume_perc = volume / float(props.volume()) * 100
+
+    # Update dataframe with obtained values
+    df.loc[len(df)] = np.concatenate([[i], volume_perc])
+
+# Plot selected dataframe columns
+volume_names = ["Cal", "hydrotalcite", "Portlandite", "ss_CSHQ", "ss_C3AFS084H", "ss_Ettrignite", "monocarbonate"]
+ax = df.plot.area(x='CaCO3', y=["volume_perc_" + name for name in volume_names], label=volume_names, colormap="Set2")
+ax.set_xlim(2.0, 10.0)
+ax.figure.savefig('phase-volume-vs-caco3.png')
