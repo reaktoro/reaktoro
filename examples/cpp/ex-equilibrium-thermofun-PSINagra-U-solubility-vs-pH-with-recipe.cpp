@@ -58,14 +58,10 @@ int main()
     EquilibriumSolver solver(specs);
     EquilibriumResult res;
 
-    // Define temperature and pressure
-    double T = 25.0; // in Celsius
-    double P = 1.0; // in bar
-
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
-    conditions.temperature(T, "celsius");
-    conditions.pressure(P, "bar");
+    conditions.temperature(25.0, "celsius");
+    conditions.pressure(1.0, "bar");
 
     std::vector<double> pHs = {5, 6, 7, 8, 9, 10};
     std::vector<double> n(pHs);
@@ -110,8 +106,9 @@ int main()
     ChemicalProps props_pc(system);
 
     // Output the header of the table
-    std::cout << "      pH       success       %n(UO2+2)   %n(UO2OH+) %n(UO2(OH)2@)  %n(UO2CO3@) "
-                 "%n((UO2)3CO3(OH)3+) %n((UO2)2(OH)+3) %n(UO2(CO3)3-4) %n(UO2(CO3)2-2) %n((UO2)2(OH)2+2) %n((UO2)4(OH)7+)" << std::endl;
+    std::cout << "        pH       success         "
+                 "%n(UO2+2)     %n(UO2OH+)   %n(UO2(OH)2@)    %n(UO2CO3@)   %n((UO2)3CO3(OH)3+)   "
+                 "%n((UO2)2(OH)+3)   %n(UO2(CO3)3-4)   %n(UO2(CO3)2-2) %n((UO2)2(OH)2+2) %n((UO2)4(OH)7+)" << std::endl;
 
     for(Index i = 0; i < pHs.size(); i++)
     {
@@ -142,7 +139,7 @@ int main()
         UO24OH7[i]    = state.speciesAmount("(UO2)4(OH)7+");
 
         // Output results for the current pH
-        std::cout.precision(6);
+        std::cout.precision(8);
         std::cout << std::scientific << " "
                   << pHs[i] << "    "
                   << res.optima.succeeded << "        "

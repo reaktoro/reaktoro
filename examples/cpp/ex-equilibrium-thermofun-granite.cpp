@@ -63,17 +63,10 @@ int main()
     // Define equilibrium solver
     EquilibriumSolver solver(specs);
 
-    // Define temperature and pressure
-    double T = 400.0; // in Celsius
-    double P = 1e3; // in bar
-
-    std::cout << "T = " << T << std::endl;
-    std::cout << "P = " << P << std::endl;
-
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
-    conditions.temperature(T, "celsius");
-    conditions.pressure(P, "bar");
+    conditions.temperature(400.0, "celsius");
+    conditions.pressure(1e3, "bar");
 
     // Define initial equilibrium state of 100 g of granite and 20 g of water
     ChemicalState state(system);
