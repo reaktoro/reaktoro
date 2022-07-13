@@ -107,10 +107,6 @@ int main()
     cement_clinker.add("SO3", 2.29, "g");
     cement_clinker.add("CO2", 0.26, "g");
     cement_clinker.add("O2", 0.15, "g");
-    // Things to change
-//    cement_clinker.add("CaCO3", 0.00, "g");
-//    cement_clinker.add("CaO", 65.7, "g");
-
     cement_clinker.add("CaCO3", 20.00, "g");
     cement_clinker.add("CaO", 45.7, "g");
 

@@ -22,7 +22,7 @@
 //   • Svetlana Kyas (27 September 2021)
 //
 // and since revised by:
-//   •
+//   • G. Dan Miron (28 January 2022)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -67,20 +67,13 @@ int main()
     // Create the result of the equilibrium calculations
     EquilibriumResult res;
 
-   // Define temperature and pressure
-    double T = 400.0; // in Celsius
-    double P = 1e3; // in bar
-
-    std::cout << "T = " << T << std::endl;
-    std::cout << "P = " << P << std::endl;
-
     // Initialize the amount of elements in the system
     Index E = system.elements().size();
 
     // Define initial equilibrium state for the equilibrium calculations
     ChemicalState initialstate(system);
-    initialstate.temperature(T, "celsius");
-    initialstate.pressure(P, "bar");
+    initialstate.temperature(400.0, "celsius");
+    initialstate.pressure(1e3, "bar");
     initialstate.set("H2O@", 1.0, "kg");
 
     // -------------------------------------------------------------------------------------------- //
