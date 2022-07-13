@@ -51,10 +51,10 @@ m0Halite = 100.0
 
 # Define initial equilibrium state
 state = ChemicalState(system)
-state.setTemperature(25.0, "celsius")
-state.setPressure(1.0, "bar")
-state.setSpeciesMass("H2O(aq)", 1.0, "kg")
-state.setSpeciesAmount("Halite", m0Halite, "mol")
+state.temperature(25.0, "celsius")
+state.pressure(1.0, "bar")
+state.set("H2O(aq)", 1.0, "kg")
+state.set("Halite", m0Halite, "mol")
 
 # Define equilibrium solver and equilibrate given initial state
 solver = EquilibriumSolver(system)

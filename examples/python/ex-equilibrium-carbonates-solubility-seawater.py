@@ -39,16 +39,16 @@ def carbonates_in_seawater(system, solver, T, P):
 
     # Define initial equilibrium state corresponding to the seawater
     state_sw = ChemicalState(system)
-    state_sw.setTemperature(T, "celsius")
-    state_sw.setPressure(P, "atm")
-    state_sw.setSpeciesMass("H2O", 1.0, "kg")
-    state_sw.setSpeciesMass("Ca+2", 412.3 * water_kg, "mg")
-    state_sw.setSpeciesMass("Mg+2", 1290 * water_kg, "mg")
-    state_sw.setSpeciesMass("Na+", 10768.0 * water_kg, "mg")
-    state_sw.setSpeciesMass("K+", 399.1 * water_kg, "mg")
-    state_sw.setSpeciesMass("Cl-", 19353.0 * water_kg, "mg")
-    state_sw.setSpeciesMass("HCO3-", 141.682 * water_kg, "mg")
-    state_sw.setSpeciesMass("SO4-2", 2712.0 * water_kg, "mg")
+    state_sw.temperature(T, "celsius")
+    state_sw.pressure(P, "atm")
+    state_sw.set("H2O", 1.0, "kg")
+    state_sw.set("Ca+2", 412.3 * water_kg, "mg")
+    state_sw.set("Mg+2", 1290 * water_kg, "mg")
+    state_sw.set("Na+", 10768.0 * water_kg, "mg")
+    state_sw.set("K+", 399.1 * water_kg, "mg")
+    state_sw.set("Cl-", 19353.0 * water_kg, "mg")
+    state_sw.set("HCO3-", 141.682 * water_kg, "mg")
+    state_sw.set("SO4-2", 2712.0 * water_kg, "mg")
 
     # Calculate chemical state corresponding to the seawater
     res = solver.solve(state_sw)
@@ -58,19 +58,19 @@ def carbonates_in_seawater(system, solver, T, P):
         raise RuntimeError("Equilibrium calculation did not succeed!")
 
     # Add carbonates
-    state_sw.setSpeciesAmount("Dolomite", n0Dolomite, "mol")
-    state_sw.setSpeciesAmount("Calcite", n0Calcite, "mol")
+    state_sw.set("Dolomite", n0Dolomite, "mol")
+    state_sw.set("Calcite", n0Calcite, "mol")
 
     # Equilibrate the seawater with carbonates
     solver.solve(state_sw)
 
     # Fetch values of the specified species
     nDolomite = state_sw.speciesAmount("Dolomite")
-    nCalcite = state_sw.speciesAmount("Calcite")
-    nCa2 = state_sw.speciesAmount("Ca+2")
-    nMg2 = state_sw.speciesAmount("Mg+2")
-    nH = state_sw.speciesAmount("H+")
-    nHCO3 = state_sw.speciesAmount("HCO3-")
+    nCalcite  = state_sw.speciesAmount("Calcite")
+    nCa2      = state_sw.speciesAmount("Ca+2")
+    nMg2      = state_sw.speciesAmount("Mg+2")
+    nH        = state_sw.speciesAmount("H+")
+    nHCO3     = state_sw.speciesAmount("HCO3-")
 
     return (nCalcite[0], nDolomite[0], nCa2[0], nMg2[0], nH[0], nHCO3[0])
 
@@ -79,9 +79,7 @@ db = PhreeqcDatabase("pitzer.dat")
 
 # Create an aqueous phase automatically selecting all species with provided elements
 aqueousphase = AqueousPhase(speciate("H O C Ca Cl Na K Mg S Si"))
-aqueousphase.setActivityModel(chain(
-    ActivityModelPitzerHMW()
-))
+aqueousphase.setActivityModel(ActivityModelPitzerHMW())
 
 # Create carbonates phases
 calcitephase = MineralPhase("Calcite")
@@ -105,12 +103,12 @@ P = 1.0
 
 # Fetch specific species amounts
 species_amounts = [carbonates_in_seawater(system, solver, x, P) for x in T]  # [0] is needed to get the value of autodiff.real
-mCalcite = [molals[0] for molals in species_amounts]
+mCalcite  = [molals[0] for molals in species_amounts]
 mDolomite = [molals[1] for molals in species_amounts]
-mCa2 = [molals[2] for molals in species_amounts]
-mMg2 = [molals[3] for molals in species_amounts]
-mH = [molals[4] for molals in species_amounts]
-mHCO3 = [molals[5] for molals in species_amounts]
+mCa2      = [molals[2] for molals in species_amounts]
+mMg2      = [molals[3] for molals in species_amounts]
+mH        = [molals[4] for molals in species_amounts]
+mHCO3     = [molals[5] for molals in species_amounts]
 
 # Output species amount after equilibration for a range of the
 print(" --------------------------------------------------------------------------------")

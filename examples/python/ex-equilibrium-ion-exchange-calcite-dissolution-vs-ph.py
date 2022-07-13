@@ -72,8 +72,8 @@ def equilibrate(solver, mol_NaX, mol_NH4):
 
     # Define initial equilibrium state
     state = ChemicalState(system)
-    state.setTemperature(25.0, "celsius")
-    state.setPressure(1, "atm")
+    state.temperature(25.0, "celsius")
+    state.pressure(1, "atm")
     # Seawater
     state.set("H2O" , 1.0, "kg")
     state.set("Na+" , 1.10, "mmol")
@@ -91,7 +91,7 @@ def equilibrate(solver, mol_NaX, mol_NH4):
     pH = aqprops.pH()[0]
 
     # Exchanger
-    state.setSpeciesAmount("NaX" , mol_NaX, "mol")
+    state.set("NaX" , mol_NaX, "mol")
 
     # Equilibrate the seawater with carbonates
     solver.solve(state)
