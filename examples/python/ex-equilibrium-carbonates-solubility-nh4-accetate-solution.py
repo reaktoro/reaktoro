@@ -45,6 +45,7 @@ def carbonates_in_seawater(T):
     # Calculate chemical state corresponding to the seawater
     res = solver.solve(state_sw)
 
+    # Update aqueous properties
     aqprops.update(state_sw)
     print("pH (before adding Calcite) = ", aqprops.pH())
 

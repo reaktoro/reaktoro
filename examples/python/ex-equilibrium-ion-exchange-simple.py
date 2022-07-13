@@ -47,14 +47,14 @@ P = 1.0  # pressure in bar
 
 # Define initial equilibrium state
 state = ChemicalState(system)
-state.setTemperature(T, "celsius")
-state.setPressure(P, "bar")
-state.setSpeciesMass("H2O"   , 1.00, "kg")
-state.setSpeciesAmount("Na+" , 1.00, "mmol")
-state.setSpeciesAmount("K+"  , 1.00, "mmol")
-state.setSpeciesAmount("Mg+2", 1.00, "mmol")
-state.setSpeciesAmount("Ca+2", 1.00, "mmol")
-state.setSpeciesAmount("NaX" , 0.06, "umol") # set small to make sure we have plenty of water for available exchanger X-
+state.temperature(T, "celsius")
+state.pressure(P, "bar")
+state.set("H2O"   , 1.00, "kg")
+state.set("Na+" , 1.00, "mmol")
+state.set("K+"  , 1.00, "mmol")
+state.set("Mg+2", 1.00, "mmol")
+state.set("Ca+2", 1.00, "mmol")
+state.set("NaX" , 0.06, "umol") # set small to make sure we have plenty of water for available exchanger X-
 
 # Define equilibrium solver and equilibrate given initial state with input conditions
 solver = EquilibriumSolver(system)

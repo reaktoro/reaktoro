@@ -31,9 +31,7 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
 solution = AqueousPhase("H2O Na+ Cl- H+ OH- K+ Ca+2")
-solution.setActivityModel(chain(
-    ActivityModelHKF()
-))
+solution.setActivityModel(ActivityModelHKF())
 
 # Define an ion exchange phase
 exchange = IonExchangePhase("CaX2 KX NaX")
@@ -47,8 +45,8 @@ P = 1.0  # pressure in bar
 
 # Define initial equilibrium state
 state = ChemicalState(system)
-state.setTemperature(T, "celsius")
-state.setPressure(P, "atm")
+state.temperature(T, "celsius")
+state.pressure(P, "atm")
 
 # To match the PHREEQC script:
 # ---------------------------------------------------------------
@@ -62,12 +60,12 @@ state.setPressure(P, "atm")
 # ---------------------------------------------------------------
 
 mix_scale = 1e-9
-state.setSpeciesMass("H2O"   , 1.00 * mix_scale, "kg")
-state.setSpeciesAmount("Na+" , 1.20 * mix_scale, "mmol")
-state.setSpeciesAmount("Cl-" , 1.20 * mix_scale, "mmol")
+state.set("H2O"   , 1.00 * mix_scale, "kg")
+state.set("Na+" , 1.20 * mix_scale, "mmol")
+state.set("Cl-" , 1.20 * mix_scale, "mmol")
 # Define exchange species
-state.setSpeciesAmount("KX"  , 0.1870, "mol")
-state.setSpeciesAmount("CaX2", 0.4065, "mol")
+state.set("KX"  , 0.1870, "mol")
+state.set("CaX2", 0.4065, "mol")
 
 # Define equilibrium solver and equilibrate given initial state with input conditions
 solver = EquilibriumSolver(system)

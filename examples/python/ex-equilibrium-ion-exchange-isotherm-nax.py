@@ -61,13 +61,13 @@ def equilibrate(solver, m_K, m_Ca):
 
     # Define initial equilibrium state
     state = ChemicalState(system)
-    state.setTemperature(T, "celsius")
-    state.setPressure(P, "atm")
-    state.setSpeciesMass("H2O"   , 1.0 , "kg")
-    state.setSpeciesAmount("K+"  , m_K , "mol")
-    state.setSpeciesAmount("Ca+2", m_Ca, "mol")
+    state.temperature(T, "celsius")
+    state.pressure(P, "atm")
+    state.set("H2O"   , 1.0 , "kg")
+    state.set("K+"  , m_K , "mol")
+    state.set("Ca+2", m_Ca, "mol")
     # Exchanger site
-    state.setSpeciesAmount("NaX", 0.5, "mol")
+    state.set("NaX", 0.5, "mol")
 
     # Equilibrate chemical state
     solver.solve(state)
