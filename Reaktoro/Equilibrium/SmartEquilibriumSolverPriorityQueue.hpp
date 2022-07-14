@@ -22,6 +22,8 @@
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolverBase.hpp>
+#include <Reaktoro/ODML/ClusterConnectivity.hpp>
+#include <Reaktoro/ODML/PriorityQueue.hpp>
 
 namespace Reaktoro {
     

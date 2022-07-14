@@ -225,7 +225,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
 
         if(success)
         {
-            _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
+            _result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
 
             //---------------------------------------------------------------------
             // TAYLOR EXTRAPOLATION STEP DURING THE LEARNING PROCESS
