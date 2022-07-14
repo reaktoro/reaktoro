@@ -31,7 +31,7 @@ from reaktoro import *
 db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
-solution = AqueousPhase(speciate("H O Cl Ca Sr Cd Zn Pb Cu Fe Ba"))
+solution = AqueousPhase(speciate("H O Cl Ca Sr Cd Zn Pb Cu Fe"))
 solution.setActivityModel(ActivityModelHKF())
 
 # Define surface complexation  species list
@@ -78,37 +78,28 @@ solver = EquilibriumSolver(specs)
 
 # Define equilibrium conditions
 conditions = EquilibriumConditions(specs)
-conditions.temperature(25.0, "celsius")
-conditions.pressure(1.0, "atm")
+conditions.temperature(25.0 + 273.15) # in Kelvin
+conditions.pressure(1e5) # in Pa
 
 import numpy as np
-pHs = np.linspace(2.0, 9.0, num=15)
-b_surf = []
-b_aq = []
+import math
+pHs = np.linspace(2.0, 9.0, num=19)
 
-metal = {"Pb": "Pb+2",
-         "Cd": "Cd+2",
-         "Zn": "Zn+2",
-         "Cu": "Cu+2",
-         "Sr": "Sr+2",
-         "Fe": "Fe+3",
-         "Ba": "Ba+2",
-         "Ca": "Ca+2"}
+metals = {"Pb": "Pb+2",
+          "Cd": "Cd+2",
+          "Zn": "Zn+2",
+          "Cu": "Cu+2",
+          "Sr": "Sr+2",
+          "Ca": "Ca+2"}
 
-#
-#metal_b = "Pb"
-#metal_b = "Cd"
-#metal_b = "Zn"
-#metal_b = "Cu"
-#metal_b = "Sr"
-#metal_b = "Fe"
-#metal_b = "Ba"
-metal_b = "Ca"
+import pandas as pd
+columns = ["Metal", "pH", "%"]
+df = pd.DataFrame(columns=columns)
 
 # Initial Sr amount
 n0 = 1e-6
 
-def equilibrate(pH):
+def equilibrate(pH, metal):
 
       # Set pH
       conditions.pH(pH)
@@ -118,37 +109,57 @@ def equilibrate(pH):
       state.set("H2O" , 1.00, "kg")
       state.set("Cl-" , 2e+0, "mmol")
       state.set("Ca+2", 1e+0, "mmol")
-      state.set(metal[metal_b], n0, "mmol")
+      state.set(metals[metal], n0, "mmol")
       state.set("Hfo_wOH", surface_Hfo.sites()["_w"].amount(), "mol")
       state.set("Hfo_sOH", surface_Hfo.sites()["_s"].amount(), "mol")
 
       # Equilibrate given initial state with input conditions
       res = solver.solve(state, conditions)
 
-      # Update properties
-      props.update(state)
+      # If the equilibrium calculations didn't succeed, continue to the next condition
+      if res.optima.succeeded:
+            # Update properties
+            props.update(state)
 
-      # Fetch amount of sorbed and dissolved mineral
-      b_aq    = float(props.elementAmountInPhase(metal_b, "AqueousPhase"))
-      b_surf  = float(props.elementAmountInPhase(metal_b, "SurfaceComplexationPhase"))
+            # Fetch amount of sorbed and dissolved mineral
+            b_aq    = float(props.elementAmountInPhase(metal, "AqueousPhase"))
+            b_surf  = float(props.elementAmountInPhase(metal, "SurfaceComplexationPhase"))
 
-      return b_surf, b_aq
+            return b_surf, b_aq
+      else:
+            return math.nan, math.nan
 
-print(f"        pH  % sorbed {metal_b}")
-for pH in pHs:
+for metal in metals:
+      print(f"pH    % sorbed {metal}   % dissolved {metal}")
 
-      result = equilibrate(pH)
-      b_total = float(props.elementAmount(metal_b))
-      b_surf.append(result[0] / b_total * 100)
-      b_aq.append(result[1] / b_total * 100)
+      for pH in pHs:
 
-      print(f"{pH:6.4e} {b_surf[-1]:12.4f}")
+            result = equilibrate(pH, metal)
+            b_total = float(props.elementAmount(metal))
+            if b_total != 0:
+                  b_surf = result[0] / b_total * 100
+                  b_aq = result[1] / b_total * 100
+                  print(f"{pH:4.2f} {b_surf:12.4f} {b_aq:16.4f}")
+            else:
+                  b_surf, b_aq = result[0], result[1]
+
+            # Update dataframe with obtained values
+            df.loc[len(df)] = [metals[metal], pH, b_surf]
 
 from matplotlib import pyplot as plt
-plt.plot(pHs, b_surf)
-plt.title(f"Dependence of {metal_b} sorption on pH")
-plt.xlabel('pH [-]')
-plt.ylabel(f'Sorbed {metal_b} [%]')
+colors = ['coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
+
+plt.figure()
+plt.title(f"Dependence of metal sorption on pH")
+plt.xlabel("pH")
+df_metal = df[df["Metal"] == list(metals.values())[0]] # fetch the columns with Pb+2
+ax = df_metal.plot(x="pH", y="%", color=colors[0], label=list(metals.keys())[0])
+
+for idx, metal in enumerate(metals):
+      if idx:
+            df_metal = df[df["Metal"] == metals[metal]] # fetch the columns with other metals
+            df_metal.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=metal)
+plt.legend(loc="best")
 plt.grid()
-plt.savefig("sorbed-" + metal_b + "-vs-pH.png")
+plt.savefig("sorbed-metals-vs-pH.png")
 plt.close()
