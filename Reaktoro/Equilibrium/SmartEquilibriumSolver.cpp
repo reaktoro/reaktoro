@@ -35,6 +35,7 @@ SmartEquilibriumSolver::~SmartEquilibriumSolver()
 {
 }
 
+/// Set the options for the equilibrium calculation.
 auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) -> void
 {
     if(!initialized)
@@ -59,9 +60,9 @@ auto SmartEquilibriumSolver::setOptions(const SmartEquilibriumOptions& options) 
                 break;
         }
     }
-    // Set options of the smart equilibrium options
-    solverptr.get()->setOptions(options);
 
+    // Set options of the smart equilibrium options
+    solverptr->setOptions(options);
 }
 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, const EquilibriumProblem& problem) -> SmartEquilibriumResult
@@ -85,4 +86,3 @@ auto SmartEquilibriumSolver::outputInfo() const -> void
 }
 
 } // namespace Reaktoro
-
