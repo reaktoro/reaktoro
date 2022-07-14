@@ -18,7 +18,6 @@
 #pragma once
 
 #include <Reaktoro/Core/ChemicalOutput.hpp>
-//#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalProperties.hpp>
 #include <Reaktoro/Core/ChemicalProperty.hpp>
 #include <Reaktoro/Core/ChemicalQuantity.hpp>

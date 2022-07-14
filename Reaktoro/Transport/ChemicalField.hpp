@@ -78,9 +78,9 @@ public:
     /// Fetch the vector with element amounts in the states
     auto elementAmounts(VectorRef values) -> void;
 
-    /// Function responsible for the output of the checmial field to the file
+    /// Function responsible for the output of the chemical field to the file
     /// @param filename The name of the file for the outputting
-    /// @param quantities The list of quantaties to output
+    /// @param quantities The list of quantities to output
     /// @see ChemicalOutput
     auto output(const std::string& filename, const StringList& quantities) -> void;
 
