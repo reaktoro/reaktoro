@@ -77,6 +77,13 @@ auto SmartEquilibriumSolverNN::learn(ChemicalState& state, double T, double P, V
     database.push_back({be, state, _properties, solver.sensitivity()});
 
     _result.timing.learn_storage = toc(STORAGE_STEP);
+
+    // The amounts of the species at the calculated equilibrium state
+    n = state.speciesAmounts();
+
+    // The amounts of the equilibrium species amounts at the calculated equilibrium state
+    ne = n(ies);
+
 }
 
 auto SmartEquilibriumSolverNN::estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void
