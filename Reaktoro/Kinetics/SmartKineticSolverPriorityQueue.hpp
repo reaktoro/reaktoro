@@ -22,7 +22,6 @@
 #include <Reaktoro/Math/Matrix.hpp>
 #include <Reaktoro/Common/ChemicalVector.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-
 #include <Reaktoro/Kinetics/SmartKineticSolverBase.hpp>
 
 namespace Reaktoro {
