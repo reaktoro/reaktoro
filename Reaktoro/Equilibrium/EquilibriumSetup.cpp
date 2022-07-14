@@ -144,17 +144,17 @@ struct EquilibriumSetup::Impl
         const auto aq_idx = detail::resolvePhaseIndex(system, "AqueousPhase");
         const auto Naq = system.phase(aq_idx).species().size();
 
-        //MatrixXd Aex = zeros(Nb, Nx);
-        MatrixXd Aex = zeros(Nb + 1, Nx); // extending Aex matrix by the line corresponding to zero charge of the aqueous phase
+        MatrixXd Aex = zeros(Nb, Nx);
+        //MatrixXd Aex = zeros(Nb + 1, Nx); // extending Aex matrix by the line corresponding to zero charge of the aqueous phase
 
         auto Wn = Aex.topLeftCorner(Nb, Nn);  // the formula matrix of the species
         auto Wq = Aex.topRightCorner(Nb, Nq); // the formula matrix of the implicit titrants
-        auto Wz = Aex.bottomLeftCorner(1, dims.Nn);  // the formula matrix of the zero-charge aqueous phase
+        //auto Wz = Aex.bottomLeftCorner(1, dims.Nn);  // the formula matrix of the zero-charge aqueous phase
 
         Wn = system.formulaMatrix();
 
-        Wz = system.formulaMatrixCharge();
-        Wz.rightCols(dims.Nn - Naq).fill(0.0);
+//        Wz = system.formulaMatrixCharge();
+//        Wz.rightCols(dims.Nn - Naq).fill(0.0);
 
         auto j = 0;
         for(const auto& formula : specs.titrantsImplicit())
