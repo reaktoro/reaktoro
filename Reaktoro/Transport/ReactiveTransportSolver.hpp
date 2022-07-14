@@ -44,10 +44,10 @@ public:
     /// Construct a ReactiveTransportSolver instance with given chemical system.
     explicit ReactiveTransportSolver(const ChemicalSystem& system);
 
-    /// Construct a ReactiveTransportSolver instance with given chemical system.
+    /// Construct a ReactiveTransportSolver instance with given partition.
     explicit ReactiveTransportSolver(const Partition& partition);
 
-    /// Construct a ReactiveTransportSolver instance when system, reactions, and partition are provided.
+    /// Construct a ReactiveTransportSolver instance when reactions and partition are provided.
     ReactiveTransportSolver(const ReactionSystem& reactions, const Partition& partition);
 
     /// Construct a copy of a ReactiveTransportSolver instance.
@@ -90,7 +90,7 @@ public:
     /// This method should be called before the first call to method ReactiveTransportSolver::step.
     auto initialize() -> void;
 
-    /// Perform one time step of a reactive transport calculation with pure equilibrium.
+    /// Perform one time step of a reactive transport calculation.
     auto step(ChemicalField& field) -> void;
 
     /// Return the result of the last reactive transport time step calculation.

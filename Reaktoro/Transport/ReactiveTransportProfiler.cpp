@@ -68,7 +68,7 @@ struct ReactiveTransportProfiler::Impl
     /// The total accumulated timing for smart equilibrium calculations.
     SmartEquilibriumTiming accumulated_timing_smart_equilibrium;
 
-    /// The total accumulated timing for smart equilibrium calculations.
+    /// The total accumulated timing for kinetics calculations.
     KineticTiming accumulated_timing_kinetics;
 
     /// The total accumulated timing for smart kinetics calculations.
@@ -200,7 +200,7 @@ struct ReactiveTransportProfiler::Impl
         return info;
     }
 
-    /// Return a summary of the performance analysis of all equilibrium calculations.
+    /// Return a summary of the performance analysis of all kinetic calculations.
     auto kineticsAnalysis() const -> ReactiveTransportAnalysis::KineticsAnalysis
     {
         ReactiveTransportAnalysis::KineticsAnalysis info;
@@ -247,23 +247,23 @@ struct ReactiveTransportProfiler::Impl
         return info;
     }
 
-    /// Return a summary of the performance analysis of all smart equilibrium calculations.
+    /// Return a summary of the performance analysis of all smart kinetic calculations.
     auto smartKineticsAnalysis() const -> ReactiveTransportAnalysis::SmartKineticsAnalysis
     {
         ReactiveTransportAnalysis::SmartKineticsAnalysis info;
         info.timing = accumulated_timing_smart_kinetics;
 
-        // Count the accepted smart equilibrium estimates and required learning operations
+        // Count the accepted smart kinetic estimates and required learning operations
         for(const auto& result : results)
             for(const auto& smart_kinetics_result : result.smart_kinetics_at_cell)
                 if(smart_kinetics_result.estimate.accepted) ++info.num_smart_kinetics_accepted_estimates;
                 else ++info.num_smart_kinetics_required_learnings;
 
-        // Set the total number of equilibrium calculations
+        // Set the total number of kinetic calculations
         info.num_kinetics_calculations =
                 info.num_smart_kinetics_accepted_estimates + info.num_smart_kinetics_required_learnings;
 
-        // Set the success rate at which smart equilibrium estimates were accepted
+        // Set the success rate at which smart kinetic estimates were accepted
         info.smart_kinetics_estimate_acceptance_rate =
                 static_cast<double>(info.num_smart_kinetics_accepted_estimates) / info.num_kinetics_calculations;
 
