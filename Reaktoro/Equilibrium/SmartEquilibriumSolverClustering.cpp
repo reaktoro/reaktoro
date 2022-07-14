@@ -303,6 +303,8 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
             // Check if the current record passes the error test
             const auto [success, error, iprimaryspecies] = pass_error_test(record);
 
+            _result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
+
             if(success)
             {
                 _result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);

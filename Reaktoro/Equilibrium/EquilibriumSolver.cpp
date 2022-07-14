@@ -348,15 +348,15 @@ struct EquilibriumSolver::Impl
     /// Find a feasible approximation for an equilibrium problem with all elements present on chemical system.
     auto approximate_with_all_element_amounts(ChemicalState& state, double T, double P, VectorConstRef b) -> EquilibriumResult
     {
-        Vector _be = b(iee);
-        return approximate(state, T, P, _be);
+        Vector be = b(iee);
+        return approximate(state, T, P, be);
     }
 
     /// Find a feasible approximation for an equilibrium problem.
-    auto approximate(ChemicalState& state, double T, double P, Vector _be) -> EquilibriumResult
+    auto approximate(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
-        // Check the dimension of the vector `_be`
-        Assert(unsigned(_be.rows()) == Ee,
+        // Check the dimension of the vector `be`
+        Assert(unsigned(be.rows()) == Ee,
             "Cannot proceed with method EquilibriumSolver::approximate.",
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
@@ -390,7 +390,7 @@ struct EquilibriumSolver::Impl
         opt_problem.n = Ne;
         opt_problem.c = ge0/RT + ln_ce;
         opt_problem.A = Ae;
-        opt_problem.b = _be;
+        opt_problem.b = be;
         opt_problem.l = zeros(Ne);
         opt_problem.u = ones(Ne) * inf;
 
@@ -425,10 +425,10 @@ struct EquilibriumSolver::Impl
     }
 
     /// Find an initial guess for an equilibrium problem.
-    auto initialguess(ChemicalState& state, double T, double P, Vector _be) -> EquilibriumResult
+    auto initialguess(ChemicalState& state, double T, double P, Vector be) -> EquilibriumResult
     {
         // Solve the linear programming problem to obtain an approximation
-        auto res = approximate(state, T, P, _be);
+        auto res = approximate(state, T, P, be);
 
         // Check the approximate calculation was successful
 //        Assert(result.optimum.succeeded,
@@ -439,7 +439,7 @@ struct EquilibriumSolver::Impl
         // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
         n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
 
-        // Set z to zero, which will later _be set to epsilon / n.
+        // Set z to zero, which will later be set to epsilon / n.
         z.fill(0.0);
 
         // Update the chemical state
@@ -482,15 +482,15 @@ struct EquilibriumSolver::Impl
     }
 
     /// Solve the equilibrium problem.
-    auto solve(ChemicalState& state, double T, double P, VectorConstRef _be) -> EquilibriumResult
+    auto solve(ChemicalState& state, double T, double P, VectorConstRef be) -> EquilibriumResult
     {
-        // Check the dimension of the vector `_be`
-        Assert(_be.size() == static_cast<int>(Ee),
+        // Check the dimension of the vector `be`
+        Assert(be.size() == static_cast<int>(Ee),
             "Cannot proceed with method EquilibriumSolver::solve.",
             "The dimension of the given vector of molar amounts of the "
             "elements does not match the number of elements in the "
             "equilibrium partition.")
-        return solve(state, T, P, _be.data());
+        return solve(state, T, P, be.data());
     }
 
     /// Solve the equilibrium problem.

@@ -170,10 +170,10 @@ struct ChemicalOutput::Impl
         if(datafile.is_open()) datafile << std::endl;
         if(terminal) std::cout << std::endl;
 
-        // Output the current chemical state to the data file.
+        // Output the current chemical state to the data file
         quantity.update(state, t);
 
-        // For each quantity, ouput its value on each column
+        // For each quantity, output its value on each column
         icolumn = 0;
         for(auto word : data)
         {
@@ -194,10 +194,10 @@ struct ChemicalOutput::Impl
         if(datafile.is_open()) datafile << std::endl;
         if(terminal) std::cout << std::endl;
 
-        // Output the current chemical state to the data file.
+        // Output the current chemical state to the data file
         quantity.update(state, properties, t);
 
-        // For each quantity, ouput its value on each column
+        // For each quantity, output its value on each column
         icolumn = 0;
         for(auto word : data)
         {
