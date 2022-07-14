@@ -191,17 +191,6 @@ struct KineticSolver::Impl
 
         // Initialise the coefficient matrix `B` of the source rates
         B = zeros(Ee + Nk, system.numSpecies());
-
-//        //std::cout << system.numSpecies() << std::endl;
-//        //std::cout << B << std::endl;
-//        std::cout << B.innerSize() << ", " << B.outerSize() << std::endl;
-//        //std::cout << Ie.innerSize() << ", " << Ie.outerSize() << std::endl;
-//        const Matrix B_ = Ae * Ie;
-//        //std::cout << B_ << std::endl;
-//        //std::cout << "B_ = " << B_ << std::endl;
-//        std::cout << B_.innerSize() << ", " << B_.outerSize() << std::endl;
-//        getchar();
-
         B.topRows(Ee) = Ae * Ie;
         B.bottomRows(Nk) = Ik;
 

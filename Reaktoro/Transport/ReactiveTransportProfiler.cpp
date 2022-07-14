@@ -21,7 +21,6 @@
 #include <iostream>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/OutputUtils.hpp>
 
 namespace Reaktoro {
