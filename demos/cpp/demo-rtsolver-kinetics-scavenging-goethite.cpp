@@ -164,76 +164,77 @@ int main()
     params.outputConsoleKineticMethod();
     runReactiveTransport(params, results);
 
-    /// **************************************************************************************************************///
-    /// CONVENTIONAL kinetics & CONVENTIONAL equilibrium
-    /// **************************************************************************************************************///
-    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
-    params.outputConsoleKineticMethod();
-    runReactiveTransport(params, results);
+//    /// **************************************************************************************************************///
+//    /// CONVENTIONAL kinetics & CONVENTIONAL equilibrium
+//    /// **************************************************************************************************************///
+//    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
+//    params.outputConsoleKineticMethod();
+//    runReactiveTransport(params, results);
 
-    // **************************************************************************************************************///
-    // SPEED-UP analysis
-    // **************************************************************************************************************///
-    if(results.smart_kin_conv_eq_total != 0){
-        std::cout << "*********************************************************************" << std::endl;
-        std::cout << "*********************************************************************" << std::endl;
-        std::cout << "speed up of using smart kinetics solver                     : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total << std::endl;
-        std::cout << "speed up ... (with ideal search)                            : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total_ideal_search << std::endl;
-        std::cout << "speed up ... (with ideal search & store)                    : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total_ideal_search_store << std::endl;
-        std::cout << "speed up ... (with ideal search & store & properties eval.) : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total_ideal_search_store_properties << std::endl;
-
-        std::cout << "time RT conv.kin.& conv.eq.  : " << results.time_reactive_transport_conv_kin_conv_eq << std::endl;
-        std::cout << "time RT smart.kin.& conv.eq. : " << results.time_reactive_transport_smart_kin_conv_eq << std::endl;
-        std::cout << "speedup                      : " << results.time_reactive_transport_conv_kin_conv_eq
-                                                          / results.time_reactive_transport_smart_kin_conv_eq << std::endl;
-    }
-    if(results.conv_kin_smart_eq_total != 0) {
-        std::cout << "*********************************************************************" << std::endl;
-        std::cout << "*********************************************************************" << std::endl;
-        std::cout << "speed up of using smart equilibrium solver                  : "
-                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total << std::endl;
-        std::cout << "speed up ... (with ideal search)                            : "
-                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total_ideal_search << std::endl;
-        std::cout << "speed up ... (with ideal search & store)                    : "
-                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total_ideal_search_store << std::endl;
-        std::cout << "speed up ... (with ideal search & store & properties eval.) : "
-                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total_ideal_search_store_properties
-                  << std::endl;
-
-        std::cout << "speed up in equilibration    : "
-                  << results.conv_kin_conv_eq_total_equilibration /
-                     results.conv_kin_smart_eq_total_smart_equilibration << std::endl;
-        std::cout << "time RT conv.kin.& conv.eq.  : " << results.time_reactive_transport_conv_kin_conv_eq << std::endl;
-        std::cout << "time RT conv.kin.& smart.eq. : " << results.time_reactive_transport_conv_kin_smart_eq
-                  << std::endl;
-        std::cout << "speedup                      : " << results.time_reactive_transport_conv_kin_conv_eq
-                                                          / results.time_reactive_transport_conv_kin_smart_eq << std::endl;
-    }
-    if(results.smart_kin_smart_eq_total != 0){
-        std::cout << "*********************************************************************" << std::endl;
-        std::cout << "*********************************************************************" << std::endl;
-        std::cout << "speed up of using smart kinetic solver (smart equilibrium)  : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total << std::endl;
-        std::cout << "speed up ... (with ideal search)                            : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total_ideal_search << std::endl;
-        std::cout << "speed up ... (with ideal search & store)                    : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total_ideal_search_store << std::endl;
-        std::cout << "speed up ... (with ideal search & store & properties eval.) : "
-                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total_ideal_search_store_properties << std::endl;
-
-        std::cout << "time RT conv.kin.& conv.eq.  : " << results.time_reactive_transport_conv_kin_conv_eq << std::endl;
-        std::cout << "time RT smart.kin.& smart.eq. : " << results.time_reactive_transport_smart_kin_smart_eq << std::endl;
-        std::cout << "speedup                      : " << results.time_reactive_transport_conv_kin_conv_eq
-                                                          / results.time_reactive_transport_smart_kin_smart_eq << std::endl;
-    }
-    std::cout << "total time                          : " << elapsed(start) << std::endl;
+//    // **************************************************************************************************************///
+//    // SPEED-UP analysis
+//    // **************************************************************************************************************///
+//    if(results.smart_kin_conv_eq_total != 0){
+//        std::cout << "*********************************************************************" << std::endl;
+//        std::cout << "*********************************************************************" << std::endl;
+//        std::cout << "speed up of using smart kinetics solver                     : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total << std::endl;
+//        std::cout << "speed up ... (with ideal search)                            : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total_ideal_search << std::endl;
+//        std::cout << "speed up ... (with ideal search & store)                    : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total_ideal_search_store << std::endl;
+//        std::cout << "speed up ... (with ideal search & store & properties eval.) : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_conv_eq_total_ideal_search_store_properties << std::endl;
+//
+//        std::cout << "time RT conv.kin.& conv.eq.  : " << results.time_reactive_transport_conv_kin_conv_eq << std::endl;
+//        std::cout << "time RT smart.kin.& conv.eq. : " << results.time_reactive_transport_smart_kin_conv_eq << std::endl;
+//        std::cout << "speedup                      : " << results.time_reactive_transport_conv_kin_conv_eq
+//                                                          / results.time_reactive_transport_smart_kin_conv_eq << std::endl;
+//    }
+//    if(results.conv_kin_smart_eq_total != 0) {
+//        std::cout << "*********************************************************************" << std::endl;
+//        std::cout << "*********************************************************************" << std::endl;
+//        std::cout << "speed up of using smart equilibrium solver                  : "
+//                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total << std::endl;
+//        std::cout << "speed up ... (with ideal search)                            : "
+//                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total_ideal_search << std::endl;
+//        std::cout << "speed up ... (with ideal search & store)                    : "
+//                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total_ideal_search_store << std::endl;
+//        std::cout << "speed up ... (with ideal search & store & properties eval.) : "
+//                  << results.conv_kin_conv_eq_total / results.conv_kin_smart_eq_total_ideal_search_store_properties
+//                  << std::endl;
+//
+//        std::cout << "speed up in equilibration    : "
+//                  << results.conv_kin_conv_eq_total_equilibration /
+//                     results.conv_kin_smart_eq_total_smart_equilibration << std::endl;
+//        std::cout << "time RT conv.kin.& conv.eq.  : " << results.time_reactive_transport_conv_kin_conv_eq << std::endl;
+//        std::cout << "time RT conv.kin.& smart.eq. : " << results.time_reactive_transport_conv_kin_smart_eq
+//                  << std::endl;
+//        std::cout << "speedup                      : " << results.time_reactive_transport_conv_kin_conv_eq
+//                                                          / results.time_reactive_transport_conv_kin_smart_eq << std::endl;
+//    }
+//    if(results.smart_kin_smart_eq_total != 0){
+//        std::cout << "*********************************************************************" << std::endl;
+//        std::cout << "*********************************************************************" << std::endl;
+//        std::cout << "speed up of using smart kinetic solver (smart equilibrium)  : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total << std::endl;
+//        std::cout << "speed up ... (with ideal search)                            : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total_ideal_search << std::endl;
+//        std::cout << "speed up ... (with ideal search & store)                    : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total_ideal_search_store << std::endl;
+//        std::cout << "speed up ... (with ideal search & store & properties eval.) : "
+//                  << results.conv_kin_conv_eq_total / results.smart_kin_smart_eq_total_ideal_search_store_properties << std::endl;
+//
+//        std::cout << "time RT conv.kin.& conv.eq.  : " << results.time_reactive_transport_conv_kin_conv_eq << std::endl;
+//        std::cout << "time RT smart.kin.& smart.eq. : " << results.time_reactive_transport_smart_kin_smart_eq << std::endl;
+//        std::cout << "speedup                      : " << results.time_reactive_transport_conv_kin_conv_eq
+//                                                          / results.time_reactive_transport_smart_kin_smart_eq << std::endl;
+//    }
+//    std::cout << "total time                          : " << elapsed(start) << std::endl;
 
     return 0;
 }
+
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKineticsResults& results) -> void
 {
     // Step **: Create the results folder

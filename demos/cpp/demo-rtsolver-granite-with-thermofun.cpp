@@ -122,6 +122,7 @@ int main()
 
     return 0;
 }
+
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder

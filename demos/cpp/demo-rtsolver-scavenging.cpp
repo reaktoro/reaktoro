@@ -62,13 +62,13 @@ int main()
     // Smart equilibrium algorithm  tolerances
     // ----------------------------------------------------------- //
 
-    // Run smart algorithm with clustering
-    params.method = SmartEquilibriumStrategy::Clustering;;
-    params.smart_equilibrium_reltol = 1e-3;
+//    // Run smart algorithm with clustering
+//    params.method = SmartEquilibriumStrategy::Clustering;;
+//    params.smart_equilibrium_reltol = 1e-3;
 
-//    // Run smart algorithm with priority queue
-//    params.method = SmartEquilibriumStrategy::PriorityQueue;
-//    params.smart_equilibrium_reltol = 2e-3;
+    // Run smart algorithm with priority queue
+    params.method = SmartEquilibriumStrategy::PriorityQueue;
+    params.smart_equilibrium_reltol = 2e-3;
 
 //    // Run smart algorithm with nn search algorithm
 //    params.method =  SmartEquilibriumStrategy::NearestNeighbour;
@@ -100,38 +100,39 @@ int main()
     params.outputEquilibriumMethod();
     runReactiveTransport(params, results);
 
-    // Conventional equilibrium solver
-    params.outputEquilibriumMethod();
-    params.use_smart_equilibrium_solver = false;
-    runReactiveTransport(params, results);
-
-    // Collect the time spent for total simulation (excluding search and store procedures costs)
-    results.conventional_total = results.equilibrium_timing.solve;
-    results.smart_total = results.smart_equilibrium_timing.solve;
-    results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
-                                       - results.smart_equilibrium_timing.estimate_search
-                                       - results.smart_equilibrium_timing.estimate_database_priority_update;
-    results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
-                                             - results.smart_equilibrium_timing.estimate_search
-                                             - results.smart_equilibrium_timing.estimate_database_priority_update
-                                             - results.smart_equilibrium_timing.learn_storage;
-
-    // Output speed-us
-    std::cout << "speed up                            : "
-              << results.conventional_total / results.smart_total << std::endl;
-    std::cout << "speed up (with ideal search)        : "
-              << results.conventional_total / results.smart_total_ideal_search << std::endl;
-    std::cout << "speed up (with ideal search & store): "
-              << results.conventional_total / results.smart_total_ideal_search_store << std::endl << std::endl;
-    // Output reactive transport times and speedup
-    std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
-    std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
-    std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
-    // Output total time
-    std::cout << "total time                          : " << toc(TOTAL_TIME) << std::endl;
+//    // Conventional equilibrium solver
+//    params.outputEquilibriumMethod();
+//    params.use_smart_equilibrium_solver = false;
+//    runReactiveTransport(params, results);
+//
+//    // Collect the time spent for total simulation (excluding search and store procedures costs)
+//    results.conventional_total = results.equilibrium_timing.solve;
+//    results.smart_total = results.smart_equilibrium_timing.solve;
+//    results.smart_total_ideal_search = results.smart_equilibrium_timing.solve
+//                                       - results.smart_equilibrium_timing.estimate_search
+//                                       - results.smart_equilibrium_timing.estimate_database_priority_update;
+//    results.smart_total_ideal_search_store = results.smart_equilibrium_timing.solve
+//                                             - results.smart_equilibrium_timing.estimate_search
+//                                             - results.smart_equilibrium_timing.estimate_database_priority_update
+//                                             - results.smart_equilibrium_timing.learn_storage;
+//
+//    // Output speed-us
+//    std::cout << "speed up                            : "
+//              << results.conventional_total / results.smart_total << std::endl;
+//    std::cout << "speed up (with ideal search)        : "
+//              << results.conventional_total / results.smart_total_ideal_search << std::endl;
+//    std::cout << "speed up (with ideal search & store): "
+//              << results.conventional_total / results.smart_total_ideal_search_store << std::endl << std::endl;
+//    // Output reactive transport times and speedup
+//    std::cout << "time_reactive_transport_conventional: " << results.time_reactive_transport_conventional << std::endl;
+//    std::cout << "time_reactive_transport_smart       : " << results.time_reactive_transport_smart << std::endl;
+//    std::cout << "reactive_transport_speedup          : " << results.time_reactive_transport_conventional / results.time_reactive_transport_smart << std::endl;
+//    // Output total time
+//    std::cout << "total time                          : " << toc(TOTAL_TIME) << std::endl;
 
     return 0;
 }
+
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder
@@ -328,9 +329,9 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
         step += 1;
     }
 
-    // Print the content of the cluster if the smart equilibrium with clustering is used
-    if(params.use_smart_equilibrium_solver)
-        rtsolver.outputSmartSolverInfo();
+//    // Print the content of the cluster if the smart equilibrium with clustering is used
+//    if(params.use_smart_equilibrium_solver)
+//        rtsolver.outputSmartSolverInfo();
 
     // Stop the time for the reactive transport simulation
     if(params.use_smart_equilibrium_solver) results.time_reactive_transport_smart = toc(REACTIVE_TRANSPORT_STEPS);

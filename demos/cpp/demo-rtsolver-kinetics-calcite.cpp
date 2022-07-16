@@ -165,12 +165,12 @@ int main()
     params.outputConsoleKineticMethod();
     runReactiveTransport(params, results);
 
-    /// **************************************************************************************************************///
-    /// CONVENTIONAL kinetics & CONVENTIONAL equilibrium
-    /// **************************************************************************************************************///
-    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
-    params.outputConsoleKineticMethod();
-    runReactiveTransport(params, results);
+//    /// **************************************************************************************************************///
+//    /// CONVENTIONAL kinetics & CONVENTIONAL equilibrium
+//    /// **************************************************************************************************************///
+//    params.use_smart_kinetics_solver = false; params.use_smart_equilibrium_solver = false;
+//    params.outputConsoleKineticMethod();
+//    runReactiveTransport(params, results);
 
     // **************************************************************************************************************///
     // SPEED-UP analysis
@@ -235,6 +235,7 @@ int main()
 
     return 0;
 }
+
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportKineticsResults& results) -> void
 {
 
