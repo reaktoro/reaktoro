@@ -90,10 +90,10 @@ int main()
     params.outputEquilibriumMethod();
     runReactiveTransport(params, results);
 
-    // Conventional equilibrium solver
-    params.outputEquilibriumMethod();
-    params.use_smart_equilibrium_solver = false;
-    runReactiveTransport(params, results);
+//    // Conventional equilibrium solver
+//    params.outputEquilibriumMethod();
+//    params.use_smart_equilibrium_solver = false;
+//    runReactiveTransport(params, results);
 
     // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
@@ -125,6 +125,7 @@ int main()
 
     return 0;
 }
+
 auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResults& results) -> void
 {
     // Step **: Create the results folder
