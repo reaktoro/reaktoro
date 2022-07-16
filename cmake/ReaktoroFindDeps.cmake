@@ -1,5 +1,5 @@
-#find_package(Boost REQUIRED)
-#find_package(nlohmann_json 3.6.1 REQUIRED)
+find_package(Boost REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 if(REAKTORO_USE_OPENLIBM)
     find_package(openlibm REQUIRED)
