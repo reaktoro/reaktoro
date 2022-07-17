@@ -64,7 +64,7 @@ int main()
     state0.setSpeciesMass("Calcite", 100, "g");
     state0.setSpeciesMass("Dolomite", 50, "g");
 
-    KineticOptions options;
+    KineticPathOptions options;
     options.use_smart_equilibrium_solver = false;
     options.smart_equilibrium.method = SmartEquilibriumStrategy::PriorityQueue;
 
