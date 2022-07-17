@@ -51,12 +51,12 @@ int main()
     params.P = 1.01325;                      // the pressure (in units of bar)
 
     // Define the activity model for the aqueous species
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
+    //params.activity_model = ActivityModel::HKF;
+    //params.activity_model = ActivityModel::HKFSelectedSpecies;
+    //params.activity_model = ActivityModel::Pitzer;
+    //params.activity_model = ActivityModel::PitzerSelectedSpecies;
+    params.activity_model = ActivityModel::DebyeHuckel;
+    //params.activity_model = ActivityModel::DebyeHuckelSelectedSpecies;
 
     // ----------------------------------------------------------- //
     // Smart equilibrium algorithm  tolerances

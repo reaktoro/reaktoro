@@ -44,7 +44,7 @@ public:
     /// Learn how to perform a full equilibrium calculation (with tracking).
     auto learn(ChemicalState& state, double T, double P, VectorConstRef be) -> void;
 
-    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expences).
+    /// Estimate the equilibrium state using sensitivity derivatives (profiling the expenses).
     auto estimate(ChemicalState& state, double T, double P, VectorConstRef be) -> void;
 
     /// Output clusters created during the ODML algorithm.

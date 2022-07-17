@@ -53,12 +53,12 @@ int main()
     params.P = Reaktoro::waterSaturatedPressureWagnerPruss(Temperature(params.T + 273.15)).val * 1e-5;
 
     // Define the activity model for the aqueous species
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
+    params.activity_model = ActivityModel::HKF;
+    //params.activity_model = ActivityModel::HKFSelectedSpecies;
+    //params.activity_model = ActivityModel::Pitzer;
+    //params.activity_model = ActivityModel::PitzerSelectedSpecies;
+    //params.activity_model = ActivityModel::DebyeHuckel;
+    //params.activity_model = ActivityModel::DebyeHuckelSelectedSpecies;
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
@@ -273,6 +273,7 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     // Step **: Define the quantities that should be output for every cell, every time step
     ChemicalOutput output(rtsolver.output());
     output.add("pH");
+    output.add("speciesMolality(H+)");
     output.add("speciesMolality(Cl-)");
     output.add("speciesMolality(HCl(aq))");
     output.add("speciesMolality(Na+)");

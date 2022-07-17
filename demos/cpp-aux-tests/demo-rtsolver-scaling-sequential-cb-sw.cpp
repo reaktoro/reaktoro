@@ -34,6 +34,7 @@ int main()
     // Step 1: Initialise auxiliary time-related constants
     int minute = 60;
     int hour = 60 * minute;
+    int day = 24 * hour;
 
     // Step 2: Define parameters for the reactive transport simulation
     ReactiveTransportParams params;
@@ -56,12 +57,12 @@ int main()
     params.smart_equilibrium_reltol = 0.003;
 
     // Define the activity model for the aqueous species
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
+    //params.activity_model = AqueousActivityModel::HKF;
+    //params.activity_model = AqueousActivityModel::HKFSelectedSpecies;
+    //params.activity_model = AqueousActivityModel::Pitzer;
+    //params.activity_model = ActivityModel::PitzerSelectedSpecies;
+    params.activity_model = ActivityModel::DebyeHuckel;
+    //params.activity_model = ActivityModel::DebyeHuckelSelectedSpecies;
 
 
     // Define equilibrium solver cutoff tolerances
@@ -162,16 +163,16 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     StringList selected_elements = "H Cl S O Ba Ca Sr Na K Mg C Si";
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model == ActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
