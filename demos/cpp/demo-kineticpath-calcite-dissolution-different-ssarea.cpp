@@ -37,7 +37,9 @@ int main()
 
 auto runKinetics(KineticPathParams & params) -> void{
 
-    auto folder = params.makeResultsFolder();
+    // Create results file
+    auto filename = params.makeResultsFile("calcite-dissolution-different-ssarea");
+
     std::vector<double> surface_areas = {1, 10, 100, 1000};
     std::vector<ChemicalState> chemical_states;
     const unsigned int states_num = surface_areas.size();
@@ -92,7 +94,7 @@ auto runKinetics(KineticPathParams & params) -> void{
         std::cout << "**********************************************************************************" << std::endl;
         std::cout << "Surface area: " << surface_areas[i] << " cm2/g" << std::endl;
 
-        output.filename(folder + "/path-sa-" +  std::to_string(surface_areas[i]) + ".txt");
+        output.filename(filename + "-" +  std::to_string(surface_areas[i]) + ".txt");
 
         double initial_calcite = chemical_states[i].speciesAmount("Calcite");
         path.solve(chemical_states[i], params.t0, params.tfinal);
