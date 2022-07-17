@@ -33,9 +33,8 @@
 
 using namespace Reaktoro;
 
-
-/// Make directory for Windows and Linux
-auto mkdir(std::string& folder) -> bool
+/// The options for the activity model of aqueous species
+enum ActivityModel
 {
     HKF,
 
@@ -75,11 +74,19 @@ struct ReactiveTransportParams
 
     // ODML params
     bool use_smart_equilibrium_solver = false;
+    bool use_smart_kinetics_solver = false;
+
     double smart_equilibrium_reltol = 0;
     double amount_fraction_cutoff = 0;
     double mole_fraction_cutoff = 0;
 
+    double smart_kinetics_tol = 0.0;
+    double smart_kinetics_reltol = 0.0;
+    double smart_kinetics_abstol = 0.0;
+
     ActivityModel activity_model = ActivityModel::HKF;
+
+    GibbsHessian hessian = GibbsHessian::Exact;
 
     SmartEquilibriumStrategy method = SmartEquilibriumStrategy::Clustering;
 
@@ -98,29 +105,6 @@ struct ReactiveTransportParams
         std::cout << "activity model : " << getActivityModelTag(activity_model) << std::endl;
         std::cout << "smart method   : " << getSmartMethodTag(method) << std::endl;
 
-    }
-
-    auto getSmartMethodtag() -> std::string
-    {
-        switch(method)
-        {
-            case SmartEquilibriumStrategy::Clustering: return "eq-clustering";
-            case SmartEquilibriumStrategy::PriorityQueue: return "eq-priority";
-            case SmartEquilibriumStrategy::NearestNeighbour: return "eq-nnsearch";
-        }
-    }
-
-    auto getActivityModel() -> std::string
-    {
-        switch(activity_model)
-        {
-            case AqueousActivityModel::HKF: return "hkf-full";
-            case AqueousActivityModel::DebyeHuckel: return "dh-full";
-            case AqueousActivityModel::Pitzer: return "pitzer-full";
-            case AqueousActivityModel::HKFSelectedSpecies: return "hkf-selected-species";
-            case AqueousActivityModel::DebyeHuckelSelectedSpecies: return "dh-selected-species";
-            case AqueousActivityModel::PitzerSelectedSpecies: return "pitzer-selected-species";
-        }
     }
 
     /// Create results file with parameters of the test
@@ -186,6 +170,275 @@ struct ReactiveTransportResults
 
     // Rate of the smart equilibrium estimation w.r.t to the total chemical equilibrium calculation
     double smart_equilibrium_acceptance_rate = 0.0;
+};
+
+struct ReactiveTransportKineticsResults
+{
+    // Conventional kinetic and conventional equilibrium schemes' times
+    // *********************************************************************************//
+
+    /// Total CPU time (in s) required by conventional kinetic and equilibrium schemes.
+    double conv_kin_conv_eq_total = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and equilibrium schemes
+    /// excluding the costs for the chemical properties evaluation.
+    double conv_kin_conv_eq_total_ideal_properties = 0.0;
+
+    /// Total CPU time (in s) required for equilibrium in the conventional kinetic using equilibrium schemes
+    double conv_kin_conv_eq_total_equilibration = 0.0;
+
+    // Smart kinetic and conventional equilibrium schemes' times
+    // *********************************************************************************//
+
+    /// Total CPU time (in s) required by smart kinetic and conventional equilibrium schemes.
+    double smart_kin_conv_eq_total = 0.0;
+
+    /// Total CPU time (in s) required by smart kinetic and conventional equilibrium schemes
+    /// excluding the costs for the search of the closest reference states.
+    double smart_kin_conv_eq_total_ideal_search = 0.0;
+
+    /// Total CPU time (in s) required by smart kinetic and conventional equilibrium schemes
+    /// excluding the costs for the search and storage of the closest reference states.
+    double smart_kin_conv_eq_total_ideal_search_store = 0.0;
+
+    /// Total CPU time (in s) required by smart kinetic and conventional equilibrium schemes
+    /// excluding the costs for the search and storage of the closest reference states
+    /// and the chemical properties evaluation.
+    double smart_kin_conv_eq_total_ideal_search_store_properties = 0.0;
+
+    // Rate of the smart kinetic estimation w.r.t to the total chemical kinetics calculation
+    double smart_kin_conv_eq_acceptance_rate = 0.0;
+
+    // Conventional kinetic and smart equilibrium schemes' times
+    // *********************************************************************************//
+
+    double conv_kin_smart_eq_total = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and smart equilibrium schemes
+    /// excluding the costs for the search of the closest reference states.
+    double conv_kin_smart_eq_total_ideal_search = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and smart equilibrium schemes
+    /// excluding the costs for the search and store of the closest reference states.
+    double conv_kin_smart_eq_total_ideal_search_store = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and smart equilibrium schemes
+    /// excluding the costs for the search and store of the closest reference states
+    /// and the chemical properties evaluation.
+    double conv_kin_smart_eq_total_ideal_search_store_properties = 0.0;
+
+
+    /// Total CPU time (in s) required for smart equilibrium in the conventional kinetic using smart equilibrium schemes
+    double conv_kin_smart_eq_total_smart_equilibration = 0.0;
+
+    // Rate of the smart equilibrium estimation w.r.t to the total chemical kinetics calculation
+    double conv_kin_smart_eq_equilibrium_acceptance_rate = 0.0;
+
+    // Smart kinetic and smart equilibrium schemes' times
+    // *********************************************************************************//
+
+    double smart_kin_smart_eq_total = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and smart equilibrium schemes
+    /// excluding the costs for the search of the closest reference states.
+    double smart_kin_smart_eq_total_ideal_search = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and smart equilibrium schemes
+    /// excluding the costs for the search and store of the closest reference states.
+    double smart_kin_smart_eq_total_ideal_search_store = 0.0;
+
+    /// Total CPU time (in s) required by conventional kinetic and smart equilibrium schemes
+    /// excluding the costs for the search and store of the closest reference states
+    /// and the chemical properties evaluation.
+    double smart_kin_smart_eq_total_ideal_search_store_properties = 0.0;
+
+    // Rate of the smart kinetics estimation w.r.t to the total chemical kinetics calculation
+    double smart_kin_smart_eq_acceptance_rate = 0.0;
+
+    // Rate of the smart equilibrium estimation w.r.t to the total chemical kinetics calculation
+    double  smart_kin_smart_eq_equilibrium_acceptance_rate = 0.0;
+
+    // Total times of reactive transport steps
+    // *********************************************************************************//
+
+    /// Total time taken to perform all time steps using conventional kinetics and conventional equilibrium algorithm
+    double time_reactive_transport_conv_kin_conv_eq = 0.0;
+
+    /// Total time taken to perform all time steps using smart kinetics and conventional equilibrium algorithm
+    double time_reactive_transport_smart_kin_conv_eq = 0.0;
+
+    /// Total time taken to perform all time steps using conventional kinetics and smart equilibrium algorithm
+    double time_reactive_transport_conv_kin_smart_eq = 0.0;
+
+    /// Total time taken to perform all time steps using smart kinetics and smart equilibrium algorithm
+    double time_reactive_transport_smart_kin_smart_eq = 0.0;
+
+    // Total times of reactive transport steps
+    // *********************************************************************************//
+
+    /// Accumulated timing information of all equilibrium calculations.
+    EquilibriumTiming equilibrium_timing = {};
+
+    /// The accumulated timing information of all smart equilibrium calculations.
+    SmartEquilibriumTiming smart_equilibrium_timing = {};
+
+    /// Accumulated timing information of all kinetic calculations.
+    KineticTiming kinetic_timing = {};
+
+    /// The accumulated timing information of all smart kinetic calculations.
+    SmartKineticTiming smart_kinetic_timing = {};
+
+
+
+    auto outputStatisticsSmartKineticsConventionalEquilibrium(const ReactiveTransportParams& params) -> void
+    {
+        smart_kin_conv_eq_total = smart_kinetic_timing.solve;
+        smart_kin_conv_eq_total_ideal_search = smart_kinetic_timing.solve
+                                                       - smart_kinetic_timing.estimate_search;
+        smart_kin_conv_eq_total_ideal_search_store = smart_kinetic_timing.solve
+                                                             - smart_kinetic_timing.estimate_search
+                                                             - smart_kinetic_timing.learn_storage;
+        smart_kin_conv_eq_total_ideal_search_store_properties = smart_kinetic_timing.solve
+                                                                        - smart_kinetic_timing.learn_chemical_properties
+                                                                        - smart_kinetic_timing.estimate_search
+                                                                        - smart_kinetic_timing.learn_storage;
+
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve                : " << smart_kinetic_timing.solve << std::endl;
+        std::cout << "   - learn              : " << smart_kinetic_timing.learn << " (" << smart_kinetic_timing.learn / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - integrate             : " << smart_kinetic_timing.learn_integration << " (" << smart_kinetic_timing.learn_integration / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - chemical properties : " << smart_kinetic_timing.learn_chemical_properties << " (" << smart_kinetic_timing.learn_chemical_properties / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - integrate_reaction_rates      : " << smart_kinetic_timing.learn_reaction_rates << " (" << smart_kinetic_timing.learn_reaction_rates / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - equilibration       : " << smart_kinetic_timing.learn_equilibration << " (" << smart_kinetic_timing.learn_equilibration / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - store                 : " << smart_kinetic_timing.learn_storage << " (" << smart_kinetic_timing.learn_storage / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - estimate           : " << smart_kinetic_timing.estimate << " (" << smart_kinetic_timing.estimate / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - search                : " << smart_kinetic_timing.estimate_search << " (" << smart_kinetic_timing.estimate_search / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - acceptance            : " << smart_kinetic_timing.estimate_error_control << " (" << smart_kinetic_timing.estimate_error_control / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - equilibrate           : " << smart_kinetic_timing.equilibrate << " (" << smart_kinetic_timing.equilibrate / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " acceptance rate      : " << smart_kin_conv_eq_acceptance_rate << " / " << (1 - smart_kin_conv_eq_acceptance_rate) * params.ncells *params.nsteps << " learnings out of " << params.ncells *params.nsteps  << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve - search                 : " << smart_kin_conv_eq_total_ideal_search << std::endl;
+        std::cout << " - solve - search - store         : " << smart_kin_conv_eq_total_ideal_search_store << std::endl;
+        std::cout << " - solve - search - store - prop. : " << smart_kin_conv_eq_total_ideal_search_store_properties << std::endl;
+
+    }
+
+    auto outputStatisticsSmartKineticsSmartEquilibrium(const ReactiveTransportParams& params) -> void
+    {
+        smart_kin_smart_eq_total = smart_kinetic_timing.solve;
+        smart_kin_smart_eq_total_ideal_search = smart_kinetic_timing.solve
+                                                        - smart_kinetic_timing.estimate_search
+                                                        - smart_equilibrium_timing.estimate_search;
+        smart_kin_smart_eq_total_ideal_search_store = smart_kinetic_timing.solve
+                                                              - smart_kinetic_timing.estimate_search
+                                                              - smart_kinetic_timing.learn_storage
+                                                              - smart_equilibrium_timing.estimate_search
+                                                              - smart_equilibrium_timing.learn_storage;
+        smart_kin_smart_eq_total_ideal_search_store_properties = smart_kinetic_timing.solve
+                                                                         - smart_kinetic_timing.learn_chemical_properties
+                                                                         - smart_kinetic_timing.estimate_search
+                                                                         - smart_kinetic_timing.learn_storage
+                                                                         - smart_equilibrium_timing.learn_chemical_properties
+                                                                         - smart_equilibrium_timing.estimate_search
+                                                                         - smart_equilibrium_timing.learn_storage;
+
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve                : " << smart_kinetic_timing.solve << std::endl;
+        std::cout << "   - learn              : " << smart_kinetic_timing.learn << " (" << smart_kinetic_timing.learn / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - integrate             : " << smart_kinetic_timing.learn_integration << " (" << smart_kinetic_timing.learn_integration / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - chemical properties      : " << smart_kinetic_timing.learn_chemical_properties << " (" << smart_kinetic_timing.learn_chemical_properties / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - integrate_reaction_rates : " << smart_kinetic_timing.learn_reaction_rates << " (" << smart_kinetic_timing.learn_reaction_rates / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - equilibration            : " << smart_kinetic_timing.learn_equilibration << " (" << smart_kinetic_timing.learn_equilibration / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - store                 : " << smart_kinetic_timing.learn_storage << " (" << smart_kinetic_timing.learn_storage / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - estimate           : " << smart_kinetic_timing.estimate << " (" << smart_kinetic_timing.estimate / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - search                : " << smart_kinetic_timing.estimate_search << " (" << smart_kinetic_timing.estimate_search / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - acceptance            : " << smart_kinetic_timing.estimate_error_control << " (" << smart_kinetic_timing.estimate_error_control / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - equilibrate        : " << smart_kinetic_timing.equilibrate << " (" << smart_kinetic_timing.equilibrate / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - learning              : " << smart_equilibrium_timing.learn << " (" << smart_equilibrium_timing.learn / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - store                    : " << smart_equilibrium_timing.learn_storage << " (" << smart_equilibrium_timing.learn_storage / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - estimation            : " << smart_equilibrium_timing.estimate << " (" << smart_equilibrium_timing.estimate / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - search                   : " << smart_equilibrium_timing.estimate_search << " (" << smart_equilibrium_timing.estimate_search / smart_kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " smart kinetics acceptance rate      : " << smart_kin_smart_eq_acceptance_rate << " ( "
+                  << smart_kin_smart_eq_acceptance_rate * 100 << " % ) / "
+                  << (1 - smart_kin_smart_eq_acceptance_rate) * params.ncells *params.nsteps
+                  << " learnings out of " << params.ncells *params.nsteps
+                  << " ( " << (1 - smart_kin_smart_eq_acceptance_rate) * 100 << "% )" << std::endl;
+        std::cout << " smart equilibrium acceptance rate   : " << smart_kin_smart_eq_equilibrium_acceptance_rate << " ( "
+                  << smart_kin_smart_eq_equilibrium_acceptance_rate * 100 << " % ) / "
+                  << (1 - smart_kin_smart_eq_equilibrium_acceptance_rate) * params.ncells *params.nsteps
+                  << " learnings states out of " << params.ncells *params.nsteps
+                  << " ( " << (1 - smart_kin_smart_eq_equilibrium_acceptance_rate) * 100 << "% )" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve - search                 : " << smart_kin_smart_eq_total_ideal_search << std::endl;
+        std::cout << " - solve - search - store         : " << smart_kin_smart_eq_total_ideal_search_store << std::endl;
+        std::cout << " - solve - search - store - prop. : " << smart_kin_smart_eq_total_ideal_search_store_properties << std::endl;
+    }
+
+    auto outputStatisticsConventionalKineticsConventionalEquilibrium(const ReactiveTransportParams& params) -> void
+    {
+        conv_kin_conv_eq_total = kinetic_timing.solve;
+        conv_kin_conv_eq_total_ideal_properties = kinetic_timing.solve - kinetic_timing.integrate_chemical_properties;
+        conv_kin_conv_eq_total_equilibration = kinetic_timing.integrate_equilibration;
+
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve                   : " << kinetic_timing.solve << std::endl;
+        std::cout << "   - initialize            : " << kinetic_timing.initialize << " (" << kinetic_timing.initialize / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - integrate             : " << kinetic_timing.integrate << " (" << kinetic_timing.integrate / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - chemical properties      : " << kinetic_timing.integrate_chemical_properties << " (" << kinetic_timing.integrate_chemical_properties / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - integrate_reaction_rates : " << kinetic_timing.integrate_reaction_rates << " (" << kinetic_timing.integrate_reaction_rates / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - equilibration            : " << kinetic_timing.integrate_equilibration << " (" << kinetic_timing.integrate_equilibration / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - equilibrate           : " << kinetic_timing.equilibrate << " (" << kinetic_timing.equilibrate / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+    }
+
+    auto outputStatisticsConventionalKineticsSmartEquilibrium(const ReactiveTransportParams& params) -> void
+    {
+        conv_kin_smart_eq_total = kinetic_timing.solve;
+        conv_kin_smart_eq_total_ideal_search = kinetic_timing.solve - smart_equilibrium_timing.estimate_search;
+        conv_kin_smart_eq_total_ideal_search_store = kinetic_timing.solve
+                                                             - smart_equilibrium_timing.estimate_search
+                                                             - smart_equilibrium_timing.learn_storage;
+        conv_kin_smart_eq_total_ideal_search_store_properties = kinetic_timing.solve
+                                                                        - smart_equilibrium_timing.estimate_search
+                                                                        - smart_equilibrium_timing.learn_storage
+                                                                        - kinetic_timing.integrate_chemical_properties;
+        conv_kin_smart_eq_total_smart_equilibration = kinetic_timing.equilibrate;
+
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve                   : " << kinetic_timing.solve << std::endl;
+        std::cout << "   - initialize            : " << kinetic_timing.initialize << " (" << kinetic_timing.initialize / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - integrate             : " << kinetic_timing.integrate << " (" << kinetic_timing.integrate / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - chemical properties : " << kinetic_timing.integrate_chemical_properties << " (" << kinetic_timing.integrate_chemical_properties / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - integrate_reaction_rates      : " << kinetic_timing.integrate_reaction_rates << " (" << kinetic_timing.integrate_reaction_rates / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - equilibration       : " << kinetic_timing.equilibrate << " (" << kinetic_timing.equilibrate / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "   - equilibrate             : " << kinetic_timing.equilibrate << " (" << kinetic_timing.equilibrate / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - learning          : " << smart_equilibrium_timing.learn << " (" << smart_equilibrium_timing.learn / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - store           : " << smart_equilibrium_timing.learn_storage << " (" << smart_equilibrium_timing.learn_storage / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "     - estimation        : " << smart_equilibrium_timing.estimate << " (" << smart_equilibrium_timing.estimate / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "       - search          : " << smart_equilibrium_timing.estimate_search << " (" << smart_equilibrium_timing.estimate_search / kinetic_timing.solve * 100 << " %)" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " smart equilibrium acceptance rate   : " << conv_kin_smart_eq_equilibrium_acceptance_rate << " ( "
+                  << conv_kin_smart_eq_equilibrium_acceptance_rate * 100 << " % ) / "
+                  << (1 - conv_kin_smart_eq_equilibrium_acceptance_rate) * params.ncells *params.nsteps
+                  << " learnings states out of " << params.ncells *params.nsteps
+                  << " ( " << (1 - conv_kin_smart_eq_equilibrium_acceptance_rate) * 100 << "% )" << std::endl;
+        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << " - solve - search              : " << kinetic_timing.solve
+                                                            - smart_equilibrium_timing.estimate_search << std::endl;
+        std::cout << " - solve - search - store      : " << kinetic_timing.solve
+                                                            - smart_equilibrium_timing.estimate_search
+                                                            - smart_equilibrium_timing.learn_storage << std::endl;
+        std::cout << " - solve - search - store - properties : " << kinetic_timing.solve
+                                                                    - kinetic_timing.integrate_chemical_properties
+                                                                    - smart_equilibrium_timing.learn_storage
+                                                                    - smart_equilibrium_timing.estimate_search << std::endl;
+    }
+
+
 };
 
 struct KineticPathParams{
