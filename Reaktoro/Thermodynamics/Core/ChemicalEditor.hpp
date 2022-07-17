@@ -249,8 +249,8 @@ public:
     /// needed, consists of specifying a list of chemical element, compound, or substance names,
     /// and let the ChemicalEditor to figure out automatically which species from the loaded database
     /// should be added in the phase. This functionality is supported by method
-    /// @ref addGaseousPhaseWithElements(std::string elements).
-    /// @ref addGaseousPhaseWithElementsOf(std::string compounds).
+    /// @ref addGaseousPhaseWithElements(const std::string& elements).
+    /// @ref addGaseousPhaseWithElementsOf(const std::string& compounds).
     /// @param species A StringList containing the names of the species.
     /// @return A reference to the created GaseousPhase object.
     /// @see addAqueousPhase, addLiquidPhase, addMineralPhase
@@ -316,8 +316,8 @@ public:
     /// needed, consists of specifying a list of chemical element, compound, or substance names,
     /// and let the ChemicalEditor to figure out automatically which species from the loaded database
     /// should be added in the phase. This functionality is supported by method
-    /// @ref addLiquidPhaseWithElements(std::string elements).
-    /// @ref addLiquidPhaseWithElementsOf(std::string compounds).
+    /// @ref addLiquidPhaseWithElements(const std::string& elements).
+    /// @ref addLiquidPhaseWithElementsOf(const std::string& compounds).
     /// @param species A StringList containing the names of the species.
     /// @return A reference to the created LiquidPhase object.
     /// @see addAqueousPhase, addGaseousPhase, addMineralPhase
@@ -391,8 +391,8 @@ public:
     /// needed, consists of specifying a list of chemical elements or compounds,
     /// and let the ChemicalEditor to figure out automatically which species from the loaded database
     /// should be added in the phase. This functionality is supported by methods
-    /// @ref addMineralPhaseWithElements(std::string elements) and
-	/// @ref addMineralPhaseWithElementsOf(std::string compounds).
+    /// @ref addMineralPhaseWithElements(const std::string& elements) and
+	/// @ref addMineralPhaseWithElementsOf(const std::string& compounds).
     /// @param species A StringList containing the names of the species.
     /// @return A reference to the created MineralPhase object.
     /// @see addAqueousPhase, addLiquidPhase, addGaseousPhase

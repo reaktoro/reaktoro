@@ -27,7 +27,7 @@ namespace detail {
 /// Return the hash number of a vector.
 /// https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
 template<typename Vec>
-auto hash(Vec &vec) -> std::size_t 
+auto hash(Vec &vec) -> std::size_t
 {
     using T = decltype(vec[0]);
     std::hash<T> hasher;
@@ -69,8 +69,7 @@ auto SmartEquilibriumSolverClustering::learn(ChemicalState& state, double T, dou
         state.setSpeciesAmounts(0.0);
         _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
         if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
-                return;
-        
+            return;
     }
     _result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
@@ -143,7 +142,7 @@ auto SmartEquilibriumSolverClustering::learn(ChemicalState& state, double T, dou
     const auto dupdbe = dudb(iprimary, iee);
     const auto dupdT = dudT(iprimary, 0);
     const auto dupdP = dudP(iprimary, 0);
-    
+
     // Compute matrix Mbe = 1/up * dup/db
     Mbe.noalias() = diag(inv(up)) * dupdbe;
     MT.noalias()  = diag(inv(up)) * dupdT;
@@ -334,8 +333,7 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 const auto& ne0 = n0(ies);
 
                 // Perform Taylor extrapolation
-                //ne.noalias() = ne0 + dnedbe0 * (be - be0);
-                ne.noalias() = ne0 + dnedbe0*(be - be0) + dnedbPe0*(P - P0) + dnedbTe0*(T - T0);
+                ne.noalias() = ne0 + dnedbe0*(be - be0) + dnedP0*(P - P0) + dnedT0*(T - T0);
 
                 _result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
@@ -352,8 +350,8 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 //---------------------------------------------------------------------
 
                 // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
-                for(unsigned int i = 0; i < ne.size(); ++i) 
-                    if(ne[i] < 0) 
+                for(unsigned int i = 0; i < ne.size(); ++i)
+                    if(ne[i] < 0)
                         ne[i] = options.learning.epsilon;
 
                 // Update the amounts of elements for the equilibrium species
@@ -367,10 +365,6 @@ auto SmartEquilibriumSolverClustering::estimate(ChemicalState& state, double T, 
                 state.setPressure(P);
                 state.setTemperature(T);
 
-                // Make sure that pressure and temperature is set to the current one
-                state.setTemperature(T);
-                state.setPressure(P);
-                    
                 // Update the chemical properties of the system
                 _properties =  record.properties;  // TODO: We need to estimate properties = properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
 

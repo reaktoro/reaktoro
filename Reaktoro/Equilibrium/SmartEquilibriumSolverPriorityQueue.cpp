@@ -54,7 +54,7 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
         _result.learning.gibbs_energy_minimization = solver.solve(state, T, P, be);
         if(!_result.learning.gibbs_energy_minimization.optimum.succeeded)
                 return;
-        
+
     }
     _result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
@@ -108,7 +108,7 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
                           - imajorminor.begin();
     const auto imajor = imajorminor.head(nummajor);
 
-    // Fetch chemical potentials and their derivatives
+    // The chemical potentials at the calculated equilibrium state
     u = _properties.chemicalPotentials();
 
     // Auxiliary references to the derivatives dn/db, dn/dT, dn/dP, and du/dn
@@ -121,8 +121,7 @@ auto SmartEquilibriumSolverPriorityQueue::learn(ChemicalState& state, double T, 
     dudP = u.ddn * dndP + u.ddP; // du/dP = ∂u/∂n*∂n/∂P + ∂u/∂P
     dudb = u.ddn * dndb;         // du/du = ∂u/∂n*∂n/∂b
 
-
-    // The vector u(iprimary) with chemical potentials of primary species
+    // The vector u(imajor) with chemical potentials of imajor species
     um.noalias() = u.val(imajor);
 
     // The matrix du(imajor)/dbe with derivatives of chemical potentials (imajor species only)
@@ -175,7 +174,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
     // Variations of the elements
     Vector dbe;
     double dT, dP;
-    
+
     // Check if an entry in the database pass the error test.
     // It returns (`success`, `error`, `ispecies`), where
     //   - `success` is true if error test succeeds, false otherwise.
@@ -300,26 +299,7 @@ auto SmartEquilibriumSolverPriorityQueue::estimate(ChemicalState& state, double 
 
             _result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
 
-            //---------------------------------------------------------------------
-            // After the search is finished successfully
-            //---------------------------------------------------------------------
-
-            // Assign small values to all the amount  in the interval [cutoff, 0] (instead of mirroring above)
-            for(unsigned int i = 0; i < ne.size(); ++i) 
-                if(ne[i] < 0) 
-                    ne[i] = options.learning.epsilon;
-
-            // Update the amounts of elements for the equilibrium species
-            //state = record.state; // this line was removed because it was destroying kinetics simulations
-            state.setSpeciesAmounts(ne, ies);
-
-            // Make sure that pressure and temperature is set to the current one
-            state.setTemperature(T);
-            state.setPressure(P);
-
-            // Update the chemical properties of the system
-            _properties = record.properties;  // FIXME: We actually want to estimate props =properties0 + variation : THIS IS A TEMPORARY SOLUTION!!!
-            
+            // Mark the estimated state as accepted
             _result.estimate.accepted = true;
 
             return;

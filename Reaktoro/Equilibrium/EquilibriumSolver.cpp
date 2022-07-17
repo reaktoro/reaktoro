@@ -431,10 +431,10 @@ struct EquilibriumSolver::Impl
         auto res = approximate(state, T, P, be);
 
         // Check the approximate calculation was successful
-//        Assert(result.optimum.succeeded,
-//            "Cannot proceed with the equilibrium calculation.",
-//            "The calculation of initial guess failed, most "
-//            "probably because no feasible solution exists.");
+        Assert(res.optimum.succeeded,
+            "Cannot proceed with the equilibrium calculation.",
+            "The calculation of initial guess failed, most "
+            "probably because no feasible solution exists.")
 
         // Preserve the values of n that are greater than z. For all others, set n to sqrt(epsilon)
         n = (n.array() > z.array()).select(n, std::sqrt(options.epsilon));
@@ -557,65 +557,15 @@ struct EquilibriumSolver::Impl
         // Check if the calculation failed
         if (!result.optimum.succeeded) {
             // Log the unsuccessful state
-            std::cout << "**************************************************************************************************" << std::endl;
-            std::cout << "Warning: EquilibriumSolver failed to compute the chemical equilibrium state with given conditions." << std::endl;
-            std::cout << "**************************************************************************************************" << std::endl;
+            std::cout << "*******************************************************************************" << std::endl;
+            std::cout << "Warning: EquilibriumSolver failed to compute the chemical equilibrium state \n"
+                         "with given conditions." << std::endl;
+            std::cout << "*******************************************************************************" << std::endl;
             std::cout << "n    = " << tr(optimum_state.x) << std::endl;
             std::cout << "e(n) = " << (result.optimum.error) << std::endl;
             std::cout << "**************************************************************************************************" << std::endl;
         }
-        // Check if the calculation failed
-        if (!result.optimum.succeeded)
-        {
-            //std::cout << "**************************************************" << std::endl;
-            //std::cout << "reset initial guess"  << std::endl;
-            //std::cout << "**************************************************" << std::endl;
 
-            initialguess(state, T, P, be);
-
-            // Update the optimum options
-            updateOptimumOptions();
-
-            // Update the optimum problem
-            updateOptimumProblem(state);
-
-            // Update the optimum state
-            updateOptimumState(state);
-
-            // Set the method for the optimisation calculation
-            solver.setMethod(options.method);
-
-            // Set the maximum number of iterations in each optimization pass
-            optimum_options.max_iterations = 10;
-
-            // Start the several optimization passes (stop if convergence attained)
-            auto counter = 0;
-            while(counter < options.optimum.max_iterations)
-            {
-                // Solve the optimisation problem
-                result.optimum += solver.solve(optimum_problem, optimum_state, optimum_options);
-
-                // Exit this loop if last solve succeeded
-                if(result.optimum.succeeded)
-                    break;
-
-                counter += optimum_options.max_iterations;
-            }
-        }
-        // Check if the calculation failed
-        if (!result.optimum.succeeded) {
-            std::cout << "**************************************************" << std::endl;
-            std::cout << "opt_succeeded = " << result.optimum.succeeded << std::endl;
-            std::cout << "optimum_state = " << tr(optimum_state.x) << std::endl;
-            std::cout << "iterations    = " << (result.optimum.iterations) << std::endl;
-            std::cout << "error         = " << (result.optimum.error) << std::endl;
-            std::cout << "**************************************************" << std::endl;
-        }
-
-//            Assert(result.optimum.succeeded,
-//                    "Cannot proceed with method EquilibriumSolver::solve.",
-//                    "The OptimumSolver solver is not converging, i.e., `result.optimum.succeeded` returns `false`");
-//
         // Update the chemical state from the optimum state
         updateChemicalState(state);
 

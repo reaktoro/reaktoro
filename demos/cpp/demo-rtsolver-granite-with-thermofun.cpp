@@ -50,17 +50,17 @@ int main()
     params.D = 1.0e-9;     // the diffusion coefficient (in units of m2/s)
     params.v = 1.0 / week; // the Darcy velocity (in units of m/s)
     params.T = 300;        // the temperature (in units of degC)
+    params.P = 85.88;      // the pressure (in units of bar)
     // Calculate the water saturation pressure using the Wagner and Pruss (1995) equation of state
     params.P = Reaktoro::waterSaturatedPressureWagnerPruss(Temperature(params.T + 273.15)).val * 1e-5;
 
     // Define the activity model for the aqueous species
     //params.activity_model = ActivityModel::HKF;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies;
+    params.activity_model = ActivityModel::HKFSelectedSpecies;
+    //params.activity_model = ActivityModel::Pitzer;
+    //params.activity_model = ActivityModel::PitzerSelectedSpecies;
+    //params.activity_model = ActivityModel::DebyeHuckel;
+    //params.activity_model = ActivityModel::DebyeHuckelSelectedSpecies;
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
@@ -71,7 +71,7 @@ int main()
 
     // Run smart algorithm with clustering
     params.method = SmartEquilibriumStrategy::Clustering;
-    params.smart_equilibrium_reltol = 1e-2;
+    params.smart_equilibrium_reltol = 1e-3;
 
 //    // Run smart algorithm with priority queue
 //    params.smart_method = SmartEquilibriumStrategy::PriorityQueue;
@@ -89,8 +89,17 @@ int main()
 
     // ----------------------------------------------------------- //
     // Execute reactive transport with different solvers
-    params.use_smart_equilibrium_solver = true; runReactiveTransport(params, results);
-    params.use_smart_equilibrium_solver = false; runReactiveTransport(params, results);
+    // ----------------------------------------------------------- //
+
+    // Smart equilibrium solver
+    params.use_smart_equilibrium_solver = true;
+    params.outputEquilibriumMethod();
+    runReactiveTransport(params, results);
+
+//    // Conventional equilibrium solver
+//    params.outputEquilibriumMethod();
+//    params.use_smart_equilibrium_solver = false;
+//    runReactiveTransport(params, results);
 
     // Collect the time spent for total simulation (excluding search and store procedures costs)
     results.conventional_total = results.equilibrium_timing.solve;
@@ -156,33 +165,33 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
                                   "Al+3 AlOH+2 Al(OH)2+ Al(OH)3@ Al(OH)4-";
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::HKFSelectedSpecies){
+    else if(params.activity_model == ActivityModel::HKFSelectedSpecies){
         // HKF selected species
         editor.addAqueousPhase(selected_species);
     }
-    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::Pitzer){
+    else if(params.activity_model == ActivityModel::Pitzer){
         // Pitzer full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::PitzerSelectedSpecies){
+    else if(params.activity_model == ActivityModel::PitzerSelectedSpecies){
         // Pitzer selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelPitzerHMW()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel()
                 .setActivityModelDrummondCO2();
     }
-    else if(params.activity_model ==  ReactiveTransportParams::AqueousActivityModel::DebyeHuckelSelectedSpecies){
+    else if(params.activity_model == ActivityModel::DebyeHuckelSelectedSpecies){
         // Debye-Huckel selected species
         editor.addAqueousPhase(selected_species)
                 .setChemicalModelDebyeHuckel()

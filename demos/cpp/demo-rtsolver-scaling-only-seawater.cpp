@@ -51,9 +51,9 @@ int main()
     params.P = 200 * 1.01325;   // the pressure (in units of bar)
 
     // Define the activity model for the aqueous species
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::HKF;
-    //params.activity_model = ReactiveTransportParams::AqueousActivityModel::Pitzer;
-    params.activity_model = ReactiveTransportParams::AqueousActivityModel::DebyeHuckel;
+    //params.activity_model = ActivityModel::HKF;
+    //params.activity_model = ActivityModel::Pitzer;
+    params.activity_model = ActivityModel::DebyeHuckel;
 
     // Define activity model depending on the parameter
     params.amount_fraction_cutoff = 1e-14;
@@ -149,11 +149,11 @@ auto runReactiveTransport(ReactiveTransportParams& params, ReactiveTransportResu
     StringList selected_elements = "H Cl S O Ba Ca Sr Na K Mg C Si";
 
     // Depending on the activity model, define it using ChemicalEditor
-    if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::HKF){
+    if(params.activity_model == ActivityModel::HKF){
         // HKF full system
         editor.addAqueousPhaseWithElements(selected_elements);
     }
-    else if(params.activity_model == ReactiveTransportParams::AqueousActivityModel::DebyeHuckel){
+    else if(params.activity_model == ActivityModel::DebyeHuckel){
         // Debye-Huckel full system
         editor.addAqueousPhaseWithElements(selected_elements)
                 .setChemicalModelDebyeHuckel(dhModel);

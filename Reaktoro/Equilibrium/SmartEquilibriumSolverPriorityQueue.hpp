@@ -73,7 +73,7 @@ private:
 
         /// The pressure of the equilibrium state (in units of Pa).
         double P;
-        
+
         /// The amounts of elements in the equilibrium state (in units of mol).
         Vector be;
 
@@ -92,7 +92,7 @@ private:
         /// The vectors used to compute relative change of chemical potentials due to change in `T` and `P`.
         Vector MT, MP;
 
-        // Indices of the major species in the chemical state. 
+        // Indices of the major species in the chemical state.
         VectorXi imajor;
     };
 
