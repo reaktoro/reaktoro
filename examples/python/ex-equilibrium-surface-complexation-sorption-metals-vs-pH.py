@@ -83,7 +83,7 @@ conditions.pressure(1e5) # in Pa
 
 import numpy as np
 import math
-pHs = np.linspace(2.0, 9.0, num=19)
+pHs = np.linspace(2.0, 9.0, num=29)
 
 metals = {"Pb": "Pb+2",
           "Cd": "Cd+2",
@@ -150,16 +150,16 @@ from matplotlib import pyplot as plt
 colors = ['coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
 
 plt.figure()
-plt.title(f"Dependence of metal sorption on pH")
-plt.xlabel("pH")
 df_metal = df[df["Metal"] == list(metals.values())[0]] # fetch the columns with Pb+2
 ax = df_metal.plot(x="pH", y="%", color=colors[0], label=list(metals.keys())[0])
-
+ax.set_title("Dependence of metal sorption on pH")
+ax.set_xlabel("pH")
+ax.set_ylabel("% of sorbed metal")
 for idx, metal in enumerate(metals):
       if idx:
             df_metal = df[df["Metal"] == metals[metal]] # fetch the columns with other metals
             df_metal.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=metal)
-plt.legend(loc="best")
-plt.grid()
-plt.savefig("sorbed-metals-vs-pH.png")
+ax.legend(loc="best")
+ax.grid()
+plt.savefig("sorbed-metals-vs-pH.png", bbox_inches='tight')
 plt.close()

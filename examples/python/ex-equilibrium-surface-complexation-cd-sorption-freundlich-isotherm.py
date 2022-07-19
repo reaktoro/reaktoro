@@ -130,17 +130,17 @@ for mCd in mCds:
 
 from matplotlib import pyplot as plt
 plt.plot(mCdaq, mCdsurf)
-plt.title(r"Freundlich sorption isotherm for Cd$^{+2}$")
+plt.title(r"Freundlich sorption isotherm")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel('Sorbed mass of Cd [mg]')
 plt.grid()
-plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass.png")
+plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass.png", bbox_inches='tight')
 plt.close()
 
 plt.plot(mCdaq, np.array(mCdsurf) / np.array(mCdaq))
-plt.title(r"Distribution coefficient of Freundlich sorption isotherm for Cd$^{+2}$")
+plt.title("Distribution coefficient \n of Freundlich sorption isotherm")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel(r'K$_d$ = s$_I$ / c$_I$ [-]')
 plt.grid()
-plt.savefig("distribution-coeff-vs-dissolved-cd-mass.png")
+plt.savefig("distribution-coeff-vs-dissolved-cd-mass.png", bbox_inches='tight')
 plt.close()
