@@ -24,8 +24,6 @@ using namespace Reaktoro;
 
 void exportPhases(py::module& m)
 {
-    const auto return_internal_ref = py::return_value_policy::reference_internal;
-
     py::class_<Speciate>(m, "Speciate")
         .def(py::init<>())
         .def_readwrite("symbols", &Speciate::symbols)

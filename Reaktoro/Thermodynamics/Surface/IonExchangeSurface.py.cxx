@@ -33,9 +33,9 @@ void exportIonExchangeSurface(py::module& m)
 
     py::class_<IonExchangeSurface>(m, "IonExchangeSurface")
         .def(py::init<const SpeciesList&>())
-        .def("clone", &IonExchangeSurface::clone, py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<Index>(&IonExchangeSurface::species, py::const_), py::return_value_policy::reference_internal)
-        .def("species", py::overload_cast<>(&IonExchangeSurface::species, py::const_), py::return_value_policy::reference_internal)
+        .def("clone", &IonExchangeSurface::clone, return_internal_ref)
+        .def("species", py::overload_cast<Index>(&IonExchangeSurface::species, py::const_), return_internal_ref)
+        .def("species", py::overload_cast<>(&IonExchangeSurface::species, py::const_), return_internal_ref)
         .def("ze", &IonExchangeSurface::ze)
         .def("state", py::overload_cast<real,real,ArrayXrConstRef>(&IonExchangeSurface::state))
         ;

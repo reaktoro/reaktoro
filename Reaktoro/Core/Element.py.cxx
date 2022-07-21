@@ -45,6 +45,6 @@ void exportElement(py::module& m)
         .def("symbol", &Element::symbol)
         .def("molarMass", &Element::molarMass)
         .def("name", &Element::name)
-        .def("tags", &Element::tags, py::return_value_policy::reference_internal)
+        .def("tags", &Element::tags, return_internal_ref)
         ;
 }

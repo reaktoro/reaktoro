@@ -24,8 +24,6 @@ using namespace Reaktoro;
 
 void exportParams(py::module& m)
 {
-    const auto return_internal_ref = py::return_value_policy::reference_internal;
-
     py::class_<Params>(m, "Params")
         .def(py::init<>())
         .def("at", &Params::at, return_internal_ref)

@@ -28,8 +28,6 @@ using namespace Reaktoro;
 
 void exportChemicalState(py::module& m)
 {
-    const auto return_internal_ref = py::return_value_policy::reference_internal;
-
     py::class_<ChemicalState>(m, "ChemicalState")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())

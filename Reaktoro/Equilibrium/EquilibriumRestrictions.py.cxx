@@ -24,8 +24,6 @@ using namespace Reaktoro;
 
 void exportEquilibriumRestrictions(py::module& m)
 {
-    const auto return_internal_ref = py::return_value_policy::reference_internal;
-
     py::class_<EquilibriumRestrictions>(m, "EquilibriumRestrictions")
         .def(py::init<const ChemicalSystem>())
         .def("cannotReact", py::overload_cast<Index>(&EquilibriumRestrictions::cannotReact))

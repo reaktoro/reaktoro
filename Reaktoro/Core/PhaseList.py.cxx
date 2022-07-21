@@ -56,7 +56,7 @@ void exportPhaseList(py::module& m)
         .def("indicesSpeciesInSolutionPhases", &PhaseList::indicesSpeciesInSolutionPhases, "Return the indices of the species in phases with more than one species.")
         .def("indicesSpeciesInPhases", &PhaseList::indicesSpeciesInPhases, "Return the indices of the species in the given phases.")
         .def("__len__", &PhaseList::size)
-        .def("__getitem__", [](const PhaseList& self, Index i) { return self[i]; }, py::return_value_policy::reference_internal)
+        .def("__getitem__", [](const PhaseList& self, Index i) { return self[i]; }, return_internal_ref)
         .def("__iter__", [](const PhaseList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         .def(py::self + py::self);
         ;

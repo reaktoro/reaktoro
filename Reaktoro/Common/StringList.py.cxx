@@ -24,8 +24,6 @@ using namespace Reaktoro;
 
 void exportStringList(py::module& m)
 {
-    const auto return_internal_ref = py::return_value_policy::reference_internal;
-
     const auto __getitem__ = [](const StringList& self, std::size_t i) { return self[i]; };
     const auto __setitem__ = [](StringList& self, std::size_t i, std::string str) { self[i] = str; };
 
