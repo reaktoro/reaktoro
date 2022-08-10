@@ -139,7 +139,7 @@ auto ComplexationSurface::sites() const -> std::map<std::string, ComplexationSur
     return surface_sites;
 }
 
-/// Return complexation surface state updated for the figen temperature, pressure, and fractions.
+/// Return complexation surface state updated for the given temperature, pressure, and fractions.
 auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceState
 {
     surface_state.T = T;
