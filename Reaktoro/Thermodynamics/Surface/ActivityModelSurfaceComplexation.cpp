@@ -124,35 +124,39 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
         // Calculate ln of activities of surfaces species as the ln of molar fractions
         ln_a = x.log();
 
-        real I = 0;
-
-        // Otherwise, calculate the stoichiometric ionic strength if the Aqueous State has been already evaluated
+        // Calculate Davies activity coefficients only if the AqueousPhase has been already evaluated,
+        // update the electrostatic potential, and add the electrostatic correction
         if (props.extra["AqueousMixtureState"].has_value())
         {
             // Export aqueous mixture state via `extra` data member
             const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
 
-            // Fetch the stoichiometric ionic strength
-            I = aqstate.Is;
+            // Auxiliary constant references properties and variables
+            const auto I = aqstate.Is;          // the stoichiometric ionic strength
+            const auto sqrtI = sqrt(I);
+            const auto ln10 = log(10);
+            const auto Agamma = 0.5095;         // the Debye-Huckel parameter
+
+            // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
+            ln_g = ln10*(-Agamma*z*z*sqrtI/(1 + sqrtI) - 0.3*I);
+
+            // Update surface potential
             surface_state.updatePotential(I);
+
+            // Calculate ln of gamma according to the coulombic correction, Appelo etal (2005), (7.44), p. 334
+            ln_g += -z*F*surface_state.psi/(R*T);
+
+            if(params.output)
+            {
+                // Output the surface and DDL charges
+                const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*surface_state.psi/(2*R*T))[0]);
+                std::cout << "sigma = " << surface_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
+            }
         }
 
         // Export the surface complexation and its state via the `extra` data member
         props.extra["ComplexationSurfaceState"] = surface_state;
         props.extra["ComplexationSurface"] = surface;
-
-        // Auxiliary variables
-        const auto psi = surface_state.psi;
-
-        // Calculate ln of gamma according to the coulombic correction, Appelo etal (2005), (7.44), p. 334
-        ln_g = z*F*psi/(R*T);
-
-        if(params.output)
-        {
-            // Output the surface and DDL charges
-            const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
-            std::cout << "sigma = " << surface_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
-        }
 
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
