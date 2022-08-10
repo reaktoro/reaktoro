@@ -54,9 +54,6 @@ struct ComplexationSurfaceState
     /// The molar fractions of the complexation surface species.
     ArrayXr x;
 
-    /// The charges of the complexation surface species.
-    ArrayXr z;
-
     /// The complexation surface charge (eq).
     real charge;
 
@@ -80,7 +77,7 @@ struct ComplexationSurfaceState
 class ComplexationSurface
 {
     /// Return the complexation surface charge.
-    auto surfaceCharge(ArrayXrConstRef x, ArrayXrConstRef z) const -> real;
+    auto surfaceCharge(ArrayXrConstRef x) const -> real;
 
     // Return the complexation surface sigma.
     auto surfaceSigma(real charge) const -> real;

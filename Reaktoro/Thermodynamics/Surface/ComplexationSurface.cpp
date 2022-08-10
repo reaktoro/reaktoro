@@ -116,7 +116,7 @@ auto ComplexationSurface::surfaceSigma(real charge) const -> real
 }
 
 /// Return the complexation surface charge.
-auto ComplexationSurface::surfaceCharge(ArrayXrConstRef x, ArrayXrConstRef z) const -> real
+auto ComplexationSurface::surfaceCharge(ArrayXrConstRef x) const -> real
 {
     return (z*x).sum();
 }
@@ -147,8 +147,7 @@ auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> Complexati
     surface_state.x = x;
     surface_state.As = specificSurfaceArea();
     surface_state.mass = mass();
-    surface_state.z = charges();
-    surface_state.charge = surfaceCharge(x, surface_state.z);
+    surface_state.charge = surfaceCharge(x);
     surface_state.sigma = surfaceSigma(surface_state.charge);
 
     return surface_state;

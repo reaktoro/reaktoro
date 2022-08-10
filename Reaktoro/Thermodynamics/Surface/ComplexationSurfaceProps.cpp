@@ -225,9 +225,9 @@ struct ComplexationSurfaceProps::Impl
     }
 
     /// Return the complexation surface charge.
-    auto Z() const -> real
+    auto Z() -> real
     {
-        return (surface_state.z*nex).sum();
+        return (surface.charges()*nex).sum();
     }
 
     /// Return the complexation surface charge density.

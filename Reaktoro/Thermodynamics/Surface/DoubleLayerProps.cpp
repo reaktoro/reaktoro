@@ -136,7 +136,6 @@ struct DoubleLayerProps::Impl
         ddlstate.Is = NaN;
         ddlstate.m.setConstant(size, NaN);
         ddlstate.ms.setConstant(size, NaN);
-        ddlstate.z.setConstant(size, NaN);
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
@@ -250,7 +249,7 @@ struct DoubleLayerProps::Impl
 
     auto speciesCharges() const -> ArrayXr
     {
-        return ddlstate.z;
+        return ddlsolution.charges();
     }
 
     auto speciesAmounts() const -> ArrayXr

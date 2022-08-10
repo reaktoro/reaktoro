@@ -225,7 +225,6 @@ struct AqueousProps::Impl
         aqstate.Is = NaN;
         aqstate.m.setConstant(size, NaN);
         aqstate.ms.setConstant(size, NaN);
-        aqstate.z.setConstant(size, NaN);
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
@@ -335,7 +334,7 @@ struct AqueousProps::Impl
 
     auto speciesCharges() const -> ArrayXr
     {
-        return aqstate.z;
+        return aqsolution.charges();
     }
 
     auto ionicStrength() const -> real
