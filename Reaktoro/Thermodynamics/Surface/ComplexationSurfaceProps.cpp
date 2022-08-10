@@ -126,7 +126,11 @@ struct ComplexationSurfaceProps::Impl
         extra = state.props().extra();
 
         if(extra["ComplexationSurface"].has_value())
+        {
             surface = std::any_cast<ComplexationSurface>(extra["ComplexationSurface"]);
+            surface_state = std::any_cast<ComplexationSurfaceState>(extra["ComplexationSurfaceState"]);
+        }
+
         props.update(T, P, n.segment(ifirst, size), extra);
         update(props);
     }
@@ -136,8 +140,6 @@ struct ComplexationSurfaceProps::Impl
     {
         props = phase_props;
         nex = props.speciesAmounts();
-
-        surface_state = surface.state(props.temperature(), props.pressure(), props.speciesMoleFractions());
 
         // Fetch ionic strength from the aqueous solution in contact with the complexation surface
         if(extra["DiffusiveLayerState"].has_value())
