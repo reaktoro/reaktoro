@@ -160,6 +160,9 @@ struct AqueousProps::Impl
     /// The amounts of the species in the aqueous phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
     VectorXd naq;
 
+    /// The electric charges of the species in the aqueous phase.
+    ArrayXd zaq;
+
     /// The chemical potentials of the elements in the aqueous phase
     VectorXr lambda;
 
@@ -228,6 +231,9 @@ struct AqueousProps::Impl
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
+
+        // Initialize charges of the species in aqueous phase
+        zaq = aqsolution.charges();
     }
 
     Impl(ChemicalState const& state)
@@ -332,9 +338,15 @@ struct AqueousProps::Impl
         return aqstate.m;
     }
 
-    auto speciesCharges() const -> ArrayXr
+    auto speciesCharges() const -> ArrayXdConstRef
     {
-        return aqsolution.charges();
+        return zaq;
+    }
+
+    auto speciesCharge(const StringOrIndex& name) const -> real
+    {
+        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        return zaq[idx];
     }
 
     auto ionicStrength() const -> real
@@ -486,7 +498,12 @@ auto AqueousProps::speciesMolalities() const -> ArrayXr
     return pimpl->speciesMolalities();
 }
 
-auto AqueousProps::speciesCharges() const -> ArrayXr
+auto AqueousProps::speciesCharge(const StringOrIndex& name) const -> real
+{
+    return pimpl->speciesCharge(name);
+}
+
+auto AqueousProps::speciesCharges() const -> ArrayXdConstRef
 {
     return pimpl->speciesCharges();
 }
