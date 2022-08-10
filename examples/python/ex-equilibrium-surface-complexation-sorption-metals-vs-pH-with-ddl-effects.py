@@ -19,7 +19,7 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (9 June 2022)
+#   • Svetlana Kyas (9 August 2022)
 #
 # and since revised by:
 #   •
@@ -42,13 +42,13 @@ species_str = ' '.join(extractNames(species_list))
 surface_Hfo = ComplexationSurface("Hfo")
 surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g")
 
+# Defined weak site of the complexation surface
+surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol")
+
 # Defined strong site of the complexation surface
 site_Hfo_s = ComplexationSurfaceSite()
 site_Hfo_s.setName("Hfo_s").setAmount(0.025e-3, "mol")
 surface_Hfo.addSite(site_Hfo_s)
-
-# Defined weak site of the complexation surface
-surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol")
 
 # Add species to the surface and corresponding sites
 surface_Hfo.addSurfaceSpecies(species_list)
@@ -59,7 +59,7 @@ params.surface = surface_Hfo
 
 # Define surface complexation phase and set an activity model
 complexation_phase_Hfo = SurfaceComplexationPhase(species_str)
-complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params))
+complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationWithDDL(params))
 
 # Create chemical system
 system = ChemicalSystem(db, solution, complexation_phase_Hfo)
@@ -90,7 +90,7 @@ metals = {"Pb": "Pb+2",
           "Zn": "Zn+2",
           "Cu": "Cu+2",
           "Sr": "Sr+2",
-          "Ca": "Ca+2"}
+          "Fe": "Fe+2"}
 
 import pandas as pd
 columns = ["Metal", "pH", "%"]
@@ -149,17 +149,30 @@ for metal in metals:
 from matplotlib import pyplot as plt
 colors = ['coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
 
+import matplotlib as mpl
+from matplotlib import font_manager as fm
+import os
+fpath = os.path.join(mpl.get_data_path(), "texgyreadventor-regular.otf")
+prop = fm.FontProperties(fname=fpath)
+prop.set_size(12)
+
+mpl.rcParams['font.family'] = 'sans-serif'
+mpl.rcParams['font.sans-serif'] = 'TeX Gyre Adventor'
+mpl.rcParams['font.style'] = 'normal'
+mpl.rcParams['font.size'] = 14
+mpl.set_loglevel("critical")
+
 plt.figure()
 df_metal = df[df["Metal"] == list(metals.values())[0]] # fetch the columns with Pb+2
 ax = df_metal.plot(x="pH", y="%", color=colors[0], label=list(metals.keys())[0])
-ax.set_title("Dependence of metal sorption on pH")
 ax.set_xlabel("pH")
 ax.set_ylabel("% of sorbed metal")
+ax.set_title("Dependence of the metal sorption on pH \n (with electrostatic effects)")
 for idx, metal in enumerate(metals):
       if idx:
             df_metal = df[df["Metal"] == metals[metal]] # fetch the columns with other metals
             df_metal.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=metal)
 ax.legend(loc="best")
 ax.grid()
-plt.savefig("sorbed-metals-vs-pH.png", bbox_inches='tight')
+plt.savefig("sorbed-metals-vs-pH-ddl-effects.png", bbox_inches='tight')
 plt.close()

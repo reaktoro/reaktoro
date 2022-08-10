@@ -87,7 +87,7 @@ int main()
 
     // Define surface complexation phase and set an activity model
     SurfaceComplexationPhase complexation_phase_Hfo(detail::extractNames(surface_Hfo.species()));
-    complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationWithDDL(params));
+    complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params));
 
     // Define the DDL phase
     DoubleLayerPhase ddl_Hfo(speciate(elements));
@@ -154,7 +154,7 @@ int main()
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumOptions opts;
-    opts.optima.output.active = false;
+    //opts.optima.output.active = true;
 
     EquilibriumSolver solver(specs);
     solver.setOptions(opts);
@@ -202,8 +202,8 @@ int main()
     props.update(state);
     std::cout << "as. phase charge = " <<  props.chargeInPhase("AqueousPhase") << std::endl;
 
-    DoubleLayerProps dlprops(state);
-    std::cout << "dlprops: \n" << dlprops << std::endl;
+//    DoubleLayerProps dlprops(state);
+//    std::cout << "dlprops: \n" << dlprops << std::endl;
 
     return 0;
 }

@@ -19,7 +19,7 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (9 June 2022)
+#   • Svetlana Kyas (10 August 2022)
 #
 # and since revised by:
 #   •
@@ -31,7 +31,7 @@ from reaktoro import *
 db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
-solution = AqueousPhase(speciate("H O Cl Ca Sr Cd Zn Pb Cu Fe"))
+solution = AqueousPhase(speciate("H O Cl Ca Fe"))
 solution.setActivityModel(ActivityModelHKF())
 
 # Define surface complexation  species list
@@ -83,23 +83,19 @@ conditions.pressure(1e5) # in Pa
 
 import numpy as np
 import math
-pHs = np.linspace(2.0, 9.0, num=29)
+pHs = np.linspace(4.0, 9.0, num=21)
 
-metals = {"Pb": "Pb+2",
-          "Cd": "Cd+2",
-          "Zn": "Zn+2",
-          "Cu": "Cu+2",
-          "Sr": "Sr+2",
-          "Ca": "Ca+2"}
+metals = {"Fe": "Fe+2"}
 
 import pandas as pd
-columns = ["Metal", "pH", "%"]
+columns = ["pH", "Hfo_sOFe+", "Hfo_wOFe+", "Hfo_wOFeOH", "Hfo_wOH", "Hfo_wOH2+", "Hfo_wO-"]
+
 df = pd.DataFrame(columns=columns)
 
 # Initial Sr amount
 n0 = 1e-6
 
-def equilibrate(pH, metal):
+def equilibrate(pH):
 
       # Set pH
       conditions.pH(pH)
@@ -109,57 +105,60 @@ def equilibrate(pH, metal):
       state.set("H2O" , 1.00, "kg")
       state.set("Cl-" , 2e+0, "mmol")
       state.set("Ca+2", 1e+0, "mmol")
-      state.set(metals[metal], n0, "mmol")
+      state.set("Fe+2", n0, "mmol")
       state.set("Hfo_wOH", surface_Hfo.sites()["_w"].amount(), "mol")
       state.set("Hfo_sOH", surface_Hfo.sites()["_s"].amount(), "mol")
 
       # Equilibrate given initial state with input conditions
       res = solver.solve(state, conditions)
 
-      # If the equilibrium calculations didn't succeed, continue to the next condition
-      if res.optima.succeeded:
-            # Update properties
-            props.update(state)
+      return state
 
-            # Fetch amount of sorbed and dissolved mineral
-            b_aq    = float(props.elementAmountInPhase(metal, "AqueousPhase"))
-            b_surf  = float(props.elementAmountInPhase(metal, "SurfaceComplexationPhase"))
+print(f"  pH   mHfo_sOFe+   mHfo_wOFe+  mHfo_wOFeOH")
+for pH in pHs:
 
-            return b_surf, b_aq
-      else:
-            return math.nan, math.nan
+      result_state = equilibrate(pH)
+      mHfo_wOH    = float(result_state.speciesAmount("Hfo_wOH"))
+      mHfo_wOH2   = float(result_state.speciesAmount("Hfo_wOH2+"))
+      mHfo_wO     = float(result_state.speciesAmount("Hfo_wO-"))
+      mHfo_sOFe   = float(result_state.speciesAmount("Hfo_sOFe+"))
+      mHfo_wOFe   = float(result_state.speciesAmount("Hfo_wOFe+"))
+      mHfo_wOFeOH = float(result_state.speciesAmount("Hfo_wOFeOH"))
 
-for metal in metals:
-      print(f"pH    % sorbed {metal}   % dissolved {metal}")
+      print(f"{pH:4.2f} {mHfo_sOFe:12.4e} {mHfo_wOFe:12.4e} {mHfo_wOFeOH:12.4e}")
 
-      for pH in pHs:
-
-            result = equilibrate(pH, metal)
-            b_total = float(props.elementAmount(metal))
-            if b_total != 0:
-                  b_surf = result[0] / b_total * 100
-                  b_aq = result[1] / b_total * 100
-                  print(f"{pH:4.2f} {b_surf:12.4f} {b_aq:16.4f}")
-            else:
-                  b_surf, b_aq = result[0], result[1]
-
-            # Update dataframe with obtained values
-            df.loc[len(df)] = [metals[metal], pH, b_surf]
+      # Update dataframe with obtained values
+      df.loc[len(df)] = [pH, mHfo_sOFe, mHfo_wOFe, mHfo_wOFeOH, mHfo_wOH, mHfo_wOH2, mHfo_wO]
 
 from matplotlib import pyplot as plt
 colors = ['coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
 
+import matplotlib as mpl
+from matplotlib import font_manager as fm
+import os
+fpath = os.path.join(mpl.get_data_path(), "texgyreadventor-regular.otf")
+prop = fm.FontProperties(fname=fpath)
+prop.set_size(12)
+
+mpl.rcParams['font.family'] = 'sans-serif'
+mpl.rcParams['font.sans-serif'] = 'TeX Gyre Adventor'
+mpl.rcParams['font.style'] = 'normal'
+mpl.rcParams['font.size'] = 14
+mpl.set_loglevel("critical")
+
 plt.figure()
-df_metal = df[df["Metal"] == list(metals.values())[0]] # fetch the columns with Pb+2
-ax = df_metal.plot(x="pH", y="%", color=colors[0], label=list(metals.keys())[0])
-ax.set_title("Dependence of metal sorption on pH")
+ax = plt.gca()
+df.plot(x="pH", y="Hfo_sOFe+", ax=ax, color=colors[0], label="Hfo_sOFe+", logy=True)
+df.plot(x="pH", y="Hfo_wOFe+", ax=ax, color=colors[1], label="Hfo_wOFe+", logy=True)
+df.plot(x="pH", y="Hfo_wOFeOH", ax=ax, color=colors[2], label="Hfo_wOFeOH", logy=True)
+df.plot(x="pH", y="Hfo_wOH", ax=ax, color=colors[3], label="Hfo_wOH", logy=True)
+df.plot(x="pH", y="Hfo_wOH2+", ax=ax, color=colors[4], label="Hfo_wOH2+", logy=True)
+df.plot(x="pH", y="Hfo_wO-", ax=ax, color=colors[5], label="Hfo_wO-", logy=True)
+
+ax.set_title("Dependence of Fe sorption on pH")
 ax.set_xlabel("pH")
-ax.set_ylabel("% of sorbed metal")
-for idx, metal in enumerate(metals):
-      if idx:
-            df_metal = df[df["Metal"] == metals[metal]] # fetch the columns with other metals
-            df_metal.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=metal)
+ax.set_ylabel("Amount of sorbed species")
 ax.legend(loc="best")
 ax.grid()
-plt.savefig("sorbed-metals-vs-pH.png", bbox_inches='tight')
+plt.savefig("sorbed-fe-vs-pH.png", bbox_inches='tight')
 plt.close()

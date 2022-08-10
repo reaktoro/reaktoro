@@ -31,12 +31,13 @@ from reaktoro import *
 db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
-solution = AqueousPhase(speciate("H O Cl Ca Sr Cd Zn Pb Cu Fe"))
+solution = AqueousPhase(speciate("H O Cl Ca Cd"))
 solution.setActivityModel(ActivityModelHKF())
 
-# Define surface complexation  species list
-species_list = db.species().withAggregateState(AggregateState.Adsorbed)
-species_str = ' '.join(extractNames(species_list))
+# Define ion exchange species list
+list_str = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOCd+ Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOCd+"
+all_species = db.species().withAggregateState(AggregateState.Adsorbed)
+list = all_species.withNames(list_str)
 
 # Create complexation surface
 surface_Hfo = ComplexationSurface("Hfo")
@@ -51,21 +52,22 @@ surface_Hfo.addSite(site_Hfo_s)
 surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol")
 
 # Add species to the surface and corresponding sites
-surface_Hfo.addSurfaceSpecies(species_list)
+surface_Hfo.addSurfaceSpecies(list)
 
 # Add specified surface as parameters for the activity model for the complexation surface
 params = ActivityModelSurfaceComplexationParams()
 params.surface = surface_Hfo
 
 # Define surface complexation phase and set an activity model
-complexation_phase_Hfo = SurfaceComplexationPhase(species_str)
+complexation_phase_Hfo = SurfaceComplexationPhase(list_str)
 complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params))
 
 # Create chemical system
 system = ChemicalSystem(db, solution, complexation_phase_Hfo)
 
-# Define properties
 props = ChemicalProps(system)
+aqprops = AqueousProps(system)
+surfprops = ComplexationSurfaceProps(surface_Hfo, system)
 
 # Specify equilibrium specs
 specs = EquilibriumSpecs(system)
@@ -78,88 +80,84 @@ solver = EquilibriumSolver(specs)
 
 # Define equilibrium conditions
 conditions = EquilibriumConditions(specs)
-conditions.temperature(25.0 + 273.15) # in Kelvin
-conditions.pressure(1e5) # in Pa
+conditions.temperature(25.0, "celsius")
+conditions.pressure(1.0, "atm")
+conditions.pH(6.0)
 
 import numpy as np
-import math
-pHs = np.linspace(2.0, 9.0, num=29)
 
-metals = {"Pb": "Pb+2",
-          "Cd": "Cd+2",
-          "Zn": "Zn+2",
-          "Cu": "Cu+2",
-          "Sr": "Sr+2",
-          "Ca": "Ca+2"}
+# Mass of given, sorbed and dissolved Cd (in mg)
+mCds = np.linspace(10, 100, num=21)
+mCdsurf = []
+mCdaq = []
+mCdtot = []
 
-import pandas as pd
-columns = ["Metal", "pH", "%"]
-df = pd.DataFrame(columns=columns)
 
-# Initial Sr amount
-n0 = 1e-6
-
-def equilibrate(pH, metal):
-
-      # Set pH
-      conditions.pH(pH)
+def equilibrate(mCd):
 
       # Define initial equilibrium state
       state = ChemicalState(system)
       state.set("H2O" , 1.00, "kg")
       state.set("Cl-" , 2e+0, "mmol")
       state.set("Ca+2", 1e+0, "mmol")
-      state.set(metals[metal], n0, "mmol")
+      state.set("Cd+2",  mCd, "mmol")
       state.set("Hfo_wOH", surface_Hfo.sites()["_w"].amount(), "mol")
       state.set("Hfo_sOH", surface_Hfo.sites()["_s"].amount(), "mol")
+
+      # print(state.speciesAmount("Cd+2"))
+      # input()
+      # Equilibrate given initial state with input conditions
+      res = solver.solve(state, conditions)
 
       # Equilibrate given initial state with input conditions
       res = solver.solve(state, conditions)
 
-      # If the equilibrium calculations didn't succeed, continue to the next condition
-      if res.optima.succeeded:
-            # Update properties
-            props.update(state)
+      # Update properties
+      props.update(state)
 
-            # Fetch amount of sorbed and dissolved mineral
-            b_aq    = float(props.elementAmountInPhase(metal, "AqueousPhase"))
-            b_surf  = float(props.elementAmountInPhase(metal, "SurfaceComplexationPhase"))
+      # Fetch total, dissolved, and sorbed mass of Cd
+      massCd_aq   = float(props.elementAmountInPhase("Cd", "AqueousPhase"))
+      massCd_surf = float(props.elementAmountInPhase("Cd", "SurfaceComplexationPhase"))
+      massCd_tot  = float(props.elementAmount("Cd"))
 
-            return b_surf, b_aq
-      else:
-            return math.nan, math.nan
+      return massCd_aq, massCd_surf, massCd_tot
 
-for metal in metals:
-      print(f"pH    % sorbed {metal}   % dissolved {metal}")
+print(f"Input(Cd) [mol]   Total(Cd) [mol]   Sorbed(Cd) [mol]   Dissolved(Cd) [mol]   Sorbed(Cd)/Dissolved(Cd) [-]   Sorbed(Cd)/Total(Cd) [-]")
+for mCd in mCds:
 
-      for pH in pHs:
+      result = equilibrate(mCd)
+      mCdaq.append(result[0])
+      mCdsurf.append(result[1])
+      mCdtot.append(result[2])
 
-            result = equilibrate(pH, metal)
-            b_total = float(props.elementAmount(metal))
-            if b_total != 0:
-                  b_surf = result[0] / b_total * 100
-                  b_aq = result[1] / b_total * 100
-                  print(f"{pH:4.2f} {b_surf:12.4f} {b_aq:16.4f}")
-            else:
-                  b_surf, b_aq = result[0], result[1]
-
-            # Update dataframe with obtained values
-            df.loc[len(df)] = [metals[metal], pH, b_surf]
+      print(f"{mCd*1e-3:15.4e} {mCdtot[-1]:17.4e} {mCdsurf[-1]:18.4e} {mCdaq[-1]:21.4e} {mCdsurf[-1]/mCdaq[-1]:30.4e} {mCdsurf[-1]/mCdtot[-1]:26.4e} ")
 
 from matplotlib import pyplot as plt
-colors = ['coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
+import matplotlib as mpl
+from matplotlib import font_manager as fm
+import os
+fpath = os.path.join(mpl.get_data_path(), "texgyreadventor-regular.otf")
+prop = fm.FontProperties(fname=fpath)
+prop.set_size(12)
 
-plt.figure()
-df_metal = df[df["Metal"] == list(metals.values())[0]] # fetch the columns with Pb+2
-ax = df_metal.plot(x="pH", y="%", color=colors[0], label=list(metals.keys())[0])
-ax.set_title("Dependence of metal sorption on pH")
-ax.set_xlabel("pH")
-ax.set_ylabel("% of sorbed metal")
-for idx, metal in enumerate(metals):
-      if idx:
-            df_metal = df[df["Metal"] == metals[metal]] # fetch the columns with other metals
-            df_metal.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=metal)
-ax.legend(loc="best")
-ax.grid()
-plt.savefig("sorbed-metals-vs-pH.png", bbox_inches='tight')
+mpl.rcParams['font.family'] = 'sans-serif'
+mpl.rcParams['font.sans-serif'] = 'TeX Gyre Adventor'
+mpl.rcParams['font.style'] = 'normal'
+mpl.rcParams['font.size'] = 14
+mpl.set_loglevel("critical")
+
+plt.plot(mCdaq, mCdsurf, color='coral')
+plt.title(r"Freundlich sorption isotherm (with electrostatic effects)")
+plt.xlabel('Dissolved mass of Cd [mg]')
+plt.ylabel('Sorbed mass of Cd [mg]')
+plt.grid()
+plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass-with-ddl-effects.png", bbox_inches='tight')
+plt.close()
+
+plt.plot(mCdaq, np.array(mCdsurf) / np.array(mCdaq), color='coral')
+plt.title("Distribution coefficient of Freundlich sorption isotherm \n (with electrostatic effects)")
+plt.xlabel('Dissolved mass of Cd [mg]')
+plt.ylabel(r'K$_d$ = s$_I$ / c$_I$ [-]')
+plt.grid()
+plt.savefig("distribution-coeff-vs-dissolved-cd-mass-with-ddl-effects.png", bbox_inches='tight')
 plt.close()

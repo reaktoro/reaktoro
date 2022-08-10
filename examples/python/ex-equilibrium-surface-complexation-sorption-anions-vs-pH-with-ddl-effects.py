@@ -19,7 +19,7 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (9 June 2022)
+#   • Svetlana Kyas (30 July 2022)
 #
 # and since revised by:
 #   •
@@ -31,7 +31,7 @@ from reaktoro import *
 db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
-solution = AqueousPhase(speciate("H O Cl Ca Sr Cd Zn Pb Cu Fe"))
+solution = AqueousPhase(speciate("H O S C P"))
 solution.setActivityModel(ActivityModelHKF())
 
 # Define surface complexation  species list
@@ -85,21 +85,19 @@ import numpy as np
 import math
 pHs = np.linspace(2.0, 9.0, num=29)
 
-metals = {"Pb": "Pb+2",
-          "Cd": "Cd+2",
-          "Zn": "Zn+2",
-          "Cu": "Cu+2",
-          "Sr": "Sr+2",
-          "Ca": "Ca+2"}
+# anions = {"SO4-2": ["S", ["Hfo_wOHSO4-2", "Hfo_wSO4-"]],
+#           "PO4-3": ["P", ["Hfo_wH2PO4", "Hfo_wHPO4-", "Hfo_wPO4-2"]],
+#           "CO3-2": ["C", ["Hfo_wCO3-", "Hfo_wHCO3"]]}
+anions = {"SO4-2": ["S", ["Hfo_wOHSO4-2", "Hfo_wSO4-"]]}
 
 import pandas as pd
-columns = ["Metal", "pH", "%"]
+columns = ["Anion", "pH", "%"]
 df = pd.DataFrame(columns=columns)
 
 # Initial Sr amount
-n0 = 1e-6
+n0 = 1e-3
 
-def equilibrate(pH, metal):
+def equilibrate(pH, anion):
 
       # Set pH
       conditions.pH(pH)
@@ -107,9 +105,9 @@ def equilibrate(pH, metal):
       # Define initial equilibrium state
       state = ChemicalState(system)
       state.set("H2O" , 1.00, "kg")
-      state.set("Cl-" , 2e+0, "mmol")
-      state.set("Ca+2", 1e+0, "mmol")
-      state.set(metals[metal], n0, "mmol")
+      # state.set("Cl-" , 2e+0, "mmol")
+      # state.set("Ca+2", 1e+0, "mmol")
+      state.set(anion, n0, "mol")
       state.set("Hfo_wOH", surface_Hfo.sites()["_w"].amount(), "mol")
       state.set("Hfo_sOH", surface_Hfo.sites()["_s"].amount(), "mol")
 
@@ -122,44 +120,48 @@ def equilibrate(pH, metal):
             props.update(state)
 
             # Fetch amount of sorbed and dissolved mineral
-            b_aq    = float(props.elementAmountInPhase(metal, "AqueousPhase"))
-            b_surf  = float(props.elementAmountInPhase(metal, "SurfaceComplexationPhase"))
+            n_aq = float(props.elementAmountInPhase(anions[anion][0], "AqueousPhase"))
+            n_surf = 0
+            for s in anions[anion][1]:
+                  #print("surf species", s)
+                  n_surf_tmp = float(state.speciesAmount(s))
+                  n_surf += n_surf_tmp
+            # print("n_surf", n_surf)
+            # print("n_aq", n_aq)
+            # print("n_total", n_aq + n_surf)
+            # input()
 
-            return b_surf, b_aq
+            return n_surf, n_aq
       else:
             return math.nan, math.nan
 
-for metal in metals:
-      print(f"pH    % sorbed {metal}   % dissolved {metal}")
+for anion in anions:
+      print(f"  pH   % sorbed {anion}   % dissolved {anion}")
 
       for pH in pHs:
 
-            result = equilibrate(pH, metal)
-            b_total = float(props.elementAmount(metal))
-            if b_total != 0:
-                  b_surf = result[0] / b_total * 100
-                  b_aq = result[1] / b_total * 100
-                  print(f"{pH:4.2f} {b_surf:12.4f} {b_aq:16.4f}")
-            else:
-                  b_surf, b_aq = result[0], result[1]
+            result = equilibrate(pH, anion)
+            n_surf = result[0] / n0 * 100
+            n_aq = result[1] / n0 * 100
+            print(f"{pH:4.2f} {n_surf:12.4f} {n_aq:16.4f}")
 
             # Update dataframe with obtained values
-            df.loc[len(df)] = [metals[metal], pH, b_surf]
+            df.loc[len(df)] = [anion, pH, n_surf]
 
 from matplotlib import pyplot as plt
 colors = ['coral', 'rosybrown', 'steelblue', 'seagreen', 'palevioletred', 'darkred', 'darkkhaki', 'cadetblue', 'indianred']
 
 plt.figure()
-df_metal = df[df["Metal"] == list(metals.values())[0]] # fetch the columns with Pb+2
-ax = df_metal.plot(x="pH", y="%", color=colors[0], label=list(metals.keys())[0])
-ax.set_title("Dependence of metal sorption on pH")
+df_anion = df[df["Anion"] == list(anions)[0]] # fetch the columns with Pb+2
+ax = df_anion.plot(x="pH", y="%", color=colors[0], label=list(anions.keys())[0])
+ax.set_title("Dependence of anion sorption on pH")
 ax.set_xlabel("pH")
-ax.set_ylabel("% of sorbed metal")
-for idx, metal in enumerate(metals):
+ax.set_ylabel("% of sorbed anion")
+for idx, anion in enumerate(anions):
       if idx:
-            df_metal = df[df["Metal"] == metals[metal]] # fetch the columns with other metals
-            df_metal.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=metal)
+            df_anion = df[df["Anion"] == anion] # fetch the columns with other anions
+            df_anion.plot(x="pH", y="%", ax=ax, color=colors[idx+1], label=anion)
 ax.legend(loc="best")
 ax.grid()
-plt.savefig("sorbed-metals-vs-pH.png", bbox_inches='tight')
+plt.savefig("sorbed-anions-vs-pH.png", bbox_inches='tight')
 plt.close()
