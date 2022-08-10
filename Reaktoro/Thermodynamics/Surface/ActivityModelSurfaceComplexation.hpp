@@ -48,6 +48,9 @@ struct ActivityModelSurfaceComplexationParams
 
     // The double layer.
     ActivityModelDDLParams ddl;
+
+    // Output option
+    bool output = false;
 };
 
 /// The parameters in the Diffuse Double Layer (DDL) model for the diffusive double layer solution between complexation

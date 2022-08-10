@@ -33,6 +33,7 @@ void exportActivityModelSurfaceComplexation(py::module& m)
     py::class_<ActivityModelSurfaceComplexationParams>(m, "ActivityModelSurfaceComplexationParams")
         .def(py::init<>())
         .def_readwrite("surface", &ActivityModelSurfaceComplexationParams::surface)
+        .def_readwrite("output", &ActivityModelSurfaceComplexationParams::output)
         ;
 
     py::class_<ActivityModelDDLParams>(m, "ActivityModelDDLParams")

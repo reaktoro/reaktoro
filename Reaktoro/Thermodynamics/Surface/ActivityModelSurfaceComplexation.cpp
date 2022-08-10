@@ -124,6 +124,8 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
         // Calculate ln of activities of surfaces species as the ln of molar fractions
         ln_a = x.log();
 
+        real I = 0;
+
         // Otherwise, calculate the stoichiometric ionic strength if the Aqueous State has been already evaluated
         if (props.extra["AqueousMixtureState"].has_value())
         {
@@ -131,7 +133,7 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
             const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
 
             // Fetch the stoichiometric ionic strength
-            const auto I = aqstate.Is;
+            I = aqstate.Is;
             surface_state.updatePotential(I);
         }
 
@@ -144,6 +146,13 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
 
         // Calculate ln of gamma according to the coulombic correction, Appelo etal (2005), (7.44), p. 334
         ln_g = z*F*psi/(R*T);
+
+        if(params.output)
+        {
+            // Output the surface and DDL charges
+            const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*psi/(2*R*T))[0]);
+            std::cout << "sigma = " << surface_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
+        }
 
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
@@ -216,7 +225,6 @@ auto activityModelDDL(const SpeciesList& species, ActivityModelDDLParams params)
                 std::cout << "sigma = " << surf_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
             }
         }
-
 
         // Add the correction introduced by the activity coefficients
         ln_a += ln_g;
