@@ -197,14 +197,14 @@ struct ComplexationSurfaceProps::Impl
     /// Return the fraction of the species on the complexation surface composition (in eq).
     auto speciesFractions() const -> ArrayXr
     {
-        return nex / nex.sum();
+        return surface.sites().size() * (nex / nex.sum());
     }
 
     /// Return the fraction of an complexation surface species (in eq).
     auto speciesFraction(const StringOrIndex& name) const -> real
     {
         const auto idx = detail::resolveSpeciesIndex(phase, name);
-        return nex[idx] / nex.sum();
+        return surface.sites().size() * nex[idx] / nex.sum();
     }
 
     /// Return the base-10 logarithm of the activity of the species on the complexation surface.
@@ -422,9 +422,6 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     table.add_row({ "Fractions:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].repr(), str(x[i]), "" });
-    table.add_row({ "Activity Coefficients (log base 10):" });
-    for(auto i = 0; i < species.size(); ++i)
-        table.add_row({ ":: " + species[i].repr(), strfix(log10a[i]), "" });
 
     auto i = 0;
     for(auto& row : table)
