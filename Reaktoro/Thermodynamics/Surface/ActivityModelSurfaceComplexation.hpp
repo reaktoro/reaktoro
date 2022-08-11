@@ -91,6 +91,10 @@ auto ActivityModelDDL() -> ActivityModelGenerator;
 /// @ingroup ActivityModels
 auto ActivityModelDDL(ActivityModelDDLParams params) -> ActivityModelGenerator;
 
+/// Return the activity model for the Aqueous phase, which include electrostatic correction of the ions.
+/// @ingroup ActivityModels
+auto ActivityModelElectrostatics(ActivityModelDDLParams params) -> ActivityModelGenerator;
+
 //=====================================================================================================================
 /// @page PageActivityModelSurfaceComplexationDDL Diffuse Double Layer (DDL) activity model
 ///
