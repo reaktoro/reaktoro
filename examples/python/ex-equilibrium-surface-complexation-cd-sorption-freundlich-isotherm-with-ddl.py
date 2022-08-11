@@ -19,7 +19,7 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (9 June 2022)
+#   • Svetlana Kyas (11 August 2022)
 #
 # and since revised by:
 #   •
@@ -60,7 +60,7 @@ params.surface = surface_Hfo
 
 # Define surface complexation phase and set an activity model
 complexation_phase_Hfo = SurfaceComplexationPhase(list_str)
-complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params))
+complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationWithDDL(params))
 
 # Create chemical system
 system = ChemicalSystem(db, solution, complexation_phase_Hfo)
@@ -129,6 +129,8 @@ for mCd in mCds:
       print(f"{mCd:16.2f} {mCdsurf[-1]:17.4e} {mCdaq[-1]:20.4e} {mCdsurf[-1]/mCdaq[-1]:12.4f}")
 
 from matplotlib import pyplot as plt
+
+from matplotlib import pyplot as plt
 import matplotlib as mpl
 from matplotlib import font_manager as fm
 import os
@@ -143,17 +145,17 @@ mpl.rcParams['font.size'] = 14
 mpl.set_loglevel("critical")
 
 plt.plot(mCdaq, mCdsurf)
-plt.title(r"Freundlich sorption isotherm")
+plt.title(r"Freundlich sorption isotherm (with electrostatic effects)")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel('Sorbed mass of Cd [mg]')
 plt.grid()
-plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass.png", bbox_inches='tight')
+plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass-with-ddl-effects.png", bbox_inches='tight')
 plt.close()
 
-plt.plot(mCdaq, np.array(mCdsurf) / np.array(mCdaq))
-plt.title("Distribution coefficient \n of Freundlich sorption isotherm")
+plt.plot(mCdaq, np.array(mCdsurf) / np.array(mCdaq), color='coral')
+plt.title("Distribution coefficient \n of Freundlich sorption isotherm\n (with electrostatic effects)")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel(r'K$_d$ = s$_I$ / c$_I$ [-]')
 plt.grid()
-plt.savefig("distribution-coeff-vs-dissolved-cd-mass.png", bbox_inches='tight')
+plt.savefig("distribution-coeff-vs-dissolved-cd-mass-with-ddl-effects.png", bbox_inches='tight')
 plt.close()

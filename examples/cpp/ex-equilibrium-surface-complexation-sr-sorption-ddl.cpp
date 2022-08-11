@@ -87,7 +87,7 @@ int main()
 
     // Define surface complexation phase and set an activity model
     SurfaceComplexationPhase complexation_phase_Hfo(detail::extractNames(surface_Hfo.species()));
-    complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params));
+    complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationWithDDL(params));
 
     // Define the DDL phase
     DoubleLayerPhase ddl_Hfo(speciate(elements));
@@ -96,8 +96,7 @@ int main()
     ActivityModelDDLParams params_dll;
     params_dll.output = true;
 
-    //ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
-    ddl_Hfo.setActivityModel(ActivityModelDDL(params_dll));
+    ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo, ddl_Hfo);
