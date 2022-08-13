@@ -153,29 +153,20 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_a[0]  == Approx(-2.76122) ); // Hfo_sOH
-        CHECK( props.ln_a[1]  == Approx(-3.88614) ); // Hfo_sOHCa+2
-        CHECK( props.ln_a[2]  == Approx(-14.7287) ); // Hfo_sOH2+
-        CHECK( props.ln_a[3]  == Approx(-14.7287) ); // Hfo_sO-
-        CHECK( props.ln_a[4]  == Approx(-3.48068) ); // Hfo_sOHSr+2
-        CHECK( props.ln_a[5]  == Approx(-2.76122) ); // Hfo_wOH
-        CHECK( props.ln_a[6]  == Approx(-14.7287) ); // Hfo_wOH2+
-        CHECK( props.ln_a[7]  == Approx(-14.7287) ); // Hfo_wO-
-        CHECK( props.ln_a[8]  == Approx(-2.52259) ); // Hfo_wOCa+
-        CHECK( props.ln_a[9]  == Approx(-2.11713) ); // Hfo_wOSr+
-        CHECK( props.ln_a[10] == Approx(-14.2741) ); // Hfo_wOSrOH
+        CHECK( props.ln_a[0]  == Approx(-2.48491) ); // Hfo_sOH
+        CHECK( props.ln_a[1]  == Approx(-1.79176) ); // Hfo_sOHCa+2
+        CHECK( props.ln_a[2]  == Approx(-13.9978) ); // Hfo_sOH2+
+        CHECK( props.ln_a[3]  == Approx(-13.9978) ); // Hfo_sO-
+        CHECK( props.ln_a[4]  == Approx(-1.3863)  ); // Hfo_sOHSr+2
+        CHECK( props.ln_a[5]  == Approx(-2.48491) ); // Hfo_wOH
+        CHECK( props.ln_a[6]  == Approx(-13.9978) ); // Hfo_wOH2+
+        CHECK( props.ln_a[7]  == Approx(-13.9978) ); // Hfo_wO-
+        CHECK( props.ln_a[8]  == Approx(-1.79176) ); // Hfo_wOCa+
+        CHECK( props.ln_a[9]  == Approx(-1.3863 ) ); // Hfo_wOSr+
+        CHECK( props.ln_a[10] == Approx(-13.9978) ); // Hfo_wOSrOH
 
-        CHECK( props.ln_g[0]  == Approx(-0.276313) ); // Hfo_sOH
-        CHECK( props.ln_g[1]  == Approx(-2.09438)  ); // Hfo_sOHCa+2
-        CHECK( props.ln_g[2]  == Approx(-0.730829) ); // Hfo_sOH2+
-        CHECK( props.ln_g[3]  == Approx(-0.730829) ); // Hfo_sO-
-        CHECK( props.ln_g[4]  == Approx(-2.09438)  ); // Hfo_sOHSr+2
-        CHECK( props.ln_g[5]  == Approx(-0.276313) ); // Hfo_wOH
-        CHECK( props.ln_g[6]  == Approx(-0.730829) ); // Hfo_wOH2+
-        CHECK( props.ln_g[7]  == Approx(-0.730829) ); // Hfo_wO-
-        CHECK( props.ln_g[8]  == Approx(-0.730829) ); // Hfo_wOCa+
-        CHECK( props.ln_g[9]  == Approx(-0.730829) ); // Hfo_wOSr+
-        CHECK( props.ln_g[10] == Approx(-0.276313) ); // Hfo_wOSrOH
+        for(auto elem : props.ln_g)
+            CHECK( elem  == Approx(0.0) );
     }
 
 }
