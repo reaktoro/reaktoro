@@ -24,8 +24,8 @@
 
 namespace Reaktoro {
 
-/// A type used to describe the state of an ion exchange surface.
-/// @see IonExchangeComposition
+/// A type used to describe the state of an double layer.
+/// @see AqueousComposition
 struct DoubleLayerState
 {
     /// The temperature of the DDL (in K).
@@ -69,11 +69,11 @@ public:
     /// Return a deep copy of this DoubleLayer object.
     auto clone() const -> DoubleLayer;
 
-    /// Return the exchange species on the surface with given index.
+    /// Return the double layer species on the surface with given index.
     /// @param idx The index of the species in the DDL
     auto species(Index idx) const -> const Species&;
 
-    /// Return the exchange species on the surface.
+    /// Return the double layer species on the surface.
     auto species() const -> const SpeciesList&;
 
     /// Return the array of DDL species' charges.
