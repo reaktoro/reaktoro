@@ -22,6 +22,7 @@
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
 #include <Reaktoro/Thermodynamics/Surface/DoubleLayer.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 
@@ -35,6 +36,41 @@ const auto F = faradayConstant;
 const auto R = universalGasConstant;
 
 namespace detail {
+
+/// Return the SurfaceComplexationActivityModel object assuming no electrostatic effects and considering every site as
+/// a separate phase.
+auto activityModelSurfaceComplexationSiteNoDDL(const SpeciesList& species, ActivityModelSurfaceComplexationSiteParams params) -> ActivityModel
+{
+    // Create the complexation surface
+    ComplexationSurface surface = params.surface;
+
+    // Create the complexation surface site
+    ComplexationSurfaceSite surface_site = surface.sites()[params.site_tag];
+
+    // The charges of the surface complexation species
+    ArrayXd z = surface_site.charges();
+
+    // The state of the complexation surface
+    ComplexationSurfaceSiteState surface_site_state;
+
+    // Define the activity model function of the surface complexation phase
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    {
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x] = args;
+
+        // Evaluate the state of the surface complexation site
+        surface_site_state = surface_site.state(T, P, x);
+
+        // Export the surface complexation and its state via the `extra` data member
+        props.extra["ComplexationSurfaceSiteState" + surface_site.name()] = surface_site_state;
+        props.extra["ComplexationSurfaceSite" + surface_site.name()] = surface_site;
+
+        // Calculate ln of activities of surfaces species as the ln of molar fractions
+        props.ln_a = x.log();
+    };
+    return fn;
+}
 
 /// Return the SurfaceComplexationActivityModel object assuming no electrostatic effects.
 auto activityModelSurfaceComplexationNoDDL(const SpeciesList& species, ActivityModelSurfaceComplexationParams params) -> ActivityModel
@@ -213,6 +249,15 @@ auto ActivityModelSurfaceComplexationNoDDL(ActivityModelSurfaceComplexationParam
     return [=](const SpeciesList& surface_species)
     {
         return detail::activityModelSurfaceComplexationNoDDL(surface_species, params);
+    };
+}
+/// Return the SurfaceComplexationActivityModel object assuming no electrostatic effects and considering every site as
+///// a separate phase.
+auto ActivityModelSurfaceComplexationSiteNoDDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator
+{
+    return [=](const SpeciesList& surface_species)
+    {
+        return detail::activityModelSurfaceComplexationSiteNoDDL(surface_species, params);
     };
 }
 

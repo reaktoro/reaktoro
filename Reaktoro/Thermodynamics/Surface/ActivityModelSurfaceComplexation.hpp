@@ -39,6 +39,22 @@ struct ActivityModelDDLParams
     bool output = false;
 };
 
+/// The parameters for the surface complexation activity model (considering every site as a separate phase).
+/// @ingroup ActivityModels
+struct ActivityModelSurfaceComplexationSiteParams
+{
+    /// The complexation surface.
+    ComplexationSurface surface;
+
+    String site_tag;
+
+    // The double layer.
+    ActivityModelDDLParams ddl;
+
+    // Output option
+    bool output = false;
+};
+
 /// The parameters for the surface complexation activity model.
 /// @ingroup ActivityModels
 struct ActivityModelSurfaceComplexationParams
@@ -73,6 +89,11 @@ struct ActivityModelDDLDonnanParams
 /// Return the activity model for surface complexation assuming not encountering electrostatic effects.
 /// @ingroup ActivityModels
 auto ActivityModelSurfaceComplexationNoDDL(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
+
+/// Return the activity model for surface complexation assuming not encountering electrostatic effects and considering
+/// every site as a separate phase.
+/// @ingroup ActivityModels
+auto ActivityModelSurfaceComplexationSiteNoDDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for surface complexation encountering electrostatic effects with the Diffuse Double Layer
 ///// (DDL).

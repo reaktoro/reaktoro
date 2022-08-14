@@ -54,6 +54,9 @@
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 #include <Reaktoro/Thermodynamics/Surface/DoubleLayerProps.hpp>
 #include <Reaktoro/Thermodynamics/Surface/DoubleLayer.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSiteProps.hpp>
+
 
 
 /// @defgroup Thermodynamics Thermodynamics
