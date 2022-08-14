@@ -104,10 +104,10 @@ public:
     /// Return the underlying Phase object for the complexation surface phase.
     auto extra() const -> const Map<String, Any>&;
 
-    /// Output the properties of the exchange phase to a stream.
+    /// Output the properties of the sorption phase to a stream.
     auto output(std::ostream& out) const -> void;
 
-    /// Output the properties of the exchange phase to a file.
+    /// Output the properties of the sorption phase to a file.
     auto output(const String& filename) const -> void;
 
 private:

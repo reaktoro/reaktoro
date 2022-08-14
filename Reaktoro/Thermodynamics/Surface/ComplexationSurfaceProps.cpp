@@ -42,8 +42,8 @@ namespace {
 /// Return the index of the first complexation surface phase in the system.
 auto indexComplexationSurfacePhase(const ChemicalSystem& system) -> Index
 {
-    const auto exchange_phases = system.phases().withAggregateState(AggregateState::Adsorbed);
-    warning(exchange_phases.size() > 1,
+    const auto sorption_phases = system.phases().withAggregateState(AggregateState::Adsorbed);
+    warning(sorption_phases.size() > 1,
             "While creating an ComplexationSurfaceProps object, it has been detected ",
             "more than one complexation surface phase in the system. The ComplexationSurfaceProps object "
             "created will correspond to the first complexation surface phase found.");
@@ -141,17 +141,7 @@ struct ComplexationSurfaceProps::Impl
         props = phase_props;
         nex = props.speciesAmounts();
 
-        // Fetch ionic strength from the aqueous solution in contact with the complexation surface
-        if(extra["DiffusiveLayerState"].has_value())
-        {
-            // Export aqueous mixture state via `extra` data member
-            const auto& state = std::any_cast<AqueousMixtureState>(extra["DiffusiveLayerState"]);
-            surface_state.updatePotential(state.Ie);
-
-            // Exit the function without evaluating the next if
-            return;
-        }
-        else if(extra["AqueousMixtureState"].has_value())
+        if(extra["AqueousMixtureState"].has_value())
         {
             // Export aqueous mixture state via `extra` data member
             const auto& state = std::any_cast<AqueousMixtureState>(extra["AqueousMixtureState"]);
