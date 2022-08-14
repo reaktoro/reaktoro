@@ -21,8 +21,29 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Constants.hpp>
 
 namespace Reaktoro {
+
+/// A type used to describe the state of the complexation surface site.
+struct ComplexationSurfaceSiteState
+{
+    /// The temperature of the solute/gas mixture on the surface site (in K).
+    real T;
+
+    /// The pressure of the solute/gas mixture on the surface site (in Pa).
+    real P;
+
+    /// The molar fractions of the complexation surface site species.
+    ArrayXr x;
+
+    /// The complexation surface site charge (eq).
+    real charge;
+
+    /// The surface site sigma (C/m2).
+    real sigma;
+};
+
 
 /// A type used to describe the site of a complexation surface.
 class ComplexationSurfaceSite
@@ -50,6 +71,22 @@ public:
     /// Construct an ComplexationSurfaceSite instance with given name and tag.
     ComplexationSurfaceSite(const String& name, const String& tag);
 
+    /// Return the species on the surface site with given index.
+    /// @param idx The index of the species in the complexation surface site
+    auto species(Index idx) const -> const Species&;
+
+    /// Return the sorption species on the surface site.
+    auto species() const -> const SpeciesList&;
+
+    // Return the indices of the sorption species.
+    auto speciesIndices() const -> Indices;
+
+    /// Return charges of the surface site complexation species.
+    auto charges() const -> ArrayXd;
+
+    /// Return the mole fractions of the surface site complexation species.
+    auto moleFractions() const -> ArrayXr;
+
     // Get the site name.
     auto name() const -> String;
 
@@ -65,17 +102,20 @@ public:
     /// Return the amount of the surface site (in mol).
     auto amount() const -> real;
 
-    // Return the sorption species.
-    auto sorptionSpecies() const -> SpeciesList;
-
-    // Return the indices of the sorption species.
-    auto sorptionSpeciesIndices() const -> Indices;
+    // Initialize charges for the surface complexation species site.
+    auto initializeCharges() -> void;
 
     // Set the name of the surface site.
     auto setName(String name) -> ComplexationSurfaceSite&;
 
     // Set name of the surface.
     auto setSurfaceName(String name) -> ComplexationSurfaceSite&;
+
+    // Set mass of the surface site.
+    auto setMass(real mass) -> ComplexationSurfaceSite&;
+
+    // Set specific surface area of the surface site.
+    auto setSpecificSurfaceArea(real ssa) -> ComplexationSurfaceSite&;
 
     // Set the tag of the surface site.
     auto setTag(String tag) -> ComplexationSurfaceSite&;
@@ -89,7 +129,25 @@ public:
     // Add sorption species on the site.
     auto addSorptionSpecies(const Species& species, const Index& index) -> void;
 
+    /// Return the surface site sigma.
+    auto siteSigma(real charge) const -> real;
+
+    /// Return the complexation surface site charge.
+    auto siteCharge(ArrayXrConstRef x) -> real;
+
+    /// Calculate the state of the surface complexation site.
+    /// @param T The temperature (in K)
+    /// @param P The pressure (in Pa)
+    /// @param x The fraction of the species in the composition
+    auto state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceSiteState;
+
+    /// Return the current state of the aqueous mixture.
+    auto state() const -> ComplexationSurfaceSiteState;
+
 private:
+
+    /// The surface complexation state.
+    ComplexationSurfaceSiteState surface_site_state;
 
     /// The site amount (mol).
     real site_amount;

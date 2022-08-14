@@ -60,16 +60,35 @@ auto ComplexationSurfaceSite::amount() const -> real
     return site_amount;
 }
 
-// Return sorption species.
-auto ComplexationSurfaceSite::sorptionSpecies() const -> SpeciesList
+// Return sorption surface site species.
+auto ComplexationSurfaceSite::species() const -> const SpeciesList&
 {
     return sorption_species;
 }
 
+// Return sorption species.
+auto ComplexationSurfaceSite::species(Index idx) const -> const Species&
+{
+    return sorption_species[idx];
+}
+
 // Return indices of the sorption species.
-auto ComplexationSurfaceSite::sorptionSpeciesIndices() const -> Indices
+auto ComplexationSurfaceSite::speciesIndices() const -> Indices
 {
     return sorption_species_indices;
+}
+
+// Return sorption surface site species' charges.
+auto ComplexationSurfaceSite::charges() const -> ArrayXd
+{
+    return z;
+}
+
+// Initialize charges for the surface complexation site species.
+auto ComplexationSurfaceSite::initializeCharges() -> void
+{
+    const auto charges = vectorize(sorption_species, RKT_LAMBDA(x, x.charge()));
+    z = ArrayXd::Map(charges.data(), charges.size());
 }
 
 // Set name of the surface site.
@@ -92,6 +111,20 @@ auto ComplexationSurfaceSite::setName(String name) -> ComplexationSurfaceSite&
 auto ComplexationSurfaceSite::setSurfaceName(String name) -> ComplexationSurfaceSite&
 {
     surface_name = name;
+    return *this;
+}
+
+// Set mass of the surface site.
+auto ComplexationSurfaceSite::setMass(real mass) -> ComplexationSurfaceSite&
+{
+    surface_mass = mass;
+    return *this;
+}
+
+// Set specific surface area of the surface site.
+auto ComplexationSurfaceSite::setSpecificSurfaceArea(real ssa) -> ComplexationSurfaceSite&
+{
+    specific_surface_area = ssa;
     return *this;
 }
 
@@ -129,6 +162,36 @@ auto ComplexationSurfaceSite::addSorptionSpecies(const Species& species, const I
         sorption_species.append(species);
         sorption_species_indices.emplace_back(index);
     }
+}
+
+/// Return the surface site sigma.
+auto ComplexationSurfaceSite::siteSigma(real charge) const -> real
+{
+    return faradayConstant*charge/(specific_surface_area*surface_mass);
+}
+
+/// Return the complexation surface site charge.
+auto ComplexationSurfaceSite::siteCharge(ArrayXrConstRef x) -> real
+{
+     return (z*x).sum();
+}
+
+/// Return complexation surface site state updated for the given temperature, pressure, and fractions.
+auto ComplexationSurfaceSite::state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceSiteState
+{
+    surface_site_state.T = T;
+    surface_site_state.P = P;
+    surface_site_state.x = x;
+    surface_site_state.charge = siteCharge(x);
+    surface_site_state.sigma = siteSigma(surface_site_state.charge);
+
+    return surface_site_state;
+}
+
+/// Return complexation surface site state.
+auto ComplexationSurfaceSite::state() const -> ComplexationSurfaceSiteState
+{
+    return surface_site_state;
 }
 
 } // namespace Reaktoro

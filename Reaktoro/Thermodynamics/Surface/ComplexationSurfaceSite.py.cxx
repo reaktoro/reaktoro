@@ -25,6 +25,15 @@ using namespace Reaktoro;
 
 void exportComplexationSurfaceSite(py::module& m)
 {
+    py::class_<ComplexationSurfaceSiteState>(m, "ComplexationSurfaceSiteState")
+        .def(py::init<>())
+        .def_readwrite("T", &ComplexationSurfaceSiteState::T)
+        .def_readwrite("P", &ComplexationSurfaceSiteState::P)
+        .def_readwrite("x", &ComplexationSurfaceSiteState::x)
+        .def_readwrite("charge", &ComplexationSurfaceSiteState::charge)
+        .def_readwrite("sigma", &ComplexationSurfaceSiteState::sigma)
+        ;
+    
     py::class_<ComplexationSurfaceSite>(m, "ComplexationSurfaceSite")
         .def(py::init<>())
         .def(py::init<const String&>())
@@ -34,8 +43,9 @@ void exportComplexationSurfaceSite(py::module& m)
         .def("specificSurfaceArea", &ComplexationSurfaceSite::specificSurfaceArea)
         .def("mass", &ComplexationSurfaceSite::mass)
         .def("amount", &ComplexationSurfaceSite::amount)
-        .def("sorptionSpecies", &ComplexationSurfaceSite::sorptionSpecies)
-        .def("sorptionSpeciesIndices", &ComplexationSurfaceSite::sorptionSpeciesIndices)
+        .def("species", py::overload_cast<Index>(&ComplexationSurfaceSite::species, py::const_), return_internal_ref)
+        .def("species", py::overload_cast<>(&ComplexationSurfaceSite::species, py::const_), return_internal_ref)
+        .def("speciesIndices", &ComplexationSurfaceSite::speciesIndices)
         .def("setName", &ComplexationSurfaceSite::setName)
         .def("setSurfaceName", &ComplexationSurfaceSite::setSurfaceName)
         .def("setTag", &ComplexationSurfaceSite::setTag)
