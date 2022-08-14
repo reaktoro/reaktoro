@@ -85,8 +85,8 @@ class ComplexationSurface
     // Initialize charges of the surface complexation species.
     auto initializeCharges() -> void;
 
-    // Initialize equivalent numbers of the surface complexation species.
-    auto initializeEquivalentNumbers() -> void;
+    // Initialize charges for the surface complexation site species.
+    auto initializeSitesCharges() -> void;
 
 public:
 
@@ -112,14 +112,11 @@ public:
     /// @param idx The index of the species in the complexation surface
     auto species(Index idx) const -> const Species&;
 
-    /// Return the exchange species on the surface.
+    /// Return the sorption species on the surface.
     auto species() const -> const SpeciesList&;
 
     /// Return charges of the surface complexation species.
     auto charges() -> ArrayXd;
-
-    /// Return equivalent numbers of surface complexation species.
-    auto equivalentsNumbers() -> ArrayXd;
 
     /// Return the mole fractions of the surface complexation species.
     auto moleFractions() const -> ArrayXr;
@@ -133,7 +130,7 @@ public:
     /// Return the list of surface sites.
     auto sites() const -> std::map<std::string, ComplexationSurfaceSite>;
 
-    /// Calculate the state of the aqueous mixture.
+    /// Calculate the state of the surface complexation.
     /// @param T The temperature (in K)
     /// @param P The pressure (in Pa)
     /// @param x The fraction of the species in the composition
@@ -188,9 +185,6 @@ private:
 
     /// The charges of the complexation surface species.
     ArrayXr z;
-
-    /// The equivalent numbers of the complexation surface species.
-    ArrayXr ze;
 
     // Map of the surface complexation sites.
     std::map<std::string, ComplexationSurfaceSite> surface_sites;

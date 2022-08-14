@@ -81,7 +81,7 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
 
     SECTION("Checking the charges of the species in ComplexationSurface")
     {
-        // The numbers of exchanger's equivalents for exchange species
+        // The charges for sorption species
         ArrayXd z = surface_Hfo.charges();
 
         CHECK( z[0]  ==  0.0 ); // Hfo_sOH

@@ -61,10 +61,12 @@ auto ComplexationSurface::initializeCharges() -> void
     z = ArrayXd::Map(charges.data(), charges.size());
 }
 
-// Initialize equivalence numbers (the charge of ionic bond) for the surface complexation species.
-auto ComplexationSurface::initializeEquivalentNumbers() -> void
+// Initialize charges for the surface complexation site species.
+auto ComplexationSurface::initializeSitesCharges() -> void
 {
-    ze = ArrayXd::Ones(species_list.size());
+    for(auto& site : surface_sites) {
+        site.second.initializeCharges();
+    }
 }
 
 // Return the surface complexation name.
@@ -95,12 +97,6 @@ auto ComplexationSurface::species() const -> const SpeciesList&
 auto ComplexationSurface::charges() -> ArrayXd
 {
     return z;
-}
-
-// Return equivalence numbers for the surface complexation species.
-auto ComplexationSurface::equivalentsNumbers() -> ArrayXd
-{
-    return ze;
 }
 
 // Return the mole fractions of the species on complexation.
@@ -199,9 +195,9 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
         surface_sites[tag].addSorptionSpecies(s, index++);
     }
 
-    // Initialize charges and equivalent numbers
+    // Initialize charges of the surface and surface sites
     initializeCharges();
-    initializeEquivalentNumbers();
+    initializeSitesCharges();
 
     return *this;
 }
@@ -246,7 +242,10 @@ auto ComplexationSurface::addSite(const String& site_name, const String& site_ta
     {
         // Create a new site with a given site name and tag
         auto site = ComplexationSurfaceSite(site_name, site_tag);
-        site.setSurfaceName(surface_name);
+        site.setSurfaceName(surface_name)
+            .setMass(surface_mass)
+            .setSpecificSurfaceArea(ssa);
+
         surface_sites[site_tag] = site;
     }
     return surface_sites[site_tag];
@@ -270,7 +269,9 @@ auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> Comple
         // Add site into the map with key site_tag
         surface_sites[site_tag] = site;
         // Initialize the name of the surface during the addition of the site
-        surface_sites[site_tag].setSurfaceName(surface_name);
+        surface_sites[site_tag].setSurfaceName(surface_name)
+                               .setMass(surface_mass)
+                               .setSpecificSurfaceArea(ssa);
     }
 
     return surface_sites[site_tag];
@@ -294,11 +295,13 @@ auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::o
     {
         std::cout << "site: " << site.name() << std::endl;
         std::cout << "\t amount       : " << site.amount() << std::endl;
-        std::cout << "\t # of species : " << site.sorptionSpecies().size() << std::endl;
-        std::cout << "\t :: index :: Species" << std::endl;
+        std::cout << "\t mass         : " << site.mass() << std::endl;
+        std::cout << "\t ssa          : " << site.specificSurfaceArea() << std::endl;
+        std::cout << "\t # of species : " << site.species().size() << std::endl;
+        std::cout << "\t :: index :: Species :: charge" << std::endl;
 
-        for(auto i : site.sorptionSpeciesIndices())
-            std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << std::endl;
+        for(auto i : site.speciesIndices())
+            std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << " : "  << surface.species()[i].charge() << std::endl;
     }
     return out;
 }
