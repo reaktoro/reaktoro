@@ -28,20 +28,21 @@ auto ActivityModelIdealAqueous() -> ActivityModelGenerator
 {
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
-        const auto iH2O = species.indexWithFormula("H2O");
-        const auto MH2O = waterMolarMass;
+        const auto iw = species.indexWithFormula("H2O");
+        const auto Mw = waterMolarMass;
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
             const auto x = args.x;
-            const auto m = x/(MH2O * args.x[iH2O]); // molalities
+            const auto xw = x[iw];
+            const auto m = x/(Mw * xw); // molalities
 
             // Set the state of matter of the phase
             props.som = StateOfMatter::Liquid;
 
             props = 0.0;
             props.ln_a = m.log();
-            props.ln_a[iH2O] = log(x[iH2O]);
+            props.ln_a[iw] = -(1 - xw)/xw; // consistent to Gibbs-Duhem conditions
         };
 
         return fn;
