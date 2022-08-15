@@ -26,6 +26,7 @@
 #include <Optima/State.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -66,7 +67,7 @@ struct EquilibriumSolver::Impl
     /// The dimensions of the variables and constraints in the equilibrium specifications.
     const EquilibriumDims dims;
 
-    // The equilibrium problem setup for the equilibrium solver.
+    /// The equilibrium problem setup for the equilibrium solver.
     EquilibriumSetup setup;
 
     /// The options of the equilibrium solver.
@@ -87,8 +88,11 @@ struct EquilibriumSolver::Impl
     /// The solver for the optimization calculations.
     Optima::Solver optsolver;
 
-    // The equilibrium result
+    /// The equilibrium result
     EquilibriumResult result;
+
+    /// The array stream used to clean up autodiff seed values from the last ChemicalProps update step.
+    ArrayStream<double> stream;
 
     /// Construct a Impl instance with given EquilibriumConditions object.
     Impl(const EquilibriumSpecs& specs)
@@ -256,16 +260,32 @@ struct EquilibriumSolver::Impl
     /// Update the chemical state object with computed optimization state.
     auto updateChemicalState(ChemicalState& state, const EquilibriumConditions& conditions)
     {
-        const auto T = setup.chemicalProps().temperature();
-        const auto P = setup.chemicalProps().pressure();
-        state.setTemperature(T);
-        state.setPressure(P);
+        // Update the ChemicalProps object in state
+        auto& props = state.props();
+        props = setup.chemicalProps();
+
+        // TODO: In Optima, make sure check for convergence does not compute
+        // any derivatives. Use F.updateSkipJacobian(u) instead of F.update(u)
+        // in method MasterSolver::Impl::stepping. Once this is implemented,
+        // there will be no need for this method, because the chemical
+        // properties will be clean of derivatives (i.e., autodiff seed values
+        // will be zero). Once this is done, the next step of cleaning up such
+        // seed values can be removed.
+
+        // Make sure the derivative information in the underlying chemical
+        // properties of the system are zeroed out!
+        ArrayStream<double> stream;
+        props.serialize(stream);
+        props.deserialize(stream);
+
+        // Update other state variables in the ChemicalState object
+        state.setTemperature(props.temperature());
+        state.setPressure(props.pressure());
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
         state.equilibrium().setInputNames(conditions.inputNames());
         state.equilibrium().setInputValues(conditions.inputValues());
         state.equilibrium().setInitialComponentAmounts(optproblem.be);
         state.equilibrium().setOptimaState(optstate);
-        state.props() = setup.chemicalProps();
     }
 
     /// Update the equilibrium sensitivity object with computed optimization sensitivity.
