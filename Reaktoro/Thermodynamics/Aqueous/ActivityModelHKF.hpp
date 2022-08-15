@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// Return the activity model for aqueous phases based on the HKF model.
+/// Return the activity model for aqueous electrolyte phases based on the HKF model.
 /// **References:**
 ///   - Helgeson, H. C., Kirkham, D. H., Flowers, G. C. (1981). Theoretical
 ///     prediction of the thermodynamic behavior of aqueous electrolytes at
