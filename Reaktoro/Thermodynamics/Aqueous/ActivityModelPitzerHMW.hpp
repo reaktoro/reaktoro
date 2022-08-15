@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-/// Return the activity model for aqueous phases based on Harvie-Møller-Weare Pitzer's formulation.
+/// Return the activity model for aqueous electrolyte phases based on Harvie-Møller-Weare Pitzer's formulation.
 /// **References:**
 ///   - Harvie, C.E., Møller, N., Weare, J.H. (1984). The prediction of mineral
 ///     solubilities in natural waters: The

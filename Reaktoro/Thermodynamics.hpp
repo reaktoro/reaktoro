@@ -33,6 +33,7 @@
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelSetschenow.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelPitzerHMW.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelHKF.hpp>
+#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDavies.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDebyeHuckel.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDuanSun.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>

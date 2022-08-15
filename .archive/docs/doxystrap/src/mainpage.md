@@ -54,6 +54,7 @@ want to read about.
 ### Activity models for aqueous phases
 
 - @ref Reaktoro::ActivityModelIdealAqueous
+- @ref Reaktoro::ActivityModelDavies
 - @ref Reaktoro::ActivityModelDebyeHuckel
 - @ref Reaktoro::ActivityModelPitzerHMW
 - @ref Reaktoro::ActivityModelHKF

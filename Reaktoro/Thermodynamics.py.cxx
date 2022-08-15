@@ -25,6 +25,7 @@ void exportAqueousProps(py::module& m);
 void exportActivityModelSetschenow(py::module& m);
 void exportActivityModelHKF(py::module& m);
 void exportActivityModelDrummond(py::module& m);
+void exportActivityModelDavies(py::module& m);
 void exportActivityModelDebyeHuckel(py::module& m);
 void exportActivityModelRumpf(py::module& m);
 void exportAqueousMixture(py::module& m);
@@ -71,6 +72,7 @@ void exportThermodynamics(py::module& m)
     exportActivityModelSetschenow(m);
     exportActivityModelHKF(m);
     exportActivityModelDrummond(m);
+    exportActivityModelDavies(m);
     exportActivityModelDebyeHuckel(m);
     exportActivityModelRumpf(m);
     exportAqueousMixture(m);
