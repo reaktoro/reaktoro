@@ -160,14 +160,14 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         exprops.update(state);
 
         // Check molalities of all species
-        CHECK( exprops.speciesAmount("NaX"  ) == Approx(1.36704e-08) );
+        CHECK( exprops.speciesAmount("NaX"  ) == Approx(1.36813e-08) );
         CHECK( exprops.speciesAmount("CaX2" ) == Approx(2.46581e-07) );
         CHECK( exprops.speciesAmount("KX"   ) == Approx(1e-16) );
         CHECK( exprops.speciesAmount("AlX3" ) == Approx(1e-16) );
         CHECK( exprops.speciesAmount("MgX2" ) == Approx(2.46581e-07) );
 
         // Check amounts of all elements
-        CHECK( exprops.elementAmount("Na") == Approx(1.36704e-08 ) );
+        CHECK( exprops.elementAmount("Na") == Approx(1.36813e-08 ) );
         CHECK( exprops.elementAmount("Mg") == Approx(2.46581e-07 ) );
         CHECK( exprops.elementAmount("Al") == Approx(1e-16       ) );
         CHECK( exprops.elementAmount("K" ) == Approx(1e-16       ) );
@@ -175,14 +175,14 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         CHECK( exprops.elementAmount("X" ) == Approx(1e-06       ) );
 
         // Check equivalents of all species
-        CHECK( exprops.speciesEquivalent("NaX"  ) == Approx(1.36704e-08 ) );
+        CHECK( exprops.speciesEquivalent("NaX"  ) == Approx(1.36813e-08 ) );
         CHECK( exprops.speciesEquivalent("CaX2" ) == Approx(4.93161e-07 ) );
         CHECK( exprops.speciesEquivalent("KX"   ) == Approx(1e-16       ) );
         CHECK( exprops.speciesEquivalent("AlX3" ) == Approx(3e-16       ) );
         CHECK( exprops.speciesEquivalent("MgX2" ) == Approx(4.93161e-07 ) );
 
         // Check equivalent fractions of all species
-        CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.0136704 ) );
+        CHECK( exprops.speciesEquivalentFraction("NaX"  ) == Approx(0.0136813 ) );
         CHECK( exprops.speciesEquivalentFraction("CaX2" ) == Approx(0.493161  ) );
         CHECK( exprops.speciesEquivalentFraction("KX"   ) == Approx(1e-10     ) );
         CHECK( exprops.speciesEquivalentFraction("AlX3" ) == Approx(3e-10     ) );

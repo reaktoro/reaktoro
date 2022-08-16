@@ -36,16 +36,15 @@ auto molalities(ArrayConstRef&& n, Index iH2O, ArrayRef&& m)
     const auto kgH2O = n[iH2O] * waterMolarMass;
     const auto nsum = n.sum();
     if(N == 1) {
-        m[iH2O] = 1.0;
+        m[iH2O] = 1.0 / waterMolarMass;
         return;
     }
     if(kgH2O == 0.0 || nsum == 0.0) {
         m.fill(0.0);
-        m[iH2O] = 1.0;
+        m[iH2O] = 1.0 / waterMolarMass;
         return;
     }
     m = n/kgH2O;
-    m[iH2O] = n[iH2O]/nsum;
 }
 
 /// Compute the molalities of the species with given species amounts.
@@ -94,8 +93,7 @@ auto molalitiesJacobian(ArrayConstRef&& n, Index iH2O, MatrixRef&& J)
         J(i, i) = kgH2Oinv;
         J(i, iH2O) -= mi/nH2O;
     }
-    J.row(iH2O).array() = -xH2O/nsum;
-    J(iH2O, iH2O) += 1.0/nsum;
+    J.row(iH2O).array() = 0.0;
 }
 
 /// Compute the Jacobian matrix of the species molalities (@eq{J=\frac{\partial m}{\partial n}}).
@@ -140,8 +138,7 @@ auto lnMolalitiesJacobian(ArrayConstRef&& n, Index iH2O, MatrixRef&& J) -> void
         J(i, i) = 1.0/ni;
         J(i, iH2O) -= 1.0/nH2O;
     }
-    J.row(iH2O).array() = -1.0/nsum;
-    J(iH2O, iH2O) += 1.0/nH2O;
+    J.row(iH2O).array() = 0.0;
 }
 
 /// Compute the Jacobian matrix of the species molalities in natural log (@eq{J=\frac{\partial\ln m}{\partial n}}).
@@ -168,6 +165,8 @@ auto lnMolalitiesJacobianDiagonal(ArrayConstRef&& n, Index iH2O, VectorRef&& D) 
     // == LATEX ==
     //-----------------------------------------------------------------------------------------------------
     // \frac{\partial\ln m_{i}}{\partial n_{i}}=\frac{1}{n_{i}}-\frac{\delta_{iw}}{n_{w}}
+    // \ln a_{w}=-\dfrac{1-x_{w}}{x_{w}}=-\dfrac{n_{\Sigma}-n_{w}}{n_{w}}
+    // \dfrac{\partial\ln a_{w}}{\partial n_{i}}=\begin{cases}-\dfrac{1}{n_{w}} & i\neq w\\\dfrac{n_{\Sigma}-n_{w}}{n_{w}^{2}} & i=w\end{cases}
     //-----------------------------------------------------------------------------------------------------
     using T = Decay<decltype(D[0])>;
     const auto N = n.size();
@@ -181,7 +180,7 @@ auto lnMolalitiesJacobianDiagonal(ArrayConstRef&& n, Index iH2O, VectorRef&& D) 
     }
     for(auto i = 0; i < N; ++i)
         D[i] = 1.0/n[i];
-    D[iH2O] = 1.0/nH2O - 1.0/nsum;
+    D[iH2O] = 0.0;
 }
 
 /// Compute the diagonal only of the Jacobian matrix of the species molalities in natural log (@eq{J=\frac{\partial\ln m}{\partial n}}).
