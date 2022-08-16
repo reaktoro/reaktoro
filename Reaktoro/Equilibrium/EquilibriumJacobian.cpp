@@ -73,14 +73,24 @@ struct EquilibriumJacobian::Impl
 
             if(phase.aggregateState() == AggregateState::Aqueous)
             {
+                // IDEAL ACTIVITY OF WATER
+                // \ln a_{w}=-\dfrac{1-x_{w}}{x_{w}}=-\dfrac{n_{\Sigma}-n_{w}}{n_{w}}
+                // \dfrac{\partial\ln a_{w}}{\partial n_{i}}=\begin{cases}-\dfrac{1}{n_{w}} & i\neq w\\\dfrac{n_{\Sigma}-n_{w}}{n_{w}^{2}} & i=w\end{cases}
                 const auto iH2O = phase.species().indexWithFormula("H2O");
                 approxfuncs[iphase] = [=](VectorXrConstRef np, MatrixXdRef block)
                 {
                     lnMolalitiesJacobian(np, iH2O, block);
+                    const auto nH2O = np[iH2O];
+                    const auto nsum = np.sum();
+                    block.row(iH2O).array() = -1.0/nH2O;
+                    block(iH2O, iH2O) = (nsum - nH2O)/(nH2O*nH2O);
                 };
                 approxfuncsdiag[iphase] = [=](VectorXrConstRef np, VectorXdRef segment)
                 {
                     lnMolalitiesJacobianDiagonal(np, iH2O, segment);
+                    const auto nH2O = np[iH2O];
+                    const auto nsum = np.sum();
+                    segment[iH2O] = (nsum - nH2O)/(nH2O*nH2O);
                 };
             }
             else

@@ -213,7 +213,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.pressure()                    == Approx(P*1e5)        );
         CHECK( aqprops.temperature()                 == Approx(T + 273.15)   );
         CHECK( aqprops.ionicStrength()               == Approx(27.2725)      );
-        CHECK( aqprops.Eh()                          == Approx(0.000754246)  );
+        CHECK( aqprops.Eh()                          == Approx(0.000754269)  );
         CHECK( aqprops.pH()                          == Approx(-0.0605375)   );
         CHECK( aqprops.ionicStrengthEffective()      == Approx(27.2725)      );
         CHECK( aqprops.ionicStrengthStoichiometric() == Approx(27.273)       );
