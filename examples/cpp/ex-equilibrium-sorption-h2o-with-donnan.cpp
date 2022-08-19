@@ -36,13 +36,13 @@ int main()
     auto dbphreeqc = PhreeqcDatabase("phreeqc.dat");
 
     // Define an aqueous phase
-    auto elements = "H O Cd Cl";
+    auto elements = "H O";
     AqueousPhase aqueous_phase(speciate(elements));
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
     // Define ion exchange species list
-    String list_str = "Hfo_sOH Hfo_sOH2+ Hfo_sO- Hfo_sOCd+ "
-                      "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCd+";
+    String list_str = "Hfo_sOH Hfo_sOH2+ Hfo_sO- "
+                      "Hfo_wOH Hfo_wOH2+ Hfo_wO-";
     SpeciesList slist = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
     SpeciesList list = slist.withNames(StringList(list_str));
 
@@ -71,7 +71,7 @@ int main()
     complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationWithDDL(params));
 
     ActivityModelDDLParams params_dll;
-    params_dll.output = true;
+    //params_dll.output = true;
 
     // Define the DDL phase
     DoubleLayerPhase ddl_Hfo(speciate(elements));
@@ -87,8 +87,6 @@ int main()
     solutionstate.temperature(25.0, "celsius");
     solutionstate.pressure(1.0, "atm");
     solutionstate.set("H2O" , 1.0, "kg");
-    solutionstate.set("Cl-" , 2.0, "mmol"); // + 1e-6 is to balance the charge of Sr+2
-    solutionstate.set("Cd+2", 1.0, "mmol");
     solutionstate.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     solutionstate.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 //    auto scale = 1e-6;
@@ -96,14 +94,15 @@ int main()
 //    solutionstate.set("Cl-!" , scale*2e+0, "mmol"); // + 1e-6 is to balance the charge of Sr+2
 //    solutionstate.set("Cd+2!", scale*1.0, "mmol");
 
-    std::cout << "*******************************************" << std::endl;
-    std::cout << "Before equilibration: " << std::endl;
-    std::cout << "*******************************************" << std::endl;
+//    std::cout << "*******************************************" << std::endl;
+//    std::cout << "Before equilibration: " << std::endl;
+//    std::cout << "*******************************************" << std::endl;
     ChemicalProps props(solutionstate);
-    std::cout << "aq.phase charge = " << props.chargeInPhase("AqueousPhase") << std::endl;
+//    std::cout << "aq.phase charge = " << props.chargeInPhase("AqueousPhase") << std::endl;
+    //std::cout << "props = \n" << props << std::endl;
 
     EquilibriumOptions opts;
-    opts.optima.output.active = true;
+    //opts.optima.output.active = true;
 
     // Define equilibrium solver and corresponding equilibrium options
     EquilibriumSolver solver(system);
@@ -120,13 +119,19 @@ int main()
     AqueousProps aprops(solutionstate);
     std::cout << "pH = " << aprops.pH() << std::endl;
     std::cout << "I  = " << aprops.ionicStrength() << std::endl;
+    std::cout << "aprops = \n" << aprops << std::endl;
 
     props.update(solutionstate);
-    std::cout << "dissolved(Cd)   = " << props.elementAmountInPhase("Cd", "AqueousPhase") << std::endl;
     std::cout << "aq.phase charge = " <<  props.chargeInPhase("AqueousPhase") << std::endl;
+
 
     ComplexationSurfaceProps surface_props(surface_Hfo, solutionstate);
     std::cout << "surface_props = \n" << surface_props << std::endl;
+
+//    DoubleLayerProps ddl_props(solutionstate);
+//    std::cout << "ddl_props = \n" << ddl_props << std::endl;
+
+    // std::cout << "props = \n " << props << std::endl;
 
     return 0;
 

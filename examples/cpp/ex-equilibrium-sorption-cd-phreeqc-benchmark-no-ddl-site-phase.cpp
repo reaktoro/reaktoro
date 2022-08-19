@@ -118,10 +118,17 @@ int main()
     ChemicalProps props(solutionstate);
     std::cout << "Dissolved(Cd)  = " << props.elementAmountInPhase("Cd", "AqueousPhase") << std::endl;
 
-    ComplexationSurfaceSiteProps site_w_props(surface_Hfo.sites()["_w"], solutionstate);
-    std::cout << site_w_props << std::endl;
 
+    ComplexationSurfaceSiteProps site_w_props(surface_Hfo.sites()["_w"], solutionstate);
     ComplexationSurfaceSiteProps site_s_props(surface_Hfo.sites()["_s"], solutionstate);
+
+    auto Z_s = site_s_props.Z();
+    auto Z_w = site_w_props.Z();
+    std::cout << "SURFACE:" << std::endl;
+    std::cout << "Z     = " << Z_s + Z_w << std::endl;
+    std::cout << "sigma = " << site_w_props.charge(Z_w) + site_s_props.charge(Z_s) << std::endl;
+
+    std::cout << site_w_props << std::endl;
     std::cout << site_s_props << std::endl;
 
     return 0;

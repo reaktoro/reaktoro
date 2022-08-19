@@ -77,7 +77,7 @@ int main()
     DoubleLayerPhase ddl_Hfo(speciate(elements));
     ddl_Hfo.named("DoubleLayerPhase");
     // Set the activity model governing the DDL phase
-    ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDonnanDDL(params_dll)));
+    ddl_Hfo.setActivityModel(chain(ActivityModelHKF(), ActivityModelDDL(params_dll)));
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo, ddl_Hfo);
@@ -102,14 +102,8 @@ int main()
     ChemicalProps props(solutionstate);
     std::cout << "aq.phase charge = " << props.chargeInPhase("AqueousPhase") << std::endl;
 
-    EquilibriumOptions opts;
-    opts.optima.output.active = true;
-
-    // Define equilibrium solver and corresponding equilibrium options
+    // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
-    solver.setOptions(opts);
-
-    // Equilibrate given initial state
     auto res = solver.solve(solutionstate);
     std::cout << "*******************************************" << std::endl;
     std::cout << "After equilibration: " << std::endl;
