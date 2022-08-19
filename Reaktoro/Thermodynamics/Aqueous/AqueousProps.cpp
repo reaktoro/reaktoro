@@ -608,12 +608,12 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", strfix(props.temperature()), "K" });
     table.add_row({ "Pressure", strfix(props.pressure()*1e-5), "bar" });
-    table.add_row({ "Ionic Strength (Effective)", strfix(props.ionicStrength()), "molal" });
-    table.add_row({ "Ionic Strength (Stoichiometric)", strfix(props.ionicStrengthStoichiometric()), "molal" });
+    table.add_row({ "Ionic Strength (Effective)", strsci(props.ionicStrength()), "molal" });
+    table.add_row({ "Ionic Strength (Stoichiometric)", strsci(props.ionicStrengthStoichiometric()), "molal" });
     table.add_row({ "pH", strfix(props.pH()), "" });
     table.add_row({ "pE", strfix(props.pE()), "" });
     table.add_row({ "Eh", strfix(props.Eh()), "V" });
-    table.add_row({ "Z", strfix((z*ms).sum()), "eq" });
+    table.add_row({ "Z", strsci((z*ms).sum()), "eq" });
     table.add_row({ "Element Molality:" });
     for(auto i = 0; i < elements.size(); ++i)
         if(elements[i].symbol() != "H" && elements[i].symbol() != "O")
