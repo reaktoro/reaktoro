@@ -100,17 +100,19 @@ auto ActivityModelSurfaceComplexationSiteNoDDL(ActivityModelSurfaceComplexationS
 /// @ingroup ActivityModels
 auto ActivityModelSurfaceComplexationWithDDL(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
 
-/// Return the activity model for surface complexation assuming not encountering electrostatic effects.
-/// @ingroup ActivityModels
-auto ActivityModelSurfaceComplexationGainesThomas(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
+auto ActivityModelSurfaceComplexationWithElectrostatics(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
+
+/// Return the SurfaceComplexationActivityModel object assuming electrostatic effects and considering every site as
+/// a separate phase.
+auto ActivityModelSurfaceComplexationSiteWithDDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for the Diffuse Double Layer (DDL) and assuming default parameters for it.
 /// @ingroup ActivityModels
-auto ActivityModelDDL() -> ActivityModelGenerator;
+auto ActivityModelDonnanDDL() -> ActivityModelGenerator;
 
 /// Return the activity model for the Diffuse Double Layer (DDL) and providing parameters of it.
 /// @ingroup ActivityModels
-auto ActivityModelDDL(ActivityModelDDLParams params) -> ActivityModelGenerator;
+auto ActivityModelDonnanDDL(ActivityModelDDLParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for the Aqueous phase, which include electrostatic correction of the ions.
 /// @ingroup ActivityModels
