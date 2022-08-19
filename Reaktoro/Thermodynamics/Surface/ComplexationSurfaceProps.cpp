@@ -232,15 +232,9 @@ struct ComplexationSurfaceProps::Impl
         // Auxiliary variables
         const auto T = surface_state.T;
 
-        // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2),
-        // y = sigma/(0.1174*sqrt(I)) = sinh(F*potential/R/T/2), and
+        // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
         const auto y = sigma/(0.1174*sqrt(I));
-
-        // Approximation of the arcsinh
-        const auto arcsinhy = log(y + sqrt(1 + y*y));
-
-        // arcsinh(y) = F*potential/R/T/2
-        // potential = 2*R*T*arcsinh(y)/F
+        const auto arcsinhy = asinh(y);
         return 2*R*T*arcsinhy/F;
     }
 };
@@ -383,17 +377,14 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceProps& props) -> std
     // Fetch auxiliary properties
     const auto T = props.complexationSurfaceState().T;
     const auto Z = props.Z();
-    const auto sigma = props.complexationSurfaceState().sigma;
-    const auto psi = props.complexationSurfaceState().psi;
+    auto I = 0.0;
+    // Export aqueous mixture state via `extra` data member
+    if (props.extra().at("AqueousMixtureState").has_value())
+        I = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState")).Ie;
 
-//    // TODO: how does PHREEQC calculates it?
-//    auto I = 0.0;
-//    // Export aqueous mixture state via `extra` data member
-//    if (props.extra().at("AqueousMixtureState").has_value())
-//        I = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState")).Ie;
-//    // Update charge and potential with Z calculate via amount of species
-//    const auto sigma = props.charge(Z);
-//    const auto psi = props.potential(I, sigma);
+    // Update charge and potential with Z calculate via amount of species
+    const auto sigma = props.charge(Z);
+    const auto psi = props.potential(I, sigma);
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
