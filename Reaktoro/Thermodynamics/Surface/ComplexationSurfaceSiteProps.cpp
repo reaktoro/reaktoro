@@ -363,16 +363,18 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceSiteProps& props) ->
     table.add_row({ ":: Z     (total charge)"   , str(props.Z()), "eq" });
     table.add_row({ ":: sigma (charge)"        , str(sigma), "C/m2" });
 
-    table.add_row({ "Element Amounts:" });
-    for(auto i = 0; i < elements.size(); ++i)
-        table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "mole" });
+//    table.add_row({ "Element Amounts:" });
+//    for(auto i = 0; i < elements.size(); ++i)
+//        table.add_row({ ":: " + elements[i].symbol(), str(ne[i]), "mole" });
     table.add_row({ "Species Amounts:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].repr(), str(ns[i]), "mole" });
     table.add_row({ "Fractions:" });
     for(auto i = 0; i < species.size(); ++i)
         table.add_row({ ":: " + species[i].repr(), str(x[i]), "" });
-
+    table.add_row({ "Log Base 10 of Species Amounts:" });
+    for(auto i = 0; i < species.size(); ++i)
+        table.add_row({ ":: " + species[i].repr(), str(log(ns[i])), "" });
     auto i = 0;
     for(auto& row : table)
     {
