@@ -29,20 +29,40 @@
 
 namespace Reaktoro {
 
+// Auxiliary constants
+const auto F = faradayConstant;
+const auto R = universalGasConstant;
+
 /// A type used to describe the state of the complexation surface.
 struct ComplexationSurfaceState
 {
     /// Update the surface complexation potential for the given ionic strength of the neighboring phase.
     auto updatePotential(real I) -> void
     {
-        // Auxiliary variables
-        const auto F = faradayConstant;
-        const auto R = universalGasConstant;
-
-        // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
-        const auto y = sigma/(0.1174*sqrt(I));
-        const auto arcsinhy = std::asinh(y[0]);
+        // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
+        const auto arcsinhy = asinh(sigma/(0.1174*sqrt(I)));
         psi = 2*R*T*arcsinhy/F;
+    }
+
+    /// Fetch the surface complexation potential for the given charges and concentrations.
+    auto surfacePotential(ArrayXrConstRef z, ArrayXrConstRef c) -> ArrayXr
+    {
+        // Using formula sigma = 0.1174*c^0.5*sinh(z*F*psi/(2*R*T))
+        const auto arcsinhy = asinh(sigma/(0.1174*sqrt(c)));
+        return 2*R*T*arcsinhy/(z*F);
+    }
+
+    /// Update the surface complexation fractions for given indices.
+    auto updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void
+    {
+        x(indices) = x_;
+    }
+
+    /// Update the surface charge and charge density.
+    auto updateCharge(ArrayXdConstRef z) -> void
+    {
+        charge = (z*x).sum();
+        sigma = F*charge/(As*mass);
     }
 
     /// The temperature of the solute/gas mixture on the surface (in K).
@@ -129,6 +149,11 @@ public:
 
     /// Return the list of surface sites.
     auto sites() const -> std::map<std::string, ComplexationSurfaceSite>;
+
+    /// Calculate the state of the surface complexation.
+    /// @param T The temperature (in K)
+    /// @param P The pressure (in Pa)
+    auto state(real T, real P) -> ComplexationSurfaceState;
 
     /// Calculate the state of the surface complexation.
     /// @param T The temperature (in K)

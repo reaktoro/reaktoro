@@ -135,6 +135,20 @@ auto ComplexationSurface::sites() const -> std::map<std::string, ComplexationSur
     return surface_sites;
 }
 
+/// Return complexation surface state updated for the given temperature, pressure, and zero fractions.
+auto ComplexationSurface::state(real T, real P) -> ComplexationSurfaceState
+{
+    surface_state.T = T;
+    surface_state.P = P;
+    surface_state.x = ArrayXr::Zero(species().size());
+    surface_state.As = specificSurfaceArea();
+    surface_state.mass = mass();
+    surface_state.charge = surfaceCharge(surface_state.x);
+    surface_state.sigma = surfaceSigma(surface_state.charge);
+
+    return surface_state;
+}
+
 /// Return complexation surface state updated for the given temperature, pressure, and fractions.
 auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceState
 {
@@ -143,7 +157,7 @@ auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> Complexati
     surface_state.x = x;
     surface_state.As = specificSurfaceArea();
     surface_state.mass = mass();
-    surface_state.charge = surfaceCharge(x);
+    surface_state.charge = surfaceCharge(surface_state.x);
     surface_state.sigma = surfaceSigma(surface_state.charge);
 
     return surface_state;
