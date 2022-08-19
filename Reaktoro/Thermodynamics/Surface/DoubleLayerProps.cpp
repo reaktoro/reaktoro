@@ -56,10 +56,6 @@ auto indexDoubleLayerPhase(const ChemicalSystem& system) -> Index
 
 } // namespace
 
-// Auxiliary constants
-const auto F = faradayConstant;
-const auto R = universalGasConstant;
-
 struct DoubleLayerProps::Impl
 {
     /// The chemical system in which the double layer phase is.

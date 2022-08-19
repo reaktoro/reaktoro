@@ -56,10 +56,6 @@ auto indexComplexationSurfacePhase(const ChemicalSystem& system) -> Index
 
 } // namespace
 
-// Auxiliary constants
-const auto F = faradayConstant;
-const auto R = universalGasConstant;
-
 struct ComplexationSurfaceProps::Impl
 {
     /// The chemical system to which the complexation surface phase belongs.
