@@ -39,9 +39,14 @@ struct ComplexationSurfaceState
     /// Update the surface complexation potential for the given ionic strength of the neighboring phase.
     auto updatePotential(real I) -> void
     {
-        // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
-        const auto arcsinhy = asinh(sigma/(0.1174*sqrt(I)));
-        psi = 2*R*T*arcsinhy/F;
+//        // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
+//        const auto arcsinhy = asinh(sigma/(0.1174*sqrt(I)));
+//        psi = 2*R*T*arcsinhy/F;
+
+        // Using formula sigma = (8*R*T*eps*eps0*1e3)^0.5*I^0.5*sinh(F*psi/(2*R*T)) from  Dzombak & Morel (1990), (2.2)
+        auto eps = 78.5;        // the dielectric constant of water, C/(V*m)
+        auto eps0 = 8.854e-12;  // the permittivity of free space
+        psi = 2*R*T*asinh(sigma/(sqrt(8*eps*eps0*R*T*I*1e3)))/F;
     }
 
     /// Fetch the surface complexation potential for the given charges and concentrations.
