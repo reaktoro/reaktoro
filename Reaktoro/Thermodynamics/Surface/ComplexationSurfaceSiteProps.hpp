@@ -91,10 +91,10 @@ public:
     auto complexationSurfaceSite() const -> ComplexationSurfaceSite;
 
     // Return the sum of species charges.
-    auto Z() const -> real;
+    auto charge() const -> real;
 
-    // Return the surface charge.
-    auto charge(real Z) const -> real;
+    // Return the surface charge density.
+    auto sigma(real Z) const -> real;
 
     /// Return the underlying Phase object for the complexation surface site phase.
     auto phase() const -> const Phase&;

@@ -207,13 +207,13 @@ struct ComplexationSurfaceSiteProps::Impl
     }
 
     /// Return the complexation surface site charge.
-    auto Z() -> real
+    auto charge() -> real
     {
         return (site.charges()*nex).sum();
     }
 
     /// Return the complexation surface site charge density.
-    auto charge(real Z) const -> real
+    auto sigma(real Z) const -> real
     {
         return F*Z/site.specificSurfaceArea()/site.mass();
     }
@@ -304,14 +304,14 @@ auto ComplexationSurfaceSiteProps::complexationSurfaceSite() const -> Complexati
     return pimpl->site;
 }
 
-auto ComplexationSurfaceSiteProps::Z() const -> real
+auto ComplexationSurfaceSiteProps::charge() const -> real
 {
-    return pimpl->Z();
+    return pimpl->charge();
 }
 
-auto ComplexationSurfaceSiteProps::charge(real Z) const -> real
+auto ComplexationSurfaceSiteProps::sigma(real Z) const -> real
 {
-    return pimpl->charge(Z);
+    return pimpl->sigma(Z);
 }
 
 auto ComplexationSurfaceSiteProps::phase() const -> const Phase&
@@ -351,12 +351,12 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceSiteProps& props) ->
 
     // Fetch auxiliary properties
     const auto T = props.complexationSurfaceSiteState().T;
-    const auto Z = props.Z();
-    const auto sigma = props.complexationSurfaceSiteState().sigma;
+    const auto charge = props.charge();
+    const auto sigma = props.sigma(charge);
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ ":: Z     (total charge)"   , str(props.Z()), "eq" });
+    table.add_row({ ":: Z     (total charge)"   , str(charge), "eq" });
     table.add_row({ ":: sigma (charge)"        , str(sigma), "C/m2" });
 
 //    table.add_row({ "Element Amounts:" });
