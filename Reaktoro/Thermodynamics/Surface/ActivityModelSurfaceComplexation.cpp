@@ -328,7 +328,6 @@ auto activityModelSurfaceComplexationSiteWithElectrostatics(const SpeciesList& s
 //            props.ln_g = z*psi_GC*F/(R*T); // the activity coefficient of a surface species
             }
             props.ln_a += props.ln_g;
-
         }
         else
         {
@@ -336,10 +335,9 @@ auto activityModelSurfaceComplexationSiteWithElectrostatics(const SpeciesList& s
             surface_state = surface.state(T, P);
 
             // Update surface fractions with calculated site's fractions and surface charge
-                surface_state.updateFractions(x, indices);
-                surface_state.updateCharge(surface_z);
+            surface_state.updateFractions(x, indices);
+            surface_state.updateCharge(surface_z);
         }
-        //getchar();
 
         // Export the surface complexation, site and their states via the `extra` data member
         props.extra["ComplexationSurface"] = surface;
