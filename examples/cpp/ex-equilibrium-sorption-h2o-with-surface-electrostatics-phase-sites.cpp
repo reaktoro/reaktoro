@@ -38,7 +38,7 @@ int main()
     // Define an aqueous phase
     auto elements = "H O";
     AqueousPhase aqueous_phase(speciate(elements));
-    aqueous_phase.setActivityModel(chain(ActivityModelHKF(), ActivityModelElectrostatics(ActivityModelDDLParams())));
+    aqueous_phase.setActivityModel(ActivityModelHKF());
 
     // Define ion exchange species list
     String list_str = "Hfo_sOH Hfo_sOH2+ Hfo_sO- "
@@ -82,10 +82,10 @@ int main()
     ActivityModelSurfaceComplexationSiteParams params_site;
     params_site.surface = surface_Hfo;
     params_site.site_tag = "_w";
-    complexation_phase_Hfo_w.setActivityModel(ActivityModelSurfaceComplexationSiteWithDDL(params_site));
+    complexation_phase_Hfo_w.setActivityModel(ActivityModelSurfaceComplexationSiteWithElectrostatics(params_site));
 
     params_site.site_tag = "_s";
-    complexation_phase_Hfo_s.setActivityModel(ActivityModelSurfaceComplexationSiteWithDDL(params_site));
+    complexation_phase_Hfo_s.setActivityModel(ActivityModelSurfaceComplexationSiteWithElectrostatics(params_site));
 
     /// Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, complexation_phase_Hfo_w, complexation_phase_Hfo_s);
@@ -143,6 +143,4 @@ int main()
 
     std::cout << site_w_props << std::endl;
     std::cout << site_s_props << std::endl;
-
-    return 0;
 }
