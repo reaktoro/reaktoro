@@ -102,6 +102,8 @@ auto ActivityModelSurfaceComplexationWithDDL(ActivityModelSurfaceComplexationPar
 
 auto ActivityModelSurfaceComplexationWithElectrostatics(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator;
 
+auto ActivityModelSurfaceComplexationSiteWithElectrostatics(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
+
 /// Return the SurfaceComplexationActivityModel object assuming electrostatic effects and considering every site as
 /// a separate phase.
 auto ActivityModelSurfaceComplexationSiteWithDDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;

@@ -26,14 +26,26 @@ using namespace Reaktoro;
 void exportActivityModelSurfaceComplexation(py::module& m)
 {
     m.def("ActivityModelSurfaceComplexationNoDDL", ActivityModelSurfaceComplexationNoDDL);
+    m.def("ActivityModelSurfaceComplexationSiteNoDDL", ActivityModelSurfaceComplexationSiteNoDDL);
     m.def("ActivityModelSurfaceComplexationWithDDL", ActivityModelSurfaceComplexationWithDDL);
+    m.def("ActivityModelSurfaceComplexationSiteWithDDL", ActivityModelSurfaceComplexationSiteWithDDL);
+    m.def("ActivityModelSurfaceComplexationWithElectrostatics", ActivityModelSurfaceComplexationWithElectrostatics);
+    m.def("ActivityModelSurfaceComplexationSiteWithElectrostatics", ActivityModelSurfaceComplexationSiteWithElectrostatics);
     m.def("ActivityModelDonnanDDL", ActivityModelDonnanDDL());
     m.def("ActivityModelDonnanDDL", py::overload_cast<ActivityModelDDLParams>(ActivityModelDonnanDDL));
+    m.def("ActivityModelElectrostatics", py::overload_cast<ActivityModelDDLParams>(ActivityModelElectrostatics));
 
     py::class_<ActivityModelSurfaceComplexationParams>(m, "ActivityModelSurfaceComplexationParams")
         .def(py::init<>())
         .def_readwrite("surface", &ActivityModelSurfaceComplexationParams::surface)
         .def_readwrite("output", &ActivityModelSurfaceComplexationParams::output)
+        ;
+
+    py::class_<ActivityModelSurfaceComplexationSiteParams>(m, "ActivityModelSurfaceComplexationSiteParams")
+        .def(py::init<>())
+        .def_readwrite("surface", &ActivityModelSurfaceComplexationSiteParams::surface)
+        .def_readwrite("site_tag", &ActivityModelSurfaceComplexationSiteParams::site_tag)
+        .def_readwrite("output", &ActivityModelSurfaceComplexationSiteParams::output)
         ;
 
     py::class_<ActivityModelDDLParams>(m, "ActivityModelDDLParams")
