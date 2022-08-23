@@ -81,6 +81,14 @@ auto ComplexationSurface::potential() const -> real
     return state().psi;
 }
 
+// Return the potential of the surface complexation for the given temperature, ionic strength and charge density.
+auto ComplexationSurface::potential(real T, real I, real sigma) const -> real
+{
+    // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
+    const auto arcsinhy = asinh(sigma/(0.1174*sqrt(I)));
+    return 2*R*T*arcsinhy/F;
+}
+
 // Return species of the surface complexation with a given index.
 auto ComplexationSurface::species(Index idx) const -> const Species&
 {
@@ -300,22 +308,22 @@ auto ComplexationSurface::output(std::ostream& out) const -> void
 /// Output a ComplexationSurface object to an output stream.
 auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::ostream&
 {
-    std::cout << "SURFACE: " << surface.name() << std::endl;
+    std::cout << "Surface: " << surface.name() << std::endl;
     std::cout << "\t specific area, m2/kg : " << surface.specificSurfaceArea() << std::endl;
     std::cout << "\t mass, kg             : " << surface.mass() << std::endl;
     std::cout << "\t # of sites           : " << surface.sites().size() << std::endl;
 
     for(const auto& [tag, site] : surface.sites())
     {
-        std::cout << "site: " << site.name() << std::endl;
+        std::cout << "Site: " << site.name() << std::endl;
         std::cout << "\t amount       : " << site.amount() << std::endl;
         std::cout << "\t mass         : " << site.mass() << std::endl;
         std::cout << "\t ssa          : " << site.specificSurfaceArea() << std::endl;
         std::cout << "\t # of species : " << site.species().size() << std::endl;
-        std::cout << "\t :: index :: Species :: charge" << std::endl;
+        std::cout << "\t :: index :: species" << std::endl;
 
         for(auto i : site.speciesIndices())
-            std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << " : "  << surface.species()[i].charge() << std::endl;
+            std::cout << "\t :: " << i << "     :: " << surface.species()[i].name() << std::endl;
     }
     return out;
 }

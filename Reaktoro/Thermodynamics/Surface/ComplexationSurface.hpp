@@ -133,6 +133,9 @@ public:
     /// Return the value of potential.
     auto potential() const -> real;
 
+    /// Return the value of potential based for on the given temperature, ionic strength and charge density.
+    auto potential(real T, real I, real sigma) const -> real;
+
     /// Return the species on the surface with given index.
     /// @param idx The index of the species in the complexation surface
     auto species(Index idx) const -> const Species&;
