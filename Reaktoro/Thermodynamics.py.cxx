@@ -67,6 +67,7 @@ void exportComplexationSurface(py::module& m);
 void exportComplexationSurfaceSite(py::module& m);
 void exportComplexationSurfaceProps(py::module& m);
 void exportComplexationSurfaceSiteProps(py::module& m);
+void exportSurfaceProps(py::module& m);
 
 void exportThermodynamics(py::module& m)
 {
@@ -119,4 +120,5 @@ void exportThermodynamics(py::module& m)
     exportComplexationSurfaceSite(m);
     exportComplexationSurfaceProps(m);
     exportComplexationSurfaceSiteProps(m);
+    exportSurfaceProps(m);
 }

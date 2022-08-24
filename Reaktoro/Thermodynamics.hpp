@@ -54,8 +54,7 @@
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSiteProps.hpp>
-
-
+#include <Reaktoro/Thermodynamics/Surface/SurfaceProps.hpp>
 
 /// @defgroup Thermodynamics Thermodynamics
 /// This is the thermodynamics module in Reaktoro, in which various thermodynamic models and related concepts are implemented.
