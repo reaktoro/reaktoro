@@ -26,20 +26,27 @@
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 
-
 using namespace Reaktoro;
 
-/// Initialize mole fractions for the species.
-inline auto initializeSurfaceComplexationMoleFractions(const SpeciesList& species) -> ArrayXr
+/// Initialize mole fractions for the sites' species.
+inline auto initializeSurfaceComplexationStrongSiteMoleFractions(const SpeciesList& species) -> ArrayXr
 {
     auto idx = [&](auto formula) { return species.indexWithName(formula); };
 
     ArrayXr n = 1e-6 * ArrayXr::Ones(species.size());
     n[idx("Hfo_sOH")] = 0.1;
-    n[idx("Hfo_wOH")] = 0.1;
     n[idx("Hfo_sOHCa+2" )] = 0.2;
-    n[idx("Hfo_wOCa+")] = 0.2;
     n[idx("Hfo_sOHSr+2" )] = 0.3;
+    return n / n.sum();
+}
+
+inline auto initializeSurfaceComplexationWeakSiteMoleFractions(const SpeciesList& species) -> ArrayXr
+{
+    auto idx = [&](auto formula) { return species.indexWithName(formula); };
+
+    ArrayXr n = 1e-6 * ArrayXr::Ones(species.size());
+    n[idx("Hfo_wOH")] = 0.1;
+    n[idx("Hfo_wOCa+")] = 0.2;
     n[idx("Hfo_wOSr+")] = 0.3;
     return n / n.sum();
 }
@@ -95,40 +102,67 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
     // Defined and add surface species
     String selected_absorbed_species = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOHSr+2 "
                                        "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOSr+ Hfo_wOSrOH";
+    String selected_absorbed_species_s = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOHSr+2";
+    String selected_absorbed_species_w = "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOSr+ Hfo_wOSrOH";
+
     // Select the names of considered absorbed species
     SpeciesList species = adsorbed_species.withNames(selected_absorbed_species);
-
     surface_Hfo.addSurfaceSpecies(species);
 
-    // The activity model params
-    ActivityModelSurfaceComplexationParams params;
-    params.surface = surface_Hfo;
+    SpeciesList species_s = adsorbed_species.withNames(selected_absorbed_species_s);
+    SpeciesList species_w = adsorbed_species.withNames(selected_absorbed_species_w);
+
+    // The activity model params per site
+    ActivityModelSurfaceComplexationSiteParams params_s, params_w;
+    params_s.surface = surface_Hfo;
+    params_s.site_tag = "_s";
+    params_w.surface = surface_Hfo;
+    params_w.site_tag = "_w";
 
     // Initialize corresponding species fractions
-    const auto x = initializeSurfaceComplexationMoleFractions(species);
+    const auto xs = initializeSurfaceComplexationStrongSiteMoleFractions(species_s);
+    const auto xw = initializeSurfaceComplexationWeakSiteMoleFractions(species_w);
 
     SECTION("Checking the activities")
     {
+        // --------------------------------------------------------------------
+        // Evaluate values for the strong site
+        // --------------------------------------------------------------------
+
         // Construct the activity model function with the given ion exchange species.
-        ActivityModel fn = ActivityModelSurfaceComplexationNoDDL(params)(species);
+        ActivityModel fn = ActivityModelSurfaceComplexationSiteNoDDL(params_s)(species_s);
 
         // Create the ActivityProps object with the results.
-        ActivityProps props = ActivityProps::create(species.size());
+        ActivityProps props = ActivityProps::create(species_s.size());
 
         // Evaluate the activity props function
-        fn(props, {T, P, x});
+        fn(props, {T, P, xs});
 
-        CHECK( props.ln_a[0]  == Approx(-2.48491) ); // Hfo_sOH
-        CHECK( props.ln_a[1]  == Approx(-1.79176) ); // Hfo_sOHCa+2
-        CHECK( props.ln_a[2]  == Approx(-13.9978) ); // Hfo_sOH2+
-        CHECK( props.ln_a[3]  == Approx(-13.9978) ); // Hfo_sO-
-        CHECK( props.ln_a[4]  == Approx(-1.3863)  ); // Hfo_sOHSr+2
-        CHECK( props.ln_a[5]  == Approx(-2.48491) ); // Hfo_wOH
-        CHECK( props.ln_a[6]  == Approx(-13.9978) ); // Hfo_wOH2+
-        CHECK( props.ln_a[7]  == Approx(-13.9978) ); // Hfo_wO-
-        CHECK( props.ln_a[8]  == Approx(-1.79176) ); // Hfo_wOCa+
-        CHECK( props.ln_a[9]  == Approx(-1.3863)  ); // Hfo_wOSr+
-        CHECK( props.ln_a[10] == Approx(-13.9978) ); // Hfo_wOSrOH
+        CHECK( props.ln_a[0]  == Approx(-1.79176)  ); // Hfo_sOH
+        CHECK( props.ln_a[1]  == Approx(-1.09862)  ); // Hfo_sOHCa+2
+        CHECK( props.ln_a[2]  == Approx(-13.3047)  ); // Hfo_sOH2+
+        CHECK( props.ln_a[3]  == Approx(-13.3047)  ); // Hfo_sO-
+        CHECK( props.ln_a[4]  == Approx(-0.693151) ); // Hfo_sOHSr+2
+
+        // --------------------------------------------------------------------
+        // Evaluate values for the weak site
+        // --------------------------------------------------------------------
+
+        // Construct the activity model function with the given ion exchange species.
+        fn = ActivityModelSurfaceComplexationSiteNoDDL(params_w)(species_w);
+
+        // Create the ActivityProps object with the results.
+        props = ActivityProps::create(species_w.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, xw});
+
+        CHECK( props.ln_a[0] == Approx(-1.79176)  ); // Hfo_wOH
+        CHECK( props.ln_a[1] == Approx(-13.3047)  ); // Hfo_wOH2+
+        CHECK( props.ln_a[2] == Approx(-13.3047)  ); // Hfo_wO-
+        CHECK( props.ln_a[3] == Approx(-1.09862)  ); // Hfo_wOCa+
+        CHECK( props.ln_a[4] == Approx(-0.693152) ); // Hfo_wOSr+
+        CHECK( props.ln_a[5] == Approx(-13.3047)  ); // Hfo_wOSrOH
     }
 
     // Define aqueous species list and corresponding fractions
@@ -143,30 +177,49 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
         // The state of the aqueous mixture
         AqueousMixtureState aqstate = mixture.state(T, P, x_aq);
 
+        // --------------------------------------------------------------------
+        // Evaluate values for the strong site
+        // --------------------------------------------------------------------
+
         // Construct the activity model function with the given ion exchange species.
-        ActivityModel fn = ActivityModelSurfaceComplexationNoDDL(params)(species);
+        ActivityModel fn = ActivityModelSurfaceComplexationSiteNoDDL(params_s)(species_s);
 
         // Create the ActivityProps object with the results.
-        ActivityProps props = ActivityProps::create(species.size());
+        ActivityProps props = ActivityProps::create(species_s.size());
         props.extra["AqueousMixtureState"] = aqstate;
 
         // Evaluate the activity props function
-        fn(props, {T, P, x});
+        fn(props, {T, P, xs});
 
-        CHECK( props.ln_a[0]  == Approx(-2.48491) ); // Hfo_sOH
-        CHECK( props.ln_a[1]  == Approx(-1.79176) ); // Hfo_sOHCa+2
-        CHECK( props.ln_a[2]  == Approx(-13.9978) ); // Hfo_sOH2+
-        CHECK( props.ln_a[3]  == Approx(-13.9978) ); // Hfo_sO-
-        CHECK( props.ln_a[4]  == Approx(-1.3863)  ); // Hfo_sOHSr+2
-        CHECK( props.ln_a[5]  == Approx(-2.48491) ); // Hfo_wOH
-        CHECK( props.ln_a[6]  == Approx(-13.9978) ); // Hfo_wOH2+
-        CHECK( props.ln_a[7]  == Approx(-13.9978) ); // Hfo_wO-
-        CHECK( props.ln_a[8]  == Approx(-1.79176) ); // Hfo_wOCa+
-        CHECK( props.ln_a[9]  == Approx(-1.3863 ) ); // Hfo_wOSr+
-        CHECK( props.ln_a[10] == Approx(-13.9978) ); // Hfo_wOSrOH
+        CHECK( props.ln_a[0]  == Approx(-1.79176)  ); // Hfo_sOH
+        CHECK( props.ln_a[1]  == Approx(-1.09862)  ); // Hfo_sOHCa+2
+        CHECK( props.ln_a[2]  == Approx(-13.3047)  ); // Hfo_sOH2+
+        CHECK( props.ln_a[3]  == Approx(-13.3047)  ); // Hfo_sO-
+        CHECK( props.ln_a[4]  == Approx(-0.693151) ); // Hfo_sOHSr+2
 
         for(auto elem : props.ln_g)
             CHECK( elem  == Approx(0.0) );
+
+        // --------------------------------------------------------------------
+        // Evaluate values for the weak site
+        // --------------------------------------------------------------------
+
+        // Construct the activity model function with the given ion exchange species.
+        fn = ActivityModelSurfaceComplexationSiteNoDDL(params_w)(species_w);
+
+        // Create the ActivityProps object with the results.
+        props = ActivityProps::create(species_w.size());
+        props.extra["AqueousMixtureState"] = aqstate;
+
+        // Evaluate the activity props function
+        fn(props, {T, P, xw});
+
+        CHECK( props.ln_a[0] == Approx(-1.79176)  ); // Hfo_wOH
+        CHECK( props.ln_a[1] == Approx(-13.3047)  ); // Hfo_wOH2+
+        CHECK( props.ln_a[2] == Approx(-13.3047)  ); // Hfo_wO-
+        CHECK( props.ln_a[3] == Approx(-1.09862)  ); // Hfo_wOCa+
+        CHECK( props.ln_a[4] == Approx(-0.693152) ); // Hfo_wOSr+
+        CHECK( props.ln_a[5] == Approx(-13.3047)  ); // Hfo_wOSrOH
     }
 
 }

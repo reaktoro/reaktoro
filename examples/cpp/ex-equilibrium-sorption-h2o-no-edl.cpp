@@ -61,10 +61,6 @@ int main()
 
     std::cout << surface_Hfo << std::endl;
 
-    // Add specified surface as parameters for the activity model for the complexation surface
-    ActivityModelSurfaceComplexationParams params;
-    params.surface = surface_Hfo;
-
     // Define surface sites as complexation sites phases
     SurfaceComplexationPhase hfo_w_phase(list_str_w);
     hfo_w_phase.setName("Hfo_w");
