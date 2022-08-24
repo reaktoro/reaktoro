@@ -80,16 +80,8 @@ auto ActivityModelSurfaceComplexationSiteNoDDL(ActivityModelSurfaceComplexationS
 auto ActivityModelSurfaceComplexationSiteWithDDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
 
 /// Return the SurfaceComplexationActivityModel object updating the surface potential of the surface site and applying
-/// the electrostatic (coloumbic) corrections on the surface site species.
-auto ActivityModelSurfaceComplexationSiteWithDDLOld(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
-
-/// Return the SurfaceComplexationActivityModel object updating the surface potential of the surface site and applying
 /// the electrostatic (coloumbic) corrections on the surface site species based on the Dzombak and Morel (1990) book.
 auto ActivityModelSurfaceComplexationSiteWithEDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
-
-/// Return the SurfaceComplexationActivityModel object assuming electrostatic effects and considering every site as
-/// a separate phase.
-auto ActivityModelSurfaceComplexationSiteWithDDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator;
 
 /// Return the activity model for the Aqueous phase, which include electrostatic correction of the ions.
 /// @ingroup ActivityModels
@@ -109,8 +101,7 @@ auto ActivityModelEDL(ActivityModelDDLParams params) -> ActivityModelGenerator;
 ///
 /// The surface potential @eq{\Psi} (volt) is defined via the charge density @eq{\sigma} (C/m2) via the relation
 /// @eqc{\sigma = 0.1174 I^{1⁄2} \sinh(\dfrac{F\Psi}{2RT}),}
-/// where \eq{\arcsinh(y) = \ln(y+(y^2+1)^{1⁄2})} and
-/// @eq{I} is the ionic strength.
+/// where @eq{I} is the ionic strength.
 ///
 /// The charge density of the surface is denoted by @eqc{\sigma} (C/m2) and defined as
 /// @eqc{\sigma = \dfrac{FZ}{A_s m},}
