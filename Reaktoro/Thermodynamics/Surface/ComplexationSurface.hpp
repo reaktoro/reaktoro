@@ -36,39 +36,14 @@ const auto R = universalGasConstant;
 /// A type used to describe the state of the complexation surface.
 struct ComplexationSurfaceState
 {
-    /// Update the surface complexation potential for the given ionic strength of the neighboring phase.
-    auto updatePotential(real I) -> void
-    {
-//        // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
-//        const auto arcsinhy = asinh(sigma/(0.1174*sqrt(I)));
-//        psi = 2*R*T*arcsinhy/F;
-
-        // Using formula sigma = (8*R*T*eps*eps0*1e3)^0.5*I^0.5*sinh(F*psi/(2*R*T)) from  Dzombak & Morel (1990), (2.2)
-        auto eps = 78.5;        // the dielectric constant of water, C/(V*m)
-        auto eps0 = 8.854e-12;  // the permittivity of free space
-        psi = 2*R*T*asinh(sigma/(sqrt(8*eps*eps0*R*T*I*1e3)))/F;
-    }
-
-    /// Fetch the surface complexation potential for the given charges and concentrations.
-    auto surfacePotential(ArrayXrConstRef z, ArrayXrConstRef c) -> ArrayXr
-    {
-        // Using formula sigma = 0.1174*c^0.5*sinh(z*F*psi/(2*R*T))
-        const auto arcsinhy = asinh(sigma/(0.1174*sqrt(c)));
-        return 2*R*T*arcsinhy/(z*F);
-    }
+    /// Update the surface complexation potential for the given ionic strength of the aqueous phase.
+    auto updatePotential(real I) -> void;
 
     /// Update the surface complexation fractions for given indices.
-    auto updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void
-    {
-        x(indices) = x_;
-    }
+    auto updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void;
 
     /// Update the surface charge and charge density.
-    auto updateCharge(ArrayXdConstRef z) -> void
-    {
-        charge = (z*x).sum();
-        sigma = F*charge/(As*mass);
-    }
+    auto updateCharge(ArrayXdConstRef z) -> void;
 
     /// The temperature of the solute/gas mixture on the surface (in K).
     real T;
@@ -96,9 +71,7 @@ struct ComplexationSurfaceState
 };
 
 /// A type used to describe a complexation surface.
-/// The ComplexationSurface class is defined as a collection of Species objects, representing,
-/// therefore, a composition of complexation phase. Its main purpose is to provide the
-/// necessary operations in the calculation of activities of surface complexation species.
+/// The ComplexationSurface class is defined as a collection of SurfaceComplexationSites and Species objects.
 class ComplexationSurface
 {
     /// Return the complexation surface charge.
@@ -178,9 +151,6 @@ public:
     /// Set the name of the surface.
     auto setName(const String& surface) -> ComplexationSurface&;
 
-    /// Set the mineral this surface belong to.
-    auto setMineral(const String& mineral) -> ComplexationSurface&;
-
     // Set the specific surface area (in m2/kg).
     auto setSpecificSurfaceArea(double value, const String& unit = "m2/kg") -> ComplexationSurface&;
 
@@ -206,9 +176,6 @@ private:
 
     /// The surface name.
     String surface_name;
-
-    /// The mineral species.
-    Species mineral;
 
     /// The specific area (m2/kg), default value is 600 m2/g = 6e5 m2/kg
     real ssa;

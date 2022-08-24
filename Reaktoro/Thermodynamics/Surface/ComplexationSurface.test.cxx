@@ -106,10 +106,6 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
     real I = 0.1;
     state.updatePotential(I);
 
-    // y = 2.78084626624
-    // arcsinhy = 1.74676718758
-    // psi = 0.08975790202
-
     SECTION("Checking the potential of ComplexationSurface for surface charge 1.07e-6 eq/m2 "
             "and an ionic strength 0.1 molal")
     {
@@ -118,10 +114,6 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
 
     I = 0.025;
     state.updatePotential(I);
-
-    // y = 5.56169253249
-    // arcsinhy = 2.41703553095
-    // psi = 0.08975790202
 
     SECTION("Checking the potential of ComplexationSurface for surface charge 1.07e-6 eq/m2 "
             "and an ionic strength 0.025 molal")
@@ -133,10 +125,6 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
     state.sigma = faradayConstant * 2.6e-7;
     I = 0.1;
     state.updatePotential(I);
-
-    // y = 0.67571965348
-    // arcsinhy = 0.63266191582
-    // psi = 0.03250943037
 
     SECTION("Checking the potential of ComplexationSurface for surface charge 2.6e-7 eq/m2 "
             "and an ionic strength 0.1 molal")

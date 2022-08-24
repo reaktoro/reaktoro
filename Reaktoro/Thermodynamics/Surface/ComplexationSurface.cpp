@@ -26,6 +26,34 @@
 
 namespace Reaktoro {
 
+/// ------------------------------------------------------------------------------------------
+/// Implementation of the methods of the ComplexationSurfaceState struct
+/// ------------------------------------------------------------------------------------------
+
+/// Update the surface complexation potential for the given ionic strength of the aqueous phase.
+auto ComplexationSurfaceState::updatePotential(real I) -> void
+{
+    // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
+    psi = 2*R*T*asinh(sigma/(0.1174*sqrt(I)))/F;
+}
+
+/// Update the surface complexation fractions for given indices.
+auto ComplexationSurfaceState::updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void
+{
+    x(indices) = x_;
+}
+
+/// Update the surface charge and charge density.
+auto ComplexationSurfaceState::updateCharge(ArrayXdConstRef z) -> void
+{
+    charge = (z*x).sum();
+    sigma = F*charge/(As*mass);
+}
+
+/// ------------------------------------------------------------------------------------------
+/// Implementation of the methods of the ComplexationSurface class
+/// ------------------------------------------------------------------------------------------
+
 ComplexationSurface::ComplexationSurface()
 {}
 
@@ -85,8 +113,7 @@ auto ComplexationSurface::potential() const -> real
 auto ComplexationSurface::potential(real T, real I, real sigma) const -> real
 {
     // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
-    const auto arcsinhy = asinh(sigma/(0.1174*sqrt(I)));
-    return 2*R*T*arcsinhy/F;
+    return 2*R*T*asinh(sigma/(0.1174*sqrt(I)))/F;
 }
 
 // Return species of the surface complexation with a given index.
@@ -228,13 +255,6 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
 auto ComplexationSurface::setName(const String& name) -> ComplexationSurface&
 {
     surface_name = name;
-    return *this;
-}
-
-// Set the mineral associated with the complexation surface.
-auto ComplexationSurface::setMineral(const String& mineral_name) -> ComplexationSurface&
-{
-    mineral = Species(mineral_name);
     return *this;
 }
 
