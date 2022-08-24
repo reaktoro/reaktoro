@@ -26,9 +26,9 @@ using namespace Reaktoro;
 void exportActivityModelSurfaceComplexation(py::module& m)
 {
     m.def("ActivityModelSurfaceComplexationSiteNoDDL", ActivityModelSurfaceComplexationSiteNoDDL);
-    m.def("ActivityModelSurfaceComplexationSiteWithDDL", ActivityModelSurfaceComplexationSiteWithDDL);
-    m.def("ActivityModelSurfaceComplexationSiteWithEDL", ActivityModelSurfaceComplexationSiteWithEDL);
-    m.def("ActivityModelEDL", py::overload_cast<ActivityModelDDLParams>(ActivityModelEDL));
+//    m.def("ActivityModelSurfaceComplexationSiteWithDDL", ActivityModelSurfaceComplexationSiteWithDDL);
+//    m.def("ActivityModelSurfaceComplexationSiteWithEDL", ActivityModelSurfaceComplexationSiteWithEDL);
+//    m.def("ActivityModelEDL", py::overload_cast<ActivityModelDDLParams>(ActivityModelEDL));
 
     py::class_<ActivityModelSurfaceComplexationSiteParams>(m, "ActivityModelSurfaceComplexationSiteParams")
         .def(py::init<>())
@@ -43,11 +43,11 @@ void exportActivityModelSurfaceComplexation(py::module& m)
         .def_readwrite("thickness", &ActivityModelDDLParams::thickness)
         ;
 
-    py::class_<ActivityModelDDLDonnanParams>(m, "ActivityModelDDLDonnanParams")
-        .def(py::init<>())
-        .def_readwrite("ddl", &ActivityModelDDLDonnanParams::ddl)
-        .def_readwrite("debye_lengths", &ActivityModelDDLDonnanParams::debye_lengths)
-        .def_readwrite("limit", &ActivityModelDDLDonnanParams::limit)
-        .def_readwrite("viscosity", &ActivityModelDDLDonnanParams::viscosity)
-        ;
+//    py::class_<ActivityModelDDLDonnanParams>(m, "ActivityModelDDLDonnanParams")
+//        .def(py::init<>())
+//        .def_readwrite("ddl", &ActivityModelDDLDonnanParams::ddl)
+//        .def_readwrite("debye_lengths", &ActivityModelDDLDonnanParams::debye_lengths)
+//        .def_readwrite("limit", &ActivityModelDDLDonnanParams::limit)
+//        .def_readwrite("viscosity", &ActivityModelDDLDonnanParams::viscosity)
+//        ;
 }
