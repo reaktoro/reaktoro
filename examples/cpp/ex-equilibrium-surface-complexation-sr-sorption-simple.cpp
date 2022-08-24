@@ -84,12 +84,12 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState solutionstate(system);
-    solutionstate.setTemperature(25.0, "celsius");
-    solutionstate.setPressure(1.0, "bar");
-    solutionstate.setSpeciesMass("H2O"    , 1.00, "kg");
-    solutionstate.setSpeciesAmount("Sr+2"  , 1e-6, "mmol");
-    solutionstate.setSpeciesAmount("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
-    solutionstate.setSpeciesAmount("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
+    solutionstate.temperature(25.0, "celsius");
+    solutionstate.pressure(1.0, "bar");
+    solutionstate.set("H2O"    , 1.00, "kg");
+    solutionstate.set("Sr+2"  , 1e-6, "mmol");
+    solutionstate.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
+    solutionstate.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 
     // Define equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);

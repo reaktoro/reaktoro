@@ -40,7 +40,7 @@ species_str = ' '.join(extractNames(species_list))
 
 # Create complexation surface
 surface_Hfo = ComplexationSurface("Hfo")
-surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g")
+surface_Hfo.setSpecificSurfaceArea(60, "m2/g").set(4.45, "g")
 
 # Defined strong site of the complexation surface
 site_Hfo_s = ComplexationSurfaceSite()
