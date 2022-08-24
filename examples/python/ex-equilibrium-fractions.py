@@ -10,7 +10,6 @@ gaseous = GaseousPhase("H2O(g)")
 system = ChemicalSystem(db, aqueous, gaseous)
 
 opt = EquilibriumOptions()
-opt.warmstart = False # default value is true
 solver = EquilibriumSolver(system)
 solver.setOptions(opt)
 
@@ -30,8 +29,8 @@ def calc_rkt_frac(state, t, p):
 
         props = ChemicalProps(state)
         phases = state.system().phases().size()
-        masses = np.array([props.phaseProps(i).mass()[0] for i in range(phases)])
-        volumes = np.array([props.phaseProps(i).volume()[0] for i in range(phases)])
+        masses = np.array([float(props.phaseProps(i).mass()) for i in range(phases)])
+        volumes = np.array([float(props.phaseProps(i).volume()) for i in range(phases)])
 
         densities = masses / (volumes + 1e-6)
         total_mass = sum(masses)
