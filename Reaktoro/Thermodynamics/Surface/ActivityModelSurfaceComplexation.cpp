@@ -37,11 +37,18 @@ auto activityModelSurfaceComplexationSiteNoDDL(const SpeciesList& species, Activ
     // Create the complexation surface
     ComplexationSurface surface = params.surface;
 
+    // The charges of the surface species
+    ArrayXd surface_z = surface.charges();
+
     // Create the complexation surface site
     ComplexationSurfaceSite site = surface.sites()[params.site_tag];
 
-    // The state of the complexation surface
+    // The indices of site species
+    auto indices = site.speciesIndices();
+
+    // The state of the complexation surface and surface site
     ComplexationSurfaceSiteState site_state;
+    ComplexationSurfaceState surface_state;
 
     // Define the activity model function of the surface complexation phase
     ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
@@ -52,9 +59,38 @@ auto activityModelSurfaceComplexationSiteNoDDL(const SpeciesList& species, Activ
         // Evaluate the state of the surface complexation site
         site_state = site.state(T, P, x);
 
-        // Export the surface complexation and its state via the `extra` data member
-        props.extra["ComplexationSurfaceSiteState" + site.name()] = site_state;
+        // If the AqueousPhase has been already evaluated, use the ionic strength to update the electrostatic potential
+        if (props.extra["ComplexationSurfaceState"].has_value())
+        {
+            // Export aqueous mixture state via `extra` data member
+            surface_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
+        }
+        else
+        {
+            // Initialize surface state with given temperature and pressure
+            surface_state = surface.state(T, P);
+        }
+        // Update surface fractions with calculated site's fractions and surface charge
+        surface_state.updateFractions(x, indices);
+        surface_state.updateCharge(surface_z);
+
+        //std::cout << site.name() << ": " << "surface_state.x = " << surface_state.x.transpose() << std::endl;
+
+        // If the AqueousPhase has been already evaluated, use the ionic strength to update the electrostatic potential
+        if (props.extra["AqueousMixtureState"].has_value())
+        {
+            // Export aqueous mixture state via `extra` data member
+            const auto& aqueous_state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+
+            // Update surface potential using the ionic strength
+            surface_state.updatePotential(aqueous_state.Is);
+        }
+
+        // Export the surface complexation, site and their states via the `extra` data member
+        props.extra["ComplexationSurface"] = surface;
+        props.extra["ComplexationSurfaceState"] = surface_state;
         props.extra["ComplexationSurfaceSite" + site.name()] = site;
+        props.extra["ComplexationSurfaceSiteState" + site.name()] = site_state;
 
         // Calculate ln of activities of surfaces species as the ln of molar fractions
         props.ln_a = x.log();
