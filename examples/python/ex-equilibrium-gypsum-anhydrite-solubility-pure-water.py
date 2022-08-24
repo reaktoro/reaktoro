@@ -27,7 +27,6 @@
 from reaktoro import *
 import numpy as np
 import math
-import multiprocessing
 
 # Initialize a thermodynamic database
 db = PhreeqcDatabase("phreeqc.dat")

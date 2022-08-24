@@ -81,7 +81,7 @@ int main()
     auto d_K = 0.025;
     auto d_Ca = 0.0125;
 
-    // Define equilibrium solver
+    // Create an equilibrium solver
     EquilibriumSolver solver(system);
 
     // Output the header of the table

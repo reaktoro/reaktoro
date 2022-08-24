@@ -27,6 +27,7 @@
 
 from reaktoro import *
 import numpy as np
+import pandas as pd
 
 # Define the Thermofun database
 db = ThermoFunDatabase ("psinagra-12-07")
@@ -78,7 +79,6 @@ percentages = np.zeros(species_list.size())
 amounts = np.zeros(species_list.size())
 
 # Define dataframe to collect amount of the selected species
-import pandas as pd
 columns = ["pH"] + ["amount_" + name for name in species_list_str.split()] + ["perc_" + name for name in species_list_str.split()]
 df = pd.DataFrame(columns=columns)
 

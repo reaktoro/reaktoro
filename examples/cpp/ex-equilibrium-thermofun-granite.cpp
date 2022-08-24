@@ -60,7 +60,7 @@ int main()
     specs.temperature();
     specs.pressure();
 
-    // Define equilibrium solver
+    // Create an equilibrium solver
     EquilibriumSolver solver(specs);
 
     // Define conditions to be satisfied at chemical equilibrium
@@ -71,7 +71,7 @@ int main()
     // Define initial equilibrium state of 100 g of granite and 20 g of water
     ChemicalState state(system);
 
-    // Define initial solution amount 1 NaCl m/Kg 
+    // Define initial solution amount 1 NaCl m/Kg
     state.set("H2O@" , 20, "g");
     state.set("NaCl@", 0.02, "mol");
 

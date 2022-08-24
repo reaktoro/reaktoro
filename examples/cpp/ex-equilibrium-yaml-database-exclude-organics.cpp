@@ -61,7 +61,7 @@ int main()
     state.setSpeciesAmount("Na+"   , 4.00, "mol");
     state.setSpeciesAmount("Cl-"   , 4.00, "mol");
 
-    // Define equilibrium solver and equilibrate given initial state
+    // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
     solver.solve(state);
 

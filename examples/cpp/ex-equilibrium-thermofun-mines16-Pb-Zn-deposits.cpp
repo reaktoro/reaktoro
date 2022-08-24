@@ -55,7 +55,7 @@ int main()
     specs.charge();
     specs.openTo("Cl-");
 
-    // Define equilibrium solver and its result
+    // Create an equilibrium solver and its result
     EquilibriumSolver solver(specs);
     EquilibriumResult res;
 

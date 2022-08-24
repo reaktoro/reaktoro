@@ -57,7 +57,7 @@ state.pressure(P, "atm")
 # ---------------------------------------------------------------
 
 mix_scale = 1e-9
-state.set("H2O"   , 1.00 * mix_scale, "kg")
+state.set("H2O" , 1.00 * mix_scale, "kg")
 state.set("Na+" , 1.20 * mix_scale, "mmol")
 state.set("Cl-" , 1.20 * mix_scale, "mmol")
 # Define exchange species

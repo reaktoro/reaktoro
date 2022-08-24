@@ -51,7 +51,7 @@ int main()
     specs.pressure();
     specs.pH();
 
-    // Define equilibrium solver and its result
+    // Create an equilibrium solver and its result
     EquilibriumSolver solver(specs);
     EquilibriumResult res;
 

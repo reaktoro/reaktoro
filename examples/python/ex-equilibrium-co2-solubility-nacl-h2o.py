@@ -34,8 +34,8 @@ def solubility_co2(system, solver, T, P, mNaCl):
 
     # Define initial chemical state corresponding to the NaCl-brine of the given concentration
     state = ChemicalState(system)
-    state.set(T, "celsius")
-    state.set(P, "bar")
+    state.temperature(T, "celsius")
+    state.pressure(P, "bar")
     state.set("H2O", 1.0, "kg")
     state.set("CO2(g)", n0CO2g, "mol")
     state.set("Na+", mNaCl, "mol")

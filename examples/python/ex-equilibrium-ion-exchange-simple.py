@@ -46,7 +46,7 @@ P = 1.0  # pressure in bar
 state = ChemicalState(system)
 state.temperature(T, "celsius")
 state.pressure(P, "bar")
-state.set("H2O"   , 1.00, "kg")
+state.set("H2O" , 1.00, "kg")
 state.set("Na+" , 1.00, "mmol")
 state.set("K+"  , 1.00, "mmol")
 state.set("Mg+2", 1.00, "mmol")
