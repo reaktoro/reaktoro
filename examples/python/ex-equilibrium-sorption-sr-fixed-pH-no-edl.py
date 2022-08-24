@@ -109,17 +109,6 @@ aqprops = AqueousProps(state)
 print("I  = %e mol/kgw" % float(aqprops.ionicStrength()))
 print("pH = %f" % float(aqprops.pH()))
 
-# Evaluate surface sites' complexation properties
-site_s_props = ComplexationSurfaceSiteProps(surface_Hfo.sites()["_s"], state)
-site_w_props = ComplexationSurfaceSiteProps(surface_Hfo.sites()["_w"], state)
-
-Z_s = site_s_props.charge();
-Z_w = site_w_props.charge();
-Z = float(Z_s + Z_w)
-sigma = float(site_w_props.sigma(Z_w) + site_s_props.sigma(Z_s))
-
-print(f"Hfo: \n"
-      f"::Z  = {float(aqprops.ionicStrength()):6.4e} mol/kgw\n"
-      f"::pH = {float(aqprops.pH()):6.4f}")
-print(f"Hfo_s:\n{site_s_props}")
-print(f"Hfo_w:\n{site_w_props}")
+# Evaluate surface and sites complexation properties
+sprops = SurfaceProps(surface_Hfo, state)
+print(sprops)

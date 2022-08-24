@@ -115,24 +115,9 @@ int main()
     std::cout << "Cd dissolved     = " << props.elementAmountInPhase("Cd", "AqueousPhase") << std::endl;
     std::cout << "Cd sorb.const., Kd = " << (state.speciesAmount("Hfo_sOCd+") + state.speciesAmount("Hfo_wOCd+")) / props.elementAmount("Cd") << std::endl;
 
-    // Evaluate surface complexation sites' properties and print them
-    ComplexationSurfaceSiteProps site_w_props(surface_Hfo.sites()["_w"], state);
-    ComplexationSurfaceSiteProps site_s_props(surface_Hfo.sites()["_s"], state);
-
-    auto Z_s = site_s_props.charge();
-    auto Z_w = site_w_props.charge();
-    auto Z = Z_s + Z_w;
-    auto sigma = site_w_props.sigma(Z_w) + site_s_props.sigma(Z_s);
-
-    std::cout << "+---------------------------------+-------------+------+" << std::endl;
-    std::cout << "Hfo" << std::endl;
-    std::cout << "+---------------------------------+-------------+------+" << std::endl;
-    std::cout << "Z     = " << Z << std::endl;
-    std::cout << "sigma = " << site_w_props.sigma(Z_w) + site_s_props.sigma(Z_s) << std::endl;
-    std::cout << "psi   = " << surface_Hfo.potential(aprops.temperature(), aprops.ionicStrength(), sigma) << std::endl;
-    std::cout << "+---------------------------------+-------------+------+" << std::endl;
-    std::cout << "Hfo_s\n" << site_s_props << std::endl;
-    std::cout << "Hfo_w\n" << site_w_props << std::endl;
+    // Evaluate properties of the surface and its sites
+    SurfaceProps sprops(surface_Hfo, state);
+    std::cout << sprops << std::endl;
 
     return 0;
 }
