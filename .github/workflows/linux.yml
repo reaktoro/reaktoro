@@ -73,5 +73,6 @@ jobs:
           cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }}
           ninja
           ninja tests
+          ninja examples
           ninja install
           ccache -s

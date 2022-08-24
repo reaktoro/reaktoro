@@ -75,4 +75,5 @@ jobs:
           ninja || goto :eof
           ninja install || goto :eof
           ninja tests || goto :eof
+          ninja examples || goto :eof
           clcache -s || goto :eof
