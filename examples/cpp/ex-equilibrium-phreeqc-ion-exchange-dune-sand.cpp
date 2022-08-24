@@ -61,7 +61,7 @@ int main()
     // Set the number of exchange assuming that it is completely occupied by Na
     solutionstate.setSpeciesAmount("NaX"  , 0.06, "umol");
 
-    // Define equilibrium solver and equilibrate given initial state
+    // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
     solver.solve(solutionstate);
 

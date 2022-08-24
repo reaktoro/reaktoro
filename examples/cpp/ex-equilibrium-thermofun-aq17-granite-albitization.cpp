@@ -34,10 +34,11 @@ int main()
     ThermoFunDatabase db("aq17");
 
     // Define list of aqueous species
-    StringList selected_species = "H2O@ H+ OH- O2@ H2@ HCl@ Cl- SiO2@ HSiO3- "
-                                  "NaOH@ NaHSiO3@ NaCl@ NaAl(OH)4@ Na+ "
-                                  "KOH@ KCl@ KAlO2@ K+ "
-                                  "AlOH+2 Al+3 Al(OH)3@ Al(OH)4- Al(OH)2+";
+    StringList selected_species =
+        "H2O@ H+ OH- O2@ H2@ HCl@ Cl- SiO2@ HSiO3- "
+        "NaOH@ NaHSiO3@ NaCl@ NaAl(OH)4@ Na+ "
+        "KOH@ KCl@ KAlO2@ K+ "
+        "AlOH+2 Al+3 Al(OH)3@ Al(OH)4- Al(OH)2+";
 
     // Define aqueous phase
     AqueousPhase solution(selected_species);
@@ -58,7 +59,7 @@ int main()
     // Define chemical system by providing database, aqueous phase, and minerals
     ChemicalSystem system(db, solution, minerals);
 
-    // Define equilibrium solver
+    // Create an equilibrium solver
     EquilibriumOptions opts;
 
     // Create equilibrium solver
@@ -85,14 +86,14 @@ int main()
 
     // Define granite-fluid element amounts (mixed granit/fluid 0.2 mass ratio)
     // GEMS input:
-    //Al e 0.84149656
-    //Cl e 0.98929196
-    //H h 104.59826
-    //K e 0.2356788
-    //Na e 1.3932998
-    //O o 58.324214
-    //Si e 2.2215454
-    //Z 0.0
+    // Al e 0.84149656
+    // Cl e 0.98929196
+    // H h 104.59826
+    // K e 0.2356788
+    // Na e 1.3932998
+    // O o 58.324214
+    // Si e 2.2215454
+    // Z 0.0
     ArrayXr bgranitefluid(E + 1);
     // H, O, Na, Al, Si, Cl, K
     bgranitefluid << 104.59826, 58.324214, 1.3932998, 0.84149656, 2.2215454, 0.98929196, 0.2356788, 0.0;

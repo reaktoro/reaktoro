@@ -49,7 +49,7 @@ int main()
     state.setPressure(1.0, "bar");
     state.setSpeciesMass("H2O", 1.0, "kg");
 
-    // Define equilibrium solver and equilibrate given initial state
+    // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
     solver.solve(state);
 

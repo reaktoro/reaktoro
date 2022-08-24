@@ -75,7 +75,7 @@ int main()
     // Specify the initial amount of calcite
     state.setSpeciesAmount("Calcite", 10.0, "mol");
 
-    // Define equilibrium solver and equilibrate given initial state
+    // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
     EquilibriumResult result = solver.solve(state);
 

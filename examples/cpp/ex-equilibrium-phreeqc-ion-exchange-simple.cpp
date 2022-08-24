@@ -65,7 +65,7 @@ int main()
     EquilibriumOptions opts;
     opts.optima.output.active = true;
 
-    // Define equilibrium solver and equilibrate given initial state
+    // Create an equilibrium solver and equilibrate given initial state
     EquilibriumSolver solver(system);
 
     auto res = solver.solve(solutionstate);

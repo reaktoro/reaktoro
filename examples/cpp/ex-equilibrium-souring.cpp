@@ -30,18 +30,20 @@ int main()
     // Initialize a thermodynamic database
     SupcrtDatabase db("supcrtbl");
 
-    // Create an aqueous phase automatically selecting all species with given elements, excluding species with tag `organic`
+    // Create an aqueous phase with specified species
     AqueousPhase aqueousphase("Ca(HCO3)+ CO3-2 CO2(aq) CaCO3(aq) Ca+2 CaSO4(aq) CaOH+ Cl- "
-                              "FeCl+2 FeCl2(aq) FeCl+ Fe+2 FeOH+ FeOH+2 Fe+3 "
-                              "H2(aq) HSO4- H2S(aq) HS- H2O(aq) H+ HCO3- K+ KSO4- "
-                              "Mg+2 MgSO4(aq) MgCO3(aq) MgOH+ Mg(HCO3)+ Na+ NaSO4- "
-                              "O2(aq) OH- S5-2 S4-2 S3-2 S2-2 SO4-2");
+        "FeCl+2 FeCl2(aq) FeCl+ Fe+2 FeOH+ FeOH+2 Fe+3 "
+        "H2(aq) HSO4- H2S(aq) HS- H2O(aq) H+ HCO3- K+ KSO4- "
+        "Mg+2 MgSO4(aq) MgCO3(aq) MgOH+ Mg(HCO3)+ Na+ NaSO4- "
+        "O2(aq) OH- S5-2 S4-2 S3-2 S2-2 SO4-2");
+
+    // Configure the activity model of the aqueous phase
     aqueousphase.setActivityModel(chain(
         ActivityModelHKF(),
         ActivityModelDrummond("CO2")
     ));
 
-    // Create a mineral phases
+    // Create mineral phases
     MineralPhases mineralphases("Siderite Pyrite Hematite");
 
     // Collect all above-defined phases
@@ -59,7 +61,7 @@ int main()
     specs.pH();
     specs.pE();
 
-    // Define equilibrium solver
+    // Create an equilibrium solver
     EquilibriumSolver solver(specs);
 
     // Define conditions to be satisfied at chemical equilibrium
@@ -93,8 +95,8 @@ int main()
     // Output the chemical state to a text file
     state.output("state.txt");
 
-    // Output characteristics of equilibrium calculations
-    std::cout << "Equilibrium calculation characteristics: " << std::endl;
+    // Output the result of the equilibrium calculation
+    std::cout << "Equilibrium calculation result: " << std::endl;
     std::cout << " * iterations = " << result.optima.iterations << std::endl;
     std::cout << " * succeeded  = " << result.optima.succeeded << std::endl;
 

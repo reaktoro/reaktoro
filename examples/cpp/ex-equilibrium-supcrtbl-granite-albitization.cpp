@@ -27,18 +27,15 @@ using namespace Reaktoro;
 
 int main()
 {
-    // Define Reaktoro database
+    // Initialize a thermodynamic database
     SupcrtDatabase db("supcrtbl");
 
-//    for(auto s : db.species()) {
-//        std::cout << s.name() << std::endl;
-//    }
-//    getchar();
     // Define list of aqueous species
-    StringList selected_species = "H2O(aq) H+ OH- O2(aq) H2(aq) HCl(aq) Cl- SiO2(aq) HSiO3- "
-                                  "NaOH(aq) NaHSiO3(aq) NaCl(aq) NaAl(OH)4(aq) Na+ "
-                                  "KOH(aq) KCl(aq) KAlO2(aq) K+ "
-                                  "AlOH+2 Al+3 Al(OH)3(aq) Al(OH)4- Al(OH)2+";
+    StringList selected_species =
+        "H2O(aq) H+ OH- O2(aq) H2(aq) HCl(aq) Cl- SiO2(aq) HSiO3- "
+        "NaOH(aq) NaHSiO3(aq) NaCl(aq) NaAl(OH)4(aq) Na+ "
+        "KOH(aq) KCl(aq) KAlO2(aq) K+ "
+        "AlOH+2 Al+3 Al(OH)3(aq) Al(OH)4- Al(OH)2+";
 
     // Define aqueous phase
     AqueousPhase solution(selected_species);
@@ -60,20 +57,12 @@ int main()
     // Define chemical system by providing database, aqueous phase, and minerals
     ChemicalSystem system(db, solution, minerals);
 
-    // Specify conditions to be satisfied at chemical equilibrium
-//    EquilibriumSpecs specs(system);
-//    specs.temperature();
-//    specs.pressure();
-
-    // Define equilibrium solver
+    // Create an equilibrium solver
     EquilibriumOptions opts;
 
     EquilibriumSolver solver(system);
 
-//    // Define temperature and pressure
-//    double T = 400.0; // in Celsius
-//    double P = 1e3; // in bar
-
+    // Define temperature and pressure conditions
     double T = 25.0; // in Celsius
     double P = 1.0; // in bar
 
@@ -84,11 +73,6 @@ int main()
 
     // Initialize the amount of elements in the system
     Index E = system.elements().size();
-
-//    // Define conditions to be satisfied at chemical equilibrium
-//    EquilibriumConditions conditions(specs);
-//    conditions.temperature(T, "celsius");
-//    conditions.pressure(P, "bar");
 
     // Define granite element amounts
     // GEMS input:

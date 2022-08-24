@@ -73,13 +73,13 @@ int main()
     specs.temperature();
     specs.pressure();
 
-    // Define equilibrium solver
+    // Create an equilibrium solver
     EquilibriumOptions opts;
     opts.optima.output.active = false;
     //opts.optima.maxiters = 100;
     opts.epsilon = 1e-13;
 
-    // Define equilibrium solver and its result
+    // Create an equilibrium solver and its result
     EquilibriumSolver solver(specs);
     EquilibriumResult res;
 
@@ -113,11 +113,11 @@ int main()
     // Water
     Material water(system);
     water.add("H2O", 1000.0, "g");
-    
-    // We make a cement mix of 0.5 water/binder 
+
+    // We make a cement mix of 0.5 water/binder
     Material cement_mix(system);
     cement_mix = cement_clinker(100.0, "g") + water(50.0, "g");
-    
+
     // And we equilibrate our cement mix
     state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts);
     res = cement_mix.result();
