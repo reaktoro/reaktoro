@@ -118,7 +118,6 @@ void exportThermodynamics(py::module& m)
     exportActivityModelSurfaceComplexation(m);
     exportComplexationSurface(m);
     exportComplexationSurfaceSite(m);
-    exportComplexationSurfaceProps(m);
     exportComplexationSurfaceSiteProps(m);
     exportSurfaceProps(m);
 }
