@@ -84,7 +84,7 @@ int main()
     EquilibriumResult res;
 
     // Define temperature and pressure
-    double T = 20.0; // in Celsius
+    double T = 25.0; // in Celsius
     double P = 1.0; // in bar
 
     // Define conditions to be satisfied at chemical equilibrium
@@ -119,7 +119,7 @@ int main()
     cement_mix = cement_clinker(100.0, "g") + water(50.0, "g");
 
     // And we equilibrate our cement mix
-    state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts);
+    state = cement_mix.equilibrate(25.0, "celsius", 1.0, "bar", opts);
     res = cement_mix.result();
     std::cout << "res (cemdata18, run with material) = " << res.optima.succeeded << std::endl;
     state.output("cpp-state-cemdata18_1.txt");

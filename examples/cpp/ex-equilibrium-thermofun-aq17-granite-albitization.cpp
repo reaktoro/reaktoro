@@ -73,8 +73,8 @@ int main()
 
     // Define initial equilibrium state for the equilibrium calculations
     ChemicalState initialstate(system);
-    initialstate.temperature(400.0, "celsius");
-    initialstate.pressure(1e3, "bar");
+    initialstate.temperature(60.0, "celsius");
+    initialstate.pressure(100, "bar");
     initialstate.set("H2O@", 1.0, "kg");
 
     // -------------------------------------------------------------------------------------------- //
