@@ -20,9 +20,6 @@
 // -----------------------------------------------------------------------------
 // This example was originally authored by:
 //   • Svetlana Kyas (27 September August 2021)
-//
-// and since revised by:
-//   •
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>

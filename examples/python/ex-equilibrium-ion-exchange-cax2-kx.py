@@ -20,9 +20,6 @@
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
 #   • Svetlana Kyas (23 November, 2021)
-#
-# and since revised by:
-#   •
 # -----------------------------------------------------------------------------
 import numpy as np
 from reaktoro import *

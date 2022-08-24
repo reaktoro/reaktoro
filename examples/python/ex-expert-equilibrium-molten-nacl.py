@@ -21,9 +21,6 @@
 # This example was originally authored by:
 #   • Allan Leal (14 September 2021)
 #   • William Smith (14 September 2021)
-#
-# and since revised by:
-#   •
 # -----------------------------------------------------------------------------
 
 from reaktoro import *

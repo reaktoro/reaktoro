@@ -20,9 +20,6 @@
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
 #   • Svetlana Kyas (13 July 2022)
-#
-# and since revised by:
-#   •
 # -----------------------------------------------------------------------------
 
 # https://water.usgs.gov/water-resources/software/PHREEQC/documentation/phreeqc3-html/phreeqc3-64.htm

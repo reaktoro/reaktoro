@@ -20,9 +20,6 @@
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
 #   • Allan Leal (4 August 2021)
-#
-# and since revised by:
-#   •
 # -----------------------------------------------------------------------------
 
 from reaktoro import *
