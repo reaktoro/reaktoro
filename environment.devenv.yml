@@ -20,7 +20,7 @@ dependencies:
   - graphviz  # [linux]
   - gxx_linux-64  # [linux]
   - make  # [unix]
-  - matplotlib
+  - matplotlib-base
   - ninja
   - nlohmann_json
   - numpy
