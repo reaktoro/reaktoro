@@ -76,7 +76,7 @@ specs.pressure()
 
 # Define conditions to be satisfied at chemical equilibrium
 conditions = EquilibriumConditions(specs)
-conditions.temperature(20.0, "celsius")
+conditions.temperature(25.0, "celsius")
 conditions.pressure(1.0, "bar")
 
 props = ChemicalProps(system)
@@ -149,7 +149,7 @@ for i in range(1, steps_num):
     cement_mix = cement_clinker(100.0-i, "g") + calcite(i, "g") + water(50.0, "g")
 
     # Equilibrate cement mix
-    state = cement_mix.equilibrate(20.0, "celsius", 1.0, "bar", opts)
+    state = cement_mix.equilibrate(25.0, "celsius", 1.0, "bar", opts)
     res = cement_mix.result()
 
     if not res.optima.succeeded:
