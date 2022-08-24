@@ -83,7 +83,7 @@ int main()
     //    Na    e   	2.0200391
     //    O     o   	30.125894
     //    Si    e   	11.107727
-    ArrayXr bgranite(E + 1);
+    ArrayXd bgranite(E + 1);
     // H, O, Na, Al, Si, Cl, K
     bgranite << 1.00e-09, 30.125894, 2.0200391, 4.2074828, 11.107727, 1.00e-09, 1.178394, 0.0;
 
@@ -110,7 +110,7 @@ int main()
     //    Na    e   	0.98929196
     //    O     o   	52.299035
     //    Si    e   	1.00E-09
-    ArrayXr bfluid(E + 1);
+    ArrayXd bfluid(E + 1);
     // H, O, Na, Al, Si, Cl, K
     bfluid << 104.59826, 52.299035, 0.98929196, 1.00e-09, 1.00e-09, 0.98929196, 1.00e-09, 0.0;
 
