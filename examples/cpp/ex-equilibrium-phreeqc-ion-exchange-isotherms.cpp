@@ -67,19 +67,8 @@ int main()
     // REACTION; K -1 Ca 0.5; 0.500 in 20 steps
     // ------------------------------------------------------
 
-    // Define initial chemical state
-    ChemicalState solutionstate(system);
-    solutionstate.setTemperature(T, "celsius");
-    solutionstate.setPressure(P, "atm");
-    solutionstate.setSpeciesMass("H2O"    , 1.0, "kg");
-    solutionstate.setSpeciesAmount("K+"  , 0.1, "mol");
-    solutionstate.setSpeciesAmount("Ca+2" , 0.0, "mol");
-    solutionstate.setSpeciesAmount("KX"  , 0.4, "mol");
-
     // Initialize auxiliary variables and K and Ca increments for the loop
     auto num_steps = 21;
-    auto d_K = 0.025;
-    auto d_Ca = 0.0125;
 
     // Create an equilibrium solver
     EquilibriumSolver solver(system);
@@ -87,9 +76,23 @@ int main()
     // Output the header of the table
     std::cout << "   mols(K)   mols(Ca)          I   mols(K+) mols(Ca+2)   beta(KX) beta(CaX2)   mols(KX) mols(CaX2)" << std::endl;
 
-    for(int i = 0; i < num_steps; i++) {
+    for(auto i = 0; i < num_steps; i++)
+    {
+        // The factor used below to regulate amounts of K+, KX, and Ca+2
+        const auto factor = double(i)/(num_steps - 1);
 
-        solver.solve(solutionstate);
+        // Define initial chemical state
+        ChemicalState solutionstate(system);
+        solutionstate.temperature(T, "celsius");
+        solutionstate.pressure(P, "atm");
+        solutionstate.set("H2O"  , 1.00, "kg");
+        solutionstate.set("K+"   , 0.10 * (1 - factor), "mol");
+        solutionstate.set("KX"   , 0.40 * (1 - factor), "mol");
+        solutionstate.set("Ca+2" , 0.25 * factor, "mol");
+
+        auto res = solver.solve(solutionstate);
+
+        errorif(!res.optima.succeeded, "Calculation did not suceeded!");
 
         aprops.update(solutionstate);
         chemprops.update(solutionstate);
@@ -106,9 +109,6 @@ int main()
             << exprops.speciesEquivalentFraction("CaX2") << " "
             << exprops.speciesAmount("KX") << " "
             << exprops.speciesAmount("CaX2") << std::endl;
-
-        solutionstate.add("K+",   -d_K, "mol");
-        solutionstate.add("Ca+2", d_Ca, "mol");
     }
 
     return 0;
