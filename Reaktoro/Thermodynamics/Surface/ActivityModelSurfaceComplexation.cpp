@@ -23,7 +23,6 @@
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
-#include <Reaktoro/Common/Constants.hpp>
 
 namespace Reaktoro {
 
@@ -131,31 +130,25 @@ auto activityModelSurfaceComplexationSiteWithDDL(const SpeciesList& species, Act
         {
             // Export aqueous mixture state via `extra` data member
             surface_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
-
-            // Update surface fractions with calculated site's fractions and surface charge
-            surface_state.updateFractions(x, indices);
-            surface_state.updateCharge(surface_z);
-
-            // If the AqueousPhase has been already evaluated, use the ionic strength to update the electrostatic potential
-            if (props.extra["AqueousMixtureState"].has_value())
-            {
-                // Export aqueous mixture state via `extra` data member
-                const auto& aqueous_state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
-
-                // Update surface potential using the ionic strength
-                surface_state.updatePotential(aqueous_state.Is);
-            }
         }
         else
         {
             // Initialize surface state with given temperature and pressure
             surface_state = surface.state(T, P);
-
-            // Update surface fractions with calculated site's fractions and surface charge
-            surface_state.updateFractions(x, indices);
-            surface_state.updateCharge(surface_z);
         }
-        //getchar();
+        // Update surface fractions with calculated site's fractions and surface charge
+        surface_state.updateFractions(x, indices);
+        surface_state.updateCharge(surface_z);
+
+        // If the AqueousPhase has been already evaluated, use the ionic strength to update the electrostatic potential
+        if (props.extra["AqueousMixtureState"].has_value())
+        {
+            // Export aqueous mixture state via `extra` data member
+            const auto& aqueous_state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+
+            // Update surface potential using the ionic strength
+            surface_state.updatePotential(aqueous_state.Is);
+        }
 
         // Export the surface complexation, site and their states via the `extra` data member
         props.extra["ComplexationSurface"] = surface;
@@ -208,7 +201,170 @@ auto activityModelSurfaceComplexationWithDDL(const SpeciesList& species, Activit
 }
 
 /// Return the SurfaceComplexationActivityModel object assuming the presence the Diffuse Double Layer (DDL) model.
-auto activityModelSurfaceComplexationWithElectrostatics(const SpeciesList& species, ActivityModelSurfaceComplexationParams params) -> ActivityModel
+auto activityModelSurfaceComplexationWithDDLOld(const SpeciesList& species, ActivityModelSurfaceComplexationParams params) -> ActivityModel
+{
+    // Create the complexation surface
+    ComplexationSurface surface = params.surface;
+
+    // The charges of the surface complexation species
+    ArrayXd z = surface.charges();
+
+    // The state of the complexation surface
+    ComplexationSurfaceState surface_state;
+
+    // Define the activity model function of the surface complexation phase
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    {
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x] = args;
+
+        // Evaluate the state of the surface complexation
+        surface_state = surface.state(T, P, x);
+
+        // Auxiliary references
+        auto& ln_g = props.ln_g;
+        auto& ln_a = props.ln_a;
+
+        // Calculate ln of activities of surfaces species as the ln of molar fractions
+        ln_a = x.log();
+
+        // Calculate Davies activity coefficients only if the AqueousPhase has been already evaluated,
+        // update the electrostatic potential, and add the electrostatic correction
+        if (props.extra["AqueousMixtureState"].has_value())
+        {
+            // Export aqueous mixture state via `extra` data member
+            const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+
+            // Auxiliary constant references properties and variables
+            const auto I = aqstate.Is;          // the stoichiometric ionic strength
+            const auto sqrtI = sqrt(I);
+            const auto ln10 = log(10);
+            const auto Agamma = 0.5095;         // the Debye-Huckel parameter
+
+            // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
+            ln_g = ln10*(-Agamma*z*z*sqrtI/(1 + sqrtI) - 0.3*I);
+
+            // Update surface potential
+            surface_state.updatePotential(I);
+
+            // Calculate ln of gamma according to the coulombic correction, Appelo etal (2005), (7.44), p. 334
+            ln_g += -z*F*surface_state.psi/(R*T);
+
+            if(params.output)
+            {
+                // Output the surface and DDL charges
+                const auto sigma_DL = -0.1174*sqrt(I)*std::sinh((F*surface_state.psi/(2*R*T))[0]);
+                std::cout << "sigma = " << surface_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
+            }
+        }
+
+        // Export the surface complexation and its state via the `extra` data member
+        props.extra["ComplexationSurfaceState"] = surface_state;
+        props.extra["ComplexationSurface"] = surface;
+
+        // Add the correction introduced by the activity coefficients
+        ln_a += ln_g;
+    };
+
+    return fn;
+}
+
+/// Return the SurfaceComplexationActivityModel object assuming the presence the Diffuse Double Layer (DDL) model.
+auto activityModelSurfaceComplexationSiteWithDDLOld(const SpeciesList& species, ActivityModelSurfaceComplexationSiteParams params) -> ActivityModel
+{
+    // Create the complexation surface
+    ComplexationSurface surface = params.surface;
+
+    // The charges of the surface species
+    ArrayXd surface_z = surface.charges();
+
+    // Initialize the surface site
+    ComplexationSurfaceSite site = surface.sites()[params.site_tag];
+
+    // The charges of the surface species
+    ArrayXd z = site.charges();
+
+    // The indices of site species
+    auto indices = site.speciesIndices();
+
+    // The state of the surface and site
+    ComplexationSurfaceSiteState site_state;
+    ComplexationSurfaceState surface_state;
+
+    // Define the activity model function of the surface complexation phase
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    {
+        // The arguments for the activity model evaluation
+        const auto& [T, P, x] = args;
+
+        // Evaluate the state of the surface complexation
+        site_state = site.state(T, P, x);
+
+        // Auxiliary references
+        auto& ln_g = props.ln_g;
+        auto& ln_a = props.ln_a;
+
+        // Calculate ln of activities of surfaces species as the ln of molar fractions
+        ln_a = x.log();
+
+        // If the AqueousPhase has been already evaluated, use the ionic strength to update the electrostatic potential
+        if (props.extra["ComplexationSurfaceState"].has_value()) {
+
+            // Export aqueous mixture state via `extra` data member
+            surface_state = std::any_cast<ComplexationSurfaceState>(props.extra["ComplexationSurfaceState"]);
+        }
+        else
+        {
+            // Initialize surface state with given temperature and pressure
+            surface_state = surface.state(T, P);
+        }
+
+        // Update surface fractions with calculated site's fractions and surface charge
+        surface_state.updateFractions(x, indices);
+        surface_state.updateCharge(surface_z);
+
+        // Calculate Davies activity coefficients only if the AqueousPhase has been already evaluated,
+        // update the electrostatic potential, and add the electrostatic correction
+        if (props.extra["AqueousMixtureState"].has_value()) {
+
+            // Export aqueous mixture state via `extra` data member
+            const auto &aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+
+            // Auxiliary constant references properties and variables
+            const auto I = aqstate.Is;          // the stoichiometric ionic strength
+            const auto sqrtI = sqrt(I);
+            const auto ln10 = log(10);
+            const auto Agamma = 0.5095;         // the Debye-Huckel parameter
+
+            // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
+            ln_g = ln10*(-Agamma*z*z*sqrtI/(1 + sqrtI) - 0.3*I);
+
+            // Update surface potential
+            surface_state.updatePotential(I);
+
+            // Calculate ln of gamma according to the coulombic correction, Appelo etal (2005), (7.44), p. 334
+            ln_g += -z*F*surface_state.psi/(R*T);
+
+            if (params.output) {
+                // Output the surface and DDL charges
+                const auto sigma_DL = -0.1174 * sqrt(I) * std::sinh((F * surface_state.psi / (2 * R * T))[0]);
+                std::cout << "sigma = " << surface_state.sigma << ", sigma_DL = " << sigma_DL << std::endl;
+            }
+        }
+
+        // Export the surface complexation and its state via the `extra` data member
+        props.extra["ComplexationSurfaceState"] = surface_state;
+        props.extra["ComplexationSurface"] = surface;
+
+        // Add the correction introduced by the activity coefficients
+        ln_a += ln_g;
+    };
+
+    return fn;
+}
+
+/// Return the SurfaceComplexationActivityModel object assuming the presence the Diffuse Double Layer (DDL) model.
+auto activityModelSurfaceComplexationWithEDL(const SpeciesList& species, ActivityModelSurfaceComplexationParams params) -> ActivityModel
 {
     // Create the complexation surface
     ComplexationSurface surface = params.surface;
@@ -237,11 +393,21 @@ auto activityModelSurfaceComplexationWithElectrostatics(const SpeciesList& speci
             // Export aqueous mixture state via `extra` data member
             const auto& aqueous_state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
 
+            // Auxiliary constant references properties and variables
+            const auto I = aqueous_state.Is;          // the stoichiometric ionic strength
+            const auto sqrtI = sqrt(I);
+            const auto ln10 = log(10);
+            const auto Agamma = 0.5095;         // the Debye-Huckel parameter
+
+            // Calculate the ln activity coefficient of the surface complexation species using the Davies activity model
+            props.ln_g = ln10*(-Agamma*z*z*sqrtI/(1 + sqrtI) - 0.3*I);
+
             // Update surface potential using the ionic strength
             surface_state.updatePotential(aqueous_state.Is);
 
             // Update ln of activity and activity coefficients based on the Dzombak & Morel (1990), (2.13), (2.40)
-            props.ln_g = z*surface_state.psi*F/(R*T);
+            props.ln_g += -z*surface_state.psi*F/(R*T);
+
             //props.ln_g = 2*z*asinh(surface_state.sigma/(0.1174*sqrt(aqueous_state.Is)));
 
 //            // Update ln of activity coefficients according to the Table 2.12 in Dzombak & Morel (1990)
@@ -263,7 +429,7 @@ auto activityModelSurfaceComplexationWithElectrostatics(const SpeciesList& speci
 
 /// Return the SurfaceComplexationActivityModel object assuming the presence the Diffuse Double Layer (DDL) model and
 /// considering every site as a separate phase.
-auto activityModelSurfaceComplexationSiteWithElectrostatics(const SpeciesList& species, ActivityModelSurfaceComplexationSiteParams params) -> ActivityModel
+auto activityModelSurfaceComplexationSiteWithEDL(const SpeciesList& species, ActivityModelSurfaceComplexationSiteParams params) -> ActivityModel
 {
     // Initialize the surface
     ComplexationSurface surface = params.surface;
@@ -465,19 +631,36 @@ auto ActivityModelSurfaceComplexationWithDDL(ActivityModelSurfaceComplexationPar
     };
 }
 
-auto ActivityModelSurfaceComplexationWithElectrostatics(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator
+/// Return the SurfaceComplexationActivityModel object assuming electrostatic effects.
+auto ActivityModelSurfaceComplexationWithDDLOld(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator
 {
     return [=](const SpeciesList& surface_species)
     {
-        return detail::activityModelSurfaceComplexationWithElectrostatics(surface_species, params);
+        return detail::activityModelSurfaceComplexationWithDDLOld(surface_species, params);
     };
 }
 
-auto ActivityModelSurfaceComplexationSiteWithElectrostatics(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator
+auto ActivityModelSurfaceComplexationSiteWithDDLOld(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator
 {
     return [=](const SpeciesList& surface_species)
     {
-        return detail::activityModelSurfaceComplexationSiteWithElectrostatics(surface_species, params);
+        return detail::activityModelSurfaceComplexationSiteWithDDLOld(surface_species, params);
+    };
+}
+
+auto ActivityModelSurfaceComplexationWithEDL(ActivityModelSurfaceComplexationParams params) -> ActivityModelGenerator
+{
+    return [=](const SpeciesList& surface_species)
+    {
+        return detail::activityModelSurfaceComplexationWithEDL(surface_species, params);
+    };
+}
+
+auto ActivityModelSurfaceComplexationSiteWithEDL(ActivityModelSurfaceComplexationSiteParams params) -> ActivityModelGenerator
+{
+    return [=](const SpeciesList& surface_species)
+    {
+        return detail::activityModelSurfaceComplexationSiteWithEDL(surface_species, params);
     };
 }
 

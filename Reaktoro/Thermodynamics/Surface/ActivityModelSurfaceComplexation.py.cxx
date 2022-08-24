@@ -29,8 +29,10 @@ void exportActivityModelSurfaceComplexation(py::module& m)
     m.def("ActivityModelSurfaceComplexationSiteNoDDL", ActivityModelSurfaceComplexationSiteNoDDL);
     m.def("ActivityModelSurfaceComplexationWithDDL", ActivityModelSurfaceComplexationWithDDL);
     m.def("ActivityModelSurfaceComplexationSiteWithDDL", ActivityModelSurfaceComplexationSiteWithDDL);
-    m.def("ActivityModelSurfaceComplexationWithElectrostatics", ActivityModelSurfaceComplexationWithElectrostatics);
-    m.def("ActivityModelSurfaceComplexationSiteWithElectrostatics", ActivityModelSurfaceComplexationSiteWithElectrostatics);
+    m.def("ActivityModelSurfaceComplexationWithDDLOld", ActivityModelSurfaceComplexationWithDDLOld);
+    m.def("ActivityModelSurfaceComplexationSiteWithDDLOld", ActivityModelSurfaceComplexationSiteWithDDLOld);
+    m.def("ActivityModelSurfaceComplexationWithEDL", ActivityModelSurfaceComplexationWithEDL);
+    m.def("ActivityModelSurfaceComplexationSiteWithEDL", ActivityModelSurfaceComplexationSiteWithEDL);
     m.def("ActivityModelDonnanDDL", ActivityModelDonnanDDL());
     m.def("ActivityModelDonnanDDL", py::overload_cast<ActivityModelDDLParams>(ActivityModelDonnanDDL));
     m.def("ActivityModelElectrostatics", py::overload_cast<ActivityModelDDLParams>(ActivityModelElectrostatics));
