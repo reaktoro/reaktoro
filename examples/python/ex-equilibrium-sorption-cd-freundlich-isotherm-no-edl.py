@@ -35,39 +35,45 @@ solution = AqueousPhase(speciate("H O Cl Ca Cd"))
 solution.setActivityModel(ActivityModelHKF())
 
 # Define ion exchange species list
-list_str = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOCd+ Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOCd+"
+list_str = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOCd+ " \
+           "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOCd+"
 all_species = db.species().withAggregateState(AggregateState.Adsorbed)
 list = all_species.withNames(list_str)
+
+list_str_s = "Hfo_sOH Hfo_sOHCa+2 Hfo_sOH2+ Hfo_sO- Hfo_sOCd+"
+list_str_w = "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCa+ Hfo_wOCd+"
 
 # Create complexation surface
 surface_Hfo = ComplexationSurface("Hfo")
 surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g")
 
-# Defined strong site of the complexation surface
-site_Hfo_s = ComplexationSurfaceSite()
-site_Hfo_s.setName("Hfo_s").setAmount(0.025e-3, "mol")
-surface_Hfo.addSite(site_Hfo_s)
-
-# Defined weak site of the complexation surface
+# Defined sites of the complexation surface
+surface_Hfo.addSite("Hfo_s", "_s").setAmount(0.025e-3, "mol")
 surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol")
 
 # Add species to the surface and corresponding sites
 surface_Hfo.addSurfaceSpecies(list)
+print(surface_Hfo)
 
 # Add specified surface as parameters for the activity model for the complexation surface
-params = ActivityModelSurfaceComplexationParams()
-params.surface = surface_Hfo
+params_site = ActivityModelSurfaceComplexationSiteParams()
+params_site.surface = surface_Hfo
 
-# Define surface complexation phase and set an activity model
-complexation_phase_Hfo = SurfaceComplexationPhase(list_str)
-complexation_phase_Hfo.setActivityModel(ActivityModelSurfaceComplexationNoDDL(params))
+# Define surface complexation phases and set an activity model
+params_site.site_tag = "_w";
+hfo_w_phase = SurfaceComplexationPhase(list_str_w)
+hfo_w_phase.setName("Hfo_w")
+hfo_w_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site))
+params_site.site_tag = "_s";
+hfo_s_phase = SurfaceComplexationPhase(list_str_s)
+hfo_s_phase.setName("Hfo_s")
+hfo_s_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site))
 
 # Create chemical system
-system = ChemicalSystem(db, solution, complexation_phase_Hfo)
+system = ChemicalSystem(db, solution, hfo_w_phase, hfo_s_phase)
 
+# Define properties
 props = ChemicalProps(system)
-aqprops = AqueousProps(system)
-surfprops = ComplexationSurfaceProps(surface_Hfo, system)
 
 # Specify equilibrium specs
 specs = EquilibriumSpecs(system)
@@ -105,28 +111,24 @@ def equilibrate(mCd):
       # Equilibrate given initial state with input conditions
       res = solver.solve(state, conditions)
 
-      # Equilibrate given initial state with input conditions
-      res = solver.solve(state, conditions)
-
-      # Update properties
-      aqprops.update(state)
-      surfprops.update(state)
-      props.update(state)
-
-      # Fetch total, dissolved, and sorbed mass of Cd (converted in mg)
-      massCd_aq   = 1e6*float(props.elementMassInPhase("Cd", "AqueousPhase"))
-      massCd_surf = 1e6*float(props.elementMassInPhase("Cd", "SurfaceComplexationPhase"))
-
-      return massCd_aq, massCd_surf
+      return state
 
 print(f" Input m(Cd), mg  Sorbed m(Cd), mg  Dissolved m(Cd), mg Kd=sI/cI [-]")
 for mCd in mCds:
 
-      result = equilibrate(mCd)
-      mCdaq.append(result[0])
-      mCdsurf.append(result[1])
+      state = equilibrate(mCd)
 
-      print(f"{mCd:16.2f} {mCdsurf[-1]:17.4e} {mCdaq[-1]:20.4e} {mCdsurf[-1]/mCdaq[-1]:12.4f}")
+      # Update properties
+      props.update(state)
+
+      # Fetch total, dissolved, and sorbed mass of Cd (converted in mg)
+      massCd_aq   = 1e6*float(props.elementMassInPhase("Cd", "AqueousPhase"))
+      massCd_surf = 1e6*float(props.elementMassInPhase("Cd", "Hfo_w") + props.elementMassInPhase("Cd", "Hfo_s"))
+
+      mCdaq.append(massCd_aq)
+      mCdsurf.append(massCd_surf)
+
+      print(f"{mCd:16.2f} {massCd_surf:17.4e} {massCd_aq:20.4e} {massCd_surf/massCd_aq:12.4f}")
 
 from matplotlib import pyplot as plt
 import matplotlib as mpl
@@ -143,17 +145,15 @@ mpl.rcParams['font.size'] = 14
 mpl.set_loglevel("critical")
 
 plt.plot(mCdaq, mCdsurf)
-plt.title(r"Freundlich sorption isotherm")
+plt.title(r"Freundlich sorption isotherm (no EDL)")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel('Sorbed mass of Cd [mg]')
-plt.grid()
-plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass.png", bbox_inches='tight')
+plt.savefig("sorbed-cd-mass-vs-dissolved-cd-mass-no-edl.png", bbox_inches='tight')
 plt.close()
 
 plt.plot(mCdaq, np.array(mCdsurf) / np.array(mCdaq))
-plt.title("Distribution coefficient \n of Freundlich sorption isotherm")
+plt.title("Distribution coefficient \n of Freundlich sorption isotherm (no EDL)")
 plt.xlabel('Dissolved mass of Cd [mg]')
 plt.ylabel(r'K$_d$ = s$_I$ / c$_I$ [-]')
-plt.grid()
-plt.savefig("distribution-coeff-vs-dissolved-cd-mass.png", bbox_inches='tight')
+plt.savefig("distribution-coeff-vs-dissolved-cd-mass-no-edl.png", bbox_inches='tight')
 plt.close()
