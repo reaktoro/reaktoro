@@ -140,9 +140,6 @@ struct EquilibriumSetup::Impl
     /// Assemble the coefficient matrix `Aex` in optimization problem.
     auto assembleMatrixAex() const -> MatrixXd
     {
-//        // Amount of species in aqueous phase (assuming that it is the first defined phase)
-//        const auto aq_idx = detail::resolvePhaseIndex(system, "AqueousPhase");
-//        const auto Naq = system.phase(aq_idx).species().size();
 
         MatrixXd Aex = zeros(Nb, Nx);
         //MatrixXd Aex = zeros(Nb + 1, Nx); // extending Aex matrix by the line corresponding to zero charge of the aqueous phase
@@ -152,9 +149,6 @@ struct EquilibriumSetup::Impl
         //auto Wz = Aex.bottomLeftCorner(1, dims.Nn);  // the formula matrix of the zero-charge aqueous phase
 
         Wn = system.formulaMatrix();
-
-//        Wz = system.formulaMatrixCharge();
-//        Wz.rightCols(dims.Nn - Naq).fill(0.0);
 
         auto j = 0;
         for(const auto& formula : specs.titrantsImplicit())

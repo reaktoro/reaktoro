@@ -143,10 +143,8 @@ struct EquilibriumSolver::Impl
         optdims.x  = dims.Nx;
         optdims.p  = dims.Np;
         optdims.be = dims.Nb;
-        //optdims.be = dims.Nb + 1;
         optdims.c  = dims.Nw + dims.Nb; // c = (w, b) where w are the input variables and b are the amounts of components
-        //optdims.c  = dims.Nw + dims.Nb + 1; // c = (w, b) where w are the input variables and b are the amounts of components
-
+        
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
 
@@ -213,9 +211,6 @@ struct EquilibriumSolver::Impl
 
         /// Set the right-hand side vector be of the linear equality constraints.
         optproblem.be = b0;
-//        ArrayXd be_tmp = ArrayXd::Zero(b0.size() + 1);
-//        be_tmp.topRows(b0.size()) = b0;
-//        optproblem.be = be_tmp;
 
         // Set the lower and upper bounds of the species amounts
         optproblem.xlower = setup.assembleLowerBoundsVector(restrictions, state0);
