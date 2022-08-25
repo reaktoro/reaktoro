@@ -51,7 +51,6 @@ struct AqueousMixtureState
 
     /// The stoichiometric molalities of the ionic species (in mol/kg)
     ArrayXr ms;
-    
 };
 
 /// A type used to describe an aqueous mixture.
