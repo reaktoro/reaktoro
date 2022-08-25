@@ -243,27 +243,6 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.speciesMolality("SiO2(aq)" ) == Approx(2.28438e-16) );
         CHECK( aqprops.speciesMolality("e-(aq)"   ) == Approx(2.28438e-16) );
 
-        // Check charges of all species
-        CHECK( aqprops.speciesCharge("H2O(aq)"  ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("H+(aq)"   ) ==  1.0 );
-        CHECK( aqprops.speciesCharge("OH-(aq)"  ) == -1.0 );
-        CHECK( aqprops.speciesCharge("H2(aq)"   ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("O2(aq)"   ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("Na+(aq)"  ) ==  1.0 );
-        CHECK( aqprops.speciesCharge("Cl-(aq)"  ) == -1.0 );
-        CHECK( aqprops.speciesCharge("NaCl(aq)" ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("HCl(aq)"  ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("NaOH(aq)" ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("Ca++(aq)" ) ==  2.0 );
-        CHECK( aqprops.speciesCharge("Mg++(aq)" ) ==  2.0 );
-        CHECK( aqprops.speciesCharge("CO2(aq)"  ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("HCO3-(aq)") == -1.0 );
-        CHECK( aqprops.speciesCharge("CO3--(aq)") == -2.0 );
-        CHECK( aqprops.speciesCharge("CaCl2(aq)") ==  0.0 );
-        CHECK( aqprops.speciesCharge("MgCl2(aq)") ==  0.0 );
-        CHECK( aqprops.speciesCharge("SiO2(aq)" ) ==  0.0 );
-        CHECK( aqprops.speciesCharge("e-(aq)"   ) == -1.0 );
-
         // Check molalities of all elements
         CHECK( aqprops.elementMolality("H")  == Approx(253.604)     );
         CHECK( aqprops.elementMolality("C")  == Approx(6.85313e-16) );
@@ -281,7 +260,6 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
             const auto idx = aqspecies.index(name);
             CHECK( aqprops.speciesMolality(name) == Approx(aqprops.speciesMolalities()[idx]) );
             CHECK( aqprops.speciesMolality(idx)  == Approx(aqprops.speciesMolalities()[idx]) );
-            CHECK( aqprops.speciesCharge(idx)    == Approx(aqprops.speciesCharges()[idx]) );
         }
 
         for(const auto& e : aqelements)
