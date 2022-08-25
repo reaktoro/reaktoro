@@ -28,7 +28,6 @@
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSorption.hpp>
 
 namespace Reaktoro {
 
@@ -566,25 +565,6 @@ public:
         setActivityModel(ActivityModelIdealIonExchange());
         setIdealActivityModel(ActivityModelIdealIonExchange());
 
-    }
-};
-
-/// The class used to configure an surface complexation phase.
-class SurfacePhase : public GenericPhase
-{
-public:
-
-    /// Construct an SurfacePhase object with given species names.
-    explicit SurfacePhase(const StringList& species) : GenericPhase(species) { initialize(); }
-
-    /// Initialize the default attributes of this SurfacePhase object.
-    auto initialize() -> void
-    {
-        setName("SurfacePhase");
-        setStateOfMatter(StateOfMatter::Solid);
-        setAggregateState(AggregateState::Adsorbed);
-        setActivityModel(ActivityModelIdealSorption());
-        setIdealActivityModel(ActivityModelIdealSorption());
     }
 };
 

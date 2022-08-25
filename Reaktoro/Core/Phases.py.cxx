@@ -150,8 +150,4 @@ void exportPhases(py::module& m)
     py::class_<IonExchangePhase, GenericPhase>(m, "IonExchangePhase")
         .def(py::init<String>())
         ;
-
-    py::class_<SurfacePhase, GenericPhase>(m, "SurfacePhase")
-        .def(py::init<String>())
-        ;
 }

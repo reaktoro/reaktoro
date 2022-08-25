@@ -62,12 +62,6 @@ void exportActivityModelIonExchange(py::module& m);
 void exportIonExchangeSurface(py::module& m);
 void exportIonExchangeProps(py::module& m);
 
-void exportActivityModelSorption(py::module& m);
-void exportSurface(py::module& m);
-void exportSurfaceSite(py::module& m);
-void exportSurfaceProps(py::module& m);
-void exportSurfaceSiteProps(py::module& m);
-void exportSurfaceProps(py::module& m);
 
 void exportThermodynamics(py::module& m)
 {
@@ -114,10 +108,4 @@ void exportThermodynamics(py::module& m)
     exportActivityModelIonExchange(m);
     exportIonExchangeSurface(m);
     exportIonExchangeProps(m);
-
-    exportActivityModelSorption(m);
-    exportSurface(m);
-    exportSurfaceSite(m);
-    exportSurfaceSiteProps(m);
-    exportSurfaceProps(m);
 }
