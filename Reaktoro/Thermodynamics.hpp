@@ -40,7 +40,6 @@
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSorption.hpp>
 #include <Reaktoro/Thermodynamics/Solids/ActivityModelVanLaar.hpp>
 #include <Reaktoro/Thermodynamics/Solids/ActivityModelRedlichKister.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>
@@ -48,13 +47,8 @@
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherPruessEnnis.hpp>
 #include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherReed.hpp>
 #include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelSorption.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeProps.hpp>
 #include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
-#include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
-#include <Reaktoro/Thermodynamics/Surface/SurfaceSite.hpp>
-#include <Reaktoro/Thermodynamics/Surface/SurfaceSiteProps.hpp>
-#include <Reaktoro/Thermodynamics/Surface/SurfaceProps.hpp>
 
 /// @defgroup Thermodynamics Thermodynamics
 /// This is the thermodynamics module in Reaktoro, in which various thermodynamic models and related concepts are implemented.
