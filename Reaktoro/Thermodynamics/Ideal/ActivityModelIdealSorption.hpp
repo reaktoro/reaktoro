@@ -15,30 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ActivityModelIdealSurfaceComplexation.hpp"
+#pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Core/ActivityModel.hpp>
 
 namespace Reaktoro {
 
-auto ActivityModelIdealSurfaceComplexation() -> ActivityModelGenerator
-{
-    ActivityModelGenerator model = [](const SpeciesList& species)
-    {
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
-        {
-            // The arguments for the activity model evaluation
-            const auto& [T, P, x] = args;
-
-            // Calculate ln of activities of surfaces species as the ln of molar fractions
-            props.ln_a = x.log();
-        };
-
-        return fn;
-    };
-
-    return model;
-}
+/// Return the activity model for the surface complexation.
+auto ActivityModelIdealSorption() -> ActivityModelGenerator;
 
 } // namespace Reaktoro

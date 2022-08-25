@@ -20,7 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 
 using namespace Reaktoro;
@@ -33,22 +33,22 @@ auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase;
 
 } // namespace test
 
-TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
+TEST_CASE("Testing Surface", "[Surface]")
 {
     // Initialize the database corresponding to the string `phreeqc.dat` has been already initialized
     auto dbphreeqc = test::getPhreeqcDatabase("phreeqc.dat");
 
-    // Create complexation surface
-    ComplexationSurface surface_Hfo("Hfo");
+    // Create surface
+    Surface surface_Hfo("Hfo");
     surface_Hfo.setSpecificSurfaceArea(60, "m2/g")
         .setMass(4.45, "g");
 
-    // Defined strong site of the complexation surface
+    // Defined strong site of the surface
     surface_Hfo.addSite("Hfo_w", "_w")
         .setAmount(1e-3, "mol");
 
-    // Defined weak site of the complexation surface
-    ComplexationSurfaceSite site_Hfo_s;
+    // Defined weak site of the surface
+    SurfaceSite site_Hfo_s;
     site_Hfo_s.setName("Hfo_s")
         .setAmount(0.025e-3, "mol");
     surface_Hfo.addSite(site_Hfo_s);
@@ -64,7 +64,7 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
 
     surface_Hfo.addSurfaceSpecies(species_list);
 
-    SECTION("Checking the species in ComplexationSurface")
+    SECTION("Checking the species in Surface")
     {
         CHECK(surface_Hfo.species()[0].name()  == "Hfo_sOH"     ); // Hfo_sOH
         CHECK(surface_Hfo.species()[1].name()  == "Hfo_sOHCa+2" ); // Hfo_sOHCa+2
@@ -79,7 +79,7 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
         CHECK(surface_Hfo.species()[10].name() == "Hfo_wOSrOH"  ); // Hfo_wOSrOH
     }
 
-    SECTION("Checking the charges of the species in ComplexationSurface")
+    SECTION("Checking the charges of the species in Surface")
     {
         // The charges for sorption species
         ArrayXd z = surface_Hfo.charges();
@@ -97,8 +97,8 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
         CHECK( z[10] ==  0.0 ); // Hfo_wOSrOH
     }
 
-    // Create surface complexation state
-    ComplexationSurfaceState state;
+    // Create surface state
+    SurfaceState state;
     state.T = 273.15 + 25;
 
     // Data for this test is taken from Appelo etal, 2005, Example 6.12, p. 292
@@ -106,7 +106,7 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
     real I = 0.1;
     state.updatePotential(I);
 
-    SECTION("Checking the potential of ComplexationSurface for surface charge 1.07e-6 eq/m2 "
+    SECTION("Checking the potential of Surface for surface charge 1.07e-6 eq/m2 "
             "and an ionic strength 0.1 molal")
     {
         CHECK(state.psi == Approx(0.08975790202) );
@@ -115,7 +115,7 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
     I = 0.025;
     state.updatePotential(I);
 
-    SECTION("Checking the potential of ComplexationSurface for surface charge 1.07e-6 eq/m2 "
+    SECTION("Checking the potential of Surface for surface charge 1.07e-6 eq/m2 "
             "and an ionic strength 0.025 molal")
     {
         CHECK(state.psi == Approx(0.12419974449) );
@@ -126,7 +126,7 @@ TEST_CASE("Testing ComplexationSurface", "[ComplexationSurface]")
     I = 0.1;
     state.updatePotential(I);
 
-    SECTION("Checking the potential of ComplexationSurface for surface charge 2.6e-7 eq/m2 "
+    SECTION("Checking the potential of Surface for surface charge 2.6e-7 eq/m2 "
             "and an ionic strength 0.1 molal")
     {
         CHECK(state.psi == Approx(0.03250943037) );

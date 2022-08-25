@@ -28,7 +28,7 @@
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSurfaceComplexation.hpp>
+#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSorption.hpp>
 
 namespace Reaktoro {
 
@@ -569,52 +569,22 @@ public:
     }
 };
 
-/// The class used to configure a diffuse double layer phase.
-class DoubleLayerPhase : public GenericPhase
-{
-    public:
-    /// Construct a default DoubleLayerPhase object.
-    DoubleLayerPhase() : GenericPhase() { initialize(); }
-
-    /// Construct an DoubleLayerPhase object with given species names.
-    explicit DoubleLayerPhase(const StringList& species) : GenericPhase(species) { initialize(); }
-
-    /// Construct an DoubleLayerPhase object with given element symbols.
-    explicit DoubleLayerPhase(Speciate elements) : GenericPhase(elements += {"H", "O"}) { initialize(); }
-
-    /// Construct an DoubleLayerPhase object with given element symbols and tags indicating which species must be excluded from the final list.
-    explicit DoubleLayerPhase(Speciate elements, const Exclude& withtags) : GenericPhase(elements += {"H", "O"}, withtags) { initialize(); }
-
-    /// Construct an DoubleLayerPhase object with tags indicating which species must be excluded from the final list.
-    explicit DoubleLayerPhase(const Exclude& withtags) : GenericPhase(speciate("H O"), withtags) { initialize(); }
-
-    /// Initialize the default attributes of this DoubleLayerPhase object.
-    auto initialize() -> void
-    {
-        setName("DoubleLayerPhase");
-        setStateOfMatter(StateOfMatter::Liquid);
-        setAggregateState(AggregateState::Aqueous);
-        setActivityModel(ActivityModelIdealAqueous());
-        setIdealActivityModel(ActivityModelIdealAqueous());
-    }
-};
-
 /// The class used to configure an surface complexation phase.
-class SurfaceComplexationPhase : public GenericPhase
+class SurfacePhase : public GenericPhase
 {
 public:
 
-    /// Construct an SurfaceComplexationPhase object with given species names.
-    explicit SurfaceComplexationPhase(const StringList& species) : GenericPhase(species) { initialize(); }
+    /// Construct an SurfacePhase object with given species names.
+    explicit SurfacePhase(const StringList& species) : GenericPhase(species) { initialize(); }
 
-    /// Initialize the default attributes of this SurfaceComplexationPhase object.
+    /// Initialize the default attributes of this SurfacePhase object.
     auto initialize() -> void
     {
-        setName("SurfaceComplexationPhase");
+        setName("SurfacePhase");
         setStateOfMatter(StateOfMatter::Solid);
         setAggregateState(AggregateState::Adsorbed);
-        setActivityModel(ActivityModelIdealSurfaceComplexation());
-        setIdealActivityModel(ActivityModelIdealSurfaceComplexation());
+        setActivityModel(ActivityModelIdealSorption());
+        setIdealActivityModel(ActivityModelIdealSorption());
     }
 };
 

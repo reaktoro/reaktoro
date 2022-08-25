@@ -20,6 +20,6 @@ from reaktoro import *
 import pytest
 
 
-def testComplexationSurfaceSite():
+def testSurfaceSite():
 
     return

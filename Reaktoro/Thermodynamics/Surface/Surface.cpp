@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ComplexationSurface.hpp"
+#include "Surface.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -27,41 +27,41 @@
 namespace Reaktoro {
 
 /// ------------------------------------------------------------------------------------------
-/// Implementation of the methods of the ComplexationSurfaceState struct
+/// Implementation of the methods of the SurfaceState struct
 /// ------------------------------------------------------------------------------------------
 
-/// Update the surface complexation potential for the given ionic strength of the aqueous phase.
-auto ComplexationSurfaceState::updatePotential(real I) -> void
+/// Update the surface potential for the given ionic strength of the aqueous phase.
+auto SurfaceState::updatePotential(real I) -> void
 {
     // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
     psi = 2*R*T*asinh(sigma/(0.1174*sqrt(I)))/F;
 }
 
-/// Update the surface complexation fractions for given indices.
-auto ComplexationSurfaceState::updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void
+/// Update the surface fractions for given indices.
+auto SurfaceState::updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void
 {
     x(indices) = x_;
 }
 
 /// Update the surface charge and charge density.
-auto ComplexationSurfaceState::updateCharge(ArrayXdConstRef z) -> void
+auto SurfaceState::updateCharge(ArrayXdConstRef z) -> void
 {
     charge = (z*x).sum();
     sigma = F*charge/(As*mass);
 }
 
 /// ------------------------------------------------------------------------------------------
-/// Implementation of the methods of the ComplexationSurface class
+/// Implementation of the methods of the Surface class
 /// ------------------------------------------------------------------------------------------
 
-ComplexationSurface::ComplexationSurface()
+Surface::Surface()
 {}
 
-ComplexationSurface::ComplexationSurface(const String& name)
+Surface::Surface(const String& name)
 : surface_name(name)
 {}
 
-ComplexationSurface::ComplexationSurface(const SpeciesList& species)
+Surface::Surface(const SpeciesList& species)
 {
     // Initialize the surface name from the given species list
     if(!species.empty())
@@ -76,102 +76,102 @@ ComplexationSurface::ComplexationSurface(const SpeciesList& species)
     addSurfaceSpecies(species);
 }
 
-auto ComplexationSurface::clone() const -> ComplexationSurface
+auto Surface::clone() const -> Surface
 {
-    ComplexationSurface copy = *this;
+    Surface copy = *this;
     return copy;
 }
 
-// Initialize charges for the surface complexation species.
-auto ComplexationSurface::initializeCharges() -> void
+// Initialize charges for the sorption species.
+auto Surface::initializeCharges() -> void
 {
     const auto charges = vectorize(species_list, RKT_LAMBDA(x, x.charge()));
     z = ArrayXd::Map(charges.data(), charges.size());
 }
 
-// Initialize charges for the surface complexation site species.
-auto ComplexationSurface::initializeSitesCharges() -> void
+// Initialize charges for the sorption site species.
+auto Surface::initializeSitesCharges() -> void
 {
     for(auto& site : surface_sites) {
         site.second.initializeCharges();
     }
 }
 
-// Return the surface complexation name.
-auto ComplexationSurface::name() const -> String
+// Return the surface name.
+auto Surface::name() const -> String
 {
     return surface_name;
 }
 
-// Return the potential of the surface complexation.
-auto ComplexationSurface::potential() const -> real
+// Return the potential of the surface.
+auto Surface::potential() const -> real
 {
     return state().psi;
 }
 
-// Return the potential of the surface complexation for the given temperature, ionic strength and charge density.
-auto ComplexationSurface::potential(real T, real I, real sigma) const -> real
+// Return the potential of the surface for the given temperature, ionic strength and charge density.
+auto Surface::potential(real T, real I, real sigma) const -> real
 {
     // Using formula sigma = 0.1174*I^0.5*sinh(F*psi/(2*R*T))
     return 2*R*T*asinh(sigma/(0.1174*sqrt(I)))/F;
 }
 
-// Return species of the surface complexation with a given index.
-auto ComplexationSurface::species(Index idx) const -> const Species&
+// Return species of the surface with a given index.
+auto Surface::species(Index idx) const -> const Species&
 {
     return species_list[idx];
 }
 
-// Return species of the surface complexation.
-auto ComplexationSurface::species() const -> const SpeciesList&
+// Return species of the surface.
+auto Surface::species() const -> const SpeciesList&
 {
     return species_list;
 }
 
-// Return charges for the surface complexation species.
-auto ComplexationSurface::charges() -> ArrayXd
+// Return charges for the surface species.
+auto Surface::charges() -> ArrayXd
 {
     return z;
 }
 
-// Return the mole fractions of the species on complexation.
-auto ComplexationSurface::moleFractions() const -> ArrayXr
+// Return the mole fractions of the species on surface.
+auto Surface::moleFractions() const -> ArrayXr
 {
     return surface_state.x;
 }
 
 /// Return the surface sigma.
-auto ComplexationSurface::surfaceSigma(real charge) const -> real
+auto Surface::surfaceSigma(real charge) const -> real
 {
     return faradayConstant*charge/(ssa*surface_mass);
 }
 
-/// Return the complexation surface charge.
-auto ComplexationSurface::surfaceCharge(ArrayXrConstRef x) const -> real
+/// Return the surface charge.
+auto Surface::surfaceCharge(ArrayXrConstRef x) const -> real
 {
     return (z*x).sum();
 }
 
 /// Return the specific surface area.
-auto ComplexationSurface::specificSurfaceArea() const -> real
+auto Surface::specificSurfaceArea() const -> real
 {
     return ssa;
 }
 
 /// Return the surface mass.
-auto ComplexationSurface::mass() const -> real
+auto Surface::mass() const -> real
 {
     return surface_mass;
 }
 
 /// Return the list of surface sites.
-auto ComplexationSurface::sites() const -> std::map<std::string, ComplexationSurfaceSite>
+auto Surface::sites() const -> std::map<std::string, SurfaceSite>
 {
     return surface_sites;
 }
 
-/// Return complexation surface state updated for the given temperature, pressure, and zero fractions.
-auto ComplexationSurface::state(real T, real P) -> ComplexationSurfaceState
+/// Return surface state updated for the given temperature, pressure, and zero fractions.
+auto Surface::state(real T, real P) -> SurfaceState
 {
     surface_state.T = T;
     surface_state.P = P;
@@ -184,8 +184,8 @@ auto ComplexationSurface::state(real T, real P) -> ComplexationSurfaceState
     return surface_state;
 }
 
-/// Return complexation surface state updated for the given temperature, pressure, and fractions.
-auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceState
+/// Return surface state updated for the given temperature, pressure, and fractions.
+auto Surface::state(real T, real P, ArrayXrConstRef x) -> SurfaceState
 {
     surface_state.T = T;
     surface_state.P = P;
@@ -198,20 +198,20 @@ auto ComplexationSurface::state(real T, real P, ArrayXrConstRef x) -> Complexati
     return surface_state;
 }
 
-/// Return complexation surface state.
-auto ComplexationSurface::state() const -> ComplexationSurfaceState
+/// Return surface state.
+auto Surface::state() const -> SurfaceState
 {
     return surface_state;
 }
 
-/// Add list of species forming as the result of sorption on complexation surface.
-auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> ComplexationSurface&
+/// Add list of species forming as the result of sorption on surface.
+auto Surface::addSurfaceSpecies(const SpeciesList& species) -> Surface&
 {
     // Initialize surface's species list
     species_list = species;
 
     // Initialize the list of surface sites
-    auto site = ComplexationSurfaceSite();
+    auto site = SurfaceSite();
 
     // Auxiliary variables
     Index index = 0;
@@ -252,28 +252,28 @@ auto ComplexationSurface::addSurfaceSpecies(const SpeciesList& species) -> Compl
 }
 
 /// Set the name of the surface.
-auto ComplexationSurface::setName(const String& name) -> ComplexationSurface&
+auto Surface::setName(const String& name) -> Surface&
 {
     surface_name = name;
     return *this;
 }
 
 // Set the specific surface site surface area (in m2/kg).
-auto ComplexationSurface::setSpecificSurfaceArea(double value, const String& unit) -> ComplexationSurface&
+auto Surface::setSpecificSurfaceArea(double value, const String& unit) -> Surface&
 {
     ssa = units::convert(value, unit, "m2/kg");
     return *this;
 }
 
 // Set the mass of the solid (in kg).
-auto ComplexationSurface::setMass(double value, const String& unit) -> ComplexationSurface&
+auto Surface::setMass(double value, const String& unit) -> Surface&
 {
     surface_mass = units::convert(value, unit, "kg");
     return *this;
 }
 
 // Add new site (with a given site name and tag) to the surface.
-auto ComplexationSurface::addSite(const String& site_name, const String& site_tag) -> ComplexationSurfaceSite&
+auto Surface::addSite(const String& site_name, const String& site_tag) -> SurfaceSite&
 {
     // Check that provided site name contains the site tag
     error(site_name.find(site_tag) == std::string::npos,
@@ -283,7 +283,7 @@ auto ComplexationSurface::addSite(const String& site_name, const String& site_ta
     if(surface_sites.find(site_tag) == surface_sites.end())
     {
         // Create a new site with a given site name and tag
-        auto site = ComplexationSurfaceSite(site_name, site_tag);
+        auto site = SurfaceSite(site_name, site_tag);
         site.setSurfaceName(surface_name)
             .setMass(surface_mass)
             .setSpecificSurfaceArea(ssa);
@@ -293,8 +293,8 @@ auto ComplexationSurface::addSite(const String& site_name, const String& site_ta
     return surface_sites[site_tag];
 }
 
-// Add the complexation surface site
-auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> ComplexationSurfaceSite&
+// Add the surface site
+auto Surface::addSite(const SurfaceSite& site) -> SurfaceSite&
 {
     // Fetch the site tag and name from the given site object
     auto site_tag = site.tag();
@@ -319,14 +319,14 @@ auto ComplexationSurface::addSite(const ComplexationSurfaceSite& site) -> Comple
     return surface_sites[site_tag];
 }
 
-/// Output this ComplexationSurface instance to a stream.
-auto ComplexationSurface::output(std::ostream& out) const -> void
+/// Output this Surface instance to a stream.
+auto Surface::output(std::ostream& out) const -> void
 {
     out << *this;
 }
 
-/// Output a ComplexationSurface object to an output stream.
-auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::ostream&
+/// Output a Surface object to an output stream.
+auto operator<<(std::ostream& out, const Surface& surface) -> std::ostream&
 {
     std::cout << "Surface: " << surface.name() << std::endl;
     std::cout << "\t specific area, m2/kg : " << surface.specificSurfaceArea() << std::endl;

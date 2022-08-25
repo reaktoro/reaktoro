@@ -25,7 +25,7 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
+#include <Reaktoro/Thermodynamics/Surface/SurfaceSite.hpp>
 
 namespace Reaktoro {
 
@@ -33,13 +33,13 @@ namespace Reaktoro {
 const auto F = faradayConstant;
 const auto R = universalGasConstant;
 
-/// A type used to describe the state of the complexation surface.
-struct ComplexationSurfaceState
+/// A type used to describe the state of the sorption.
+struct SurfaceState
 {
-    /// Update the surface complexation potential for the given ionic strength of the aqueous phase.
+    /// Update the surface potential for the given ionic strength of the aqueous phase.
     auto updatePotential(real I) -> void;
 
-    /// Update the surface complexation fractions for given indices.
+    /// Update the surface fractions for given indices.
     auto updateFractions(ArrayXrConstRef x_, const Indices& indices) -> void;
 
     /// Update the surface charge and charge density.
@@ -51,10 +51,10 @@ struct ComplexationSurfaceState
     /// The pressure of the solute/gas mixture on the surface (in Pa).
     real P;
 
-    /// The molar fractions of the complexation surface species.
+    /// The molar fractions of the sorption species.
     ArrayXr x;
 
-    /// The complexation surface charge (eq).
+    /// The sorption charge (eq).
     real charge;
 
     /// The surface sigma (C/m2).
@@ -70,35 +70,35 @@ struct ComplexationSurfaceState
     real psi;
 };
 
-/// A type used to describe a complexation surface.
-/// The ComplexationSurface class is defined as a collection of SurfaceComplexationSites and Species objects.
-class ComplexationSurface
+/// A type used to describe a sorption.
+/// The Surface class is defined as a collection of SurfaceSites and Species objects.
+class Surface
 {
-    /// Return the complexation surface charge.
+    /// Return the sorption charge.
     auto surfaceCharge(ArrayXrConstRef x) const -> real;
 
-    // Return the complexation surface sigma.
+    // Return the sorption sigma.
     auto surfaceSigma(real charge) const -> real;
 
-    // Initialize charges of the surface complexation species.
+    // Initialize charges of the surface species.
     auto initializeCharges() -> void;
 
-    // Initialize charges for the surface complexation site species.
+    // Initialize charges for the surface site species.
     auto initializeSitesCharges() -> void;
 
 public:
 
-    /// Construct a default ComplexationSurface instance.
-    ComplexationSurface();
+    /// Construct a default Surface instance.
+    Surface();
 
-    /// Construct an ComplexationSurface instance with a given name.
-    explicit ComplexationSurface(const String& name);
+    /// Construct an Surface instance with a given name.
+    explicit Surface(const String& name);
 
-    /// Construct an ComplexationSurface instance with given species.
-    explicit ComplexationSurface(const SpeciesList& species);
+    /// Construct an Surface instance with given species.
+    explicit Surface(const SpeciesList& species);
 
-    /// Return a deep copy of this ComplexationSurface object.
-    auto clone() const -> ComplexationSurface;
+    /// Return a deep copy of this Surface object.
+    auto clone() const -> Surface;
 
     /// Return the name of the surface.
     auto name() const -> String;
@@ -110,16 +110,16 @@ public:
     auto potential(real T, real I, real sigma) const -> real;
 
     /// Return the species on the surface with given index.
-    /// @param idx The index of the species in the complexation surface
+    /// @param idx The index of the species in the sorption
     auto species(Index idx) const -> const Species&;
 
     /// Return the sorption species on the surface.
     auto species() const -> const SpeciesList&;
 
-    /// Return charges of the surface complexation species.
+    /// Return charges of the surface species.
     auto charges() -> ArrayXd;
 
-    /// Return the mole fractions of the surface complexation species.
+    /// Return the mole fractions of the surface species.
     auto moleFractions() const -> ArrayXr;
 
     /// Return the specific surface area.
@@ -129,49 +129,49 @@ public:
     auto mass() const -> real;
 
     /// Return the list of surface sites.
-    auto sites() const -> std::map<std::string, ComplexationSurfaceSite>;
+    auto sites() const -> std::map<std::string, SurfaceSite>;
 
-    /// Calculate the state of the surface complexation.
+    /// Calculate the state of the surface.
     /// @param T The temperature (in K)
     /// @param P The pressure (in Pa)
-    auto state(real T, real P) -> ComplexationSurfaceState;
+    auto state(real T, real P) -> SurfaceState;
 
-    /// Calculate the state of the surface complexation.
+    /// Calculate the state of the surface.
     /// @param T The temperature (in K)
     /// @param P The pressure (in Pa)
     /// @param x The fraction of the species in the composition
-    auto state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceState;
+    auto state(real T, real P, ArrayXrConstRef x) -> SurfaceState;
 
     /// Return the current state of the aqueous mixture.
-    auto state() const -> ComplexationSurfaceState;
+    auto state() const -> SurfaceState;
 
     /// Add the list species to the surface.
-    auto addSurfaceSpecies(const SpeciesList& name) -> ComplexationSurface&;
+    auto addSurfaceSpecies(const SpeciesList& name) -> Surface&;
 
     /// Set the name of the surface.
-    auto setName(const String& surface) -> ComplexationSurface&;
+    auto setName(const String& surface) -> Surface&;
 
     // Set the specific surface area (in m2/kg).
-    auto setSpecificSurfaceArea(double value, const String& unit = "m2/kg") -> ComplexationSurface&;
+    auto setSpecificSurfaceArea(double value, const String& unit = "m2/kg") -> Surface&;
 
     // Set the mass of the solid (in kg).
-    auto setMass(double value, const String& unit = "kg") -> ComplexationSurface&;
+    auto setMass(double value, const String& unit = "kg") -> Surface&;
 
     // Add new site (with a given site name and tag) to the surface.
-    auto addSite(const String& site, const String& site_tag) -> ComplexationSurfaceSite&;
+    auto addSite(const String& site, const String& site_tag) -> SurfaceSite&;
 
     // Add new site to the surface.
-    auto addSite(const ComplexationSurfaceSite& site) -> ComplexationSurfaceSite&;
+    auto addSite(const SurfaceSite& site) -> SurfaceSite&;
 
-    /// Output this ComplexationSurface instance to a stream.
+    /// Output this Surface instance to a stream.
     auto output(std::ostream& out) const -> void;
 
 private:
 
-    /// The surface complexation state.
-    ComplexationSurfaceState surface_state;
+    /// The surface state.
+    SurfaceState surface_state;
 
-    /// Species on the surface complexation surface.
+    /// Species on the surface sorption.
     SpeciesList species_list;
 
     /// The surface name.
@@ -183,14 +183,14 @@ private:
     /// The solid mass (kg)
     real surface_mass;
 
-    /// The charges of the complexation surface species.
+    /// The charges of the sorption species.
     ArrayXr z;
 
-    // Map of the surface complexation sites.
-    std::map<std::string, ComplexationSurfaceSite> surface_sites;
+    // Map of the surface sites.
+    std::map<std::string, SurfaceSite> surface_sites;
 };
 
-/// Output a ComplexationSurface object to an output stream.
-auto operator<<(std::ostream& out, const ComplexationSurface& surface) -> std::ostream&;
+/// Output a Surface object to an output stream.
+auto operator<<(std::ostream& out, const Surface& surface) -> std::ostream&;
 
 } // namespace Reaktoro

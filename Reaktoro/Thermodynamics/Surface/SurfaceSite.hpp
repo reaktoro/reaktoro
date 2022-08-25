@@ -25,8 +25,8 @@
 
 namespace Reaktoro {
 
-/// A type used to describe the state of the complexation surface site.
-struct ComplexationSurfaceSiteState
+/// A type used to describe the state of the surface site.
+struct SurfaceSiteState
 {
     /// The temperature of the solute/gas mixture on the surface site (in K).
     real T;
@@ -34,10 +34,10 @@ struct ComplexationSurfaceSiteState
     /// The pressure of the solute/gas mixture on the surface site (in Pa).
     real P;
 
-    /// The molar fractions of the complexation surface site species.
+    /// The molar fractions of the surface site species.
     ArrayXr x;
 
-    /// The complexation surface site charge (eq).
+    /// The surface site charge (eq).
     real charge;
 
     /// The surface site sigma (C/m2).
@@ -45,34 +45,34 @@ struct ComplexationSurfaceSiteState
 };
 
 
-/// A type used to describe the site of a complexation surface.
-class ComplexationSurfaceSite
+/// A type used to describe the site of a surface.
+class SurfaceSite
 {
 
 public:
-    /// Default constructor of ComplexationSurfaceSite class
-    ComplexationSurfaceSite() = default;
+    /// Default constructor of SurfaceSite class
+    SurfaceSite() = default;
 
-    /// Copy constructor of ComplexationSurfaceSite class
-    ComplexationSurfaceSite(const ComplexationSurfaceSite& other) = default;
+    /// Copy constructor of SurfaceSite class
+    SurfaceSite(const SurfaceSite& other) = default;
 
-    /// Copy assigment operator of ComplexationSurfaceSite class
-    ComplexationSurfaceSite& operator=(const ComplexationSurfaceSite& other) = default;
+    /// Copy assigment operator of SurfaceSite class
+    SurfaceSite& operator=(const SurfaceSite& other) = default;
 
-    /// Move constructor of ComplexationSurfaceSite class
-    ComplexationSurfaceSite(ComplexationSurfaceSite&& other) = default;
+    /// Move constructor of SurfaceSite class
+    SurfaceSite(SurfaceSite&& other) = default;
 
-    /// Move assigment operator of ComplexationSurfaceSite class
-    ComplexationSurfaceSite& operator=(ComplexationSurfaceSite&& other) = default;
+    /// Move assigment operator of SurfaceSite class
+    SurfaceSite& operator=(SurfaceSite&& other) = default;
 
-    /// Construct an ComplexationSurfaceSite instance with given name.
-    ComplexationSurfaceSite(const String& name);
+    /// Construct an SurfaceSite instance with given name.
+    SurfaceSite(const String& name);
 
-    /// Construct an ComplexationSurfaceSite instance with given name and tag.
-    ComplexationSurfaceSite(const String& name, const String& tag);
+    /// Construct an SurfaceSite instance with given name and tag.
+    SurfaceSite(const String& name, const String& tag);
 
     /// Return the species on the surface site with given index.
-    /// @param idx The index of the species in the complexation surface site
+    /// @param idx The index of the species in the surface site
     auto species(Index idx) const -> const Species&;
 
     /// Return the sorption species on the surface site.
@@ -81,10 +81,10 @@ public:
     // Return the indices of the sorption species.
     auto speciesIndices() const -> Indices;
 
-    /// Return charges of the surface site complexation species.
+    /// Return charges of the surface site species.
     auto charges() const -> ArrayXd;
 
-    /// Return the mole fractions of the surface site complexation species.
+    /// Return the mole fractions of the surface site species.
     auto moleFractions() const -> ArrayXr;
 
     // Get the site name.
@@ -102,29 +102,29 @@ public:
     /// Return the amount of the surface site (in mol).
     auto amount() const -> real;
 
-    // Initialize charges for the surface complexation species site.
+    // Initialize charges for the surface species site.
     auto initializeCharges() -> void;
 
     // Set the name of the surface site.
-    auto setName(String name) -> ComplexationSurfaceSite&;
+    auto setName(String name) -> SurfaceSite&;
 
     // Set name of the surface.
-    auto setSurfaceName(String name) -> ComplexationSurfaceSite&;
+    auto setSurfaceName(String name) -> SurfaceSite&;
 
     // Set mass of the surface site.
-    auto setMass(real mass) -> ComplexationSurfaceSite&;
+    auto setMass(real mass) -> SurfaceSite&;
 
     // Set specific surface area of the surface site.
-    auto setSpecificSurfaceArea(real ssa) -> ComplexationSurfaceSite&;
+    auto setSpecificSurfaceArea(real ssa) -> SurfaceSite&;
 
     // Set the tag of the surface site.
-    auto setTag(String tag) -> ComplexationSurfaceSite&;
+    auto setTag(String tag) -> SurfaceSite&;
 
     // Set the amount of surface site.
-    auto setAmount(double value, String unit = "mol") -> ComplexationSurfaceSite&;
+    auto setAmount(double value, String unit = "mol") -> SurfaceSite&;
 
     // Set the density of surface site (in sites/m2).
-    auto setDensity(double value, String unit = "sites/m2") -> ComplexationSurfaceSite&;
+    auto setDensity(double value, String unit = "sites/m2") -> SurfaceSite&;
 
     // Add sorption species on the site.
     auto addSorptionSpecies(const Species& species, const Index& index) -> void;
@@ -132,22 +132,22 @@ public:
     /// Return the surface site sigma.
     auto siteSigma(real charge) const -> real;
 
-    /// Return the complexation surface site charge.
+    /// Return the surface site charge.
     auto siteCharge(ArrayXrConstRef x) -> real;
 
-    /// Calculate the state of the surface complexation site.
+    /// Calculate the state of the surface site.
     /// @param T The temperature (in K)
     /// @param P The pressure (in Pa)
     /// @param x The fraction of the species in the composition
-    auto state(real T, real P, ArrayXrConstRef x) -> ComplexationSurfaceSiteState;
+    auto state(real T, real P, ArrayXrConstRef x) -> SurfaceSiteState;
 
     /// Return the current state of the aqueous mixture.
-    auto state() const -> ComplexationSurfaceSiteState;
+    auto state() const -> SurfaceSiteState;
 
 private:
 
-    /// The surface complexation state.
-    ComplexationSurfaceSiteState surface_site_state;
+    /// The surface state.
+    SurfaceSiteState surface_site_state;
 
     /// The site amount (mol).
     real site_amount;

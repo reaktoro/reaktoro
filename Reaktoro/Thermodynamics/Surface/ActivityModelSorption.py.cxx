@@ -19,22 +19,22 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelSurfaceComplexation.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ActivityModelSorption.hpp>
 
 using namespace Reaktoro;
 
-void exportActivityModelSurfaceComplexation(py::module& m)
+void exportActivityModelSorption(py::module& m)
 {
-    m.def("ActivityModelSurfaceComplexationSiteNoDDL", ActivityModelSurfaceComplexationSiteNoDDL);
-//    m.def("ActivityModelSurfaceComplexationSiteWithDDL", ActivityModelSurfaceComplexationSiteWithDDL);
-//    m.def("ActivityModelSurfaceComplexationSiteWithEDL", ActivityModelSurfaceComplexationSiteWithEDL);
+    m.def("ActivityModelSorptionNoDDL", ActivityModelSorptionNoDDL);
+//    m.def("ActivityModelSorptionWithDDL", ActivityModelSorptionWithDDL);
+//    m.def("ActivityModelSorptionWithEDL", ActivityModelSorptionWithEDL);
 //    m.def("ActivityModelEDL", py::overload_cast<ActivityModelDDLParams>(ActivityModelEDL));
 
-    py::class_<ActivityModelSurfaceComplexationSiteParams>(m, "ActivityModelSurfaceComplexationSiteParams")
+    py::class_<ActivityModelSorptionParams>(m, "ActivityModelSorptionParams")
         .def(py::init<>())
-        .def_readwrite("surface", &ActivityModelSurfaceComplexationSiteParams::surface)
-        .def_readwrite("site_tag", &ActivityModelSurfaceComplexationSiteParams::site_tag)
-        .def_readwrite("output", &ActivityModelSurfaceComplexationSiteParams::output)
+        .def_readwrite("surface", &ActivityModelSorptionParams::surface)
+        .def_readwrite("site_tag", &ActivityModelSorptionParams::site_tag)
+        .def_readwrite("output", &ActivityModelSorptionParams::output)
         ;
 
     py::class_<ActivityModelDDLParams>(m, "ActivityModelDDLParams")

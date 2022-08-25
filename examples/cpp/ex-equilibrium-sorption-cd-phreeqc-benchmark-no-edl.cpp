@@ -39,7 +39,7 @@ int main()
     AqueousPhase aqueous_phase(speciate("H O Cd"));
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
-    // Define surface complexation species
+    // Define surface species
     SpeciesList slist = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
     String list_str_s = "Hfo_sOH Hfo_sOH2+ Hfo_sO- Hfo_sOCd+";
     String list_str_w = "Hfo_wOH Hfo_wOH2+ Hfo_wO- Hfo_wOCd+";
@@ -47,11 +47,11 @@ int main()
     SpeciesList list_w = slist.withNames(StringList(list_str_w));
     SpeciesList list = list_s + list_w;
 
-    // Create complexation surface
-    ComplexationSurface surface_Hfo("Hfo");
+    // Create surface
+    Surface surface_Hfo("Hfo");
     surface_Hfo.setSpecificSurfaceArea(100, "m2/g").setMass(1, "g");
 
-    // Defined the sites of the complexation surface
+    // Defined the sites of the surface
     surface_Hfo.addSite("Hfo_w", "_w").setAmount(1.0, "mol");
     surface_Hfo.addSite("Hfo_s", "_s").setAmount(1.0, "mol");
 
@@ -60,19 +60,19 @@ int main()
 
     std::cout << surface_Hfo << std::endl;
 
-    // Define surface sites as complexation sites phases
-    SurfaceComplexationPhase hfo_w_phase(list_str_w);
+    // Define surface sites as sites phases
+    SurfacePhase hfo_w_phase(list_str_w);
     hfo_w_phase.setName("Hfo_w");
-    SurfaceComplexationPhase hfo_s_phase(list_str_s);
+    SurfacePhase hfo_s_phase(list_str_s);
     hfo_s_phase.setName("Hfo_s");
 
-    // Define parameters for the activity model of the complexation surface and set corresponding activity model
-    ActivityModelSurfaceComplexationSiteParams params_site;
+    // Define parameters for the activity model of the surface and set corresponding activity model
+    ActivityModelSorptionParams params_site;
     params_site.surface = surface_Hfo;
     params_site.site_tag = "_w";
-    hfo_w_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site));
+    hfo_w_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site));
     params_site.site_tag = "_s";
-    hfo_s_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site));
+    hfo_s_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site));
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, hfo_w_phase, hfo_s_phase);

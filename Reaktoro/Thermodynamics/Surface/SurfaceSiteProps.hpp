@@ -20,44 +20,44 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Surface/SurfaceSite.hpp>
 
 namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
 class ChemicalState;
-class ChemicalSystem;
 class Phase;
-class ComplexationSurfaceSiteState;
-class ComplexationSurfaceSite;
-class ComplexationSurface;
+class SurfaceSiteState;
+class Surface;
 
 /// The chemical properties of an aqueous phase.
-class ComplexationSurfaceSiteProps
+class SurfaceSiteProps
 {
 public:
-    /// Construct an uninitialized ComplexationSurfaceSiteProps object with given chemical system.
-    explicit ComplexationSurfaceSiteProps(const ComplexationSurfaceSite& site, const ChemicalSystem& system);
+    /// Construct an uninitialized SurfaceSiteProps object with given chemical system.
+    explicit SurfaceSiteProps(const SurfaceSite& site, const ChemicalSystem& system);
 
-    /// Construct an ComplexationSurfaceSiteProps object with given chemical state of the system.
-    explicit ComplexationSurfaceSiteProps(const ComplexationSurfaceSite& site, const ChemicalState& state);
+    /// Construct an SurfaceSiteProps object with given chemical state of the system.
+    explicit SurfaceSiteProps(const SurfaceSite& site, const ChemicalState& state);
 
-    /// Construct an ComplexationSurfaceSiteProps object with given chemical properties of the system.
-    explicit ComplexationSurfaceSiteProps(const ComplexationSurfaceSite& site, const ChemicalProps& props);
+    /// Construct an SurfaceSiteProps object with given chemical properties of the system.
+    explicit SurfaceSiteProps(const SurfaceSite& site, const ChemicalProps& props);
 
-    /// Construct a copy of a ComplexationSurfaceSiteProps object.
-    ComplexationSurfaceSiteProps(const ComplexationSurfaceSiteProps& other);
+    /// Construct a copy of a SurfaceSiteProps object.
+    SurfaceSiteProps(const SurfaceSiteProps& other);
 
-    /// Destroy this ComplexationSurfaceSiteProps object.
-    virtual ~ComplexationSurfaceSiteProps();
+    /// Destroy this SurfaceSiteProps object.
+    virtual ~SurfaceSiteProps();
 
-    /// Assign a ComplexationSurfaceSiteProps object to this object.
-    auto operator=(ComplexationSurfaceSiteProps other) -> ComplexationSurfaceSiteProps&;
+    /// Assign a SurfaceSiteProps object to this object.
+    auto operator=(SurfaceSiteProps other) -> SurfaceSiteProps&;
 
-    /// Update the complexation surface site properties with given chemical state of the system.
+    /// Update the surface site properties with given chemical state of the system.
     auto update(const ChemicalState& state) -> void;
 
-    /// Update the complexation surface site properties with given chemical properties of the system.
+    /// Update the surface site properties with given chemical properties of the system.
     auto update(const ChemicalProps& props) -> void;
 
     /// Return the amount of an element (in moles).
@@ -66,29 +66,29 @@ public:
     /// Return the amounts of the elements (in moles).
     auto elementAmounts() const -> ArrayXr;
 
-    /// Return the amounts of the species on the complexation surface site surface (in moles).
+    /// Return the amounts of the species on the surface site surface (in moles).
     auto speciesAmounts() const -> ArrayXr;
 
-    /// Return the amounts of an complexation surface site species (in moles).
+    /// Return the amounts of an surface site species (in moles).
     auto speciesAmount(const StringOrIndex& name) const -> real;
 
-    /// Return the fraction of the species on the complexation surface site composition (in eq).
+    /// Return the fraction of the species on the surface site composition (in eq).
     auto speciesFractions() const -> ArrayXr;
 
-    /// Return the fraction of an complexation surface site species.
+    /// Return the fraction of an surface site species.
     auto speciesFraction(const StringOrIndex& name) const -> real;
 
-    /// Return the base-10 logarithms of the species' activity on the complexation surface.
+    /// Return the base-10 logarithms of the species' activity on the surface.
     auto speciesActivitiesLg() const -> ArrayXr;
 
-    /// Return the base-10 logarithm of the species; activity on the complexation surface.
+    /// Return the base-10 logarithm of the species; activity on the surface.
     auto speciesActivityLg(const StringOrIndex& name) const -> real;
 
-    // Return the complexation surface site state.
-    auto complexationSurfaceSiteState() const -> ComplexationSurfaceSiteState;
+    // Return the surface site state.
+    auto surfaceSiteState() const -> SurfaceSiteState;
 
     // Return the complexation surface.
-    auto complexationSurfaceSite() const -> ComplexationSurfaceSite;
+    auto surfaceSite() const -> SurfaceSite;
 
     // Return the sum of species charges.
     auto charge() const -> real;
@@ -114,7 +114,7 @@ private:
     Ptr<Impl> pimpl;
 };
 
-/// Output an ComplexationSurfaceSiteProps object to an output stream.
-auto operator<<(std::ostream& out, const ComplexationSurfaceSiteProps& state) -> std::ostream&;
+/// Output an SurfaceSiteProps object to an output stream.
+auto operator<<(std::ostream& out, const SurfaceSiteProps& state) -> std::ostream&;
 
 } // namespace Reaktoro

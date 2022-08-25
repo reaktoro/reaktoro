@@ -20,5 +20,5 @@ from reaktoro import *
 import numpy as np
 import pytest
 
-def testActivityModelSurfaceComplexation():
+def testActivityModelSorption():
     return

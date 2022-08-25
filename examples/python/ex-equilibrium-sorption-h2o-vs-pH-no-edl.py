@@ -34,7 +34,7 @@ db = PhreeqcDatabase("phreeqc.dat")
 solution = AqueousPhase(speciate("H O Na Cl"))
 solution.setActivityModel(ActivityModelHKF())
 
-# Define surface complexation  species list
+# Define surface species list
 list_str = "Hfo_sOH Hfo_sOH2+ Hfo_sO- Hfo_wOH Hfo_wOH2+ Hfo_wO-";
 slist = db.species().withAggregateState(AggregateState.Adsorbed)
 list = slist.withNames(StringList(list_str))
@@ -42,31 +42,31 @@ list = slist.withNames(StringList(list_str))
 list_str_s = "Hfo_sOH Hfo_sOH2+ Hfo_sO-"
 list_str_w = "Hfo_wOH Hfo_wOH2+ Hfo_wO-"
 
-# Create complexation surface
-surface_Hfo = ComplexationSurface("Hfo")
+# Create the surface
+surface_Hfo = Surface("Hfo")
 surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g")
 
-# Defined sites of the complexation surface
+# Defined sites of the surface
 surface_Hfo.addSite("Hfo_s", "_s").setAmount(0.025e-3, "mol")
 surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol")
 
 # Add species to the surface and corresponding sites
 surface_Hfo.addSurfaceSpecies(list)
 
-# Add specified surface as parameters for the activity model for the complexation surface
-params_site = ActivityModelSurfaceComplexationSiteParams()
+# Add specified surface as parameters for the activity model for the surface
+params_site = ActivityModelSorptionParams()
 params_site.surface = surface_Hfo
 
-# Define surface complexation phases and set an activity model
+# Define surface phases and set an activity model
 params_site.site_tag = "_w";
-hfo_w_phase = SurfaceComplexationPhase(list_str_w)
+hfo_w_phase = SurfacePhase(list_str_w)
 hfo_w_phase.setName("Hfo_w")
-hfo_w_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site))
+hfo_w_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site))
 
 params_site.site_tag = "_s";
-hfo_s_phase = SurfaceComplexationPhase(list_str_s)
+hfo_s_phase = SurfacePhase(list_str_s)
 hfo_s_phase.setName("Hfo_s")
-hfo_s_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site))
+hfo_s_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site))
 
 # Create chemical system
 system = ChemicalSystem(db, solution, hfo_w_phase, hfo_s_phase)
@@ -74,8 +74,8 @@ system = ChemicalSystem(db, solution, hfo_w_phase, hfo_s_phase)
 # Define properties
 props = ChemicalProps(system)
 aprops = AqueousProps(system)
-site_w_props = ComplexationSurfaceSiteProps(surface_Hfo.sites()["_w"], system)
-site_s_props = ComplexationSurfaceSiteProps(surface_Hfo.sites()["_s"], system)
+site_w_props = SurfaceSiteProps(surface_Hfo.sites()["_w"], system)
+site_s_props = SurfaceSiteProps(surface_Hfo.sites()["_s"], system)
 
 # Specify equilibrium specs
 specs = EquilibriumSpecs(system)

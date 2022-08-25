@@ -28,21 +28,21 @@ class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class Phase;
-class ComplexationSurfaceState;
-class ComplexationSurface;
+class SurfaceState;
+class Surface;
 
 /// The chemical properties of an surface and surface sites phase.
 class SurfaceProps
 {
 public:
     /// Construct an uninitialized SurfaceProps object with given chemical system.
-    explicit SurfaceProps(const ComplexationSurface& surface, const ChemicalSystem& system);
+    explicit SurfaceProps(const Surface& surface, const ChemicalSystem& system);
 
     /// Construct an SurfaceProps object with given chemical state of the system.
-    explicit SurfaceProps(const ComplexationSurface& surface, const ChemicalState& state);
+    explicit SurfaceProps(const Surface& surface, const ChemicalState& state);
 
     /// Construct an SurfaceProps object with given chemical properties of the system.
-    explicit SurfaceProps(const ComplexationSurface& surface, const ChemicalProps& props);
+    explicit SurfaceProps(const Surface& surface, const ChemicalProps& props);
 
     /// Construct a copy of a SurfaceProps object.
     SurfaceProps(const SurfaceProps& other);
@@ -53,10 +53,10 @@ public:
     /// Assign a SurfaceProps object to this object.
     auto operator=(SurfaceProps other) -> SurfaceProps&;
 
-    /// Update the complexation surface properties with given chemical state of the system.
+    /// Update the surface properties with given chemical state of the system.
     auto update(const ChemicalState& state) -> void;
 
-    /// Update the complexation surface properties with given chemical properties of the system.
+    /// Update the surface properties with given chemical properties of the system.
     auto update(const ChemicalProps& props) -> void;
 
     /// Return the amount of an element (in moles).
@@ -65,23 +65,23 @@ public:
     /// Return the amounts of the elements (in moles).
     auto elementAmounts(const String& site_tag) const -> ArrayXr;
 
-    /// Return the amounts of the species on the complexation surface surface (in moles).
+    /// Return the amounts of the species on the surface surface (in moles).
     auto speciesAmounts(const String& site_tag) const -> ArrayXr;
 
-    /// Return the amounts of an complexation surface species (in moles).
+    /// Return the amounts of an surface species (in moles).
     auto speciesAmount(const String& site_tag, const StringOrIndex& name) const -> real;
 
-    /// Return the fraction of the species on the complexation surface composition (in eq).
+    /// Return the fraction of the species on the surface composition (in eq).
     auto speciesFractions(const String& site_tag) const -> ArrayXr;
 
-    /// Return the fraction of an complexation surface species.
+    /// Return the fraction of an surface species.
     auto speciesFraction(const String& site_tag, const StringOrIndex& name) const -> real;
 
-    // Return the complexation surface state.
-    auto complexationSurfaceState() const -> ComplexationSurfaceState;
+    // Return the surface state.
+    auto surfaceState() const -> SurfaceState;
 
-    // Return the complexation surface.
-    auto complexationSurface() const -> ComplexationSurface;
+    // Return the surface.
+    auto surface() const -> Surface;
 
     // Return the sum of species charges.
     auto Z() const -> real;
@@ -92,10 +92,10 @@ public:
     // Return the surface potential.
     auto potential(real I, real sigma) const -> real ;
 
-    /// Return the underlying Phase object for the complexation surface phase.
+    /// Return the underlying Phase object for the surface phase.
     auto phase(const String& site_tag) const -> const Phase&;
 
-    /// Return the underlying Phase object for the complexation surface phase.
+    /// Return the underlying Phase object for the surface phase.
     auto extra() const -> const Map<String, Any>&;
 
     /// Output the properties of the sorption phase to a stream.

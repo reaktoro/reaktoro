@@ -51,11 +51,11 @@ int main()
     SpeciesList species_list_w = adsorbed_species.withNames(selected_species_w);
     SpeciesList species_list = species_list_s + species_list_w;
 
-    // Create complexation surface
-    ComplexationSurface surface_Hfo("Hfo");
+    // Create the surface
+    Surface surface_Hfo("Hfo");
     surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g");
 
-    // Defined siteS of the complexation surface
+    // Defined siteS of the surface
     surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol");
     surface_Hfo.addSite("Hfo_s", "_s").setAmount(0.025e-3, "mol");
 
@@ -64,19 +64,19 @@ int main()
 
     std::cout << surface_Hfo << std::endl;
 
-    // Define surface sites as complexation sites phases
-    SurfaceComplexationPhase hfo_w_phase(selected_species_w);
+    // Define surface sites as sites phases
+    SurfacePhase hfo_w_phase(selected_species_w);
     hfo_w_phase.setName("Hfo_w");
-    SurfaceComplexationPhase hfo_s_phase(selected_species_s);
+    SurfacePhase hfo_s_phase(selected_species_s);
     hfo_s_phase.setName("Hfo_s");
 
-    // Define parameters for the activity model of the complexation surface and set corresponding activity model
-    ActivityModelSurfaceComplexationSiteParams params_site;
+    // Define parameters for the activity model of the surface and set corresponding activity model
+    ActivityModelSorptionParams params_site;
     params_site.surface = surface_Hfo;
     params_site.site_tag = "_w";
-    hfo_w_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site));
+    hfo_w_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site));
     params_site.site_tag = "_s";
-    hfo_s_phase.setActivityModel(ActivityModelSurfaceComplexationSiteNoDDL(params_site));
+    hfo_s_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site));
 
     // Construct the chemical system
     ChemicalSystem system(dbphreeqc, aqueous_phase, hfo_w_phase, hfo_s_phase);
@@ -125,9 +125,9 @@ int main()
     std::cout << "Cd dissolved     = " << props.elementAmountInPhase("Cd", "AqueousPhase") << std::endl;
     std::cout << "Cd sorb.const., Kd = " << (state.speciesAmount("Hfo_sOCd+") + state.speciesAmount("Hfo_wOCd+")) / props.elementAmount("Cd") << std::endl;
 
-    // Evaluate surface complexation sites' properties and print them
-    ComplexationSurfaceSiteProps site_w_props(surface_Hfo.sites()["_w"], state);
-    ComplexationSurfaceSiteProps site_s_props(surface_Hfo.sites()["_s"], state);
+    // Evaluate surface sites' properties and print them
+    SurfaceSiteProps site_w_props(surface_Hfo.sites()["_w"], state);
+    SurfaceSiteProps site_s_props(surface_Hfo.sites()["_s"], state);
 
     auto Z_s = site_s_props.charge();
     auto Z_w = site_w_props.charge();

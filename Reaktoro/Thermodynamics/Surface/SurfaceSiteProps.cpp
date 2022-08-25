@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ComplexationSurfaceSiteProps.hpp"
+#include "SurfaceSiteProps.hpp"
 
 // C++ includes
 #include <fstream>
@@ -30,34 +30,33 @@ using namespace tabulate;
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurfaceSite.hpp>
+#include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
+
 namespace {
 
-/// Return the index of the first complexation surface site phase in the system.
-auto indexComplexationSurfaceSitePhase(const ChemicalSystem& system, const ComplexationSurfaceSite& site) -> Index
+/// Return the index of the first surface site phase in the system.
+extern auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSite& site) -> Index
 {
     const auto exchange_phases = system.phases().withAggregateState(AggregateState::Adsorbed).withNames(site.name());
     error(exchange_phases.size() > 1,
-            "While creating an ComplexationSurfaceSiteProps object, it has been detected ",
-            "more than one complexation surface site phase with the name " + site.name() +
-            " in the system.");
+          "While creating an SurfaceSiteProps object, it has been detected ",
+          "more than one surface site phase with the name " + site.name() +
+              " in the system.");
     const auto idx = system.phases().findWithName(site.name());
     error(idx >= system.phases().size(),
-          "Could not create an ComplexationSurfaceSiteProps object because there is no "
+          "Could not create an SurfaceSiteProps object because there is no "
           "phase in the system with the name " + site.name());
     return idx;
 }
 
 } // namespace
 
-struct ComplexationSurfaceSiteProps::Impl
+struct SurfaceSiteProps::Impl
 {
     /// The chemical system to which the complexation surface site phase belongs.
     const ChemicalSystem system;
@@ -69,13 +68,13 @@ struct ComplexationSurfaceSiteProps::Impl
     const Phase phase;
 
     /// The complexation surface phase as an complexation surface.
-    ComplexationSurface surface;
+    Surface surface;
 
     /// The complexation surface site phase as an complexation surface site.
-    ComplexationSurfaceSite site;
+    SurfaceSite site;
 
     /// The state representing the complexation surface.
-    ComplexationSurfaceSiteState site_state;
+    SurfaceSiteState site_state;
 
     /// The chemical properties of the complexation surface site phase.
     ChemicalPropsPhase props;
@@ -89,9 +88,9 @@ struct ComplexationSurfaceSiteProps::Impl
     /// The extra properties and data produced during the evaluation of the complexation surface site phase activity model.
     Map<String, Any> extra;
 
-    Impl(const ComplexationSurfaceSite& site, const ChemicalSystem& system)
+    Impl(const SurfaceSite& site, const ChemicalSystem& system)
     : system(system),
-      iphase(indexComplexationSurfaceSitePhase(system, site)),
+      iphase(indexSurfaceSitePhase(system, site)),
       phase(system.phase(iphase)),
       props(phase),
       site(site)
@@ -103,13 +102,13 @@ struct ComplexationSurfaceSiteProps::Impl
         Aex = detail::assembleFormulaMatrix(phase.species(), phase.elements());
     }
 
-    Impl(const ComplexationSurfaceSite& site, const ChemicalSystem& system, const ChemicalState& state)
+    Impl(const SurfaceSite& site, const ChemicalSystem& system, const ChemicalState& state)
     : Impl(site, system)
     {
         update(state);
     }
 
-    Impl(const ComplexationSurfaceSite& site, const ChemicalSystem& system, const ChemicalProps& props)
+    Impl(const SurfaceSite& site, const ChemicalSystem& system, const ChemicalProps& props)
     : Impl(site, system)
     {
         update(props);
@@ -125,10 +124,10 @@ struct ComplexationSurfaceSiteProps::Impl
         const auto size = phase.species().size();
         extra = state.props().extra();
 
-        if(extra["ComplexationSurfaceSiteState" + site.name()].has_value())
-            site_state = std::any_cast<ComplexationSurfaceSiteState>(extra["ComplexationSurfaceSiteState" + site.name()]);
-        if(extra["ComplexationSurfaceSite" + site.name()].has_value())
-            site = std::any_cast<ComplexationSurfaceSite>(extra["ComplexationSurfaceSite" + site.name()]);
+        if(extra["SurfaceSiteState" + site.name()].has_value())
+            site_state = std::any_cast<SurfaceSiteState>(extra["SurfaceSiteState" + site.name()]);
+        if(extra["SurfaceSite" + site.name()].has_value())
+            site = std::any_cast<SurfaceSite>(extra["SurfaceSite" + site.name()]);
 
         props.update(T, P, n.segment(ifirst, size), extra);
         update(props);
@@ -219,123 +218,123 @@ struct ComplexationSurfaceSiteProps::Impl
     }
 };
 
-ComplexationSurfaceSiteProps::ComplexationSurfaceSiteProps(const ComplexationSurfaceSite& site, const ChemicalSystem& system)
+SurfaceSiteProps::SurfaceSiteProps(const SurfaceSite& site, const ChemicalSystem& system)
 : pimpl(new Impl(site, system))
 {}
 
-ComplexationSurfaceSiteProps::ComplexationSurfaceSiteProps(const ComplexationSurfaceSite& site, const ChemicalState& state)
+SurfaceSiteProps::SurfaceSiteProps(const SurfaceSite& site, const ChemicalState& state)
 : pimpl(new Impl(site, state.system(), state))
 {}
 
-ComplexationSurfaceSiteProps::ComplexationSurfaceSiteProps(const ComplexationSurfaceSite& site, const ChemicalProps& props)
+SurfaceSiteProps::SurfaceSiteProps(const SurfaceSite& site, const ChemicalProps& props)
 : pimpl(new Impl(site, props.system(), props))
 {}
 
-ComplexationSurfaceSiteProps::ComplexationSurfaceSiteProps(const ComplexationSurfaceSiteProps& other)
+SurfaceSiteProps::SurfaceSiteProps(const SurfaceSiteProps& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-ComplexationSurfaceSiteProps::~ComplexationSurfaceSiteProps()
+SurfaceSiteProps::~SurfaceSiteProps()
 {}
 
-auto ComplexationSurfaceSiteProps::operator=(ComplexationSurfaceSiteProps other) -> ComplexationSurfaceSiteProps&
+auto SurfaceSiteProps::operator=(SurfaceSiteProps other) -> SurfaceSiteProps&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto ComplexationSurfaceSiteProps::update(const ChemicalState& state) -> void
+auto SurfaceSiteProps::update(const ChemicalState& state) -> void
 {
     pimpl->update(state);
 }
 
-auto ComplexationSurfaceSiteProps::update(const ChemicalProps& props) -> void
+auto SurfaceSiteProps::update(const ChemicalProps& props) -> void
 {
     pimpl->update(props);
 }
 
-auto ComplexationSurfaceSiteProps::elementAmount(const StringOrIndex& symbol) const -> real
+auto SurfaceSiteProps::elementAmount(const StringOrIndex& symbol) const -> real
 {
     return pimpl->elementAmount(symbol);
 }
 
-auto ComplexationSurfaceSiteProps::elementAmounts() const -> ArrayXr
+auto SurfaceSiteProps::elementAmounts() const -> ArrayXr
 {
     return pimpl->elementAmounts();
 }
 
-auto ComplexationSurfaceSiteProps::speciesAmounts() const -> ArrayXr
+auto SurfaceSiteProps::speciesAmounts() const -> ArrayXr
 {
     return pimpl->speciesAmounts();
 }
 
-auto ComplexationSurfaceSiteProps::speciesAmount(const StringOrIndex& name) const -> real
+auto SurfaceSiteProps::speciesAmount(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesAmount(name);
 }
 
-auto ComplexationSurfaceSiteProps::speciesFractions() const -> ArrayXr
+auto SurfaceSiteProps::speciesFractions() const -> ArrayXr
 {
     return pimpl->speciesFractions();
 }
 
-auto ComplexationSurfaceSiteProps::speciesFraction(const StringOrIndex& name) const -> real
+auto SurfaceSiteProps::speciesFraction(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesFraction(name);
 }
 
-auto ComplexationSurfaceSiteProps::speciesActivityLg(const StringOrIndex& name) const -> real
+auto SurfaceSiteProps::speciesActivityLg(const StringOrIndex& name) const -> real
 {
     return pimpl->speciesActivityLg(name);
 }
 
-auto ComplexationSurfaceSiteProps::speciesActivitiesLg() const -> ArrayXr
+auto SurfaceSiteProps::speciesActivitiesLg() const -> ArrayXr
 {
     return pimpl->speciesActivitiesLg();
 }
 
-auto ComplexationSurfaceSiteProps::complexationSurfaceSiteState() const -> ComplexationSurfaceSiteState
+auto SurfaceSiteProps::surfaceSiteState() const -> SurfaceSiteState
 {
     return pimpl->site_state;
 }
 
-auto ComplexationSurfaceSiteProps::complexationSurfaceSite() const -> ComplexationSurfaceSite
+auto SurfaceSiteProps::surfaceSite() const -> SurfaceSite
 {
     return pimpl->site;
 }
 
-auto ComplexationSurfaceSiteProps::charge() const -> real
+auto SurfaceSiteProps::charge() const -> real
 {
     return pimpl->charge();
 }
 
-auto ComplexationSurfaceSiteProps::sigma(real Z) const -> real
+auto SurfaceSiteProps::sigma(real Z) const -> real
 {
     return pimpl->sigma(Z);
 }
 
-auto ComplexationSurfaceSiteProps::phase() const -> const Phase&
+auto SurfaceSiteProps::phase() const -> const Phase&
 {
     return pimpl->phase;
 }
 
-auto ComplexationSurfaceSiteProps::extra() const -> const Map<String, Any>&
+auto SurfaceSiteProps::extra() const -> const Map<String, Any>&
 {
     return pimpl->extra;
 }
 
-auto ComplexationSurfaceSiteProps::output(std::ostream& out) const -> void
+auto SurfaceSiteProps::output(std::ostream& out) const -> void
 {
     out << *this;
 }
 
-auto ComplexationSurfaceSiteProps::output(const String& filename) const -> void
+auto SurfaceSiteProps::output(const String& filename) const -> void
 {
     auto out = std::ofstream(filename);
     out << *this;
 }
 
-auto operator<<(std::ostream& out, const ComplexationSurfaceSiteProps& props) -> std::ostream&
+auto operator<<(std::ostream& out, const SurfaceSiteProps& props) -> std::ostream&
 {
     // Extract the output data
     const auto elements = props.phase().elements();
@@ -350,7 +349,7 @@ auto operator<<(std::ostream& out, const ComplexationSurfaceSiteProps& props) ->
     assert(elements.size() == ne.size());
 
     // Fetch auxiliary properties
-    const auto T = props.complexationSurfaceSiteState().T;
+    const auto T = props.surfaceSiteState().T;
     const auto charge = props.charge();
     const auto sigma = props.sigma(charge);
 

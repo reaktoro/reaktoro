@@ -20,16 +20,16 @@
 
 // Reaktoro includes
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelSurfaceComplexation.hpp>
+#include <Reaktoro/Thermodynamics/Surface/ActivityModelSorption.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 
 using namespace Reaktoro;
 
 /// Initialize mole fractions for the sites' species.
-inline auto initializeSurfaceComplexationStrongSiteMoleFractions(const SpeciesList& species) -> ArrayXr
+inline auto initializeSorptionStrongSiteMoleFractions(const SpeciesList& species) -> ArrayXr
 {
     auto idx = [&](auto formula) { return species.indexWithName(formula); };
 
@@ -40,7 +40,7 @@ inline auto initializeSurfaceComplexationStrongSiteMoleFractions(const SpeciesLi
     return n / n.sum();
 }
 
-inline auto initializeSurfaceComplexationWeakSiteMoleFractions(const SpeciesList& species) -> ArrayXr
+inline auto initializeSorptionWeakSiteMoleFractions(const SpeciesList& species) -> ArrayXr
 {
     auto idx = [&](auto formula) { return species.indexWithName(formula); };
 
@@ -72,7 +72,7 @@ namespace test
     auto getPhreeqcDatabase(const String& name) -> PhreeqcDatabase;
 }
 
-TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComplexation]")
+TEST_CASE("Testing ActivityModelSorption", "[ActivityModelSorption]")
 {
     // Initialize input data
     const auto T = 25.0;
@@ -81,17 +81,17 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
     // Create custom database
     Database db = test::getPhreeqcDatabase("phreeqc.dat");
 
-    // Create complexation surface
-    ComplexationSurface surface_Hfo("Hfo");
+    // Create a surface
+    Surface surface_Hfo("Hfo");
     surface_Hfo.setSpecificSurfaceArea(60, "m2/g")
         .setMass(4.45, "g");
 
-    // Defined strong site of the complexation surface
+    // Defined strong site of the surface
     surface_Hfo.addSite("Hfo_w", "_w")
         .setAmount(1e-3, "mol");
 
-    // Defined weak site of the complexation surface
-    ComplexationSurfaceSite site_Hfo_s;
+    // Defined weak site of the surface
+    SurfaceSite site_Hfo_s;
     site_Hfo_s.setName("Hfo_s")
         .setAmount(0.025e-3, "mol");
     surface_Hfo.addSite(site_Hfo_s);
@@ -113,15 +113,15 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
     SpeciesList species_w = adsorbed_species.withNames(selected_absorbed_species_w);
 
     // The activity model params per site
-    ActivityModelSurfaceComplexationSiteParams params_s, params_w;
+    ActivityModelSorptionParams params_s, params_w;
     params_s.surface = surface_Hfo;
     params_s.site_tag = "_s";
     params_w.surface = surface_Hfo;
     params_w.site_tag = "_w";
 
     // Initialize corresponding species fractions
-    const auto xs = initializeSurfaceComplexationStrongSiteMoleFractions(species_s);
-    const auto xw = initializeSurfaceComplexationWeakSiteMoleFractions(species_w);
+    const auto xs = initializeSorptionStrongSiteMoleFractions(species_s);
+    const auto xw = initializeSorptionWeakSiteMoleFractions(species_w);
 
     SECTION("Checking the activities")
     {
@@ -129,8 +129,8 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
         // Evaluate values for the strong site
         // --------------------------------------------------------------------
 
-        // Construct the activity model function with the given ion exchange species.
-        ActivityModel fn = ActivityModelSurfaceComplexationSiteNoDDL(params_s)(species_s);
+        // Construct the activity model function with the given sorption species.
+        ActivityModel fn = ActivityModelSorptionNoDDL(params_s)(species_s);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species_s.size());
@@ -149,7 +149,7 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
         // --------------------------------------------------------------------
 
         // Construct the activity model function with the given ion exchange species.
-        fn = ActivityModelSurfaceComplexationSiteNoDDL(params_w)(species_w);
+        fn = ActivityModelSorptionNoDDL(params_w)(species_w);
 
         // Create the ActivityProps object with the results.
         props = ActivityProps::create(species_w.size());
@@ -182,7 +182,7 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
         // --------------------------------------------------------------------
 
         // Construct the activity model function with the given ion exchange species.
-        ActivityModel fn = ActivityModelSurfaceComplexationSiteNoDDL(params_s)(species_s);
+        ActivityModel fn = ActivityModelSorptionNoDDL(params_s)(species_s);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species_s.size());
@@ -205,7 +205,7 @@ TEST_CASE("Testing ActivityModelSurfaceComplexation", "[ActivityModelSurfaceComp
         // --------------------------------------------------------------------
 
         // Construct the activity model function with the given ion exchange species.
-        fn = ActivityModelSurfaceComplexationSiteNoDDL(params_w)(species_w);
+        fn = ActivityModelSorptionNoDDL(params_w)(species_w);
 
         // Create the ActivityProps object with the results.
         props = ActivityProps::create(species_w.size());

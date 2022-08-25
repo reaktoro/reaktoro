@@ -22,7 +22,7 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
 #include <Reaktoro/Thermodynamics/Surface/SurfaceProps.hpp>
 
 using namespace Reaktoro;
@@ -30,8 +30,8 @@ using namespace Reaktoro;
 void exportSurfaceProps(py::module& m)
 {
     py::class_<SurfaceProps>(m, "SurfaceProps")
-        .def(py::init<const ComplexationSurface&, const ChemicalSystem&>())
-        .def(py::init<const ComplexationSurface&, const ChemicalState&>())
+        .def(py::init<const Surface&, const ChemicalSystem&>())
+        .def(py::init<const Surface&, const ChemicalState&>())
         .def("update", py::overload_cast<const ChemicalState&>(&SurfaceProps::update))
         .def("elementAmounts", &SurfaceProps::elementAmounts)
         .def("elementAmount", &SurfaceProps::elementAmount)

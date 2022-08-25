@@ -151,15 +151,7 @@ void exportPhases(py::module& m)
         .def(py::init<String>())
         ;
 
-    py::class_<SurfaceComplexationPhase, GenericPhase>(m, "SurfaceComplexationPhase")
+    py::class_<SurfacePhase, GenericPhase>(m, "SurfacePhase")
         .def(py::init<String>())
-        ;
-
-    py::class_<DoubleLayerPhase, GenericPhase>(m, "DoubleLayerPhase")
-        .def(py::init<>())
-        .def(py::init<const StringList&>())
-        .def(py::init<Speciate>())
-        .def(py::init<Speciate, const Exclude&>())
-        .def(py::init<const Exclude&>())
         ;
 }

@@ -32,63 +32,56 @@ using namespace tabulate;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ComplexationSurface.hpp>
+#include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
-namespace {
 
-
-/// Return the index of the first complexation surface site phase in the system.
-auto indexComplexationSurfaceSitePhase(const ChemicalSystem& system, const ComplexationSurfaceSite& site) -> Index
+/// Return the index of the first surface site phase in the system.
+extern auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSite& site) -> Index
 {
     const auto exchange_phases = system.phases().withAggregateState(AggregateState::Adsorbed).withNames(site.name());
     error(exchange_phases.size() > 1,
-          "While creating an ComplexationSurfaceSiteProps object, it has been detected ",
-          "more than one complexation surface site phase with the name " + site.name() +
-              " in the system.");
+          "While creating an SurfaceProps object, it has been detected that",
+          " more than one surface site phase with the name " + site.name() +
+          " in the system.");
     const auto idx = system.phases().findWithName(site.name());
     error(idx >= system.phases().size(),
-          "Could not create an ComplexationSurfaceSiteProps object because there is no "
+          "Could not create an SurfaceProps object because there is no "
           "phase in the system with the name " + site.name());
     return idx;
 }
 
-} // namespace
-
 struct SurfaceProps::Impl
 {
-    /// The chemical system to which the complexation surface phase belongs.
+    /// The chemical system to which the surface phase belongs.
     const ChemicalSystem system;
 
-    /// The indices of the underlying Phases object for the complexation surface site phhases in the system.
+    /// The indices of the underlying Phases object for the surface site phases in the system.
     std::map<std::string, Index> iphases;
 
-    /// The underlying Phase object for the complexation surface phase in the system.
+    /// The underlying Phase object for the surface phase in the system.
     std::map<std::string, Phase> phases;
 
-    /// The complexation surface phase as an complexation surface.
-    ComplexationSurface surface;
+    /// The surface.
+    Surface surface;
 
-    /// The state representing the complexation surface.
-    ComplexationSurfaceState surface_state;
-
-    /// The states representing the complexation surface.
-    std::map<std::string, ComplexationSurfaceSiteState> site_states;
+    /// The state representing the surface.
+    SurfaceState surface_state;
 
     /// The chemical properties of the system.
     ChemicalProps props;
 
-    /// The formula matrix of the complexation surface species.
+    /// The formula matrix of the surface species.
     std::map<std::string, MatrixXd> Aex;
 
-    /// The amounts of the species in the complexation surface phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
+    /// The amounts of the species in the surface phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
     std::map<std::string, ArrayXr> nex;
 
-    /// The extra properties and data produced during the evaluation of the complexation surface phase activity model.
+    /// The extra properties and data produced during the evaluation of the surface phase activity model.
     Map<String, Any> extra;
 
-    Impl(const ComplexationSurface& surface, const ChemicalSystem& system)
+    Impl(const Surface& surface, const ChemicalSystem& system)
     : system(system),
       props(system),
       surface(surface)
@@ -96,7 +89,7 @@ struct SurfaceProps::Impl
 
         for(auto [tag, site] : surface.sites())
         {
-            auto iphase_site = indexComplexationSurfaceSitePhase(system, site);
+            auto iphase_site = indexSurfaceSitePhase(system, site);
             auto phase_site = Phase(system.phase(iphase_site));
             auto props_site = props.phaseProps(iphase_site);
 
@@ -111,13 +104,13 @@ struct SurfaceProps::Impl
         }
     }
 
-    Impl(const ComplexationSurface& surface, const ChemicalSystem& system, const ChemicalState& state)
+    Impl(const Surface& surface, const ChemicalSystem& system, const ChemicalState& state)
     : Impl(surface, system)
     {
         update(state);
     }
 
-    /// Update the complexation surface properties with given chemical state.
+    /// Update the surface properties with given chemical state.
     auto update(const ChemicalState& state) -> void
     {
         const auto T = state.temperature();
@@ -129,11 +122,6 @@ struct SurfaceProps::Impl
             const auto ifirst = system.phases().numSpeciesUntilPhase(iphases[tag]);
             const auto size = phases[tag].species().size();
 
-            if(extra["ComplexationSurfaceSiteState" + tag].has_value())
-            {
-                site_states[tag] = std::any_cast<ComplexationSurfaceSiteState>(extra["ComplexationSurfaceSiteState" + site.name()]);
-            }
-
             auto props_site = props.phaseProps(iphases[tag]);
             props_site.update(T, P, n.segment(ifirst, size), extra);
 
@@ -142,10 +130,10 @@ struct SurfaceProps::Impl
 
         extra = state.props().extra();
 
-        if(extra["ComplexationSurface"].has_value())
+        if(extra["Surface"].has_value())
         {
-            surface = std::any_cast<ComplexationSurface>(extra["ComplexationSurface"]);
-            surface_state = std::any_cast<ComplexationSurfaceState>(extra["ComplexationSurfaceState"]);
+            surface = std::any_cast<Surface>(extra["Surface"]);
+            surface_state = std::any_cast<SurfaceState>(extra["SurfaceState"]);
         }
     }
 
@@ -163,33 +151,33 @@ struct SurfaceProps::Impl
         return (Aex.at(site_tag).topRows(E) * VectorXr(nex.at(site_tag))).array();
     }
 
-    /// Return the amounts of the species on the complexation surface (in moles).
+    /// Return the amounts of the species on the surface (in moles).
     auto speciesAmounts(const String& site_tag) const -> ArrayXr
     {
         return nex.at(site_tag);
     }
 
-    /// Return the amounts of an complexation surface species (in moles).
+    /// Return the amounts of an surface species (in moles).
     auto speciesAmount(const String& site_tag, const StringOrIndex& name) const -> real
     {
         const auto idx = detail::resolveSpeciesIndex(phases.at(site_tag), name);
         return nex.at(site_tag)[idx];
     }
 
-    /// Return the fraction of the species on the complexation surface composition (in eq).
+    /// Return the fraction of the species on the surface composition (in eq).
     auto speciesFractions(const String& site_tag) const -> ArrayXr
     {
         return nex.at(site_tag) / nex.at(site_tag).sum();
     }
 
-    /// Return the fraction of an complexation surface species (in eq).
+    /// Return the fraction of an surface species (in eq).
     auto speciesFraction(const String& site_tag, const StringOrIndex& name) const -> real
     {
         const auto idx = detail::resolveSpeciesIndex(phases.at(site_tag), name);
         return nex.at(site_tag)[idx] / nex.at(site_tag).sum();
     }
 
-    /// Return the complexation surface charge.
+    /// Return the surface charge.
     auto Z() -> real
     {
         real Z = 0;
@@ -198,13 +186,13 @@ struct SurfaceProps::Impl
         return Z;
     }
 
-    /// Return the complexation surface charge density.
+    /// Return the surface charge density.
     auto charge(real Z) const -> real
     {
         return F*Z/surface.specificSurfaceArea()/surface.mass();
     }
 
-    /// Return the surface complexation potential for given ionic strength of the neighboring phase
+    /// Return the surface potential for given ionic strength of the neighboring phase
     auto potential(real I, real sigma) const -> real
     {
         // Auxiliary variables
@@ -217,11 +205,11 @@ struct SurfaceProps::Impl
     }
 };
 
-SurfaceProps::SurfaceProps(const ComplexationSurface& surface, const ChemicalSystem& system)
+SurfaceProps::SurfaceProps(const Surface& surface, const ChemicalSystem& system)
 : pimpl(new Impl(surface, system))
 {}
 
-SurfaceProps::SurfaceProps(const ComplexationSurface& surface, const ChemicalState& state)
+SurfaceProps::SurfaceProps(const Surface& surface, const ChemicalState& state)
 : pimpl(new Impl(surface, state.system(), state))
 {}
 
@@ -273,12 +261,12 @@ auto SurfaceProps::speciesFraction(const String& site_tag, const StringOrIndex& 
     return pimpl->speciesFraction(site_tag, name);
 }
 
-auto SurfaceProps::complexationSurfaceState() const -> ComplexationSurfaceState
+auto SurfaceProps::surfaceState() const -> SurfaceState
 {
     return pimpl->surface_state;
 }
 
-auto SurfaceProps::complexationSurface() const -> ComplexationSurface
+auto SurfaceProps::surface() const -> Surface
 {
     return pimpl->surface;
 }
@@ -322,8 +310,8 @@ auto SurfaceProps::output(const String& filename) const -> void
 auto operator<<(std::ostream& out, const SurfaceProps& props) -> std::ostream&
 {
     // Fetch auxiliary properties
-    auto surface = props.complexationSurface();
-    auto surface_state = props.complexationSurfaceState();
+    auto surface = props.surface();
+    auto surface_state = props.surfaceState();
 
     const auto T = surface_state.T;
     const auto Z = props.Z();
@@ -344,8 +332,8 @@ auto operator<<(std::ostream& out, const SurfaceProps& props) -> std::ostream&
     table.add_row({ ":: psi   (potential) "    , str(psi), "Volt" });
     table.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F*psi/R/T), "" });
     table.add_row({ ":: :: exp(-F*psi/(R*T))"  , str(exp(- F*psi/R/T)), "" });
-    table.add_row({ ":: As    (specific area)" , str(props.complexationSurfaceState().As), "m2/kg" });
-    table.add_row({ ":: mass  (mass)"          , str(props.complexationSurfaceState().mass), "kg" });
+    table.add_row({":: As    (specific area)" , str(props.surfaceState().As), "m2/kg" });
+    table.add_row({":: mass  (mass)"          , str(props.surfaceState().mass), "kg" });
 
     for(auto [tag, site] : surface.sites()) {
 
