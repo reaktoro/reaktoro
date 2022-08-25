@@ -67,7 +67,7 @@ hfo_w_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site))
 params_site.site_tag = "_s";
 hfo_s_phase = SurfacePhase(species_str_s)
 hfo_s_phase.setName("Hfo_s")
-hfo_w_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site))
+hfo_s_phase.setActivityModel(ActivityModelSorptionNoDDL(params_site))
 
 # Create chemical system
 system = ChemicalSystem(db, solution, hfo_s_phase, hfo_w_phase)
