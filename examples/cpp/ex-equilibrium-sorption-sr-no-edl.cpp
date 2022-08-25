@@ -40,18 +40,6 @@ int main()
     AqueousPhase aqueous_phase(speciate(elements));
     aqueous_phase.setActivityModel(ActivityModelHKF());
 
-    // Create the surface
-    Surface surface_Hfo("Hfo");
-    surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g");
-
-    // Defined strong site of the surface
-    surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol");
-
-    // Defined weak site of the surface
-    SurfaceSite site_Hfo_s;
-    site_Hfo_s.setName("Hfo_s").setAmount(0.025e-3, "mol");
-    surface_Hfo.addSite(site_Hfo_s);
-
     // Fetch all the species with Adsorbed aggregate state
     SpeciesList adsorbed_species = dbphreeqc.species().withAggregateState(AggregateState::Adsorbed);
 
@@ -64,9 +52,22 @@ int main()
     SpeciesList species_list_w = adsorbed_species.withNames(selected_species_w);
     SpeciesList species_list = species_list_s + species_list_w;
 
+    // Create the surface
+    Surface surface_Hfo("Hfo");
+    surface_Hfo.setSpecificSurfaceArea(60, "m2/g").setMass(4.45, "g");
+
     // Add species to the surface
     surface_Hfo.addSurfaceSpecies(species_list);
 
+    // Defined strong site of the surface
+    surface_Hfo.addSite("Hfo_w", "_w").setAmount(1e-3, "mol");
+
+    // Defined weak site of the surface
+    SurfaceSite site_Hfo_s;
+    site_Hfo_s.setName("Hfo_s").setAmount(0.025e-3, "mol");
+    surface_Hfo.addSite(site_Hfo_s);
+
+    // Print out the surface structure
     std::cout << surface_Hfo << std::endl;
 
     // Define surface sites as sites phases

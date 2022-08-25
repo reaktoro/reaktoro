@@ -305,8 +305,9 @@ auto Surface::addSite(const SurfaceSite& site) -> SurfaceSite&
     // Check if the name of the site's tag is initialized
     error(site_tag.empty(), "The tag of the site should be initialized.");
 
-    // Check if no site with the tag `site_tag` exist, add the site
-    if(surface_sites.find(site_tag) == surface_sites.end())
+    // Check if no site with the tag `site_tag` exist and add either add or extend it with the amount of the site
+    auto psite = surface_sites.find(site_tag);
+    if(psite == surface_sites.end())
     {
         // Add site into the map with key site_tag
         surface_sites[site_tag] = site;
@@ -314,6 +315,11 @@ auto Surface::addSite(const SurfaceSite& site) -> SurfaceSite&
         surface_sites[site_tag].setSurfaceName(surface_name)
                                .setMass(surface_mass)
                                .setSpecificSurfaceArea(ssa);
+    }
+    else
+    {
+        // Assign amount to the existing site
+        psite->second.setAmount(site.amount());
     }
 
     return surface_sites[site_tag];
