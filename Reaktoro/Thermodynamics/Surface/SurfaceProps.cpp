@@ -27,7 +27,6 @@ using namespace tabulate;
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
@@ -157,6 +156,19 @@ struct SurfaceProps::Impl
             surface = std::any_cast<Surface>(extra["Surface"]);
             surface_state = std::any_cast<SurfaceState>(extra["SurfaceState"]);
         }
+
+        // Update surface state electrostatic characteristics based on the new speciation
+        surface_state.charge = Z();
+
+        // Export ionic strength from the aqueous mixture state via `extra` data member
+        auto I = 0.0;
+        if (extra["AqueousMixtureState"].has_value())
+            I = std::any_cast<AqueousMixtureState>(extra["AqueousMixtureState"]).Ie;
+
+        // Update charge and potential with Z calculate via amount of species
+        surface_state.sigma = sigma(surface_state.charge);
+        surface_state.psi = potential(I, surface_state.sigma);
+
     }
 
     /// Return the amount of an element (in moles).
@@ -200,18 +212,30 @@ struct SurfaceProps::Impl
     }
 
     /// Return the surface charge.
-    auto Z() -> real
+    auto Z() const -> real
     {
-        real Z = 0;
+        real charge = 0;
         for(auto [tag, site] : surface.sites())
-            Z += (site.charges()*nex.at(tag)).sum();
-        return Z;
+            charge += (site.charges()*nex.at(tag)).sum();
+        return charge;
+    }
+
+    /// Return the surface charge.
+    auto charge() const -> real
+    {
+        return surface_state.charge;
+    }
+
+    /// Return the surface charge density based on given charge.
+    auto sigma(real charge) const -> real
+    {
+        return F*charge/surface.specificSurfaceArea()/surface.mass();
     }
 
     /// Return the surface charge density.
-    auto charge(real Z) const -> real
+    auto sigma() const -> real
     {
-        return F*Z/surface.specificSurfaceArea()/surface.mass();
+        return surface_state.sigma;
     }
 
     /// Return the surface potential for given ionic strength of the neighboring phase
@@ -221,10 +245,15 @@ struct SurfaceProps::Impl
         const auto T = surface_state.T;
 
         // Using formula sigma = 0.1174*I^0.5*sinh(F*potential/R/T/2) and arcsinh(y) = ln(y+(y^2+1)^1⁄2)
-        const auto y = sigma/(0.1174*sqrt(I));
-        const auto arcsinhy = asinh(y);
-        return 2*R*T*arcsinhy/F;
+        return 2*R*T*asinh(sigma/(0.1174*sqrt(I)))/F;
     }
+
+    /// Return the surface potential.
+    auto potential() const -> real
+    {
+        return surface_state.psi;
+    }
+
 };
 
 SurfaceProps::SurfaceProps(const Surface& surface, const ChemicalSystem& system)
@@ -298,14 +327,30 @@ auto SurfaceProps::Z() const -> real
     return pimpl->Z();
 }
 
-auto SurfaceProps::charge(real Z) const -> real
+auto SurfaceProps::charge() const -> real
 {
-    return pimpl->charge(Z);
+    return pimpl->charge();
 }
+
+auto SurfaceProps::sigma(real charge) const -> real
+{
+    return pimpl->sigma(charge);
+}
+
+auto SurfaceProps::sigma() const -> real
+{
+    return pimpl->sigma();
+}
+
 
 auto SurfaceProps::potential(real I, real sigma) const -> real
 {
     return pimpl->potential(I, sigma);
+}
+
+auto SurfaceProps::potential() const -> real
+{
+    return pimpl->potential();
 }
 
 auto SurfaceProps::phase(const String& site_tag) const -> const Phase&
@@ -336,19 +381,13 @@ auto operator<<(std::ostream& out, const SurfaceProps& props) -> std::ostream&
     auto surface_state = props.surfaceState();
 
     const auto T = surface_state.T;
-    const auto Z = props.Z();
-    auto I = 0.0;
-    // Export aqueous mixture state via `extra` data member
-    if (props.extra().at("AqueousMixtureState").has_value())
-        I = std::any_cast<AqueousMixtureState>(props.extra().at("AqueousMixtureState")).Ie;
-
-    // Update charge and potential with Z calculate via amount of species
-    const auto sigma = props.charge(Z);
-    const auto psi = props.potential(I, sigma);
+    const auto charge = surface_state.charge;
+    const auto sigma = surface_state.sigma;
+    const auto psi = surface_state.psi;
 
     Table table_surface;
     table_surface.add_row({ "Properties of the surface " + surface.name(), "Value", "Unit" });
-    table_surface.add_row({ ":: Z     (total charge)"   , str(props.Z()), "eq" });
+    table_surface.add_row({ ":: Z     (total charge)"  , str(charge), "eq" });
     table_surface.add_row({ ":: sigma (charge)"        , str(sigma), "C/m2" });
     table_surface.add_row({ ":: psi   (potential) "    , str(psi), "Volt" });
     table_surface.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F*psi/R/T), "" });

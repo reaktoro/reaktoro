@@ -74,8 +74,7 @@ system = ChemicalSystem(db, solution, hfo_w_phase, hfo_s_phase)
 # Define properties
 props = ChemicalProps(system)
 aprops = AqueousProps(system)
-site_w_props = SurfaceSiteProps(surface_Hfo.sites()["_w"], system)
-site_s_props = SurfaceSiteProps(surface_Hfo.sites()["_s"], system)
+sprops = SurfaceProps(surface_Hfo, system)
 
 # Specify equilibrium specs
 specs = EquilibriumSpecs(system)
@@ -134,21 +133,19 @@ for pH in pHs:
       mHfo_sOH2 = float(result_state.speciesAmount("Hfo_sOH2+"))
       mHfo_sO   = float(result_state.speciesAmount("Hfo_sO-"))
 
-      site_w_props.update(result_state)
-      site_s_props.update(result_state)
+      sprops.update(result_state)
       aprops.update(result_state)
 
-      xHfo_wOH  = float(site_w_props.speciesFraction("Hfo_wOH"))
-      xHfo_wOH2 = float(site_w_props.speciesFraction("Hfo_wOH2+"))
-      xHfo_wO   = float(site_w_props.speciesFraction("Hfo_wO-"))
-      xHfo_sOH  = float(site_s_props.speciesFraction("Hfo_sOH"))
-      xHfo_sOH2 = float(site_s_props.speciesFraction("Hfo_sOH2+"))
-      xHfo_sO   = float(site_s_props.speciesFraction("Hfo_sO-"))
+      xHfo_wOH  = float(sprops.speciesFraction("_w", "Hfo_wOH"))
+      xHfo_wOH2 = float(sprops.speciesFraction("_w", "Hfo_wOH2+"))
+      xHfo_wO   = float(sprops.speciesFraction("_w", "Hfo_wO-"))
+      xHfo_sOH  = float(sprops.speciesFraction("_s", "Hfo_sOH"))
+      xHfo_sOH2 = float(sprops.speciesFraction("_s", "Hfo_sOH2+"))
+      xHfo_sO   = float(sprops.speciesFraction("_s", "Hfo_sO-"))
 
-      Z_s = site_s_props.charge();
-      Z_w = site_w_props.charge();
-      Z = float(Z_s + Z_w)
-      sigma = float(site_w_props.sigma(Z_w) + site_s_props.sigma(Z_s))
+      Z         = float(sprops.charge())
+      sigma     = float(sprops.sigma())
+      potential = float(sprops.potential())
 
       print(f"{pH:4.1f} {xHfo_sOH:12.4e} {xHfo_sOH2:12.4e} {xHfo_sO:12.4e} {xHfo_wOH:12.4e} {xHfo_wOH2:12.4e} {xHfo_wO:12.4e} {float(aprops.ionicStrength()):12.4e} {Z:12.4e} {sigma:12.4e}")
 

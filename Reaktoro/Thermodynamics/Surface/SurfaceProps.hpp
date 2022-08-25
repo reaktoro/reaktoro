@@ -34,6 +34,7 @@ class Surface;
 /// The chemical properties of an surface and surface sites phase.
 class SurfaceProps
 {
+
 public:
     /// Construct an uninitialized SurfaceProps object with given chemical system.
     explicit SurfaceProps(const Surface& surface, const ChemicalSystem& system);
@@ -83,14 +84,23 @@ public:
     // Return the surface.
     auto surface() const -> Surface;
 
-    // Return the sum of species charges.
+    /// Return the surface charge.
     auto Z() const -> real;
 
-    // Return the surface charge.
-    auto charge(real Z) const -> real;
+    // Return the surface charge based on the given charge.
+    auto sigma(real charge) const -> real;
 
-    // Return the surface potential.
-    auto potential(real I, real sigma) const -> real ;
+    /// Return the surface potential for given ionic strength of the neighboring phase
+    auto potential(real I, real sigma) const -> real;
+
+    // Return the sum of species charges.
+    auto charge() const -> real;
+
+    // Return the surface charge based on the given charge.
+    auto sigma() const -> real;
+
+    /// Return the surface potential.
+    auto potential() const -> real;
 
     /// Return the underlying Phase object for the surface phase.
     auto phase(const String& site_tag) const -> const Phase&;
