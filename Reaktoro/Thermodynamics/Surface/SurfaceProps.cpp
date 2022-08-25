@@ -37,8 +37,10 @@ using namespace tabulate;
 
 namespace Reaktoro {
 
+namespace {
+
 /// Return the index of the first surface site phase in the system.
-extern auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSite& site) -> Index
+auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSite& site) -> Index
 {
     const auto exchange_phases = system.phases().withAggregateState(AggregateState::Adsorbed).withNames(site.name());
     error(exchange_phases.size() > 1,
@@ -51,6 +53,26 @@ extern auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSit
           "phase in the system with the name " + site.name());
     return idx;
 }
+
+// Function formatting table's header and columns' alignment
+auto formatTable(Table& table) -> void
+{
+    auto i = 0;
+    for (auto &row : table) {
+        if (i >= 2)  // apply from the third row
+            table[i].format()
+                    .border_top("")
+                    .column_separator("")
+                    .corner_top_left("")
+                    .corner_top_right("");
+        i += 1;
+    }
+    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
+    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
+    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
+}
+
+} //
 
 struct SurfaceProps::Impl
 {
@@ -324,18 +346,24 @@ auto operator<<(std::ostream& out, const SurfaceProps& props) -> std::ostream&
     const auto sigma = props.charge(Z);
     const auto psi = props.potential(I, sigma);
 
-    Table table;
-    table.add_row({ "Property", "Value", "Unit" });
-    table.add_row({ surface.name(), "", "" });
-    table.add_row({ ":: Z     (total charge)"   , str(props.Z()), "eq" });
-    table.add_row({ ":: sigma (charge)"        , str(sigma), "C/m2" });
-    table.add_row({ ":: psi   (potential) "    , str(psi), "Volt" });
-    table.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F*psi/R/T), "" });
-    table.add_row({ ":: :: exp(-F*psi/(R*T))"  , str(exp(- F*psi/R/T)), "" });
-    table.add_row({":: As    (specific area)" , str(props.surfaceState().As), "m2/kg" });
-    table.add_row({":: mass  (mass)"          , str(props.surfaceState().mass), "kg" });
+    Table table_surface;
+    table_surface.add_row({ "Properties of the surface " + surface.name(), "Value", "Unit" });
+    table_surface.add_row({ ":: Z     (total charge)"   , str(props.Z()), "eq" });
+    table_surface.add_row({ ":: sigma (charge)"        , str(sigma), "C/m2" });
+    table_surface.add_row({ ":: psi   (potential) "    , str(psi), "Volt" });
+    table_surface.add_row({ ":: ::     -F*psi/(R*T)"   , str(- F*psi/R/T), "" });
+    table_surface.add_row({ ":: :: exp(-F*psi/(R*T))"  , str(exp(- F*psi/R/T)), "" });
+    table_surface.add_row({":: As    (specific area)" , str(props.surfaceState().As), "m2/kg" });
+    table_surface.add_row({":: mass  (mass)"          , str(props.surfaceState().mass), "kg" });
+
+    formatTable(table_surface);
+
+    out << table_surface << "\n";
 
     for(auto [tag, site] : surface.sites()) {
+
+        Table table_site;
+        table_site.add_row({ "Properties of the site " + site.name(), "Value", "Unit" });
 
         // Extract the output data
         const auto elements = props.phase(tag).elements();
@@ -348,36 +376,23 @@ auto operator<<(std::ostream& out, const SurfaceProps& props) -> std::ostream&
         assert(species.size() == ns.size());
         assert(elements.size() == ne.size());
 
-        table.add_row({site.name(), "", ""});
-        table.add_row({"Element Amounts:"});
+        table_site.add_row({"Element Amounts:"});
         for (auto i = 0; i < elements.size(); ++i)
-            table.add_row({":: " + elements[i].symbol(), str(ne[i]), "mole"});
-        table.add_row({"Species Amounts:"});
+            table_site.add_row({":: " + elements[i].symbol(), str(ne[i]), "mole"});
+        table_site.add_row({"Species Amounts:"});
         for (auto i = 0; i < species.size(); ++i)
-            table.add_row({":: " + species[i].repr(), str(ns[i]), "mole"});
-        table.add_row({"Fractions:"});
+            table_site.add_row({":: " + species[i].repr(), str(ns[i]), "mole"});
+        table_site.add_row({"Fractions:"});
         for (auto i = 0; i < species.size(); ++i)
-            table.add_row({":: " + species[i].repr(), str(x[i]), ""});
-        table.add_row({ "Log Base 10 of Species Amounts:" });
+            table_site.add_row({":: " + species[i].repr(), str(x[i]), ""});
+        table_site.add_row({ "Log Base 10 of Species Amounts:" });
         for(auto i = 0; i < species.size(); ++i)
-            table.add_row({ ":: " + species[i].repr(), str(log(ns[i])), "" });
-    }
+            table_site.add_row({ ":: " + species[i].repr(), str(log(ns[i])), "" });
 
-    auto i = 0;
-    for (auto &row : table) {
-        if (i >= 2)  // apply from the third row
-            table[i].format()
-                .border_top("")
-                .column_separator("")
-                .corner_top_left("")
-                .corner_top_right("");
-        i += 1;
-    }
-    table.row(0).format().font_style({FontStyle::bold});  // Bold face for header
-    table.column(1).format().font_align(FontAlign::right); // Value column with right alignment
-    table.column(2).format().font_align(FontAlign::right); // Unit column with right alignment
+        formatTable(table_site);
 
-    out << table;
+        out << table_site << "\n";
+    }
 
     return out;
 }

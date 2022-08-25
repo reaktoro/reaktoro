@@ -40,7 +40,7 @@ namespace Reaktoro {
 namespace {
 
 /// Return the index of the first surface site phase in the system.
-extern auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSite& site) -> Index
+auto indexSurfaceSitePhase(const ChemicalSystem& system, const SurfaceSite& site) -> Index
 {
     const auto exchange_phases = system.phases().withAggregateState(AggregateState::Adsorbed).withNames(site.name());
     error(exchange_phases.size() > 1,
