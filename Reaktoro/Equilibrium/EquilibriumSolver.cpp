@@ -144,7 +144,7 @@ struct EquilibriumSolver::Impl
         optdims.p  = dims.Np;
         optdims.be = dims.Nb;
         optdims.c  = dims.Nw + dims.Nb; // c = (w, b) where w are the input variables and b are the amounts of components
-        
+
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
 
