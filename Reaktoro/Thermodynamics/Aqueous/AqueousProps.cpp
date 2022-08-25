@@ -49,10 +49,10 @@ namespace {
 auto indexAqueousPhase(const ChemicalSystem& system) -> Index
 {
     const auto aqueous_phases = system.phases().withAggregateState(AggregateState::Aqueous);
-//    warning(aqueous_phases.size() > 1,
-//        "While creating an AqueousProps object, it has been detected ",
-//        "more than one aqueous phase in the system. The AqueousProps object "
-//        "created will correspond to the first aqueous phase found.");
+   warningif(aqueous_phases.size() > 1,
+       "While creating an AqueousProps object, it has been detected ",
+       "more than one aqueous phase in the system. The AqueousProps object "
+       "created will correspond to the first aqueous phase found.");
     const auto idx = system.phases().findWithAggregateState(AggregateState::Aqueous);
     error(idx >= system.phases().size(),
         "Could not find the phase with the aggregate state AggregateState::Aqueous.");
@@ -160,9 +160,6 @@ struct AqueousProps::Impl
     /// The amounts of the species in the aqueous phase (to be used with echelonizer - not for any computation, since it does not have autodiff propagation!).
     VectorXd naq;
 
-    /// The electric charges of the species in the aqueous phase.
-    ArrayXd zaq;
-
     /// The chemical potentials of the elements in the aqueous phase
     VectorXr lambda;
 
@@ -231,9 +228,6 @@ struct AqueousProps::Impl
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
-
-        // Initialize charges of the species in aqueous phase
-        zaq = aqsolution.charges();
     }
 
     Impl(ChemicalState const& state)
@@ -336,17 +330,6 @@ struct AqueousProps::Impl
     auto speciesMolalities() const -> ArrayXr
     {
         return aqstate.m;
-    }
-
-    auto speciesCharges() const -> ArrayXdConstRef
-    {
-        return zaq;
-    }
-
-    auto speciesCharge(const StringOrIndex& name) const -> real
-    {
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
-        return zaq[idx];
     }
 
     auto ionicStrength() const -> real
@@ -498,16 +481,6 @@ auto AqueousProps::speciesMolalities() const -> ArrayXr
     return pimpl->speciesMolalities();
 }
 
-auto AqueousProps::speciesCharge(const StringOrIndex& name) const -> real
-{
-    return pimpl->speciesCharge(name);
-}
-
-auto AqueousProps::speciesCharges() const -> ArrayXdConstRef
-{
-    return pimpl->speciesCharges();
-}
-
 auto AqueousProps::ionicStrength() const -> real
 {
     return pimpl->ionicStrength();
@@ -600,7 +573,6 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     const auto species = props.phase().species();
     const auto ms = props.speciesMolalities();
     const auto me = props.elementMolalities();
-    const auto z = props.speciesCharges();
     const auto lgOmega = props.saturationIndicesLg();
     assert(species.size() == ms.size());
     assert(elements.size() == me.size());
@@ -608,12 +580,11 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     table.add_row({ "Property", "Value", "Unit" });
     table.add_row({ "Temperature", strfix(props.temperature()), "K" });
     table.add_row({ "Pressure", strfix(props.pressure()*1e-5), "bar" });
-    table.add_row({ "Ionic Strength (Effective)", strsci(props.ionicStrength()), "molal" });
-    table.add_row({ "Ionic Strength (Stoichiometric)", strsci(props.ionicStrengthStoichiometric()), "molal" });
+    table.add_row({ "Ionic Strength (Effective)", strfix(props.ionicStrength()), "molal" });
+    table.add_row({ "Ionic Strength (Stoichiometric)", strfix(props.ionicStrengthStoichiometric()), "molal" });
     table.add_row({ "pH", strfix(props.pH()), "" });
     table.add_row({ "pE", strfix(props.pE()), "" });
     table.add_row({ "Eh", strfix(props.Eh()), "V" });
-    table.add_row({ "Z", strsci((z*ms).sum()), "eq" });
     table.add_row({ "Element Molality:" });
     for(auto i = 0; i < elements.size(); ++i)
         if(elements[i].symbol() != "H" && elements[i].symbol() != "O")

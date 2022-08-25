@@ -89,12 +89,6 @@ public:
     /// Return the molality concentrations of the species (in molal).
     auto speciesMolalities() const -> ArrayXr;
 
-    /// Return the charge of the species.
-    auto speciesCharge(const StringOrIndex& name) const -> real;
-
-    /// Return the charges of the species.
-    auto speciesCharges() const -> ArrayXdConstRef;
-
     /// Return the effective ionic strength of the aqueous phase (in molal). Equivalent to @ref ionicStrengthEffective.
     auto ionicStrength() const -> real;
 
