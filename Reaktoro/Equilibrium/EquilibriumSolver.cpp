@@ -236,12 +236,8 @@ struct EquilibriumSolver::Impl
         if((optstate.dims.x != dims.Nx) || (!result.optima.succeeded))
             optstate = Optima::State(optdims);
 
-        if(options.warmstart)
-            // Set species amounts in x = (n, q) to that from the chemical state
-            optstate.x.head(dims.Nn) = state0.speciesAmounts();
-        else
-            // Set species amounts in x = (n, q) to zero
-            optstate.x.head(dims.Nn).fill(1.0);
+        // Set species amounts in x = (n, q) to that from the chemical state
+        optstate.x.head(dims.Nn) = state0.speciesAmounts();
 
         // Set delta variables in q to zero (i.e., the amount of an implicit titrant to add/remove)
         optstate.x.tail(dims.Nq).fill(0.0);
