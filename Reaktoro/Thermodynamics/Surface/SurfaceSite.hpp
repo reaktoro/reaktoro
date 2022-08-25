@@ -106,10 +106,10 @@ public:
     auto initializeCharges() -> void;
 
     // Set the name of the surface site.
-    auto setName(String name) -> SurfaceSite&;
+    auto setName(const String& name) -> SurfaceSite&;
 
     // Set name of the surface.
-    auto setSurfaceName(String name) -> SurfaceSite&;
+    auto setSurfaceName(const String& name) -> SurfaceSite&;
 
     // Set mass of the surface site.
     auto setMass(real mass) -> SurfaceSite&;
@@ -118,13 +118,13 @@ public:
     auto setSpecificSurfaceArea(real ssa) -> SurfaceSite&;
 
     // Set the tag of the surface site.
-    auto setTag(String tag) -> SurfaceSite&;
+    auto setTag(const String& tag) -> SurfaceSite&;
 
     // Set the amount of surface site.
-    auto setAmount(double value, String unit = "mol") -> SurfaceSite&;
+    auto setAmount(double value, const String& unit = "mol") -> SurfaceSite&;
 
     // Set the density of surface site (in sites/m2).
-    auto setDensity(double value, String unit = "sites/m2") -> SurfaceSite&;
+    auto setDensity(double value, const String& unit = "sites/m2") -> SurfaceSite&;
 
     // Add sorption species on the site.
     auto addSorptionSpecies(const Species& species, const Index& index) -> void;

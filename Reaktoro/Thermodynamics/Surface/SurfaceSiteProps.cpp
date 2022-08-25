@@ -26,7 +26,6 @@ using namespace tabulate;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -34,6 +33,8 @@ using namespace tabulate;
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Thermodynamics/Surface/Surface.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Thermodynamics/Surface/SurfaceSite.hpp>
 
 namespace Reaktoro {
 
@@ -95,7 +96,7 @@ struct SurfaceSiteProps::Impl
       props(phase),
       site(site)
     {
-        assert(phase.species().size() > 0);
+        assert(!phase.species().empty());
         assert(phase.species().size() == props.phase().species().size());
         assert(phase.species().size() == site.species().size());
 
@@ -190,23 +191,8 @@ struct SurfaceSiteProps::Impl
         return nex[idx] / nex.sum();
     }
 
-    /// Return the base-10 logarithm of the activity of the species on the complexation surface.
-    auto speciesActivitiesLg() const -> ArrayXr
-    {
-        auto lng = props.speciesActivitiesLn();
-        return lng / std::log(10);
-    }
-
-    /// Return the base-10 logarithm of the activity of an surface complexation species.
-    auto speciesActivityLg(const StringOrIndex& name) const -> real
-    {
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
-        auto lng = props.speciesActivitiesLn()[idx];
-        return lng / std::log(10);
-    }
-
     /// Return the complexation surface site charge.
-    auto charge() -> real
+    auto charge() const -> real
     {
         return (site.charges()*nex).sum();
     }
@@ -283,16 +269,6 @@ auto SurfaceSiteProps::speciesFraction(const StringOrIndex& name) const -> real
     return pimpl->speciesFraction(name);
 }
 
-auto SurfaceSiteProps::speciesActivityLg(const StringOrIndex& name) const -> real
-{
-    return pimpl->speciesActivityLg(name);
-}
-
-auto SurfaceSiteProps::speciesActivitiesLg() const -> ArrayXr
-{
-    return pimpl->speciesActivitiesLg();
-}
-
 auto SurfaceSiteProps::surfaceSiteState() const -> SurfaceSiteState
 {
     return pimpl->site_state;
@@ -342,7 +318,6 @@ auto operator<<(std::ostream& out, const SurfaceSiteProps& props) -> std::ostrea
     const auto ne = props.elementAmounts();
     const auto ns = props.speciesAmounts();
     const auto x = props.speciesFractions();
-    const auto log10a = props.speciesActivitiesLg();
 
     // Check if the size of the species' and elements' data containers are the same
     assert(species.size() == ns.size());

@@ -108,13 +108,13 @@ struct SurfaceProps::Impl
       surface(surface)
     {
 
-        for(auto [tag, site] : surface.sites())
+        for(const auto& [tag, site] : surface.sites())
         {
             auto iphase_site = indexSurfaceSitePhase(system, site);
             auto phase_site = Phase(system.phase(iphase_site));
             auto props_site = props.phaseProps(iphase_site);
 
-            assert(phase_site.species().size() > 0);
+            assert(!phase_site.species().empty());
             assert(phase_site.species().size() == props_site.phase().species().size());
             assert(phase_site.species().size() == site.species().size());
 
@@ -399,7 +399,7 @@ auto operator<<(std::ostream& out, const SurfaceProps& props) -> std::ostream&
 
     out << table_surface << "\n";
 
-    for(auto [tag, site] : surface.sites()) {
+    for(const auto& [tag, site] : surface.sites()) {
 
         Table table_site;
         table_site.add_row({ "Properties of the site " + site.name(), "Value", "Unit" });

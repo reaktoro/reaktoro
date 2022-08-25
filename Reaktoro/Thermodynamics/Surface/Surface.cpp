@@ -69,7 +69,7 @@ Surface::Surface(const SpeciesList& species)
         // Get the name of the first species
         auto full_name = species[0].name();
         // Assign a surface name with a substring of the full name till the '_' symbol (PHREEQC convention)
-        surface_name = species[0].name().substr(0, full_name.find("_"));
+        surface_name = species[0].name().substr(0, full_name.find('_'));
     }
 
     // Add species parsing the info about the sites
@@ -217,7 +217,7 @@ auto Surface::addSurfaceSpecies(const SpeciesList& species) -> Surface&
     Index index = 0;
     String tag;
 
-    for(auto s : species)
+    for(const auto& s : species)
     {
         // Fetch phreeqc species from the `attachedData` field of the species
         const auto phreeqc_species = std::any_cast<const PhreeqcSpecies*>(s.attachedData());

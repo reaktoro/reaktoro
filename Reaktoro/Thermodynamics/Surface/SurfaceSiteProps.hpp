@@ -28,9 +28,11 @@ namespace Reaktoro {
 // Forward declarations
 class ChemicalProps;
 class ChemicalState;
+class ChemicalSystem;
 class Phase;
-class SurfaceSiteState;
 class Surface;
+class SurfaceSite;
+class SurfaceSiteState;
 
 /// The chemical properties of an aqueous phase.
 class SurfaceSiteProps
@@ -77,12 +79,6 @@ public:
 
     /// Return the fraction of an surface site species.
     auto speciesFraction(const StringOrIndex& name) const -> real;
-
-    /// Return the base-10 logarithms of the species' activity on the surface.
-    auto speciesActivitiesLg() const -> ArrayXr;
-
-    /// Return the base-10 logarithm of the species; activity on the surface.
-    auto speciesActivityLg(const StringOrIndex& name) const -> real;
 
     // Return the surface site state.
     auto surfaceSiteState() const -> SurfaceSiteState;

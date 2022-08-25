@@ -92,13 +92,13 @@ auto SurfaceSite::initializeCharges() -> void
 }
 
 // Set name of the surface site.
-auto SurfaceSite::setName(String name) -> SurfaceSite&
+auto SurfaceSite::setName(const String& name) -> SurfaceSite&
 {
     site_name = name;
 
     // If site's name contain `_` symbol,
     // then initialize surface name and site's tag
-    auto pos = site_name.find("_");
+    auto pos = site_name.find('_');
     if(pos != std::string::npos)
     {
         surface_name = site_name.substr(0, pos);
@@ -108,7 +108,7 @@ auto SurfaceSite::setName(String name) -> SurfaceSite&
 }
 
 // Set name of the surface.
-auto SurfaceSite::setSurfaceName(String name) -> SurfaceSite&
+auto SurfaceSite::setSurfaceName(const String& name) -> SurfaceSite&
 {
     surface_name = name;
     return *this;
@@ -129,7 +129,7 @@ auto SurfaceSite::setSpecificSurfaceArea(real ssa) -> SurfaceSite&
 }
 
 // Set the tag of the surface site.
-auto SurfaceSite::setTag(String tag) -> SurfaceSite&
+auto SurfaceSite::setTag(const String& tag) -> SurfaceSite&
 {
     // Check if the site name contains this tag
     if(site_name.find(tag) != std::string::npos)
@@ -139,14 +139,14 @@ auto SurfaceSite::setTag(String tag) -> SurfaceSite&
 }
 
 // Set the surface site surface area (in m2).
-auto SurfaceSite::setAmount(double value, String unit) -> SurfaceSite&
+auto SurfaceSite::setAmount(double value, const String& unit) -> SurfaceSite&
 {
     site_amount = units::convert(value, unit, "mol");
     return *this;
 }
 
 // Set the density of the solid (in kg).
-auto SurfaceSite::setDensity(double value, String unit) -> SurfaceSite&
+auto SurfaceSite::setDensity(double value, const String& unit) -> SurfaceSite&
 {
     site_density = units::convert(value, unit, "sites/nm2");
     return *this;
