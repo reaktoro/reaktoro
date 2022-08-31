@@ -88,10 +88,10 @@ int main()
     ChemicalState state(system);
     state.temperature(T, "celsius");
     state.pressure(P, "bar");
-    state.set("H2O"    , 1.00, "kg");
-    state.set("Cl-"  , 2e+0, "mmol");
-    state.set("Ca+2"  , 1e+0, "mmol");
-    state.set("Cd+2"  , 1e-6, "mmol");
+    state.set("H2O" , 1.00, "kg");
+    state.set("Cl-" , 2e+0, "mmol");
+    state.set("Ca+2", 1e+0, "mmol");
+    state.set("Cd+2", 1e-6, "mmol");
     state.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     state.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
 
@@ -106,14 +106,15 @@ int main()
 
     AqueousProps aprops(state);
     ChemicalProps props(state);
-    std::cout << "Aqueous properties:" << std::endl;
-    std::cout << "pH               = " << aprops.pH() << std::endl;
-    std::cout << "I                = " << aprops.ionicStrength() << std::endl;
+    std::cout << "Aqueous properties:\n" << aprops << std::endl;
+
     std::cout << "Aq. phase charge = " << props.chargeInPhase("AqueousPhase") << std::endl;
     std::cout << "Cd sorbed        = " << props.elementAmountInPhase("Cd", "Hfo_s")
                                         + props.elementAmountInPhase("Cd", "Hfo_w") << std::endl;
     std::cout << "Cd dissolved     = " << props.elementAmountInPhase("Cd", "AqueousPhase") << std::endl;
-    std::cout << "Cd sorb.const., Kd = " << (state.speciesAmount("Hfo_sOCd+") + state.speciesAmount("Hfo_wOCd+")) / props.elementAmount("Cd") << std::endl;
+    std::cout << "% of Cd sorbed   = " << (state.speciesAmount("Hfo_sOCd+") + state.speciesAmount("Hfo_wOCd+")) / props.elementAmount("Cd") << std::endl;
+    std::cout << "Cd sorb.const., Kd = " << (props.elementAmountInPhase("Cd", "Hfo_s") + props.elementAmountInPhase("Cd", "Hfo_w"))
+                                            / props.elementAmountInPhase("Cd", "AqueousPhase") << std::endl;
 
     // Evaluate properties of the surface and its sites
     SurfaceProps sprops(surface_Hfo, state);

@@ -107,10 +107,10 @@ int main()
 
     // Define initial equilibrium state
     ChemicalState state(system);
-    state.set("H2O"  , 1.00, "kg");
-    state.set("Cl-"  , 2e+0 + 2e-6, "mmol"); // + 1e-6 is to balance the charge of Sr+2
-    state.set("Ca+2" , 1e+0, "mmol");
-    state.set("Sr+2" , 1e-6, "mmol");
+    state.set("H2O" , 1.00, "kg");
+    state.set("Cl-" , 2e+0, "mmol"); // + 1e-6 is to balance the charge of Sr+2
+    state.set("Ca+2", 1e+0, "mmol");
+    state.set("Sr+2", 1e-3, "mmol");
     // Set amounts of the surface species in the chemical state
     state.set("Hfo_wOH"  , surface_Hfo.sites()["_w"].amount(), "mol");
     state.set("Hfo_sOH"  , surface_Hfo.sites()["_s"].amount(), "mol");
@@ -132,8 +132,7 @@ int main()
     AqueousProps aprops(state);
     props.update(state);
     std::cout << "Aqueous properties:" << std::endl;
-    std::cout << "pH               = " << aprops.pH() << std::endl;
-    std::cout << "I                = " << aprops.ionicStrength() << std::endl;
+    std::cout << aprops << std::endl;
     std::cout << "Aq. phase charge = " << props.chargeInPhase("AqueousPhase") << std::endl;
     std::cout << "Sr sorbed        = " << props.elementAmountInPhase("Sr", "Hfo_s")
                                           + props.elementAmountInPhase("Sr", "Hfo_w") << std::endl;

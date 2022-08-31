@@ -207,7 +207,7 @@ plt.close()
 
 plt.figure()
 ax = plt.gca()
-df.plot(x="pH", y="sigma"  , ax=ax, color=colors[6])
+df.plot(x="pH", y="sigma"  , ax=ax, color=colors[6], label=r"$\sigma$")
 
 ax.set_title("Dependence of surface charge on pH (no EDL)")
 ax.set_xlabel("pH")

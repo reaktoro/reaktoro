@@ -116,7 +116,7 @@ int main()
     std::cout << "pH              = " << aprops.pH() << std::endl;
     std::cout << "I               = " << aprops.ionicStrength() << std::endl;
     std::cout << "Aq.phase charge = " <<  props.chargeInPhase("AqueousPhase") << std::endl;
-    std::cout << "Aq.phase mass   = " <<  props.phaseProps("AqueousPhase").mass() << std::endl;
+    std::cout <<  aprops << std::endl;
 
     // Evaluate properties of the surface and its sites
     SurfaceProps sprops(surface_Hfo, state);
