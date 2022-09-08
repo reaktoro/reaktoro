@@ -47,5 +47,6 @@ void exportReactionRateModelPalandriKharaka(py::module& m)
         .def_readwrite("mechanisms", &ReactionRateModelParamsPalandriKharaka::mechanisms)
         ;
 
-    m.def("ReactionRateModelPalandriKharaka", ReactionRateModelPalandriKharaka);
+    m.def("ReactionRateModelPalandriKharaka", py::overload_cast<ReactionRateModelParamsPalandriKharaka const&>(ReactionRateModelPalandriKharaka));
+    m.def("ReactionRateModelPalandriKharaka", py::overload_cast<Vec<ReactionRateModelParamsPalandriKharaka> const&>(ReactionRateModelPalandriKharaka));
 }
