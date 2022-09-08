@@ -35,7 +35,6 @@ void exportEquilibriumSolver(py::module& m)
     py::class_<EquilibriumSolver>(m, "EquilibriumSolver")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const EquilibriumSpecs&>())
-        .def("setOptions", &EquilibriumSolver::setOptions)
 
         .def("solve", py::overload_cast<ChemicalState&>(&EquilibriumSolver::solve))
         .def("solve", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&>(&EquilibriumSolver::solve))
@@ -51,5 +50,9 @@ void exportEquilibriumSolver(py::module& m)
         .def("solve", py::overload_cast<ChemicalState&, const EquilibriumRestrictions&, ArrayXdConstRef>(&EquilibriumSolver::solve))
         .def("solve", py::overload_cast<ChemicalState&, const EquilibriumConditions&, ArrayXdConstRef>(&EquilibriumSolver::solve))
         .def("solve", py::overload_cast<ChemicalState&, const EquilibriumConditions&, const EquilibriumRestrictions&, ArrayXdConstRef>(&EquilibriumSolver::solve))
+
+        .def("setOptions", &EquilibriumSolver::setOptions)
+        .def("conservativeMatrix", &EquilibriumSolver::conservativeMatrix)
+        .def("componentAmounts", &EquilibriumSolver::componentAmounts)
         ;
 }

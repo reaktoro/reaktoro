@@ -478,11 +478,6 @@ auto EquilibriumSolver::operator=(EquilibriumSolver other) -> EquilibriumSolver&
     return *this;
 }
 
-auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
-{
-    pimpl->setOptions(options);
-}
-
 auto EquilibriumSolver::solve(ChemicalState& state) -> EquilibriumResult
 {
     return pimpl->solve(state);
@@ -561,6 +556,11 @@ auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sens
 auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult
 {
     return pimpl->solve(state, sensitivity, conditions, restrictions, b0);
+}
+
+auto EquilibriumSolver::setOptions(const EquilibriumOptions& options) -> void
+{
+    pimpl->setOptions(options);
 }
 
 auto EquilibriumSolver::conservativeMatrix() const -> MatrixXdConstRef
