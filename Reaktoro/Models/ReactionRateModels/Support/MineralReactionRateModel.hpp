@@ -29,7 +29,7 @@
 namespace Reaktoro {
 
 /// The data available for the evaluation of a mineral reaction rate.
-struct MineralReactionRateArgs
+struct MineralReactionRateModelArgs
 {
     /// The state of the chemical system.
     ChemicalState const& state;
@@ -57,7 +57,7 @@ struct MineralReactionRateArgs
 };
 
 /// The type of functions that calculate rates for mineral dissolution/precipitation reactions.
-using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateArgs)>;
+using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateModelArgs)>;
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
 /// @param mineral The name of the mineral in the system.

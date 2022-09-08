@@ -87,7 +87,7 @@ auto mineralCatalystFn(Catalyst const& catalyst, ChemicalSystem const& system) -
 
 struct Foo {};
 
-auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system) -> Fn<real(MineralReactionRateArgs)>
+auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system) -> Fn<real(MineralReactionRateModelArgs)>
 {
     // The universal gas constant (in kJ/(mol*K))
     const auto R = universalGasConstant * 1e-3;
@@ -98,7 +98,7 @@ auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system
         catalyst_fns.push_back(mineralCatalystFn(catalyst, system));
 
     // Define the mineral mechanism function
-    auto fn = [=](MineralReactionRateArgs args)
+    auto fn = [=](MineralReactionRateModelArgs args)
     {
         const auto& lgk = mechanism.lgk.value();
         const auto& E = mechanism.E.value();
@@ -129,11 +129,11 @@ auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka con
 {
     MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
     {
-        Vec<Fn<real(MineralReactionRateArgs)>> mechanism_fns;
+        Vec<Fn<real(MineralReactionRateModelArgs)>> mechanism_fns;
         for(auto const& mechanism : params.mechanisms)
             mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, system));
 
-        MineralReactionRateModel fn = [=](MineralReactionRateArgs args) -> ReactionRate
+        MineralReactionRateModel fn = [=](MineralReactionRateModelArgs args) -> ReactionRate
         {
             const auto area = args.area;
             real sum = 0.0;
