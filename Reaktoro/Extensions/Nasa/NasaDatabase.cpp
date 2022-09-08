@@ -17,10 +17,8 @@
 
 #include "NasaDatabase.hpp"
 
-// CMakeRC includes
-#include <cmrc/cmrc.hpp>
-
-CMRC_DECLARE(ReaktoroEmbedded);
+// Reaktoro includes
+#include <Reaktoro/Core/Embedded.hpp>
 
 namespace Reaktoro {
 
@@ -39,9 +37,7 @@ auto NasaDatabase::withName(String name) -> NasaDatabase
         "The currently supported names are: \n"
         "    - nasa-cea \n",
         "");
-    auto fs = cmrc::ReaktoroEmbedded::get_filesystem();
-    auto file = fs.open("embedded/databases/reaktoro/" + name + ".yaml");
-    const String contents(file.begin(), file.end());
+    const String contents = Embedded::get("databases/reaktoro/" + name + ".yaml");
     return fromContents(contents);
 }
 

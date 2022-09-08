@@ -17,14 +17,10 @@
 
 #include "PhreeqcDatabase.hpp"
 
-// CMakeRC includes
-#include <cmrc/cmrc.hpp>
-
-CMRC_DECLARE(ReaktoroEmbedded);
-
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcThermo.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
@@ -232,9 +228,7 @@ auto getPhreeqcDatabaseContent(String name) -> String
         "    - Tipping_Hurley.dat \n"
         "    - wateq4f.da         \n"
         "");
-    auto fs = cmrc::ReaktoroEmbedded::get_filesystem();
-    auto contents = fs.open("embedded/databases/phreeqc/" + name);
-    return String{contents.begin(), contents.end()};
+    return Embedded::get("databases/phreeqc/" + name);
 }
 
 /// Create the Species objects from given PHREEQC database.
