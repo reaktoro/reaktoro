@@ -298,3 +298,39 @@ def testChemicalState():
     assert state.surfaceIndex(2, 0)                     == 1
 
     assert state.surfaceIndex("AqueousPhase", "Quartz") == len(state.surfaces())  # this surface was not creat
+
+    #-------------------------------------------------------------------------
+    # TESTING METHOD: ChemicalState::update
+    #-------------------------------------------------------------------------
+
+    otherstate = ChemicalState(system)
+
+    otherstate.update(state.temperature(), state.pressure(), state.speciesAmounts())
+
+    assert otherstate.temperature() == state.temperature()
+    assert otherstate.pressure() == state.pressure()
+    assert otherstate.speciesAmounts() == state.speciesAmounts()
+
+    state.props().update(state)
+
+    assert otherstate.props().temperature() == state.temperature()
+    assert otherstate.props().pressure() == state.pressure()
+    assert otherstate.props().speciesAmounts() == state.speciesAmounts()
+    assert otherstate.props().speciesActivitiesLn() == state.props().speciesActivitiesLn()
+
+    #-------------------------------------------------------------------------
+    # TESTING METHOD: ChemicalState::update
+    #-------------------------------------------------------------------------
+
+    otherstate.updateIdeal(state.temperature(), state.pressure(), state.speciesAmounts())
+
+    assert otherstate.temperature() == state.temperature()
+    assert otherstate.pressure() == state.pressure()
+    assert otherstate.speciesAmounts() == state.speciesAmounts()
+
+    state.props().updateIdeal(state)
+
+    assert otherstate.props().temperature() == state.temperature()
+    assert otherstate.props().pressure() == state.pressure()
+    assert otherstate.props().speciesAmounts() == state.speciesAmounts()
+    assert otherstate.props().speciesActivitiesLn() == state.props().speciesActivitiesLn()
