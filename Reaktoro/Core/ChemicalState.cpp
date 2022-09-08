@@ -366,11 +366,12 @@ struct ChemicalState::Impl
         s[isurface] = value;
     }
 
-    auto setSurfaceArea(Index isurface, real value, Chars unit) -> void
+    auto setSurfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void
     {
         const auto numsurfaces = system.surfaces().size();
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
-        errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
+        const auto isurface = detail::resolveSurfaceIndex(system, surface);
+        errorif(isurface >= numsurfaces, "Could not find a surface in the system with index or name `", stringfy(surface), "`.");
         value = units::convert(value, unit, "m2");
         s[isurface] = value;
     }
@@ -383,15 +384,11 @@ struct ChemicalState::Impl
         return s[isurface];
     }
 
-    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
-    {
-        setSurfaceArea(phase1, phase2, value, unit);
-    }
-
-    auto surfaceArea(Index isurface) const -> real
+    auto surfaceArea(StringOrIndex const& surface) const -> real
     {
         const auto numsurfaces = system.surfaces().size();
-        errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
+        const auto isurface = detail::resolveSurfaceIndex(system, surface);
+        errorif(isurface >= numsurfaces, "Could not find a surface in the system with index or name `", stringfy(surface), "`.");
         return s[isurface];
     }
 };
@@ -640,14 +637,19 @@ auto ChemicalState::setSurfaceArea(StringOrIndex const& phase1, StringOrIndex co
     pimpl->setSurfaceArea(phase1, phase2, value, unit);
 }
 
-auto ChemicalState::setSurfaceArea(Index isurface, real value, Chars unit) -> void
+auto ChemicalState::setSurfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void
 {
-    pimpl->setSurfaceArea(isurface, value, unit);
+    pimpl->setSurfaceArea(surface, value, unit);
 }
 
 auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
 {
-    pimpl->surfaceArea(phase1, phase2, value, unit);
+    pimpl->setSurfaceArea(phase1, phase2, value, unit);
+}
+
+auto ChemicalState::surfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void
+{
+    pimpl->setSurfaceArea(surface, value, unit);
 }
 
 auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
@@ -655,9 +657,9 @@ auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const
     return pimpl->surfaceArea(phase1, phase2);
 }
 
-auto ChemicalState::surfaceArea(Index isurface) const -> real
+auto ChemicalState::surfaceArea(StringOrIndex const& surface) const -> real
 {
-    return pimpl->surfaceArea(isurface);
+    return pimpl->surfaceArea(surface);
 }
 
 auto ChemicalState::surfaceAreas() const -> ArrayXrConstRef
