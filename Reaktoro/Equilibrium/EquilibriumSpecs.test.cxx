@@ -33,8 +33,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
     const auto Ns = system.surfaces().size(); // needed below because surface areas are added as inputs in specs by default
 
-    EquilibriumSpecs specs(system);
-
     ChemicalState state(system);
     state.setTemperature(50.0, "celsius");
     state.setPressure(100.0, "bar");
@@ -44,12 +42,44 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
     const auto props = state.props();
 
+    EquilibriumSpecs specs(system);
+
+    WHEN("the EquilibriumSpecs object holds default state")
+    {
+        // Check both temperature and pressure are unknowns by default
+        CHECK( specs.isTemperatureUnknown() );
+        CHECK( specs.isPressureUnknown() );
+
+        // Check both temperature and pressure are in the list of *p* control variables by default
+        CHECK( contains(specs.namesControlVariablesP(), "T") );
+        CHECK( contains(specs.namesControlVariablesP(), "P") );
+
+        // Check both temperature and pressure are not in the list of *w* input variables by default
+        CHECK( !contains(specs.namesInputs(), "T") );
+        CHECK( !contains(specs.namesInputs(), "P") );
+
+        // Check all surface areas are not unknowns
+        for(auto surface : system.surfaces())
+        {
+            auto const id = "surfaceArea[" + surface.name() + "]";
+
+            // Check current surface area is not an unknown by default
+            CHECK( !specs.isSurfaceAreaUnknown(surface.name()) );
+
+            // Check current surface area is not in the list of *p* control variables by default
+            CHECK( !contains(specs.namesControlVariablesP(), id) );
+
+            // Check current surface area is in the list of *w* input variables by default
+            CHECK( contains(specs.namesInputs(), id) );
+        }
+    }
+
     WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
     {
         specs.temperature();
         specs.pressure();
 
-        CHECK( specs.numInputs()                             == Ns + 2 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, P
+        CHECK( specs.numInputs()                             == Ns + 2 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 0 );
@@ -59,7 +89,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 0 );
         CHECK( specs.numTitrantsImplicit()                   == 0 );
         CHECK( specs.numConstraints()                        == 0 );
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "T", "P"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P"} );
         CHECK( specs.isTemperatureUnknown()                  == false );
         CHECK( specs.isPressureUnknown()                     == false );
         CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
@@ -71,7 +101,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.temperature();
         specs.volume();
 
-        CHECK( specs.numInputs()                             == Ns + 2 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, V
+        CHECK( specs.numInputs()                             == Ns + 2 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, V
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 1 ); // P
         CHECK( specs.numControlVariablesP()                  == 1 ); // P
@@ -80,7 +110,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 0 );
         CHECK( specs.numTitrantsImplicit()                   == 0 );
         CHECK( specs.numConstraints()                        == 1 ); // V = V(given)
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "T", "V"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "V"} );
         CHECK( specs.namesControlVariables()                 == Strings{"P"} );
         CHECK( specs.namesConstraints()                      == Strings{"volume"} );
         CHECK( specs.isTemperatureUnknown()                  == false );
@@ -94,7 +124,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.volume();
         specs.internalEnergy();
 
-        CHECK( specs.numInputs()                             == Ns + 2 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], V, U
+        CHECK( specs.numInputs()                             == Ns + 2 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], V, U
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 2 ); // T, P
         CHECK( specs.numControlVariablesP()                  == 2 ); // T, P
@@ -103,7 +133,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 0 );
         CHECK( specs.numTitrantsImplicit()                   == 0 );
         CHECK( specs.numConstraints()                        == 2 ); // V = V(given), U = U(given)
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "V", "U"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "V", "U"} );
         CHECK( specs.namesControlVariables()                 == Strings{"T", "P"} );
         CHECK( specs.namesConstraints()                      == Strings{"volume", "internalEnergy"} );
         CHECK( specs.isTemperatureUnknown()                  == true );
@@ -118,7 +148,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.pressure();
         specs.pH();
 
-        CHECK( specs.numInputs()                             == Ns + 3 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, P, pH
+        CHECK( specs.numInputs()                             == Ns + 3 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, pH
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 1 ); // n[H+]
         CHECK( specs.numControlVariablesP()                  == 0 );
@@ -127,7 +157,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 0 );
         CHECK( specs.numTitrantsImplicit()                   == 1 ); // [H+]
         CHECK( specs.numConstraints()                        == 1 ); // pH = pH(given)
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "T", "P", "pH"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "pH"} );
         CHECK( specs.namesControlVariables()                 == Strings{"[H+]"} );
         CHECK( specs.namesTitrants()                         == Strings{"[H+]"} );
         CHECK( specs.namesTitrantsImplicit()                 == Strings{"[H+]"} );
@@ -144,7 +174,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.entropy();
         specs.activity("CO2(g)");
 
-        CHECK( specs.numInputs()                             == Ns + 3 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], V, S, ln(a[CO2(g)])
+        CHECK( specs.numInputs()                             == Ns + 3 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], V, S, ln(a[CO2(g)])
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 3 ); // T, P, n[CO2]
         CHECK( specs.numControlVariablesP()                  == 2 ); // T, P
@@ -153,7 +183,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 0 );
         CHECK( specs.numTitrantsImplicit()                   == 1 ); // [CO2]
         CHECK( specs.numConstraints()                        == 3 ); // V = V(given), S = S(given), a[CO2(g)] = a[CO2(g)](given)
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "V", "S", "ln(a[CO2(g)])"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "V", "S", "ln(a[CO2(g)])"} );
         CHECK( specs.namesControlVariables()                 == Strings{"T", "P", "[CO2(g)]"} );
         CHECK( specs.namesTitrants()                         == Strings{"[CO2]"} );
         CHECK( specs.namesTitrantsImplicit()                 == Strings{"[CO2]"} );
@@ -175,7 +205,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.openTo("CO2");
         specs.openTo("CH4");
 
-        CHECK( specs.numInputs()                             == Ns + 6 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, P, V, U, pH, pE
+        CHECK( specs.numInputs()                             == Ns + 6 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, U, pH, pE
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
         CHECK( specs.numControlVariablesP()                  == 2 ); // n[CO2], n[CH4]
@@ -184,7 +214,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 2 ); // [CO2], [CH4]
         CHECK( specs.numTitrantsImplicit()                   == 2 ); // [H+], [e-]
         CHECK( specs.numConstraints()                        == 4 ); // V = V(given), U = U(given), pH = pH(given), pE = pE(given)
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "T", "P", "V", "U", "pH", "pE"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "U", "pH", "pE"} );
         CHECK( specs.namesControlVariables()                 == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
         CHECK( specs.namesTitrants()                         == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
         CHECK( specs.namesTitrantsExplicit()                 == Strings{"[CO2]", "[CH4]"} );
@@ -211,7 +241,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.addReactivityConstraint({ "xi1", VectorXd::Random(Nn), {} });
         specs.addReactivityConstraint({ "xi2", VectorXd::Random(Nn), {} });
 
-        CHECK( specs.numInputs()                             == Ns + 6 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, P, V, U, pH, pE
+        CHECK( specs.numInputs()                             == Ns + 6 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, U, pH, pE
         CHECK( specs.numParams()                             == 0 );
         CHECK( specs.numControlVariables()                   == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
         CHECK( specs.numControlVariablesP()                  == 2 ); // n[CO2], n[CH4]
@@ -220,7 +250,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 2 ); // [CO2], [CH4]
         CHECK( specs.numTitrantsImplicit()                   == 2 ); // [H+], [e-]
         CHECK( specs.numConstraints()                        == 6 ); // V = V(given), U = U(given), pH = pH(given), pE = pE(given), 2x reactivity constraints
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "T", "P", "V", "U", "pH", "pE"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "U", "pH", "pE"} );
         CHECK( specs.namesControlVariables()                 == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
         CHECK( specs.namesTitrants()                         == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
         CHECK( specs.namesTitrantsExplicit()                 == Strings{"[CO2]", "[CH4]"} );
@@ -239,7 +269,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.addInput("V");
         specs.addInput(Param("G0[H2O]", 1.0));
 
-        CHECK( specs.numInputs()                             == Ns + 4 ); // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, P, V, G0[H2O]
+        CHECK( specs.numInputs()                             == Ns + 4 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, G0[H2O]
         CHECK( specs.numParams()                             == 1 ); // G0[H2O]
         CHECK( specs.numControlVariables()                   == 0 );
         CHECK( specs.numControlVariablesP()                  == 0 );
@@ -248,7 +278,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                   == 0 );
         CHECK( specs.numTitrantsImplicit()                   == 0 );
         CHECK( specs.numConstraints()                        == 0 );
-        CHECK( specs.namesInputs()                           == Strings{"SA[AqueousPhase:GaseousPhase]", "SA[AqueousPhase:Halite]", "SA[Calcite]", "T", "P", "V", "G0[H2O]"} );
+        CHECK( specs.namesInputs()                           == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "G0[H2O]"} );
         CHECK( specs.namesParams()                           == Strings{"G0[H2O]"} );
         CHECK( specs.namesControlVariables()                 == Strings{} );
         CHECK( specs.namesTitrants()                         == Strings{} );
@@ -260,6 +290,85 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.isPressureUnknown()                     == false );
         CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
         CHECK( specs.indexControlVariablePressure()          == Index(-1) );
+    }
+
+    WHEN("temperature, pressure, and surface areas become unknowns and then inputs")
+    {
+        // Specify that temperature, pressure and surface areas are unknowns
+        specs.unknownTemperature();
+        specs.unknownPressure();
+        specs.unknownSurfaceAreas();
+
+        // Ensure temperature, pressure and surface areas are unknowns
+        CHECK( specs.isTemperatureUnknown() );
+        CHECK( specs.isPressureUnknown() );
+        for(auto surface : system.surfaces())
+            CHECK( specs.isSurfaceAreaUnknown(surface.name()) );
+
+        // Ensure temperature, pressure and surface areas are in the list of *p* control variables
+        CHECK( contains(specs.namesControlVariablesP(), "T") );
+        CHECK( contains(specs.namesControlVariablesP(), "P") );
+        for(auto surface : system.surfaces())
+            CHECK( contains(specs.namesControlVariablesP(), "surfaceArea[" + surface.name() + "]") );
+
+        // Ensure temperature, pressure and surface areas are not in the list of *w* input variables
+        CHECK( !contains(specs.namesInputs(), "T") );
+        CHECK( !contains(specs.namesInputs(), "P") );
+        for(auto surface : system.surfaces())
+            CHECK( !contains(specs.namesInputs(), "surfaceArea[" + surface.name() + "]") );
+
+        //=========================================================================================
+
+        // Specify that temperature, pressure and surface areas are now known and given
+        specs.temperature();
+        specs.pressure();
+        specs.surfaceAreas();
+
+        // Ensure temperature, pressure and surface areas are not unknowns
+        CHECK( !specs.isTemperatureUnknown() );
+        CHECK( !specs.isPressureUnknown() );
+        for(auto surface : system.surfaces())
+            CHECK( !specs.isSurfaceAreaUnknown(surface.name()) );
+
+        // Ensure temperature, pressure and surface areas are not in the list of *p* control variables
+        CHECK( !contains(specs.namesControlVariablesP(), "T") );
+        CHECK( !contains(specs.namesControlVariablesP(), "P") );
+        for(auto surface : system.surfaces())
+            CHECK( !contains(specs.namesControlVariablesP(), "surfaceArea[" + surface.name() + "]") );
+
+        // Ensure temperature, pressure and surface areas are in the list of *w* input variables
+        CHECK( contains(specs.namesInputs(), "T") );
+        CHECK( contains(specs.namesInputs(), "P") );
+        for(auto surface : system.surfaces())
+            CHECK( contains(specs.namesInputs(), "surfaceArea[" + surface.name() + "]") );
+
+        //=========================================================================================
+
+        // Specify that the surface area for Calcite is unknown
+        specs.unknownSurfaceArea("Calcite");
+
+        // Ensure the surface area of Calcite is unknown
+        CHECK( specs.isSurfaceAreaUnknown("Calcite") );
+
+        // Ensure the surface area of Calcite is in the list of *p* control variables
+        CHECK( contains(specs.namesControlVariablesP(), "surfaceArea[Calcite]") );
+
+        // Ensure the surface area of Calcite is not in the list of *w* input variables
+        CHECK( !contains(specs.namesInputs(), "surfaceArea[Calcite]") );
+
+        //=========================================================================================
+
+        // Specify that the surface area for Calcite is known and an input
+        specs.surfaceArea("Calcite");
+
+        // Ensure the surface area of Calcite is not an unknown
+        CHECK( !specs.isSurfaceAreaUnknown("Calcite") );
+
+        // Ensure the surface area of Calcite is not in the list of *p* control variables
+        CHECK( !contains(specs.namesControlVariablesP(), "surfaceArea[Calcite]") );
+
+        // Ensure the surface area of Calcite is in the list of *w* input variables
+        CHECK( contains(specs.namesInputs(), "surfaceArea[Calcite]") );
     }
 
     SECTION("Checking lambda functions in equation constraints")
