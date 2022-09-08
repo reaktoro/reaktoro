@@ -111,70 +111,6 @@ public:
 
     //=================================================================================================================
     //
-    // CHEMICAL EQUILIBRIUM METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS
-    //
-    //=================================================================================================================
-
-    /// Equilibrate a chemical state.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    /// Equilibrate a chemical state respecting given reactivity restrictions.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param restrictions The reactivity restrictions on the amounts of selected species
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    /// Equilibrate a chemical state respecting given constraint conditions.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    /// Equilibrate a chemical state respecting given constraint conditions and reactivity restrictions.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
-    /// @param restrictions The reactivity restrictions on the amounts of selected species
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    //=================================================================================================================
-    //
-    // CHEMICAL EQUILIBRIUM METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS AND SENSITIVITY CALCULATION
-    //
-    //=================================================================================================================
-
-    /// Equilibrate a chemical state and compute sensitivity derivatives.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    /// Equilibrate a chemical state respecting given reactivity restrictions and compute sensitivity derivatives.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
-    /// @param restrictions The reactivity restrictions on the amounts of selected species
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    /// Equilibrate a chemical state respecting given constraint conditions and compute sensitivity derivatives.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
-    /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    /// Equilibrate a chemical state respecting given constraint conditions and reactivity restrictions and compute sensitivity derivatives.
-    /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
-    /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
-    /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
-    /// @param restrictions The reactivity restrictions on the amounts of selected species
-    /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
-
-    //=================================================================================================================
-    //
     // MISCELLANEOUS METHODS
     //
     //=================================================================================================================
@@ -191,10 +127,10 @@ public:
     /// computation). This matrix is used to compute the amounts of the
     /// conservative components in the chemical equilibrium problem, which are
     /// elements, electric charge, and the extend of the restricted reactions.
-    auto conservativeMatrix() const -> MatrixXdConstRef;
+    auto conservativeMatrix() const -> MatrixXdConstRef; // TODO: Delete this method as it is now available in EquilibriumSpecs
 
     /// Return the amounts of the conservative components (elements, charge, extent of restricted reactions) in the chemical equilibrium problem.
-    auto componentAmounts(ChemicalState const& state) const -> ArrayXr;
+    auto componentAmounts(ChemicalState const& state) const -> ArrayXr; // TODO: Delete this method as it is now available in EquilibriumConditions
 
 private:
     struct Impl;
