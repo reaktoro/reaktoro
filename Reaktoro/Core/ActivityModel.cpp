@@ -19,13 +19,13 @@
 
 namespace Reaktoro {
 
-auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator
+auto chain(Vec<ActivityModelGenerator> const& models) -> ActivityModelGenerator
 {
-    ActivityModelGenerator chained_model = [=](const SpeciesList& species)
+    ActivityModelGenerator chained_model = [=](SpeciesList const& species)
     {
         const Vec<ActivityModel> activity_models = vectorize(models, RKT_LAMBDA(model, model(species)));
 
-        ActivityModel chained_activity_model = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel chained_activity_model = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             for(const auto& fn : activity_models)
                 fn(props, args);
@@ -37,7 +37,7 @@ auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator
     return chained_model;
 }
 
-auto chain(const ActivityModelGenerator& model) -> ActivityModelGenerator
+auto chain(ActivityModelGenerator const& model) -> ActivityModelGenerator
 {
     return model;
 }

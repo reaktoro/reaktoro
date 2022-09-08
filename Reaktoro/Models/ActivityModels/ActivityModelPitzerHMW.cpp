@@ -1389,7 +1389,7 @@ auto activityModelPitzerHMW(const SpeciesList& species) -> ActivityModel
     // The state of the aqueous mixture
     AqueousMixtureState state;
 
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;

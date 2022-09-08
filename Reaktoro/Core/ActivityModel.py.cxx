@@ -25,14 +25,14 @@ using namespace Reaktoro;
 
 void exportActivityModel(py::module& m)
 {
-    py::class_<ActivityArgs>(m, "ActivityArgs")
+    py::class_<ActivityModelArgs>(m, "ActivityModelArgs")
         .def(py::init<const real&, const real&, ArrayXrConstRef>())
-        .def_property_readonly("T", [](const ActivityArgs& self) { return self.T; })
-        .def_property_readonly("P", [](const ActivityArgs& self) { return self.P; })
-        .def_property_readonly("x", [](const ActivityArgs& self) { return self.x; })
+        .def_property_readonly("T", [](const ActivityModelArgs& self) { return self.T; })
+        .def_property_readonly("P", [](const ActivityModelArgs& self) { return self.P; })
+        .def_property_readonly("x", [](const ActivityModelArgs& self) { return self.x; })
         ;
 
-    auto cls = exportModel<ActivityProps, ActivityArgs>(m, "ActivityModel");
+    auto cls = exportModel<ActivityProps, ActivityModelArgs>(m, "ActivityModel");
 
     cls.def("__call__", [](const ActivityModel& self, const real& T, const real& P, ArrayXrConstRef x) { return self({T, P, x}); });
     cls.def("__call__", [](const ActivityModel& self, ActivityPropsRef props, const real& T, const real& P, ArrayXrConstRef x) { self(props, {T, P, x}); });

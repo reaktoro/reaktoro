@@ -30,7 +30,7 @@ auto ActivityModelIdealGas() -> ActivityModelGenerator
     {
         const auto R = universalGasConstant;
 
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             const auto& [T, P, x] = args;
 

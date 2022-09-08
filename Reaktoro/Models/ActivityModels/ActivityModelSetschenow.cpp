@@ -32,7 +32,7 @@ auto ActivityModelSetschenow(String neutral, real b) -> ActivityModelGenerator
         // The index of the neutral aqueous species in the aqueous phase.
         const auto ineutral = species.indexWithFormula(neutral);
 
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             // Check AqueousMixtureState is available in props.extra
             auto stateit = props.extra.find("AqueousMixtureState");

@@ -54,7 +54,7 @@ TEST_CASE("Testing ChemicalPropsPhase class", "[ChemicalPropsPhase]")
 {
     const auto R = universalGasConstant;
 
-    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_model = [](ActivityPropsRef props, ActivityModelArgs args)
     {
         const auto [T, P, x] = args;
         props.Vx  = 1.0 * (T * P);

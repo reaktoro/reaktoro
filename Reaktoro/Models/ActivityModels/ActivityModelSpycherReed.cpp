@@ -219,7 +219,7 @@ auto activityModelSpycherReed(const SpeciesList& species) -> ActivityModel
     const auto R = universalGasConstant;
 
     // Define the activity model function of the gaseous phase
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;

@@ -90,7 +90,7 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     ActivityModelGenerator activitymodel = [](const SpeciesList& species)
     {
-        ActivityModel fn = [](ActivityPropsRef props, ActivityArgs args) {};
+        ActivityModel fn = [](ActivityPropsRef props, ActivityModelArgs args) {};
         return fn;
     };
 

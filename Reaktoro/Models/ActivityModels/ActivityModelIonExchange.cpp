@@ -43,7 +43,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
     ArrayXd ze = surface.ze();
 
     // Define the activity model function of the ion exchange phase
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;
@@ -120,7 +120,7 @@ auto activityModelIonExchangeVanselow(const SpeciesList& species) -> ActivityMod
         ArrayXd ze = surface.ze();
 
         // Define the activity model function of the ion exchange phase
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
         {
             // The arguments for the activity model evaluation
             const auto& [T, P, x] = args;

@@ -32,7 +32,7 @@ auto ActivityModelIdealIonExchange() -> ActivityModelGenerator
         // The numbers of exchanger's equivalents for exchange species
         ArrayXd ze = surface.ze();
 
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             // Fetch species fractions for the activity model evaluation
             const auto x = args.x;

@@ -29,7 +29,7 @@ namespace test {
 extern auto createDatabase() -> Database;
 
 /// Return mock activity properties for an aqueous solution.
-auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
+auto activityModelAqueous(ActivityPropsRef props, ActivityModelArgs args)
 {
     const auto [T, P, x] = args;
     props.Vx  = 0.1 * log(P/T);
@@ -43,7 +43,7 @@ auto activityModelAqueous(ActivityPropsRef props, ActivityArgs args)
 };
 
 /// Return mock activity properties for a gaseous solution.
-auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
+auto activityModelGaseous(ActivityPropsRef props, ActivityModelArgs args)
 {
     const auto [T, P, x] = args;
     props.Vx  = 1.0 * log(P/T);
@@ -57,7 +57,7 @@ auto activityModelGaseous(ActivityPropsRef props, ActivityArgs args)
 };
 
 /// Return mock activity properties for a solid solution.
-auto activityModelSolid(ActivityPropsRef props, ActivityArgs args)
+auto activityModelSolid(ActivityPropsRef props, ActivityModelArgs args)
 {
     const auto [T, P, x] = args;
     props.Vx  = 1.1 * log(P/T);

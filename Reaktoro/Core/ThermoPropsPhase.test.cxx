@@ -44,7 +44,7 @@ auto createStandardThermoModel(double param)
 
 TEST_CASE("Testing ThermoPropsPhase class", "[ThermoPropsPhase]")
 {
-    ActivityModel activity_model = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model = [](ActivityPropsRef props, ActivityModelArgs args) {};
 
     Phase phase;
     phase = phase.withName("SomeGas");

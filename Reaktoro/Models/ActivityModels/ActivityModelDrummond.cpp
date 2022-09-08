@@ -36,7 +36,7 @@ auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> Ac
         // The index of the dissolved gas in the aqueous phase.
         const auto igas = species.indexWithFormula(gas);
 
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             // Check AqueousMixtureState is available in props.extra
             auto stateit = props.extra.find("AqueousMixtureState");

@@ -48,9 +48,9 @@ TEST_CASE("Testing ThermoProps class", "[ThermoProps]")
         return props;
     };
 
-    ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityModelArgs args) {};
 
-    ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args) {};
+    ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityModelArgs args) {};
 
     Database db;
 
