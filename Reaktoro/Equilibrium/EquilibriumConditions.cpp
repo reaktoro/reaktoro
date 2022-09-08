@@ -57,7 +57,7 @@ EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
     w = constants(specs.numInputs(), NaN);
 
     // Initialize the values of the *w* input variables that are model parameters to their current values
-    for(auto [i, idx] : enumerate(specs.indicesParams()))
+    for(auto [i, idx] : enumerate(specs.indicesInputParams()))
         w[idx] = specs.params()[i].value();
 
     // Initialize the default lower and upper bounds for the *p* control variables (-inf and inf respectively).
