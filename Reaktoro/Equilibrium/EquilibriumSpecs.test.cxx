@@ -285,7 +285,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.namesTitrantsExplicit()                  == Strings{} );
         CHECK( specs.namesTitrantsImplicit()                  == Strings{} );
         CHECK( specs.namesConstraints()                       == Strings{} );
-        CHECK( specs.indicesParams()                          == Indices{6} ); // index of G0[H2O]
+        CHECK( specs.indicesInputParams()                     == Indices{6} ); // index of G0[H2O]
         CHECK( specs.isTemperatureUnknown()                   == false );
         CHECK( specs.isPressureUnknown()                      == false );
         CHECK( specs.indexTemperatureAmongControlVariablesP() == Index(-1) );

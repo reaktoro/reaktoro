@@ -728,7 +728,7 @@ public:
     auto params() const -> const Vec<Param>&;
 
     /// Return the indices of the model parameters among the input variables.
-    auto indicesParams() const -> const Vec<Index>&; // TODO: Rename to indicesInputParams because there should be another method called indicesUnknownParams.
+    auto indicesInputParams() const -> Vec<Index> const&;
 
     /// Return true if temperature is unknown in the chemical equilibrium specifications.
     auto isTemperatureUnknown() const -> bool;

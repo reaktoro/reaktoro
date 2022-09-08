@@ -993,7 +993,7 @@ auto EquilibriumSpecs::params() const -> const Vec<Param>&
     return m_params;
 }
 
-auto EquilibriumSpecs::indicesParams() const -> const Vec<Index>&
+auto EquilibriumSpecs::indicesInputParams() const -> Vec<Index> const&
 {
     return m_params_idxs;
 }

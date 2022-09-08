@@ -153,8 +153,8 @@ struct EquilibriumProps::Impl
         // The model parameters considered inputs in the equilibrium calculation.
         auto params = specs.params();
 
-        // The indices of the model params among the inputs.
-        const auto& iparams = specs.indicesParams();
+        // The indices of the model params among the input variables *w*.
+        const auto& iparams = specs.indicesInputParams();
 
         // Store the current values of the model parameters
         params0.resize(params.size());
