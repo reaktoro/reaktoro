@@ -19,14 +19,11 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Param.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalSystem;
-class EquilibriumSpecs;
-class Param;
 
 /// The sensitivity derivatives of a chemical equilibrium state.
 /// This class stores the sensitivity derivatives of a chemical equilibrium
@@ -44,19 +41,10 @@ public:
     EquilibriumSensitivity();
 
     /// Construct an EquilibriumSensitivity object with given equilibrium problem specifications.
-    EquilibriumSensitivity(const EquilibriumSpecs& specs);
-
-    /// Construct a copy of an EquilibriumSensitivity object.
-    EquilibriumSensitivity(const EquilibriumSensitivity& other);
-
-    /// Destroy this EquilibriumSensitivity object.
-    ~EquilibriumSensitivity();
-
-    /// Assign a copy of an EquilibriumSensitivity object to this.
-    auto operator=(EquilibriumSensitivity other) -> EquilibriumSensitivity&;
+    explicit EquilibriumSensitivity(EquilibriumSpecs const& specs);
 
     /// Initialize this EquilibriumSensitivity object with given equilibrium problem specifications.
-    auto initialize(const EquilibriumSpecs& specs) -> void;
+    auto initialize(EquilibriumSpecs const& specs) -> void;
 
     //======================================================================
     // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO INPUT PARAMETERS
@@ -64,11 +52,11 @@ public:
 
     /// Return the derivatives of the species amounts *n* with respect to an input variable in *w*.
     /// @param wid The identifier of the input variable in *w* (e.g., "T", "P", "pH", it depends on what is input).
-    auto dndw(const String& wid) const -> VectorXdConstRef;
+    auto dndw(String const& wid) const -> VectorXdConstRef;
 
     /// Return the derivatives of the species amounts *n* with respect to an input variable in *w*.
     /// @param param The input variable in *w* as a Param object.
-    auto dndw(const Param& param) const -> VectorXdConstRef;
+    auto dndw(Param const& param) const -> VectorXdConstRef;
 
     /// Return the derivatives of the species amounts *n* with respect to the input variables *w*.
     auto dndw() const -> MatrixXdConstRef;
@@ -82,11 +70,11 @@ public:
 
     /// Return the derivatives of the *p* control variables with respect to an input variable in *w*.
     /// @param wid The identifier of the input variable in *w* (e.g., "T", "P", "pH", it depends on what is input).
-    auto dpdw(const String& wid) const -> VectorXdConstRef;
+    auto dpdw(String const& wid) const -> VectorXdConstRef;
 
     /// Return the derivatives of the *p* control variables with respect to an input variable in *w*.
     /// @param param The input variable in *w* as a Param object.
-    auto dpdw(const Param& param) const -> VectorXdConstRef;
+    auto dpdw(Param const& param) const -> VectorXdConstRef;
 
     /// Return the derivatives of the *p* control variables with respect to the input variables *w*.
     auto dpdw() const -> MatrixXdConstRef;
@@ -100,11 +88,11 @@ public:
 
     /// Return the derivatives of the *q* control variables with respect to an input variable in *w*.
     /// @param wid The identifier of the input variable in *w* (e.g., "T", "P", "pH", it depends on what is input).
-    auto dqdw(const String& wid) const -> VectorXdConstRef;
+    auto dqdw(String const& wid) const -> VectorXdConstRef;
 
     /// Return the derivatives of the *q* control variables with respect to an input variable in *w*.
     /// @param param The input variable in *w* as a Param object.
-    auto dqdw(const Param& param) const -> VectorXdConstRef;
+    auto dqdw(Param const& param) const -> VectorXdConstRef;
 
     /// Return the derivatives of the *q* control variables with respect to the input variables *w*.
     auto dqdw() const -> MatrixXdConstRef;
@@ -159,9 +147,35 @@ public:
     auto dudb(MatrixXdConstRef data) -> void;
 
 private:
-    struct Impl;
+    /// The chemical system associated with the sensitivity derivatives.
+    ChemicalSystem msystem;
 
-    Ptr<Impl> pimpl;
+    /// The input variables *w* in the chemical equilibrium problem specifications.
+    Strings minputs;
+
+    /// The derivatives of the species amounts *n* with respect to input variables *w*.
+    MatrixXd mdndw;
+
+    /// The derivatives of the control variables *p* with respect to input variables *w*.
+    MatrixXd mdpdw;
+
+    /// The derivatives of the control variables *q* with respect to input variables *w*.
+    MatrixXd mdqdw;
+
+    /// The derivatives of the species amounts *n* with respect to component amounts *b*.
+    MatrixXd mdndb;
+
+    /// The derivatives of the control variables *p* with respect to component amounts *b*.
+    MatrixXd mdpdb;
+
+    /// The derivatives of the control variables *q* with respect to component amounts *b*.
+    MatrixXd mdqdb;
+
+    /// The total derivatives of the chemical properties *u* with respect to input variables *w*.
+    MatrixXd mdudw;
+
+    /// The total derivatives of the chemical properties *u* with respect to component amounts *b*.
+    MatrixXd mdudb;
 };
 
 } // namespace Reaktoro
