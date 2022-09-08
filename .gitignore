@@ -18,6 +18,7 @@ _build/
 .env
 .history
 .vscode
+.cache
 
 # JetBrains related files
 .idea
