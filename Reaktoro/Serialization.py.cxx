@@ -22,9 +22,17 @@ void exportSerializationCommonYAML(py::module& m);
 void exportSerializationCoreYAML(py::module& m);
 void exportSerializationModelsYAML(py::module& m);
 
+void exportSerializationCommonData(py::module& m);
+void exportSerializationCoreData(py::module& m);
+void exportSerializationModelsData(py::module& m);
+
 void exportSerialization(py::module& m)
 {
     exportSerializationCommonYAML(m);
     exportSerializationCoreYAML(m);
     exportSerializationModelsYAML(m);
+
+    exportSerializationCommonData(m);
+    exportSerializationCoreData(m);
+    exportSerializationModelsData(m);
 }
