@@ -33,7 +33,14 @@ def testChemicalState():
     phases.add( MineralPhase("Dolomite") )
     phases.add( MineralPhase("Quartz") )
 
-    system = ChemicalSystem(phases)
+    reactions = Reactions()
+    reactions.add( db.reaction("H2O(aq) = H+ + OH-") )
+    reactions.add( db.reaction("CO2(aq) + H2O(aq) = H+ + HCO3-") )
+    reactions.add( db.reaction("CO2(g) = CO2(aq)") )
+    reactions.add( db.reaction("Halite = Na+ + Cl-") )
+    reactions.add( db.reaction("Calcite") )
+
+    system = ChemicalSystem(phases, reactions)
 
     state = ChemicalState(system)
 
@@ -217,14 +224,7 @@ def testChemicalState():
     # TESTING METHODS: ChemicalState::setSurfaceArea,surfaceArea
     #-------------------------------------------------------------------------
 
-    # There are no surface areas yet, so the calls below should raise an error
-    with pytest.raises(Exception): state.surfaceArea("AqueousPhase", "GaseousPhase")
-    with pytest.raises(Exception): state.surfaceArea("AqueousPhase", 1)
-    with pytest.raises(Exception): state.surfaceArea(0, "GaseousPhase")
-    with pytest.raises(Exception): state.surfaceArea(0, 1)
-    with pytest.raises(Exception): state.surfaceArea(0)
-
-    # Create the first surface between aqueous and gaseous phase and set its value
+    # Set the surface area between aqueous and gaseous phase
     state.setSurfaceArea("AqueousPhase", "GaseousPhase", 10, "cm2")
 
     assert state.surfaceArea("AqueousPhase", "GaseousPhase") == 0.001
@@ -250,7 +250,7 @@ def testChemicalState():
     assert state.surfaceArea(1, 0)                           == 0.01
     assert state.surfaceArea(0)                              == 0.01
 
-    # Create the second surface between aqueous and gaseous phase and set its value
+    # Set the surface area between aqueous and halite phase
     state.surfaceArea("Halite", "AqueousPhase", 0.27, "m2")
 
     assert state.surfaceArea("AqueousPhase", "Halite") == 0.27
@@ -263,41 +263,21 @@ def testChemicalState():
     assert state.surfaceArea(2, 0)                     == 0.27
     assert state.surfaceArea(1)                        == 0.27
 
+    # Set the surface area of the calcite phase
+    state.surfaceArea("Calcite", "Calcite", 0.32, "m2")
+
+    assert state.surfaceArea("Calcite", "Calcite") == 0.32
+    assert state.surfaceArea("Calcite", 3)         == 0.32
+    assert state.surfaceArea(3, "Calcite")         == 0.32
+    assert state.surfaceArea("Calcite", 3)         == 0.32
+    assert state.surfaceArea(3, 3)                 == 0.32
+    assert state.surfaceArea(2)                    == 0.32
+
     #-------------------------------------------------------------------------
     # TESTING METHOD: ChemicalState::surfaceAreas
     #-------------------------------------------------------------------------
 
-    assert state.surfaceAreas() == [0.01, 0.27]
-
-    #-------------------------------------------------------------------------
-    # TESTING METHOD: ChemicalState::surfaces
-    #-------------------------------------------------------------------------
-
-    assert state.surfaces() == [(0, 1), (0, 2)]
-
-    #-------------------------------------------------------------------------
-    # TESTING METHOD: ChemicalState::surfaceIndex
-    #-------------------------------------------------------------------------
-
-    assert state.surfaceIndex("AqueousPhase", "GaseousPhase") == 0
-    assert state.surfaceIndex("GaseousPhase", "AqueousPhase") == 0
-    assert state.surfaceIndex("AqueousPhase", 1)              == 0
-    assert state.surfaceIndex(1, "AqueousPhase")              == 0
-    assert state.surfaceIndex("GaseousPhase", 0)              == 0
-    assert state.surfaceIndex(0, "GaseousPhase")              == 0
-    assert state.surfaceIndex(0, 1)                           == 0
-    assert state.surfaceIndex(1, 0)                           == 0
-
-    assert state.surfaceIndex("AqueousPhase", "Halite") == 1
-    assert state.surfaceIndex("Halite", "AqueousPhase") == 1
-    assert state.surfaceIndex("AqueousPhase", 2)        == 1
-    assert state.surfaceIndex(2, "AqueousPhase")        == 1
-    assert state.surfaceIndex("Halite", 0)              == 1
-    assert state.surfaceIndex(0, "Halite")              == 1
-    assert state.surfaceIndex(0, 2)                     == 1
-    assert state.surfaceIndex(2, 0)                     == 1
-
-    assert state.surfaceIndex("AqueousPhase", "Quartz") == len(state.surfaces())  # this surface was not creat
+    assert state.surfaceAreas() == [0.01, 0.27, 0.32]
 
     #-------------------------------------------------------------------------
     # TESTING METHOD: ChemicalState::update
