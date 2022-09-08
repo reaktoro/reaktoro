@@ -45,7 +45,7 @@ public:
     ChemicalSystem(const Database& database, const Vec<Phase>& phases);
 
     /// Construct a ChemicalSystem instance with given database and one or more generic phases.
-    template<typename... GenericPhases>
+    template<typename... GenericPhases, EnableIf<areGenericPhases<GenericPhases...>>...>
     ChemicalSystem(const Database& database, const GenericPhases&... genericPhases)
     : ChemicalSystem(Phases(database, genericPhases...)) {}
 
