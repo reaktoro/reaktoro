@@ -22,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <variant>
 
 namespace Reaktoro {
 namespace internal {
@@ -55,6 +56,15 @@ auto stringfy(const std::string& sep, Args... items) -> std::string
 {
     std::ostringstream ss;
     internal::stringfy(ss, sep, items...);
+    return ss.str();
+}
+
+/// Stringfy a `std::variant` object.
+template <typename... Args>
+auto stringfy(const std::variant<Args...>& var) -> std::string
+{
+    std::ostringstream ss;
+    std::visit([&](auto arg){ ss << arg; }, var);
     return ss.str();
 }
 
