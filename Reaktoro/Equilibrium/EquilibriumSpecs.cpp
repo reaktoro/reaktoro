@@ -125,7 +125,7 @@ auto assembleReactivityConstraints(EquilibriumSpecs const& specs) -> ReactivityC
 
     // Create the final constraint coefficient matrices Kn and Kp
     rconstraints.Kn = zeros(Nr, Nn);
-    rconstraints.Kn = zeros(Nr, Np);
+    rconstraints.Kp = zeros(Nr, Np);
 
     // Define auxiliary offset variable to keep track of the current row in the assembly of Kn and Kp below
     auto offset = 0;
