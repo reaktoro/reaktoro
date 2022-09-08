@@ -38,6 +38,7 @@ compile_commands.json
 *.lyx~
 
 # Other files/directories
+*DO-NOT-COMMIT*
 .DS_Store
 .directory
 ~lock.*
