@@ -53,7 +53,7 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
             auto const& Omega = aprops.saturationIndex(imineral);
             auto const& area = state.surfaceArea(iaqueousphase, imineralphase);
 
-            const auto args = MineralReactionRateArgs{ state, props, aprops, T, P, pH, Omega, area };
+            const auto args = MineralReactionRateModelArgs{ state, props, aprops, T, P, pH, Omega, area };
 
             return models[i](args);
         };
