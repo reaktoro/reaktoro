@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
-#include <Reaktoro/Core/ReactionProps.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
 #include <Reaktoro/Core/ReactionRateModel.hpp>
 
 namespace Reaktoro {
@@ -65,14 +65,14 @@ public:
     /// Calculate the complete set of thermodynamic properties of the reaction.
     /// @param T The temperature for the calculation (in K)
     /// @param P The pressure for the calculation (in Pa)
-    auto props(real T, real P) const -> ReactionProps;
+    auto props(real T, real P) const -> ReactionThermoProps;
 
     /// Calculate the complete set of thermodynamic properties of the reaction.
     /// @param T The temperature for the calculation
     /// @param unitT The temperature unit for the calculation
     /// @param P The pressure for the calculation
     /// @param unitP The pressure unit for the calculation
-    auto props(real T, Chars unitT, real P, Chars unitP) const -> ReactionProps;
+    auto props(real T, Chars unitT, real P, Chars unitP) const -> ReactionThermoProps;
 
     /// Calculate the rate of the reaction for given chemical state.
     /// @attention Make sure `state` has updated chemical properties before

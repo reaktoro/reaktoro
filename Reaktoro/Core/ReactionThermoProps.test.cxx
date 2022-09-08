@@ -19,10 +19,10 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ReactionProps.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing ReactionProps class", "[ReactionProps]")
+TEST_CASE("Testing ReactionThermoProps class", "[ReactionThermoProps]")
 {
 
 }

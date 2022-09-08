@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ReactionProps.hpp"
+#include "ReactionThermoProps.hpp"
 
 // cpp-tabulate includes
 #include <tabulate/table.hpp>
@@ -26,7 +26,7 @@ using namespace tabulate;
 
 namespace Reaktoro {
 
-auto operator<<(std::ostream& out, const ReactionProps& props) -> std::ostream&
+auto operator<<(std::ostream& out, const ReactionThermoProps& props) -> std::ostream&
 {
     Table table;
     table.add_row({ "Property", "Value", "Unit" });

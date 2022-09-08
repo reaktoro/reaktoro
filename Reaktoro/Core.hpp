@@ -38,7 +38,7 @@
 #include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
-#include <Reaktoro/Core/ReactionProps.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
 #include <Reaktoro/Core/ReactionRate.hpp>
 #include <Reaktoro/Core/ReactionRateModel.hpp>
 #include <Reaktoro/Core/Reactions.hpp>
