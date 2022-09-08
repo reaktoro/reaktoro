@@ -21,11 +21,8 @@
 #include <Reaktoro/Core/ActivityProps.hpp>
 #include <Reaktoro/Core/AggregateState.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
-#include <Reaktoro/Core/ChemicalOutput.hpp>
-#include <Reaktoro/Core/ChemicalPlot.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
-#include <Reaktoro/Core/ChemicalQuantity.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Database.hpp>
@@ -33,18 +30,28 @@
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
+#include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Core/Param.hpp>
+#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Phases.hpp>
+#include <Reaktoro/Core/Rate.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
+#include <Reaktoro/Core/ReactionProps.hpp>
+#include <Reaktoro/Core/ReactionRateModel.hpp>
+#include <Reaktoro/Core/Reactions.hpp>
 #include <Reaktoro/Core/ReactionSystem.hpp>
+#include <Reaktoro/Core/ReactionThermoProps.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/SpeciesThermoProps.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Core/ThermoProps.hpp>
 #include <Reaktoro/Core/ThermoPropsPhase.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 /// @defgroup Core Core
 /// The module in Reaktoro in which core classes and methods are defined.
