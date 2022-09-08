@@ -66,14 +66,16 @@ REAKTORO_DATA_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
 
 REAKTORO_DATA_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
 {
-    data["Mineral"] = join(obj.names, " ");
+    data["Mineral"] = obj.mineral;
+    if(obj.othernames.size()) data["OtherNames"] = obj.othernames;
     for(auto mechanism : obj.mechanisms)
         data["Mechanisms"][mechanism.name] = mechanism;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
 {
-    obj.names = split(data.required("Mineral").asString(), " ");
+    data.required("Mineral").to(obj.mineral);
+    data.optional("OtherNames").to(obj.othernames);
     for(auto const& [name, mechanism] : data.required("Mechanisms").asDict())
     {
         obj.mechanisms.push_back(mechanism.as<ReactionRateModelParamsPalandriKharaka::Mechanism>());

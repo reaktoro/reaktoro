@@ -53,7 +53,7 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
     phases.add(calcite);
 
     ReactionRateModelParamsPalandriKharaka params;
-    params.names = {{"Calcite"}};
+    params.mineral = "Calcite";
     params.mechanisms = {{
         { "Acid", -0.30, 14.4, 1.0, 1.0, {{"H+", "a", 1.0}} },
         { "Neutral", -5.81, 23.5, 1.0, 1.0 },
@@ -108,7 +108,7 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
     const auto k_neutral = k0_neutral * exp(-E_neutral/R * (1/T - 1/T0));
     const auto k_carbonate = k0_carbonate * exp(-E_carbonate/R * (1/T - 1/T0));
 
-    const auto Omega = aprops.saturationIndex(params.names.front());
+    const auto Omega = aprops.saturationIndex(params.mineral);
 
     const auto pOmega_acid = pow(Omega, params.mechanisms[0].p);
     const auto pOmega_neutral = pow(Omega, params.mechanisms[1].p);

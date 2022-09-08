@@ -33,12 +33,13 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
         String yml = R"#(
             Mineral: Halite
             Mechanisms:
-                Neutral:   { lgk: -0.21, E: 7.4 }
+              Neutral: { lgk: -0.21, E: 7.4 }
         )#";
 
         params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
-        CHECK( params.names == Strings{"Halite"} );
+        CHECK( params.mineral == "Halite" );
+        CHECK( params.othernames.empty() );
         CHECK( params.mechanisms.size() == 1 );
         CHECK( params.mechanisms[0].name == "Neutral" );
         CHECK( params.mechanisms[0].lgk == -0.21 );
@@ -54,13 +55,14 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
         String yml = R"#(
             Mineral: Pyrite
             Mechanisms:
-                Acid:      { lgk: -7.52, E: 56.9, a(H+): -0.500, a(Fe+3): 0.500 }
-                Neutral:   { lgk: -4.55, E: 56.9, a(O2): 0.500 }
+              Acid:    { lgk: -7.52, E: 56.9, a(H+): -0.500, a(Fe+3): 0.500 }
+              Neutral: { lgk: -4.55, E: 56.9, a(O2): 0.500 }
         )#";
 
         params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
-        CHECK( params.names == Strings{"Pyrite"} );
+        CHECK( params.mineral == "Pyrite" );
+        CHECK( params.othernames.empty() );
         CHECK( params.mechanisms.size() == 2 );
         CHECK( params.mechanisms[0].name == "Acid" );
         CHECK( params.mechanisms[0].lgk == -7.52 );
@@ -90,14 +92,15 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
         String yml = R"#(
             Mineral: Epidote
             Mechanisms:
-                Acid:      { lgk: -10.60, E: 71.1, a(H+):  0.338 }
-                Neutral:   { lgk: -11.99, E: 70.7 }
-                Base:      { lgk: -17.33, E: 79.1, a(H+): -0.556 }
+              Acid:    { lgk: -10.60, E: 71.1, a(H+):  0.338 }
+              Neutral: { lgk: -11.99, E: 70.7 }
+              Base:    { lgk: -17.33, E: 79.1, a(H+): -0.556 }
         )#";
 
         params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
-        CHECK( params.names == Strings{"Epidote"} );
+        CHECK( params.mineral == "Epidote" );
+        CHECK( params.othernames.empty() );
         CHECK( params.mechanisms.size() == 3 );
         CHECK( params.mechanisms[0].name == "Acid" );
         CHECK( params.mechanisms[0].lgk == -10.60 );
@@ -128,17 +131,21 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
     WHEN("there are many mechanisms")
     {
         String yml = R"#(
-            Mineral: FakeMineral FakeMineralAlternativeName
+            Mineral: FakeMineral
+            OtherNames:
+              - FakeMineral1
+              - FakeMineral2
             Mechanisms:
-                Acid:      { lgk: -0.30, E: 14.4, a(H+): 1.000 }
-                Neutral:   { lgk: -5.81, E: 23.5 }
-                Carbonate: { lgk: -3.48, E: 35.4, P(CO2): 1.000 }
-                Base:      { lgk: -17.33, E: 79.1, a((Ca)(CO3)): -0.556, p: 2.34, q: 1.46 }
+              Acid:      { lgk: -0.30, E: 14.4, a(H+): 1.000 }
+              Neutral:   { lgk: -5.81, E: 23.5 }
+              Carbonate: { lgk: -3.48, E: 35.4, P(CO2): 1.000 }
+              Base:      { lgk: -17.33, E: 79.1, a((Ca)(CO3)): -0.556, p: 2.34, q: 1.46 }
         )#";
 
         params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
-        CHECK( params.names == Strings{"FakeMineral", "FakeMineralAlternativeName"} );
+        CHECK( params.mineral == "FakeMineral" );
+        CHECK( params.othernames == Strings{"FakeMineral1", "FakeMineral2"} );
         CHECK( params.mechanisms.size() == 4 );
         CHECK( params.mechanisms[0].name == "Acid" );
         CHECK( params.mechanisms[0].lgk == -0.30 );
