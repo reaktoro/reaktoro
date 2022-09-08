@@ -62,6 +62,60 @@ EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
 
 //=================================================================================================
 //
+// STATIC METHODS TO CREATE PREDEFINED CHEMICAL EQUILIBRIUM SPECIFICATIONS
+//
+//=================================================================================================
+
+auto EquilibriumSpecs::TP(ChemicalSystem const& system) -> EquilibriumSpecs
+{
+    EquilibriumSpecs specs(system);
+    specs.temperature();
+    specs.pressure();
+    return specs;
+}
+
+auto EquilibriumSpecs::HP(ChemicalSystem const& system) -> EquilibriumSpecs
+{
+    EquilibriumSpecs specs(system);
+    specs.enthalpy();
+    specs.pressure();
+    return specs;
+}
+
+auto EquilibriumSpecs::TV(ChemicalSystem const& system) -> EquilibriumSpecs
+{
+    EquilibriumSpecs specs(system);
+    specs.temperature();
+    specs.volume();
+    return specs;
+}
+
+auto EquilibriumSpecs::UV(ChemicalSystem const& system) -> EquilibriumSpecs
+{
+    EquilibriumSpecs specs(system);
+    specs.internalEnergy();
+    specs.volume();
+    return specs;
+}
+
+auto EquilibriumSpecs::SP(ChemicalSystem const& system) -> EquilibriumSpecs
+{
+    EquilibriumSpecs specs(system);
+    specs.entropy();
+    specs.pressure();
+    return specs;
+}
+
+auto EquilibriumSpecs::SV(ChemicalSystem const& system) -> EquilibriumSpecs
+{
+    EquilibriumSpecs specs(system);
+    specs.entropy();
+    specs.volume();
+    return specs;
+}
+
+//=================================================================================================
+//
 // METHODS TO SPECIFY THERMODYNAMIC CONSTRAINTS
 //
 //=================================================================================================
