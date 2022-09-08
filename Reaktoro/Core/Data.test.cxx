@@ -314,6 +314,29 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data["K9"].asNull()   == nullptr );
     }
 
+    SECTION("Checking method Data::add(key, newvalue) overwrites if Data::add(key, oldvalue) has been called")
+    {
+        Data data;
+
+        data.add("K0", "Hello");
+        data.add("K1", true);
+        data.add("K2", 1);
+        data.add("K3", 2.0);
+        data.add("K4", Param(3.0));
+
+        CHECK_NOTHROW( data.add("K0", "Hello There") );
+        CHECK_NOTHROW( data.add("K1", false) );
+        CHECK_NOTHROW( data.add("K2", 11) );
+        CHECK_NOTHROW( data.add("K3", 22.0) );
+        CHECK_NOTHROW( data.add("K4", Param(33.0)) );
+
+        CHECK( data["K0"].asString() == "Hello There" );
+        CHECK( data["K1"].asBoolean() == false );
+        CHECK( data["K2"].asInteger() == 11 );
+        CHECK( data["K3"].asFloat() == 22.0 );
+        CHECK( data["K4"].asParam() == 33.0 );
+    }
+
     SECTION("Checking the construction of nested Data objects using operator[]")
     {
         Data foo;

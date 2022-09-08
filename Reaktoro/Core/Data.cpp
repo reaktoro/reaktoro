@@ -551,8 +551,7 @@ auto Data::add(String const& key, Data value) -> void
         tree = Dict<String, Data>();
     errorif(!isDict(), "Method Data::add(key, value) can only be used when the Data object is a dictionary or null.");
     auto& dict = std::any_cast<Dict<String, Data>&>(tree);
-    auto res = dict.emplace(key, std::move(value));
-    errorif(!res.second, "It was not possible to insert key-data pair with key `", key, "` in the Data object.");
+    dict.insert_or_assign(key, std::move(value));
 }
 
 auto Data::reset() -> void
