@@ -171,28 +171,21 @@ struct SmartEquilibriumSolver::Impl
         result.timing.learning_solve = toc(EQUILIBRIUM_STEP);
 
         //---------------------------------------------------------------------
-        // ERROR CONTROL MATRICES ASSEMBLING STEP DURING THE LEARNING PROCESS
+        // STORAGE STEP DURING THE LEARNING PROCESS
         //---------------------------------------------------------------------
-
-        // The indices of the primary species at the calculated equilibrium state
-        auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
+        tic(STORAGE_STEP)
 
         // Create an equilibrium predictor object with computed equilibrium state and its sensitivities
         EquilibriumPredictor predictor(state, sensitivity);
 
-        //---------------------------------------------------------------------
-        // STORAGE STEP DURING THE LEARNING PROCESS
-        //---------------------------------------------------------------------
-        tic(STORAGE_STEP)
+        // The indices of the primary species at the calculated equilibrium state
+        auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
 
         // Generate the hash number for the indices of primary species in the state
         const auto label = detail::hash(iprimary);
 
         // Find the index of the cluster that has same primary species
-        // auto iter = std::find_if(database.clusters.begin(), database.clusters.end(),
-        //     [&](Cluster const& cluster) { return cluster.label == label; });
         auto icluster = indexfn(database.clusters, RKT_LAMBDA(cluster, cluster.label == label));
-
 
         // If cluster is found, store the new record in it, otherwise, create a new cluster
         if(icluster < database.clusters.size())
@@ -229,45 +222,46 @@ struct SmartEquilibriumSolver::Impl
         if(database.clusters.empty())
             return;
 
-        // The current set of primary species in the chemical state
-        auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
-
-        // The number of primary species
-        auto const numprimary = iprimary.size();
-
         const auto wvals = conditions.inputValues();
         const auto cvals = conditions.initialComponentAmountsGetOrCompute(state);
 
         const auto w = wvals.cast<double>();
         const auto c = cvals.cast<double>();
 
+        // Auxiliary vectors used in the lambda function below to avoid repeated memory allocation
+        VectorXd dw;
+        VectorXd dc;
+
         // The function that checks if a record in the database pass the error test.
-        auto pass_error_test = [&](Record const& record) -> bool
+        auto pass_error_test = [&](Record const& record) mutable -> bool
         {
+            // The primary species at the reference chemical state
+            auto const& iprimary0 = record.state.equilibrium().indicesPrimarySpecies();
+
+            // The equilibrium predictor calculator at the reference state
+            auto const& predictor0 = record.predictor;
+
             const auto w0 = record.state.equilibrium().w();
             const auto c0 = record.state.equilibrium().c();
 
-            const VectorXd dw = w - w0;
-            const VectorXd dc = c - c0;
+            dw = w - w0;
+            dc = c - c0;
 
-            auto const& predictor = record.predictor;
+            using std::abs;
 
-            auto error = 0.0;
-            for(auto i = 1; i <= numprimary; ++i)
+            for(auto ispecies : iprimary0)
             {
-                const auto ispecies = iprimary[numprimary - i];
-
-                const auto mu0 = predictor.speciesChemicalPotentialReference(ispecies);
-                const auto mu1 = predictor.speciesChemicalPotentialPredicted(ispecies, dw, dc);
-
-                using std::abs;
-
+                const auto mu0 = predictor0.speciesChemicalPotentialReference(ispecies);
+                const auto mu1 = predictor0.speciesChemicalPotentialPredicted(ispecies, dw, dc);
                 if(abs(mu1 - mu0) >= options.reltol*abs(mu0) + options.abstol)
                     return false;
             }
 
             return true;
         };
+
+        // The current set of primary species in the chemical state
+        auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
 
         // Generate the hash number for the indices of primary species in the state
         const auto label = detail::hash(iprimary);
@@ -323,16 +317,14 @@ struct SmartEquilibriumSolver::Impl
 
                 if(success)
                 {
-                    result.timing.prediction_error_control = toc(ERROR_CONTROL_STEP);
-
                     //---------------------------------------------------------------------
                     // TAYLOR PREDICTION STEP DURING THE ESTIMATE PROCESS
                     //---------------------------------------------------------------------
                     tic(TAYLOR_STEP)
 
-                    auto const& predictor = record.predictor;
+                    auto const& predictor0 = record.predictor;
 
-                    predictor.predict(state, conditions);
+                    predictor0.predict(state, conditions);
 
                     result.timing.prediction_taylor = toc(TAYLOR_STEP);
 
@@ -343,7 +335,7 @@ struct SmartEquilibriumSolver::Impl
                     const double nsum = n.sum();
 
                     if(nmin <= options.reltol_negative_amounts * nsum)
-                        continue; // continue searching for a another record that may not produce negative amounts or tolerable negative values
+                        continue; // continue searching for a another record that produces positive amounts only or tolerable negative values
 
                     result.timing.prediction_search = toc(SEARCH_STEP);
 
@@ -351,10 +343,10 @@ struct SmartEquilibriumSolver::Impl
                     // After the search is finished successfully
                     //---------------------------------------------------------------------
 
-                    // Assign small values to all the amount in the interval [cutoff, 0] (instead of mirroring above)
+                    // Assign small positive values to all negative amounts
                     for(auto i = 0; i < n.size(); ++i)
-                        if(n[i] < 0)
-                            state.setSpeciesAmount(i, options.learning.epsilon, "mol");
+                        if(n[i] < 0.0)
+                            state.setSpeciesAmount(i, options.learning.epsilon);
 
                     //---------------------------------------------------------------------
                     // DATABASE PRIORITY UPDATE STEP DURING THE ESTIMATE PROCESS
