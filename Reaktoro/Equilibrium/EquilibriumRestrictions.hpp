@@ -28,7 +28,13 @@ class EquilibriumRestrictions
 {
 public:
     /// Construct an EquilibriumRestrictions object.
-    explicit EquilibriumRestrictions(const ChemicalSystem& system);
+    explicit EquilibriumRestrictions(ChemicalSystem const& system);
+
+    //=================================================================================================
+    //
+    // METHODS THAT INTRODUCE RESTRICTIONS ON HOW MUCH SPECIES CAN REACT
+    //
+    //=================================================================================================
 
     /// Prevent the amount of a species from changing during the chemical equilibrium calculation.
     /// @param ispecies The index of the species whose amount cannot change.
@@ -78,6 +84,12 @@ public:
     /// @param unit The unit of the lower bound value (must be convertible to mol or kg).
     auto cannotDecreaseBelow(String species, double value, Chars unit="mol") -> void;
 
+    //=================================================================================================
+    //
+    // METHODS THAT REMOVE EXISTING REACTIVITY RESTRICTIONS ON SPECIES
+    //
+    //=================================================================================================
+
     /// Remove any previously set increase/decrease restriction on the amount of a species.
     /// @param ispecies The index of the species whose amount is now allowed to change without bounds.
     auto canReactFreely(Index ispecies) -> void;
@@ -102,8 +114,14 @@ public:
     /// @param species The name of the species whose amount is now allowed to decrease without bounds.
     auto canDecreaseFreely(String species) -> void;
 
+    //=================================================================================================
+    //
+    // MISCELLANEOUS METHODS
+    //
+    //=================================================================================================
+
     /// Return the chemical system associated with the equilibrium conditions.
-    auto system() const -> const ChemicalSystem&;
+    auto system() const -> ChemicalSystem const&;
 
     /// Return the indices of the species whose amounts cannot increase.
     auto speciesCannotIncrease() const -> Set<Index> const&;

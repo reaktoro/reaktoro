@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-EquilibriumRestrictions::EquilibriumRestrictions(const ChemicalSystem& system)
+EquilibriumRestrictions::EquilibriumRestrictions(ChemicalSystem const& system)
 : msystem(system)
 {}
 
@@ -136,7 +136,7 @@ auto EquilibriumRestrictions::canDecreaseFreely(String species) -> void
     canDecreaseFreely(ispecies);
 }
 
-auto EquilibriumRestrictions::system() const -> const ChemicalSystem&
+auto EquilibriumRestrictions::system() const -> ChemicalSystem const&
 {
     return msystem;
 }
