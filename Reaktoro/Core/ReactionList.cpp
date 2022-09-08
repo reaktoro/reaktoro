@@ -28,8 +28,12 @@ namespace Reaktoro {
 ReactionList::ReactionList()
 {}
 
-ReactionList::ReactionList(const Vec<Reaction>& reaction)
-: m_reactions(reaction)
+ReactionList::ReactionList(std::initializer_list<Reaction> reactions)
+: m_reactions(std::move(reactions))
+{}
+
+ReactionList::ReactionList(const Vec<Reaction>& reactions)
+: m_reactions(reactions)
 {}
 
 auto ReactionList::append(const Reaction& reaction) -> void

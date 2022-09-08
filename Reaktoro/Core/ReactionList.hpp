@@ -31,8 +31,11 @@ public:
     /// Construct a default ReactionList object.
     ReactionList();
 
-    /// Construct an ReactionList object with given reaction.
-    ReactionList(const Vec<Reaction>& reaction);
+    /// Construct an ReactionList object with given reactions.
+    ReactionList(std::initializer_list<Reaction> reactions);
+
+    /// Construct an ReactionList object with given reactions.
+    ReactionList(const Vec<Reaction>& reactions);
 
     /// Append a new reaction to the list of reaction.
     auto append(const Reaction& reaction) -> void;
