@@ -791,7 +791,7 @@ auto ChemicalState::Equilibrium::setInputNames(Strings const& names) -> void
     pimpl->inputs = names;
 }
 
-auto ChemicalState::Equilibrium::setInputValues(VectorXdConstRef w) -> void
+auto ChemicalState::Equilibrium::setInputValues(ArrayXdConstRef w) -> void
 {
     pimpl->w = w;
 }
@@ -872,7 +872,7 @@ auto ChemicalState::Equilibrium::inputNames() const -> Strings const&
     return pimpl->inputs;
 }
 
-auto ChemicalState::Equilibrium::inputValues() const -> VectorXdConstRef
+auto ChemicalState::Equilibrium::inputValues() const -> ArrayXdConstRef
 {
     return pimpl->w;
 }
@@ -902,7 +902,7 @@ auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
     return pimpl->q;
 }
 
-auto ChemicalState::Equilibrium::w() const -> VectorXdConstRef
+auto ChemicalState::Equilibrium::w() const -> ArrayXdConstRef
 {
     return pimpl->w;
 }
