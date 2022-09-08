@@ -531,7 +531,8 @@ def createTextLines(file) -> list[str]:
 def createDatabase(specieslist:list[NasaSpecies]) -> list:
     database = {}
     species_groups = combineSpeciesBlocksWhenPossible(specieslist)
-    species_list = database["Species"] = []
+    species_list = database["Species"] = {}
     for species_group in species_groups:
-        species_list.append(serialize(species_group))
+        newspecies = serialize(species_group)
+        species_list[newspecies["Name"]] = newspecies
     return database

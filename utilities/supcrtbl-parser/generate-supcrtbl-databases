@@ -541,7 +541,7 @@ def createDatabase(species):
         if "charge" in params:
             params["charge"] = obj["Charge"]  # there are charge inconsistencies in SUPCRTBL -- use the charge from the elemental formula in the HKF block
 
-    species = [organizeSpeciesDataBlock(x) for x in species]
+    species = dict([organizeSpeciesDataBlock(x) for x in species])
     db = { "Species": species }
     return db
 
@@ -584,7 +584,7 @@ def organizeSpeciesDataBlock(species):
     if "Tags" in species: newspecies["Tags"] = species["Tags"]
     newspecies["AggregateState"] = species["AggregateState"]
     newspecies["StandardThermoModel"] = species["StandardThermoModel"]
-    return newspecies
+    return ( species["Name"], newspecies )
 
 
 if __name__ == "__main__":
@@ -633,6 +633,9 @@ if __name__ == "__main__":
     # Clean both json and yaml dumps from, for example, @ surrounding dictionaries (e.g., &{...}&)
     jdump = jdump.replace("\"&{", "{ ").replace("}&\"", " }").replace("'", "\"")
     ydump = ydump.replace("&{", "{ ").replace("}&", " }").replace("'", "")
+
+    # Replace NaN and .nan in json dump by null
+    jdump = jdump.replace("NaN", "null").replace(".nan", "null")
 
     # Output the database in json format
     with open(args.outputjson, 'w') as f:

@@ -447,20 +447,22 @@ def createSpecies(splitline):
 
     entries = iter(splitline)
 
+    id = next(entries)  # the unique id of the species, which is its name
+
     species = {}
-    species["Name"] = next(entries)
+    species["Name"] = id
     species["Formula"] = next(entries)
     strucformula = next(entries)
     agcode = next(entries) # the aggregate state code (e.g., min, gas, aq)
     species["Elements"] = parseElements(strucformula)
     if agcode == "aq":
         species["Charge"] = parseCharge(strucformula)
-    species["Tags"] = determineTags(species["Name"])
+    species["Tags"] = determineTags(id)
     species["AggregateState"] = determineAggregateState(agcode)
     species["StandardThermoModel"] = createStandardThermoModel(entries)
     if species["Tags"] == "": species.pop("Tags")
 
-    return species
+    return { id: species }
 
 
 def clean(dump):
@@ -503,16 +505,16 @@ def convert(filename, outdir):
     :param str outdir: The directory where to output the database files.
     """
 
-    # Create the list of species in each line of the pre linearized database file
-    species = []
+    # Create the dictionary of species in each line of the pre linearized database file
+    species = {}
 
     with open(filename, "r") as f:
         for line in f:
             s = createSpecies(line.split())
-            species.append(s)
+            species.update(s)
 
     # Transform all list values to strings surrounded by @
-    species = [stringfylists(subs) for subs in species]
+    species = stringfylists(species)
 
     # The base name taken from the input file (e.g., supcrt98 for linearized.supcrt98.dat)
     basename = os.path.basename(filename)
@@ -539,6 +541,9 @@ def convert(filename, outdir):
     # Clean both json and yaml dumps from, for example, @ surrounding lists (e.g., @[...]@)
     jdump = clean(jdump)
     ydump = clean(ydump)
+
+    # Replace NaN and .nan in json dump by null
+    jdump = jdump.replace("NaN", "null").replace(".nan", "null")
 
     # Output the database in json format
     with open(jname, "w") as f:
