@@ -63,6 +63,7 @@ public:
     }
 
     /// Convert this Reactions object into a vector of Reaction objects.
+    /// @param system The intermediate chemical system without attached reactions in which the reactions take place.
     auto convert(ChemicalSystem const& system) const -> Vec<Reaction>;
 
 private:
