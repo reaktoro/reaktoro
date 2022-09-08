@@ -32,11 +32,11 @@ public:
 
     /// Construct a ReactionRate object with given rate value.
     ReactionRate(double value)
-    : m_value(m_value) {}
+    : m_value(value) {}
 
     /// Construct a ReactionRate object with given rate value.
     ReactionRate(real const& value)
-    : m_value(m_value) {}
+    : m_value(value) {}
 
     /// Return a ReactionRate object that represents the residual of an enforced equation `f(props) = 0` instead of a reaction rate.
     static ReactionRate enforce(real const& value)
