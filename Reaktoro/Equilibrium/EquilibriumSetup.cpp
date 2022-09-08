@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
@@ -84,17 +85,19 @@ struct EquilibriumSetup::Impl
     // -------------------------------------------- //
 
     const Index Nb; ///< The number of conservative components
+    const Index Ne; ///< The number of elements
     const Index Nn; ///< The number of chemical species
     const Index Np; ///< The number of p control variables
     const Index Nq; ///< The number of q control variables
     const Index Nx; ///< The number of x variables with x = (n, q)
     const Index Nw; ///< The number of input variables w in the chemical equilibrium problem
     const Index Nc; ///< The number of input variables in c = (w, b)
+    const Index Nr; ///< The number of reactivity constraints (aka restricted reactions)
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(EquilibriumSpecs const& specs)
     : system(specs.system()), specs(specs), dims(specs), props(specs),
-      Nb(dims.Nb), Nn(dims.Nn), Np(dims.Np), Nq(dims.Nq), Nx(dims.Nx), Nw(dims.Nw), Nc(dims.Nw + dims.Nb)
+      Nb(dims.Nb), Ne(dims.Ne), Nn(dims.Nn), Np(dims.Np), Nq(dims.Nq), Nx(dims.Nx), Nw(dims.Nw), Nc(dims.Nw + dims.Nb), Nr(dims.Nr)
     {
         x.resize(Nx);
         n.resize(Nn);
@@ -127,9 +130,9 @@ struct EquilibriumSetup::Impl
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
     auto assembleFormulaVector(VectorXdRef vec, ChemicalFormula const& formula) const -> void
     {
-        assert(vec.size() == Nb);
+        assert(vec.size() == Ne + 1);
         vec.fill(0.0);
-        vec[Nb - 1] = formula.charge(); // last entry in the column vector is charge of substance
+        vec[Ne] = formula.charge(); // last entry in the column vector is charge of substance
         for(auto const& [element, coeff] : formula.elements()) {
             const auto ielem = system.elements().index(element);
             vec[ielem] = coeff;
@@ -141,14 +144,17 @@ struct EquilibriumSetup::Impl
     {
         MatrixXd Aex = zeros(Nb, Nx);
 
-        auto Wn = Aex.topLeftCorner(Nb, Nn);  // the formula matrix of the species
-        auto Wq = Aex.topRightCorner(Nb, Nq); // the formula matrix of the implicit titrants
+        auto Wn = Aex.topLeftCorner(Ne + 1, Nn);  // the formula matrix of the species with respect to elements and charge
+        auto Wq = Aex.topRightCorner(Ne + 1, Nq); // the formula matrix of the implicit titrants with respect to elements and charge
+        auto Kn = Aex.bottomLeftCorner(Nr, Nn);   // the coefficient matrix of the reactivity constraints with respect to the species amount variables
 
         Wn = system.formulaMatrix();
 
-        auto j = 0;
-        for(auto const& formula : specs.titrantsImplicit())
-            assembleFormulaVector(Wq.col(j++), formula);
+        for(auto [i, formula] : enumerate(specs.titrantsImplicit()))
+            assembleFormulaVector(Wq.col(i), formula);
+
+        for(auto [i, rconstraint] : enumerate(specs.reactivityConstraints()))
+            Kn.row(i) = rconstraint.Kn;
 
         return Aex;
     }
@@ -158,11 +164,17 @@ struct EquilibriumSetup::Impl
     {
         MatrixXd Aep = zeros(Nb, Np);
 
-        auto Wp = Aep.topRows(Nb); // the formula matrix of temperature, pressure and explicit titrants
+        auto Wp = Aep.topRows(Nb);    // the formula matrix of the p variables with respect to elements and charge (e.g., temperature, pressure, custom variables, and explicit titrants)
+        auto Kp = Aep.bottomRows(Nr); // the coefficient matrix of the reactivity constraints with respect to the p control variables
 
-        auto j = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P in p (if applicable), since these are zeros
-        for(auto const& formula : specs.titrantsExplicit())
-            assembleFormulaVector(Wp.col(j++), formula);
+        auto offset = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P variables in p (if applicable, if they are unknown), since these columns are zeros
+
+        for(auto [i, formula] : enumerate(specs.titrantsExplicit()))
+            assembleFormulaVector(Wp.col(i + offset), formula);
+
+        for(auto [i, rconstraint] : enumerate(specs.reactivityConstraints()))
+            if(rconstraint.Kp.size())
+                Kp.row(i) = rconstraint.Kp;
 
         return Aep;
     }
