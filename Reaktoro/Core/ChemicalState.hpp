@@ -389,7 +389,7 @@ public:
     auto setInputNames(Strings const& names) -> void;
 
     /// Set the values of the input variables used in the equilibrium calculation.
-    auto setInputValues(VectorXdConstRef w) -> void;
+    auto setInputValues(ArrayXdConstRef w) -> void;
 
     /// Set initial component amounts used in the equilibrium calculation.
     auto setInitialComponentAmounts(ArrayXdConstRef c0) -> void;
@@ -435,7 +435,7 @@ public:
     auto inputNames() const -> Strings const&;
 
     /// Return the values of the input variables used in the equilibrium calculation.
-    auto inputValues() const -> VectorXdConstRef;
+    auto inputValues() const -> ArrayXdConstRef;
 
     /// Return the initial component amounts used in the equilibrium calculation.
     auto initialComponentAmounts() const -> ArrayXdConstRef;
@@ -453,7 +453,7 @@ public:
     auto q() const -> ArrayXdConstRef;
 
     /// Return the values of the input variables used in the equilibrium calculation.
-    auto w() const -> VectorXdConstRef;
+    auto w() const -> ArrayXdConstRef;
 
     /// Return the initial component amounts used in the equilibrium calculation.
     auto c() const -> ArrayXdConstRef;
