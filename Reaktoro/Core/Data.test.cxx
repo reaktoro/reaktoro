@@ -257,5 +257,13 @@ TEST_CASE("Testing Data class", "[Data]")
 
         CHECK( extrastrings[0].string() == "Hello" );
         CHECK( extrastrings[1].string() == "Hallo" );
+
+        CHECK_NOTHROW( data["Species"].with("Name", "Almandine") );
+        CHECK_NOTHROW( data["Species"].with("Name", "Andradite") );
+
+        CHECK( data["Species"].with("Name", "Almandine")["Name"].string() == "Almandine" );
+        CHECK( data["Species"].with("Name", "Andradite")["Name"].string() == "Andradite" );
+
+        CHECK_THROWS( data["Species"].with("Name", "Calcite") );
     }
 }

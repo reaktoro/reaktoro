@@ -326,6 +326,16 @@ auto Data::operator[](Index const& index) const -> Data const&
     return vec[index];
 }
 
+auto Data::with(String const& attribute, String const& value) const -> Data const&
+{
+    errorif(!isList(), "Expecting Data object to be a list when using Data::with method.");
+    for(auto const& entry : list())
+        if(entry[attribute].string() == value)
+            return entry;
+    errorif(true, "Could not find any data block whose attribute `", attribute, "` has value `", value, "`.");
+    return {};
+}
+
 auto Data::add(Data const& data) -> Data&
 {
     if(!isList())
