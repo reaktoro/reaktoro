@@ -18,6 +18,7 @@
 #include "Models.YAML.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
@@ -37,7 +38,7 @@
 namespace Reaktoro {
 
 //======================================================================
-// ReactionThermoModel Types
+// ReactionThermoModelParams Types
 //======================================================================
 
 REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsConstLgK)
@@ -125,7 +126,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsVantHoff)
 }
 
 //======================================================================
-// StandardThermoModel Types
+// StandardThermoModelParams Types
 //======================================================================
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardThermoModelParamsConstant)
@@ -403,7 +404,7 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsWaterHKF)
 }
 
 //======================================================================
-// StandardVolumeModel Types
+// StandardVolumeModelParams Types
 //======================================================================
 
 REAKTORO_YAML_ENCODE_DEFINE(StandardVolumeModelParamsConstant)
@@ -415,5 +416,68 @@ REAKTORO_YAML_DECODE_DEFINE(StandardVolumeModelParamsConstant)
 {
     node.at("V0").to(obj.V0);
 }
+
+//======================================================================
+// ReactionRateModelParams Types
+//======================================================================
+
+REAKTORO_YAML_ENCODE_DECLARE(ReactionRateModelParamsPalandriKharaka::Mechanism);
+REAKTORO_YAML_DECODE_DECLARE(ReactionRateModelParamsPalandriKharaka::Mechanism);
+
+REAKTORO_YAML_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
+{
+    node["lgk"] = obj.lgk;
+    node["E"] = obj.E;
+    node.appendIfNotDefault("p", obj.p, 1.0);
+    node.appendIfNotDefault("q", obj.q, 1.0);
+    for(auto catalyst : obj.catalysts)
+    {
+        const auto key = catalyst.property + "(" + catalyst.formula + ")";
+        node[key] = catalyst.power;
+    }
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
+{
+    node.at("lgk").to(obj.lgk);
+    node.at("E").to(obj.E);
+    node.copyOptionalChildValueTo("p", obj.p, Param{1.0});
+    node.copyOptionalChildValueTo("q", obj.q, Param{1.0});
+
+    // Collect all catalyst properties and their power
+    for(auto child : node)
+    {
+        errorif(!child.IsMap(), "Expecting key and value pairs only in YAML node:\n", node.repr());
+        const auto key = child.first.as<String>();
+        const auto words = split(key, "()");
+        if(words.size() == 2)
+        {
+            errorif(!oneof(words[0], "a", "P"), "Expecting mineral catalyst symbols to be either `a` or `P`, such as `a(H+)`, `P(CO2)`.");
+            const auto formula = words[1];
+            const auto property = words[0];
+            const auto power = child.second.as<double>();
+            obj.catalysts.push_back({ formula, property, power });
+        }
+    }
+}
+
+REAKTORO_YAML_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
+{
+    node["Mineral"] = join(obj.names, " ");
+    for(auto mechanism : obj.mechanisms)
+        node["Mechanisms"][mechanism.name] = mechanism;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
+{
+    obj.names = split(node.at("Mineral"), " ");
+    for(auto mechanism : node["Mechanisms"])
+    {
+        obj.mechanisms.push_back(mechanism.second.as<ReactionRateModelParamsPalandriKharaka::Mechanism>());
+        obj.mechanisms.back().name = mechanism.first.as<String>();
+    }
+}
+
+//----------------------------------------------------------------------
 
 } // namespace YAML

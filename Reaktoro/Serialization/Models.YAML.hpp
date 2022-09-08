@@ -24,7 +24,7 @@
 namespace Reaktoro {
 
 //======================================================================
-// ReactionThermoModel Types
+// ReactionThermoModelParams Types
 //======================================================================
 struct ReactionThermoModelParamsConstLgK;
 struct ReactionThermoModelParamsGemsLgK;
@@ -44,7 +44,7 @@ REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsVantHoff);
 REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsVantHoff);
 
 //======================================================================
-// StandardThermoModel Types
+// StandardThermoModelParams Types
 //======================================================================
 struct StandardThermoModelParamsConstant;
 struct StandardThermoModelParamsHKF;
@@ -80,11 +80,19 @@ REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsWaterHKF);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsWaterHKF);
 
 //======================================================================
-// StandardVolumeModel Types
+// StandardVolumeModelParams Types
 //======================================================================
 struct StandardVolumeModelParamsConstant;
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardVolumeModelParamsConstant);
 REAKTORO_YAML_DECODE_DECLARE(StandardVolumeModelParamsConstant);
+
+//======================================================================
+// ReactionRateModelParams Types
+//======================================================================
+struct ReactionRateModelParamsPalandriKharaka;
+
+REAKTORO_YAML_ENCODE_DECLARE(ReactionRateModelParamsPalandriKharaka);
+REAKTORO_YAML_DECODE_DECLARE(ReactionRateModelParamsPalandriKharaka);
 
 } // namespace YAML
