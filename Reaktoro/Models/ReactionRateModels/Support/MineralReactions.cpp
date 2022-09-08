@@ -42,6 +42,7 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
     {
         const auto imineral = aprops_ptr->saturationSpecies().indexWithName(minerals[i]);
         const auto imineralphase = system.phases().indexWithName(minerals[i]);
+        const auto imineralsurface = system.reactingPhaseInterfaceIndex(imineralphase, imineralphase);
 
         ratemodels[i] = [=](ChemicalProps const& props) -> ReactionRate
         {
@@ -50,7 +51,7 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
             auto const& P = props.pressure();
             auto const& pH = aprops.pH();
             auto const& Omega = aprops.saturationIndex(imineral);
-            auto const& area = props.surfaceArea(iaqueousphase, imineralphase);
+            auto const& area = props.surfaceArea(imineralsurface);
 
             const auto args = MineralReactionRateModelArgs{ props, aprops, T, P, pH, Omega, area };
 
