@@ -467,6 +467,11 @@ auto Data::dumpJson() const -> String
     return doc.dump();
 }
 
+auto Data::repr() const -> String
+{
+    return dumpYaml();
+}
+
 Data::operator bool() const
 {
     return asBoolean();

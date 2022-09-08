@@ -70,6 +70,9 @@ void exportData(py::module& m)
         .def("exists", &Data::exists, "Return true if a child parameter exists with given key, presuming this Data object is a dictionary.")
         .def("dumpYaml", &Data::dumpYaml, "Return a YAML formatted string representing the state of this Data object.")
         .def("dumpJson", &Data::dumpJson, "Return a JSON formatted string representing the state of this Data object.")
+        .def("repr", &Data::repr, "Return a YAML formatted string representing the state of this Data object.")
+        .def("__str__", &Data::repr, "Return a YAML formatted string representing the state of this Data object.")
+        .def("__repr__", &Data::repr, "Return a YAML formatted string representing the state of this Data object.")
         ;
 
     py::implicitly_convertible<Chars, Data>();

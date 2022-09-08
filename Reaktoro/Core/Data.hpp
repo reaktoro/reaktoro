@@ -169,6 +169,9 @@ public:
     /// Return a JSON formatted string representing the state of this Data object.
     auto dumpJson() const -> String;
 
+    /// Return a YAML formatted string representing the state of this Data object.
+    auto repr() const -> String;
+
     /// Convert this Data object to a `bool` value; raises an error if not convertible to `bool`.
     operator bool() const;
 
