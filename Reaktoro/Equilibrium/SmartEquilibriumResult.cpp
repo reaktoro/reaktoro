@@ -22,22 +22,22 @@ namespace Reaktoro {
 auto SmartEquilibriumTiming::operator+=(const SmartEquilibriumTiming& other) -> SmartEquilibriumTiming&
 {
     solve += other.solve;
-    learn += other.learn;
-    learn_gibbs_energy_minimization += other.learn_gibbs_energy_minimization;
-    learn_chemical_properties += other.learn_chemical_properties;
-    learn_sensitivity_matrix += other.learn_sensitivity_matrix;
-    learn_error_control_matrices += other.learn_error_control_matrices;
-    learn_storage += other.learn_storage;
-    estimate += other.estimate;
-    estimate_search += other.estimate_search;
-    estimate_error_control += other.estimate_error_control;
-    estimate_taylor += other.estimate_taylor;
-    estimate_database_priority_update += other.estimate_database_priority_update;
+    learning += other.learning;
+    learning_solve += other.learning_solve;
+    learning_chemical_properties += other.learning_chemical_properties;
+    learning_sensitivity_matrix += other.learning_sensitivity_matrix;
+    learning_error_control_matrices += other.learning_error_control_matrices;
+    learning_storage += other.learning_storage;
+    prediction += other.prediction;
+    prediction_search += other.prediction_search;
+    prediction_error_control += other.prediction_error_control;
+    prediction_taylor += other.prediction_taylor;
+    prediction_database_priority_update += other.prediction_database_priority_update;
 
     return *this;
 }
 
-auto SmartEquilibriumResultDuringEstimate::operator+=(const SmartEquilibriumResultDuringEstimate& other) -> SmartEquilibriumResultDuringEstimate&
+auto SmartEquilibriumResultDuringPrediction::operator+=(const SmartEquilibriumResultDuringPrediction& other) -> SmartEquilibriumResultDuringPrediction&
 {
     accepted = other.accepted;
     failed_with_species = other.failed_with_species;
@@ -49,14 +49,14 @@ auto SmartEquilibriumResultDuringEstimate::operator+=(const SmartEquilibriumResu
 
 auto SmartEquilibriumResultDuringLearning::operator+=(const SmartEquilibriumResultDuringLearning& other) -> SmartEquilibriumResultDuringLearning&
 {
-    gibbs_energy_minimization +=other.gibbs_energy_minimization;
+    solve +=other.solve;
 
     return *this;
 }
 
 auto SmartEquilibriumResult::operator+=(const SmartEquilibriumResult& other) -> SmartEquilibriumResult&
 {
-    estimate += other.estimate;
+    prediction += other.prediction;
     learning += other.learning;
     timing   += other.timing;
 

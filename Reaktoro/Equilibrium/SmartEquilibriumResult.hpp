@@ -23,54 +23,54 @@
 
 namespace Reaktoro {
 
-/// Provide timing information of the operations during a smart equilibrium calculation.
+/// Used to provide timing information of the operations during a smart chemical equilibrium calculation.
 struct SmartEquilibriumTiming
 {
-    /// The time spent in seconds for solving the chemical equilibrium problem.
+    /// The time spent for solving the chemical equilibrium problem (in seconds).
     double solve = 0.0;
 
-    /// The time spent in seconds for learning a new chemical equilibrium calculation.
-    double learn = 0.0;
+    /// The time spent for learning a new chemical equilibrium state (in seconds).
+    double learning = 0.0;
 
-    /// The time spent in seconds for a conventional Gibbs energy minimization calculation during learning operation.
-    double learn_gibbs_energy_minimization = 0.0;
+    /// The time spent for a conventional iterative chemical equilibrium calculation during the learning operation (in seconds).
+    double learning_solve = 0.0;
 
-    /// The time spent in seconds for computing the chemical properties during learning operation.
-    double learn_chemical_properties = 0.0;
+    /// The time spent for computing the chemical properties during the learning operation (in seconds).
+    double learning_chemical_properties = 0.0;
 
-    /// The time spent in seconds for computing the sensitivity matrix during learning operation.
-    double learn_sensitivity_matrix = 0.0;
+    /// The time spent for computing the sensitivity matrix during the learning operation (in seconds).
+    double learning_sensitivity_matrix = 0.0;
 
-    /// The time spent in seconds for computing the error control matrices during learning operation.
-    double learn_error_control_matrices = 0.0;
+    /// The time spent for computing the error control matrices during the learning operation (in seconds).
+    double learning_error_control_matrices = 0.0;
 
-    /// The time spent in seconds for storing the computed chemical state into the tree of knowledge.
-    double learn_storage = 0.0;
+    /// The time spent for storing the computed chemical state into the tree of knowledge (in seconds).
+    double learning_storage = 0.0;
 
-    /// The time spent in seconds for the smart chemical equilibrium state estimation.
-    double estimate = 0.0;
+    /// The time spent for the smart chemical equilibrium state prediction (in seconds).
+    double prediction = 0.0;
 
-    /// The time spent in seconds for the search operation during a smart estimation.
-    double estimate_search = 0.0;
+    /// The time spent for the search operation during a smart prediction (in seconds).
+    double prediction_search = 0.0;
 
-    /// The time spent in seconds during on error control while searching during a smart estimation.
-    double estimate_error_control = 0.0;
+    /// The time spent during on error control while searching during a smart prediction (in seconds).
+    double prediction_error_control = 0.0;
 
-    /// The time spent in seconds for the matrix-vector multiplication during a smart estimation.
-    double estimate_taylor = 0.0;
+    /// The time spent for the matrix-vector multiplication during a smart prediction (in seconds).
+    double prediction_taylor = 0.0;
 
-    /// The time spent in seconds for updating the priority related info of the clusters in the database.
-    double estimate_database_priority_update = 0.0;
+    /// The time spent for updating the priority related info of the clusters in the database (in seconds).
+    double prediction_database_priority_update = 0.0;
 
     /// Self addition of another SmartEquilibriumTiming instance to this one.
     auto operator+=(const SmartEquilibriumTiming& other) -> SmartEquilibriumTiming&;
 };
 
-/// A type used to define the result status of a smart estimation operation in a smart equilibrium calculation.
+/// Used to represent the result of a prediction operation in a smart chemical equilibrium calculation.
 /// @see SmartEquilibriumResult
-struct SmartEquilibriumResultDuringEstimate
+struct SmartEquilibriumResultDuringPrediction
 {
-    /// The indication whether the smart equilibrium estimate was accepted.
+    /// The indication whether the smart equilibrium prediction was accepted.
     bool accepted = false;
 
     /// The name of the species that caused the smart approximation to fail.
@@ -83,30 +83,39 @@ struct SmartEquilibriumResultDuringEstimate
     double failed_with_chemical_potential;
 
     // Self addition assignment to accumulate results.
-    auto operator+=(const SmartEquilibriumResultDuringEstimate& other) -> SmartEquilibriumResultDuringEstimate&;
+    auto operator+=(const SmartEquilibriumResultDuringPrediction& other) -> SmartEquilibriumResultDuringPrediction&;
 };
 
-/// A type used to define the result status of a learning operation in a smart equilibrium calculation.
+/// Used to represent the result of a learning operation in a smart chemical equilibrium calculation.
 /// @see SmartEquilibriumResult
 struct SmartEquilibriumResultDuringLearning
 {
-    /// The result of the full Gibbs energy minimization calculation.
-    EquilibriumResult gibbs_energy_minimization;
+    /// The result of the conventional iterative chemical equilibrium calculation in the learning operation.
+    EquilibriumResult solve;
 
     /// Self addition assignment to accumulate results.
     auto operator+=(const SmartEquilibriumResultDuringLearning& other) -> SmartEquilibriumResultDuringLearning&;
 };
 
-/// A type used to describe the result of a smart equilibrium calculation.
+/// Used to describe the result of a smart chemical equilibrium calculation.
 struct SmartEquilibriumResult
 {
+    /// Return true if the calculation succeeded.
+    auto succeeded() { return prediction.accepted ? true : learning.solve.succeeded(); };
+
+    /// Return true if the calculation failed.
+    auto failed() { return !succeeded(); };
+
+    /// Return the number of iterations in the calculation (zero if prediction was successful).
+    auto iterations() { return prediction.accepted ? 0 : learning.solve.iterations(); };
+
     /// The result of the smart approximation operation.
-    SmartEquilibriumResultDuringEstimate estimate;
+    SmartEquilibriumResultDuringPrediction prediction;
 
     /// The result of the learning operation (if there was learning).
     SmartEquilibriumResultDuringLearning learning;
 
-    /// The timing information of the operations during a smart equilibrium calculation.
+    /// The timing information of the operations during a smart chemical equilibrium calculation.
     SmartEquilibriumTiming timing;
 
     /// Self addition assignment to accumulate results.
