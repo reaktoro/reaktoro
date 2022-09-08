@@ -50,8 +50,8 @@ void exportEquilibriumSpecs(py::module& m)
 
     py::class_<ReactivityConstraint>(m, "ReactivityConstraint")
         .def_readwrite("id", &ReactivityConstraint::id)
-        .def_readwrite("An", &ReactivityConstraint::An)
-        .def_readwrite("Ap", &ReactivityConstraint::Ap)
+        .def_readwrite("Kn", &ReactivityConstraint::Kn)
+        .def_readwrite("Kp", &ReactivityConstraint::Kp)
         ;
 
     py::class_<EquilibriumSpecs>(m, "EquilibriumSpecs")
