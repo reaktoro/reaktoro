@@ -415,6 +415,23 @@ auto Data::at(Index const& index) const -> Data const&
     return list[index];
 }
 
+auto Data::optional(String const& key) const -> Opt
+{
+    errorif(!isDict(), "Method Data::optional(key), with key `", key, "` can only be used when the Data object is a dictionary.");
+    auto const& dict = std::any_cast<Dict<String, Data> const&>(tree);
+    auto const it = dict.find(key);
+    return it != dict.end() ? Opt{&it->second} : Opt{};
+}
+
+auto Data::required(String const& key) const -> Data const&
+{
+    errorif(!isDict(), "Method Data::required(key), with key `", key, "` can only be used when the Data object is a dictionary.");
+    auto const& dict = std::any_cast<Dict<String, Data> const&>(tree);
+    auto const it = dict.find(key);
+    errorif(it == dict.end(), "Could not find required data block with key `", key, "` in the Data object.");
+    return it->second;
+}
+
 auto Data::with(String const& attribute, String const& value) const -> Data const&
 {
     errorif(!isList(), "Expecting Data object to be a list when using Data::with method.");
@@ -448,6 +465,11 @@ auto Data::add(Chars key, Data const& data) -> Data&
 auto Data::add(String const& key, Data const& data) -> Data&
 {
     return add(key.c_str(), data);
+}
+
+auto Data::reset() -> void
+{
+    tree = nullptr;
 }
 
 auto Data::exists(String const& key) const -> bool

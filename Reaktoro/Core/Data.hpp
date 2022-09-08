@@ -151,6 +151,28 @@ public:
     /// This method throws an error if this Data object is not a list or if the given index is out of bounds.
     auto at(Index const& index) const -> Data const&;
 
+    /// Used as the return type of method Data::optional.
+    struct Opt
+    {
+        Data const*const ptrdata = nullptr;
+
+        /// Decode this Opt object into an object of type `T`, or leave it unchanged if no data is available.
+        template<typename T>
+        auto to(T& obj) const -> void
+        {
+            if(ptrdata)
+                obj = ptrdata->as<T>();
+        }
+    };
+
+    /// Return an optional child Data object with given key, presuming this Data object is a dictionary.
+    /// This method throws an error if this Data object is not a dictionary.
+    auto optional(String const& key) const -> Opt;
+
+    /// Return a required to exist child Data object with given key, presuming this Data object is a dictionary.
+    /// This method throws an error if this Data object is not a dictionary or if the given key does not exist.
+    auto required(String const& key) const -> Data const&;
+
     /// Return the child Data object whose `attribute` has a given `value`, presuming this Data object is a list.
     auto with(String const& attribute, String const& value) const -> Data const&;
 
@@ -162,6 +184,9 @@ public:
 
     /// Add a Data object with given key to this Data object, which becomes a dictionary if not already.
     auto add(String const& key, Data const& data) -> Data&;
+
+    /// Reset this Data object to a null state, deleting its current stored data.
+    auto reset() -> void;
 
     /// Return true if a child Data object exists with given key, presuming this Data object is a dictionary.
     auto exists(String const& key) const -> bool;
@@ -227,7 +252,11 @@ public:
             tree = obj;
         else if constexpr(isArithmetic<T> || isSame<T, real>)
             tree = Param(obj);
-        else Encode<T>::eval(*this, obj);
+        else
+        {
+            reset();
+            Encode<T>::eval(*this, obj);
+        }
     }
 
     /// Assign a raw string to this Data object.
