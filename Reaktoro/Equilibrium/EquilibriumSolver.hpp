@@ -39,13 +39,13 @@ class EquilibriumSolver
 {
 public:
     /// Construct an EquilibriumSolver object with given chemical system.
-    explicit EquilibriumSolver(const ChemicalSystem& system);
+    explicit EquilibriumSolver(ChemicalSystem const& system);
 
     /// Construct an EquilibriumSolver object with given chemical equilibrium specifications.
-    explicit EquilibriumSolver(const EquilibriumSpecs& specs);
+    explicit EquilibriumSolver(EquilibriumSpecs const& specs);
 
     /// Construct a copy of an EquilibriumSolver object.
-    EquilibriumSolver(const EquilibriumSolver& other);
+    EquilibriumSolver(EquilibriumSolver const& other);
 
     /// Destroy this EquilibriumSolver object.
     ~EquilibriumSolver();
@@ -66,18 +66,18 @@ public:
     /// Equilibrate a chemical state respecting given reactivity restrictions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param restrictions The reactivity restrictions on the amounts of selected species
-    auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
-    auto solve(ChemicalState& state, const EquilibriumConditions& conditions) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumConditions const& conditions) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions and reactivity restrictions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param restrictions The reactivity restrictions on the amounts of selected species
-    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult;
 
     //=================================================================================================================
     //
@@ -94,20 +94,20 @@ public:
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
     /// @param restrictions The reactivity restrictions on the amounts of selected species
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions and compute sensitivity derivatives.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions and reactivity restrictions and compute sensitivity derivatives.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param restrictions The reactivity restrictions on the amounts of selected species
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult;
 
     //=================================================================================================================
     //
@@ -118,26 +118,26 @@ public:
     /// Equilibrate a chemical state.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given reactivity restrictions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param restrictions The reactivity restrictions on the amounts of selected species
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions and reactivity restrictions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param restrictions The reactivity restrictions on the amounts of selected species
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     //=================================================================================================================
     //
@@ -149,21 +149,21 @@ public:
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given reactivity restrictions and compute sensitivity derivatives.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
     /// @param restrictions The reactivity restrictions on the amounts of selected species
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumRestrictions& restrictions, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions and compute sensitivity derivatives.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param[out] sensitivity The sensitivity derivatives of the equilibrium state with respect to given input conditions
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions and reactivity restrictions and compute sensitivity derivatives.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
@@ -171,7 +171,7 @@ public:
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param restrictions The reactivity restrictions on the amounts of selected species
     /// @param c0 The amounts of the conservative components in the chemical equilibrium problem
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef c0) -> EquilibriumResult;
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult;
 
     //=================================================================================================================
     //
@@ -180,7 +180,7 @@ public:
     //=================================================================================================================
 
     /// Set the options of the equilibrium solver.
-    auto setOptions(const EquilibriumOptions& options) -> void;
+    auto setOptions(EquilibriumOptions const& options) -> void;
 
     /// Return the conservative matrix of the chemical equilibrium problem.
     /// This conservative matrix of the chemical equilibrium problem is a
