@@ -161,7 +161,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 const auto dndT = sensitivity.dndw("T");
                 const auto dndP = sensitivity.dndw("P");
-                const auto dndb = sensitivity.dndb();
+                const auto dndc = sensitivity.dndc();
 
                 PRINT_INFO_IF_FAILS(dndT);
                 CHECK( dndT.isApprox(VectorXd({{
@@ -179,8 +179,8 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                     0.0000000000000000e+00,
                     0.0000000000000000e+00 }})));
 
-                PRINT_INFO_IF_FAILS(dndb);
-                CHECK( dndb.isApprox(MatrixXd({
+                PRINT_INFO_IF_FAILS(dndc);
+                CHECK( dndc.isApprox(MatrixXd({
                     { 4.9999999384665239e-01,  0.0000000000000000e+00,  1.2306694552322028e-09 },
                     { 6.1533476097769288e-09, -0.0000000000000000e+00,  4.9999999876933054e-01 },
                     { 6.1533476097769296e-09, -0.0000000000000000e+00, -5.0000000123066946e-01 },
@@ -547,7 +547,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 const auto dndT  = sensitivity.dndw("T");
                 const auto dndP  = sensitivity.dndw("P");
                 const auto dndpH = sensitivity.dndw("pH");
-                const auto dndb  = sensitivity.dndb();
+                const auto dndc  = sensitivity.dndc();
 
                 PRINT_INFO_IF_FAILS(dndT);
                 CHECK( dndT.isApprox(VectorXd({{
@@ -573,8 +573,8 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                     0.0000000000000000e+00,
                     0.0000000000000000e+00 }})));
 
-                PRINT_INFO_IF_FAILS(dndb);
-                CHECK( dndb.isApprox(MatrixXd({
+                PRINT_INFO_IF_FAILS(dndc);
+                CHECK( dndc.isApprox(MatrixXd({
                     { 4.9999999999834693e-01, 0.0000000000000000e+00, -4.9999999999834693e-01 },
                     { 9.0076339999702179e-06, 0.0000000000000000e+00, -9.0076339999702179e-06 },
                     { 1.6530565225577372e-12, 0.0000000000000000e+00, -1.6530565225577372e-12 },
