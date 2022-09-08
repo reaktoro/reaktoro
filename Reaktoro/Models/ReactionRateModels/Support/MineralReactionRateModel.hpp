@@ -23,7 +23,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/Rate.hpp>
+#include <Reaktoro/Core/ReactionRate.hpp>
 #include <Reaktoro/Utils/AqueousProps.hpp>
 
 namespace Reaktoro {
@@ -57,7 +57,7 @@ struct MineralReactionRateArgs
 };
 
 /// The type of functions that calculate rates for mineral dissolution/precipitation reactions.
-using MineralReactionRateModel = Model<Rate(MineralReactionRateArgs)>;
+using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateArgs)>;
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
 /// @param mineral The name of the mineral in the system.

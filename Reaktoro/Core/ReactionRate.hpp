@@ -23,37 +23,37 @@
 namespace Reaktoro {
 
 /// The result of a reaction rate model evaluation.
-class Rate
+class ReactionRate
 {
 public:
-    /// Construct a default Rate object.
-    Rate()
+    /// Construct a default ReactionRate object.
+    ReactionRate()
     {}
 
-    /// Construct a Rate object with given rate value.
-    Rate(double value)
+    /// Construct a ReactionRate object with given rate value.
+    ReactionRate(double value)
     : m_value(m_value) {}
 
-    /// Construct a Rate object with given rate value.
-    Rate(real const& value)
+    /// Construct a ReactionRate object with given rate value.
+    ReactionRate(real const& value)
     : m_value(m_value) {}
 
-    /// Return a Rate object that represents the residual of an enforced equation `f(props) = 0` instead of a reaction rate.
-    static Rate enforce(real const& value)
+    /// Return a ReactionRate object that represents the residual of an enforced equation `f(props) = 0` instead of a reaction rate.
+    static ReactionRate enforce(real const& value)
     {
-        Rate res(value);
+        ReactionRate res(value);
         res.m_equation_mode = true;
         return res;
     }
 
-    /// Convert this Rate object into a real object.
+    /// Convert this ReactionRate object into a real object.
     operator real const&() const
     {
         return m_value;
     }
 
-    /// Assign a real value to this Rate object.
-    auto operator=(real const& value) -> Rate&
+    /// Assign a real value to this ReactionRate object.
+    auto operator=(real const& value) -> ReactionRate&
     {
         m_value = value;
         return *this;

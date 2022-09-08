@@ -38,7 +38,7 @@ TEST_CASE("Testing Reaction class", "[Reaction]")
 
     reaction = reaction.withName("Dolomite");
     reaction = reaction.withEquation("CaCO3(s) = Ca++ + CO3--");
-    reaction = reaction.withRateModel([](const ChemicalState& state) -> Rate { return 1.0; });
+    reaction = reaction.withRateModel([](const ChemicalState& state) -> ReactionRate { return 1.0; });
 
     REQUIRE( reaction.name() == "Dolomite" );
     REQUIRE( reaction.equation().size() == 3 );

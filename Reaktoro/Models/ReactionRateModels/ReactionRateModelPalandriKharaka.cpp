@@ -133,7 +133,7 @@ auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka con
         for(auto const& mechanism : params.mechanisms)
             mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, system));
 
-        MineralReactionRateModel fn = [=](MineralReactionRateArgs args) -> Rate
+        MineralReactionRateModel fn = [=](MineralReactionRateArgs args) -> ReactionRate
         {
             const auto area = args.area;
             real sum = 0.0;

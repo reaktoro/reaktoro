@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/Rate.hpp>
+#include <Reaktoro/Core/ReactionRate.hpp>
 
 namespace Reaktoro {
 
@@ -33,7 +33,7 @@ class Reaction;
 /// @return The rate of the reaction (in mol/s)
 /// @see Reaction
 /// @ingroup Core
-using ReactionRateModel = Model<Rate(ChemicalState const& state)>;
+using ReactionRateModel = Model<ReactionRate(ChemicalState const& state)>;
 
 /// The type of functions that construct a ReactionRateModel for a reaction.
 /// @param reaction The reaction for which the reaction rate model is constructed.
