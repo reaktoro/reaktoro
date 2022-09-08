@@ -34,9 +34,8 @@ def testChemicalSystem():
 
     system = ChemicalSystem(phases)
 
-    assert system.id() == 0
-    assert system.id() != ChemicalSystem().id()      # new ChemicalSystem object has id=1 and original system continues to have id=0
-    assert system.id() == ChemicalSystem().id() - 2  # new ChemicalSystem object has id=2 and original system continues to have id=0
+    assert ChemicalSystem().id() == system.id() + 1  # new ChemicalSystem object has id = id0 + 1 and original system continues to have id = id0
+    assert ChemicalSystem().id() == system.id() + 2  # new ChemicalSystem object has id = id0 + 2 and original system continues to have id = id0
 
     assert system.database().elements().size() == db.elements().size()
     assert system.database().species().size() == db.species().size()

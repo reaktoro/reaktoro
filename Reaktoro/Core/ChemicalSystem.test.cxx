@@ -145,9 +145,8 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::id()
     //-------------------------------------------------------------------------
-    CHECK( system.id() == 0 );
-    CHECK( system.id() != ChemicalSystem().id()     ); // new ChemicalSystem object has id=1 and original system continues to have id=0
-    CHECK( system.id() == ChemicalSystem().id() - 2 ); // new ChemicalSystem object has id=2 and original system continues to have id=0
+    CHECK( ChemicalSystem().id() == system.id() + 1 ); // new ChemicalSystem object has id = id0 + 1 and original system continues to have id = id0
+    CHECK( ChemicalSystem().id() == system.id() + 2 ); // new ChemicalSystem object has id = id0 + 2 and original system continues to have id = id0
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::database()
@@ -259,22 +258,35 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     CHECK(system.stoichiometricMatrix() == Sexpected);
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalSystem::reactingPhaseInterfaces()
+    // TESTING METHOD: ChemicalSystem::surfaces()
     //-------------------------------------------------------------------------
 
-    auto interfaces = system.reactingPhaseInterfaces();
+    auto surfaces = system.surfaces();
 
-    CHECK( interfaces == Pairs<Index, Index>{ {0, 1}, {0, 2}, {3, 3} } ); // aqueous-gaseous, aqueous-halite, calcite-implicit phase
+    CHECK( surfaces.size() == 3 ); // aqueous-gaseous, aqueous-halite, calcite-implicit phase
+
+    CHECK( surfaces[0].name()         == "AqueousPhase:GaseousPhase" );
+    CHECK( surfaces[0].phaseNames()   == Pair<String, String>{ "AqueousPhase", "GaseousPhase" } );
+    CHECK( surfaces[0].phaseIndices() == Pair<Index, Index>{ 0, 1 } );
+
+    CHECK( surfaces[1].name()         == "AqueousPhase:Halite" );
+    CHECK( surfaces[1].phaseNames()   == Pair<String, String>{ "AqueousPhase", "Halite" } );
+    CHECK( surfaces[1].phaseIndices() == Pair<Index, Index>{ 0, 2 } );
+
+    CHECK( surfaces[2].name()         == "Calcite" );
+    CHECK( surfaces[2].phaseNames()   == Pair<String, String>{ "Calcite", "Calcite" } );
+    CHECK( surfaces[2].phaseIndices() == Pair<Index, Index>{ 3, 3 } );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalSystem::reactingPhaseInterfaceIndex()
+    // TESTING METHOD: ChemicalSystem::surfaces().indexWithPhases()
+    //-------------------------------------------------------------------------
 
-    CHECK( system.reactingPhaseInterfaceIndex("AqueousPhase", "GaseousPhase") == 0 );
-    CHECK( system.reactingPhaseInterfaceIndex("AqueousPhase", "Halite") == 1 );
-    CHECK( system.reactingPhaseInterfaceIndex("Calcite", "Calcite") == 2 );
+    CHECK( system.surfaces().findWithPhases("AqueousPhase", "GaseousPhase") == 0 );
+    CHECK( system.surfaces().findWithPhases("AqueousPhase", "Halite") == 1 );
+    CHECK( system.surfaces().findWithPhases("Calcite", "Calcite") == 2 );
 
-    CHECK( system.reactingPhaseInterfaceIndex("Calcite", "Halite") >= system.reactingPhaseInterfaces().size() );
-    CHECK( system.reactingPhaseInterfaceIndex("Calcite", "Quartz") >= system.reactingPhaseInterfaces().size() );
+    CHECK( system.surfaces().findWithPhases("Calcite", "Halite") >= system.surfaces().size() );
+    CHECK( system.surfaces().findWithPhases("Calcite", "Quartz") >= system.surfaces().size() );
 
     //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)

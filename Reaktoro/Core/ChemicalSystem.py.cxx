@@ -25,15 +25,15 @@ using namespace Reaktoro;
 
 void exportChemicalSystem(py::module& m)
 {
-    auto createChemicalSystem = [](const Database& db, py::args gphases)
+    auto createChemicalSystem = [](Database const& db, py::args gphases)
     {
         Phases phases(db);
         for(auto phase : gphases)
         {
-            try { phases.add(phase.cast<const GenericPhase&>()); }
+            try { phases.add(phase.cast<GenericPhase const&>()); }
             catch(...)
             {
-                try { phases.add(phase.cast<const GenericPhasesGenerator&>()); }
+                try { phases.add(phase.cast<GenericPhasesGenerator const&>()); }
                 catch(...)
                 {
                     errorif(true, "Could not create ChemicalSystem with phase object:\n", py::str(phase));
@@ -46,10 +46,14 @@ void exportChemicalSystem(py::module& m)
 
     py::class_<ChemicalSystem>(m, "ChemicalSystem")
         .def(py::init<>())
-        .def(py::init<const Database&, const Vec<Phase>&>())
-        .def(py::init<const Database&, const Vec<Phase>&, const Vec<Reaction>&>())
-        .def(py::init<const Phases&>())
-        .def(py::init<const Phases&, const Reactions&>())
+        .def(py::init<Database const&, PhaseList const&>())
+        .def(py::init<Database const&, PhaseList const&, SurfaceList const&>())
+        .def(py::init<Database const&, PhaseList const&, ReactionList const&>())
+        .def(py::init<Database const&, PhaseList const&, ReactionList const&, SurfaceList const&>())
+        .def(py::init<Phases const&>())
+        .def(py::init<Phases const&, Surfaces const&>())
+        .def(py::init<Phases const&, Reactions const&>())
+        .def(py::init<Phases const&, Reactions const&, Surfaces const&>())
         .def(py::init(createChemicalSystem))
         .def("id", &ChemicalSystem::id)
         .def("database", &ChemicalSystem::database, return_internal_ref)
@@ -61,11 +65,11 @@ void exportChemicalSystem(py::module& m)
         .def("phases", &ChemicalSystem::phases, return_internal_ref)
         .def("reaction", &ChemicalSystem::reaction, return_internal_ref)
         .def("reactions", &ChemicalSystem::reactions, return_internal_ref)
+        .def("surface", &ChemicalSystem::surface, return_internal_ref)
+        .def("surfaces", &ChemicalSystem::surfaces, return_internal_ref)
         .def("formulaMatrix", &ChemicalSystem::formulaMatrix, return_internal_ref)
         .def("formulaMatrixElements", &ChemicalSystem::formulaMatrixElements, return_internal_ref)
         .def("formulaMatrixCharge", &ChemicalSystem::formulaMatrixCharge, return_internal_ref)
         .def("stoichiometricMatrix", &ChemicalSystem::stoichiometricMatrix, return_internal_ref)
-        .def("reactingPhaseInterfaces", &ChemicalSystem::reactingPhaseInterfaces, return_internal_ref)
-        .def("reactingPhaseInterfaceIndex", &ChemicalSystem::reactingPhaseInterfaceIndex)
         ;
 }

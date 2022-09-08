@@ -35,4 +35,6 @@ void exportReactionEquation(py::module& m)
         .def("coefficient", &ReactionEquation::coefficient)
         .def("__str__", [](ReactionEquation const& self) { return String(self); })
         ;
+
+    py::implicitly_convertible<String, ReactionEquation>();
 }
