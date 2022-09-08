@@ -51,6 +51,7 @@ void exportSpeciesThermoProps(py::module& m);
 void exportStandardThermoModel(py::module& m);
 void exportStandardThermoProps(py::module& m);
 void exportStateOfMatter(py::module& m);
+void exportSurface(py::module& m);
 void exportThermoProps(py::module& m);
 void exportThermoPropsPhase(py::module& m);
 void exportCoreUtils(py::module& m);
@@ -90,6 +91,7 @@ void exportCore(py::module& m)
     exportStandardThermoProps(m);
     exportStandardThermoModel(m);
     exportStateOfMatter(m);
+    exportSurface(m);
     exportThermoProps(m);
     exportThermoPropsPhase(m);
     exportCoreUtils(m);
