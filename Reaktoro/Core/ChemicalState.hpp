@@ -292,6 +292,22 @@ public:
     auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index;
 
     // --------------------------------------------------------------------------------------------
+    // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
+    // --------------------------------------------------------------------------------------------
+
+    /// Update the chemical state and properties of the system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    auto update(const real& T, const real& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical state and properties of the system using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
+
+    // --------------------------------------------------------------------------------------------
     // MISCELLANEOUS METHODS
     // --------------------------------------------------------------------------------------------
 
