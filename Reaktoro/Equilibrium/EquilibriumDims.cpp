@@ -24,23 +24,25 @@
 
 namespace Reaktoro {
 
-EquilibriumDims::EquilibriumDims(const EquilibriumSpecs& specs)
+EquilibriumDims::EquilibriumDims(EquilibriumSpecs const& specs)
 {
-    const auto& system = specs.system();
+    auto const& system = specs.system();
 
-    Ne = system.elements().size() + 1;
-    Nb = Ne; // TODO: Currently, this is chemical elements + electric charge. But we should change this when using EquilibriumReactions, where we will define the components (possibly fictitious ones if reactions are prevented in the equilibrium calculation).
+    Ne = system.elements().size();
     Nn = system.species().size();
     Np = specs.numControlVariablesP();
     Nq = specs.numControlVariablesQ();
+    Nv = specs.constraintsEquationType().size();
+    Nr = specs.reactivityConstraints().size();
+    Nb = 1 + Ne + Nr;
     Nt = specs.numTitrants();
     Nx = Nn + Nq;
     Nu = Nn + Np + Nq;
     Nw = specs.numInputs();
 
-    error(Np + Nq != specs.numConstraints(),
-        "The number of introduced control variables (e.g., temperature, pressure, amounts of titrants) is ", Np + Nq, ". "
-        "The number of introduced constraints (e.g., equation constraints and chemical potential constraints) is ", specs.numConstraints(), ". "
+    errorif(Np != Nv,
+        "The number of introduced p control variables (e.g., temperature, pressure, amounts of explicit titrants, custom variables) is ", Np, ". "
+        "The number of introduced equation constraints is ", Nv, ". "
         "These two numbers must be equal, otherwise the chemical equilibrium problem cannot be solved. "
         "Modify your chemical equilibrium specifications so that this requirement is satisfied. ");
 }
