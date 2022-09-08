@@ -664,6 +664,27 @@ auto ChemicalState::surfaceIndex(const StringOrIndex& phase1, const StringOrInde
     return pimpl->surfaceIndex(phase1, phase2);
 }
 
+
+// --------------------------------------------------------------------------------------------
+// METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::update(const real& T, const real& P, ArrayXrConstRef n) -> void
+{
+    setTemperature(T);
+    setPressure(P);
+    setSpeciesAmounts(n);
+    props().update(T, P, n);
+}
+
+auto ChemicalState::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
+{
+    setTemperature(T);
+    setPressure(P);
+    setSpeciesAmounts(n);
+    props().updateIdeal(T, P, n);
+}
+
 // --------------------------------------------------------------------------------------------
 // MISCELLANEOUS METHODS
 // --------------------------------------------------------------------------------------------
