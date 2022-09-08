@@ -265,6 +265,12 @@ public:
         }
     }
 
+    /// Assign a char to this Data object.
+    auto assign(char obj) -> void
+    {
+        tree = String(1, obj);
+    }
+
     /// Assign a raw string to this Data object.
     auto assign(Chars obj) -> void
     {
