@@ -206,8 +206,8 @@ struct EquilibriumSolver::Impl
         };
 
         // Set the coefficient matrices Aex and Aep of the linear equality constraints
-        optproblem.Aex = setup.assembleMatrixAex();
-        optproblem.Aep = setup.assembleMatrixAep();
+        optproblem.Aex = setup.Aex();
+        optproblem.Aep = setup.Aep();
 
         /// Set the right-hand side vector be of the linear equality constraints.
         optproblem.be = b0;
