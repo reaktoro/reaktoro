@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 using namespace Reaktoro;
 
 namespace test {
@@ -112,8 +113,7 @@ auto createChemicalSystem() -> ChemicalSystem
     Database db = test::createDatabase();
 
     // Create the Phase objects for the ChemicalSystem
-    const Vec<Phase> phases =
-    {
+    const PhaseList phases = {
         createAqueousPhase(db),
         createGaseousPhase(db),
         createMineralPhase(db, "Halite", "NaCl(s)"),
@@ -122,7 +122,15 @@ auto createChemicalSystem() -> ChemicalSystem
         createMineralPhase(db, "Quartz", "SiO2(s)"),
     };
 
-    return ChemicalSystem(db, phases);
+    const ReactionList reactions = {
+        db.reaction("H2O(aq) = H+(aq) + OH-(aq)"),
+        db.reaction("H2O(aq) = H2(aq) + 0.5*O2(aq)"),
+        db.reaction("O2(g) = O2(aq)"),
+        db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)"),
+        db.reaction("NaCl(s)"),
+    };
+
+    return ChemicalSystem(db, phases, reactions);
 }
 
 } // namespace test
@@ -212,43 +220,36 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     CHECK( contains(symbols, system.element(7).symbol()) );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::reactions()
+    //-------------------------------------------------------------------------
+    CHECK( system.reactions().size() == 5 );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::reaction(i)
+    //-------------------------------------------------------------------------
+    CHECK( system.reaction(0).name() == "H2O(aq) = H+(aq) + OH-(aq)" );
+    CHECK( system.reaction(1).name() == "H2O(aq) = H2(aq) + 0.5*O2(aq)" );
+    CHECK( system.reaction(2).name() == "O2(g) = O2(aq)" );
+    CHECK( system.reaction(3).name() == "NaCl(s) = Na+(aq) + Cl-(aq)" );
+    CHECK( system.reaction(4).name() == "NaCl(s)" );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::formulaMatrix()
     //-------------------------------------------------------------------------
-    // The transpose of the formula matrix of the chemical system.
-    const MatrixXd Atr{
-       // H   C   O  Na  Mg, Si  Cl  Ca   Z     (elements sorted in ascending order of atomic weights)
-        { 2,  0,  1,  0,  0,  0,  0,  0,  0 }, // H2O
-        { 1,  0,  0,  0,  0,  0,  0,  0,  1 }, // H+
-        { 1,  0,  1,  0,  0,  0,  0,  0, -1 }, // OH-
-        { 2,  0,  0,  0,  0,  0,  0,  0,  0 }, // H2
-        { 0,  0,  2,  0,  0,  0,  0,  0,  0 }, // O2
-        { 0,  0,  0,  1,  0,  0,  0,  0,  1 }, // Na+
-        { 0,  0,  0,  0,  0,  0,  1,  0, -1 }, // Cl-
-        { 0,  0,  0,  1,  0,  0,  1,  0,  0 }, // NaCl
-        { 1,  0,  0,  0,  0,  0,  1,  0,  0 }, // HCl
-        { 1,  0,  1,  1,  0,  0,  0,  0,  0 }, // NaOH
-        { 0,  0,  0,  0,  0,  0,  0,  1,  2 }, // Ca++
-        { 0,  0,  0,  0,  1,  0,  0,  0,  2 }, // Mg++
-        { 0,  1,  2,  0,  0,  0,  0,  0,  0 }, // CO2
-        { 1,  1,  3,  0,  0,  0,  0,  0, -1 }, // HCO3-
-        { 0,  1,  3,  0,  0,  0,  0,  0, -2 }, // CO3--
-        { 0,  0,  0,  0,  0,  0,  2,  1,  0 }, // CaCl2
-        { 0,  0,  0,  0,  1,  0,  2,  0,  0 }, // MgCl2
-        { 0,  0,  2,  0,  0,  1,  0,  0,  0 }, // SiO2
-        { 0,  0,  0,  0,  0,  0,  0,  0, -1 }, // e-
-        { 0,  1,  2,  0,  0,  0,  0,  0,  0 }, // CO2(g)
-        { 0,  0,  2,  0,  0,  0,  0,  0,  0 }, // O2(g)
-        { 2,  0,  0,  0,  0,  0,  0,  0,  0 }, // H2(g)
-        { 2,  0,  1,  0,  0,  0,  0,  0,  0 }, // H2O(g)
-        { 4,  1,  0,  0,  0,  0,  0,  0,  0 }, // CH4(g)
-        { 0,  1,  1,  0,  0,  0,  0,  0,  0 }, // CO(g)
-        { 0,  0,  0,  1,  0,  0,  1,  0,  0 }, // NaCl(s)
-        { 0,  1,  3,  0,  0,  0,  0,  1,  0 }, // CaCO3(s)
-        { 0,  1,  3,  0,  1,  0,  0,  0,  0 }, // MgCO3(s)
-        { 0,  0,  2,  0,  0,  1,  0,  0,  0 }  // SiO2(s)
-    };
 
-    CHECK( Atr.transpose() == system.formulaMatrix() );
+    const auto Aexpected = detail::assembleFormulaMatrix(system.species(), system.elements());
+
+    CHECK(system.formulaMatrix() == Aexpected);
+    CHECK(system.formulaMatrixElements() == Aexpected.topRows(system.elements().size()));
+    CHECK(system.formulaMatrixCharge() == Aexpected.row(system.elements().size()));
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::stoichiometricMatrix()
+    //-------------------------------------------------------------------------
+
+    const auto Sexpected = detail::assembleStoichiometricMatrix(system.reactions(), system.species());
+
+    CHECK(system.stoichiometricMatrix() == Sexpected);
 
     //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)
