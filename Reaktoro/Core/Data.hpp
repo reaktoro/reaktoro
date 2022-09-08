@@ -61,6 +61,9 @@ public:
     /// Construct a Data object with given Param object.
     Data(Param const& value);
 
+    /// Construct a Data object with given real object.
+    Data(real const& value);
+
     /// Construct a Data object with given numeric value (integers and floating-point values), which becomes a Param object.
     template<typename Number, EnableIf<isNumeric<Number>>...>
     Data(Number const& value) : Data(Param(value)) {}
@@ -144,10 +147,28 @@ public:
     auto isNull() const -> bool;
 
     /// Return the child data block with given key, presuming this data block is a dictionary.
+    auto operator[](Chars const& key) const -> Data const&;
+
+    /// Return the child data block with given key, presuming this data block is a dictionary.
     auto operator[](String const& key) const -> Data const&;
 
     /// Return the child data block with given index, presuming this data block is a list.
+    auto operator[](int const& index) const -> Data const&;
+
+    /// Return the child data block with given index, presuming this data block is a list.
     auto operator[](Index const& index) const -> Data const&;
+
+    /// Return the child data block with given key, presuming this data block is a dictionary.
+    auto at(String const& key) const -> Data const&;
+
+    /// Return the child data block with given index, presuming this data block is a list.
+    auto at(Index const& index) const -> Data const&;
+
+    /// Return the child data block with given key or create it if not existent, presuming this data block is a dictionary.
+    auto at(String const& key) -> Data&;
+
+    /// Return the child data block with given index or create it if not existent, presuming this data block is a list.
+    auto at(Index const& index) -> Data&;
 
     /// Return the child data block whose `attribute` has a given `value`, presuming this data block is a list.
     auto with(String const& attribute, String const& value) const -> Data const&;
@@ -163,6 +184,15 @@ public:
 
     /// Return true if a child parameter exists with given key, presuming this data block is a dictionary.
     auto exists(String const& key) const -> bool;
+
+    /// Convert this Data object to a `bool` value; raises an error if not convertible to `bool`.
+    operator bool() const;
+
+    /// Convert this Data object to a String value; raises an error if not convertible to String.
+    operator String() const;
+
+    /// Convert this Data object to a Param value; raises an error if not convertible to Param.
+    operator Param() const;
 
 private:
     Any tree;

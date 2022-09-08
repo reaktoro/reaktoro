@@ -171,6 +171,11 @@ Data::Data(Param const& value)
 {
 }
 
+Data::Data(real const& value)
+: tree(Param(value))
+{
+}
+
 Data::Data(Map<String, Data> const& value)
 : tree(value)
 {
@@ -311,7 +316,27 @@ auto Data::isNull() const -> bool
     return std::any_cast<std::nullptr_t>(&tree);
 }
 
+auto Data::operator[](Chars const& key) const -> Data const&
+{
+    return at(key);
+}
+
 auto Data::operator[](String const& key) const -> Data const&
+{
+    return at(key);
+}
+
+auto Data::operator[](int const& index) const -> Data const&
+{
+    return at(index);
+}
+
+auto Data::operator[](Index const& index) const -> Data const&
+{
+    return at(index);
+}
+
+auto Data::at(String const& key) const -> Data const&
 {
     auto const& obj = dict();
     auto const it = obj.find(key);
@@ -319,11 +344,25 @@ auto Data::operator[](String const& key) const -> Data const&
     return it->second;
 }
 
-auto Data::operator[](Index const& index) const -> Data const&
+auto Data::at(Index const& index) const -> Data const&
 {
     auto const& vec = list();
     errorif(index >= vec.size(), "Could not retrieve child data block with index `,", index, "` because the list has size ", vec.size(), ".");
     return vec[index];
+}
+
+auto Data::at(String const& key) -> Data&
+{
+    auto& obj = std::any_cast<Map<String, Data>&>(tree);
+    return obj[key];
+}
+
+auto Data::at(Index const& index) -> Data&
+{
+    auto& obj = std::any_cast<Vec<Data>&>(tree);
+    if(index >= obj.size())
+        obj.resize(index + 1);
+    return obj[index];
 }
 
 auto Data::with(String const& attribute, String const& value) const -> Data const&
@@ -333,7 +372,7 @@ auto Data::with(String const& attribute, String const& value) const -> Data cons
         if(entry[attribute].string() == value)
             return entry;
     errorif(true, "Could not find any data block whose attribute `", attribute, "` has value `", value, "`.");
-    return {};
+    return *this;
 }
 
 auto Data::add(Data const& data) -> Data&
@@ -365,6 +404,21 @@ auto Data::exists(String const& key) const -> bool
         return false;
     auto obj = dict();
     return obj.find(key) != obj.end();
+}
+
+Data::operator bool() const
+{
+    return boolean();
+}
+
+Data::operator String() const
+{
+    return string();
+}
+
+Data::operator Param() const
+{
+    return param();
 }
 
 } // namespace Reaktoro
