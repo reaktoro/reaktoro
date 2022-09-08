@@ -25,7 +25,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Algorithms", "[Algorithms]")
 {
-    Vec<int> nums = { 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    Vec<int> nums = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     Vec<int> res;
     Strings strs;
 
@@ -54,7 +54,13 @@ TEST_CASE("Testing Algorithms", "[Algorithms]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: remove
     //-------------------------------------------------------------------------
-    res = remove(nums, RKT_LAMBDA(x, x % 2 == 1));
+    res = remove(nums, 5);
+    REQUIRE( res == Vec<int>{1, 2, 3, 4, 6, 7, 8, 9} );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: removefn
+    //-------------------------------------------------------------------------
+    res = removefn(nums, RKT_LAMBDA(x, x % 2 == 1));
     REQUIRE( res == Vec<int>{2, 4, 6, 8} );
 
     //-------------------------------------------------------------------------

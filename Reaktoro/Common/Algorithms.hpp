@@ -54,9 +54,16 @@ auto filter(const Container& c, const Predicate& pred)
     return res;
 }
 
+/// Return a container without items `x`.
+template<typename Container, typename T>
+auto remove(const Container& c, const T& x)
+{
+    return filter(c, [&](auto&& y) { return x != y; });
+}
+
 /// Return a container without items `x` for which `pred(x)` evaluates to true.
 template<typename Container, typename Predicate>
-auto remove(const Container& c, const Predicate& pred)
+auto removefn(const Container& c, const Predicate& pred)
 {
     return filter(c, [&](auto&& x) { return !pred(x); });
 }
