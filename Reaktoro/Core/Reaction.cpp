@@ -92,6 +92,8 @@ auto Reaction::withEquation(const ReactionEquation& equation) const -> Reaction
 {
     Reaction copy = clone();
     copy.pimpl->equation = equation;
+    if(copy.pimpl->name.empty())
+        copy.pimpl->name = String(equation);
     return copy;
 }
 
