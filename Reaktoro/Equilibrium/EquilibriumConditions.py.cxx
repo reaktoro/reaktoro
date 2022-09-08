@@ -28,7 +28,8 @@ using namespace Reaktoro;
 void exportEquilibriumConditions(py::module& m)
 {
     py::class_<EquilibriumConditions>(m, "EquilibriumConditions")
-        .def(py::init<const EquilibriumSpecs>())
+        .def(py::init<ChemicalSystem const&>())
+        .def(py::init<EquilibriumSpecs const&>())
 
         .def("temperature", &EquilibriumConditions::temperature, "Specify the temperature of the system at chemical equilibrium", py::arg("value"), py::arg("unit")="K")
         .def("pressure", &EquilibriumConditions::pressure, "Specify the pressure of the system at chemical equilibrium", py::arg("value"), py::arg("unit")="Pa")

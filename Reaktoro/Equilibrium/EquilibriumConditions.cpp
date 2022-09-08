@@ -24,6 +24,7 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
@@ -41,6 +42,10 @@ auto throwErrorIfNotRegisteredInput(Strings const& inputs, String const& wid, St
 }
 
 } // namespace
+
+EquilibriumConditions::EquilibriumConditions(ChemicalSystem const& system)
+: EquilibriumConditions(EquilibriumSpecs::TP(system))
+{}
 
 EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
 : msystem(specs.system()),
