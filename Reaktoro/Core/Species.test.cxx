@@ -106,8 +106,8 @@ TEST_CASE("Testing Species class", "[Species]")
             FormationReaction()
                 .withReactants({{R1, 1.0}, {R2, 2.0}})
                 .withProductStandardVolume(0.1)
-                .withReactionThermoModel(
-                    [](ReactionThermoProps& props, ReactionThermoArgs args) {
+                .withReactionStandardThermoModel(
+                    [](ReactionStandardThermoProps& props, ReactionStandardThermoModelArgs args) {
                         const auto& [T, P, dV0] = args;
                         props.dG0 = T + P;
                         props.dH0 = T - P;

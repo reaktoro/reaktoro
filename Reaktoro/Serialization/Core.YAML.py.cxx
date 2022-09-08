@@ -63,8 +63,8 @@ void exportSerializationCoreYAML(py::module& m)
     py::implicitly_convertible<yaml, Phase>();
     py::implicitly_convertible<Phase, yaml>();
 
-    py::implicitly_convertible<yaml, ReactionThermoModel>();
-    py::implicitly_convertible<ReactionThermoModel, yaml>();
+    py::implicitly_convertible<yaml, ReactionStandardThermoModel>();
+    py::implicitly_convertible<ReactionStandardThermoModel, yaml>();
 
     py::implicitly_convertible<yaml, Species>();
     py::implicitly_convertible<Species, yaml>();

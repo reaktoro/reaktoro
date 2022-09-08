@@ -42,7 +42,7 @@
 #include <Reaktoro/Core/ReactionRate.hpp>
 #include <Reaktoro/Core/ReactionRateModel.hpp>
 #include <Reaktoro/Core/Reactions.hpp>
-#include <Reaktoro/Core/ReactionThermoProps.hpp>
+#include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/SpeciesThermoProps.hpp>

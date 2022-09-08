@@ -18,13 +18,15 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportActivityModels(py::module& m);
-void exportReactionRateModels(py::module& m);
-void exportStandardThermoModels(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
+using namespace Reaktoro;
 
-void exportModels(py::module& m)
+void exportStandardVolumeModelConstant(py::module& m)
 {
-    exportActivityModels(m);
-    exportReactionRateModels(m);
-    exportStandardThermoModels(m);
+    py::class_<StandardVolumeModelParamsConstant>(m, "StandardVolumeModelParamsConstant")
+        .def_readwrite("V0",  &StandardVolumeModelParamsConstant::V0)
+        ;
+
+    m.def("StandardVolumeModelConstant", StandardVolumeModelConstant);
 }

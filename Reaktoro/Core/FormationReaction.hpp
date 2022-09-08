@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
-#include <Reaktoro/Core/ReactionThermoProps.hpp>
+#include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
 
 namespace Reaktoro {
 
@@ -48,7 +48,7 @@ public:
     /// It also sets the standard molar enthalpy and volume of the reaction to zero.
     ///
     /// For a more advanced thermodynamic model setup, use methods
-    /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel.
+    /// @ref withProductStandardVolumeModel and @ref withReactionStandardThermoModel.
     ///
     /// @param lgK0 The equilibrium constant of the reaction (in log base 10)
     auto withEquilibriumConstant(Param lgK0) const -> FormationReaction;
@@ -81,8 +81,8 @@ public:
     /// @param fn The standard molar volume model of the product species (in m3/mol).
     auto withProductStandardVolumeModel(Model<real(real,real)> fn) const -> FormationReaction;
 
-    /// Return a duplicate of this FormationReaction object with new reaction thermodynamic model function.
-    auto withReactionThermoModel(const ReactionThermoModel& fn) const -> FormationReaction;
+    /// Return a duplicate of this FormationReaction object with a new reaction standard thermodynamic model function.
+    auto withReactionStandardThermoModel(const ReactionStandardThermoModel& fn) const -> FormationReaction;
 
     /// Return true if this FormationReaction object has been initialized with reactants and a reaction thermodynamic model.
     auto initialized() const -> bool;
@@ -97,7 +97,7 @@ public:
     auto productStandardVolumeModel() const -> const Model<real(real,real)>&;
 
     /// Return the reaction thermodynamic model function of the formation reaction.
-    auto reactionThermoModel() const -> const ReactionThermoModel&;
+    auto reactionThermoModel() const -> const ReactionStandardThermoModel&;
 
     /// Construct the standard thermodynamic model function of the product species.
     ///
@@ -107,7 +107,7 @@ public:
     /// has been previously assigned.
     ///
     /// @warning This method will throw a runtime error if methods
-    /// @ref withProductStandardVolumeModel and @ref withReactionThermoModel
+    /// @ref withProductStandardVolumeModel and @ref withReactionStandardThermoModel
     /// have not been invoked.
     auto createStandardThermoModel() const -> StandardThermoModel;
 

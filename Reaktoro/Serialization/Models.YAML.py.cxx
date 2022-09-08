@@ -20,10 +20,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
@@ -36,17 +36,17 @@ using namespace Reaktoro;
 
 void exportSerializationModelsYAML(py::module& m)
 {
-    py::implicitly_convertible<yaml, ReactionThermoModelParamsConstLgK>();
-    py::implicitly_convertible<ReactionThermoModelParamsConstLgK, yaml>();
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsConstLgK>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsConstLgK, yaml>();
 
-    py::implicitly_convertible<yaml, ReactionThermoModelParamsGemsLgK>();
-    py::implicitly_convertible<ReactionThermoModelParamsGemsLgK, yaml>();
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsGemsLgK>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsGemsLgK, yaml>();
 
-    py::implicitly_convertible<yaml, ReactionThermoModelParamsPhreeqcLgK>();
-    py::implicitly_convertible<ReactionThermoModelParamsPhreeqcLgK, yaml>();
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsPhreeqcLgK>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsPhreeqcLgK, yaml>();
 
-    py::implicitly_convertible<yaml, ReactionThermoModelParamsVantHoff>();
-    py::implicitly_convertible<ReactionThermoModelParamsVantHoff, yaml>();
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsVantHoff>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsVantHoff, yaml>();
 
     py::implicitly_convertible<yaml, StandardThermoModelParamsConstant>();
     py::implicitly_convertible<StandardThermoModelParamsConstant, yaml>();

@@ -19,10 +19,10 @@
 
 // Reaktoro includes
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
@@ -31,32 +31,32 @@
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
 
 namespace Reaktoro {
 
 //======================================================================
-// ReactionThermoModelParams Types
+// ReactionStandardThermoModelParams Types
 //======================================================================
 
-REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsConstLgK)
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
 {
     node["lgKr"] = obj.lgKr;
     node["Pr"]   = obj.Pr;
 }
 
-REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsConstLgK)
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
 {
-    static const ReactionThermoModelParamsConstLgK defaultstate;
+    static const ReactionStandardThermoModelParamsConstLgK defaultstate;
     node.at("lgKr").to(obj.lgKr);
     node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
 //----------------------------------------------------------------------
 
-REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsGemsLgK)
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
 {
     node["A0"] = obj.A0;
     node["A1"] = obj.A1;
@@ -68,9 +68,9 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsGemsLgK)
     node["Pr"] = obj.Pr;
 }
 
-REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsGemsLgK)
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
 {
-    static const ReactionThermoModelParamsGemsLgK defaultstate;
+    static const ReactionStandardThermoModelParamsGemsLgK defaultstate;
     node.at("A0").to(obj.A0);
     node.at("A1").to(obj.A1);
     node.at("A2").to(obj.A2);
@@ -83,7 +83,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsGemsLgK)
 
 //----------------------------------------------------------------------
 
-REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
 {
     node["A1"] = obj.A1;
     node["A2"] = obj.A2;
@@ -94,9 +94,9 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
     node["Pr"] = obj.Pr;
 }
 
-REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
 {
-    static const ReactionThermoModelParamsPhreeqcLgK defaultstate;
+    static const ReactionStandardThermoModelParamsPhreeqcLgK defaultstate;
     node.at("A1").to(obj.A1);
     node.at("A2").to(obj.A2);
     node.at("A3").to(obj.A3);
@@ -108,7 +108,7 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsPhreeqcLgK)
 
 //----------------------------------------------------------------------
 
-REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsVantHoff)
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
 {
     node["lgKr"] = obj.lgKr;
     node["dHr"]  = obj.dHr;
@@ -116,9 +116,9 @@ REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModelParamsVantHoff)
     node["Pr"]   = obj.Pr;
 }
 
-REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModelParamsVantHoff)
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
 {
-    static const ReactionThermoModelParamsVantHoff defaultstate;
+    static const ReactionStandardThermoModelParamsVantHoff defaultstate;
     node.at("lgKr").to(obj.lgKr);
     node.at("dHr").to(obj.dHr);
     node["Tr"].to(obj.Tr, defaultstate.Tr);

@@ -30,7 +30,7 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 
@@ -146,7 +146,7 @@ REAKTORO_YAML_ENCODE_DEFINE(FormationReaction)
 
     node["Reactants"] = repr.str();
     if(obj.reactionThermoModel().initialized())
-        node["ReactionThermoModel"] = obj.reactionThermoModel().serialize();
+        node["ReactionStandardThermoModel"] = obj.reactionThermoModel().serialize();
     if(obj.productStandardVolumeModel().initialized())
         node["StandardVolumeModel"] = obj.productStandardVolumeModel().serialize();
 }
@@ -194,14 +194,14 @@ REAKTORO_YAML_DECODE_DEFINE(Phase)
 
 //=====================================================================================================================
 
-REAKTORO_YAML_ENCODE_DEFINE(ReactionThermoModel)
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModel)
 {
     node = obj.serialize();
 }
 
-REAKTORO_YAML_DECODE_DEFINE(ReactionThermoModel)
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModel)
 {
-    obj = ReactionThermoModelYAML(node);
+    obj = ReactionStandardThermoModelYAML(node);
 }
 
 //=====================================================================================================================

@@ -564,7 +564,7 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
 // AUXILIARY FUNCTIONS: DEFINITION
 //=================================================================================================
 
-auto evalReactionThermoProps(const Species& species, real T, real P) -> ReactionThermoProps
+auto evalReactionStandardThermoProps(const Species& species, real T, real P) -> ReactionStandardThermoProps
 {
     const auto dV0 = 0.0;
     return species.reaction().reactionThermoModel()({T, P, dV0});
@@ -573,7 +573,7 @@ auto evalReactionThermoProps(const Species& species, real T, real P) -> Reaction
 auto lgK(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
 {
     const auto species = db.species().get(name);
-    const auto dG0 = evalReactionThermoProps(species, T, P).dG0;
+    const auto dG0 = evalReactionStandardThermoProps(species, T, P).dG0;
     const auto R = universalGasConstant;
     const auto lnK = -dG0/(R*T);
     return lnK / ln10;
@@ -582,14 +582,14 @@ auto lgK(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
 auto dH0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
 {
     const auto species = db.species().get(name);
-    const auto dH0 = evalReactionThermoProps(species, T, P).dH0;
+    const auto dH0 = evalReactionStandardThermoProps(species, T, P).dH0;
     return dH0;
 }
 
 auto dCp0(const PhreeqcDatabase& db, real T, real P, const String& name) -> real
 {
     const auto species = db.species().get(name);
-    const auto dCp0 = evalReactionThermoProps(species, T, P).dCp0;
+    const auto dCp0 = evalReactionStandardThermoProps(species, T, P).dCp0;
     return dCp0;
 }
 

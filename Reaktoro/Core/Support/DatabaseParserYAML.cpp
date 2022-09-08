@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
@@ -196,7 +196,7 @@ struct DatabaseParserYAML::Impl
         if(!child.IsDefined()) return {};
         return FormationReaction()
             .withReactants(createReactants(child))
-            .withReactionThermoModel(createReactionThermoModel(child))
+            .withReactionStandardThermoModel(createReactionStandardThermoModel(child))
             // .withProductStandardVolumeModel(createStandardVolumeModel(child))
             ;
     }
@@ -222,11 +222,11 @@ struct DatabaseParserYAML::Impl
     }
 
     /// Create a standard thermodynamic model with given yaml @p node for a species.
-    auto createReactionThermoModel(const yaml& node) -> ReactionThermoModel
+    auto createReactionStandardThermoModel(const yaml& node) -> ReactionStandardThermoModel
     {
-        auto child = node["ReactionThermoModel"];
-        errorif(!child, "Missing `ReactionThermoModel` specification in:\n\n", node.repr());
-        return ReactionThermoModelYAML(child);
+        auto child = node["ReactionStandardThermoModel"];
+        errorif(!child, "Missing `ReactionStandardThermoModel` specification in:\n\n", node.repr());
+        return ReactionStandardThermoModelYAML(child);
     }
 
     // auto createStandardVolumeModel(const yaml& child) -> StandardVolumeModel

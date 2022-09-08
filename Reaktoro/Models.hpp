@@ -19,9 +19,7 @@
 
 #include <Reaktoro/Models/ActivityModels.hpp>
 #include <Reaktoro/Models/ReactionRateModels.hpp>
-#include <Reaktoro/Models/ReactionThermoModels.hpp>
 #include <Reaktoro/Models/StandardThermoModels.hpp>
-#include <Reaktoro/Models/StandardVolumeModels.hpp>
 
 /// @defgroup Models Models
 /// @brief The module in Reaktoro in which various thermodynamic and reaction models are implemented.

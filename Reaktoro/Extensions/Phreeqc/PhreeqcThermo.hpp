@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Core/ReactionThermoProps.hpp>
+#include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp> // ***BECAUSE PhreeqcLegacy.hpp IS INCLUDED HERE, MAKE SURE THIS HEADER FILE IS NOT EXPORTED!***
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 
@@ -40,10 +40,10 @@ auto standardVolume(const PhreeqcSpecies* species, real T, real P, const Phreeqc
 auto standardVolume(const PhreeqcPhase* phase, real T, real P) -> real;
 
 /// Create a standard thermodynamic model for a PHREEQC species.
-auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionThermoModel;
+auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionStandardThermoModel;
 
 /// Create a standard thermodynamic model for a PHREEQC phase.
-auto reactionThermoModel(const PhreeqcPhase* phase) -> ReactionThermoModel;
+auto reactionThermoModel(const PhreeqcPhase* phase) -> ReactionStandardThermoModel;
 
 /// Create a standard molar volume model for a PHREEQC species.
 auto standardVolumeModel(const PhreeqcSpecies* species) -> Model<real(real,real)>;

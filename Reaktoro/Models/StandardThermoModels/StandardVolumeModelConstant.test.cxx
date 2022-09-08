@@ -15,16 +15,24 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+// Catch includes
+#include <catch2/catch.hpp>
 
-void exportActivityModels(py::module& m);
-void exportReactionRateModels(py::module& m);
-void exportStandardThermoModels(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
+using namespace Reaktoro;
 
-void exportModels(py::module& m)
+TEST_CASE("Testing StandardVolumeModelConstant class", "[StandardVolumeModelConstant]")
 {
-    exportActivityModels(m);
-    exportReactionRateModels(m);
-    exportStandardThermoModels(m);
+    StandardVolumeModelParamsConstant params;
+    params.V0 = 3.0;
+
+    auto model = StandardVolumeModelConstant(params);
+
+    auto T = 300.0;
+    auto P = 100.0e5;
+
+    auto V0 = model(T, P);
+
+    CHECK( V0 == params.V0  );
 }

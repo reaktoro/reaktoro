@@ -22,8 +22,8 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +36,7 @@ struct FormationReaction::Impl
     Model<real(real,real)> std_volume_model;
 
     /// The function that computes the standard thermodynamic properties of this reaction.
-    ReactionThermoModel rxn_thermo_model;
+    ReactionStandardThermoModel rxn_thermo_model;
 
     /// Construct a default FormationReaction::Impl object
     Impl()
@@ -53,7 +53,7 @@ struct FormationReaction::Impl
             "model function because no reaction thermodynamic model has been set "
             "in the FormationReaction object. Use one of the methods below to correct this: \n"
             "    1) FormationReaction::withEquilibriumConstant\n"
-            "    2) FormationReaction::withReactionThermoModel");
+            "    2) FormationReaction::withReactionStandardThermoModel");
 
         const auto num_reactants = reactants.size();
 
@@ -83,7 +83,7 @@ struct FormationReaction::Impl
             }
 
             // Compute the rest of the standard thermodynamic properties of the reaction
-            ReactionThermoProps rxnprops;
+            ReactionStandardThermoProps rxnprops;
             rxn_thermo_model.apply(rxnprops, {T, P, dV0});
 
             // Compute finally the standard thermodynamic properties of the product species
@@ -129,7 +129,7 @@ auto FormationReaction::withReactants(Pairs<Species, double> reactants) const ->
 auto FormationReaction::withEquilibriumConstant(Param lgK0) const -> FormationReaction
 {
     FormationReaction copy = clone();
-    copy = copy.withReactionThermoModel(ReactionThermoModelConstLgK({lgK0}));
+    copy = copy.withReactionStandardThermoModel(ReactionStandardThermoModelConstLgK({lgK0}));
     copy = copy.withProductStandardVolume(0.0);
     return copy;
 }
@@ -146,7 +146,7 @@ auto FormationReaction::withProductStandardVolumeModel(Model<real(real,real)> fn
     return copy;
 }
 
-auto FormationReaction::withReactionThermoModel(const ReactionThermoModel& fn) const -> FormationReaction
+auto FormationReaction::withReactionStandardThermoModel(const ReactionStandardThermoModel& fn) const -> FormationReaction
 {
     FormationReaction copy = clone();
     copy.pimpl->rxn_thermo_model = fn;
@@ -176,7 +176,7 @@ auto FormationReaction::productStandardVolumeModel() const -> const Model<real(r
     return pimpl->std_volume_model;
 }
 
-auto FormationReaction::reactionThermoModel() const -> const ReactionThermoModel&
+auto FormationReaction::reactionThermoModel() const -> const ReactionStandardThermoModel&
 {
     return pimpl->rxn_thermo_model;
 }
