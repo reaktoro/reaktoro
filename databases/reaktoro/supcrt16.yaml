@@ -2015,7 +2015,7 @@ Species:
       b: 0.10549538
       c: -11357468.0
       Tmax: 700.0
-- Name: "[Ala](cr)"
+- Name: (Ala)(cr)
   Formula: CH3
   Elements: 1:C 3:H
   AggregateState: Solid
@@ -2029,7 +2029,7 @@ Species:
       b: 0.22129176
       c: 0.0
       Tmax: .nan
-- Name: "[Arg](cr)"
+- Name: (Arg)(cr)
   Formula: C4H10N3
   Elements: 4:C 10:H 3:N
   AggregateState: Solid
@@ -2043,7 +2043,7 @@ Species:
       b: 0.59881408
       c: 0.0
       Tmax: .nan
-- Name: "[Asn](cr)"
+- Name: (Asn)(cr)
   Formula: C2H4NO
   Elements: 2:C 4:H 1:N 1:O
   AggregateState: Solid
@@ -2057,7 +2057,7 @@ Species:
       b: 0.33321376
       c: 0.0
       Tmax: .nan
-- Name: "[Asp](cr)"
+- Name: (Asp)(cr)
   Formula: C2H3O2
   Elements: 2:C 3:H 2:O
   AggregateState: Solid
@@ -2071,7 +2071,7 @@ Species:
       b: 0.31459496
       c: 0.0
       Tmax: .nan
-- Name: "[Cys](cr)"
+- Name: (Cys)(cr)
   Formula: CH3S
   Elements: 1:C 3:H 1:S
   AggregateState: Solid
@@ -2085,7 +2085,7 @@ Species:
       b: 0.420492
       c: 0.0
       Tmax: .nan
-- Name: "[Glu](cr)"
+- Name: (Glu)(cr)
   Formula: C3H5O2
   Elements: 3:C 5:H 2:O
   AggregateState: Solid
@@ -2099,7 +2099,7 @@ Species:
       b: 0.38028376
       c: 0.0
       Tmax: .nan
-- Name: "[Gln](cr)"
+- Name: (Gln)(cr)
   Formula: C3H6NO
   Elements: 3:C 6:H 1:N 1:O
   AggregateState: Solid
@@ -2113,7 +2113,7 @@ Species:
       b: 0.3937144
       c: 0.0
       Tmax: .nan
-- Name: "[Gly](cr)"
+- Name: (Gly)(cr)
   Formula: H
   Elements: 1:H
   AggregateState: Solid
@@ -2127,7 +2127,7 @@ Species:
       b: 0.1753096
       c: 0.0
       Tmax: .nan
-- Name: "[His](cr)"
+- Name: (His)(cr)
   Formula: C4H5N2
   Elements: 4:C 5:H 2:N
   AggregateState: Solid
@@ -2141,7 +2141,7 @@ Species:
       b: 0.57479792
       c: 0.0
       Tmax: .nan
-- Name: "[Ile](cr)"
+- Name: (Ile)(cr)
   Formula: C4H9
   Elements: 4:C 9:H
   AggregateState: Solid
@@ -2155,7 +2155,7 @@ Species:
       b: 0.42250032
       c: 0.0
       Tmax: .nan
-- Name: "[Leu](cr)"
+- Name: (Leu)(cr)
   Formula: C4H9
   Elements: 4:C 9:H
   AggregateState: Solid
@@ -2169,7 +2169,7 @@ Species:
       b: 0.44630728
       c: 0.0
       Tmax: .nan
-- Name: "[Lys](cr)"
+- Name: (Lys)(cr)
   Formula: C4H10N
   Elements: 4:C 10:H 1:N
   AggregateState: Solid
@@ -2183,7 +2183,7 @@ Species:
       b: 0.55320848
       c: 0.0
       Tmax: .nan
-- Name: "[Met](cr)"
+- Name: (Met)(cr)
   Formula: C3H7S
   Elements: 3:C 7:H 1:S
   AggregateState: Solid
@@ -2197,7 +2197,7 @@ Species:
       b: 0.42329528
       c: 0.0
       Tmax: .nan
-- Name: "[Phe](cr)"
+- Name: (Phe)(cr)
   Formula: C7H7
   Elements: 7:C 7:H
   AggregateState: Solid
@@ -2211,7 +2211,7 @@ Species:
       b: 0.5437108
       c: 0.0
       Tmax: .nan
-- Name: "[Pro](cr)"
+- Name: (Pro)(cr)
   Formula: C3H5
   Elements: 3:C 5:H
   AggregateState: Solid
@@ -2225,7 +2225,7 @@ Species:
       b: 0.34919664
       c: 0.0
       Tmax: .nan
-- Name: "[Ser](cr)"
+- Name: (Ser)(cr)
   Formula: CH3O
   Elements: 1:C 3:H 1:O
   AggregateState: Solid
@@ -2239,7 +2239,7 @@ Species:
       b: 0.24878064
       c: 0.0
       Tmax: .nan
-- Name: "[Thr](cr)"
+- Name: (Thr)(cr)
   Formula: C2H5O
   Elements: 2:C 5:H 1:O
   AggregateState: Solid
@@ -2253,7 +2253,7 @@ Species:
       b: 0.36601632
       c: 0.0
       Tmax: .nan
-- Name: "[Trp](cr)"
+- Name: (Trp)(cr)
   Formula: C9H8N
   Elements: 9:C 8:H 1:N
   AggregateState: Solid
@@ -2267,7 +2267,7 @@ Species:
       b: 0.66019336
       c: 0.0
       Tmax: .nan
-- Name: "[Tyr](cr)"
+- Name: (Tyr)(cr)
   Formula: C7H7O
   Elements: 7:C 7:H 1:O
   AggregateState: Solid
@@ -2281,7 +2281,7 @@ Species:
       b: 0.58718256
       c: 0.0
       Tmax: .nan
-- Name: "[Val](cr)"
+- Name: (Val)(cr)
   Formula: C3H7
   Elements: 3:C 7:H
   AggregateState: Solid
@@ -2295,7 +2295,7 @@ Species:
       b: 0.35388272
       c: 0.0
       Tmax: .nan
-- Name: "[Hyd-Pro](cr)"
+- Name: (Hyd-Pro)(cr)
   Formula: C3H5O
   Elements: 3:C 5:H 1:O
   AggregateState: Solid
@@ -2309,7 +2309,7 @@ Species:
       b: 1.120015
       c: 0.0
       Tmax: .nan
-- Name: "[Hyd-Lys](cr)"
+- Name: (Hyd-Lys)(cr)
   Formula: C4H10NO
   Elements: 4:C 10:H 1:N 1:O
   AggregateState: Solid
@@ -2323,7 +2323,7 @@ Species:
       b: 1.323985
       c: 0.0
       Tmax: .nan
-- Name: "[AABB](cr)"
+- Name: (AABB)(cr)
   Formula: C2H4NO2
   Elements: 2:C 4:H 1:N 2:O
   AggregateState: Solid
@@ -2337,7 +2337,7 @@ Species:
       b: 0.10761248
       c: 0.0
       Tmax: .nan
-- Name: "[PBB](cr)"
+- Name: (PBB)(cr)
   Formula: C2H2NO
   Elements: 2:C 2:H 1:N 1:O
   AggregateState: Solid
@@ -2726,13 +2726,13 @@ Species:
       Hf: -3931621.1
       Sr: 207.14984
       Vr: 0.00010025
-      a: [258.1528, 342.58592]
-      b: [0.0581576, 0.014869936]
-      c: [-6280184.0, -20984434.0]
-      Ttr: [473.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (258.1528, 342.58592)
+      b: (0.0581576, 0.014869936)
+      c: (-6280184.0, -20984434.0)
+      Ttr: (473.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1200.0
 - Name: Albite,high
   Formula: NaAlSi3O8
@@ -2745,13 +2745,13 @@ Species:
       Hf: -3920617.2
       Sr: 218.8232
       Vr: 0.00010043
-      a: [258.1528, 268.48728]
-      b: [0.0581576, 0.0581576]
-      c: [-6280184.0, -6280184.0]
-      Ttr: [623.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (258.1528, 268.48728)
+      b: (0.0581576, 0.0581576)
+      c: (-6280184.0, -6280184.0)
+      Ttr: (623.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1400.0
 - Name: Almandine
   Formula: Fe3Al2Si3O12
@@ -2764,13 +2764,13 @@ Species:
       Hf: .nan
       Sr: 316.3104
       Vr: 0.00011528
-      a: [408.1492, 448.06456]
-      b: [0.14074976, 0.06217424]
-      c: [-7836632.0, -4447592.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (408.1492, 448.06456)
+      b: (0.14074976, 0.06217424)
+      c: (-7836632.0, -4447592.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1600.0
 - Name: Amesite,14A
   Formula: Mg4Al2(Al2Si2)O10(OH)8
@@ -2783,13 +2783,13 @@ Species:
       Hf: .nan
       Sr: 455.6376
       Vr: 0.0002054
-      a: [722.11656, 708.7696]
-      b: [0.14635632, 0.17254816]
-      c: [-17434728.0, -18564408.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (722.11656, 708.7696)
+      b: (0.14635632, 0.17254816)
+      c: (-17434728.0, -18564408.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Antigorite
   Formula: Mg48Si34O85(OH)62
@@ -2802,13 +2802,13 @@ Species:
       Hf: -71424608.0
       Sr: 3603.9302
       Vr: 0.00174913
-      a: [5139.8348, 5166.5287]
-      b: [2.1495718, 2.0971882]
-      c: [-119946910.0, -117687550.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (5139.8348, 5166.5287)
+      b: (2.1495718, 2.0971882)
+      c: (-119946910.0, -117687550.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Clinochlore,7A
   Formula: Mg5Al(AlSi3)O10(OH)8
@@ -2821,13 +2821,13 @@ Species:
       Hf: -8841616.2
       Sr: 445.596
       Vr: 0.0002115
-      a: [681.23888, 694.58584]
-      b: [0.21179408, 0.18560224]
-      c: [-17104192.0, -15974512.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (681.23888, 694.58584)
+      b: (0.21179408, 0.18560224)
+      c: (-17104192.0, -15974512.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 900.0
 - Name: Coesite
   Formula: SiO2
@@ -2840,13 +2840,13 @@ Species:
       Hf: -906312.98
       Sr: 40.3756
       Vr: 2.0641e-05
-      a: [46.024, 59.37096]
-      b: [0.0343088, 0.00811696]
-      c: [-1129680.0, 0.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (46.024, 59.37096)
+      b: (0.0343088, 0.00811696)
+      c: (-1129680.0, 0.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 2000.0
 - Name: Cristobalite
   Formula: SiO2
@@ -2859,13 +2859,13 @@ Species:
       Hf: -906902.92
       Sr: 43.396448
       Vr: 2.574e-05
-      a: [58.49232, 72.75976]
-      b: [0.01397456, 0.00129704]
-      c: [-1594104.0, -4137976.0]
-      Ttr: [543.0]
-      Htr: [1343.064]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (58.49232, 72.75976)
+      b: (0.01397456, 0.00129704)
+      c: (-1594104.0, -4137976.0)
+      Ttr: (543.0)
+      Htr: (1343.064)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 2000.0
 - Name: Daphnite,7A
   Formula: Fe5Al(AlSi3)O10(OH)8
@@ -2878,13 +2878,13 @@ Species:
       Hf: .nan
       Sr: 581.1576
       Vr: 0.0002212
-      a: [721.86552, 735.21248]
-      b: [0.21873952, 0.19254768]
-      c: [-15577032.0, -14489192.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (721.86552, 735.21248)
+      b: (0.21873952, 0.19254768)
+      c: (-15577032.0, -14489192.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Edenite
   Formula: Na(Ca2Mg5)(AlSi7)O22(OH2)
@@ -2897,13 +2897,13 @@ Species:
       Hf: .nan
       Sr: 673.624
       Vr: 0.000271
-      a: [835.58664, 848.9336]
-      b: [0.20409552, 0.17790368]
-      c: [-19250584.0, -18120904.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (835.58664, 848.9336)
+      b: (0.20409552, 0.17790368)
+      c: (-19250584.0, -18120904.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Epistilbite
   Formula: Ca(Al2Si6)O16(H2O)5
@@ -2916,13 +2916,13 @@ Species:
       Hf: .nan
       Sr: 639.7336
       Vr: 0.00026756
-      a: [657.05536, 683.74928]
-      b: [0.25468008, 0.2022964]
-      c: [-9133672.0, -6874312.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (657.05536, 683.74928)
+      b: (0.25468008, 0.2022964)
+      c: (-9133672.0, -6874312.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Ferroedenite
   Formula: Na(Ca2Fe5)(AlSi7)O22(OH)2
@@ -2935,13 +2935,13 @@ Species:
       Hf: .nan
       Sr: 810.4408
       Vr: 0.0002809
-      a: [876.21328, 889.56024]
-      b: [0.21104096, 0.18484912]
-      c: [-17723424.0, -16593744.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (876.21328, 889.56024)
+      b: (0.21104096, 0.18484912)
+      c: (-17723424.0, -16593744.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Ferrosilite
   Formula: FeSiO3
@@ -2954,13 +2954,13 @@ Species:
       Hf: -1195193.1
       Sr: 90.49992
       Vr: 3.2952e-05
-      a: [110.83416, 99.85116]
-      b: [0.02121288, 0.03673552]
-      c: [-2322120.0, -1966480.0]
-      Ttr: [413.0]
-      Htr: [154.808]
-      Vtr: [5.6e-08]
-      dPdTtr: [6700000.0]
+      a: (110.83416, 99.85116)
+      b: (0.02121288, 0.03673552)
+      c: (-2322120.0, -1966480.0)
+      Ttr: (413.0)
+      Htr: (154.808)
+      Vtr: (5.6e-08)
+      dPdTtr: (6700000.0)
       Tmax: 1400.0
 - Name: Fluoredenite
   Formula: Na(Ca2Mg5)(AlSi7)O22(F)2
@@ -2973,13 +2973,13 @@ Species:
       Hf: .nan
       Sr: 613.7928
       Vr: 0.0002725
-      a: [816.84232, 830.18928]
-      b: [0.19556016, 0.16936832]
-      c: [-18794528.0, -17664848.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (816.84232, 830.18928)
+      b: (0.19556016, 0.16936832)
+      c: (-18794528.0, -17664848.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Heulandite
   Formula: Ca(Al2Si7)O18(H2O)6
@@ -2992,13 +2992,13 @@ Species:
       Hf: .nan
       Sr: 763.1616
       Vr: 0.00031637
-      a: [751.69744, 791.73832]
-      b: [0.28898888, 0.21041336]
-      c: [-10263352.0, -6874312.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (751.69744, 791.73832)
+      b: (0.28898888, 0.21041336)
+      c: (-10263352.0, -6874312.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Kalsilite
   Formula: K(AlSi)O4
@@ -3011,13 +3011,13 @@ Species:
       Hf: -2131363.1
       Sr: 133.2604
       Vr: 5.989e-05
-      a: [123.13512, 177.82]
-      b: [0.07263424, 0.0]
-      c: [-2225888.0, 0.0]
-      Ttr: [810.0]
-      Htr: [669.44]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (123.13512, 177.82)
+      b: (0.07263424, 0.0)
+      c: (-2225888.0, 0.0)
+      Ttr: (810.0)
+      Htr: (669.44)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1800.0
 - Name: Lawsonite
   Formula: CaAl2Si2O7(OH)2(H2O)
@@ -3030,13 +3030,13 @@ Species:
       Hf: -4845507.1
       Sr: 233.4672
       Vr: 0.00010132
-      a: [342.2512, 355.59816]
-      b: [0.09773824, 0.0715464]
-      c: [-6803184.0, -5673504.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (342.2512, 355.59816)
+      b: (0.09773824, 0.0715464)
+      c: (-6803184.0, -5673504.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Magnetite
   Formula: Fe3O4
@@ -3049,13 +3049,13 @@ Species:
       Hf: -1118174.0
       Sr: 145.72872
       Vr: 4.4524e-05
-      a: [91.54592, 200.832]
-      b: [0.2016688, 0.0]
-      c: [0.0, 0.0]
-      Ttr: [900.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (91.54592, 200.832)
+      b: (0.2016688, 0.0)
+      c: (0.0, 0.0)
+      Ttr: (900.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1800.0
 - Name: Margarite
   Formula: CaAl2(Al2Si2)O10(OH)2
@@ -3068,13 +3068,13 @@ Species:
       Hf: -6216599.8
       Sr: 266.9392
       Vr: 0.0001294
-      a: [428.86, 415.51304]
-      b: [0.0684084, 0.09460024]
-      c: [-11736120.0, -12865800.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (428.86, 415.51304)
+      b: (0.0684084, 0.09460024)
+      c: (-11736120.0, -12865800.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Natrolite
   Formula: Na2(Al2Si3)O10(H2O)2
@@ -3087,13 +3087,13 @@ Species:
       Hf: .nan
       Sr: 425.0944
       Vr: 0.00016972
-      a: [400.65984, 387.31288]
-      b: [0.16769472, 0.19388656]
-      c: [-6301104.0, -7430784.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (400.65984, 387.31288)
+      b: (0.16769472, 0.19388656)
+      c: (-6301104.0, -7430784.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Nesquehonite
   Formula: MgCO3(H2O)3
@@ -3106,13 +3106,13 @@ Species:
       Hf: -1977258.0
       Sr: 195.64384
       Vr: 7.479e-05
-      a: [-6588.9799, 105.62926]
-      b: [16.31414, 0.38195318]
-      c: [-174608780.0, -1766484.8]
-      Ttr: [306.5]
-      Htr: [769.856]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (-6588.9799, 105.62926)
+      b: (16.31414, 0.38195318)
+      c: (-174608780.0, -1766484.8)
+      Ttr: (306.5)
+      Htr: (769.856)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 340.0
 - Name: Nickel
   Formula: Ni
@@ -3125,13 +3125,13 @@ Species:
       Hf: 0.0
       Sr: 29.87376
       Vr: 6.588e-06
-      a: [16.98704, 25.104]
-      b: [0.02945536, 0.0075312]
-      c: [0.0, 0.0]
-      Ttr: [633.0]
-      Htr: [0.0]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (16.98704, 25.104)
+      b: (0.02945536, 0.0075312)
+      c: (0.0, 0.0)
+      Ttr: (633.0)
+      Htr: (0.0)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1725.0
 - Name: Phillipsite,Ca
   Formula: Ca(Al2Si5)O14(H2O)5
@@ -3144,13 +3144,13 @@ Species:
       Hf: .nan
       Sr: 697.0544
       Vr: 0.000265
-      a: [610.11088, 623.45784]
-      b: [0.22037128, 0.19417944]
-      c: [-8003992.0, -6874312.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (610.11088, 623.45784)
+      b: (0.22037128, 0.19417944)
+      c: (-8003992.0, -6874312.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Phillipsite,K
   Formula: K2(Al2Si5)O14(H2O)5
@@ -3163,13 +3163,13 @@ Species:
       Hf: .nan
       Sr: 720.0664
       Vr: 0.000265
-      a: [638.72944, 652.0764]
-      b: [0.25204416, 0.22585232]
-      c: [-7719480.0, -6589800.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (638.72944, 652.0764)
+      b: (0.25204416, 0.22585232)
+      c: (-7719480.0, -6589800.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Phillipsite,Na
   Formula: Na2(Al2Si5)O14(H2O)5
@@ -3182,13 +3182,13 @@ Species:
       Hf: .nan
       Sr: 721.3216
       Vr: 0.000265
-      a: [637.6416, 650.98856]
-      b: [0.23631232, 0.21012048]
-      c: [-8560464.0, -7430784.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (637.6416, 650.98856)
+      b: (0.23631232, 0.21012048)
+      c: (-8560464.0, -7430784.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Prehnite
   Formula: Ca2Al2Si3O10(OH)2
@@ -3201,13 +3201,13 @@ Species:
       Hf: -6199219.4
       Sr: 271.96
       Vr: 0.00014033
-      a: [383.2544, 423.29528]
-      b: [0.15823888, 0.07966336]
-      c: [-8200640.0, -4811600.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (383.2544, 423.29528)
+      b: (0.15823888, 0.07966336)
+      c: (-8200640.0, -4811600.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Pyrope
   Formula: Mg3Al2Si3O12
@@ -3220,13 +3220,13 @@ Species:
       Hf: .nan
       Sr: 260.6632
       Vr: 0.00011327
-      a: [383.63096, 423.67184]
-      b: [0.13656576, 0.05799024]
-      c: [-8752928.0, -5363888.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (383.63096, 423.67184)
+      b: (0.13656576, 0.05799024)
+      c: (-8752928.0, -5363888.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1800.0
 - Name: Quartz
   Formula: SiO2
@@ -3239,13 +3239,13 @@ Species:
       Hf: -910647.6
       Sr: 41.33792
       Vr: 2.2688e-05
-      a: [46.94448, 60.29144]
-      b: [0.0343088, 0.00811696]
-      c: [-1129680.0, 0.0]
-      Ttr: [848.0]
-      Htr: [1213.36]
-      Vtr: [3.72e-07]
-      dPdTtr: [3850000.0]
+      a: (46.94448, 60.29144)
+      b: (0.0343088, 0.00811696)
+      c: (-1129680.0, 0.0)
+      Ttr: (848.0)
+      Htr: (1213.36)
+      Vtr: (3.72e-07)
+      dPdTtr: (3850000.0)
       Tmax: 2000.0
 - Name: Quicksilver
   Formula: Hg
@@ -3258,13 +3258,13 @@ Species:
       Hf: 0.0
       Sr: 76.02328
       Vr: 1.4822e-05
-      a: [26.94496, 20.79448]
-      b: [0.0, 0.0]
-      c: [79496.0, 0.0]
-      Ttr: [629.0]
-      Htr: [59161.76]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (26.94496, 20.79448)
+      b: (0.0, 0.0)
+      c: (79496.0, 0.0)
+      Ttr: (629.0)
+      Htr: (59161.76)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 3000.0
 - Name: Selenium
   Formula: Se
@@ -3277,13 +3277,13 @@ Species:
       Hf: 0.0
       Sr: 42.270952
       Vr: 1.642e-05
-      a: [25.444619, 18.879882]
-      b: [0.0051940176, 0.013380014]
-      c: [-173325.97, 2576339.8]
-      Ttr: [494.0]
-      Htr: [6158.848]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (25.444619, 18.879882)
+      b: (0.0051940176, 0.013380014)
+      c: (-173325.97, 2576339.8)
+      Ttr: (494.0)
+      Htr: (6158.848)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 957.0
 - Name: Spessartine
   Formula: Mn3Al2Si3O12
@@ -3296,13 +3296,13 @@ Species:
       Hf: .nan
       Sr: 311.708
       Vr: 0.0001179
-      a: [395.30432, 435.3452]
-      b: [0.13907616, 0.06050064]
-      c: [-7999808.0, -4610768.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (395.30432, 435.3452)
+      b: (0.13907616, 0.06050064)
+      c: (-7999808.0, -4610768.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1800.0
 - Name: Stilbite
   Formula: NaCa2(Al5Si13)O36(H2O)14
@@ -3315,13 +3315,13 @@ Species:
       Hf: .nan
       Sr: 1670.6712
       Vr: 0.00064991
-      a: [1634.0612, 1674.1021]
-      b: [0.57605312, 0.4974776]
-      c: [-20853056.0, -17464016.0]
-      Ttr: [848.0]
-      Htr: [.nan]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (1634.0612, 1674.1021)
+      b: (0.57605312, 0.4974776)
+      c: (-20853056.0, -17464016.0)
+      Ttr: (848.0)
+      Htr: (.nan)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 1000.0
 - Name: Tin
   Formula: Sn
@@ -3334,13 +3334,13 @@ Species:
       Hf: 0.0
       Sr: 51.21216
       Vr: 1.6289e-05
-      a: [18.49328, 30.5432]
-      b: [0.0263592, 0.0]
-      c: [0.0, 0.0]
-      Ttr: [505.06]
-      Htr: [7029.12]
-      Vtr: [.nan]
-      dPdTtr: [.nan]
+      a: (18.49328, 30.5432)
+      b: (0.0263592, 0.0)
+      c: (0.0, 0.0)
+      Ttr: (505.06)
+      Htr: (7029.12)
+      Vtr: (.nan)
+      dPdTtr: (.nan)
       Tmax: 3000.0
 - Name: Acanthite
   Formula: Ag2S
@@ -3353,13 +3353,13 @@ Species:
       Hf: -31589.2
       Sr: 143.5112
       Vr: 3.42e-05
-      a: [65.39592, 7.610696, 90.3744]
-      b: [0.0359824, 0.221752, 0.0]
-      c: [0.0, 0.0, 0.0]
-      Ttr: [450.0, 620.0]
-      Htr: [3974.8, 2510.4]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (65.39592, 7.610696, 90.3744)
+      b: (0.0359824, 0.221752, 0.0)
+      c: (0.0, 0.0, 0.0)
+      Ttr: (450.0, 620.0)
+      Htr: (3974.8, 2510.4)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1000.0
 - Name: Aegerine
   Formula: NaFe(SiO3)2
@@ -3372,13 +3372,13 @@ Species:
       Hf: .nan
       Sr: 153.5528
       Vr: 6.437e-05
-      a: [193.13344, 219.32528, 210.32968]
-      b: [0.08079304, 0.04188184, 0.04556376]
-      c: [-3958064.0, -3213312.0, -3213312.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (193.13344, 219.32528, 210.32968)
+      b: (0.08079304, 0.04188184, 0.04556376)
+      c: (-3958064.0, -3213312.0, -3213312.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1400.0
 - Name: Anthophyllite
   Formula: Mg7Si8O22(OH)2
@@ -3391,13 +3391,13 @@ Species:
       Hf: -12086526.0
       Sr: 538.0624
       Vr: 0.0002644
-      a: [755.97349, 826.51573, 834.80005]
-      b: [0.25344162, 0.17411298, 0.17411298]
-      c: [-16092501.0, -5582292.8, -5582292.8]
-      Ttr: [903.0, 1258.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (755.97349, 826.51573, 834.80005)
+      b: (0.25344162, 0.17411298, 0.17411298)
+      c: (-16092501.0, -5582292.8, -5582292.8)
+      Ttr: (903.0, 1258.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1800.0
 - Name: Bornite
   Formula: Cu5FeS4
@@ -3410,13 +3410,13 @@ Species:
       Hf: -334393.65
       Sr: 415.42936
       Vr: 9.86e-05
-      a: [208.19584, -143.55304, 336.10072]
-      b: [0.14677472, 1.033448, -0.00853536]
-      c: [-564840.0, 0.0, 0.0]
-      Ttr: [485.0, 540.0]
-      Htr: [5983.12, 0.0]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (208.19584, -143.55304, 336.10072)
+      b: (0.14677472, 1.033448, -0.00853536)
+      c: (-564840.0, 0.0, 0.0)
+      Ttr: (485.0, 540.0)
+      Htr: (5983.12, 0.0)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1200.0
 - Name: Bunsenite
   Formula: NiO
@@ -3429,13 +3429,13 @@ Species:
       Hf: -239743.2
       Sr: 37.99072
       Vr: 1.097e-05
-      a: [-20.87816, 58.07392, 46.77712]
-      b: [0.15723472, 0.0, 0.00845168]
-      c: [1627576.0, 0.0, 0.0]
-      Ttr: [525.0, 565.0]
-      Htr: [0.0, 0.0]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (-20.87816, 58.07392, 46.77712)
+      b: (0.15723472, 0.0, 0.00845168)
+      c: (1627576.0, 0.0, 0.0)
+      Ttr: (525.0, 565.0)
+      Htr: (0.0, 0.0)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 2000.0
 - Name: Chalcocite
   Formula: Cu2S
@@ -3448,13 +3448,13 @@ Species:
       Hf: -79496.0
       Sr: 120.9176
       Vr: 2.748e-05
-      a: [52.84392, 112.04752, 85.01888]
-      b: [0.07874288, -0.0307524, 0.0]
-      c: [0.0, 0.0, 0.0]
-      Ttr: [376.0, 717.0]
-      Htr: [3849.28, 1200.808]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (52.84392, 112.04752, 85.01888)
+      b: (0.07874288, -0.0307524, 0.0)
+      c: (0.0, 0.0, 0.0)
+      Ttr: (376.0, 717.0)
+      Htr: (3849.28, 1200.808)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1400.0
 - Name: Chalcopyrite
   Formula: CuFeS2
@@ -3467,13 +3467,13 @@ Species:
       Hf: -185991.35
       Sr: 130.3316
       Vr: 4.283e-05
-      a: [86.98536, -591.6176, 172.46448]
-      b: [0.0535552, 0.87864, 0.0]
-      c: [-560656.0, 0.0, 0.0]
-      Ttr: [830.0, 930.0]
-      Htr: [10062.52, 0.0]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (86.98536, -591.6176, 172.46448)
+      b: (0.0535552, 0.87864, 0.0)
+      c: (-560656.0, 0.0, 0.0)
+      Ttr: (830.0, 930.0)
+      Htr: (10062.52, 0.0)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1200.0
 - Name: Cronstedtite,7A
   Formula: Fe2Fe(FeSi)O5(OH)4
@@ -3486,13 +3486,13 @@ Species:
       Hf: .nan
       Sr: 307.524
       Vr: 0.0001109
-      a: [354.76136, 407.1032, 389.15384]
-      b: [0.17505856, 0.09723616, 0.1046]
-      c: [-5219958.4, -3736312.0, -3736312.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (354.76136, 407.1032, 389.15384)
+      b: (0.17505856, 0.09723616, 0.1046)
+      c: (-5219958.4, -3736312.0, -3736312.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1500.0
 - Name: Enstatite
   Formula: MgSiO3
@@ -3505,13 +3505,13 @@ Species:
       Hf: -1546766.2
       Sr: 67.7808
       Vr: 3.1276e-05
-      a: [102.7172, 120.35276, 122.42384]
-      b: [0.01983216, 0.0, 0.0]
-      c: [-2627552.0, 0.0, 0.0]
-      Ttr: [903.0, 1258.0]
-      Htr: [694.544, 1631.76]
-      Vtr: [2e-08, 1.09e-06]
-      dPdTtr: [38461500.0, 1190000.0]
+      a: (102.7172, 120.35276, 122.42384)
+      b: (0.01983216, 0.0, 0.0)
+      c: (-2627552.0, 0.0, 0.0)
+      Ttr: (903.0, 1258.0)
+      Htr: (694.544, 1631.76)
+      Vtr: (2e-08, 1.09e-06)
+      dPdTtr: (38461500.0, 1190000.0)
       Tmax: 1800.0
 - Name: Ferrogedrite
   Formula: (Fe5Al2)(Al2Si6)O22(OH)2
@@ -3524,13 +3524,13 @@ Species:
       Hf: .nan
       Sr: 642.244
       Vr: 0.0002659
-      a: [821.19368, 856.4648, 860.60696]
-      b: [0.24430376, 0.20463944, 0.20463944]
-      c: [-16321784.0, -11066680.0, -11066680.0]
-      Ttr: [903.0, 1258.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (821.19368, 856.4648, 860.60696)
+      b: (0.24430376, 0.20463944, 0.20463944)
+      c: (-16321784.0, -11066680.0, -11066680.0)
+      Ttr: (903.0, 1258.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1500.0
 - Name: Hastingsite
   Formula: Na(Ca2Fe4Fe)(Al2Si6)O22(OH)2
@@ -3543,13 +3543,13 @@ Species:
       Hf: .nan
       Sr: 791.6128
       Vr: 0.0002803
-      a: [885.20888, 911.35888, 902.40512]
-      b: [0.21288192, 0.17397072, 0.17765264]
-      c: [-18777792.0, -18033040.0, -18033040.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (885.20888, 911.35888, 902.40512)
+      b: (0.21288192, 0.17397072, 0.17765264)
+      c: (-18777792.0, -18033040.0, -18033040.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1500.0
 - Name: Hematite
   Formula: Fe2O3
@@ -3562,13 +3562,13 @@ Species:
       Hf: -827260.48
       Sr: 87.61296
       Vr: 3.0274e-05
-      a: [98.28216, 150.624, 132.67464]
-      b: [0.0778224, 0.0, 0.00736384]
-      c: [-1485320.0, 0.0, 0.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [669.44, 0.0]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (98.28216, 150.624, 132.67464)
+      b: (0.0778224, 0.0, 0.00736384)
+      c: (-1485320.0, 0.0, 0.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (669.44, 0.0)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1800.0
 - Name: Larnite
   Formula: Ca2SiO4
@@ -3581,13 +3581,13 @@ Species:
       Hf: .nan
       Sr: 127.612
       Vr: 5.16e-05
-      a: [145.89608, 134.55744, 205.016]
-      b: [0.04075216, 0.04610768, 0.0]
-      c: [-2619184.0, 0.0, 0.0]
-      Ttr: [970.0, 1710.0]
-      Htr: [1840.96, 14183.76]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (145.89608, 134.55744, 205.016)
+      b: (0.04075216, 0.04610768, 0.0)
+      c: (-2619184.0, 0.0, 0.0)
+      Ttr: (970.0, 1710.0)
+      Htr: (1840.96, 14183.76)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 2000.0
 - Name: Magnesiohastingsite
   Formula: Na(Ca2Mg4Fe)(Al2Si6)O22(OH)2
@@ -3600,13 +3600,13 @@ Species:
       Hf: .nan
       Sr: 685.3392
       Vr: 0.0002738
-      a: [852.6992, 878.89104, 869.89544]
-      b: [0.2073172, 0.168406, 0.17208792]
-      c: [-19999520.0, -19254768.0, -19254768.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (852.6992, 878.89104, 869.89544)
+      b: (0.2073172, 0.168406, 0.17208792)
+      c: (-19999520.0, -19254768.0, -19254768.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1500.0
 - Name: Magnesioriebeckite
   Formula: Na2(Mg3Fe2)Si8O22(OH)2
@@ -3619,13 +3619,13 @@ Species:
       Hf: .nan
       Sr: 577.392
       Vr: 0.0002713
-      a: [779.31184, 831.65368, 813.70432]
-      b: [0.31438576, 0.23656336, 0.2439272]
-      c: [-18903312.0, -17417992.0, -17417992.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (779.31184, 831.65368, 813.70432)
+      b: (0.31438576, 0.23656336, 0.2439272)
+      c: (-18903312.0, -17417992.0, -17417992.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1500.0
 - Name: Pyrrhotite
   Formula: FeS
@@ -3638,13 +3638,13 @@ Species:
       Hf: -100416.0
       Sr: 60.29144
       Vr: 1.82e-05
-      a: [21.71496, 72.8016, 51.0448]
-      b: [0.1104576, 0.0, 0.00995792]
-      c: [0.0, 0.0, 0.0]
-      Ttr: [411.0, 598.0]
-      Htr: [2384.88, 502.08]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (21.71496, 72.8016, 51.0448)
+      b: (0.1104576, 0.0, 0.00995792)
+      c: (0.0, 0.0, 0.0)
+      Ttr: (411.0, 598.0)
+      Htr: (2384.88, 502.08)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1468.0
 - Name: Riebeckite
   Formula: Na2(Fe3Fe2)Si8O22(OH)2
@@ -3657,13 +3657,13 @@ Species:
       Hf: .nan
       Sr: 655.2144
       Vr: 0.0002749
-      a: [803.70456, 856.0464, 838.09704]
-      b: [0.31856976, 0.24074736, 0.2481112]
-      c: [-17987016.0, -16501696.0, -16501696.0]
-      Ttr: [950.0, 1050.0]
-      Htr: [.nan, .nan]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (803.70456, 856.0464, 838.09704)
+      b: (0.31856976, 0.24074736, 0.2481112)
+      c: (-17987016.0, -16501696.0, -16501696.0)
+      Ttr: (950.0, 1050.0)
+      Htr: (.nan, .nan)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 1500.0
 - Name: Sulfur
   Formula: S
@@ -3676,13 +3676,13 @@ Species:
       Hf: 0.0
       Sr: 31.7984
       Vr: 1.561e-05
-      a: [14.97872, 25.9408, 36.52632]
-      b: [0.02610816, 0.0, 0.0]
-      c: [0.0, 0.0, 0.0]
-      Ttr: [368.6, 392.0]
-      Htr: [355.64, 1401.64]
-      Vtr: [.nan, .nan]
-      dPdTtr: [.nan, .nan]
+      a: (14.97872, 25.9408, 36.52632)
+      b: (0.02610816, 0.0, 0.0)
+      c: (0.0, 0.0, 0.0)
+      Ttr: (368.6, 392.0)
+      Htr: (355.64, 1401.64)
+      Vtr: (.nan, .nan)
+      dPdTtr: (.nan, .nan)
       Tmax: 717.8
 - Name: Iron
   Formula: Fe
@@ -3695,13 +3695,13 @@ Species:
       Hf: 0.0
       Sr: 27.27968
       Vr: 7.092e-06
-      a: [12.71936, 46.56792, 24.2672, 28.20016]
-      b: [0.03171472, 0.0, 0.00828432, 0.0066944]
-      c: [251040.0, 0.0, 0.0, 0.0]
-      Ttr: [1033.0, 1183.0, 1673.0]
-      Htr: [1363.984, 899.56, 690.36]
-      Vtr: [.nan, .nan, .nan]
-      dPdTtr: [.nan, .nan, .nan]
+      a: (12.71936, 46.56792, 24.2672, 28.20016)
+      b: (0.03171472, 0.0, 0.00828432, 0.0066944)
+      c: (251040.0, 0.0, 0.0, 0.0)
+      Ttr: (1033.0, 1183.0, 1673.0)
+      Htr: (1363.984, 899.56, 690.36)
+      Vtr: (.nan, .nan, .nan)
+      dPdTtr: (.nan, .nan, .nan)
       Tmax: 1812.0
 - Name: Pd-Oxyannite
   Formula: KFe3(AlSi3)O10(OH)O-
@@ -3714,13 +3714,13 @@ Species:
       Hf: .nan
       Sr: 286.604
       Vr: 0.0001432
-      a: [369.61456, 409.65544, 488.18912, 461.24416]
-      b: [0.22643808, 0.14786256, 0.03112896, 0.04217472]
-      c: [-7556304.0, -4167264.0, -1937192.0, -1937192.0]
-      Ttr: [848.0, 950.0, 1050.0]
-      Htr: [.nan, .nan, .nan]
-      Vtr: [.nan, .nan, .nan]
-      dPdTtr: [.nan, .nan, .nan]
+      a: (369.61456, 409.65544, 488.18912, 461.24416)
+      b: (0.22643808, 0.14786256, 0.03112896, 0.04217472)
+      c: (-7556304.0, -4167264.0, -1937192.0, -1937192.0)
+      Ttr: (848.0, 950.0, 1050.0)
+      Htr: (.nan, .nan, .nan)
+      Vtr: (.nan, .nan, .nan)
+      dPdTtr: (.nan, .nan, .nan)
       Tmax: 1100.0
 - Name: Ar(g)
   Formula: Ar
@@ -35402,7 +35402,7 @@ Species:
       c2: -1717950.4
       wref: 4602400.0
       charge: -3.0
-- Name: "[Ala](aq)"
+- Name: (Ala)(aq)
   Formula: CH3
   Elements: 1:C 3:H
   Charge: 0.0
@@ -35421,7 +35421,7 @@ Species:
       c2: 150624.0
       wref: -20920.0
       charge: 0.0
-- Name: "[Arg](aq)"
+- Name: (Arg)(aq)
   Formula: C4H10N3
   Elements: 4:C 10:H 3:N
   Charge: 0.0
@@ -35440,7 +35440,7 @@ Species:
       c2: -79496.0
       wref: -221752.0
       charge: 0.0
-- Name: "[Arg]+"
+- Name: (Arg)+
   Formula: C4H11N3+
   Elements: 4:C 11:H 3:N
   Charge: 1.0
@@ -35459,7 +35459,7 @@ Species:
       c2: 41840.0
       wref: 209200.0
       charge: 1.0
-- Name: "[Asn](aq)"
+- Name: (Asn)(aq)
   Formula: C2H4NO
   Elements: 2:C 4:H 1:N 1:O
   Charge: 0.0
@@ -35478,7 +35478,7 @@ Species:
       c2: -46024.0
       wref: -8368.0
       charge: 0.0
-- Name: "[Asp](aq)"
+- Name: (Asp)(aq)
   Formula: C2H3O2
   Elements: 2:C 3:H 2:O
   Charge: 0.0
@@ -35497,7 +35497,7 @@ Species:
       c2: -54392.0
       wref: -25104.0
       charge: 0.0
-- Name: "[Asp]-"
+- Name: (Asp)-
   Formula: C2H2O2-
   Elements: 2:C 2:H 2:O
   Charge: -1.0
@@ -35516,7 +35516,7 @@ Species:
       c2: -196648.0
       wref: 937216.0
       charge: -1.0
-- Name: "[Cys](aq)"
+- Name: (Cys)(aq)
   Formula: CH3S
   Elements: 1:C 3:H 1:S
   Charge: 0.0
@@ -35535,7 +35535,7 @@ Species:
       c2: 209200.0
       wref: -33472.0
       charge: 0.0
-- Name: "[Cys]-"
+- Name: (Cys)-
   Formula: CH2S-
   Elements: 1:C 2:H 1:S
   Charge: -1.0
@@ -35554,7 +35554,7 @@ Species:
       c2: 46024.0
       wref: 941400.0
       charge: -1.0
-- Name: "[Gln](aq)"
+- Name: (Gln)(aq)
   Formula: C3H6NO
   Elements: 3:C 6:H 1:N 1:O
   Charge: 0.0
@@ -35573,7 +35573,7 @@ Species:
       c2: -33472.0
       wref: -20920.0
       charge: 0.0
-- Name: "[Glu](aq)"
+- Name: (Glu)(aq)
   Formula: C3H5O2
   Elements: 3:C 5:H 2:O
   Charge: 0.0
@@ -35592,7 +35592,7 @@ Species:
       c2: 25104.0
       wref: -33472.0
       charge: 0.0
-- Name: "[Glu]-"
+- Name: (Glu)-
   Formula: C3H4O2-
   Elements: 3:C 4:H 2:O
   Charge: -1.0
@@ -35611,7 +35611,7 @@ Species:
       c2: 117152.0
       wref: 1012528.0
       charge: -1.0
-- Name: "[Gly](aq)"
+- Name: (Gly)(aq)
   Formula: H
   Elements: 1:H
   Charge: 0.0
@@ -35630,7 +35630,7 @@ Species:
       c2: 92048.0
       wref: 0.0
       charge: 0.0
-- Name: "[His](aq)"
+- Name: (His)(aq)
   Formula: C4H5N2
   Elements: 4:C 5:H 2:N
   Charge: 0.0
@@ -35649,7 +35649,7 @@ Species:
       c2: -29288.0
       wref: 16736.0
       charge: 0.0
-- Name: "[His]+"
+- Name: (His)+
   Formula: C4H6N2+
   Elements: 4:C 6:H 2:N
   Charge: 1.0
@@ -35668,7 +35668,7 @@ Species:
       c2: -58576.0
       wref: 112968.0
       charge: 1.0
-- Name: "[Ile](aq)"
+- Name: (Ile)(aq)
   Formula: C4H9
   Elements: 4:C 9:H
   Charge: 0.0
@@ -35687,7 +35687,7 @@ Species:
       c2: 292880.0
       wref: -58576.0
       charge: 0.0
-- Name: "[Leu](aq)"
+- Name: (Leu)(aq)
   Formula: C4H9
   Elements: 4:C 9:H
   Charge: 0.0
@@ -35706,7 +35706,7 @@ Species:
       c2: 305432.0
       wref: -58576.0
       charge: 0.0
-- Name: "[Lys](aq)"
+- Name: (Lys)(aq)
   Formula: C4H10N
   Elements: 4:C 10:H 1:N
   Charge: 0.0
@@ -35725,7 +35725,7 @@ Species:
       c2: -12552.0
       wref: -66944.0
       charge: 0.0
-- Name: "[Lys]+"
+- Name: (Lys)+
   Formula: C4H11N+
   Elements: 4:C 11:H 1:N
   Charge: 1.0
@@ -35744,7 +35744,7 @@ Species:
       c2: 108784.0
       wref: 410032.0
       charge: 1.0
-- Name: "[Met](aq)"
+- Name: (Met)(aq)
   Formula: C3H7S
   Elements: 3:C 7:H 1:S
   Charge: 0.0
@@ -35763,7 +35763,7 @@ Species:
       c2: 167360.0
       wref: -41840.0
       charge: 0.0
-- Name: "[Phe](aq)"
+- Name: (Phe)(aq)
   Formula: C7H7
   Elements: 7:C 7:H
   Charge: 0.0
@@ -35782,7 +35782,7 @@ Species:
       c2: 171544.0
       wref: -46024.0
       charge: 0.0
-- Name: "[Pro](aq)"
+- Name: (Pro)(aq)
   Formula: C3H5
   Elements: 3:C 5:H
   Charge: 0.0
@@ -35801,7 +35801,7 @@ Species:
       c2: 46024.0
       wref: -37656.0
       charge: 0.0
-- Name: "[Ser](aq)"
+- Name: (Ser)(aq)
   Formula: CH3O
   Elements: 1:C 3:H 1:O
   Charge: 0.0
@@ -35820,7 +35820,7 @@ Species:
       c2: 50208.0
       wref: -20920.0
       charge: 0.0
-- Name: "[Thr](aq)"
+- Name: (Thr)(aq)
   Formula: C2H5O
   Elements: 2:C 5:H 1:O
   Charge: 0.0
@@ -35839,7 +35839,7 @@ Species:
       c2: 146440.0
       wref: -50208.0
       charge: 0.0
-- Name: "[Trp](aq)"
+- Name: (Trp)(aq)
   Formula: C9H8N
   Elements: 9:C 8:H 1:N
   Charge: 0.0
@@ -35858,7 +35858,7 @@ Species:
       c2: 117152.0
       wref: -33472.0
       charge: 0.0
-- Name: "[Tyr](aq)"
+- Name: (Tyr)(aq)
   Formula: C7H7O
   Elements: 7:C 7:H 1:O
   Charge: 0.0
@@ -35877,7 +35877,7 @@ Species:
       c2: -75312.0
       wref: -58576.0
       charge: 0.0
-- Name: "[Tyr]-"
+- Name: (Tyr)-
   Formula: C7H6O-
   Elements: 7:C 6:H 1:O
   Charge: -1.0
@@ -35896,7 +35896,7 @@ Species:
       c2: -225936.0
       wref: 1066920.0
       charge: -1.0
-- Name: "[Val](aq)"
+- Name: (Val)(aq)
   Formula: C3H7
   Elements: 3:C 7:H
   Charge: 0.0
@@ -35915,7 +35915,7 @@ Species:
       c2: 263592.0
       wref: -46024.0
       charge: 0.0
-- Name: "[AABB](aq)"
+- Name: (AABB)(aq)
   Formula: C2H4NO2
   Elements: 2:C 4:H 1:N 2:O
   Charge: 0.0
@@ -35934,7 +35934,7 @@ Species:
       c2: -443504.0
       wref: 96232.0
       charge: 0.0
-- Name: "[AABB]+"
+- Name: (AABB)+
   Formula: C2H5NO2+
   Elements: 2:C 5:H 1:N 2:O
   Charge: 1.0
@@ -35953,7 +35953,7 @@ Species:
       c2: -167360.0
       wref: 246856.0
       charge: 1.0
-- Name: "[AABB]-"
+- Name: (AABB)-
   Formula: C2H3NO2-
   Elements: 2:C 3:H 1:N 2:O
   Charge: -1.0
@@ -35972,7 +35972,7 @@ Species:
       c2: -740568.0
       wref: 1184072.0
       charge: -1.0
-- Name: "[UPBB](aq)"
+- Name: (UPBB)(aq)
   Formula: C2H2NO
   Elements: 2:C 2:H 1:N 1:O
   Charge: 0.0
@@ -35991,7 +35991,7 @@ Species:
       c2: -313800.0
       wref: 20920.0
       charge: 0.0
-- Name: "[-CH2-](aq)"
+- Name: (-CH2-)(aq)
   Formula: CH2
   Elements: 1:C 2:H
   Charge: 0.0
@@ -36010,7 +36010,7 @@ Species:
       c2: 96232.0
       wref: 0.0
       charge: 0.0
-- Name: "[-CH3](aq)"
+- Name: (-CH3)(aq)
   Formula: CH3
   Elements: 1:C 3:H
   Charge: 0.0
@@ -36029,7 +36029,7 @@ Species:
       c2: 79496.0
       wref: -20920.0
       charge: 0.0
-- Name: "[-CHCH3-](aq)"
+- Name: (-CHCH3-)(aq)
   Formula: C2H4
   Elements: 2:C 4:H
   Charge: 0.0
@@ -36048,7 +36048,7 @@ Species:
       c2: 184096.0
       wref: -37656.0
       charge: 0.0
-- Name: "[-CH2NH2](aq)"
+- Name: (-CH2NH2)(aq)
   Formula: CH4N
   Elements: 1:C 4:H 1:N
   Charge: 0.0
@@ -36067,7 +36067,7 @@ Species:
       c2: -104600.0
       wref: -79496.0
       charge: 0.0
-- Name: "[-CH2OH](aq)"
+- Name: (-CH2OH)(aq)
   Formula: CH3O
   Elements: 1:C 3:H 1:O
   Charge: 0.0
@@ -36086,7 +36086,7 @@ Species:
       c2: 37656.0
       wref: -20920.0
       charge: 0.0
-- Name: "[-CONH2](aq)"
+- Name: (-CONH2)(aq)
   Formula: CH2NO
   Elements: 1:C 2:H 1:N 1:O
   Charge: 0.0
@@ -36105,7 +36105,7 @@ Species:
       c2: -205016.0
       wref: -20920.0
       charge: 0.0
-- Name: "[-COOH](aq)"
+- Name: (-COOH)(aq)
   Formula: CHO2
   Elements: 1:C 1:H 2:O
   Charge: 0.0
@@ -36124,7 +36124,7 @@ Species:
       c2: -171544.0
       wref: -33472.0
       charge: 0.0
-- Name: "[-C6H5](aq)"
+- Name: (-C6H5)(aq)
   Formula: C6H5
   Elements: 6:C 5:H
   Charge: 0.0
@@ -36143,7 +36143,7 @@ Species:
       c2: 75312.0
       wref: -46024.0
       charge: 0.0
-- Name: "[di.corr](aq)"
+- Name: (di.corr)(aq)
   Formula: C
   Elements: 1:C
   Charge: 0.0
