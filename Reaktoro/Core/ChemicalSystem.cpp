@@ -66,28 +66,40 @@ struct ChemicalSystem::Impl
     /// The list of reactions in the system.
     ReactionList reactions;
 
+    /// The list of surfaces in the system.
+    SurfaceList surfaces;
+
     /// The formula matrix of the species in the system with respect to its elements.
     MatrixXd formula_matrix;
 
     /// The stoichiometric matrix of the reactions in the system with respect to its species.
     MatrixXd stoichiometric_matrix;
 
-    /// The phase index pairs defining the kinetically controlled reacting interfaces in the system.
-    Pairs<Index, Index> reacting_phase_interfaces;
-
     /// Construct a default ChemicalSystem::Impl object.
     Impl()
     {}
 
     /// Construct a ChemicalSystem::Impl object with given database and phases.
-    Impl(const Database& database, const Vec<Phase>& phaselist)
-    : Impl(database, phaselist, {})
+    Impl(Database const& database, PhaseList const& phases)
+    : Impl(database, phases, ReactionList{}, SurfaceList{})
     {
     }
 
-    /// Construct a ChemicalSystem::Impl object with given database, phases, and reactions.
-    Impl(const Database& database, const Vec<Phase>& phaselist, const Vec<Reaction>& reactionlist)
-    : database(database), phases(phaselist), reactions(reactionlist)
+    /// Construct a ChemicalSystem::Impl object with given database, phases, and surfaces.
+    Impl(Database const& database, PhaseList const& phases, SurfaceList const& surfaces)
+    : Impl(database, phases, ReactionList{}, surfaces)
+    {
+    }
+
+    /// Construct a ChemicalSystem::Impl object with given database, phases, and reactions (determine surfaces from reactions and phases).
+    Impl(Database const& database, PhaseList const& phases, ReactionList const& reactions)
+    : Impl(database, phases, reactions, detail::createSurfacesForReactingPhaseInterfacesInReactions(reactions, phases))
+    {
+    }
+
+    /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
+    Impl(Database const& database0, PhaseList const& phases0, ReactionList const& reactions0, SurfaceList const& surfaces0)
+    : database(database0), phases(phases0), reactions(reactions0), surfaces(surfaces0)
     {
         errorif(database.species().empty(), "Expecting at least one species in the Database object provided when creating a ChemicalSystem object.");
         errorif(phases.empty(), "Expecting at least one phase when creating a ChemicalSystem object, but none was provided.");
@@ -96,24 +108,29 @@ struct ChemicalSystem::Impl
         elements = species.elements();
         formula_matrix = detail::assembleFormulaMatrix(species, elements);
         stoichiometric_matrix = detail::assembleStoichiometricMatrix(reactions, species);
-        reacting_phase_interfaces = detail::determineReactingPhaseInterfaces(reactions, phases);
 
         detail::fixDuplicateNames(phases);
         detail::fixDuplicateNames(species);
         detail::fixDuplicateNames(reactions);
+        detail::fixDuplicateNames(surfaces);
     }
 
-    /// Return the index of the reacting phase interface with given pair of phase names or phase indices.
-    auto reactingPhaseInterfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
+    /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
+    Impl(Database const& database, PhaseList const& phases, Reactions const& reactions)
+    : Impl(database, phases, ReactionList(reactions.convert(phases)))
     {
-        const auto iphase1 = detail::resolvePhaseIndex(phases, phase1);
-        const auto iphase2 = detail::resolvePhaseIndex(phases, phase2);
-        const auto numphases = phases.size();
-        errorif(iphase1 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase1), "`.");
-        errorif(iphase2 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase2), "`.");
-        const auto pair = iphase1 < iphase2 ? Pair<Index,Index>{iphase1, iphase2} : Pair<Index,Index>{iphase2, iphase1};
-        const auto isurface = index(reacting_phase_interfaces, pair);
-        return isurface;
+    }
+
+    /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
+    Impl(Database const& database, PhaseList const& phases, Surfaces const& surfaces)
+    : Impl(database, phases, SurfaceList(surfaces.convert(phases)))
+    {
+    }
+
+    /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
+    Impl(Database const& database, PhaseList const& phases, Reactions const& reactions, Surfaces const& surfaces)
+    : Impl(database, phases, reactions.convert(phases), surfaces.convert(phases))
+    {
     }
 };
 
@@ -121,20 +138,36 @@ ChemicalSystem::ChemicalSystem()
 : pimpl(new Impl())
 {}
 
-ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases)
+ChemicalSystem::ChemicalSystem(Database const& database, PhaseList const& phases)
 : pimpl(new Impl(database, phases))
 {}
 
-ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases, const Vec<Reaction>& reactions)
+ChemicalSystem::ChemicalSystem(Database const& database, PhaseList const& phases, SurfaceList const& surfaces)
+: pimpl(new Impl(database, phases, surfaces))
+{}
+
+ChemicalSystem::ChemicalSystem(Database const& database, PhaseList const& phases, ReactionList const& reactions)
 : pimpl(new Impl(database, phases, reactions))
 {}
 
-ChemicalSystem::ChemicalSystem(const Phases& phases)
-: pimpl(new Impl(phases.database(), phases))
+ChemicalSystem::ChemicalSystem(Database const& database, PhaseList const& phases, ReactionList const& reactions, SurfaceList const& surfaces)
+: pimpl(new Impl(database, phases, reactions, surfaces))
 {}
 
-ChemicalSystem::ChemicalSystem(const Phases& phases, const Reactions& reactions)
-: pimpl(new Impl(phases.database(), phases, reactions.convert(ChemicalSystem(phases))))
+ChemicalSystem::ChemicalSystem(Phases const& phases)
+: pimpl(new Impl(phases.database(), phases.convert()))
+{}
+
+ChemicalSystem::ChemicalSystem(Phases const& phases, Surfaces const& surfaces)
+: pimpl(new Impl(phases.database(), phases.convert(), surfaces))
+{}
+
+ChemicalSystem::ChemicalSystem(Phases const& phases, Reactions const& reactions)
+: pimpl(new Impl(phases.database(), phases.convert(), reactions))
+{}
+
+ChemicalSystem::ChemicalSystem(Phases const& phases, Reactions const& reactions, Surfaces const& surfaces)
+: pimpl(new Impl(phases.database(), phases.convert(), reactions, surfaces))
 {}
 
 auto ChemicalSystem::id() const -> Index
@@ -142,48 +175,59 @@ auto ChemicalSystem::id() const -> Index
     return pimpl->id;
 }
 
+auto ChemicalSystem::database() const -> Database const&
 {
     return pimpl->database;
 }
 
-auto ChemicalSystem::element(Index index) const -> const Element&
+auto ChemicalSystem::element(Index index) const -> Element const&
 {
-    return elements()[index];
+    return pimpl->elements[index];
 }
 
-auto ChemicalSystem::elements() const -> const ElementList&
+auto ChemicalSystem::elements() const -> ElementList const&
 {
     return pimpl->elements;
 }
 
-auto ChemicalSystem::species(Index index) const -> const Species&
+auto ChemicalSystem::species(Index index) const -> Species const&
 {
-    return species()[index];
+    return pimpl->species[index];
 }
 
-auto ChemicalSystem::species() const -> const SpeciesList&
+auto ChemicalSystem::species() const -> SpeciesList const&
 {
     return pimpl->species;
 }
 
-auto ChemicalSystem::phase(Index index) const -> const Phase&
+auto ChemicalSystem::phase(Index index) const -> Phase const&
 {
-    return phases()[index];
+    return pimpl->phases[index];
 }
 
-auto ChemicalSystem::phases() const -> const PhaseList&
+auto ChemicalSystem::phases() const -> PhaseList const&
 {
     return pimpl->phases;
 }
 
-auto ChemicalSystem::reaction(Index index) const -> const Reaction&
+auto ChemicalSystem::reaction(Index index) const -> Reaction const&
 {
-    return reactions()[index];
+    return pimpl->reactions[index];
 }
 
-auto ChemicalSystem::reactions() const -> const ReactionList&
+auto ChemicalSystem::reactions() const -> ReactionList const&
 {
     return pimpl->reactions;
+}
+
+auto ChemicalSystem::surface(Index index) const -> Surface const&
+{
+    return pimpl->surfaces[index];
+}
+
+auto ChemicalSystem::surfaces() const -> SurfaceList const&
+{
+    return pimpl->surfaces;
 }
 
 auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
@@ -206,21 +250,11 @@ auto ChemicalSystem::stoichiometricMatrix() const -> MatrixXdConstRef
     return pimpl->stoichiometric_matrix;
 }
 
-auto ChemicalSystem::reactingPhaseInterfaces() const -> const Pairs<Index, Index>&
+auto operator<<(std::ostream& out, ChemicalSystem const& system) -> std::ostream&
 {
-    return pimpl->reacting_phase_interfaces;
-}
-
-auto ChemicalSystem::reactingPhaseInterfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
-{
-    return pimpl->reactingPhaseInterfaceIndex(phase1, phase2);
-}
-
-auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
-{
-    // const auto& phases = system.phases();
-    // const auto& species = system.species();
-    // const auto& elements = system.elements();
+    // auto const& phases = system.phases();
+    // auto const& species = system.species();
+    // auto const& elements = system.elements();
 
     // const unsigned num_phases = phases.size();
     // const unsigned bar_size = std::max(unsigned(4), num_phases) * 25;
@@ -228,11 +262,11 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
     // const String bar2(bar_size, '-');
 
     // std::size_t max_size = 0;
-    // for(const auto& phase : phases)
+    // for(auto const& phase : phases)
     //     max_size = std::max(max_size, phase.species().size());
 
     // out << bar1 << std::endl;
-    // for(const auto& phase : phases)
+    // for(auto const& phase : phases)
     //     out << std::setw(25) << std::left << phase.name();
     // out << std::endl;
     // out << bar2 << std::endl;
@@ -241,7 +275,7 @@ auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream
     //     if(max_size <= i)
     //         break;
 
-    //     for(const auto& phase : phases)
+    //     for(auto const& phase : phases)
     //     {
     //         if(i < phase.species().size())
     //             out << std::setw(25) << std::left << phase.species(i).name();

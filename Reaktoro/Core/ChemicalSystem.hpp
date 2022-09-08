@@ -22,13 +22,19 @@
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
+#include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Phases.hpp>
+#include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/ReactionList.hpp>
 #include <Reaktoro/Core/Reactions.hpp>
+#include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/Surface.hpp>
+#include <Reaktoro/Core/SurfaceList.hpp>
+#include <Reaktoro/Core/Surfaces.hpp>
 
 namespace Reaktoro {
 
@@ -42,20 +48,32 @@ public:
     ChemicalSystem();
 
     /// Construct a ChemicalSystem instance with given database and phases.
-    ChemicalSystem(const Database& database, const Vec<Phase>& phases);
+    explicit ChemicalSystem(Database const& database, PhaseList const& phases);
+
+    /// Construct a ChemicalSystem instance with given database, phases, and surfaces.
+    explicit ChemicalSystem(Database const& database, PhaseList const& phases, SurfaceList const& surfaces);
 
     /// Construct a ChemicalSystem instance with given database, phases, and reactions.
-    ChemicalSystem(const Database& database, const Vec<Phase>& phases, const Vec<Reaction>& reactions);
+    explicit ChemicalSystem(Database const& database, PhaseList const& phases, ReactionList const& reactions);
+
+    /// Construct a ChemicalSystem instance with given database, phases, reactions, and surfaces.
+    explicit ChemicalSystem(Database const& database, PhaseList const& phases, ReactionList const& reactions, SurfaceList const& surfaces);
 
     /// Construct a ChemicalSystem instance with given phases.
-    explicit ChemicalSystem(const Phases& phases);
+    explicit ChemicalSystem(Phases const& phases);
+
+    /// Construct a ChemicalSystem instance with given phases and surfaces.
+    explicit ChemicalSystem(Phases const& phases, Surfaces const& surfaces);
 
     /// Construct a ChemicalSystem instance with given phases and reactions.
-    explicit ChemicalSystem(const Phases& phases, const Reactions& reactions);
+    explicit ChemicalSystem(Phases const& phases, Reactions const& reactions);
+
+    /// Construct a ChemicalSystem instance with given phases, reactions, and surfaces.
+    explicit ChemicalSystem(Phases const& phases, Reactions const& reactions, Surfaces const& surfaces);
 
     /// Construct a ChemicalSystem instance with given database and one or more generic phases.
     template<typename... GenericPhases, EnableIf<areGenericPhases<GenericPhases...>>...>
-    ChemicalSystem(const Database& database, const GenericPhases&... genericPhases)
+    ChemicalSystem(Database const& database, GenericPhases const&... genericPhases)
     : ChemicalSystem(Phases(database, genericPhases...)) {}
 
     /// Return the unique identification number of this ChemicalSystem object.
@@ -63,31 +81,37 @@ public:
     auto id() const -> Index;
 
     /// Return the database used to construct the chemical system.
-    auto database() const -> const Database&;
+    auto database() const -> Database const&;
 
     /// Return the element in the system with given index.
-    auto element(Index index) const -> const Element&;
+    auto element(Index index) const -> Element const&;
 
     /// Return the list of elements in the system.
-    auto elements() const -> const ElementList&;
+    auto elements() const -> ElementList const&;
 
     /// Return the species in the system with given index.
-    auto species(Index index) const -> const Species&;
+    auto species(Index index) const -> Species const&;
 
     /// Return the list of species in the system.
-    auto species() const -> const SpeciesList&;
+    auto species() const -> SpeciesList const&;
 
     /// Return the phase in the system with given index.
-    auto phase(Index index) const -> const Phase&;
+    auto phase(Index index) const -> Phase const&;
 
     /// Return the list of phases in the system.
-    auto phases() const -> const PhaseList&;
+    auto phases() const -> PhaseList const&;
 
     /// Return the reaction in the system with given index.
-    auto reaction(Index index) const -> const Reaction&;
+    auto reaction(Index index) const -> Reaction const&;
 
     /// Return the list of reactions in the system.
-    auto reactions() const -> const ReactionList&;
+    auto reactions() const -> ReactionList const&;
+
+    /// Return the surface in the system with given index.
+    auto surface(Index index) const -> Surface const&;
+
+    /// Return the list of surfaces in the system.
+    auto surfaces() const -> SurfaceList const&;
 
     /// Return the formula matrix of the system.
     /// The formula matrix is defined as the matrix whose entry *(j, i)* is
@@ -106,28 +130,13 @@ public:
     /// is given by the coefficient of the *i*th species in the *j*th reaction.
     auto stoichiometricMatrix() const -> MatrixXdConstRef;
 
-    /// Return the phase interfaces across which kinetically controlled
-    /// reactions take place. These interfaces are automatically detected from
-    /// the given reactions composing the chemical system. They are implemented
-    /// as phase index pairs `{(i, j)}`. If a kinetically controlled reaction
-    /// is defined with a single species, both indices `i` and `j` are
-    /// identical, and this is the index of the phase in which the species
-    /// exists. This is needed when, for example, mineral-aqueous reactions are
-    /// defined and all aqueous species assumed to be in equilibrium.
-    auto reactingPhaseInterfaces() const -> const Pairs<Index, Index>&;
-
-    /// Return the index of the reacting phase interface with given pair of
-    /// phase names or phase indices. Return the number of reacting phase
-    /// interfaces if interface not found.
-    auto reactingPhaseInterfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index;
-
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
 
 /// Output a ChemicalSystem instance
-auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&;
+auto operator<<(std::ostream& out, ChemicalSystem const& system) -> std::ostream&;
 
 } // namespace Reaktoro

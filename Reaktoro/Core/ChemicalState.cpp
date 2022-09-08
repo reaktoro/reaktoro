@@ -70,7 +70,7 @@ struct ChemicalState::Impl
     : system(system), equilibrium(system), props(system)
     {
         n.setConstant(system.species().size(), 1e-16); // set small positive value for initial species amounts
-        s.setZero(system.reactingPhaseInterfaces().size());
+        s.setZero(system.surfaces().size());
     }
 
     auto temperature(real val) -> void
@@ -124,7 +124,7 @@ struct ChemicalState::Impl
     {
         errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         n[ispecies] = units::convert(amount, unit, "mol");
     }
 
@@ -132,7 +132,7 @@ struct ChemicalState::Impl
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         n[ispecies] = units::convert(mass, unit, "kg") / system.species(ispecies).molarMass();
     }
 
@@ -141,7 +141,7 @@ struct ChemicalState::Impl
         errorif(value < 0.0, "Expecting a non-negative amount/mass value, but got ", value, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
         const auto numspecies = system.species().size();
-        errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", stringfy(species), "`.");
         const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
         n[ispecies] = amount;
     }
@@ -150,7 +150,7 @@ struct ChemicalState::Impl
     {
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
         const auto numspecies = system.species().size();
-        errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", stringfy(species), "`.");
         const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
         n[ispecies] += amount;
         errorif(n[ispecies] < 0.0, "It is not possible to add a negative species amount (", value, " ", unit, ") that produces a negative amount for the species.");
@@ -163,7 +163,7 @@ struct ChemicalState::Impl
     auto speciesAmountsInPhase(StringOrIndex const& phase) const -> ArrayXrConstRef
     {
         const auto iphase = detail::resolvePhaseIndex(system, phase);
-        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
+        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         const auto start = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = system.phase(iphase).species().size();
         return n.segment(start, size);
@@ -172,14 +172,14 @@ struct ChemicalState::Impl
     auto speciesAmount(StringOrIndex const& species) const -> real
     {
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         return n[ispecies];
     }
 
     auto speciesMass(StringOrIndex const& species) const -> real
     {
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
-        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
+        errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         return n[ispecies] * system.species(ispecies).molarMass();
     }
 
@@ -221,7 +221,7 @@ struct ChemicalState::Impl
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
         const auto iphase = detail::resolvePhaseIndex(system, phase);
-        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
+        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         const auto start = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = system.phase(iphase).species().size();
         n.segment(start, size) *= scalar;
@@ -246,7 +246,7 @@ struct ChemicalState::Impl
         errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
         const auto iphase = detail::resolvePhaseIndex(system, phase);
-        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
+        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         props.update(T, P, n);
         const auto current_volume = props.phaseProps(iphase).volume();
         const auto scalar = (current_volume != 0.0) ? volume/current_volume : real(0.0);
@@ -298,7 +298,7 @@ struct ChemicalState::Impl
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
         const auto iphase = detail::resolvePhaseIndex(system, phase);
-        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
+        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         props.update(T, P, n);
         const auto current_mass = props.phaseProps(iphase).mass();
         const auto scalar = (current_mass != 0.0) ? mass/current_mass : real(0.0);
@@ -353,15 +353,15 @@ struct ChemicalState::Impl
     {
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
         value = units::convert(value, unit, "m2");
-        const auto isurface = system.reactingPhaseInterfaceIndex(phase1, phase2);
-        const auto numsurfaces = system.reactingPhaseInterfaces().size();
-        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
+        const auto isurface = system.surfaces().indexWithPhases(phase1, phase2);
+        const auto numsurfaces = system.surfaces().size();
+        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", stringfy(phase1), "` and `", stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
         s[isurface] = value;
     }
 
     auto setSurfaceArea(Index isurface, real value, Chars unit) -> void
     {
-        const auto numsurfaces = system.reactingPhaseInterfaces().size();
+        const auto numsurfaces = system.surfaces().size();
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
         errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
         value = units::convert(value, unit, "m2");
@@ -370,9 +370,9 @@ struct ChemicalState::Impl
 
     auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
     {
-        const auto numsurfaces = system.reactingPhaseInterfaces().size();
-        const auto isurface = system.reactingPhaseInterfaceIndex(phase1, phase2);
-        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
+        const auto numsurfaces = system.surfaces().size();
+        const auto isurface = system.surfaces().indexWithPhases(phase1, phase2);
+        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", stringfy(phase1), "` and `", stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
         return s[isurface];
     }
 
@@ -383,7 +383,7 @@ struct ChemicalState::Impl
 
     auto surfaceArea(Index isurface) const -> real
     {
-        const auto numsurfaces = system.reactingPhaseInterfaces().size();
+        const auto numsurfaces = system.surfaces().size();
         errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
         return s[isurface];
     }
@@ -962,7 +962,7 @@ auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&
     auto const& phases = state.system().phases();
     auto const& species = state.system().species();
     auto const& elements = state.system().elements();
-    auto const& surfaces = state.system().reactingPhaseInterfaces();
+    auto const& surfaces = state.system().surfaces();
     auto const& s = state.surfaceAreas();
 
     Table table;
@@ -977,8 +977,8 @@ auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&
     if(surfaces.size())
     {
         table.add_row({ "Surface Area:", "", "" });
-            for(auto [k, pair] : enumerate(surfaces))
-                table.add_row({ ":: " + phases[pair.first].name() + " : " + phases[pair.second].name(), strfix(s[k]), "m2" });
+            for(auto [k, surface] : enumerate(surfaces))
+                table.add_row({ ":: " + surface.name(), strfix(s[k]), "m2" });
     }
 
     auto i = 0;

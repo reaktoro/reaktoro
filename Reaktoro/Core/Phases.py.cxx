@@ -19,6 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Phases.hpp>
 using namespace Reaktoro;
 
@@ -47,6 +48,8 @@ void exportPhases(py::module& m)
         .def("genericPhasesGenerators", &Phases::genericPhasesGenerators, return_internal_ref)
         .def("convert", &Phases::convert)
         ;
+
+    py::implicitly_convertible<Phases, PhaseList>();
 
     py::class_<GenericPhase>(m, "GenericPhase")
         .def(py::init<>())
