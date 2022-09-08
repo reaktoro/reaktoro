@@ -28,6 +28,9 @@ void exportEquilibriumSensitivity(py::module& m);
 void exportEquilibriumSolver(py::module& m);
 void exportEquilibriumSpecs(py::module& m);
 void exportEquilibriumUtils(py::module& m);
+void exportSmartEquilibriumOptions(py::module& m);
+void exportSmartEquilibriumResult(py::module& m);
+void exportSmartEquilibriumSolver(py::module& m);
 
 void exportEquilibrium(py::module& m)
 {
@@ -41,4 +44,7 @@ void exportEquilibrium(py::module& m)
     exportEquilibriumSolver(m);
     exportEquilibriumSpecs(m);
     exportEquilibriumUtils(m);
+    exportSmartEquilibriumOptions(m);
+    exportSmartEquilibriumResult(m);
+    exportSmartEquilibriumSolver(m);
 }
