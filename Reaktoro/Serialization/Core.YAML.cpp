@@ -79,8 +79,12 @@ REAKTORO_YAML_ENCODE_DEFINE(Database)
 {
     auto elements_node = node["Elements"];
     auto species_node = node["Species"];
-    elements_node = obj.elements();
-    species_node = obj.species();
+
+    for(auto const& element : obj.elements())
+        elements_node[element.symbol()] = element;
+
+    for(auto const& species : obj.species())
+        species_node[species.name()] = species;
 }
 
 REAKTORO_YAML_DECODE_DEFINE(Database)

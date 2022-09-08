@@ -259,20 +259,21 @@ TEST_CASE("Testing Database object creation using Database::fromContents", "[Dat
 {
     String contents = R"xyz(
 Species:
-- Name: Akermanite
-  Formula: Ca2MgSi2O7
-  Elements: 2:Ca 1:Mg 2:Si 7:O
-  AggregateState: Solid
-  StandardThermoModel:
-    MaierKelley:
-      Gf: -3679250.6
-      Hf: -3876463.4
-      Sr: 209.32552
-      Vr: 9.281e-05
-      a: 251.41656
-      b: 0.0476976
-      c: -4769760.0
-      Tmax: 1700.0
+  Akermanite:
+    Name: Akermanite
+    Formula: Ca2MgSi2O7
+    Elements: 2:Ca 1:Mg 2:Si 7:O
+    AggregateState: Solid
+    StandardThermoModel:
+      MaierKelley:
+        Gf: -3679250.6
+        Hf: -3876463.4
+        Sr: 209.32552
+        Vr: 9.281e-05
+        a: 251.41656
+        b: 0.0476976
+        c: -4769760.0
+        Tmax: 1700.0
     )xyz";
 
     Database db = Database::fromContents(contents);
