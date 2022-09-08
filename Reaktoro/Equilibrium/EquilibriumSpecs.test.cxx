@@ -88,6 +88,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 0 );
         CHECK( specs.numConstraints()                         == 0 );
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P"} );
         CHECK( specs.isTemperatureUnknown()                   == false );
         CHECK( specs.isPressureUnknown()                      == false );
@@ -109,6 +110,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 0 );
         CHECK( specs.numConstraints()                         == 1 ); // V = V(given)
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "V"} );
         CHECK( specs.namesControlVariables()                  == Strings{"P"} );
         CHECK( specs.namesConstraints()                       == Strings{"volume"} );
@@ -132,6 +134,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 0 );
         CHECK( specs.numConstraints()                         == 2 ); // V = V(given), U = U(given)
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "V", "U"} );
         CHECK( specs.namesControlVariables()                  == Strings{"T", "P"} );
         CHECK( specs.namesConstraints()                       == Strings{"volume", "internalEnergy"} );
@@ -156,6 +159,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 1 ); // [H+]
         CHECK( specs.numConstraints()                         == 1 ); // pH = pH(given)
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "pH"} );
         CHECK( specs.namesControlVariables()                  == Strings{"[H+]"} );
         CHECK( specs.namesTitrants()                          == Strings{"[H+]"} );
@@ -182,6 +186,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 1 ); // [CO2]
         CHECK( specs.numConstraints()                         == 3 ); // V = V(given), S = S(given), a[CO2(g)] = a[CO2(g)](given)
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "V", "S", "ln(a[CO2(g)])"} );
         CHECK( specs.namesControlVariables()                  == Strings{"T", "P", "[CO2(g)]"} );
         CHECK( specs.namesTitrants()                          == Strings{"[CO2]"} );
@@ -213,6 +218,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 2 ); // [CO2], [CH4]
         CHECK( specs.numTitrantsImplicit()                    == 2 ); // [H+], [e-]
         CHECK( specs.numConstraints()                         == 4 ); // V = V(given), U = U(given), pH = pH(given), pE = pE(given)
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "U", "pH", "pE"} );
         CHECK( specs.namesControlVariables()                  == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
         CHECK( specs.namesTitrants()                          == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
@@ -249,6 +255,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 2 ); // [CO2], [CH4]
         CHECK( specs.numTitrantsImplicit()                    == 2 ); // [H+], [e-]
         CHECK( specs.numConstraints()                         == 6 ); // V = V(given), U = U(given), pH = pH(given), pE = pE(given), 2x reactivity constraints
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "U", "pH", "pE"} );
         CHECK( specs.namesControlVariables()                  == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
         CHECK( specs.namesTitrants()                          == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
@@ -277,6 +284,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 0 );
         CHECK( specs.numConstraints()                         == 0 );
+        CHECK( specs.numConservativeComponents()              == 9999999 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "G0[H2O]"} );
         CHECK( specs.namesInputParams()                       == Strings{"G0[H2O]"} );
         CHECK( specs.namesControlVariables()                  == Strings{} );
@@ -382,7 +390,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const VectorXr p = {};
         const VectorXr w = random(specs.numInputs());
 
-        const VectorXr v = specs.equationConstraints().fn(state, p, w);
+        const VectorXr v = specs.assembleEquationConstraints().fn(state, p, w);
 
         CHECK( v[0] == props.volume() - w[Ns + 0] );
         CHECK( v[1] == props.internalEnergy() - w[Ns + 1] );

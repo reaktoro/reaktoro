@@ -46,10 +46,11 @@ TEST_CASE("Testing KineticsUtils", "[KineticsUtils]")
             CHECK( specs.numControlVariablesP() == Nr ); // the extent of reaction change variables Δξ (one for each reaction)
 
             auto Np = specs.numControlVariablesP();
+            auto rconstraints = specs.assembleReactivityConstraints();
 
-            CHECK( specs.reactivityConstraints().ids.size() == Nr );
-            CHECK( specs.reactivityConstraints().Kn == system.stoichiometricMatrix().transpose() );
-            CHECK( specs.reactivityConstraints().Kp == -identity(Nr, Nr) );
+            CHECK( rconstraints.ids.size() == Nr );
+            CHECK( rconstraints.Kn == system.stoichiometricMatrix().transpose() );
+            CHECK( rconstraints.Kp == -identity(Nr, Nr) );
         }
 
         WHEN("volume and internal energy are given")
@@ -62,11 +63,12 @@ TEST_CASE("Testing KineticsUtils", "[KineticsUtils]")
             CHECK( specs.numControlVariablesP() == Nr + 2 ); // the extent of reaction change variables Δξ (one for each reaction), temperature and pressure
 
             auto Np = specs.numControlVariablesP();
+            auto rconstraints = specs.assembleReactivityConstraints();
 
-            CHECK( specs.reactivityConstraints().ids.size() == Nr );
-            CHECK( specs.reactivityConstraints().Kn == system.stoichiometricMatrix().transpose() );
-            CHECK( specs.reactivityConstraints().Kp.leftCols(2).isZero() );
-            CHECK( specs.reactivityConstraints().Kp.rightCols(Nr) == -identity(Nr, Nr) );
+            CHECK( rconstraints.ids.size() == Nr );
+            CHECK( rconstraints.Kn == system.stoichiometricMatrix().transpose() );
+            CHECK( rconstraints.Kp.leftCols(2).isZero() );
+            CHECK( rconstraints.Kp.rightCols(Nr) == -identity(Nr, Nr) );
         }
     }
 }
