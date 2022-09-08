@@ -279,7 +279,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numTitrantsImplicit()                    == 0 );
         CHECK( specs.numConstraints()                         == 0 );
         CHECK( specs.namesInputs()                            == Strings{"surfaceArea[AqueousPhase:GaseousPhase]", "surfaceArea[AqueousPhase:Halite]", "surfaceArea[Calcite]", "T", "P", "V", "G0[H2O]"} );
-        CHECK( specs.namesParams()                            == Strings{"G0[H2O]"} );
+        CHECK( specs.namesInputParams()                       == Strings{"G0[H2O]"} );
         CHECK( specs.namesControlVariables()                  == Strings{} );
         CHECK( specs.namesTitrants()                          == Strings{} );
         CHECK( specs.namesTitrantsExplicit()                  == Strings{} );
