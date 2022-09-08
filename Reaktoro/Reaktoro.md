@@ -56,9 +56,10 @@ want to read about.
 
 ## Chemical kinetics problem definition and calculations
 
-- @ref Reaktoro::KineticSolver
-- @ref Reaktoro::KineticOptions
-- @ref Reaktoro::KineticSensitivity
+- @ref Reaktoro::KineticsSolver
+- @ref Reaktoro::KineticsOptions
+- @ref Reaktoro::KineticsResult
+- @ref Reaktoro::KineticsSensitivity
 
 ## Activity models for aqueous phases
 
