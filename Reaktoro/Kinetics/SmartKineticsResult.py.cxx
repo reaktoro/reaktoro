@@ -18,21 +18,14 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportKineticsOptions(py::module& m);
-void exportKineticsResult(py::module& m);
-void exportKineticsSensitivity(py::module& m);
-void exportKineticsSolver(py::module& m);
-void exportSmartKineticsOptions(py::module& m);
-void exportSmartKineticsResult(py::module& m);
-void exportSmartKineticsSolver(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Kinetics/SmartKineticsResult.hpp>
+using namespace Reaktoro;
 
-void exportKinetics(py::module& m)
+void exportSmartKineticsResult(py::module& m)
 {
-    exportKineticsOptions(m);
-    exportKineticsResult(m);
-    exportKineticsSensitivity(m);
-    exportKineticsSolver(m);
-    exportSmartKineticsOptions(m);
-    exportSmartKineticsResult(m);
-    exportSmartKineticsSolver(m);
+    py::class_<SmartKineticsResult, SmartEquilibriumResult>(m, "SmartKineticsResult")
+        .def(py::init<>())
+        ;
 }
