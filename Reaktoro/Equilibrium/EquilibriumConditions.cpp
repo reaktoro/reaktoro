@@ -333,10 +333,33 @@ auto EquilibriumConditions::setUpperBoundTitrant(String substance, double value,
 
 auto EquilibriumConditions::set(const String& input, const real& val) -> void
 {
+    setInputVariable(input, val);
+}
+
+auto EquilibriumConditions::setInputVariable(const String& input, const real& val) -> void
+{
     const auto idx = index(m_inputs, input);
     const auto size = m_inputs.size();
     errorif(idx >= size, "There is no input variable with name `", input, "` in this EquilibriumConditions object.");
     m_inputs_values[idx] = val;
+}
+
+auto EquilibriumConditions::setInputVariables(VectorXrConstRef const& values) -> void
+{
+    errorif(values.size() != m_inputs_values.size(), "Expecting in EquilibriumConditions::setInputVariables a vector with same size as that of number of input variables, ", m_inputs_values.size(), ", but got instead a vector with size ", values.size(), ".");
+    m_inputs_values = values;
+}
+
+auto EquilibriumConditions::setLowerBoundsControlVariablesP(VectorXdConstRef const& values) -> void
+{
+    errorif(values.size() != m_plower.size(), "Expecting in EquilibriumConditions::setLowerBoundsControlVariablesP a vector with same size as that of number of p control variables, ", m_plower.size(), ", but got instead a vector with size ", values.size(), ".");
+    m_plower = values;
+}
+
+auto EquilibriumConditions::setUpperBoundsControlVariablesP(VectorXdConstRef const& values) -> void
+{
+    errorif(values.size() != m_pupper.size(), "Expecting in EquilibriumConditions::setUpperBoundsControlVariablesP a vector with same size as that of number of p control variables, ", m_pupper.size(), ", but got instead a vector with size ", values.size(), ".");
+    m_pupper = values;
 }
 
 auto EquilibriumConditions::system() const -> const ChemicalSystem&
