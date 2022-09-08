@@ -21,12 +21,13 @@
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
+#include <Reaktoro/Core/ReactionGenerator.hpp>
 #include <Reaktoro/Models/ReactionRateModels/Support/MineralReactionRateModel.hpp>
 
 namespace Reaktoro {
 
 /// The class used to configure mineral dissolution/precipitation reactions.
-class MineralReactions
+class MineralReactions : ReactionGenerator
 {
 public:
     /// Construct a MineralReactions object with given mineral names.
