@@ -201,7 +201,7 @@ struct AqueousProps::Impl
         const auto species_same_elements = system.database().species().withElements(symbols);
 
         // Collect the non-aqueous species from the database that contains the elements in the aqueous phase
-        nonaqueous = remove(species_same_elements, RKT_LAMBDA(x, x.aggregateState() == AggregateState::Aqueous));
+        nonaqueous = removefn(species_same_elements, RKT_LAMBDA(x, x.aggregateState() == AggregateState::Aqueous));
 
         // Ensure non-aqueous species are sorted by aggregate state (gases, solids, etc)
         std::sort(nonaqueous.begin(), nonaqueous.end(),
