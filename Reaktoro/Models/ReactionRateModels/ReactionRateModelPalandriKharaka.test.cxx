@@ -121,7 +121,7 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
     const auto g_acid = pow(props.speciesActivity("H+"), params.mechanisms[0].catalysts[0].power);
     const auto g_carbonate = pow(props.speciesMoleFraction("CO2(g)") * P * 1e-5, params.mechanisms[2].catalysts[0].power);
 
-    const auto rate_expected = SA * (
+    const auto rate_expected = -SA * (
         k_acid * qOmega_acid * g_acid +
         k_neutral * qOmega_neutral +
         k_carbonate * qOmega_carbonate * g_carbonate
