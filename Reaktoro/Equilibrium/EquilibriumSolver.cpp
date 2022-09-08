@@ -54,7 +54,13 @@ struct EquilibriumSolver::Impl
     /// The dimensions of the variables and constraints in the equilibrium specifications.
     const EquilibriumDims dims;
 
-    /// The equilibrium problem setup for the equilibrium solver.
+    /// The auxiliary equilibrium restrictions used whenever none are given.
+    const EquilibriumRestrictions restrictions;
+
+    /// The auxiliary equilibrium conditions used whenever none are given.
+    EquilibriumConditions conditions;
+
+    // The equilibrium problem setup for the equilibrium solver.
     EquilibriumSetup setup;
 
     /// The options of the equilibrium solver.
@@ -83,7 +89,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance with given EquilibriumConditions object.
     Impl(const EquilibriumSpecs& specs)
-    : system(specs.system()), specs(specs), dims(specs), setup(specs)
+    : system(specs.system()), specs(specs), dims(specs), restrictions(system), conditions(specs), setup(specs)
     {
         // Initialize the equilibrium solver with the default options
         setOptions(options);
@@ -310,8 +316,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
-        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
         conditions.surfaceAreas(state.surfaceAreas());
@@ -320,7 +324,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
         conditions.surfaceAreas(state.surfaceAreas());
@@ -329,7 +332,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
         return solve(state, conditions, restrictions);
     }
 
@@ -347,8 +349,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
-        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
         conditions.surfaceAreas(state.surfaceAreas());
@@ -357,7 +357,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
         conditions.surfaceAreas(state.surfaceAreas());
@@ -366,7 +365,6 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions) -> EquilibriumResult
     {
-        EquilibriumRestrictions restrictions(system); // TODO: Avoid this EquilibriumRestrictions object here, created in every call of EquilibriumSolver::solve.
         return solve(state, sensitivity, conditions, restrictions);
     }
 
