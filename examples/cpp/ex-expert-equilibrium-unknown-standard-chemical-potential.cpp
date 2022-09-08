@@ -59,7 +59,7 @@ int main()
 
     const auto solubilityCaCO3 = computeSolubilityCaCO3(system);
 
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "solubility[CaCO3]";
     constraint.fn = [=](const ChemicalState& state, VectorXrConstRef p, VectorXrConstRef w)
     {

@@ -75,7 +75,7 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
     // Add equation constraints to `specs` to model the kinetic rates of the reactions in the equilibrium problem
     for(auto i = 0; i < K.cols(); ++i)
     {
-        ConstraintEquation econstraint;
+        EquationConstraint econstraint;
         econstraint.id = reactions[i].name();
         const auto idx = specs.addInput("xi0[" + econstraint.id + "]");
         econstraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> real

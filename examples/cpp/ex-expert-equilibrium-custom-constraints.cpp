@@ -68,14 +68,14 @@ int main()
     auto idxV = specs.addInput("V");
     auto idxU = specs.addInput("U");
 
-    ConstraintEquation volumeConstraint;
+    EquationConstraint volumeConstraint;
     volumeConstraint.id = "VolumeConstraint";
     volumeConstraint.fn = [=](const ChemicalState& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().volume() - w[idxV];
     };
 
-    ConstraintEquation internalEnergyConstraint;
+    EquationConstraint internalEnergyConstraint;
     internalEnergyConstraint.id = "InternalEnergyConstraint";
     internalEnergyConstraint.fn = [=](const ChemicalState& state, VectorXrConstRef p, VectorXrConstRef w)
     {

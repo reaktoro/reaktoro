@@ -190,7 +190,7 @@ auto EquilibriumSpecs::pressure() -> void
 
 auto EquilibriumSpecs::volume() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "volume";
     const auto idx = addInput("V");
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -202,7 +202,7 @@ auto EquilibriumSpecs::volume() -> void
 
 auto EquilibriumSpecs::internalEnergy() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "internalEnergy";
     const auto idx = addInput("U");
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -214,7 +214,7 @@ auto EquilibriumSpecs::internalEnergy() -> void
 
 auto EquilibriumSpecs::enthalpy() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "enthalpy";
     const auto idx = addInput("H");
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -226,7 +226,7 @@ auto EquilibriumSpecs::enthalpy() -> void
 
 auto EquilibriumSpecs::gibbsEnergy() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "gibbsEnergy";
     const auto idx = addInput("G");
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -238,7 +238,7 @@ auto EquilibriumSpecs::gibbsEnergy() -> void
 
 auto EquilibriumSpecs::helmholtzEnergy() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "helmholtzEnergy";
     const auto idx = addInput("A");
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -250,7 +250,7 @@ auto EquilibriumSpecs::helmholtzEnergy() -> void
 
 auto EquilibriumSpecs::entropy() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "entropy";
     const auto idx = addInput("S");
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -262,7 +262,7 @@ auto EquilibriumSpecs::entropy() -> void
 
 auto EquilibriumSpecs::charge() -> void
 {
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "charge";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -276,7 +276,7 @@ auto EquilibriumSpecs::elementAmount(StringOrIndex const& element) -> void
 {
     const auto ielement = detail::resolveElementIndex(m_system, element);
     const auto elementsymbol = m_system.element(ielement).symbol();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "elementAmount[" + elementsymbol + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -292,7 +292,7 @@ auto EquilibriumSpecs::elementAmountInPhase(StringOrIndex const& element, String
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto elementsymbol = m_system.element(ielement).symbol();
     const auto phasename = m_system.phase(iphase).name();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "elementAmountInPhase[" + elementsymbol + "][" + phasename + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -306,7 +306,7 @@ auto EquilibriumSpecs::elementMass(StringOrIndex const& element) -> void
 {
     const auto ielement = detail::resolveElementIndex(m_system, element);
     const auto elementsymbol = m_system.element(ielement).symbol();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "elementMass[" + elementsymbol + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -322,7 +322,7 @@ auto EquilibriumSpecs::elementMassInPhase(StringOrIndex const& element, StringOr
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto elementsymbol = m_system.element(ielement).symbol();
     const auto phasename = m_system.phase(iphase).name();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "elementMassInPhase[" + elementsymbol + "][" + phasename + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -336,7 +336,7 @@ auto EquilibriumSpecs::phaseAmount(StringOrIndex const& phase) -> void
 {
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "phaseAmount[" + phasename + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -350,7 +350,7 @@ auto EquilibriumSpecs::phaseMass(StringOrIndex const& phase) -> void
 {
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "phaseMass[" + phasename + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -364,7 +364,7 @@ auto EquilibriumSpecs::phaseVolume(StringOrIndex const& phase) -> void
 {
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
-    ConstraintEquation constraint;
+    EquationConstraint constraint;
     constraint.id = "phaseVolume[" + phasename + "]";
     const auto idx = addInput(constraint.id);
     constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
@@ -782,7 +782,7 @@ auto EquilibriumSpecs::addControlVariableP(ControlVariableP const& pvar) -> void
     pvars.push_back(pvar);
 }
 
-auto EquilibriumSpecs::addConstraint(ConstraintEquation const& constraint) -> void
+auto EquilibriumSpecs::addConstraint(EquationConstraint const& constraint) -> void
 {
     errorif(contains(econstraints_ids, constraint.id), "Cannot impose a new equation constraint with repeating id (", constraint.id, ").");
     errorif(constraint.id.empty(), "An equation constraint cannot have an empty id.");
@@ -902,7 +902,7 @@ auto EquilibriumSpecs::titrantsImplicit() const -> Vec<ChemicalFormula>
     return titrants_implicit;
 }
 
-auto EquilibriumSpecs::equationConstraintsSingle() const -> Vec<ConstraintEquation> const&
+auto EquilibriumSpecs::equationConstraintsSingle() const -> Vec<EquationConstraint> const&
 {
     return econstraints_single;
 }
