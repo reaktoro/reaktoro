@@ -29,6 +29,7 @@ class ElementList;
 class Phase;
 class PhaseList;
 class Reaction;
+class ReactionList;
 class SpeciesList;
 
 namespace detail {
@@ -70,11 +71,11 @@ auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Ind
 /// Convert a StringOrIndex value to a string.
 auto stringfy(StringOrIndex value) -> String;
 
-/// Assemble the formula matrix of the list of `species` with respect to given `elements`.
+/// Assemble the formula matrix of the list of `species` with respect to given list of `elements`.
 auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
 
-/// Assemble the formula matrix of the list of `species` with respect to given `elements`.
-auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
+/// Assemble the stoichiometric matrix of the list of `reactions` with respect to given list of `species`.
+auto assembleStoichiometricMatrix(const ReactionList& reactions, const SpeciesList& species) -> MatrixXd;
 
 /// Extract names of the species from the species' list
 auto extractNames(const SpeciesList& list) -> Strings;
