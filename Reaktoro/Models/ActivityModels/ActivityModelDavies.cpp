@@ -19,8 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 
@@ -60,7 +60,7 @@ auto activityModelDavies(const SpeciesList& species, ActivityModelDaviesParams p
     AqueousMixtureState state;
 
     // Define the activity model function of the aqueous mixture
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;

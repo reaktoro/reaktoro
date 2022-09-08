@@ -19,8 +19,8 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDavies.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 using namespace Reaktoro;
 
 #define PRINT_INFO_IF_FAILS(x) INFO(#x " = \n" << std::scientific << std::setprecision(16) << x)
