@@ -80,8 +80,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.pressure();
 
         CHECK( specs.numInputs()                              == Ns + 2 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P
-        CHECK( specs.numParams()                              == 0 );
-        CHECK( specs.numParams()                              == 0 );
+        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 0 );
         CHECK( specs.numControlVariablesP()                   == 0 );
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -102,7 +101,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.volume();
 
         CHECK( specs.numInputs()                              == Ns + 2 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, V
-        CHECK( specs.numParams()                              == 0 );
+        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 1 ); // P
         CHECK( specs.numControlVariablesP()                   == 1 ); // P
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -125,7 +124,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.internalEnergy();
 
         CHECK( specs.numInputs()                              == Ns + 2 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], V, U
-        CHECK( specs.numParams()                              == 0 );
+        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 2 ); // T, P
         CHECK( specs.numControlVariablesP()                   == 2 ); // T, P
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -148,8 +147,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.pressure();
         specs.pH();
 
-        CHECK( specs.numInputs()                             == Ns + 3 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, pH
-        CHECK( specs.numParams()                             == 0 );
+        CHECK( specs.numInputs()                              == Ns + 3 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, pH
+        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 1 ); // n[H+]
         CHECK( specs.numControlVariablesP()                   == 0 );
         CHECK( specs.numControlVariablesQ()                   == 1 ); // n[H+]
@@ -174,8 +173,8 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.entropy();
         specs.activity("CO2(g)");
 
-        CHECK( specs.numInputs()                             == Ns + 3 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], V, S, ln(a[CO2(g)])
-        CHECK( specs.numParams()                             == 0 );
+        CHECK( specs.numInputs()                              == Ns + 3 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], V, S, ln(a[CO2(g)])
+        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 3 ); // T, P, n[CO2]
         CHECK( specs.numControlVariablesP()                   == 2 ); // T, P
         CHECK( specs.numControlVariablesQ()                   == 1 ); // n[CO2]
@@ -205,9 +204,9 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.openTo("CO2");
         specs.openTo("CH4");
 
-        CHECK( specs.numInputs()                             == Ns + 6 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, U, pH, pE
-        CHECK( specs.numParams()                             == 0 );
-        CHECK( specs.numControlVariables()                   == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
+        CHECK( specs.numInputs()                              == Ns + 6 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, U, pH, pE
+        CHECK( specs.numInputParams()                         == 0 );
+        CHECK( specs.numControlVariables()                    == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
         CHECK( specs.numControlVariablesP()                   == 2 ); // n[CO2], n[CH4]
         CHECK( specs.numControlVariablesQ()                   == 2 ); // n[H+], n[e-]
         CHECK( specs.numTitrants()                            == 4 ); // [CO2], [CH4], [H+], [e-]
@@ -241,9 +240,9 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.addReactivityConstraint({ "xi1", VectorXd::Random(Nn), {} });
         specs.addReactivityConstraint({ "xi2", VectorXd::Random(Nn), {} });
 
-        CHECK( specs.numInputs()                             == Ns + 6 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, U, pH, pE
-        CHECK( specs.numParams()                             == 0 );
-        CHECK( specs.numControlVariables()                   == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
+        CHECK( specs.numInputs()                              == Ns + 6 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, U, pH, pE
+        CHECK( specs.numInputParams()                         == 0 );
+        CHECK( specs.numControlVariables()                    == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
         CHECK( specs.numControlVariablesP()                   == 2 ); // n[CO2], n[CH4]
         CHECK( specs.numControlVariablesQ()                   == 2 ); // n[H+], n[e-]
         CHECK( specs.numTitrants()                            == 4 ); // [CO2], [CH4], [H+], [e-]
@@ -269,11 +268,11 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.addInput("V");
         specs.addInput(Param("G0[H2O]", 1.0));
 
-        CHECK( specs.numInputs()                             == Ns + 4 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, G0[H2O]
-        CHECK( specs.numParams()                             == 1 ); // G0[H2O]
-        CHECK( specs.numControlVariables()                   == 0 );
-        CHECK( specs.numControlVariablesP()                  == 0 );
-        CHECK( specs.numControlVariablesQ()                  == 0 );
+        CHECK( specs.numInputs()                              == Ns + 4 ); // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Halite], surfaceArea[Calcite], T, P, V, G0[H2O]
+        CHECK( specs.numInputParams()                         == 1 ); // G0[H2O]
+        CHECK( specs.numControlVariables()                    == 0 );
+        CHECK( specs.numControlVariablesP()                   == 0 );
+        CHECK( specs.numControlVariablesQ()                   == 0 );
         CHECK( specs.numTitrants()                            == 0 );
         CHECK( specs.numTitrantsExplicit()                    == 0 );
         CHECK( specs.numTitrantsImplicit()                    == 0 );

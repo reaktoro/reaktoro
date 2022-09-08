@@ -768,7 +768,7 @@ auto EquilibriumSpecs::numInputs() const -> Index
     return m_inputs.size();
 }
 
-auto EquilibriumSpecs::numParams() const -> Index
+auto EquilibriumSpecs::numInputParams() const -> Index
 {
     return m_params.size();
 }
@@ -829,7 +829,7 @@ auto EquilibriumSpecs::namesInputs() const -> Strings
     return m_inputs;
 }
 
-auto EquilibriumSpecs::namesParams() const -> Strings
+auto EquilibriumSpecs::namesInputParams() const -> Strings
 {
     return vectorize(m_params, RKT_LAMBDA(x, x.id()));
 }

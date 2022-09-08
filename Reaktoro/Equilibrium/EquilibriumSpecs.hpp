@@ -620,7 +620,7 @@ public:
     auto numInputs() const -> Index;
 
     /// Return the number of model parameters among the introduced input variables.
-    auto numParams() const -> Index;
+    auto numInputParams() const -> Index;
 
     /// Return the number of all introduced control variables.
     auto numControlVariables() const -> Index;
