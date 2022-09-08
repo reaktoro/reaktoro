@@ -44,6 +44,7 @@ auto throwErrorIfNotRegisteredInput(Strings const& inputs, String const& wid, St
 
 EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
 : msystem(specs.system()),
+  C(specs.assembleConservationMatrix()),
   wvars(specs.inputs()),
   pvars(specs.namesControlVariablesP()),
   itemperature_p(specs.indexTemperatureAmongControlVariablesP()),
@@ -316,7 +317,7 @@ auto EquilibriumConditions::Eh(real const& value, String const& unit) -> void
 
 //=================================================================================================
 //
-// METHODS TO SPECIFY LOWER AND UPPER BOUNDS FOR UNKNOWN VARIABLES
+// METHODS FOR SETTING AND GETTING LOWER AND UPPER BOUNDS FOR UNKNOWN VARIABLES
 //
 //=================================================================================================
 
@@ -360,9 +361,31 @@ auto EquilibriumConditions::setUpperBoundTitrant(String const& substance, double
     pupper[idx] = units::convert(value, unit, "mol");
 }
 
+auto EquilibriumConditions::setLowerBoundsControlVariablesP(ArrayXdConstRef const& values) -> void
+{
+    errorif(values.size() != plower.size(), "Expecting in EquilibriumConditions::setLowerBoundsControlVariablesP a vector with same size as that of number of p control variables, ", plower.size(), ", but got instead a vector with size ", values.size(), ".");
+    plower = values;
+}
+
+auto EquilibriumConditions::setUpperBoundsControlVariablesP(ArrayXdConstRef const& values) -> void
+{
+    errorif(values.size() != pupper.size(), "Expecting in EquilibriumConditions::setUpperBoundsControlVariablesP a vector with same size as that of number of p control variables, ", pupper.size(), ", but got instead a vector with size ", values.size(), ".");
+    pupper = values;
+}
+
+auto EquilibriumConditions::lowerBoundsControlVariablesP() const -> ArrayXdConstRef
+{
+    return plower;
+}
+
+auto EquilibriumConditions::upperBoundsControlVariablesP() const -> ArrayXdConstRef
+{
+    return pupper;
+}
+
 //=================================================================================================
 //
-// MISCELLANEOUS METHODS
+// METHODS FOR SETTING AND GETTING INPUT VARIABLES
 //
 //=================================================================================================
 
@@ -392,23 +415,6 @@ auto EquilibriumConditions::setInputVariables(ArrayXrConstRef const& values) -> 
     w = values;
 }
 
-auto EquilibriumConditions::setLowerBoundsControlVariablesP(ArrayXdConstRef const& values) -> void
-{
-    errorif(values.size() != plower.size(), "Expecting in EquilibriumConditions::setLowerBoundsControlVariablesP a vector with same size as that of number of p control variables, ", plower.size(), ", but got instead a vector with size ", values.size(), ".");
-    plower = values;
-}
-
-auto EquilibriumConditions::setUpperBoundsControlVariablesP(ArrayXdConstRef const& values) -> void
-{
-    errorif(values.size() != pupper.size(), "Expecting in EquilibriumConditions::setUpperBoundsControlVariablesP a vector with same size as that of number of p control variables, ", pupper.size(), ", but got instead a vector with size ", values.size(), ".");
-    pupper = values;
-}
-
-auto EquilibriumConditions::system() const -> ChemicalSystem const&
-{
-    return msystem;
-}
-
 auto EquilibriumConditions::inputNames() const -> Strings const&
 {
     return wvars;
@@ -426,14 +432,56 @@ auto EquilibriumConditions::inputValue(String const& name) const -> real const&
     return w[k];
 }
 
-auto EquilibriumConditions::lowerBoundsControlVariablesP() const -> ArrayXdConstRef
+//=================================================================================================
+//
+// METHODS TO SPECIFY THE INITIAL COMPOSITIONAL STATE OF THE CHEMICAL SYSTEM BEFORE IT REACTS
+//
+//=================================================================================================
+
+auto EquilibriumConditions::setInitialComponentAmounts(VectorXrConstRef const& c0) -> void
 {
-    return plower;
+    errorif(c0.rows() != C.rows(), "Expecting a vector of initial amounts of conservative components with size ", C.rows(), " but given one has size ", c0.rows(), " instead.");
+    this->c0 = c0;
 }
 
-auto EquilibriumConditions::upperBoundsControlVariablesP() const -> ArrayXdConstRef
+auto EquilibriumConditions::setInitialComponentAmountsFromSpeciesAmounts(VectorXrConstRef const& n0) -> void
 {
-    return pupper;
+    errorif(n0.rows() != C.cols(), "Expecting a vector of initial amounts of species with size ", C.cols(), " but given one has size ", n0.rows(), " instead.");
+    c0 = C * n0;
+}
+
+auto EquilibriumConditions::setInitialComponentAmountsFromState(ChemicalState const& state0) -> void
+{
+    const VectorXrConstRef n0 = state0.speciesAmounts();
+    c0 = C * n0;
+}
+
+auto EquilibriumConditions::initialComponentAmounts() const -> ArrayXrConstRef
+{
+    return c0;
+}
+
+auto EquilibriumConditions::initialComponentAmountsGetOrCompute(VectorXrConstRef const& n0) const -> ArrayXr
+{
+    errorif(n0.rows() != C.cols(), "Expecting a vector of initial amounts of species with size ", C.cols(), " but given one has size ", n0.rows(), " instead.");
+    return c0.rows() != 0 ? c0 : ArrayXr(C * n0);
+}
+
+auto EquilibriumConditions::initialComponentAmountsGetOrCompute(ChemicalState const& state0) const -> ArrayXr
+{
+    const VectorXrConstRef n0 = state0.speciesAmounts();
+    return c0.rows() != 0 ? c0 : ArrayXr(C * n0);
+}
+
+//=================================================================================================
+//
+// MISCELLANEOUS METHODS
+//
+//=================================================================================================
+
+auto EquilibriumConditions::system() const -> ChemicalSystem const&
+{
+    return msystem;
 }
 
 } // namespace Reaktoro

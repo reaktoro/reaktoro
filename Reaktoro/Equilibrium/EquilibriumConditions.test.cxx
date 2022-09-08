@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 using namespace Reaktoro;
@@ -30,7 +31,10 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
+    const auto Nn = system.species().size();  // the number of species
+    const auto Ne = system.elements().size(); // the number of elements
     const auto Ns = system.surfaces().size(); // the number of surfaces
+    const auto Nb = Ne + 1;                   // the number of elements and charge
 
     EquilibriumSpecs specs(system);
 
@@ -302,5 +306,51 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         CHECK( conditions.inputValue("P")  == 1e6 );   // corresponding to P
         CHECK( conditions.inputValue("K0") == 11.0 );  // corresponding to K0
         CHECK( conditions.inputValue("K1") == 12.0 );  // corresponding to K1
+    }
+
+    WHEN("the initial amounts of conservative components are set")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.pH();
+        specs.addReactivityConstraint({ "Reaction1", VectorXd::Random(Nn).cwiseAbs(), {} });
+        specs.addReactivityConstraint({ "Reaction2", VectorXd::Random(Nn).cwiseAbs(), {} });
+
+        EquilibriumConditions conditions(specs);
+
+        CHECK( conditions.initialComponentAmounts().size() == 0 );
+
+        WHEN("using setInitialComponentAmounts")
+        {
+            const ArrayXr b0  = ArrayXr::Random(Nb).cwiseAbs();
+            const ArrayXr xi0 = ArrayXr::Random(2).cwiseAbs(); // two reactivity constraints
+
+            ArrayXr c0(Nb + 2);
+            c0 << b0, xi0;
+
+            CHECK_NOTHROW( conditions.setInitialComponentAmounts(c0) );
+            CHECK( conditions.initialComponentAmounts().isApprox(c0) );
+        }
+
+        WHEN("using setInitialComponentAmountsFromSpeciesAmounts")
+        {
+            const ArrayXr n0 = ArrayXr::Random(Nn).cwiseAbs();
+            const ArrayXr c0 = conditions.initialComponentAmountsGetOrCompute(n0);
+
+            CHECK_NOTHROW( conditions.setInitialComponentAmountsFromSpeciesAmounts(n0) );
+            CHECK( conditions.initialComponentAmounts().isApprox(c0) );
+        }
+
+        WHEN("using setInitialComponentAmountsFromState")
+        {
+            const ArrayXr n0 = ArrayXr::Random(Nn).cwiseAbs();
+            const ArrayXr c0 = conditions.initialComponentAmountsGetOrCompute(n0);
+
+            ChemicalState state0(system);
+            state0.setSpeciesAmounts(n0);
+
+            CHECK_NOTHROW( conditions.setInitialComponentAmountsFromState(state0) );
+            CHECK( conditions.initialComponentAmounts().isApprox(c0) );
+        }
     }
 }
