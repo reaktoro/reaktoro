@@ -27,7 +27,6 @@ using namespace Catch;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Param.hpp>
-#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>

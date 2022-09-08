@@ -22,7 +22,6 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Params.hpp>
 
 namespace Reaktoro {
 

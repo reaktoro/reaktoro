@@ -23,7 +23,7 @@
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/YAML.hpp>
-#include <Reaktoro/Core/Params.hpp>
+#include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
 
