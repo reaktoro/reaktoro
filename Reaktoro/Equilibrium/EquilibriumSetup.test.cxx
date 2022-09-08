@@ -507,11 +507,11 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //-------------------------------------------------------------------------------------------------
             // Check the value of the constraint functions of equation type at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------------------------
-            VectorXd v(Np);
+            const VectorXd v = specs.equationConstraints().fn(state, p, w);
 
-            v[0] = specs.equationConstraints()[0].fn(state, p, w); // the volume constraint equation
-            v[1] = specs.equationConstraints()[1].fn(state, p, w); // the internal energy constraint equation
-            v[2] = specs.equationConstraints()[2].fn(state, p, w); // the enthalpy constraint equation
+            // v[0] = the residual of the volume constraint equation
+            // v[1] = the residual of the internal energy constraint equation
+            // v[2] = the residual of the enthalpy constraint equation
 
             CHECK( v.isApprox(setup.getConstraintResiduals()) );
 
@@ -527,10 +527,11 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 updateStateSpecial(auxstate, T, P, n, options);
 
-                VectorXr v(Np);
-                v[0] = specs.equationConstraints()[0].fn(auxstate, p, w); // the volume constraint equation
-                v[1] = specs.equationConstraints()[1].fn(auxstate, p, w); // the internal energy constraint equation
-                v[2] = specs.equationConstraints()[2].fn(auxstate, p, w); // the enthalpy constraint equation
+                VectorXr v = specs.equationConstraints().fn(auxstate, p, w);
+
+                // v[0] = the residual of the volume constraint equation
+                // v[1] = the residual of the internal energy constraint equation
+                // v[2] = the residual of the enthalpy constraint equation
 
                 return v;
             };

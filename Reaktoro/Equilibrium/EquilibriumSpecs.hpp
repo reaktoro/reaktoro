@@ -112,7 +112,7 @@ struct ConstraintEquations
     using ConstraintFn = Fn<VectorXr(ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)>;
 
     /// The unique identifier for each equation constraint.
-    Strings id;
+    Strings ids;
 
     /// The function defining the system of equations to be satisfied at chemical equilibrium.
     ConstraintFn fn;
@@ -680,8 +680,17 @@ public:
     /// Return the chemical formulas of the implicit titrant substances.
     auto titrantsImplicit() const -> Vec<ChemicalFormula>;
 
-    /// Return the equation constraints to be satisfied at chemical equilibrium.
-    auto equationConstraints() const -> Vec<ConstraintEquation> const&;
+    /// Return the specified single equation constraints to be satisfied at chemical equilibrium.
+    auto equationConstraintsSingle() const -> Vec<ConstraintEquation> const&;
+
+    /// Return the specified systems of equation constraints to be satisfied at chemical equilibrium.
+    auto equationConstraintsSystem() const -> Vec<ConstraintEquations> const&;
+
+    /// Return the complete system of equation constraints to be satisfied at chemical equilibrium.
+    /// This method assembles a system of equation constraints that considers first the
+    /// evaluation of the provided single equations via @ref addConstraint and then
+    /// the provided systems of equations via method @ref addConstraints.
+    auto equationConstraints() const -> ConstraintEquations;
 
     /// Return the introduced reactivity constraints to be satisfied during the equilibrium calculation.
     auto reactivityConstraints() const -> Vec<ReactivityConstraint> const&;
@@ -711,13 +720,13 @@ private:
     /// The *p* control variables in the chemical equilibrium problem.
     Vec<ControlVariableP> pvars;
 
-    /// The equation constraints to be satisfied at chemical equilibrium.
-    Vec<ConstraintEquation> econstraints;
+    /// The single equation constraints to be satisfied at chemical equilibrium.
+    Vec<ConstraintEquation> econstraints_single;
 
     /// The systems of equation constraints to be satisfied at chemical equilibrium.
     Vec<ConstraintEquations> econstraints_system;
 
-    /// The collected ids of every equation constraint above (individual and collective).
+    /// The collected ids of every equation constraint above (single and collective).
     Strings econstraints_ids;
 
     /// The reactivity constraints to be satisfied at chemical equilibrium.
