@@ -835,6 +835,13 @@ public:
     auto assembleConservationMatrix() const -> MatrixXd;
 
     /// Assemble the conservation matrix for the *n* species amount variables with respect to the conservative components.
+    /// This conservative matrix of the chemical equilibrium problem is a matrix whose upper rows
+    /// contains the formula matrix of the species with respect to elements and electric charge, and
+    /// the lower rows contains the coefficients of the reactivity constraints (e.g., the
+    /// stoichiometric matrix of the restricted reactions in the equilibrium computation). This
+    /// matrix is used to compute the amounts of the conservative components in the chemical
+    /// equilibrium problem, which are elements, electric charge, and the extend of the restricted
+    /// reactions.
     auto assembleConservationMatrixN() const -> MatrixXd;
 
     /// Assemble the conservation matrix for the *q* control variables with respect to the conservative components.
