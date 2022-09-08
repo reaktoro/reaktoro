@@ -32,8 +32,8 @@ EquilibriumDims::EquilibriumDims(EquilibriumSpecs const& specs)
     Nn = system.species().size();
     Np = specs.numControlVariablesP();
     Nq = specs.numControlVariablesQ();
-    Nv = specs.equationConstraints().size();
-    Nr = specs.reactivityConstraints().size();
+    Nv = specs.numEquationConstraints();
+    Nr = specs.numReactivityConstraints();
     Nb = 1 + Ne + Nr;
     Nt = specs.numTitrants();
     Nx = Nn + Nq;

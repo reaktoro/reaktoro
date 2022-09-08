@@ -632,9 +632,19 @@ auto EquilibriumSpecs::numTitrantsImplicit() const -> Index
     return titrants_implicit.size();
 }
 
+auto EquilibriumSpecs::numEquationConstraints() const -> Index
+{
+    return econstraints_ids.size();
+}
+
+auto EquilibriumSpecs::numReactivityConstraints() const -> Index
+{
+    return rconstraints.size();
+}
+
 auto EquilibriumSpecs::numConstraints() const -> Index
 {
-    return econstraints.size() + rconstraints.size() + qvars.size();
+    return numEquationConstraints() + numReactivityConstraints() + numControlVariablesQ();
 }
 
 //=================================================================================================
