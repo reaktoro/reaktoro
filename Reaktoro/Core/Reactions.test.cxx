@@ -28,17 +28,19 @@ namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
 namespace test {
 
-class SomeReactionGenerator : ReactionGenerator
+class ReactionGeneratorUsingClass
 {
 public:
-    SomeReactionGenerator()
-    {}
-
-    virtual auto convert(ChemicalSystem const& system) const -> Vec<Reaction> override
+    auto operator()(ChemicalSystem const& system) const -> Vec<Reaction>
     {
         return { system.database().reaction("H2O(aq) = H+(aq) + OH-(aq)") };
     }
 };
+
+auto ReactionGeneratorUsingFunction(ChemicalSystem const& system) -> Vec<Reaction>
+{
+    return { system.database().reaction("H2O(aq) = H2(aq) + 0.5*O2(aq)") };
+}
 
 } // namespace test
 
@@ -51,12 +53,14 @@ TEST_CASE("Testing Reactions class", "[Reactions]")
 
     reactions.add(db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)"));
     reactions.add(db.reaction("CaCO3(s)"));
-    reactions.add(test::SomeReactionGenerator());
+    reactions.add(test::ReactionGeneratorUsingClass());
+    reactions.add(test::ReactionGeneratorUsingFunction);
 
     auto converted = reactions.convert(system);
 
-    CHECK( converted.size() == 3 );
+    CHECK( converted.size() == 4 );
     CHECK( String(converted[0].equation()) == "NaCl(s) = Na+(aq) + Cl-(aq)" );
     CHECK( String(converted[1].equation()) == "CaCO3(s)" );
     CHECK( String(converted[2].equation()) == "H2O(aq) = H+(aq) + OH-(aq)" );
+    CHECK( String(converted[3].equation()) == "H2O(aq) = H2(aq) + 0.5*O2(aq)" );
 }
