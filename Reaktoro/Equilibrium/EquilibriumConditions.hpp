@@ -30,7 +30,7 @@ class ChemicalState;
 class EquilibriumConditions
 {
 public:
-    /// Construct an EquilibriumConditions object.
+    /// Construct an EquilibriumConditions object with constraint specifications to be attained at chemical equilibrium.
     explicit EquilibriumConditions(EquilibriumSpecs const& specs);
 
     //=================================================================================================
