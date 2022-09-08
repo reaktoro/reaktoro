@@ -69,10 +69,12 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
         CHECK( A.cols() == species.size() );
         CHECK( A.rows() == components_num );
 
-        MatrixXd A_system = system.formulaMatrix();
+        for(auto i = 0; i < A.rows() - 1; ++i)
+            for(auto j = 0; j < A.cols(); ++j)
+                CHECK( A(i, j) == species[j].elements().coefficient(elements[i].symbol()) );
 
-        for(Index i = 0; i < A.rows(); i++)
-            CHECK(A.row(i) == A_system.row(i));
+        for(auto j = 0; j < A.cols(); ++j)
+            CHECK( A(components_num - 1, j) == species[j].charge() );
     }
 
     SECTION("Testing assembleFormulaMatrix for the aqueous phase")
