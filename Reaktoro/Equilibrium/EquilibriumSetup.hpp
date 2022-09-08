@@ -62,6 +62,12 @@ public:
     /// Return the coefficient matrix `Aex` in the optimization problem.
     auto Aex() const -> MatrixXdConstRef;
 
+    /// Return the block `Aen` corresponding to variables `n` in the coefficient matrix `Aex = [Aen Aeq]` of the optimization problem.
+    auto Aen() const -> MatrixXdConstRef;
+
+    /// Return the block `Aeq` corresponding to variables `n` in the coefficient matrix `Aex = [Aen Aeq]` of the optimization problem.
+    auto Aeq() const -> MatrixXdConstRef;
+
     /// Return the coefficient matrix `Aep` in the optimization problem.
     auto Aep() const -> MatrixXdConstRef;
 

@@ -474,6 +474,16 @@ auto EquilibriumSetup::Aex() const -> MatrixXdConstRef
     return pimpl->Aex;
 }
 
+auto EquilibriumSetup::Aen() const -> MatrixXdConstRef
+{
+    return pimpl->Aex.leftCols(pimpl->dims.Nn);
+}
+
+auto EquilibriumSetup::Aeq() const -> MatrixXdConstRef
+{
+    return pimpl->Aex.rightCols(pimpl->dims.Nq);
+}
+
 auto EquilibriumSetup::Aep() const -> MatrixXdConstRef
 {
     return pimpl->Aep;
