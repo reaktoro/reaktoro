@@ -48,7 +48,7 @@ EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
   pvars(specs.namesControlVariablesP()),
   itemperature_p(specs.indexTemperatureAmongControlVariablesP()),
   ipressure_p(specs.indexPressureAmongControlVariablesP()),
-  isurface_areas_w(specs.indicesSurfaceAreasAmongInputVariablesW()),
+  isurface_areas_w(specs.indicesSurfaceAreasAmongInputVariables()),
   isurface_areas_p(specs.indicesSurfaceAreasAmongControlVariablesP()),
   isurface_areas_known(specs.indicesSurfaceAreasKnown()),
   isurface_areas_unknown(specs.indicesSurfaceAreasUnknown())
@@ -366,17 +366,24 @@ auto EquilibriumConditions::setUpperBoundTitrant(String const& substance, double
 //
 //=================================================================================================
 
-auto EquilibriumConditions::set(String const& input, real const& val) -> void
+auto EquilibriumConditions::set(String const& name, real const& value) -> void
 {
-    setInputVariable(input, val);
+    setInputVariable(name, value);
 }
 
-auto EquilibriumConditions::setInputVariable(String const& input, real const& val) -> void
+auto EquilibriumConditions::setInputVariable(String const& name, real const& value) -> void
 {
-    const auto idx = index(wvars, input);
+    const auto idx = index(wvars, name);
     const auto size = wvars.size();
-    errorif(idx >= size, "There is no input variable with name `", input, "` in this EquilibriumConditions object.");
-    w[idx] = val;
+    errorif(idx >= size, "There is no input variable with name `", name, "` in this EquilibriumConditions object.");
+    w[idx] = value;
+}
+
+auto EquilibriumConditions::setInputVariable(Index index, real const& value) -> void
+{
+    const auto size = wvars.size();
+    errorif(index >= size, "There is no input variable with index ", index, " in this EquilibriumConditions object.");
+    w[index] = value;
 }
 
 auto EquilibriumConditions::setInputVariables(ArrayXrConstRef const& values) -> void
