@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/Phases.hpp>
+#include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Rate.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
@@ -32,7 +32,7 @@ using ReactionRateModel = Model<Rate(ChemicalProps const&)>;
 /// The type of functions that construct a ReactionRateModel for a reaction.
 /// @param reaction The reaction for which the reaction rate model is constructed.
 /// @param phases The phases and their constituent species that form the chemical system.
-using ReactionRateModelGenerator = Fn<ReactionRateModel(Reaction const& reaction, Phases const& phases)>;
+using ReactionRateModelGenerator = Fn<ReactionRateModel(Reaction const& reaction, PhaseList const& phases)>;
 
 } // namespace Reaktoro
 
