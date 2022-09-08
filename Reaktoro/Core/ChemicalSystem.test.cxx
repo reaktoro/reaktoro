@@ -127,7 +127,7 @@ auto createChemicalSystem() -> ChemicalSystem
         db.reaction("H2O(aq) = H2(aq) + 0.5*O2(aq)"),
         db.reaction("O2(g) = O2(aq)"),
         db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)"),
-        db.reaction("NaCl(s)"),
+        db.reaction("CaCO3(s)"),
     };
 
     return ChemicalSystem(db, phases, reactions);
@@ -231,7 +231,7 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     CHECK( system.reaction(1).name() == "H2O(aq) = H2(aq) + 0.5*O2(aq)" );
     CHECK( system.reaction(2).name() == "O2(g) = O2(aq)" );
     CHECK( system.reaction(3).name() == "NaCl(s) = Na+(aq) + Cl-(aq)" );
-    CHECK( system.reaction(4).name() == "NaCl(s)" );
+    CHECK( system.reaction(4).name() == "CaCO3(s)" );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::formulaMatrix()
@@ -257,7 +257,17 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
 
     auto interfaces = system.reactingPhaseInterfaces();
 
-    CHECK( interfaces == Pairs<Index, Index>{ {0, 1}, {0, 2}, {2, 2} } ); // aqueous-gaseous, aqueous-halite, halite-implicit phase
+    CHECK( interfaces == Pairs<Index, Index>{ {0, 1}, {0, 2}, {3, 3} } ); // aqueous-gaseous, aqueous-halite, calcite-implicit phase
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::reactingPhaseInterfaceIndex()
+
+    CHECK( system.reactingPhaseInterfaceIndex("AqueousPhase", "GaseousPhase") == 0 );
+    CHECK( system.reactingPhaseInterfaceIndex("AqueousPhase", "Halite") == 1 );
+    CHECK( system.reactingPhaseInterfaceIndex("Calcite", "Calcite") == 2 );
+
+    CHECK( system.reactingPhaseInterfaceIndex("Calcite", "Halite") >= system.reactingPhaseInterfaces().size() );
+    CHECK( system.reactingPhaseInterfaceIndex("Calcite", "Quartz") >= system.reactingPhaseInterfaces().size() );
 
     //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)
