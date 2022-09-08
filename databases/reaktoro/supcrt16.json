@@ -2593,7 +2593,7 @@
       }
     },
     {
-      "Name": "[Ala](cr)",
+      "Name": "(Ala)(cr)",
       "Formula": "CH3",
       "Elements": "1:C 3:H",
       "AggregateState": "Solid",
@@ -2611,7 +2611,7 @@
       }
     },
     {
-      "Name": "[Arg](cr)",
+      "Name": "(Arg)(cr)",
       "Formula": "C4H10N3",
       "Elements": "4:C 10:H 3:N",
       "AggregateState": "Solid",
@@ -2629,7 +2629,7 @@
       }
     },
     {
-      "Name": "[Asn](cr)",
+      "Name": "(Asn)(cr)",
       "Formula": "C2H4NO",
       "Elements": "2:C 4:H 1:N 1:O",
       "AggregateState": "Solid",
@@ -2647,7 +2647,7 @@
       }
     },
     {
-      "Name": "[Asp](cr)",
+      "Name": "(Asp)(cr)",
       "Formula": "C2H3O2",
       "Elements": "2:C 3:H 2:O",
       "AggregateState": "Solid",
@@ -2665,7 +2665,7 @@
       }
     },
     {
-      "Name": "[Cys](cr)",
+      "Name": "(Cys)(cr)",
       "Formula": "CH3S",
       "Elements": "1:C 3:H 1:S",
       "AggregateState": "Solid",
@@ -2683,7 +2683,7 @@
       }
     },
     {
-      "Name": "[Glu](cr)",
+      "Name": "(Glu)(cr)",
       "Formula": "C3H5O2",
       "Elements": "3:C 5:H 2:O",
       "AggregateState": "Solid",
@@ -2701,7 +2701,7 @@
       }
     },
     {
-      "Name": "[Gln](cr)",
+      "Name": "(Gln)(cr)",
       "Formula": "C3H6NO",
       "Elements": "3:C 6:H 1:N 1:O",
       "AggregateState": "Solid",
@@ -2719,7 +2719,7 @@
       }
     },
     {
-      "Name": "[Gly](cr)",
+      "Name": "(Gly)(cr)",
       "Formula": "H",
       "Elements": "1:H",
       "AggregateState": "Solid",
@@ -2737,7 +2737,7 @@
       }
     },
     {
-      "Name": "[His](cr)",
+      "Name": "(His)(cr)",
       "Formula": "C4H5N2",
       "Elements": "4:C 5:H 2:N",
       "AggregateState": "Solid",
@@ -2755,7 +2755,7 @@
       }
     },
     {
-      "Name": "[Ile](cr)",
+      "Name": "(Ile)(cr)",
       "Formula": "C4H9",
       "Elements": "4:C 9:H",
       "AggregateState": "Solid",
@@ -2773,7 +2773,7 @@
       }
     },
     {
-      "Name": "[Leu](cr)",
+      "Name": "(Leu)(cr)",
       "Formula": "C4H9",
       "Elements": "4:C 9:H",
       "AggregateState": "Solid",
@@ -2791,7 +2791,7 @@
       }
     },
     {
-      "Name": "[Lys](cr)",
+      "Name": "(Lys)(cr)",
       "Formula": "C4H10N",
       "Elements": "4:C 10:H 1:N",
       "AggregateState": "Solid",
@@ -2809,7 +2809,7 @@
       }
     },
     {
-      "Name": "[Met](cr)",
+      "Name": "(Met)(cr)",
       "Formula": "C3H7S",
       "Elements": "3:C 7:H 1:S",
       "AggregateState": "Solid",
@@ -2827,7 +2827,7 @@
       }
     },
     {
-      "Name": "[Phe](cr)",
+      "Name": "(Phe)(cr)",
       "Formula": "C7H7",
       "Elements": "7:C 7:H",
       "AggregateState": "Solid",
@@ -2845,7 +2845,7 @@
       }
     },
     {
-      "Name": "[Pro](cr)",
+      "Name": "(Pro)(cr)",
       "Formula": "C3H5",
       "Elements": "3:C 5:H",
       "AggregateState": "Solid",
@@ -2863,7 +2863,7 @@
       }
     },
     {
-      "Name": "[Ser](cr)",
+      "Name": "(Ser)(cr)",
       "Formula": "CH3O",
       "Elements": "1:C 3:H 1:O",
       "AggregateState": "Solid",
@@ -2881,7 +2881,7 @@
       }
     },
     {
-      "Name": "[Thr](cr)",
+      "Name": "(Thr)(cr)",
       "Formula": "C2H5O",
       "Elements": "2:C 5:H 1:O",
       "AggregateState": "Solid",
@@ -2899,7 +2899,7 @@
       }
     },
     {
-      "Name": "[Trp](cr)",
+      "Name": "(Trp)(cr)",
       "Formula": "C9H8N",
       "Elements": "9:C 8:H 1:N",
       "AggregateState": "Solid",
@@ -2917,7 +2917,7 @@
       }
     },
     {
-      "Name": "[Tyr](cr)",
+      "Name": "(Tyr)(cr)",
       "Formula": "C7H7O",
       "Elements": "7:C 7:H 1:O",
       "AggregateState": "Solid",
@@ -2935,7 +2935,7 @@
       }
     },
     {
-      "Name": "[Val](cr)",
+      "Name": "(Val)(cr)",
       "Formula": "C3H7",
       "Elements": "3:C 7:H",
       "AggregateState": "Solid",
@@ -2953,7 +2953,7 @@
       }
     },
     {
-      "Name": "[Hyd-Pro](cr)",
+      "Name": "(Hyd-Pro)(cr)",
       "Formula": "C3H5O",
       "Elements": "3:C 5:H 1:O",
       "AggregateState": "Solid",
@@ -2971,7 +2971,7 @@
       }
     },
     {
-      "Name": "[Hyd-Lys](cr)",
+      "Name": "(Hyd-Lys)(cr)",
       "Formula": "C4H10NO",
       "Elements": "4:C 10:H 1:N 1:O",
       "AggregateState": "Solid",
@@ -2989,7 +2989,7 @@
       }
     },
     {
-      "Name": "[AABB](cr)",
+      "Name": "(AABB)(cr)",
       "Formula": "C2H4NO2",
       "Elements": "2:C 4:H 1:N 2:O",
       "AggregateState": "Solid",
@@ -3007,7 +3007,7 @@
       }
     },
     {
-      "Name": "[PBB](cr)",
+      "Name": "(PBB)(cr)",
       "Formula": "C2H2NO",
       "Elements": "2:C 2:H 1:N 1:O",
       "AggregateState": "Solid",
@@ -43256,7 +43256,7 @@
       }
     },
     {
-      "Name": "[Ala](aq)",
+      "Name": "(Ala)(aq)",
       "Formula": "CH3",
       "Elements": "1:C 3:H",
       "Charge": 0.0,
@@ -43279,7 +43279,7 @@
       }
     },
     {
-      "Name": "[Arg](aq)",
+      "Name": "(Arg)(aq)",
       "Formula": "C4H10N3",
       "Elements": "4:C 10:H 3:N",
       "Charge": 0.0,
@@ -43302,7 +43302,7 @@
       }
     },
     {
-      "Name": "[Arg]+",
+      "Name": "(Arg)+",
       "Formula": "C4H11N3+",
       "Elements": "4:C 11:H 3:N",
       "Charge": 1.0,
@@ -43325,7 +43325,7 @@
       }
     },
     {
-      "Name": "[Asn](aq)",
+      "Name": "(Asn)(aq)",
       "Formula": "C2H4NO",
       "Elements": "2:C 4:H 1:N 1:O",
       "Charge": 0.0,
@@ -43348,7 +43348,7 @@
       }
     },
     {
-      "Name": "[Asp](aq)",
+      "Name": "(Asp)(aq)",
       "Formula": "C2H3O2",
       "Elements": "2:C 3:H 2:O",
       "Charge": 0.0,
@@ -43371,7 +43371,7 @@
       }
     },
     {
-      "Name": "[Asp]-",
+      "Name": "(Asp)-",
       "Formula": "C2H2O2-",
       "Elements": "2:C 2:H 2:O",
       "Charge": -1.0,
@@ -43394,7 +43394,7 @@
       }
     },
     {
-      "Name": "[Cys](aq)",
+      "Name": "(Cys)(aq)",
       "Formula": "CH3S",
       "Elements": "1:C 3:H 1:S",
       "Charge": 0.0,
@@ -43417,7 +43417,7 @@
       }
     },
     {
-      "Name": "[Cys]-",
+      "Name": "(Cys)-",
       "Formula": "CH2S-",
       "Elements": "1:C 2:H 1:S",
       "Charge": -1.0,
@@ -43440,7 +43440,7 @@
       }
     },
     {
-      "Name": "[Gln](aq)",
+      "Name": "(Gln)(aq)",
       "Formula": "C3H6NO",
       "Elements": "3:C 6:H 1:N 1:O",
       "Charge": 0.0,
@@ -43463,7 +43463,7 @@
       }
     },
     {
-      "Name": "[Glu](aq)",
+      "Name": "(Glu)(aq)",
       "Formula": "C3H5O2",
       "Elements": "3:C 5:H 2:O",
       "Charge": 0.0,
@@ -43486,7 +43486,7 @@
       }
     },
     {
-      "Name": "[Glu]-",
+      "Name": "(Glu)-",
       "Formula": "C3H4O2-",
       "Elements": "3:C 4:H 2:O",
       "Charge": -1.0,
@@ -43509,7 +43509,7 @@
       }
     },
     {
-      "Name": "[Gly](aq)",
+      "Name": "(Gly)(aq)",
       "Formula": "H",
       "Elements": "1:H",
       "Charge": 0.0,
@@ -43532,7 +43532,7 @@
       }
     },
     {
-      "Name": "[His](aq)",
+      "Name": "(His)(aq)",
       "Formula": "C4H5N2",
       "Elements": "4:C 5:H 2:N",
       "Charge": 0.0,
@@ -43555,7 +43555,7 @@
       }
     },
     {
-      "Name": "[His]+",
+      "Name": "(His)+",
       "Formula": "C4H6N2+",
       "Elements": "4:C 6:H 2:N",
       "Charge": 1.0,
@@ -43578,7 +43578,7 @@
       }
     },
     {
-      "Name": "[Ile](aq)",
+      "Name": "(Ile)(aq)",
       "Formula": "C4H9",
       "Elements": "4:C 9:H",
       "Charge": 0.0,
@@ -43601,7 +43601,7 @@
       }
     },
     {
-      "Name": "[Leu](aq)",
+      "Name": "(Leu)(aq)",
       "Formula": "C4H9",
       "Elements": "4:C 9:H",
       "Charge": 0.0,
@@ -43624,7 +43624,7 @@
       }
     },
     {
-      "Name": "[Lys](aq)",
+      "Name": "(Lys)(aq)",
       "Formula": "C4H10N",
       "Elements": "4:C 10:H 1:N",
       "Charge": 0.0,
@@ -43647,7 +43647,7 @@
       }
     },
     {
-      "Name": "[Lys]+",
+      "Name": "(Lys)+",
       "Formula": "C4H11N+",
       "Elements": "4:C 11:H 1:N",
       "Charge": 1.0,
@@ -43670,7 +43670,7 @@
       }
     },
     {
-      "Name": "[Met](aq)",
+      "Name": "(Met)(aq)",
       "Formula": "C3H7S",
       "Elements": "3:C 7:H 1:S",
       "Charge": 0.0,
@@ -43693,7 +43693,7 @@
       }
     },
     {
-      "Name": "[Phe](aq)",
+      "Name": "(Phe)(aq)",
       "Formula": "C7H7",
       "Elements": "7:C 7:H",
       "Charge": 0.0,
@@ -43716,7 +43716,7 @@
       }
     },
     {
-      "Name": "[Pro](aq)",
+      "Name": "(Pro)(aq)",
       "Formula": "C3H5",
       "Elements": "3:C 5:H",
       "Charge": 0.0,
@@ -43739,7 +43739,7 @@
       }
     },
     {
-      "Name": "[Ser](aq)",
+      "Name": "(Ser)(aq)",
       "Formula": "CH3O",
       "Elements": "1:C 3:H 1:O",
       "Charge": 0.0,
@@ -43762,7 +43762,7 @@
       }
     },
     {
-      "Name": "[Thr](aq)",
+      "Name": "(Thr)(aq)",
       "Formula": "C2H5O",
       "Elements": "2:C 5:H 1:O",
       "Charge": 0.0,
@@ -43785,7 +43785,7 @@
       }
     },
     {
-      "Name": "[Trp](aq)",
+      "Name": "(Trp)(aq)",
       "Formula": "C9H8N",
       "Elements": "9:C 8:H 1:N",
       "Charge": 0.0,
@@ -43808,7 +43808,7 @@
       }
     },
     {
-      "Name": "[Tyr](aq)",
+      "Name": "(Tyr)(aq)",
       "Formula": "C7H7O",
       "Elements": "7:C 7:H 1:O",
       "Charge": 0.0,
@@ -43831,7 +43831,7 @@
       }
     },
     {
-      "Name": "[Tyr]-",
+      "Name": "(Tyr)-",
       "Formula": "C7H6O-",
       "Elements": "7:C 6:H 1:O",
       "Charge": -1.0,
@@ -43854,7 +43854,7 @@
       }
     },
     {
-      "Name": "[Val](aq)",
+      "Name": "(Val)(aq)",
       "Formula": "C3H7",
       "Elements": "3:C 7:H",
       "Charge": 0.0,
@@ -43877,7 +43877,7 @@
       }
     },
     {
-      "Name": "[AABB](aq)",
+      "Name": "(AABB)(aq)",
       "Formula": "C2H4NO2",
       "Elements": "2:C 4:H 1:N 2:O",
       "Charge": 0.0,
@@ -43900,7 +43900,7 @@
       }
     },
     {
-      "Name": "[AABB]+",
+      "Name": "(AABB)+",
       "Formula": "C2H5NO2+",
       "Elements": "2:C 5:H 1:N 2:O",
       "Charge": 1.0,
@@ -43923,7 +43923,7 @@
       }
     },
     {
-      "Name": "[AABB]-",
+      "Name": "(AABB)-",
       "Formula": "C2H3NO2-",
       "Elements": "2:C 3:H 1:N 2:O",
       "Charge": -1.0,
@@ -43946,7 +43946,7 @@
       }
     },
     {
-      "Name": "[UPBB](aq)",
+      "Name": "(UPBB)(aq)",
       "Formula": "C2H2NO",
       "Elements": "2:C 2:H 1:N 1:O",
       "Charge": 0.0,
@@ -43969,7 +43969,7 @@
       }
     },
     {
-      "Name": "[-CH2-](aq)",
+      "Name": "(-CH2-)(aq)",
       "Formula": "CH2",
       "Elements": "1:C 2:H",
       "Charge": 0.0,
@@ -43992,7 +43992,7 @@
       }
     },
     {
-      "Name": "[-CH3](aq)",
+      "Name": "(-CH3)(aq)",
       "Formula": "CH3",
       "Elements": "1:C 3:H",
       "Charge": 0.0,
@@ -44015,7 +44015,7 @@
       }
     },
     {
-      "Name": "[-CHCH3-](aq)",
+      "Name": "(-CHCH3-)(aq)",
       "Formula": "C2H4",
       "Elements": "2:C 4:H",
       "Charge": 0.0,
@@ -44038,7 +44038,7 @@
       }
     },
     {
-      "Name": "[-CH2NH2](aq)",
+      "Name": "(-CH2NH2)(aq)",
       "Formula": "CH4N",
       "Elements": "1:C 4:H 1:N",
       "Charge": 0.0,
@@ -44061,7 +44061,7 @@
       }
     },
     {
-      "Name": "[-CH2OH](aq)",
+      "Name": "(-CH2OH)(aq)",
       "Formula": "CH3O",
       "Elements": "1:C 3:H 1:O",
       "Charge": 0.0,
@@ -44084,7 +44084,7 @@
       }
     },
     {
-      "Name": "[-CONH2](aq)",
+      "Name": "(-CONH2)(aq)",
       "Formula": "CH2NO",
       "Elements": "1:C 2:H 1:N 1:O",
       "Charge": 0.0,
@@ -44107,7 +44107,7 @@
       }
     },
     {
-      "Name": "[-COOH](aq)",
+      "Name": "(-COOH)(aq)",
       "Formula": "CHO2",
       "Elements": "1:C 1:H 2:O",
       "Charge": 0.0,
@@ -44130,7 +44130,7 @@
       }
     },
     {
-      "Name": "[-C6H5](aq)",
+      "Name": "(-C6H5)(aq)",
       "Formula": "C6H5",
       "Elements": "6:C 5:H",
       "Charge": 0.0,
@@ -44153,7 +44153,7 @@
       }
     },
     {
-      "Name": "[di.corr](aq)",
+      "Name": "(di.corr)(aq)",
       "Formula": "C",
       "Elements": "1:C",
       "Charge": 0.0,
