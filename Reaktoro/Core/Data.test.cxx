@@ -193,8 +193,8 @@ TEST_CASE("Testing Data class", "[Data]")
     SECTION("testing construction using yaml and json strings")
     {
         const Data data = GENERATE(
-            Data(YAML::Load(yaml_testing_string)),
-            Data(nlohmann::json::parse(json_testing_string))
+            Data::fromYaml(yaml_testing_string),
+            Data::fromJson(json_testing_string)
         );
 
         CHECK( data.isDict() );

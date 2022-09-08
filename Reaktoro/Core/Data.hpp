@@ -67,6 +67,24 @@ public:
     /// Construct a Data object with given json object.
     Data(nlohmann::json const& obj);
 
+    /// Return a Data object by parsing an YAML document.
+    static auto fromYaml(Chars const& input) -> Data;
+
+    /// Return a Data object by parsing an YAML document.
+    static auto fromYaml(String const& input) -> Data;
+
+    /// Return a Data object by parsing an YAML document.
+    static auto fromYaml(std::istream& input) -> Data;
+
+    /// Return a Data object by parsing a JSON document.
+    static auto fromJson(Chars const& input) -> Data;
+
+    /// Return a Data object by parsing a JSON document.
+    static auto fromJson(String const& input) -> Data;
+
+    /// Return a Data object by parsing a JSON document.
+    static auto fromJson(std::istream& input) -> Data;
+
     /// Return this data block as a string value.
     auto string() const -> String const&;
 
