@@ -62,15 +62,15 @@ struct ChemicalState::Impl
     /// The amounts of the chemical species (in mol)
     ArrayXr n;
 
-    /// The surface areas for the existing interphase surfaces.
-    ArrayXr surface_areas;
+    /// The surface areas for the existing interphase surfaces (in m2).
+    ArrayXr s;
 
     /// Construct a ChemicalState::Impl instance with given chemical system.
-    Impl(const ChemicalSystem& system)
+    Impl(ChemicalSystem const& system)
     : system(system), equilibrium(system), props(system)
     {
         n.setConstant(system.species().size(), 1e-16); // set small positive value for initial species amounts
-        surface_areas.setZero(system.reactingPhaseInterfaces().size());
+        s.setZero(system.reactingPhaseInterfaces().size());
     }
 
     auto temperature(real val) -> void
@@ -120,7 +120,7 @@ struct ChemicalState::Impl
         n = values;
     }
 
-    auto setSpeciesAmount(const StringOrIndex& species, real amount, Chars unit) -> void
+    auto setSpeciesAmount(StringOrIndex const& species, real amount, Chars unit) -> void
     {
         errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
@@ -128,7 +128,7 @@ struct ChemicalState::Impl
         n[ispecies] = units::convert(amount, unit, "mol");
     }
 
-    auto setSpeciesMass(const StringOrIndex& species, real mass, Chars unit) -> void
+    auto setSpeciesMass(StringOrIndex const& species, real mass, Chars unit) -> void
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
@@ -136,7 +136,7 @@ struct ChemicalState::Impl
         n[ispecies] = units::convert(mass, unit, "kg") / system.species(ispecies).molarMass();
     }
 
-    auto set(const StringOrIndex& species, real value, Chars unit) -> void
+    auto set(StringOrIndex const& species, real value, Chars unit) -> void
     {
         errorif(value < 0.0, "Expecting a non-negative amount/mass value, but got ", value, " ", unit);
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
@@ -146,7 +146,7 @@ struct ChemicalState::Impl
         n[ispecies] = amount;
     }
 
-    auto add(const StringOrIndex& species, real value, Chars unit) -> void
+    auto add(StringOrIndex const& species, real value, Chars unit) -> void
     {
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
         const auto numspecies = system.species().size();
@@ -160,7 +160,7 @@ struct ChemicalState::Impl
     // METHODS FOR GETTING THE AMOUNT OR MASS OF SPECIES, ELEMENTS, AND CHARGE
     // --------------------------------------------------------------------------------------------
 
-    auto speciesAmountsInPhase(const StringOrIndex& phase) const -> ArrayXrConstRef
+    auto speciesAmountsInPhase(StringOrIndex const& phase) const -> ArrayXrConstRef
     {
         const auto iphase = detail::resolvePhaseIndex(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", detail::stringfy(phase));
@@ -169,14 +169,14 @@ struct ChemicalState::Impl
         return n.segment(start, size);
     }
 
-    auto speciesAmount(const StringOrIndex& species) const -> real
+    auto speciesAmount(StringOrIndex const& species) const -> real
     {
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
         errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
         return n[ispecies];
     }
 
-    auto speciesMass(const StringOrIndex& species) const -> real
+    auto speciesMass(StringOrIndex const& species) const -> real
     {
         const auto ispecies = detail::resolveSpeciesIndex(system, species);
         errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", detail::stringfy(species), "`.");
@@ -185,19 +185,19 @@ struct ChemicalState::Impl
 
     auto componentAmounts() const -> ArrayXr
     {
-        const auto& A = system.formulaMatrix();
+        auto const& A = system.formulaMatrix();
         return A * n.matrix();
     }
 
     auto elementAmounts() const -> ArrayXr
     {
-        const auto& Ae = system.formulaMatrixElements();
+        auto const& Ae = system.formulaMatrixElements();
         return Ae * n.matrix();
     }
 
     auto charge() const -> real
     {
-        const auto& Az = system.formulaMatrixCharge();
+        auto const& Az = system.formulaMatrixCharge();
         return (Az * n.matrix())[0];
     }
 
@@ -211,13 +211,13 @@ struct ChemicalState::Impl
         n *= scalar;
     }
 
-    auto scaleSpeciesAmounts(double scalar, const Indices& indices) -> void
+    auto scaleSpeciesAmounts(double scalar, Indices const& indices) -> void
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
         n(indices) *= scalar;
     }
 
-    auto scaleSpeciesAmountsInPhase(const StringOrIndex& phase, double scalar) -> void
+    auto scaleSpeciesAmountsInPhase(StringOrIndex const& phase, double scalar) -> void
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
         const auto iphase = detail::resolvePhaseIndex(system, phase);
@@ -241,7 +241,7 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
-    auto scalePhaseVolume(const StringOrIndex& phase, real volume, Chars unit) -> void
+    auto scalePhaseVolume(StringOrIndex const& phase, real volume, Chars unit) -> void
     {
         errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
@@ -261,8 +261,8 @@ struct ChemicalState::Impl
         const auto ifluidphases = props.indicesPhasesWithFluidState();
         const auto current_fluid_volume =
             Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).volume(); });
-        const auto& factor = current_fluid_volume > 0.0 ? volume / current_fluid_volume : real(0.0);
-        const auto& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
+        auto const& factor = current_fluid_volume > 0.0 ? volume / current_fluid_volume : real(0.0);
+        auto const& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
         n(ifluidspecies) *= factor;
     }
 
@@ -274,8 +274,8 @@ struct ChemicalState::Impl
         const auto isolidphases = props.indicesPhasesWithSolidState();
         const auto current_solid_volume =
             Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).volume(); });
-        const auto& factor = current_solid_volume > 0.0 ? volume / current_solid_volume : real(0.0);
-        const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
+        auto const& factor = current_solid_volume > 0.0 ? volume / current_solid_volume : real(0.0);
+        auto const& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
         n(isolidspecies) *= factor;
     }
 
@@ -293,7 +293,7 @@ struct ChemicalState::Impl
         scaleSpeciesAmounts(scalar);
     }
 
-    auto scalePhaseMass(const StringOrIndex& phase, real mass, Chars unit) -> void
+    auto scalePhaseMass(StringOrIndex const& phase, real mass, Chars unit) -> void
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
@@ -313,8 +313,8 @@ struct ChemicalState::Impl
         const auto ifluidphases = props.indicesPhasesWithFluidState();
         const auto current_fluid_mass =
             Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).mass(); });
-        const auto& factor = current_fluid_mass > 0.0 ? mass / current_fluid_mass : real(0.0);
-        const auto& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
+        auto const& factor = current_fluid_mass > 0.0 ? mass / current_fluid_mass : real(0.0);
+        auto const& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
         n(ifluidspecies) *= factor;
     }
 
@@ -326,8 +326,8 @@ struct ChemicalState::Impl
         const auto isolidphases = props.indicesPhasesWithSolidState();
         const auto current_solid_mass =
             Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).mass(); });
-        const auto& factor = current_solid_mass > 0.0 ? mass / current_solid_mass : real(0.0);
-        const auto& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
+        auto const& factor = current_solid_mass > 0.0 ? mass / current_solid_mass : real(0.0);
+        auto const& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
         n(isolidspecies) *= factor;
     }
 
@@ -335,14 +335,28 @@ struct ChemicalState::Impl
     // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
     // --------------------------------------------------------------------------------------------
 
-    auto setSurfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
+    auto setSurfaceAreas(ArrayXdConstRef const& values) -> void
+    {
+        assert(s.size() == values.size());
+        assert(values.minCoeff() >= 0.0);
+        s = values;
+    }
+
+    auto setSurfaceAreas(ArrayXrConstRef const& values) -> void
+    {
+        assert(s.size() == values.size());
+        assert(values.minCoeff() >= 0.0);
+        s = values;
+    }
+
+    auto setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
     {
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
         value = units::convert(value, unit, "m2");
         const auto isurface = system.reactingPhaseInterfaceIndex(phase1, phase2);
         const auto numsurfaces = system.reactingPhaseInterfaces().size();
         errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
-        surface_areas[isurface] = value;
+        s[isurface] = value;
     }
 
     auto setSurfaceArea(Index isurface, real value, Chars unit) -> void
@@ -351,18 +365,18 @@ struct ChemicalState::Impl
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
         errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
         value = units::convert(value, unit, "m2");
-        surface_areas[isurface] = value;
+        s[isurface] = value;
     }
 
-    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real
+    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
     {
         const auto numsurfaces = system.reactingPhaseInterfaces().size();
         const auto isurface = system.reactingPhaseInterfaceIndex(phase1, phase2);
         errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
-        return surface_areas[isurface];
+        return s[isurface];
     }
 
-    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
+    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
     {
         setSurfaceArea(phase1, phase2, value, unit);
     }
@@ -371,15 +385,15 @@ struct ChemicalState::Impl
     {
         const auto numsurfaces = system.reactingPhaseInterfaces().size();
         errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
-        return surface_areas[isurface];
+        return s[isurface];
     }
 };
 
-ChemicalState::ChemicalState(const ChemicalSystem& system)
+ChemicalState::ChemicalState(ChemicalSystem const& system)
 : pimpl(new Impl(system))
 {}
 
-ChemicalState::ChemicalState(const ChemicalState& other)
+ChemicalState::ChemicalState(ChemicalState const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
@@ -469,22 +483,22 @@ auto ChemicalState::setSpeciesAmounts(ArrayXdConstRef n) -> void
     pimpl->setSpeciesAmounts(n);
 }
 
-auto ChemicalState::set(const StringOrIndex& species, real value, Chars unit) -> void
+auto ChemicalState::set(StringOrIndex const& species, real value, Chars unit) -> void
 {
     pimpl->set(species, value, unit);
 }
 
-auto ChemicalState::add(const StringOrIndex& species, real value, Chars unit) -> void
+auto ChemicalState::add(StringOrIndex const& species, real value, Chars unit) -> void
 {
     pimpl->add(species, value, unit);
 }
 
-auto ChemicalState::setSpeciesAmount(const StringOrIndex& species, real amount, Chars unit) -> void
+auto ChemicalState::setSpeciesAmount(StringOrIndex const& species, real amount, Chars unit) -> void
 {
     pimpl->setSpeciesAmount(species, amount, unit);
 }
 
-auto ChemicalState::setSpeciesMass(const StringOrIndex& species, real mass, Chars unit) -> void
+auto ChemicalState::setSpeciesMass(StringOrIndex const& species, real mass, Chars unit) -> void
 {
     pimpl->setSpeciesMass(species, mass, unit);
 }
@@ -498,17 +512,17 @@ auto ChemicalState::speciesAmounts() const -> ArrayXrConstRef
     return pimpl->n;
 }
 
-auto ChemicalState::speciesAmountsInPhase(const StringOrIndex& phase) const -> ArrayXrConstRef
+auto ChemicalState::speciesAmountsInPhase(StringOrIndex const& phase) const -> ArrayXrConstRef
 {
     return pimpl->speciesAmountsInPhase(phase);
 }
 
-auto ChemicalState::speciesAmount(const StringOrIndex& species) const -> real
+auto ChemicalState::speciesAmount(StringOrIndex const& species) const -> real
 {
     return pimpl->speciesAmount(species);
 }
 
-auto ChemicalState::speciesMass(const StringOrIndex& species) const -> real
+auto ChemicalState::speciesMass(StringOrIndex const& species) const -> real
 {
     return pimpl->speciesMass(species);
 }
@@ -537,12 +551,12 @@ auto ChemicalState::scaleSpeciesAmounts(real scalar) -> void
     pimpl->scaleSpeciesAmounts(scalar);
 }
 
-auto ChemicalState::scaleSpeciesAmounts(real scalar, const Indices& indices) -> void
+auto ChemicalState::scaleSpeciesAmounts(real scalar, Indices const& indices) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar, indices);
 }
 
-auto ChemicalState::scaleSpeciesAmountsInPhase(const StringOrIndex& phase, real scalar) -> void
+auto ChemicalState::scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real scalar) -> void
 {
     pimpl->scaleSpeciesAmountsInPhase(phase, scalar);
 }
@@ -556,7 +570,7 @@ auto ChemicalState::scaleVolume(real value, Chars unit) -> void
     pimpl->scaleVolume(value, unit);
 }
 
-auto ChemicalState::scalePhaseVolume(const StringOrIndex& phase, real value, Chars unit) -> void
+auto ChemicalState::scalePhaseVolume(StringOrIndex const& phase, real value, Chars unit) -> void
 {
     pimpl->scalePhaseVolume(phase, value, unit);
 }
@@ -580,7 +594,7 @@ auto ChemicalState::scaleMass(real value, Chars unit) -> void
     pimpl->scaleMass(value, unit);
 }
 
-auto ChemicalState::scalePhaseMass(const StringOrIndex& phase, real value, Chars unit) -> void
+auto ChemicalState::scalePhaseMass(StringOrIndex const& phase, real value, Chars unit) -> void
 {
     pimpl->scalePhaseMass(phase, value, unit);
 }
@@ -599,7 +613,17 @@ auto ChemicalState::scaleSolidMass(real value, Chars unit) -> void
 // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::setSurfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
+auto ChemicalState::setSurfaceAreas(ArrayXrConstRef const& s) -> void
+{
+    pimpl->setSurfaceAreas(s);
+}
+
+auto ChemicalState::setSurfaceAreas(ArrayXdConstRef const& s) -> void
+{
+    pimpl->setSurfaceAreas(s);
+}
+
+auto ChemicalState::setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
 {
     pimpl->setSurfaceArea(phase1, phase2, value, unit);
 }
@@ -609,12 +633,12 @@ auto ChemicalState::setSurfaceArea(Index isurface, real value, Chars unit) -> vo
     pimpl->setSurfaceArea(isurface, value, unit);
 }
 
-auto ChemicalState::surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void
+auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
 {
     pimpl->surfaceArea(phase1, phase2, value, unit);
 }
 
-auto ChemicalState::surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real
+auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
 {
     return pimpl->surfaceArea(phase1, phase2);
 }
@@ -626,14 +650,14 @@ auto ChemicalState::surfaceArea(Index isurface) const -> real
 
 auto ChemicalState::surfaceAreas() const -> ArrayXrConstRef
 {
-    return pimpl->surface_areas;
+    return pimpl->s;
 }
 
 // --------------------------------------------------------------------------------------------
 // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::update(const real& T, const real& P, ArrayXrConstRef n) -> void
+auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef n) -> void
 {
     setTemperature(T);
     setPressure(P);
@@ -641,7 +665,16 @@ auto ChemicalState::update(const real& T, const real& P, ArrayXrConstRef n) -> v
     props().update(T, P, n);
 }
 
-auto ChemicalState::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
+auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void
+{
+    setTemperature(T);
+    setPressure(P);
+    setSpeciesAmounts(n);
+    setSurfaceAreas(s);
+    props().update(T, P, n, s);
+}
+
+auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef n) -> void
 {
     setTemperature(T);
     setPressure(P);
@@ -649,16 +682,25 @@ auto ChemicalState::updateIdeal(const real& T, const real& P, ArrayXrConstRef n)
     props().updateIdeal(T, P, n);
 }
 
+auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void
+{
+    setTemperature(T);
+    setPressure(P);
+    setSpeciesAmounts(n);
+    setSurfaceAreas(s);
+    props().updateIdeal(T, P, n, s);
+}
+
 // --------------------------------------------------------------------------------------------
 // MISCELLANEOUS METHODS
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::system() const -> const ChemicalSystem&
+auto ChemicalState::system() const -> ChemicalSystem const&
 {
     return pimpl->system;
 }
 
-auto ChemicalState::props() const -> const ChemicalProps&
+auto ChemicalState::props() const -> ChemicalProps const&
 {
     return pimpl->props;
 }
@@ -668,7 +710,7 @@ auto ChemicalState::props() -> ChemicalProps&
     return pimpl->props;
 }
 
-auto ChemicalState::equilibrium() const -> const Equilibrium&
+auto ChemicalState::equilibrium() const -> Equilibrium const&
 {
     return pimpl->equilibrium;
 }
@@ -683,7 +725,7 @@ auto ChemicalState::output(std::ostream& out) const -> void
     out << *this;
 }
 
-auto ChemicalState::output(const String& filename) const -> void
+auto ChemicalState::output(String const& filename) const -> void
 {
     auto out = std::ofstream(filename);
     out << *this;
@@ -734,12 +776,12 @@ struct ChemicalState::Equilibrium::Impl
     ArrayXl isus;
 
     /// Construct a default ChemicalState::Equilibrium::Impl instance
-    Impl(const ChemicalSystem& system)
+    Impl(ChemicalSystem const& system)
     : Nn(system.species().size()), Nb(system.elements().size() + 1)
     {}
 };
 
-ChemicalState::Equilibrium::Equilibrium(const ChemicalSystem& system)
+ChemicalState::Equilibrium::Equilibrium(ChemicalSystem const& system)
 : pimpl(new Impl(system))
 {}
 
@@ -756,7 +798,7 @@ auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> 
     return *this;
 }
 
-auto ChemicalState::Equilibrium::setInputNames(const Strings& names) -> void
+auto ChemicalState::Equilibrium::setInputNames(Strings const& names) -> void
 {
     pimpl->inputs = names;
 }
@@ -863,7 +905,7 @@ auto ChemicalState::Equilibrium::implicitTitrantAmounts() const -> ArrayXdConstR
     return q();
 }
 
-auto ChemicalState::Equilibrium::inputNames() const -> const Strings&
+auto ChemicalState::Equilibrium::inputNames() const -> Strings const&
 {
     return pimpl->inputs;
 }
@@ -913,15 +955,15 @@ auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
     return pimpl->optstate;
 }
 
-auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
+auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&
 {
-    const auto& n = state.speciesAmounts();
-    const auto& b = state.elementAmounts();
-    const auto& phases = state.system().phases();
-    const auto& species = state.system().species();
-    const auto& elements = state.system().elements();
-    const auto& surfaces = state.system().reactingPhaseInterfaces();
-    const auto& surface_areas = state.surfaceAreas();
+    auto const& n = state.speciesAmounts();
+    auto const& b = state.elementAmounts();
+    auto const& phases = state.system().phases();
+    auto const& species = state.system().species();
+    auto const& elements = state.system().elements();
+    auto const& surfaces = state.system().reactingPhaseInterfaces();
+    auto const& s = state.surfaceAreas();
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
@@ -936,7 +978,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     {
         table.add_row({ "Surface Area:", "", "" });
             for(auto [k, pair] : enumerate(surfaces))
-                table.add_row({ ":: " + phases[pair.first].name() + " : " + phases[pair.second].name(), strfix(surface_areas[k]), "m2" });
+                table.add_row({ ":: " + phases[pair.first].name() + " : " + phases[pair.second].name(), strfix(s[k]), "m2" });
     }
 
     auto i = 0;

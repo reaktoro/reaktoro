@@ -46,10 +46,10 @@ public:
     /// Construct a ChemicalState instance with standard conditions.
     /// This constructor creates an instance of ChemicalState with temperature
     /// 25 °C, pressure 1 bar, and zero mole amounts for the species.
-    explicit ChemicalState(const ChemicalSystem& system);
+    explicit ChemicalState(ChemicalSystem const& system);
 
     /// Construct a copy of a ChemicalState instance.
-    ChemicalState(const ChemicalState& other);
+    ChemicalState(ChemicalState const& other);
 
     /// Destroy this ChemicalState instance.
     virtual ~ChemicalState();
@@ -128,27 +128,27 @@ public:
     /// @param species The name or index of the species.
     /// @param amount The amount of the species
     /// @param unit The amount unit (must be convertible to mol)
-    auto setSpeciesAmount(const StringOrIndex& species, real amount, Chars unit) -> void;
+    auto setSpeciesAmount(StringOrIndex const& species, real amount, Chars unit) -> void;
 
     /// Set the mass of a specific species in the system.
     /// @param species The name or index of the species.
     /// @param mass The mass of the species
     /// @param unit The mass unit (must be convertible to kg)
-    auto setSpeciesMass(const StringOrIndex& species, real mass, Chars unit) -> void;
+    auto setSpeciesMass(StringOrIndex const& species, real mass, Chars unit) -> void;
 
     /// Set the amount or mass of a chemical species in the chemical state.
     /// @param species The name or index of the species.
     /// @param value The amount or mass value of the species.
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
     /// @warning An error is thrown if the chemical system has no species with name `species`.
-    auto set(const StringOrIndex& species, real value, Chars unit) -> void;
+    auto set(StringOrIndex const& species, real value, Chars unit) -> void;
 
     /// Add a specified amount or mass of a chemical species in the chemical state.
     /// @param species The name or index of the species in the chemical system.
     /// @param value The amount or mass value of the added species.
     /// @param unit The amount or mass unit (must be convertible to mol or kg).
     /// @warning An error is thrown if the chemical system has no species with name `species`.
-    auto add(const StringOrIndex& species, real value, Chars unit) -> void;
+    auto add(StringOrIndex const& species, real value, Chars unit) -> void;
 
     // --------------------------------------------------------------------------------------------
     // METHODS FOR GETTING THE AMOUNT OR MASS OF SPECIES, ELEMENTS, AND CHARGE
@@ -159,15 +159,15 @@ public:
 
     /// Return the amounts of the species from a phase in the chemical state (in mol).
     /// @param phase The name or index of the phase in the system.
-    auto speciesAmountsInPhase(const StringOrIndex& phase) const -> ArrayXrConstRef;
+    auto speciesAmountsInPhase(StringOrIndex const& phase) const -> ArrayXrConstRef;
 
     /// Return the amount of a species in the chemical state (in mol).
     /// @param species The name or index of the species.
-    auto speciesAmount(const StringOrIndex& species) const -> real;
+    auto speciesAmount(StringOrIndex const& species) const -> real;
 
     /// Return the mass of a species in the chemical state (in kg).
     /// @param species The name or index of the species.
-    auto speciesMass(const StringOrIndex& species) const -> real;
+    auto speciesMass(StringOrIndex const& species) const -> real;
 
     /// Return the amounts of the conservative components (elements and charge) in the chemical state (in mol).
     auto componentAmounts() const -> ArrayXr;
@@ -189,12 +189,12 @@ public:
     /// Scale the amounts of the species with given indices.
     /// @param scalar The scale factor
     /// @param indices The indices of the species
-    auto scaleSpeciesAmounts(real scalar, const Indices& indices) -> void;
+    auto scaleSpeciesAmounts(real scalar, Indices const& indices) -> void;
 
     /// Scale the amounts of the species in a phase by a given factor.
     /// @param phase The name or index of the phase in the system.
     /// @param scalar The scale factor
-    auto scaleSpeciesAmountsInPhase(const StringOrIndex& phase, real scalar) -> void;
+    auto scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real scalar) -> void;
 
     // --------------------------------------------------------------------------------------------
     // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
@@ -209,7 +209,7 @@ public:
     /// @param phase The name or index of the phase in the system.
     /// @param volume The new volume of the phase
     /// @param unit The volume unit (must be convertible to m3)
-    auto scalePhaseVolume(const StringOrIndex& phase, real volume, Chars unit) -> void;
+    auto scalePhaseVolume(StringOrIndex const& phase, real volume, Chars unit) -> void;
 
     /// Scale the total volume of fluids in the system to a new value.
     /// @param volume The new total volume of fluids in the system
@@ -234,7 +234,7 @@ public:
     /// @param phase The name or index of the phase in the system.
     /// @param mass The new mass of the phase
     /// @param unit The mass unit (must be convertible to kg)
-    auto scalePhaseMass(const StringOrIndex& phase, real mass, Chars unit) -> void;
+    auto scalePhaseMass(StringOrIndex const& phase, real mass, Chars unit) -> void;
 
     /// Scale the total mass of fluids in the system to a new value.
     /// @param mass The new total mass of fluids in the system
@@ -251,11 +251,19 @@ public:
     // --------------------------------------------------------------------------------------------
 
     /// Set the surface area between two phases.
+    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
+    auto setSurfaceAreas(ArrayXrConstRef const& s) -> void;
+
+    /// Set the surface area between two phases.
+    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
+    auto setSurfaceAreas(ArrayXdConstRef const& s) -> void;
+
+    /// Set the surface area between two phases.
     /// @param phase1 The name or index of a phase.
     /// @param phase2 The name or index of the other phase.
     /// @param value The surface area between these two phases.
     /// @param unit The unit of the surface area (must be convertible to m2).
-    auto setSurfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void;
+    auto setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void;
 
     /// Set the surface area between two phases with given surface index.
     /// @param isurface The index of the surface.
@@ -269,13 +277,13 @@ public:
     /// @param value The surface area value.
     /// @param unit The unit of the surface area (must be convertible to m2).
     /// @note This method is equivalent to ChemicalState::setSurfaceArea
-    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void;
+    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void;
 
     /// Return the surface area of the interface between two reacting phases (in m2).
     /// @param phase1 The name or index of a phase.
     /// @param phase2 The name or index of the phase interfacing with the previous one.
     /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
-    auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real;
+    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real;
 
     /// Return the surface area of the interface between two reacting phases with given surface index (in m2).
     /// @param isurface The index of the surface between two phases.
@@ -296,26 +304,40 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto update(const real& T, const real& P, ArrayXrConstRef n) -> void;
+    auto update(real const& T, real const& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical state and properties of the system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
+    auto update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     /// Update the chemical state and properties of the system using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
+    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical state and properties of the system using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
+    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     // --------------------------------------------------------------------------------------------
     // MISCELLANEOUS METHODS
     // --------------------------------------------------------------------------------------------
 
     /// Return the underlying chemical system for this chemical state.
-    auto system() const -> const ChemicalSystem&;
+    auto system() const -> ChemicalSystem const&;
 
     /// Return the chemical properties of the system. For performance reasons,
     /// the stored chemical properties are not updated at every change in the
     /// chemical state. For a ChemicalState object `state`, update its chemical
     /// properties using `state.props().update(state)`.
-    auto props() const -> const ChemicalProps&;
+    auto props() const -> ChemicalProps const&;
 
     /// Return the chemical properties of the system. For performance reasons,
     /// the stored chemical properties are not updated at every change in the
@@ -324,7 +346,7 @@ public:
     auto props() -> ChemicalProps&;
 
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
-    auto equilibrium() const -> const Equilibrium&;
+    auto equilibrium() const -> Equilibrium const&;
 
     /// Return the equilibrium properties of a calculated chemical equilibrium state.
     auto equilibrium() -> Equilibrium&;
@@ -333,7 +355,7 @@ public:
     auto output(std::ostream& out) const -> void;
 
     /// Output this ChemicalState instance to a file.
-    auto output(const String& filename) const -> void;
+    auto output(String const& filename) const -> void;
 
 private:
     struct Impl;
@@ -352,10 +374,10 @@ class ChemicalState::Equilibrium
 {
 public:
     /// Construct a ChemicalState::Equilibrium instance.
-    Equilibrium(const ChemicalSystem& system);
+    Equilibrium(ChemicalSystem const& system);
 
     /// Construct a copy of a ChemicalState::Equilibrium instance
-    Equilibrium(const Equilibrium& other);
+    Equilibrium(Equilibrium const& other);
 
     /// Destroy this ChemicalState::Equilibrium instance
     virtual ~Equilibrium();
@@ -364,7 +386,7 @@ public:
     auto operator=(Equilibrium other) -> Equilibrium&;
 
     /// Set the names of the input variables used in the equilibrium calculation.
-    auto setInputNames(const Strings& names) -> void;
+    auto setInputNames(Strings const& names) -> void;
 
     /// Set the values of the input variables used in the equilibrium calculation.
     auto setInputValues(VectorXdConstRef w) -> void;
@@ -428,7 +450,7 @@ public:
     auto implicitTitrantAmounts() const -> ArrayXdConstRef;
 
     /// Return the names of the input variables used in the equilibrium calculation.
-    auto inputNames() const -> const Strings&;
+    auto inputNames() const -> Strings const&;
 
     /// Return the values of the input variables used in the equilibrium calculation.
     auto inputValues() const -> VectorXdConstRef;
@@ -464,7 +486,7 @@ private:
 };
 
 /// Output a ChemicalState object to an output stream.
-auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&;
+auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&;
 
 } // namespace Reaktoro
 
@@ -486,7 +508,7 @@ struct MemoizationTraits<ChemicalState>
     /// The type used instead to cache a ChemicalState object.
     using CacheType = Tuple<real, real, ArrayXr, ArrayXr>;
 
-    static auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
+    static auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
     {
         auto const& [T, P, n, S] = a;
         return
@@ -496,7 +518,7 @@ struct MemoizationTraits<ChemicalState>
             (S == b.surfaceAreas()).all();
     }
 
-    static auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
+    static auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
     {
         auto& [T, P, n, S] = a;
         T = b.temperature();
