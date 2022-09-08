@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 using namespace Reaktoro;
 
@@ -260,4 +261,10 @@ TEST_CASE("Testing ElementList", "[ElementList]")
 
     REQUIRE( elements.indexWithSymbol("Xy")   < elements.size() );
     REQUIRE( elements.indexWithName("Xyrium") < elements.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ElementList::begin|end
+    //-------------------------------------------------------------------------
+    for(auto [i, element] : enumerate(elements))
+        REQUIRE( element.name() == elements[i].name() );
 }

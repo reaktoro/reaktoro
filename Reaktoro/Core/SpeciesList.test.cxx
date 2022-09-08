@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 using namespace Reaktoro;
 
@@ -504,4 +505,10 @@ TEST_CASE("Testing SpeciesList", "[SpeciesList]")
 
     CHECK( specieslist.indexWithName("CaCO3(calcite)") < specieslist.size() );
     CHECK( specieslist.indexWithFormula("CaCO3") < specieslist.size() );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: SpeciesList::begin|end
+    //-------------------------------------------------------------------------
+    for(auto [i, species] : enumerate(specieslist))
+        REQUIRE( species.name() == specieslist[i].name() );
 }
