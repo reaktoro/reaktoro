@@ -18,3 +18,4 @@
 #pragma once
 
 #include <Reaktoro/Serialization/Serialization.YAML.hpp>
+#include <Reaktoro/Serialization/Serialization.Data.hpp>
