@@ -18,19 +18,15 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportKineticsConditions(py::module& m);
 void exportKineticsOptions(py::module& m);
 void exportKineticsResult(py::module& m);
 void exportKineticsSensitivity(py::module& m);
 void exportKineticsSolver(py::module& m);
-void exportKineticsSpecs(py::module& m);
 
 void exportKinetics(py::module& m)
 {
-    exportKineticsConditions(m);
     exportKineticsOptions(m);
     exportKineticsResult(m);
     exportKineticsSensitivity(m);
     exportKineticsSolver(m);
-    exportKineticsSpecs(m);
 }
