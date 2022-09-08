@@ -302,7 +302,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             EquilibriumSetup setup(specs);
 
-            VectorXr w{{T, P}};
+            VectorXr w{{0.0, 0.0, 0.0, T, P}}; // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], T, P
 
             ChemicalProps props(system);
             props.update(T, P, n);
@@ -362,7 +362,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const real pH = 4.0;
             const real pE = 5.0;
 
-            VectorXr w{{V, U, H, pH, pE}};
+            VectorXr w{{0.0, 0.0, 0.0, V, U, H, pH, pE}}; // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Halite], SA[Calcite], V, U, H, pH, pE
 
             ChemicalState state(system);
             state.update(T, P, n);

@@ -67,16 +67,12 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
     specs.addReactivityConstraints(rconstraints);
 
     //-------------------------------------------------------------------
-    // NOTE! There is no need to add ξ0 as inputs into `specs` for each
+    // NOTE 1! There is no need to add ξ0 as inputs into `specs` for each
     // kinetically controlled reaction because these go in the b vector
-    // together with element amounts
+    // together with element amounts.
+    // NOTE 2! No need to also add surface areas as inputs because there
+    // are added by default in EquilibriumSpecs implementation.
     //-------------------------------------------------------------------
-
-    // Add surface area inputs into `specs` for each reacting phase interfaces in the system due to kinetically controlled reactions
-    for(auto const& [iphase1, iphase2] : system.reactingPhaseInterfaces())
-        if(iphase1 != iphase2)
-            specs.addInput("SA[" + system.phase(iphase1).name() + ":" + system.phase(iphase2).name() + "]"); // SA[AqueousPhase:GaseousPhase]
-        else specs.addInput("SA[" + system.phase(iphase1).name() + "]"); // SA[Calcite]
 
     // Add Δt as input to the calculation (idt is the index of dt := Δt input in the w argument vector when defining equation constraints)
     const auto idt = specs.addInput("dt");

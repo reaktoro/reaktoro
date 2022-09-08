@@ -67,7 +67,7 @@ auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrCo
 auto createSurfaceAreaGetterFns(const EquilibriumSpecs& specs) -> Vec<Fn<real(VectorXrConstRef, VectorXrConstRef)>>
 {
     auto const& system = specs.system();
-    auto const& surfaces = system.reactingPhaseInterfaces();
+    auto const& surfaces = system.surfaces();
 
     auto const num_surfaces = surfaces.size();
 
@@ -76,19 +76,16 @@ auto createSurfaceAreaGetterFns(const EquilibriumSpecs& specs) -> Vec<Fn<real(Ve
 
     Vec<Fn<real(VectorXrConstRef, VectorXrConstRef)>> fns;
 
-    for(auto const& [iphase1, iphase2] : system.reactingPhaseInterfaces())
+    for(auto const& surface : system.surfaces())
     {
-        const String id = (iphase1 != iphase2) ?
-            "SA[" + system.phase(iphase1).name() + ":" + system.phase(iphase2).name() + "]" :
-            "SA[" + system.phase(iphase1).name() + "]";
+        auto const id = "SA[" + surface.name() + "]"; // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Quartz], SA[Calcite]
+        auto const iSAw = index(specs.namesInputs(), id);
+        auto const iSAp = index(specs.namesControlVariables(), id);
 
-        const auto iSAw = index(specs.namesInputs(), id);
-        const auto iSAp = index(specs.namesControlVariables(), id);
-
-        // errorif(iSAw >= Nw && iSAp >= Np, "Expecting surface area with id `", id, "` to be either an input or a p control variable in the equilibrium calculation.");
+        errorif(iSAw >= Nw && iSAp >= Np, "Expecting surface area with name `", surface.name(), "` to be either an input or a p control variable in the equilibrium calculation.");
 
         if(iSAw < Nw) fns.push_back( [iSAw](VectorXrConstRef p, VectorXrConstRef w) -> real { return w[iSAw]; } );
-        else if(iSAp < Np) fns.push_back( [iSAp](VectorXrConstRef p, VectorXrConstRef w) -> real { return p[iSAp]; } );
+        else fns.push_back( [iSAp](VectorXrConstRef p, VectorXrConstRef w) -> real { return p[iSAp]; } );
     }
 
     return fns;
@@ -139,7 +136,7 @@ struct EquilibriumProps::Impl
       getT(createTemperatureGetterFn(specs)),
       getP(createPressureGetterFn(specs)),
       getSAs(createSurfaceAreaGetterFns(specs)),
-      s(constants(specs.system().reactingPhaseInterfaces().size(), 1e-16))
+      s(zeros(specs.system().surfaces().size()))
     {}
 
     /// Update the chemical properties of the chemical system.
