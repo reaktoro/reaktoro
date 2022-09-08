@@ -46,10 +46,12 @@ class EquilibriumSpecs;
 struct EquilibriumDims
 {
     Index Ne = 0; ///< The number of elements in the chemical system.
-    Index Nb = 0; ///< The number of components in the chemical equilibrium problem (`Nb = Ne` if no inert reactions are specified).
     Index Nn = 0; ///< The number of species in the chemical system.
-    Index Np = 0; ///< The number of *p* control variables (temperature, pressure, and amounts of explicit titrants when these are introduced unknowns).
-    Index Nq = 0; ///< The number of *q* control variables (the amounts of the implicit titrants when these are introduced unknowns).
+    Index Np = 0; ///< The number of *p* control variables (temperature, pressure, amounts of explicit titrants, and custom variables).
+    Index Nq = 0; ///< The number of *q* control variables (amounts of implicit titrants).
+    Index Nv = 0; ///< The number of equations constraints in the chemical equilibrium problem.
+    Index Nr = 0; ///< The number of reactivity constraints (i.e., *restricted reactions*) in the chemical equilibrium problem.
+    Index Nb = 0; ///< The number of components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `1 + Ne + Nr`).
     Index Nt = 0; ///< The number of substances for which the chemical system is open to (the number of explicit and implicit titrants).
     Index Nx = 0; ///< The number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`).
     Index Nu = 0; ///< The number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`).
@@ -59,7 +61,7 @@ struct EquilibriumDims
     EquilibriumDims() = default;
 
     /// Construct an EquilibriumDims object with given equilibrium specifications.
-    explicit EquilibriumDims(const EquilibriumSpecs& specs);
+    explicit EquilibriumDims(EquilibriumSpecs const& specs);
 };
 
 } // namespace Reaktoro
