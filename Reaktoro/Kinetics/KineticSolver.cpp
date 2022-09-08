@@ -16,6 +16,8 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #include "KineticSolver.hpp"
+#include "Reaktoro/Common/Algorithms.hpp"
+#include "Reaktoro/Common/Matrix.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
@@ -47,10 +49,10 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
     auto const& K = system.stoichiometricMatrix();
 
     // Add a p control variable to `specs` for each *extent of reaction change* variable Δξ (one for each reactive constraint, aka, restricted reaction)
-    for(auto i = 0; i < reactions.size(); ++i)
+    for(auto const& reaction : reactions)
     {
         ControlVariableP pvar;
-        pvar.name = "dxi[" + reactions[i].name() + "]"; // e.g., Δξ[H2O = H+ + OH-], Δξ[Calcite]
+        pvar.name = "dxi[" + reaction.name() + "]"; // e.g., Δξ[H2O = H+ + OH-], Δξ[Calcite]
         specs.addControlVariableP(pvar);
     }
 
@@ -61,33 +63,52 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
     auto const offset = Np - Nr;
 
     // Add reactivity constraints to `specs` to model the restricted reactions in the equilibrium problem (those that cannot react to full equilibrium but are constrained to a certain extent of reaction progress)
-    for(auto i = 0; i < K.cols(); ++i)
-    {
-        ReactivityConstraint rconstraint;
-        rconstraint.id = reactions[i].name();
-        rconstraint.Kn = K.col(i);
-        rconstraint.Kp = -unit(Np, offset + i); // let p' be the last Nr entries in p; thus p' = Δξ and because tr(K)*n - Δξ = ξ0, we use negative unit here so that we obtain this equation with tr(Kn)*n + tr(Kp)*p = ξ0.
-        specs.addReactivityConstraint(rconstraint);
-    }
+    ReactivityConstraints rconstraints;
+    rconstraints.ids = vectorize(reactions, RKT_LAMBDA(x, x.name()));
+    rconstraints.Kn = K.transpose();
+    rconstraints.Kp = zeros(Nr, Np); // let p' be the last Nr entries in p; thus p' = Δξ and because tr(K)*n - Δξ = ξ0, we set Kn = tr(K) and Kp = = [0, -I] where I has dims Nr x Nr.
+    rconstraints.Kp.rightCols(Nr) = -identity(Nr, Nr);
 
-    const auto idt = specs.addInput("dt"); // Add dt as input to the calculation (idt is the index of dt input in the w argument vector when defining equation constraints)
+    specs.addReactivityConstraints(rconstraints);
+
+    // Add dt as input to the calculation (idt is the index of dt input in the w argument vector when defining equation constraints)
+    const auto idt = specs.addInput("dt");
+
+    // Add ξ0 inputs into `specs` for each kinetically controlled reaction
+    for(auto const& reaction : reactions)
+        specs.addInput("xi0[" + reaction.name() + "]"); // xi0[H2O = H+ + OH-], xi0[CO2(aq) = CO2(g)], xi0[Calcite]
+
+    // Compute matrix M = tr(K)*K
+    const MatrixXd M = K.transpose() * K;
 
     // Add equation constraints to `specs` to model the kinetic rates of the reactions in the equilibrium problem
-    for(auto i = 0; i < K.cols(); ++i)
+    EquationConstraints econstraints;
+    econstraints.ids = rconstraints.ids;
+    econstraints.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
     {
-        EquationConstraint econstraint;
-        econstraint.id = reactions[i].name();
-        const auto idx = specs.addInput("xi0[" + econstraint.id + "]");
-        econstraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> real
-        {
-            auto const& dt = w[idt];
-            auto const& pi = p[offset + i];
-            // return pi - dt * M.row(i) * r;
-            return {};
-        };
+        auto const& dt = w[idt];
+        auto const& dxi = p.tail(Nr);
+        const VectorXr r = state.props().reactionRates();
+        return dxi - dt * M * r; // Δξ - ΔtMr = 0
+    };
 
-        specs.addConstraint(econstraint);
-    }
+    specs.addConstraints(econstraints);
+
+    // for(auto i = 0; i < K.cols(); ++i)
+    // {
+    //     EquationConstraint econstraint;
+    //     econstraint.id = reactions[i].name();
+    //     const auto idx = specs.addInput("xi0[" + econstraint.id + "]");
+    //     econstraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> real
+    //     {
+    //         auto const& dt = w[idt];
+    //         auto const& pi = p[offset + i];
+    //         // return pi - dt * M.row(i) * r;
+    //         return {};
+    //     };
+
+    //     specs.addConstraint(econstraint);
+    // }
 
 
     return specs;
