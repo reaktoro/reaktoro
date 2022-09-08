@@ -20,13 +20,9 @@
 // C++ includes
 #include <fstream>
 
-// CMakeRC includes
-#include <cmrc/cmrc.hpp>
-
-CMRC_DECLARE(ReaktoroEmbedded);
-
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
 
 namespace Reaktoro {
@@ -57,10 +53,8 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
         "    - supcrt16 \n",
         "    - supcrtbl \n",
         "");
-    auto fs = cmrc::ReaktoroEmbedded::get_filesystem();
-    auto file = fs.open("embedded/databases/reaktoro/" + name + ".yaml");
-    String text(file.begin(), file.end());
-    auto doc = yaml::parse(text);
+    const auto text = Embedded::get("databases/reaktoro/" + name + ".yaml");
+    const auto doc = yaml::parse(text);
     DatabaseParserYAML dbparser(doc);
     return Database(dbparser);
 }

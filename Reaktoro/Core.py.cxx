@@ -31,6 +31,7 @@ void exportDatabase(py::module& m);
 void exportElement(py::module& m);
 void exportElementalComposition(py::module& m);
 void exportElementList(py::module& m);
+void exportEmbedded(py::module& m);
 void exportFormationReaction(py::module& m);
 void exportPhase(py::module& m);
 void exportPhaseList(py::module& m);
@@ -67,6 +68,7 @@ void exportCore(py::module& m)
     exportElement(m);
     exportElementalComposition(m);
     exportElementList(m);
+    exportEmbedded(m);
     exportFormationReaction(m);
     exportPhase(m);
     exportPhaseList(m);
