@@ -18,7 +18,7 @@
 #include "StandardThermoModelConstant.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -35,7 +35,7 @@ auto createModelSerializer(const StandardThermoModelParamsConstant& params) -> M
     return [=]()
     {
         Data node;
-        node.at("Constant") = params;
+        node["Constant"] = params;
         return node;
     };
 }

@@ -21,7 +21,7 @@
 #include <cmath>
 
 // Reaktoro includes
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -43,7 +43,7 @@ auto createModelSerializer(const StandardThermoModelParamsHollandPowell& params)
     return [=]()
     {
         Data node;
-        node.at("HollandPowell") = params;
+        node["HollandPowell"] = params;
         return node;
     };
 }

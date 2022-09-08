@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -36,7 +36,7 @@ auto createModelSerializer(const ReactionStandardThermoModelParamsVantHoff& para
     return [=]()
     {
         Data node;
-        node.at("VantHoff") = params;
+        node["VantHoff"] = params;
         return node;
     };
 }

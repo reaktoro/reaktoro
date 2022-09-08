@@ -23,7 +23,7 @@ using std::log;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -40,7 +40,7 @@ auto createModelSerializer(const StandardThermoModelParamsMaierKelley& params) -
     return [=]()
     {
         Data node;
-        node.at("MaierKelley") = params;
+        node["MaierKelley"] = params;
         return node;
     };
 }

@@ -21,7 +21,7 @@
 #include <Reaktoro/Water/WaterConstants.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -37,7 +37,7 @@ auto createModelSerializer(const StandardThermoModelParamsWaterHKF& params) -> M
     return [=]()
     {
         Data node;
-        node.at("WaterHKF") = params;
+        node["WaterHKF"] = params;
         return node;
     };
 }

@@ -26,7 +26,7 @@ using std::log;
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Models/StandardThermoModels/Support/SpeciesElectroProps.hpp>
 #include <Reaktoro/Models/StandardThermoModels/Support/SpeciesElectroPropsHKF.hpp>
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 #include <Reaktoro/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Water/WaterElectroPropsJohnsonNorton.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
@@ -86,7 +86,7 @@ auto createModelSerializer(const StandardThermoModelParamsHKF& params) -> ModelS
     return [=]()
     {
         Data node;
-        node.at("HKF") = params;
+        node["HKF"] = params;
         return node;
     };
 }
