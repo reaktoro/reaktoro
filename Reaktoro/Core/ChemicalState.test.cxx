@@ -317,6 +317,42 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK( state.surfaceIndex("AqueousPhase", "Quartz") == state.surfaces().size() ); // this surface was not created!
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::update
+    //-------------------------------------------------------------------------
+
+    ChemicalState otherstate(system);
+
+    otherstate.update(state.temperature(), state.pressure(), state.speciesAmounts());
+
+    CHECK( otherstate.temperature() == state.temperature() );
+    CHECK( otherstate.pressure() == state.pressure() );
+    CHECK( otherstate.speciesAmounts().isApprox(state.speciesAmounts()) );
+
+    state.props().update(state);
+
+    CHECK( otherstate.props().temperature() == state.temperature() );
+    CHECK( otherstate.props().pressure() == state.pressure() );
+    CHECK( otherstate.props().speciesAmounts().isApprox(state.speciesAmounts()) );
+    CHECK( otherstate.props().speciesActivitiesLn().isApprox(state.props().speciesActivitiesLn()) );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::update
+    //-------------------------------------------------------------------------
+
+    otherstate.updateIdeal(state.temperature(), state.pressure(), state.speciesAmounts());
+
+    CHECK( otherstate.temperature() == state.temperature() );
+    CHECK( otherstate.pressure() == state.pressure() );
+    CHECK( otherstate.speciesAmounts().isApprox(state.speciesAmounts()) );
+
+    state.props().updateIdeal(state);
+
+    CHECK( otherstate.props().temperature() == state.temperature() );
+    CHECK( otherstate.props().pressure() == state.pressure() );
+    CHECK( otherstate.props().speciesAmounts().isApprox(state.speciesAmounts()) );
+    CHECK( otherstate.props().speciesActivitiesLn().isApprox(state.props().speciesActivitiesLn()) );
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::props
     //-------------------------------------------------------------------------
     state.props().update(state);
