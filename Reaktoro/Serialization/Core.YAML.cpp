@@ -90,7 +90,6 @@ REAKTORO_YAML_ENCODE_DEFINE(Database)
 REAKTORO_YAML_DECODE_DEFINE(Database)
 {
     obj = DatabaseParserYAML(node);
-    obj = DatabaseParserYAML(node);
 }
 
 //=====================================================================================================================
