@@ -52,7 +52,7 @@ auto PhaseList::size() const -> Index
     return m_phases.size();
 }
 
-auto PhaseList::species() const -> Vec<Species>
+auto PhaseList::species() const -> SpeciesList
 {
     auto num_species = 0;
     for(const auto& phase : m_phases)
