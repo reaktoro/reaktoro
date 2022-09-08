@@ -24,9 +24,7 @@
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
-#include <Reaktoro/Serialization/Common.Data.hpp>
-#include <Reaktoro/Serialization/Core.Data.hpp>
-#include <Reaktoro/Serialization/Models.Data.hpp>
+#include <Reaktoro/Serialization.hpp>
 
 namespace Reaktoro {
 
@@ -55,11 +53,13 @@ struct DatabaseParser::Impl
             "Are you forgetting to add the list of chemical species inside a Species YAML or JSON map?\n",
             "Please check other Reaktoro's YAML or JSON databases to identify what is not conforming.");
 
-        for(auto const& child : doc["Elements"].asDict())
-            addElement(child.first, child.second);
+        if(doc.exists("Elements"))
+            for(auto const& child : doc["Elements"].asDict())
+                addElement(child.first, child.second);
 
-        for(auto const& child : doc["Species"].asDict())
-            addSpecies(child.first, child.second);
+        if(doc.exists("Species"))
+            for(auto const& child : doc["Species"].asDict())
+                addSpecies(child.first, child.second);
     }
 
     /// Return the Data object with the details of an element with given unique @p symbol.
@@ -85,7 +85,7 @@ struct DatabaseParser::Impl
     {
         const auto attributes = getElementDetails(symbol);
         if(!attributes.isNull())
-            return addElement(attributes); // create an element using info in the database file.
+            return addElement(symbol, attributes); // create an element using info in the database file.
         Element element(symbol); // create an element using info from default elements in Elements.
         element_list.append(element);
         return element;
@@ -119,11 +119,11 @@ struct DatabaseParser::Impl
     auto addSpecies(String const& name, Data const& attributes) -> Species
     {
         errorif(!attributes.isDict(), "Expecting the attributes of a species as an object, but got instead:\n\n", attributes.repr());
-        errorif(!attributes["Formula"], "Missing `Formula` specification in:\n\n", attributes.repr());
-        errorif(!attributes["AggregateState"], "Missing `AggregateState` specification in:\n\n", attributes.repr());
-        errorif(!attributes["Elements"], "Missing `Elements` specification in:\n\n", attributes.repr(), "\n",
+        errorif(!attributes.exists("Formula"), "Missing `Formula` specification in:\n\n", attributes.repr());
+        errorif(!attributes.exists("AggregateState"), "Missing `AggregateState` specification in:\n\n", attributes.repr());
+        errorif(!attributes.exists("Elements"), "Missing `Elements` specification in:\n\n", attributes.repr(), "\n",
             "Please assign `Elements: null` if this species does not have chemical elements (e.g., e-, which may be represented with only `Charge: -1`).");
-        errorif(!attributes["FormationReaction"] && !attributes["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", attributes.repr());
+        errorif(!attributes.exists("FormationReaction") && !attributes.exists("StandardThermoModel"), "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", attributes.repr());
         const auto idx = species_list.find(name);
         if(idx < species_list.size())
             return species_list[idx]; // Do not add a species that has already been added! Return existing one.
@@ -148,7 +148,7 @@ struct DatabaseParser::Impl
     /// Create the elemental composition of the species whose attributes are found in the given Data object `data`.
     auto createElementalComposition(Data const& attributes) -> ElementalComposition
     {
-        if(!attributes.exists("Elements"))
+        if(!attributes.exists("Elements") || attributes.at("Elements").isNull())
             return {}; // for example, e- may be described with only Charge: -1 and Elements: null
 
         Pairs<Element, double> pairs;
