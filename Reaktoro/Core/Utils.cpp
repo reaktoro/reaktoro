@@ -172,12 +172,23 @@ auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elemen
     const auto num_components = num_elements + 1;
     const auto num_species = species.size();
     MatrixXd A(num_components, num_species);
-    for(auto i = 0; i < num_species; ++i)
-        for(auto j = 0; j < num_elements; ++j)
-            A(j, i) = species[i].elements().coefficient(elements[j].symbol());
-    for(auto i = 0; i < num_species; ++i)
-        A(num_elements, i) = species[i].charge();
+    for(auto i = 0; i < num_elements; ++i)
+        for(auto j = 0; j < num_species; ++j)
+            A(i, j) = species[j].elements().coefficient(elements[i].symbol());
+    for(auto j = 0; j < num_species; ++j)
+        A(num_elements, j) = species[j].charge();
     return A;
+}
+
+auto assembleStoichiometricMatrix(const ReactionList& reactions, const SpeciesList& species) -> MatrixXd
+{
+    const auto num_species = species.size();
+    const auto num_reactions = reactions.size();
+    MatrixXd S(num_species, num_reactions);
+    for(auto i = 0; i < num_species; ++i)
+        for(auto j = 0; j < num_reactions; ++j)
+            S(i, j) = reactions[j].equation().coefficient(species[i].name());
+    return S;
 }
 
 auto extractNames(const SpeciesList& list) -> Strings
