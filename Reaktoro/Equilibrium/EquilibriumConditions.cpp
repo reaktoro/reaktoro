@@ -30,10 +30,10 @@ namespace Reaktoro {
 namespace {
 
 /// Throw an error if an input variable has not been registered in the equilibrium specifications.
-/// @param inputs The list of registered input variables in the equilibrium specifications (e.g., {"T", "P", "pH"}).
+/// @param inputs The list of registered *w* input variables in the equilibrium specifications (e.g., {"T", "P", "pH"}).
 /// @param wid The id of the input variable that needs to be checked in the equilibrium specifications (e.g., "T").
 /// @param propertymsg The message about the property being constrained (e.g., "temperature").
-auto throwErrorIfNotRegisteredInput(const Strings& inputs, const String& wid, const String& propertymsg) -> void
+auto throwErrorIfNotRegisteredInput(Strings const& inputs, String const& wid, String const& propertymsg) -> void
 {
     const auto registered = contains(inputs, wid);
     errorif(!registered, "Cannot set ", propertymsg, " for the equilibrium calculation "
@@ -42,349 +42,391 @@ auto throwErrorIfNotRegisteredInput(const Strings& inputs, const String& wid, co
 
 } // namespace
 
-EquilibriumConditions::EquilibriumConditions(const EquilibriumSpecs& specs)
-: m_system(specs.system()),
-  m_inputs(specs.inputs()),
-  m_control_variables_p(specs.namesControlVariablesP()),
-  m_idxT(specs.indexControlVariableTemperature()),
-  m_idxP(specs.indexControlVariablePressure())
+EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
+: msystem(specs.system()),
+  wvars(specs.inputs()),
+  pvars(specs.namesControlVariablesP()),
+  itemperature_p(specs.indexTemperatureAmongControlVariablesP()),
+  ipressure_p(specs.indexPressureAmongControlVariablesP()),
+  isurface_areas_w(specs.indicesSurfaceAreasAmongInputVariablesW()),
+  isurface_areas_p(specs.indicesSurfaceAreasAmongControlVariablesP()),
+  isurface_areas_known(specs.indicesSurfaceAreasKnown()),
+  isurface_areas_unknown(specs.indicesSurfaceAreasUnknown())
 {
-    // Initialize the values of the input variables to zero
-    m_inputs_values = zeros(specs.numInputs());
+    // Initialize the values of the *w* input variables to NaN, so that we can easily verify later which ones have not been specified yet by the user.
+    w = constants(specs.numInputs(), NaN);
 
-    // Initialize the values of the input variables that are model parameters to their current values
+    // Initialize the values of the *w* input variables that are model parameters to their current values
     for(auto [i, idx] : enumerate(specs.indicesParams()))
-        m_inputs_values[idx] = specs.params()[i].value();
+        w[idx] = specs.params()[i].value();
 
     // Initialize the default lower and upper bounds for the *p* control variables (-inf and inf respectively).
-    m_plower.setConstant(m_control_variables_p.size(), -inf);
-    m_pupper.setConstant(m_control_variables_p.size(),  inf);
+    plower.setConstant(pvars.size(), -inf);
+    pupper.setConstant(pvars.size(),  inf);
 }
 
-auto EquilibriumConditions::temperature(real value, String unit) -> void
+//=================================================================================================
+//
+// METHODS TO SPECIFY THERMODYNAMIC CONDITIONS
+//
+//=================================================================================================
+
+auto EquilibriumConditions::temperature(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "T", "temperature");
-    value = units::convert(value, unit, "K");
-    const auto idx = index(m_inputs, "T");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "T", "temperature");
+    const auto idx = index(wvars, "T");
+    w[idx] = units::convert(value, unit, "K");
 }
 
-auto EquilibriumConditions::pressure(real value, String unit) -> void
+auto EquilibriumConditions::pressure(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "P", "pressure");
-    value = units::convert(value, unit, "Pa");
-    const auto idx = index(m_inputs, "P");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "P", "pressure");
+    const auto idx = index(wvars, "P");
+    w[idx] = units::convert(value, unit, "Pa");
 }
 
-auto EquilibriumConditions::volume(real value, String unit) -> void
+auto EquilibriumConditions::volume(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "V", "volume");
-    value = units::convert(value, unit, "m3");
-    const auto idx = index(m_inputs, "V");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "V", "volume");
+    const auto idx = index(wvars, "V");
+    w[idx] = units::convert(value, unit, "m3");
 }
 
-auto EquilibriumConditions::internalEnergy(real value, String unit) -> void
+auto EquilibriumConditions::internalEnergy(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "U", "internal energy");
-    value = units::convert(value, unit, "J");
-    const auto idx = index(m_inputs, "U");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "U", "internal energy");
+    const auto idx = index(wvars, "U");
+    w[idx] = units::convert(value, unit, "J");
 }
 
-auto EquilibriumConditions::enthalpy(real value, String unit) -> void
+auto EquilibriumConditions::enthalpy(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "H", "enthalpy");
-    value = units::convert(value, unit, "J");
-    const auto idx = index(m_inputs, "H");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "H", "enthalpy");
+    const auto idx = index(wvars, "H");
+    w[idx] = units::convert(value, unit, "J");
 }
 
-auto EquilibriumConditions::gibbsEnergy(real value, String unit) -> void
+auto EquilibriumConditions::gibbsEnergy(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "G", "Gibbs energy");
-    value = units::convert(value, unit, "J");
-    const auto idx = index(m_inputs, "G");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "G", "Gibbs energy");
+    const auto idx = index(wvars, "G");
+    w[idx] = units::convert(value, unit, "J");
 }
 
-auto EquilibriumConditions::helmholtzEnergy(real value, String unit) -> void
+auto EquilibriumConditions::helmholtzEnergy(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "A", "Helmholtz energy");
-    value = units::convert(value, unit, "J");
-    const auto idx = index(m_inputs, "A");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "A", "Helmholtz energy");
+    const auto idx = index(wvars, "A");
+    w[idx] = units::convert(value, unit, "J");
 }
 
-auto EquilibriumConditions::entropy(real value, String unit) -> void
+auto EquilibriumConditions::entropy(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "S", "entropy");
-    value = units::convert(value, unit, "J/K");
-    const auto idx = index(m_inputs, "S");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "S", "entropy");
+    const auto idx = index(wvars, "S");
+    w[idx] = units::convert(value, unit, "J/K");
 }
 
-auto EquilibriumConditions::charge(real value, String unit) -> void
+auto EquilibriumConditions::charge(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "charge", "charge");
-    value = units::convert(value, unit, "mol");
-    const auto idx = index(m_inputs, "charge");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "charge", "charge");
+    const auto idx = index(wvars, "charge");
+    w[idx] = units::convert(value, unit, "mol");
 }
 
-auto EquilibriumConditions::elementAmount(const StringOrIndex& element, real value, String unit) -> void
+auto EquilibriumConditions::elementAmount(StringOrIndex const& element, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
-    const auto elementsymbol = m_system.element(ielement).symbol();
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto elementsymbol = msystem.element(ielement).symbol();
     const auto id = "elementAmount[" + elementsymbol + "]";
     const auto errormsg = "element amount of " + elementsymbol;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "mol");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "mol");
 }
 
-auto EquilibriumConditions::elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase, real value, String unit) -> void
+auto EquilibriumConditions::elementAmountInPhase(StringOrIndex const& element, StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
-    const auto elementsymbol = m_system.element(ielement).symbol();
-    const auto phasename = m_system.phase(iphase).name();
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto elementsymbol = msystem.element(ielement).symbol();
+    const auto phasename = msystem.phase(iphase).name();
     const auto id = "elementAmountInPhase[" + elementsymbol + "][" + phasename + "]";
     const auto errormsg = "element amount of " + elementsymbol + " in phase " + phasename;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "mol");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "mol");
 }
 
-auto EquilibriumConditions::elementMass(const StringOrIndex& element, real value, String unit) -> void
+auto EquilibriumConditions::elementMass(StringOrIndex const& element, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
-    const auto elementsymbol = m_system.element(ielement).symbol();
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto elementsymbol = msystem.element(ielement).symbol();
     const auto id = "elementMass[" + elementsymbol + "]";
     const auto errormsg = "element mass of " + elementsymbol;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "kg");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "kg");
 }
 
-auto EquilibriumConditions::elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase, real value, String unit) -> void
+auto EquilibriumConditions::elementMassInPhase(StringOrIndex const& element, StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
-    const auto elementsymbol = m_system.element(ielement).symbol();
-    const auto phasename = m_system.phase(iphase).name();
+    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto elementsymbol = msystem.element(ielement).symbol();
+    const auto phasename = msystem.phase(iphase).name();
     const auto id = "elementMassInPhase[" + elementsymbol + "][" + phasename + "]";
     const auto errormsg = "element mass of " + elementsymbol + " in phase " + phasename;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "kg");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "kg");
 }
 
-auto EquilibriumConditions::phaseAmount(const StringOrIndex& phase, real value, String unit) -> void
+auto EquilibriumConditions::phaseAmount(StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
-    const auto phasename = m_system.phase(iphase).name();
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto phasename = msystem.phase(iphase).name();
     const auto id = "phaseAmount[" + phasename + "]";
     const auto errormsg = "phase amount of " + phasename;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "mol");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "mol");
 }
 
-auto EquilibriumConditions::phaseMass(const StringOrIndex& phase, real value, String unit) -> void
+auto EquilibriumConditions::phaseMass(StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
-    const auto phasename = m_system.phase(iphase).name();
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto phasename = msystem.phase(iphase).name();
     const auto id = "phaseMass[" + phasename + "]";
     const auto errormsg = "phase mass of " + phasename;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "kg");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "kg");
 }
 
-auto EquilibriumConditions::phaseVolume(const StringOrIndex& phase, real value, String unit) -> void
+auto EquilibriumConditions::phaseVolume(StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
-    const auto phasename = m_system.phase(iphase).name();
+    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto phasename = msystem.phase(iphase).name();
     const auto id = "phaseVolume[" + phasename + "]";
     const auto errormsg = "phase volume of " + phasename;
-    throwErrorIfNotRegisteredInput(m_inputs, id, errormsg);
-    value = units::convert(value, unit, "m3");
-    const auto idx = index(m_inputs, id);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, id, errormsg);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "m3");
 }
 
-auto EquilibriumConditions::chemicalPotential(String substance, real value, String unit) -> void
+//=================================================================================================
+//
+// METHODS TO SPECIFY SURFACE AREA CONDITIONS
+//
+//=================================================================================================
+
+auto EquilibriumConditions::surfaceAreas(ArrayXrConstRef const& values) -> void
+{
+    assert((values >= 0.0).all());
+    assert(values.size() == msystem.surfaces().size());
+    w(isurface_areas_w) = values(isurface_areas_known);
+}
+
+auto EquilibriumConditions::surfaceArea(StringOrIndex const& surface, real const& value, String const& unit) -> void
+{
+    auto const& surfaces = msystem.surfaces();
+    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
+    errorifnot(isurface < surfaces.size(), "There is no surface area with name or index `", stringfy(surface), "` in the chemical system.");
+    auto const surface_name = surfaces[isurface].name();
+    const auto id = "surfaceArea[" + surface_name + "]";
+    throwErrorIfNotRegisteredInput(wvars, id, "the area of surface " + surface_name);
+    const auto idx = index(wvars, id);
+    w[idx] = units::convert(value, unit, "m2");
+}
+
+//=================================================================================================
+//
+// METHODS TO SPECIFY CHEMICAL POTENTIAL CONDITIONS
+//
+//=================================================================================================
+
+auto EquilibriumConditions::chemicalPotential(String const& substance, real const& value, String const& unit) -> void
 {
     const auto pid = "u[" + substance + "]";
-    throwErrorIfNotRegisteredInput(m_inputs, pid, "the chemical potential of " + substance);
-    value = units::convert(value, unit, "J/mol");
-    const auto idx = index(m_inputs, pid);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, pid, "the chemical potential of " + substance);
+    const auto idx = index(wvars, pid);
+    w[idx] = units::convert(value, unit, "J/mol");
 }
 
-auto EquilibriumConditions::lnActivity(String species, real value) -> void
+auto EquilibriumConditions::lnActivity(String const& species, real const& value) -> void
 {
     const auto pid = "ln(a[" + species + "])";
-    throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
-    const auto idx = index(m_inputs, pid);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, pid, "the activity of " + species);
+    const auto idx = index(wvars, pid);
+    w[idx] = value;
 }
 
-auto EquilibriumConditions::lgActivity(String species, real value) -> void
+auto EquilibriumConditions::lgActivity(String const& species, real const& value) -> void
 {
     const auto pid = "ln(a[" + species + "])";
-    throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
-    const auto idx = index(m_inputs, pid);
-    m_inputs_values[idx] = value * ln10;
+    throwErrorIfNotRegisteredInput(wvars, pid, "the activity of " + species);
+    const auto idx = index(wvars, pid);
+    w[idx] = value * ln10;
 }
 
-auto EquilibriumConditions::activity(String species, real value) -> void
+auto EquilibriumConditions::activity(String const& species, real const& value) -> void
 {
     const auto pid = "ln(a[" + species + "])";
-    throwErrorIfNotRegisteredInput(m_inputs, pid, "the activity of " + species);
-    const auto idx = index(m_inputs, pid);
-    m_inputs_values[idx] = log(value);
+    throwErrorIfNotRegisteredInput(wvars, pid, "the activity of " + species);
+    const auto idx = index(wvars, pid);
+    w[idx] = log(value);
 }
 
-auto EquilibriumConditions::fugacity(String gas, real value, String unit) -> void
+auto EquilibriumConditions::fugacity(String const& gas, real const& value, String const& unit) -> void
 {
     const auto pid = "f[" + gas + "]";
-    throwErrorIfNotRegisteredInput(m_inputs, pid, "the fugacity of " + gas);
-    value = units::convert(value, unit, "bar");
-    const auto idx = index(m_inputs, pid);
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, pid, "the fugacity of " + gas);
+    const auto idx = index(wvars, pid);
+    w[idx] = units::convert(value, unit, "bar");
 }
 
-auto EquilibriumConditions::pH(real value) -> void
+auto EquilibriumConditions::pH(real const& value) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "pH", "pH");
-    const auto idx = index(m_inputs, "pH");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "pH", "pH");
+    const auto idx = index(wvars, "pH");
+    w[idx] = value;
 }
 
-auto EquilibriumConditions::pMg(real value) -> void
+auto EquilibriumConditions::pMg(real const& value) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "pMg", "pMg");
-    const auto idx = index(m_inputs, "pMg");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "pMg", "pMg");
+    const auto idx = index(wvars, "pMg");
+    w[idx] = value;
 }
 
-auto EquilibriumConditions::pE(real value) -> void
+auto EquilibriumConditions::pE(real const& value) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "pE", "pE");
-    const auto idx = index(m_inputs, "pE");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "pE", "pE");
+    const auto idx = index(wvars, "pE");
+    w[idx] = value;
 }
 
-auto EquilibriumConditions::Eh(real value, String unit) -> void
+auto EquilibriumConditions::Eh(real const& value, String const& unit) -> void
 {
-    throwErrorIfNotRegisteredInput(m_inputs, "Eh", "Eh");
-    const auto idx = index(m_inputs, "Eh");
-    m_inputs_values[idx] = value;
+    throwErrorIfNotRegisteredInput(wvars, "Eh", "Eh");
+    const auto idx = index(wvars, "Eh");
+    w[idx] = value;
 }
 
-auto EquilibriumConditions::setLowerBoundTemperature(double value, String unit) -> void
+//=================================================================================================
+//
+// METHODS TO SPECIFY LOWER AND UPPER BOUNDS FOR UNKNOWN VARIABLES
+//
+//=================================================================================================
+
+auto EquilibriumConditions::setLowerBoundTemperature(double value, String const& unit) -> void
 {
-    if(m_idxT < m_plower.size())
-        m_plower[m_idxT] = units::convert(value, unit, "K");
+    if(itemperature_p < plower.size())
+        plower[itemperature_p] = units::convert(value, unit, "K");
 }
 
-auto EquilibriumConditions::setUpperBoundTemperature(double value, String unit) -> void
+auto EquilibriumConditions::setUpperBoundTemperature(double value, String const& unit) -> void
 {
-    if(m_idxT < m_pupper.size())
-        m_pupper[m_idxT] = units::convert(value, unit, "K");
+    if(itemperature_p < pupper.size())
+        pupper[itemperature_p] = units::convert(value, unit, "K");
 }
 
-auto EquilibriumConditions::setLowerBoundPressure(double value, String unit) -> void
+auto EquilibriumConditions::setLowerBoundPressure(double value, String const& unit) -> void
 {
-    if(m_idxP < m_plower.size())
-        m_plower[m_idxP] = units::convert(value, unit, "Pa");
+    if(ipressure_p < plower.size())
+        plower[ipressure_p] = units::convert(value, unit, "Pa");
 }
 
-auto EquilibriumConditions::setUpperBoundPressure(double value, String unit) -> void
+auto EquilibriumConditions::setUpperBoundPressure(double value, String const& unit) -> void
 {
-    if(m_idxP < m_pupper.size())
-        m_pupper[m_idxP] = units::convert(value, unit, "Pa");
+    if(ipressure_p < pupper.size())
+        pupper[ipressure_p] = units::convert(value, unit, "Pa");
 }
 
-auto EquilibriumConditions::setLowerBoundTitrant(String substance, double value, String unit) -> void
+auto EquilibriumConditions::setLowerBoundTitrant(String const& substance, double value, String const& unit) -> void
 {
-    const auto idx = index(m_control_variables_p, substance);
-    const auto size = m_control_variables_p.size();
+    const auto idx = index(pvars, substance);
+    const auto size = pvars.size();
     errorif(idx >= size, "EquilibriumConditions::setLowerBoundTitrant requires a substance name that was specified in a call to EquilibriumSpecs::openTo.");
-    m_plower[idx] = units::convert(value, unit, "mol");
+    plower[idx] = units::convert(value, unit, "mol");
 }
 
-auto EquilibriumConditions::setUpperBoundTitrant(String substance, double value, String unit) -> void
+auto EquilibriumConditions::setUpperBoundTitrant(String const& substance, double value, String const& unit) -> void
 {
-    const auto idx = index(m_control_variables_p, substance);
-    const auto size = m_control_variables_p.size();
+    const auto idx = index(pvars, substance);
+    const auto size = pvars.size();
     errorif(idx >= size, "EquilibriumConditions::setUpperBoundTitrant requires a substance name that was specified in a call to EquilibriumSpecs::openTo.");
-    m_pupper[idx] = units::convert(value, unit, "mol");
+    pupper[idx] = units::convert(value, unit, "mol");
 }
 
-auto EquilibriumConditions::set(const String& input, const real& val) -> void
+//=================================================================================================
+//
+// MISCELLANEOUS METHODS
+//
+//=================================================================================================
+
+auto EquilibriumConditions::set(String const& input, real const& val) -> void
 {
     setInputVariable(input, val);
 }
 
-auto EquilibriumConditions::setInputVariable(const String& input, const real& val) -> void
+auto EquilibriumConditions::setInputVariable(String const& input, real const& val) -> void
 {
-    const auto idx = index(m_inputs, input);
-    const auto size = m_inputs.size();
+    const auto idx = index(wvars, input);
+    const auto size = wvars.size();
     errorif(idx >= size, "There is no input variable with name `", input, "` in this EquilibriumConditions object.");
-    m_inputs_values[idx] = val;
+    w[idx] = val;
 }
 
-auto EquilibriumConditions::setInputVariables(VectorXrConstRef const& values) -> void
+auto EquilibriumConditions::setInputVariables(ArrayXrConstRef const& values) -> void
 {
-    errorif(values.size() != m_inputs_values.size(), "Expecting in EquilibriumConditions::setInputVariables a vector with same size as that of number of input variables, ", m_inputs_values.size(), ", but got instead a vector with size ", values.size(), ".");
-    m_inputs_values = values;
+    errorif(values.size() != w.size(), "Expecting in EquilibriumConditions::setInputVariables a vector with same size as that of number of *w* input variables, ", w.size(), ", but got instead a vector with size ", values.size(), ".");
+    w = values;
 }
 
-auto EquilibriumConditions::setLowerBoundsControlVariablesP(VectorXdConstRef const& values) -> void
+auto EquilibriumConditions::setLowerBoundsControlVariablesP(ArrayXdConstRef const& values) -> void
 {
-    errorif(values.size() != m_plower.size(), "Expecting in EquilibriumConditions::setLowerBoundsControlVariablesP a vector with same size as that of number of p control variables, ", m_plower.size(), ", but got instead a vector with size ", values.size(), ".");
-    m_plower = values;
+    errorif(values.size() != plower.size(), "Expecting in EquilibriumConditions::setLowerBoundsControlVariablesP a vector with same size as that of number of p control variables, ", plower.size(), ", but got instead a vector with size ", values.size(), ".");
+    plower = values;
 }
 
-auto EquilibriumConditions::setUpperBoundsControlVariablesP(VectorXdConstRef const& values) -> void
+auto EquilibriumConditions::setUpperBoundsControlVariablesP(ArrayXdConstRef const& values) -> void
 {
-    errorif(values.size() != m_pupper.size(), "Expecting in EquilibriumConditions::setUpperBoundsControlVariablesP a vector with same size as that of number of p control variables, ", m_pupper.size(), ", but got instead a vector with size ", values.size(), ".");
-    m_pupper = values;
+    errorif(values.size() != pupper.size(), "Expecting in EquilibriumConditions::setUpperBoundsControlVariablesP a vector with same size as that of number of p control variables, ", pupper.size(), ", but got instead a vector with size ", values.size(), ".");
+    pupper = values;
 }
 
-auto EquilibriumConditions::system() const -> const ChemicalSystem&
+auto EquilibriumConditions::system() const -> ChemicalSystem const&
 {
-    return m_system;
+    return msystem;
 }
 
-auto EquilibriumConditions::inputNames() const -> const Strings&
+auto EquilibriumConditions::inputNames() const -> Strings const&
 {
-    return m_inputs;
+    return wvars;
 }
 
-auto EquilibriumConditions::inputValues() const -> VectorXrConstRef
+auto EquilibriumConditions::inputValues() const -> ArrayXrConstRef
 {
-    return m_inputs_values;
+    return w;
 }
 
-auto EquilibriumConditions::lowerBoundsControlVariablesP() const -> VectorXdConstRef
+auto EquilibriumConditions::inputValue(String const& name) const -> real const&
 {
-    return m_plower;
+    auto k = index(wvars, name);
+    errorifnot(k < wvars.size(), "Your equilibrium problem specifications do not include an input variable named `", name, "`.");
+    return w[k];
 }
 
-auto EquilibriumConditions::upperBoundsControlVariablesP() const -> VectorXdConstRef
+auto EquilibriumConditions::lowerBoundsControlVariablesP() const -> ArrayXdConstRef
 {
-    return m_pupper;
+    return plower;
+}
+
+auto EquilibriumConditions::upperBoundsControlVariablesP() const -> ArrayXdConstRef
+{
+    return pupper;
 }
 
 } // namespace Reaktoro
