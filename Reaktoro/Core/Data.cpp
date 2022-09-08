@@ -48,14 +48,14 @@ auto convertYamlScalar(yaml const& obj) -> Data
     auto const& word = obj.Scalar();
     auto number = 0.0;
     if(isFloat(word, number))
-        return Data(number);
+        return Param(number);
     else
     {
         if(word == "true" || word == "True")
-            return Data(true);
+            return true;
         if(word == "false" || word == "False")
-            return Data(false);
-        return Data(word);
+            return false;
+        return word;
     }
 }
 
@@ -207,46 +207,36 @@ auto Data::asString() const -> String const&
     return std::any_cast<String const&>(tree);
 }
 
-auto Data::asFloat() const -> double
-{
-    if(isFloat())
-        return std::any_cast<double const&>(tree);
-    else if(isInteger())
-        return std::any_cast<int const&>(tree);
-    else if(isReal())
-        return std::any_cast<real const&>(tree).val();
-    else if(isParam())
-        return std::any_cast<Param const&>(tree).value().val();
-    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be either a float, integer, real, or Param object.");
-}
-
-auto Data::asInteger() const -> int
-{
-    if(isInteger())
-        return std::any_cast<int const&>(tree);
-    else if(isFloat())
-        return std::any_cast<double const&>(tree);
-    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be either an integer or float number.");
-}
-
 auto Data::asBoolean() const -> bool
 {
     errorif(!isBoolean(), "Cannot convert this Data object to a boolean value.");
     return std::any_cast<bool const&>(tree);
 }
 
+auto Data::asInteger() const -> int
+{
+    if(isParam())
+        return std::any_cast<Param const&>(tree).value().val();
+    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be a Param object.");
+}
+
+auto Data::asFloat() const -> double
+{
+    if(isParam())
+        return std::any_cast<Param const&>(tree).value().val();
+    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be a Param object.");
+}
+
 auto Data::asReal() const -> real const&
 {
-    if(isReal())
-        return std::any_cast<real const&>(tree);
-    else if(isParam())
+    if(isParam())
         return std::any_cast<Param const&>(tree).value();
-    else errorif(true, "Cannot convert this Data object to a real number. This Data object should be either a real or Param object.");
+    else errorif(true, "Cannot convert this Data object to a real number. This Data object should be a Param object.");
 }
 
 auto Data::asParam() const -> Param const&
 {
-    errorif(!isParam(), "Cannot convert this Data object to a Param object.");
+    errorif(!isParam(), "Cannot convert this Data object to a Param object. This Data object should be a Param object.");
     return std::any_cast<Param const&>(tree);
 }
 
@@ -412,26 +402,29 @@ Data::operator Param() const
     return asParam();
 }
 
-REAKTORO_DATA_ENCODE_DEFINE(int) { data = obj; }
-REAKTORO_DATA_DECODE_DEFINE(int) { obj = data.asInteger(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(Index) { data = obj; }
-REAKTORO_DATA_DECODE_DEFINE(Index) { obj = data.asInteger(); }
-
 REAKTORO_DATA_ENCODE_DEFINE(bool) { data = obj; }
 REAKTORO_DATA_DECODE_DEFINE(bool) { obj = data.asBoolean(); }
 
-REAKTORO_DATA_ENCODE_DEFINE(Chars) { data = Data(obj); }
+REAKTORO_DATA_ENCODE_DEFINE(Chars) { data = String(obj); }
 REAKTORO_DATA_DECODE_DEFINE(Chars) { obj = data.asString().c_str(); }
 
 REAKTORO_DATA_ENCODE_DEFINE(String) { data = obj; }
 REAKTORO_DATA_DECODE_DEFINE(String) { obj = data.asString(); }
 
+REAKTORO_DATA_ENCODE_DEFINE(int) { data = Param(obj); }
+REAKTORO_DATA_DECODE_DEFINE(int) { obj = data.asInteger(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(Index) { data = Param(obj); }
+REAKTORO_DATA_DECODE_DEFINE(Index) { obj = data.asInteger(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(double) { data = Param(obj); }
+REAKTORO_DATA_DECODE_DEFINE(double) { obj = data.asFloat(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(real) { data = Param(obj); }
+REAKTORO_DATA_DECODE_DEFINE(real) { obj = data.asReal(); }
+
 REAKTORO_DATA_ENCODE_DEFINE(Param) { data = obj; }
 REAKTORO_DATA_DECODE_DEFINE(Param) { obj = data.asParam(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(real) { data = obj; }
-REAKTORO_DATA_DECODE_DEFINE(real) { obj = data.asReal(); }
 
 } // namespace Reaktoro
 

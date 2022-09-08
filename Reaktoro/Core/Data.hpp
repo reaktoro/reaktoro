@@ -73,17 +73,17 @@ public:
     /// Return a Data object by parsing a JSON document.
     static auto fromJson(std::istream& input) -> Data;
 
+    /// Return this Data object as a boolean value.
+    auto asBoolean() const -> bool;
+
     /// Return this Data object as a string.
     auto asString() const -> String const&;
-
-    /// Return this Data object as a float number.
-    auto asFloat() const -> double;
 
     /// Return this Data object as an integer number.
     auto asInteger() const -> int;
 
-    /// Return this Data object as a boolean value.
-    auto asBoolean() const -> bool;
+    /// Return this Data object as a float number.
+    auto asFloat() const -> double;
 
     /// Return this Data object as a real number.
     auto asReal() const -> real const&;
@@ -97,17 +97,17 @@ public:
     /// Return this Data object as a list object.
     auto asList() const -> Vec<Data> const&;
 
+    /// Return true if this Data object is a boolean value.
+    auto isBoolean() const -> bool;
+
     /// Return true if this Data object is a string.
     auto isString() const -> bool;
-
-    /// Return true if this Data object is a float number.
-    auto isFloat() const -> bool;
 
     /// Return true if this Data object is a integer number.
     auto isInteger() const -> bool;
 
-    /// Return true if this Data object is a boolean value.
-    auto isBoolean() const -> bool;
+    /// Return true if this Data object is a float number.
+    auto isFloat() const -> bool;
 
     /// Return true if this Data object is a real object.
     auto isReal() const -> bool;
@@ -237,9 +237,9 @@ private:
 
 template<> inline auto Data::assign(bool const& obj) -> void { tree = obj; }
 template<> inline auto Data::assign(String const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(int const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(double const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(real const& obj) -> void { tree = obj; }
+template<> inline auto Data::assign(int const& obj) -> void { tree = Param(obj); }
+template<> inline auto Data::assign(double const& obj) -> void { tree = Param(obj); }
+template<> inline auto Data::assign(real const& obj) -> void { tree = Param(obj); }
 template<> inline auto Data::assign(Param const& obj) -> void { tree = obj; }
 template<> inline auto Data::assign(Vec<Data> const& obj) -> void { tree = obj; }
 template<> inline auto Data::assign(Map<String, Data> const& obj) -> void { tree = obj; }
@@ -262,12 +262,6 @@ template<> inline auto Data::assign(Map<String, Data> const& obj) -> void { tree
 
 #define REAKTORO_COMMA ,
 
-REAKTORO_DATA_ENCODE_DECLARE(int);
-REAKTORO_DATA_DECODE_DECLARE(int);
-
-REAKTORO_DATA_ENCODE_DECLARE(Index);
-REAKTORO_DATA_DECODE_DECLARE(Index);
-
 REAKTORO_DATA_ENCODE_DECLARE(bool);
 REAKTORO_DATA_DECODE_DECLARE(bool);
 
@@ -277,11 +271,20 @@ REAKTORO_DATA_DECODE_DECLARE(Chars);
 REAKTORO_DATA_ENCODE_DECLARE(String);
 REAKTORO_DATA_DECODE_DECLARE(String);
 
-REAKTORO_DATA_ENCODE_DECLARE(Param);
-REAKTORO_DATA_DECODE_DECLARE(Param);
+REAKTORO_DATA_ENCODE_DECLARE(int);
+REAKTORO_DATA_DECODE_DECLARE(int);
+
+REAKTORO_DATA_ENCODE_DECLARE(Index);
+REAKTORO_DATA_DECODE_DECLARE(Index);
+
+REAKTORO_DATA_ENCODE_DECLARE(double);
+REAKTORO_DATA_DECODE_DECLARE(double);
 
 REAKTORO_DATA_ENCODE_DECLARE(real);
 REAKTORO_DATA_DECODE_DECLARE(real);
+
+REAKTORO_DATA_ENCODE_DECLARE(Param);
+REAKTORO_DATA_DECODE_DECLARE(Param);
 
 REAKTORO_DATA_ENCODE_DECLARE(Vec<T>, typename T);
 REAKTORO_DATA_DECODE_DECLARE(Vec<T>, typename T);
