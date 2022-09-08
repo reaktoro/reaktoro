@@ -188,7 +188,7 @@ public:
     struct Decode
     {
         /// Evaluate the conversion of a Data object to an object with custom type.
-        static auto decode(Data const& data, Type& obj) -> void
+        static auto eval(Data const& data, Type& obj) -> void
         {
             errorif(true, "Cannot convert an object a Data object to an object of type ", typeid(Type).name(), " because Convert::decode was not defined for it.");
         }
@@ -214,6 +214,22 @@ public:
     }
 
     auto assign(Chars obj) -> void { tree = String(obj); }
+
+    /// Convert this Data object into an object of type `Type`.
+    template<typename Type>
+    auto as() const -> Type
+    {
+        Type obj;
+        Decode<Type>::eval(*this, obj);
+        return obj;
+    }
+
+    /// Decode this Data object into an object of type `Type`.
+    template<typename Type>
+    auto to(Type& obj) const -> void
+    {
+        Decode<Type>::eval(*this, obj);
+    }
 
 private:
     Any tree;
@@ -290,7 +306,7 @@ template<typename T>
 REAKTORO_DATA_DECODE_DEFINE(Vec<T>, typename T)
 {
     for(auto const& x : data.asList())
-        obj.push_back(x);
+        obj.push_back(x.as<T>());
 }
 
 template<typename T, std::size_t N>
@@ -305,7 +321,7 @@ REAKTORO_DATA_DECODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N
 {
     auto i = 0;
     for(auto const& x : data.asList())
-        obj[i++] = x;
+        obj[i++] = x.as<T>();
 }
 
 template<typename A, typename B>
@@ -320,8 +336,8 @@ REAKTORO_DATA_DECODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
 {
     auto const& l = data.asList();
     errorif(l.size() != 2, "Converting from Data to Pair requires the Data object to be a list with two entries.");
-    obj.first = l[0];
-    obj.second = l[1];
+    obj.first = l[0].as<A>();
+    obj.second = l[1].as<B>();
 }
 
 template<typename K, typename T>
@@ -335,7 +351,7 @@ template<typename K, typename T>
 REAKTORO_DATA_DECODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
 {
     for(auto const& [k, v] : data.asDict())
-        obj[k] = v;
+        obj[k] = v.template as<T>();
 }
 
 } // namespace Reaktoro
