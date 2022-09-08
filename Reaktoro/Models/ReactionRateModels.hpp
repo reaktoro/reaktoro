@@ -17,6 +17,10 @@
 
 #pragma once
 
+#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
+#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactionRateModel.hpp>
+#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
+
 /// @defgroup ReactionRateModels Reaction Rate Models
 /// @ingroup Models
 /// @brief The module in Reaktoro in which kinetic rate models for reactions are implemented.
