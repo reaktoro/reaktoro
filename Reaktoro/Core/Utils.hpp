@@ -91,7 +91,10 @@ auto extractNames(const PhaseList& list) -> Strings;
 /// vector `{}` is returned. In case the reaction contains only one species, a
 /// single-entry vector `{ {i, i} }` is returned where `i` is the index of the
 /// phase in which the species exists.
-auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Vec<Pair<Index, Index>>;
+auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Pairs<Index, Index>;
+
+/// Return the phase interfaces, as phase index pairs, across which reactions take place.
+auto determineReactingPhaseInterfaces(const Vec<Reaction>& reactions, const PhaseList& phases) -> Pairs<Index, Index>;
 
 } // namespace detail
 } // namespace Reaktoro

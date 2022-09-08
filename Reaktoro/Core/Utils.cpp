@@ -206,7 +206,7 @@ auto extractNames(const PhaseList& list) -> Strings
     return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
-auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Vec<Pair<Index, Index>>
+auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Pairs<Index, Index>
 {
     Indices iphases;
     for(auto const& species : reaction.equation().species())
@@ -229,13 +229,23 @@ auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseLis
     if(iphases.size() == 1)
         return {};
 
-    Vec<Pair<Index, Index>> surfaces;
+    Pairs<Index, Index> surfaces;
 
     for(auto i = 0; i < iphases.size(); ++i)
         for(auto j = i + 1; j < iphases.size(); ++j)
             surfaces.push_back({ iphases[i], iphases[j] });
 
     return surfaces;
+}
+
+auto determineReactingPhaseInterfaces(const Vec<Reaction>& reactions, const PhaseList& phases) -> Pairs<Index, Index>
+{
+    Pairs<Index, Index> result;
+
+    for(auto const& reaction : reactions)
+        result = merge(result, determinePhaseInterfacesInReaction(reaction, phases));
+
+    return result;
 }
 
 } // namespace detail
