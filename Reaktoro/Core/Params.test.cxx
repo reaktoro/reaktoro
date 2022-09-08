@@ -22,48 +22,30 @@
 #include <Reaktoro/Core/Params.hpp>
 using namespace Reaktoro;
 
+const auto some_model_params_1 = R"(
+SomeModelParams1:
+  A: 1.1
+  B: 1.2
+)";
+
+const auto some_model_params_2 = R"(
+SomeModelParams2:
+  C: 2.1
+  D: 2.2
+)";
+
 TEST_CASE("Testing Params class", "[Params]")
 {
-    Params foo;
-    foo.set("A", 1.0);
-    foo.set("B", 2.0);
-
-    Params bar;
-    bar.set("C", 5.0);
-    bar.set("D", 6.0);
-    bar.set("E", 7.0);
+    Params params1(Data::fromYaml(some_model_params_1));
+    Params params2(Data::fromYaml(some_model_params_2));
 
     Params params;
-    params.set("Foo", foo);
-    params.set("Bar", bar);
+    params += params1;
+    params += params2;
 
-    CHECK( foo.size() == 2 );
-    CHECK( foo.get("A").value() == 1.0 );
-    CHECK( foo.get("B").value() == 2.0 );
-    CHECK( foo.exists("A") == true );
-    CHECK( foo.exists("B") == true );
-    CHECK( foo.exists("C") == false );
+    CHECK( params["SomeModelParams1"]["A"].number() == 1.1 );
+    CHECK( params["SomeModelParams1"]["B"].number() == 1.2 );
 
-    CHECK( bar.size() == 3 );
-    CHECK( bar.get("C").value() == 5.0 );
-    CHECK( bar.get("D").value() == 6.0 );
-    CHECK( bar.get("E").value() == 7.0 );
-    CHECK( bar.exists("C") == true );
-    CHECK( bar.exists("D") == true );
-    CHECK( bar.exists("E") == true );
-    CHECK( bar.exists("F") == false );
-
-    CHECK( params.size() == 5 );
-    CHECK( params.at("Foo").get("A").value() == 1.0 );
-    CHECK( params.at("Foo").get("B").value() == 2.0 );
-    CHECK( params.at("Bar").get("C").value() == 5.0 );
-    CHECK( params.at("Bar").get("D").value() == 6.0 );
-    CHECK( params.at("Bar").get("E").value() == 7.0 );
-    CHECK( params.exists("Foo") == true );
-    CHECK( params.exists("Bar") == true );
-    CHECK( params.exists("Joe") == false );
-    CHECK( params.at("Foo").exists("A") == true );
-    CHECK( params.at("Foo").exists("Z") == false );
-    CHECK( params.at("Bar").exists("C") == true );
-    CHECK( params.at("Bar").exists("Z") == false );
+    CHECK( params["SomeModelParams2"]["C"].number() == 2.1 );
+    CHECK( params["SomeModelParams2"]["D"].number() == 2.2 );
 }
