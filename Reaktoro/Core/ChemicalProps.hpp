@@ -53,7 +53,7 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    /// @param s The surface areas of reacting phase interfaces in the system (in mol)
+    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
     auto update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     /// Update the chemical properties of the system with serialized data.
@@ -78,7 +78,7 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    /// @param s The surface areas of reacting phase interfaces in the system (in mol)
+    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
     auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     /// Serialize the chemical properties into the array stream @p stream.

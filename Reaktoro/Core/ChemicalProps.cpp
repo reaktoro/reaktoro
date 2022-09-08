@@ -38,10 +38,12 @@ ChemicalProps::ChemicalProps(ChemicalSystem const& system)
 {
     const auto N = system.species().size();
     const auto K = system.phases().size();
+    const auto S = system.reactingPhaseInterfaces().size();
 
     Ts   = ArrayXr::Zero(K);
     Ps   = ArrayXr::Zero(K);
     n    = ArrayXr::Zero(N);
+    s    = ArrayXr::Zero(S);
     nsum = ArrayXr::Zero(K);
     msum = ArrayXr::Zero(K);
     x    = ArrayXr::Zero(N);
@@ -80,8 +82,22 @@ auto ChemicalProps::update(ChemicalState const& state) -> void
 
 auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
+    update(T0, P0, n0, s);
+}
+
+auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
+{
+    assert(T0 > 0.0);
+    assert(P0 > 0.0);
+    assert(n0.size() == n.size());
+    assert(s0.size() == s.size());
+    assert(n0.abs().minCoeff() > 0.0);
+    assert(s0.abs().minCoeff() > 0.0);
+
     T = T0;
     P = P0;
+    s = s0;
+
     auto offset = 0;
     for(auto const& [i, phase] : enumerate(msystem.phases()))
     {
@@ -90,12 +106,6 @@ auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -
         phaseProps(i).update(T, P, np, m_extra);
         offset += size;
     }
-}
-
-auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
-{
-    update(T0, P0, n0);
-    s = s0;
 }
 
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
@@ -119,8 +129,22 @@ auto ChemicalProps::updateIdeal(ChemicalState const& state) -> void
 
 auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
+    updateIdeal(T0, P0, n0, s);
+}
+
+auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
+{
+    assert(T0 > 0.0);
+    assert(P0 > 0.0);
+    assert(n0.size() == n.size());
+    assert(s0.size() == s.size());
+    assert(n0.abs().minCoeff() > 0.0);
+    assert(s0.abs().minCoeff() > 0.0);
+
     T = T0;
     P = P0;
+    s = s0;
+
     auto offset = 0;
     for(auto const& [i, phase] : enumerate(msystem.phases()))
     {
@@ -129,12 +153,6 @@ auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef 
         phaseProps(i).updateIdeal(T, P, np, m_extra);
         offset += size;
     }
-}
-
-auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
-{
-    updateIdeal(T0, P0, n0);
-    s = s0;
 }
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
