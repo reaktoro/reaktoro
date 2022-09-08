@@ -21,18 +21,9 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ReactionEquation.hpp>
 #include <Reaktoro/Core/ReactionProps.hpp>
+#include <Reaktoro/Core/ReactionRateModel.hpp>
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalProps;
-
-/// The function type for calculation of reaction rates (in mol/s).
-/// @param props The chemical properties of the chemical system
-/// @return The rate of the reaction (in mol/s)
-/// @see Reaction
-/// @ingroup Core
-using ReactionRateFn = Fn<real(const ChemicalProps& props)>;
 
 /// A class to represent a reaction and its attributes.
 /// The Reaction class provides a representation of a chemical reaction and
@@ -55,8 +46,8 @@ public:
     /// Return a duplicate of this Reaction object with new reaction equation.
     auto withEquation(const ReactionEquation& equation) const -> Reaction;
 
-    /// Return a duplicate of this Reaction object with new reaction rate function.
-    auto withRateFn(const ReactionRateFn& fn) const -> Reaction;
+    /// Return a duplicate of this Reaction object with new reaction rate model.
+    auto withRateModel(const ReactionRateModel& model) const -> Reaction;
 
     /// Return the name of the reaction.
     auto name() const -> String;
@@ -64,8 +55,8 @@ public:
     /// Return the equation of the reaction.
     auto equation() const -> const ReactionEquation&;
 
-    /// Return the rate function of the reaction.
-    auto rateFn() const -> const ReactionRateFn&;
+    /// Return the rate model of the reaction.
+    auto rateModel() const -> const ReactionRateModel&;
 
     /// Calculate the complete set of thermodynamic properties of the reaction.
     /// @param T The temperature for the calculation (in K)
@@ -79,13 +70,16 @@ public:
     /// @param unitP The pressure unit for the calculation
     auto props(real T, Chars unitT, real P, Chars unitP) const -> ReactionProps;
 
-    /// Calculate the rate of the reaction for given conditions of chemical properties.
-    auto rate(const ChemicalProps& props) const -> real;
+    /// Calculate the rate of the reaction for given chemical state.
+    /// @attention Make sure `state` has updated chemical properties before
+    /// using it to evaluate reaction rates. If this is not the case,
+    /// ensure `state.props().update(state)` is executed before (only once).
+    auto rate(ChemicalState const& state) const -> real;
 
 private:
     struct Impl;
 
-    std::shared_ptr<Impl> pimpl;
+    SharedPtr<Impl> pimpl;
 };
 
 /// Compare two Reaction instances for less than

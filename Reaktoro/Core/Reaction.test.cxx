@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 using namespace Reaktoro;
@@ -37,14 +38,14 @@ TEST_CASE("Testing Reaction class", "[Reaction]")
 
     reaction = reaction.withName("Dolomite");
     reaction = reaction.withEquation("CaCO3(s) = Ca++ + CO3--");
-    reaction = reaction.withRateFn([](const ChemicalProps& props) { return 1.0; });
+    reaction = reaction.withRateModel([](const ChemicalState& state) -> Rate { return 1.0; });
 
     REQUIRE( reaction.name() == "Dolomite" );
     REQUIRE( reaction.equation().size() == 3 );
     REQUIRE( reaction.equation().coefficient("CaCO3(s)") == -1 );
     REQUIRE( reaction.equation().coefficient("Ca++") == 1 );
     REQUIRE( reaction.equation().coefficient("CO3--") == 1 );
-    REQUIRE( reaction.rateFn() );
+    REQUIRE( reaction.rateModel().initialized() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Reaction::props

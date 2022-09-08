@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 using namespace Reaktoro;
 
@@ -30,10 +30,10 @@ void exportReaction(py::module& m)
         .def("clone", &Reaction::clone)
         .def("withName", &Reaction::withName)
         .def("withEquation", &Reaction::withEquation)
-        .def("withRateFn", &Reaction::withRateFn)
+        .def("withRateModel", &Reaction::withRateModel)
         .def("name", &Reaction::name)
         .def("equation", &Reaction::equation)
-        .def("rateFn", &Reaction::rateFn)
+        .def("rateModel", &Reaction::rateModel)
         .def("props", py::overload_cast<real, real>(&Reaction::props, py::const_))
         .def("props", py::overload_cast<real, Chars, real, Chars>(&Reaction::props, py::const_))
         .def("rate", &Reaction::rate)
