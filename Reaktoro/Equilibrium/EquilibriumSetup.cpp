@@ -92,7 +92,7 @@ struct EquilibriumSetup::Impl
     const Index Nc; ///< The number of input variables in c = (w, b)
 
     /// Construct an EquilibriumSetup::Impl object
-    Impl(const EquilibriumSpecs& specs)
+    Impl(EquilibriumSpecs const& specs)
     : system(specs.system()), specs(specs), dims(specs), props(specs),
       Nb(dims.Nb), Nn(dims.Nn), Np(dims.Np), Nq(dims.Nq), Nx(dims.Nx), Nw(dims.Nw), Nc(dims.Nw + dims.Nb)
     {
@@ -115,7 +115,7 @@ struct EquilibriumSetup::Impl
         isbasicvar.resize(Nx);
 
         auto offset = 0;
-        for(const auto& phase : system.phases())
+        for(auto const& phase : system.phases())
         {
             const auto size = phase.species().size();
             if(size == 1)
@@ -125,12 +125,12 @@ struct EquilibriumSetup::Impl
     }
 
     /// Assemble the vector with the element and charge coefficients of a chemical formula.
-    auto assembleFormulaVector(VectorXdRef vec, const ChemicalFormula& formula) const -> void
+    auto assembleFormulaVector(VectorXdRef vec, ChemicalFormula const& formula) const -> void
     {
         assert(vec.size() == Nb);
         vec.fill(0.0);
         vec[Nb - 1] = formula.charge(); // last entry in the column vector is charge of substance
-        for(const auto& [element, coeff] : formula.elements()) {
+        for(auto const& [element, coeff] : formula.elements()) {
             const auto ielem = system.elements().index(element);
             vec[ielem] = coeff;
         }
@@ -147,7 +147,7 @@ struct EquilibriumSetup::Impl
         Wn = system.formulaMatrix();
 
         auto j = 0;
-        for(const auto& formula : specs.titrantsImplicit())
+        for(auto const& formula : specs.titrantsImplicit())
             assembleFormulaVector(Wq.col(j++), formula);
 
         return Aex;
@@ -161,13 +161,13 @@ struct EquilibriumSetup::Impl
         auto Wp = Aep.topRows(Nb); // the formula matrix of temperature, pressure and explicit titrants
 
         auto j = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P in p (if applicable), since these are zeros
-        for(const auto& formula : specs.titrantsExplicit())
+        for(auto const& formula : specs.titrantsExplicit())
             assembleFormulaVector(Wp.col(j++), formula);
 
         return Aep;
     }
 
-    auto assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
+    auto assembleLowerBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd
     {
         VectorXd xlower = constants(Nx, -inf);
         auto nlower = xlower.head(Nn);
@@ -178,7 +178,7 @@ struct EquilibriumSetup::Impl
         return xlower;
     }
 
-    auto assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
+    auto assembleUpperBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd
     {
         VectorXd xupper = constants(Nx, inf);
         auto nupper = xupper.head(Nn);
@@ -247,15 +247,15 @@ struct EquilibriumSetup::Impl
 
     auto updateF() -> void
     {
-        const auto& qvars = specs.controlVariablesQ();
-        const auto& pvars = specs.controlVariablesP();
+        auto const& qvars = specs.controlVariablesQ();
+        auto const& pvars = specs.controlVariablesP();
 
-        const auto& econstraints = specs.constraintsEquationType();
+        auto const& econstraints = specs.constraintsEquationType();
 
-        const auto& state = props.chemicalState();
+        auto const& state = props.chemicalState();
 
-        const auto& T = state.temperature();
-        const auto& n = state.speciesAmounts();
+        auto const& T = state.temperature();
+        auto const& n = state.speciesAmounts();
 
         // Update the vector of species chemical potentials in case there are p variables associated to them
         mu = state.props().speciesChemicalPotentials();
@@ -331,9 +331,9 @@ struct EquilibriumSetup::Impl
 
     auto updateGibbsEnergy() -> void
     {
-        const auto& state = props.chemicalState();
-        const auto& T = state.temperature();
-        const auto& n = state.speciesAmounts();
+        auto const& state = props.chemicalState();
+        auto const& T = state.temperature();
+        auto const& n = state.speciesAmounts();
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
         const auto barrier = -tau * n(ipps).log().sum();
@@ -436,11 +436,11 @@ struct EquilibriumSetup::Impl
     }
 };
 
-EquilibriumSetup::EquilibriumSetup(const EquilibriumSpecs& conditions)
+EquilibriumSetup::EquilibriumSetup(EquilibriumSpecs const& conditions)
 : pimpl(new Impl(conditions))
 {}
 
-EquilibriumSetup::EquilibriumSetup(const EquilibriumSetup& other)
+EquilibriumSetup::EquilibriumSetup(EquilibriumSetup const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
@@ -453,17 +453,17 @@ auto EquilibriumSetup::operator=(EquilibriumSetup other) -> EquilibriumSetup&
     return *this;
 }
 
-auto EquilibriumSetup::setOptions(const EquilibriumOptions& opts) -> void
+auto EquilibriumSetup::setOptions(EquilibriumOptions const& opts) -> void
 {
     pimpl->options = opts;
 }
 
-auto EquilibriumSetup::dims() const -> const EquilibriumDims&
+auto EquilibriumSetup::dims() const -> EquilibriumDims const&
 {
     return pimpl->dims;
 }
 
-auto EquilibriumSetup::options() const -> const EquilibriumOptions&
+auto EquilibriumSetup::options() const -> EquilibriumOptions const&
 {
     return pimpl->options;
 }
@@ -478,12 +478,12 @@ auto EquilibriumSetup::assembleMatrixAep() const -> MatrixXd
     return pimpl->assembleMatrixAep();
 }
 
-auto EquilibriumSetup::assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
+auto EquilibriumSetup::assembleLowerBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd
 {
     return pimpl->assembleLowerBoundsVector(restrictions, state0);
 }
 
-auto EquilibriumSetup::assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd
+auto EquilibriumSetup::assembleUpperBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd
 {
     return pimpl->assembleUpperBoundsVector(restrictions, state0);
 }
@@ -573,12 +573,12 @@ auto EquilibriumSetup::assembleChemicalPropsJacobianEnd() -> void
     pimpl->props.assembleFullJacobianEnd();
 }
 
-auto EquilibriumSetup::equilibriumProps() const -> const EquilibriumProps&
+auto EquilibriumSetup::equilibriumProps() const -> EquilibriumProps const&
 {
     return pimpl->props;
 }
 
-auto EquilibriumSetup::chemicalProps() const -> const ChemicalProps&
+auto EquilibriumSetup::chemicalProps() const -> ChemicalProps const&
 {
     return pimpl->props.chemicalProps();
 }

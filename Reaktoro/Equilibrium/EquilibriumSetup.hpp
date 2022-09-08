@@ -39,10 +39,10 @@ class EquilibriumSetup
 {
 public:
     /// Construct an EquilibriumSetup object with given specifications.
-    explicit EquilibriumSetup(const EquilibriumSpecs& specs);
+    explicit EquilibriumSetup(EquilibriumSpecs const& specs);
 
     /// Construct a copy of an EquilibriumSetup object.
-    EquilibriumSetup(const EquilibriumSetup& other);
+    EquilibriumSetup(EquilibriumSetup const& other);
 
     /// Destroy this EquilibriumSetup object.
     ~EquilibriumSetup();
@@ -51,13 +51,13 @@ public:
     auto operator=(EquilibriumSetup other) -> EquilibriumSetup&;
 
     /// Set the options for the solution of the equilibrium problem.
-    auto setOptions(const EquilibriumOptions& options) -> void;
+    auto setOptions(EquilibriumOptions const& options) -> void;
 
     /// Return the dimensions of the variables in the equilibrium problem.
-    auto dims() const -> const EquilibriumDims&;
+    auto dims() const -> EquilibriumDims const&;
 
     /// Return the options for the solution of the equilibrium problem.
-    auto options() const -> const EquilibriumOptions&;
+    auto options() const -> EquilibriumOptions const&;
 
     /// Assemble the coefficient matrix `Aex` in the optimization problem.
     auto assembleMatrixAex() const -> MatrixXd;
@@ -68,12 +68,12 @@ public:
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
     /// @param restrictions The lower and upper bounds information of the species.
     /// @param state0 The initial chemical state of the system.
-    auto assembleLowerBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd;
+    auto assembleLowerBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd;
 
     /// Assemble the upper bound vector `xupper` in the optimization problem where *x = (n, q)*.
     /// @param restrictions The lower and upper bounds information of the species.
     /// @param state0 The initial chemical state of the system.
-    auto assembleUpperBoundsVector(const EquilibriumRestrictions& restrictions, const ChemicalState& state0) const -> VectorXd;
+    auto assembleUpperBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd;
 
     /// Update the chemical potentials and residuals of the equilibrium constraints.
     /// @param x The amounts of the species and implicit titrants, @eq{x = (n, q)}.
@@ -142,10 +142,10 @@ public:
     auto assembleChemicalPropsJacobianEnd() -> void;
 
     /// Return the current chemical properties of the system as an EquilibriumProps object.
-    auto equilibriumProps() const -> const EquilibriumProps&;
+    auto equilibriumProps() const -> EquilibriumProps const&;
 
     /// Return the current chemical properties of the system as a ChemicalProps object.
-    auto chemicalProps() const -> const ChemicalProps&;
+    auto chemicalProps() const -> ChemicalProps const&;
 
 private:
     struct Impl;
