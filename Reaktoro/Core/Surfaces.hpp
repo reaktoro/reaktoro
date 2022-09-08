@@ -19,9 +19,12 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Surface.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class PhaseList;
+class Surface;
 
 /// Used to represent the interface surface between two phases in a chemical system.
 class Surfaces
@@ -36,12 +39,15 @@ public:
     /// Register a new surface surrounding phase with name `phase`.
     auto add(String const& phase) -> void;
 
-    /// Return the Surface objects already constructed.
-    auto surfaces() const -> Vec<Surface> const&;
+    /// Return the pairs of phase names already registered.
+    auto data() const -> Pairs<String, String> const&;
+
+    /// Convert this Surfaces object into a vector of Surface objects.
+    auto convert(PhaseList const& phases) const -> Vec<Surface>;
 
 private:
     /// The registered surfaces.
-    Vec<Surface> m_surfaces;
+    Pairs<String, String> surfaces;
 };
 
 } // namespace Reaktoro

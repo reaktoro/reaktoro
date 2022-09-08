@@ -20,6 +20,8 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/Surface.hpp>
 
 namespace Reaktoro {
 
@@ -30,18 +32,35 @@ Surfaces::Surfaces()
 auto Surfaces::add(String const& phase1, String const& phase2) -> void
 {
     errorif(phase1.empty() || phase2.empty(), "Expecting a non-empty phase name when registering a surface.");
-    m_surfaces.push_back(Surface(phase1 + ":" + phase2).withPhases(phase1, phase2));
+    surfaces.push_back({ phase1, phase2});
 }
 
 auto Surfaces::add(String const& phase) -> void
 {
     errorif(phase.empty(), "Expecting a non-empty phase name when registering a surface.");
-    m_surfaces.push_back(Surface(phase).withPhases(phase, phase));
+    surfaces.push_back({ phase, phase});
 }
 
-auto Surfaces::surfaces() const -> Vec<Surface> const&
+auto Surfaces::data() const -> Pairs<String, String> const&
 {
-    return m_surfaces;
+    return surfaces;
+}
+
+auto Surfaces::convert(PhaseList const& phases) const -> Vec<Surface>
+{
+    auto createSurface = [&](auto phasepair)
+    {
+        auto const nphase1 = phasepair.first;
+        auto const nphase2 = phasepair.second;
+        auto const iphase1 = phases.findWithName(nphase1);
+        auto const iphase2 = phases.findWithName(nphase2);
+        errorif(iphase1 >= phases.size(), "Expecting a name of a phase that exist in the list of assembled phase, but got instead `", nphase1, "`.");
+        errorif(iphase2 >= phases.size(), "Expecting a name of a phase that exist in the list of assembled phase, but got instead `", nphase2, "`.");
+        auto const id = nphase1 != nphase2 ? nphase1 + ":" + nphase2 : nphase1;
+        return Surface(id, nphase1, iphase1, nphase2, iphase2);
+    };
+
+    return vectorize(surfaces, RKT_LAMBDA(x, createSurface(x)));
 }
 
 } // namespace Reaktoro

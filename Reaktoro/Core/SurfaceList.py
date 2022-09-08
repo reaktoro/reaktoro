@@ -24,9 +24,9 @@ def testSurfaceList():
     # TESTING CONSTRUCTOR: SurfaceList(formulas)
     #-------------------------------------------------------------------------
     surfaces = SurfaceList([
-        Surface("AqueousPhase:GaseousPhase").withPhases("AqueousPhase", "GaseousPhase"),
-        Surface("Calcite").withPhases("Calcite", "Calcite"),
-        Surface("Quartz:AqueousPhase").withPhases("Quartz", "AqueousPhase"),
+        Surface("AqueousPhase:GaseousPhase", "AqueousPhase", "GaseousPhase"),
+        Surface("Calcite", "Calcite", "Calcite"),
+        Surface("Quartz:AqueousPhase", "Quartz", "AqueousPhase"),
     ])
 
     assert surfaces.size() == 3
@@ -137,7 +137,7 @@ def testSurfaceList():
     #-------------------------------------------------------------------------
     # TESTING METHOD: SurfaceList::append
     #-------------------------------------------------------------------------
-    surfaces.append(Surface("LiquidPhase:Gel").withPhases("LiquidPhase", "Gel"))
+    surfaces.append(Surface("LiquidPhase:Gel", "LiquidPhase", "Gel"))
 
     assert surfaces.indexWithName("LiquidPhase:Gel") < surfaces.size()
     assert surfaces.indexWithPhases("LiquidPhase", "Gel") < surfaces.size()

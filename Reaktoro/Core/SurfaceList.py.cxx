@@ -44,6 +44,7 @@ void exportSurfaceList(py::module& m)
         .def("withNames", &SurfaceList::withNames)
         .def("__len__", &SurfaceList::size)
         .def("__getitem__", [](const SurfaceList& self, Index i) { return self[i]; }, return_internal_ref)
+        .def("__getitem__", [](SurfaceList& self, Index i) { return self[i]; }, return_internal_ref)
         .def("__iter__", [](const SurfaceList& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         .def(py::self + py::self);
         ;

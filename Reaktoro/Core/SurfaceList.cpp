@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 
@@ -30,16 +31,16 @@ SurfaceList::SurfaceList(std::initializer_list<Surface> surfaces)
 : m_surfaces(std::move(surfaces))
 {}
 
-SurfaceList::SurfaceList(const Vec<Surface>& surfaces)
+SurfaceList::SurfaceList(Vec<Surface> const& surfaces)
 : m_surfaces(surfaces)
 {}
 
-auto SurfaceList::append(const Surface& surface) -> void
+auto SurfaceList::append(Surface const& surface) -> void
 {
     m_surfaces.push_back(surface);
 }
 
-auto SurfaceList::data() const -> const Vec<Surface>&
+auto SurfaceList::data() const -> Vec<Surface> const&
 {
     return m_surfaces;
 }
@@ -54,61 +55,66 @@ auto SurfaceList::size() const -> Index
     return m_surfaces.size();
 }
 
-auto SurfaceList::operator[](Index i) const -> const Surface&
+auto SurfaceList::operator[](Index i) const -> Surface const&
 {
     return m_surfaces[i];
 }
 
-auto SurfaceList::find(const String& symbol) const -> Index
+auto SurfaceList::operator[](Index i) -> Surface&
+{
+    return m_surfaces[i];
+}
+
+auto SurfaceList::find(String const& symbol) const -> Index
 {
     return findWithName(symbol);
 }
 
-auto SurfaceList::findWithName(const String& name) const -> Index
+auto SurfaceList::findWithName(String const& name) const -> Index
 {
     return indexfn(m_surfaces, RKT_LAMBDA(e, e.name() == name));
 }
 
-auto SurfaceList::findWithPhases(const String& phase1, const String& phase2) const -> Index
+auto SurfaceList::findWithPhases(StringOrIndex const& iphase1, StringOrIndex const& iphase2) const -> Index
 {
-    return indexfn(m_surfaces, RKT_LAMBDA(e, e.equivalent(phase1, phase2)));
+    return indexfn(m_surfaces, RKT_LAMBDA(e, e.equivalent(iphase1, iphase2)));
 }
 
-auto SurfaceList::index(const String& symbol) const -> Index
+auto SurfaceList::index(String const& symbol) const -> Index
 {
     return indexWithName(symbol);
 }
 
-auto SurfaceList::indexWithName(const String& name) const -> Index
+auto SurfaceList::indexWithName(String const& name) const -> Index
 {
     const auto idx = findWithName(name);
     errorif(idx >= size(), "Could not find any Surface object with name ", name, ".");
     return idx;
 }
 
-auto SurfaceList::indexWithPhases(const String& phase1, const String& phase2) const -> Index
+auto SurfaceList::indexWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Index
 {
     const auto idx = findWithPhases(phase1, phase2);
-    errorif(idx >= size(), "Could not find any Surface object with phases ", phase1, " and ", phase2, ".");
+    errorif(idx >= size(), "Could not find any Surface object with phases ", stringfy(phase1), " and ", stringfy(phase2), ".");
     return idx;
 }
 
-auto SurfaceList::get(const String& symbol) const -> const Surface&
+auto SurfaceList::get(String const& symbol) const -> Surface const&
 {
     return getWithName(symbol);
 }
 
-auto SurfaceList::getWithName(const String& name) const -> const Surface&
+auto SurfaceList::getWithName(String const& name) const -> Surface const&
 {
     return m_surfaces[indexWithName(name)];
 }
 
-auto SurfaceList::getWithPhases(const String& phase1, const String& phase2) const -> const Surface&
+auto SurfaceList::getWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Surface const&
 {
     return m_surfaces[indexWithPhases(phase1, phase2)];
 }
 
-auto SurfaceList::withNames(const StringList& names) const -> SurfaceList
+auto SurfaceList::withNames(StringList const& names) const -> SurfaceList
 {
     return vectorize(names, RKT_LAMBDA(name, m_surfaces[indexWithName(name)]));
 }
@@ -118,12 +124,12 @@ SurfaceList::operator Vec<Surface>&()
     return m_surfaces;
 }
 
-SurfaceList::operator Vec<Surface>const&() const
+SurfaceList::operator Vec<Surface> const&() const
 {
     return m_surfaces;
 }
 
-auto operator+(const SurfaceList& a, const SurfaceList& b) -> SurfaceList
+auto operator+(SurfaceList const& a, SurfaceList const& b) -> SurfaceList
 {
     return concatenate(a, b);
 }
