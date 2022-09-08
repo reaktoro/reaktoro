@@ -176,4 +176,4 @@ struct convert
     }
 };
 
-} // namespace YAML
+} // namespace Reaktoro
