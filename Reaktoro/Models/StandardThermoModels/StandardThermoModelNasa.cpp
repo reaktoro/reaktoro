@@ -102,7 +102,7 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, con
 
 } // namemespace detail
 
-/// Return a Params object containing all Param objects in @p params.
+/// Return a vector containing all Param objects in @p params.
 auto extractParams(const StandardThermoModelParamsNasa& params) -> Vec<Param>
 {
     Vec<Param> collected;
