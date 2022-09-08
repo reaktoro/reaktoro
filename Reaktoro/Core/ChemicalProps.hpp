@@ -34,20 +34,27 @@ class ChemicalProps
 {
 public:
     /// Construct an uninitialized ChemicalProps object with given chemical system.
-    explicit ChemicalProps(const ChemicalSystem& system);
+    explicit ChemicalProps(ChemicalSystem const& system);
 
     /// Construct a ChemicalProps object with given chemical state of the system.
-    explicit ChemicalProps(const ChemicalState& state);
+    explicit ChemicalProps(ChemicalState const& state);
 
     /// Update the chemical properties of the system.
     /// @param state The chemical state of the system
-    auto update(const ChemicalState& state) -> void;
+    auto update(ChemicalState const& state) -> void;
 
     /// Update the chemical properties of the system.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto update(const real& T, const real& P, ArrayXrConstRef n) -> void;
+    auto update(real const& T, real const& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical properties of the system.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param s The surface areas of reacting phase interfaces in the system (in mol)
+    auto update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     /// Update the chemical properties of the system with serialized data.
     /// @param u The chemical properties of the system serialized in an array of real numbers.
@@ -59,13 +66,20 @@ public:
 
     /// Update the chemical properties of the system using ideal activity models.
     /// @param state The chemical state of the system
-    auto updateIdeal(const ChemicalState& state) -> void;
+    auto updateIdeal(ChemicalState const& state) -> void;
 
     /// Update the chemical properties of the system using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void;
+    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n) -> void;
+
+    /// Update the chemical properties of the system using ideal activity models.
+    /// @param T The temperature condition (in K)
+    /// @param P The pressure condition (in Pa)
+    /// @param n The amounts of the species in the system (in mol)
+    /// @param s The surface areas of reacting phase interfaces in the system (in mol)
+    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     /// Serialize the chemical properties into the array stream @p stream.
     /// @param stream The array stream used to serialize the chemical properties.
@@ -84,7 +98,7 @@ public:
     auto deserialize(const ArrayStream<double>& stream) -> void;
 
     /// Return the chemical system associated with these chemical properties.
-    auto system() const -> const ChemicalSystem&;
+    auto system() const -> ChemicalSystem const&;
 
     /// Return the chemical properties of a phase with given index.
     /// @param phase The name or index of the phase in the system.
@@ -112,7 +126,7 @@ public:
 
     /// Return the amount of electric charge among a group of species in the system (in mol).
     /// @param indices The indices of the species in the system.
-    auto chargeAmongSpecies(const Indices& indices) const -> real;
+    auto chargeAmongSpecies(Indices const& indices) const -> real;
 
     /// Return the amount of an element in the system (in mol).
     /// @param element The symbol or index of the element in the system.
@@ -126,7 +140,7 @@ public:
     /// Return the amount of an element among a group of species in the system (in mol).
     /// @param element The symbol or index of the element in the system.
     /// @param indices The indices of the species in the system.
-    auto elementAmountAmongSpecies(StringOrIndex element, const Indices& indices) const -> real;
+    auto elementAmountAmongSpecies(StringOrIndex element, Indices const& indices) const -> real;
 
     /// Return the mass of an element in the system (in kg).
     /// @param element The symbol or index of the element in the system.
@@ -140,7 +154,7 @@ public:
     /// Return the mass of an element among a group of species in the system (in kg).
     /// @param element The symbol or index of the element in the system.
     /// @param indices The indices of the species in the system.
-    auto elementMassAmongSpecies(StringOrIndex element, const Indices& indices) const -> real;
+    auto elementMassAmongSpecies(StringOrIndex element, Indices const& indices) const -> real;
 
     /// Return the amounts of the elements in the system (in mol).
     auto elementAmounts() const -> ArrayXr;
@@ -151,7 +165,7 @@ public:
 
     /// Return the amounts of the elements among a group of species in the system (in mol).
     /// @param indices The indices of the species in the system.
-    auto elementAmountsAmongSpecies(const Indices& indices) const -> ArrayXr;
+    auto elementAmountsAmongSpecies(Indices const& indices) const -> ArrayXr;
 
     /// Return the amounts of the conservative components (elements and charge) in the system (in mol).
     auto componentAmounts() const -> ArrayXr;
@@ -162,7 +176,7 @@ public:
 
     /// Return the amounts of the conservative components (elements and charge) among a group of species in the system (in mol).
     /// @param indices The indices of the species in the system.
-    auto componentAmountsAmongSpecies(const Indices& indices) const -> ArrayXr;
+    auto componentAmountsAmongSpecies(Indices const& indices) const -> ArrayXr;
 
     /// Return the amount of a species in the system (in mol).
     /// @param species The name or index of the species in the system.
@@ -307,6 +321,19 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
     auto speciesStandardHeatCapacitiesConstV() const -> ArrayXr;
 
+    /// Return the surface area of the interface between two reacting phases (in m2).
+    /// @param phase1 The name or index of a phase.
+    /// @param phase2 The name or index of the phase interfacing with the previous one.
+    /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
+    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real;
+
+    /// Return the surface area of the interface between two reacting phases with given surface index (in m2).
+    /// @param isurface The index of the reacting interface between two phases.
+    auto surfaceArea(Index isurface) const -> real;
+
+    /// Return the areas of all reacting phase interfaces in the system (in m2).
+    auto surfaceAreas() const -> ArrayXrConstRef;
+
     /// Return the molar volume of the system (in m³/mol).
     auto molarVolume() const -> real;
 
@@ -406,6 +433,9 @@ public:
     /// Return the isochoric heat capacity of the system (in J/K).
     auto heatCapacityConstV() const -> real;
 
+    /// Return the reaction rates of the kinetic reactions in the system (in mol/s).
+    auto reactionRates() const -> ArrayXr;
+
     /// Return the indices of the phases in a given state of matter.
     auto indicesPhasesWithState(StateOfMatter som) const -> Indices;
 
@@ -434,7 +464,7 @@ public:
     auto output(std::ostream& out) const -> void;
 
     /// Output the chemical properties of the system to a file.
-    auto output(const String& filename) const -> void;
+    auto output(String const& filename) const -> void;
 
     /// Return the chemical properties in this object serialized in an array of real numbers.
     operator VectorXr() const;
@@ -452,14 +482,17 @@ private:
     /// The pressure of the system (in Pa).
     real P = 0.0;
 
+    /// The amounts of each species in the system (in mol).
+    ArrayXr n;
+
+    /// The surface areas of the reacting phase interfaces (in m2).
+    ArrayXr s;
+
     /// The temperatures of each phase (in K).
     ArrayXr Ts;
 
     /// The pressures of each phase (in Pa).
     ArrayXr Ps;
-
-    /// The amounts of each species in the system (in mol).
-    ArrayXr n;
 
     /// The sum of species amounts in each phase of the system (in mol).
     ArrayXr nsum;
@@ -525,6 +558,6 @@ private:
 };
 
 /// Output a ChemicalProps object to an output stream.
-auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&;
+auto operator<<(std::ostream& out, ChemicalProps const& props) -> std::ostream&;
 
 } // namespace Reaktoro
