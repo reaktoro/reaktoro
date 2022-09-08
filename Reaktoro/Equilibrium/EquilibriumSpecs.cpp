@@ -51,14 +51,14 @@ auto getGaseousSpecies(Database const& db, String const& formula) -> Species
 }
 
 /// Assemble the complete system of equation constraints to be satisfied at chemical equilibrium.
-auto assembleConstraintEquations(EquilibriumSpecs const& specs) -> ConstraintEquations
+auto assembleConstraintEquations(EquilibriumSpecs const& specs) -> EquationConstraints
 {
     // Create copies of all provided equation constraints to avoid full capture of `specs` in lambda function below
     const auto econstraints_single = specs.equationConstraintsSingle();
     const auto econstraints_system = specs.equationConstraintsSystem();
 
     // The complete system of equation constraints that will be created below.
-    ConstraintEquations econstraints;
+    EquationConstraints econstraints;
 
     // Collect the id constraints across the single equation constraints
     for(auto const& x : econstraints_single)
@@ -791,7 +791,7 @@ auto EquilibriumSpecs::addConstraint(EquationConstraint const& constraint) -> vo
     econstraints_single.push_back(constraint);
 }
 
-auto EquilibriumSpecs::addConstraints(ConstraintEquations const& constraints) -> void
+auto EquilibriumSpecs::addConstraints(EquationConstraints const& constraints) -> void
 {
     for(auto const& constraintid : constraints.ids)
     {
@@ -907,12 +907,12 @@ auto EquilibriumSpecs::equationConstraintsSingle() const -> Vec<EquationConstrai
     return econstraints_single;
 }
 
-auto EquilibriumSpecs::equationConstraintsSystem() const -> Vec<ConstraintEquations> const&
+auto EquilibriumSpecs::equationConstraintsSystem() const -> Vec<EquationConstraints> const&
 {
     return econstraints_system;
 }
 
-auto EquilibriumSpecs::equationConstraints() const -> ConstraintEquations
+auto EquilibriumSpecs::equationConstraints() const -> EquationConstraints
 {
     return assembleConstraintEquations(*this);
 }
