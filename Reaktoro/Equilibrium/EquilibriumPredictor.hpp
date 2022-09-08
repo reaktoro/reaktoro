@@ -35,10 +35,10 @@ public:
     /// Construct a EquilibriumPredictor object.
     /// @param state0 The reference chemical equilibrium state from which first-order Taylor predictions are made.
     /// @param sensitivity0 The sensitivity derivatives of the chemical equilibrium state at the reference point.
-    EquilibriumPredictor(const ChemicalState& state0, const EquilibriumSensitivity& sensitivity0);
+    EquilibriumPredictor(ChemicalState const& state0, EquilibriumSensitivity const& sensitivity0);
 
     /// Construct a copy of a EquilibriumPredictor object.
-    EquilibriumPredictor(const EquilibriumPredictor& other);
+    EquilibriumPredictor(EquilibriumPredictor const& other);
 
     /// Destroy this EquilibriumPredictor object.
     ~EquilibriumPredictor();
@@ -47,10 +47,16 @@ public:
     auto operator=(EquilibriumPredictor other) -> EquilibriumPredictor&;
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void;
+    auto predict(ChemicalState& state, EquilibriumConditions const& conditions) const -> void;
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXrConstRef c) -> void;
+    auto predict(ChemicalState& state, EquilibriumConditions const& conditions, VectorXrConstRef const& c) const -> void;
+
+    /// Perform a first-order Taylor prediction of the chemical potential of a species at given conditions.
+    auto predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions, VectorXdConstRef const& c) const -> double;
+
+    /// Return the chemical potential of a species at given reference conditions.
+    auto referenceSpeciesChemicalPotential(Index ispecies) const -> double;
 
 private:
     struct Impl;
