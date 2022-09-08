@@ -15,20 +15,25 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+// Catch includes
+#include <catch2/catch.hpp>
 
 // Reaktoro includes
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 using namespace Reaktoro;
 
-void exportEquilibriumResult(py::module& m)
+TEST_CASE("Testing EquilibriumResult", "[EquilibriumResult]")
 {
-    py::class_<EquilibriumResult>(m, "EquilibriumResult")
-        .def(py::init<>())
-        .def("succeeded", &EquilibriumResult::succeeded, "Return true if the calculation succeeded.")
-        .def("failed", &EquilibriumResult::failed, "Return true if the calculation failed.")
-        .def("iterations", &EquilibriumResult::iterations, "Return the number of iterations in the calculation.")
-        .def_readwrite("optima", &EquilibriumResult::optima)
-        ;
+    EquilibriumResult result;
+
+    CHECK( result.succeeded() == false );
+    CHECK( result.failed() == true );
+    CHECK( result.iterations() == 0 );
+
+    result.optima.succeeded = true;
+    result.optima.iterations = 23;
+
+    CHECK( result.succeeded() == true );
+    CHECK( result.failed() == false );
+    CHECK( result.iterations() == 23 );
 }
