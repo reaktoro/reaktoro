@@ -30,6 +30,17 @@ namespace YAML { class Node; }
 
 namespace Reaktoro {
 
+// ================================================================================================
+// TODO: Implement Data::with(key_name, key_value) to find entries in lists. Example:
+//
+// params["Species"].with("Name", "H2O(aq)")["StandardThermoModel"]["HKF"]["Gf"]
+//
+// Implement also Data::get(string_path_to_parameter) such as:
+//
+// params.get("Species:Name=H2O(aq):StandardThermoModel:HKF:Gf")
+// params.get("Species:Formula=Ca++:StandardThermoModel:HKF:Gf")
+// ================================================================================================
+
 /// The class used to store and retrieve data for assemblying chemical systems.
 /// @ingroup Core
 class Data
