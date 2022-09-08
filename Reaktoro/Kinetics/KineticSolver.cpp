@@ -81,7 +81,8 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
         econstraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> real
         {
             auto const& dt = w[idt];
-            auto const& pi = w[idt];
+            auto const& pi = p[offset + i];
+            // return pi - dt * M.row(i) * r;
             return {};
         };
 

@@ -724,11 +724,23 @@ auto EquilibriumSpecs::addControlVariableP(ControlVariableP const& pvar) -> void
 
 auto EquilibriumSpecs::addConstraint(ConstraintEquation const& constraint) -> void
 {
-    const auto constraint_has_same_id = containsfn(econstraints, RKT_LAMBDA(x, x.id == constraint.id));
-    errorif(constraint_has_same_id, "Cannot impose a new equation constraint with same id (", constraint.id, ").");
+    errorif(contains(econstraints_ids, constraint.id), "Cannot impose a new equation constraint with repeating id (", constraint.id, ").");
     errorif(constraint.id.empty(), "An equation constraint cannot have an empty id.");
     errorif(!constraint.fn, "The equation constraint with id `", constraint.id, " should not have an empty function.");
+    econstraints_ids.push_back(constraint.id);
     econstraints.push_back(constraint);
+}
+
+auto EquilibriumSpecs::addConstraints(ConstraintEquations const& constraints) -> void
+{
+    for(auto const& constraintid : constraints.id)
+    {
+        errorif(contains(econstraints_ids, constraintid), "Cannot impose a new equation constraint with repeating id (", constraintid, ").");
+        errorif(constraintid.empty(), "An equation constraint cannot have an empty id.");
+        econstraints_ids.push_back(constraintid);
+    }
+    errorif(!constraints.fn, "The system of equation constraints with ids `", constraints.id, " should not have an empty function.");
+    econstraints_system.push_back(constraints);
 }
 
 auto EquilibriumSpecs::addReactivityConstraint(ReactivityConstraint const& constraint) -> void

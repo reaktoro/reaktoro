@@ -48,6 +48,12 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &ConstraintEquation::fn)
         ;
 
+    py::class_<ConstraintEquations>(m, "ConstraintEquations")
+        .def(py::init<>())
+        .def_readwrite("id", &ConstraintEquations::id)
+        .def_readwrite("fn", &ConstraintEquations::fn)
+        ;
+
     py::class_<ReactivityConstraint>(m, "ReactivityConstraint")
         .def_readwrite("id", &ReactivityConstraint::id)
         .def_readwrite("Kn", &ReactivityConstraint::Kn)
@@ -115,6 +121,7 @@ void exportEquilibriumSpecs(py::module& m)
         .def("addControlVariableQ", &EquilibriumSpecs::addControlVariableQ)
         .def("addControlVariableP", &EquilibriumSpecs::addControlVariableP)
         .def("addConstraint", &EquilibriumSpecs::addConstraint)
+        .def("addConstraints", &EquilibriumSpecs::addConstraints)
         .def("addReactivityConstraint", &EquilibriumSpecs::addReactivityConstraint)
         .def("addInput", py::overload_cast<const String&>(&EquilibriumSpecs::addInput), return_internal_ref)
         .def("addInput", py::overload_cast<const Param&>(&EquilibriumSpecs::addInput), return_internal_ref)
