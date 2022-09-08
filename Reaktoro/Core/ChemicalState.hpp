@@ -63,7 +63,7 @@ public:
 
     /// Set the temperature of the chemical state.
     /// @param value The temperature value (in K).
-    auto setTemperature(real value) -> void;
+    auto setTemperature(real const& value) -> void;
 
     /// Set the temperature of the chemical state with given unit.
     /// @param value The temperature value.
@@ -73,7 +73,7 @@ public:
     /// Set the temperature of the chemical state.
     /// @param value The temperature value (in K).
     /// @note This method is equivalent to ChemicalState::setTemperature(real)
-    auto temperature(real value) -> void;
+    auto temperature(real const& value) -> void;
 
     /// Set the temperature of the chemical state with given unit.
     /// @param value The temperature value.
@@ -90,7 +90,7 @@ public:
 
     /// Set the pressure of the chemical state.
     /// @param value The pressure value (in Pa).
-    auto setPressure(real value) -> void;
+    auto setPressure(real const& value) -> void;
 
     /// Set the pressure of the chemical state with given unit.
     /// @param value The pressure value.
@@ -100,7 +100,7 @@ public:
     /// Set the pressure of the chemical state.
     /// @param value The pressure value (in Pa).
     /// @note This method is equivalent to ChemicalState::setPressure(real)
-    auto pressure(real value) -> void;
+    auto pressure(real const& value) -> void;
 
     /// Set the pressure of the chemical state with given unit.
     /// @param value The pressure value.
@@ -116,13 +116,18 @@ public:
     // --------------------------------------------------------------------------------------------
 
     /// Set the amounts of all species in the chemical state to a common value (in mol).
-    auto setSpeciesAmounts(real value) -> void;
+    auto setSpeciesAmounts(real const& value) -> void;
 
     /// Set the amounts of the species in the chemical state with given array (in mol).
-    auto setSpeciesAmounts(ArrayXrConstRef n) -> void;
+    auto setSpeciesAmounts(ArrayXrConstRef const& n) -> void;
 
     /// Set the amounts of the species in the chemical state with given array (in mol).
-    auto setSpeciesAmounts(ArrayXdConstRef n) -> void;
+    auto setSpeciesAmounts(ArrayXdConstRef const& n) -> void;
+
+    /// Set the amount of a specific species in the system (in mol).
+    /// @param ispecies The index of the species.
+    /// @param amount The amount of the species
+    auto setSpeciesAmount(Index ispecies, real const& amount) -> void;
 
     /// Set the amount of a specific species in the system.
     /// @param species The name or index of the species.
@@ -184,17 +189,17 @@ public:
 
     /// Scale the amounts of every species by a given factor.
     /// @param scalar The scale factor
-    auto scaleSpeciesAmounts(real scalar) -> void;
+    auto scaleSpeciesAmounts(real const& scalar) -> void;
 
     /// Scale the amounts of the species with given indices.
     /// @param scalar The scale factor
     /// @param indices The indices of the species
-    auto scaleSpeciesAmounts(real scalar, Indices const& indices) -> void;
+    auto scaleSpeciesAmounts(real const& scalar, Indices const& indices) -> void;
 
     /// Scale the amounts of the species in a phase by a given factor.
     /// @param phase The name or index of the phase in the system.
     /// @param scalar The scale factor
-    auto scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real scalar) -> void;
+    auto scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real const& scalar) -> void;
 
     // --------------------------------------------------------------------------------------------
     // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
@@ -304,27 +309,27 @@ public:
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto update(real const& T, real const& P, ArrayXrConstRef n) -> void;
+    auto update(real const& T, real const& P, ArrayXrConstRef const& n) -> void;
 
     /// Update the chemical state and properties of the system.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
+    auto update(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void;
 
     /// Update the chemical state and properties of the system using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
-    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n) -> void;
+    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n) -> void;
 
     /// Update the chemical state and properties of the system using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
+    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void;
 
     // --------------------------------------------------------------------------------------------
     // MISCELLANEOUS METHODS
@@ -389,19 +394,19 @@ public:
     auto setInputNames(Strings const& names) -> void;
 
     /// Set the values of the input variables used in the equilibrium calculation.
-    auto setInputValues(ArrayXdConstRef w) -> void;
+    auto setInputValues(ArrayXdConstRef const& w) -> void;
 
     /// Set initial component amounts used in the equilibrium calculation.
-    auto setInitialComponentAmounts(ArrayXdConstRef c0) -> void;
+    auto setInitialComponentAmounts(ArrayXdConstRef const& c0) -> void;
 
     /// Set the computed control variables *p* in the equilibrium calculation.
-    auto setControlVariablesP(ArrayXdConstRef p) -> void;
+    auto setControlVariablesP(ArrayXdConstRef const& p) -> void;
 
     /// Set the computed control variables *q* in the equilibrium calculation.
-    auto setControlVariablesQ(ArrayXdConstRef q) -> void;
+    auto setControlVariablesQ(ArrayXdConstRef const& q) -> void;
 
     /// Set the Optima::State object computed as part of the equilibrium calculation.
-    auto setOptimaState(const Optima::State& state) -> void;
+    auto setOptimaState(Optima::State const& state) -> void;
 
     /// Return the number of primary species.
     auto numPrimarySpecies() const -> Index;
@@ -459,7 +464,7 @@ public:
     auto c() const -> ArrayXdConstRef;
 
     /// Return the Optima::State object computed as part of the equilibrium calculation.
-    auto optimaState() const -> const Optima::State&;
+    auto optimaState() const -> Optima::State const&;
 
 private:
     struct Impl;
@@ -490,7 +495,7 @@ struct MemoizationTraits<ChemicalState>
     /// The type used instead to cache a ChemicalState object.
     using CacheType = Tuple<real, real, ArrayXr, ArrayXr>;
 
-    static auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
+    auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
     {
         auto const& [T, P, n, S] = a;
         return
@@ -500,7 +505,7 @@ struct MemoizationTraits<ChemicalState>
             (S == b.surfaceAreas()).all();
     }
 
-    static auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
+    auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
     {
         auto& [T, P, n, S] = a;
         T = b.temperature();
