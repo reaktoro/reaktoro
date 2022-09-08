@@ -248,39 +248,39 @@ Data::Data(json const& obj)
 {
 }
 
-auto Data::fromYaml(Chars input) -> Data
+auto Data::parseYaml(Chars input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(YAML::Load(input));
 }
 
-auto Data::fromYaml(String const& input) -> Data
+auto Data::parseYaml(String const& input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(YAML::Load(input));
 }
 
-auto Data::fromYaml(std::istream& input) -> Data
+auto Data::parseYaml(std::istream& input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(YAML::Load(input));
 }
 
-auto Data::fromJson(Chars input) -> Data
+auto Data::parseJson(Chars input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(nlohmann::json::parse(input));
 
 }
 
-auto Data::fromJson(String const& input) -> Data
+auto Data::parseJson(String const& input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(nlohmann::json::parse(input));
 
 }
 
-auto Data::fromJson(std::istream& input) -> Data
+auto Data::parseJson(std::istream& input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     nlohmann::json obj;

@@ -142,7 +142,7 @@ Species:
           lgKr: 7.0
 )";
 
-    Data data = Data::fromYaml(contents);
+    Data data = Data::parseYaml(contents);
 
     CHECK_NOTHROW(data.as<Database>());
 
@@ -280,7 +280,7 @@ TEST_CASE("Testing Data encoder/decoder for FormationReaction", "[Serialization]
 
     Data data = reaction;
 
-    Data expected = Data::fromYaml(R"(
+    Data expected = Data::parseYaml(R"(
 Reactants: 1:Ca++ 1:Mg++ 2:CO3--
 ReactionStandardThermoModel:
   ConstLgK:
@@ -350,7 +350,7 @@ TEST_CASE("Testing Data encoder/decoder for ReactionStandardThermoModel", "[Seri
 
     data = ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr});
 
-    expected = Data::fromYaml(R"(
+    expected = Data::parseYaml(R"(
         VantHoff:
           lgKr: 1
           dHr: 2
@@ -375,7 +375,7 @@ TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
         data = Species("CaCO3(aq)")
             .withStandardGibbsEnergy(10.0);
 
-        expected = Data::fromYaml(R"(
+        expected = Data::parseYaml(R"(
             Name: CaCO3(aq)
             Formula: CaCO3
             Substance: CaCO3
@@ -414,7 +414,7 @@ TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
             .withSubstance("CARBONATE")
             .withStandardThermoModel(StandardThermoModelHKF(params));
 
-        expected = Data::fromYaml(R"(
+        expected = Data::parseYaml(R"(
             Name: CO3--(aq)
             Formula: CO3--
             Substance: CARBONATE
@@ -458,7 +458,7 @@ TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
 
         data = Species("CaCO3(s)").withFormationReaction(reaction);
 
-        expected = Data::fromYaml(R"(
+        expected = Data::parseYaml(R"(
             Name: CaCO3(s)
             Formula: CaCO3
             Substance: CaCO3
@@ -489,7 +489,7 @@ TEST_CASE("Testing Data encoder/decoder for SpeciesList", "[Serialization][Core]
         Species("CaCO3(aq)").withStandardGibbsEnergy(0.0)
     });
 
-    Data expected = Data::fromYaml(R"(
+    Data expected = Data::parseYaml(R"(
         - Name: Ca++(aq)
           Formula: Ca++
           Substance: Ca++
@@ -550,7 +550,7 @@ TEST_CASE("Testing Data encoder/decoder for StandardThermoModel", "[Serializatio
 
     Data data = StandardThermoModelMaierKelley(params);
 
-    Data expected = Data::fromYaml(R"(
+    Data expected = Data::parseYaml(R"(
         MaierKelley:
           Gf: 1
           Hf: 2
