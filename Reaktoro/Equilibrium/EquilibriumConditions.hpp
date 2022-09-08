@@ -226,9 +226,22 @@ public:
     //
     //=================================================================================================
 
-    /// Set the input variable with name @p input to the value in @p val.
-    /// @warning An error is thrown if there are no input variables with name @p input.
+    /// Set the input variable with name `input` to the value in `val`.
+    /// @warning An error is thrown if there are no input variables with name `input`.
     auto set(const String& input, const real& val) -> void;
+
+    /// Set the input variable with name `input` to the value in `val`.
+    /// @warning An error is thrown if there are no input variables with name `input`.
+    auto setInputVariable(const String& input, const real& val) -> void;
+
+    /// Set the input variables with given vector of input values.
+    auto setInputVariables(VectorXrConstRef const& values) -> void;
+
+    /// Set the values of the specified lower bounds for the *p* control variables.
+    auto setLowerBoundsControlVariablesP(VectorXdConstRef const& values) -> void;
+
+    /// Set the values of the specified upper bounds for the *p* control variables.
+    auto setUpperBoundsControlVariablesP(VectorXdConstRef const& values) -> void;
 
     /// Return the chemical system associated with the equilibrium conditions.
     auto system() const -> const ChemicalSystem&;
