@@ -128,11 +128,12 @@ auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system
 auto ReactionRateModelPalandriKharaka(Params const& params) -> MineralReactionRateModelGenerator
 {
     auto const& data = params.data();
-    errorif(!data.exists("PalandriKharaka"), "Expecting Palandri-Kharaka mineral rate parameters in given Params object, under the section `PalandriKharaka`.");
-    errorif(!data.at("PalandriKharaka").isDict(), "Expecting section `PalandriKharaka` with Palandri-Kharaka mineral rate parameters to be a dictionary.");
+    errorif(!data.exists("ReactionRateModelParams"), "Expecting Palandri-Kharaka mineral rate parameters in given Params object, but it lacks a `ReactionRateModelParams` section within which another section `PalandriKharaka` should exist.");
+    errorif(!data.at("ReactionRateModelParams").exists("PalandriKharaka"), "Expecting Palandri-Kharaka mineral rate parameters in given Params object, under the section `PalandriKharaka`.");
+    errorif(!data.at("ReactionRateModelParams").at("PalandriKharaka").isDict(), "Expecting section `PalandriKharaka` with Palandri-Kharaka mineral rate parameters to be a dictionary.");
 
     Vec<ReactionRateModelParamsPalandriKharaka> paramsvec;
-    for(auto const& [key, value] : data["PalandriKharaka"].asDict())
+    for(auto const& [key, value] : data["ReactionRateModelParams"]["PalandriKharaka"].asDict())
         paramsvec.push_back(value.as<ReactionRateModelParamsPalandriKharaka>());
 
     return ReactionRateModelPalandriKharaka(paramsvec);
