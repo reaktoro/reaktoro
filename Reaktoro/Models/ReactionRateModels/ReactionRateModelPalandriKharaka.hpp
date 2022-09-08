@@ -65,8 +65,11 @@ struct ReactionRateModelParamsPalandriKharaka
         Vec<Catalyst> catalysts;
     };
 
-    /// The alternative names of the mineral (e.g., `Dolomite`, `Dolomite,ord`, `Dolomite,ordered`).
-    Strings names;
+    /// The name of the mineral (e.g., `Dolomite`).
+    String mineral;
+
+    /// The alternative names of the mineral (e.g., `Dolomite,ord`, `Dolomite,ordered`).
+    Strings othernames;
 
     /// The reaction mechanisms considered in the mineral dissolution/precipitation rate model.
     Vec<Mechanism> mechanisms;

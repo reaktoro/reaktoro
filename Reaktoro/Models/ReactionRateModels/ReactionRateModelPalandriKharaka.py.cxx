@@ -43,7 +43,8 @@ void exportReactionRateModelPalandriKharaka(py::module& m)
 
     py::class_<ReactionRateModelParamsPalandriKharaka>(m, "ReactionRateModelParamsPalandriKharaka")
         .def(py::init<>())
-        .def_readwrite("names",      &ReactionRateModelParamsPalandriKharaka::names)
+        .def_readwrite("mineral",    &ReactionRateModelParamsPalandriKharaka::mineral)
+        .def_readwrite("othernames", &ReactionRateModelParamsPalandriKharaka::othernames)
         .def_readwrite("mechanisms", &ReactionRateModelParamsPalandriKharaka::mechanisms)
         ;
 

@@ -79,8 +79,8 @@ TEST_CASE("Testing Params class", "[Params]")
     SECTION("Check when constructed from an embedded or local resource")
     {
         Params params = GENERATE(
-            Params::embedded("PalandriKharaka.yml"),
-            Params::local(REAKTORO_PARAMS_DIR"/PalandriKharaka.yml")
+            Params::embedded("PalandriKharaka.yaml"),
+            Params::local(REAKTORO_PARAMS_DIR"/PalandriKharaka.yaml")
         );
 
         auto const& data = params.data();

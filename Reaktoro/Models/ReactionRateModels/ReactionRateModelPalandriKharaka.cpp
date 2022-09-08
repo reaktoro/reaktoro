@@ -188,7 +188,7 @@ auto ReactionRateModelPalandriKharaka(Vec<ReactionRateModelParamsPalandriKharaka
 {
     MineralReactionRateModelGenerator model = [=](String const& mineral, PhaseList const& phases)
     {
-        const auto idx = indexfn(paramsvec, RKT_LAMBDA(x, contains(x.names, mineral)));
+        const auto idx = indexfn(paramsvec, RKT_LAMBDA(x, x.mineral == mineral || contains(x.othernames, mineral)));
         errorif(idx >= paramsvec.size(), "Could not find a mineral with name `", mineral, "` in the provided set of Palandri-Kharaka parameters.");
         const auto params = paramsvec[idx];
         return ReactionRateModelPalandriKharaka(params)(mineral, phases);
