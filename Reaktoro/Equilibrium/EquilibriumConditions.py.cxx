@@ -81,7 +81,7 @@ void exportEquilibriumConditions(py::module& m)
         .def("setInitialComponentAmountsFromSpeciesAmounts", &EquilibriumConditions::setInitialComponentAmountsFromSpeciesAmounts, "Set the initial amounts of the conservative components c0 before the chemical system reacts.")
         .def("setInitialComponentAmountsFromState", &EquilibriumConditions::setInitialComponentAmountsFromState, "Set the initial amounts of the conservative components c0 before the chemical system reacts.")
         .def("initialComponentAmounts", &EquilibriumConditions::initialComponentAmounts, return_internal_ref, "Get the initial amounts of the conservative components c0 before the chemical system reacts.")
-        .def("initialComponentAmountsGetOrCompute", py::overload_cast<VectorXrConstRef const&>(&EquilibriumConditions::initialComponentAmountsGetOrCompute, py::const_), "Get the initial amounts of the conservative components c0 before the chemical system reacts if available, otherwise compute it.")
+        .def("initialComponentAmountsGetOrCompute", py::overload_cast<VectorXdConstRef const&>(&EquilibriumConditions::initialComponentAmountsGetOrCompute, py::const_), "Get the initial amounts of the conservative components c0 before the chemical system reacts if available, otherwise compute it.")
         .def("initialComponentAmountsGetOrCompute", py::overload_cast<ChemicalState const&>(&EquilibriumConditions::initialComponentAmountsGetOrCompute, py::const_), "Get the initial amounts of the conservative components c0 before the chemical system reacts if available, otherwise compute it.")
 
         .def("system", &EquilibriumConditions::system, return_internal_ref, "Return the chemical system associated with the equilibrium conditions.")

@@ -301,14 +301,14 @@ public:
 
     /// Set the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
     /// @param c0 The initial amounts of the conservative components \eq{c^\circ}.
-    auto setInitialComponentAmounts(VectorXrConstRef const& c0) -> void;
+    auto setInitialComponentAmounts(VectorXdConstRef const& c0) -> void;
 
     /// Set the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
     /// This method sets the initial amounts of the conservative components \eq{c^\circ} using
     /// \eq{c^\circ=Cn^\circ} where \eq{C} is the conservation matrix of the species with respect to
     /// the conservative components and \eq{n^\circ} is the given initial amounts of the species.
     /// @param n0 The initial amounts of the species \eq{n^\circ}.
-    auto setInitialComponentAmountsFromSpeciesAmounts(VectorXrConstRef const& n0) -> void;
+    auto setInitialComponentAmountsFromSpeciesAmounts(VectorXdConstRef const& n0) -> void;
 
     /// Set the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
     /// This method sets the initial amounts of the conservative components \eq{c^\circ} using
@@ -322,7 +322,7 @@ public:
     /// The amounts of conservative components can be set directly using @ref setInitialComponentAmounts
     /// or indirectly using @ref setInitialComponentAmountsFromSpeciesAmounts and @ref setInitialComponentAmountsFromState.
     /// If none of these methods have been called, and empty array is returned by this method.
-    auto initialComponentAmounts() const -> ArrayXrConstRef;
+    auto initialComponentAmounts() const -> ArrayXdConstRef;
 
     /// Get the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts if available, otherwise compute it.
     /// If neither @ref setInitialSpeciesAmounts nor @ref setInitialComponentAmounts have been used
@@ -330,11 +330,11 @@ public:
     /// vector is computed using a given vector \eq{n^\circ} with the initial amounts of species.
     /// Otherwise, the existing values for \eq{c^\circ} is returned instead.
     /// @param n0 The initial amounts of the species \eq{n^\circ} used to compute \eq{c^\circ} in case it has not been set before.
-    auto initialComponentAmountsGetOrCompute(VectorXrConstRef const& n0) const -> ArrayXr;
+    auto initialComponentAmountsGetOrCompute(VectorXdConstRef const& n0) const -> ArrayXd;
 
     /// Get the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts if available, otherwise compute it.
     /// @param state0 The initial state of the system from which the initial amounts of the species \eq{n^\circ} are collected if needed.
-    auto initialComponentAmountsGetOrCompute(ChemicalState const& state0) const -> ArrayXr;
+    auto initialComponentAmountsGetOrCompute(ChemicalState const& state0) const -> ArrayXd;
 
     //=================================================================================================
     //
@@ -359,7 +359,7 @@ private:
     const Indices isurface_areas_known;   ///< The indices of the surfaces areas that are known.
     const Indices isurface_areas_unknown; ///< The indices of the surfaces areas that are unknown.
     ArrayXr w;                            ///< The values of the *w* input variables.
-    ArrayXr c0;                           ///< The initial amounts of the conservative components.
+    ArrayXd c0;                           ///< The initial amounts of the conservative components.
     ArrayXd plower;                       ///< The lower bounds for the *p* control variables.
     ArrayXd pupper;                       ///< The upper bounds for the *p* control variables.
 };

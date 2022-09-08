@@ -470,13 +470,13 @@ auto EquilibriumConditions::inputValue(String const& name) const -> real const&
 //
 //=================================================================================================
 
-auto EquilibriumConditions::setInitialComponentAmounts(VectorXrConstRef const& c0) -> void
+auto EquilibriumConditions::setInitialComponentAmounts(VectorXdConstRef const& c0) -> void
 {
     errorif(c0.rows() != C.rows(), "Expecting a vector of initial amounts of conservative components with size ", C.rows(), " but given one has size ", c0.rows(), " instead.");
     this->c0 = c0;
 }
 
-auto EquilibriumConditions::setInitialComponentAmountsFromSpeciesAmounts(VectorXrConstRef const& n0) -> void
+auto EquilibriumConditions::setInitialComponentAmountsFromSpeciesAmounts(VectorXdConstRef const& n0) -> void
 {
     errorif(n0.rows() != C.cols(), "Expecting a vector of initial amounts of species with size ", C.cols(), " but given one has size ", n0.rows(), " instead.");
     c0 = C * n0;
@@ -484,25 +484,25 @@ auto EquilibriumConditions::setInitialComponentAmountsFromSpeciesAmounts(VectorX
 
 auto EquilibriumConditions::setInitialComponentAmountsFromState(ChemicalState const& state0) -> void
 {
-    const VectorXrConstRef n0 = state0.speciesAmounts();
+    const VectorXdConstRef n0 = state0.speciesAmounts();
     c0 = C * n0;
 }
 
-auto EquilibriumConditions::initialComponentAmounts() const -> ArrayXrConstRef
+auto EquilibriumConditions::initialComponentAmounts() const -> ArrayXdConstRef
 {
     return c0;
 }
 
-auto EquilibriumConditions::initialComponentAmountsGetOrCompute(VectorXrConstRef const& n0) const -> ArrayXr
+auto EquilibriumConditions::initialComponentAmountsGetOrCompute(VectorXdConstRef const& n0) const -> ArrayXd
 {
     errorif(n0.rows() != C.cols(), "Expecting a vector of initial amounts of species with size ", C.cols(), " but given one has size ", n0.rows(), " instead.");
-    return c0.rows() != 0 ? c0 : ArrayXr(C * n0);
+    return c0.rows() != 0 ? c0 : ArrayXd(C * n0);
 }
 
-auto EquilibriumConditions::initialComponentAmountsGetOrCompute(ChemicalState const& state0) const -> ArrayXr
+auto EquilibriumConditions::initialComponentAmountsGetOrCompute(ChemicalState const& state0) const -> ArrayXd
 {
-    const VectorXrConstRef n0 = state0.speciesAmounts();
-    return c0.rows() != 0 ? c0 : ArrayXr(C * n0);
+    const VectorXdConstRef n0 = state0.speciesAmounts();
+    return c0.rows() != 0 ? c0 : ArrayXd(C * n0);
 }
 
 //=================================================================================================
