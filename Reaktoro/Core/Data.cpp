@@ -25,7 +25,6 @@ using json = nlohmann::json;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/Enumerate.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -427,64 +426,6 @@ REAKTORO_DATA_DECODE_DEFINE(Chars) { obj = data.asString().c_str(); }
 
 REAKTORO_DATA_ENCODE_DEFINE(String) { data = obj; }
 REAKTORO_DATA_DECODE_DEFINE(String) { obj = data.asString(); }
-
-template<typename T>
-REAKTORO_DATA_ENCODE_DEFINE(Vec<T>, typename T)
-{
-    for(auto const& x : obj)
-        data.add(x);
-}
-
-template<typename T>
-REAKTORO_DATA_DECODE_DEFINE(Vec<T>, typename T)
-{
-    for(auto const& x : data.asList())
-        obj.push_back(x);
-}
-
-template<typename T, std::size_t N>
-REAKTORO_DATA_ENCODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N)
-{
-    for(auto const& x : obj)
-        data.add(x);
-}
-
-template<typename T, std::size_t N>
-REAKTORO_DATA_DECODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N)
-{
-    for(auto const& [i, x] : enumerate(data.asList()))
-        obj[i] = x;
-}
-
-template<typename A, typename B>
-REAKTORO_DATA_ENCODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
-{
-    data.add(obj.first);
-    data.add(obj.second);
-}
-
-template<typename A, typename B>
-REAKTORO_DATA_DECODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
-{
-    auto const& l = data.asList();
-    errorif(l.size() != 2, "Converting from Data to Pair requires the Data object to be a list with two entries.");
-    obj.first = l[0];
-    obj.second = l[1];
-}
-
-template<typename K, typename T>
-REAKTORO_DATA_ENCODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
-{
-    for(auto const& [k, v] : obj)
-        data.add(k, v);
-}
-
-template<typename K, typename T>
-REAKTORO_DATA_DECODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
-{
-    for(auto const& [k, v] : data.asDict())
-        obj[k] = v;
-}
 
 REAKTORO_DATA_ENCODE_DEFINE(Param) { data = obj; }
 REAKTORO_DATA_DECODE_DEFINE(Param) { obj = data.asParam(); }
