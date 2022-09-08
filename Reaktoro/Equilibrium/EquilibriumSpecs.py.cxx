@@ -48,6 +48,12 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &ConstraintEquation::fn)
         ;
 
+    py::class_<ReactivityConstraint>(m, "ReactivityConstraint")
+        .def_readwrite("id", &ReactivityConstraint::id)
+        .def_readwrite("An", &ReactivityConstraint::An)
+        .def_readwrite("Ap", &ReactivityConstraint::Ap)
+        ;
+
     py::class_<EquilibriumSpecs>(m, "EquilibriumSpecs")
         .def(py::init<const ChemicalSystem&>())
         .def("temperature", &EquilibriumSpecs::temperature)
@@ -103,6 +109,7 @@ void exportEquilibriumSpecs(py::module& m)
         .def("addControlVariableQ", &EquilibriumSpecs::addControlVariableQ)
         .def("addControlVariableP", &EquilibriumSpecs::addControlVariableP)
         .def("addConstraint", &EquilibriumSpecs::addConstraint)
+        .def("addReactivityConstraint", &EquilibriumSpecs::addReactivityConstraint)
         .def("addInput", py::overload_cast<const String&>(&EquilibriumSpecs::addInput), return_internal_ref)
         .def("addInput", py::overload_cast<const Param&>(&EquilibriumSpecs::addInput), return_internal_ref)
         .def("system", &EquilibriumSpecs::system, return_internal_ref)
@@ -119,5 +126,6 @@ void exportEquilibriumSpecs(py::module& m)
         .def("titrantsExplicit", &EquilibriumSpecs::titrantsExplicit)
         .def("titrantsImplicit", &EquilibriumSpecs::titrantsImplicit)
         .def("constraintsEquationType", &EquilibriumSpecs::constraintsEquationType, return_internal_ref)
+        .def("reactivityConstraints", &EquilibriumSpecs::reactivityConstraints, return_internal_ref)
         ;
 }

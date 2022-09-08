@@ -70,7 +70,7 @@ struct ControlVariableP
     /// The signature of functions that evaluate the chemical potential of a species in terms of a *p* control variable.
     /// @param state The current chemical state and properties of the system in the equilibrium calculation.
     /// @param pk The current value of the corresponding *p* control variable during the equilibrium calculation.
-    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, const real& pk)>;
+    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, real const& pk)>;
 
     /// The unique name for this *p* control variable (required).
     String name;
@@ -98,6 +98,21 @@ struct ConstraintEquation
 
     /// The function defining the equation to be satisfied at chemical equilibrium.
     ConstraintFn fn;
+};
+
+/// Used to define reactivity restrictions among species in the chemical
+/// equilibrium calculation. This can be used, for example, to impose that a
+/// reaction is inert and should not progress during the equilibration process.
+struct ReactivityConstraint
+{
+    /// The unique identifier for this reactivity constraint.
+    String id;
+
+    /// The linear equation coefficients in the constraint corresponding to the species amounts variables *n*.
+    VectorXd An;
+
+    /// The linear equation coefficients in the constraint corresponding to the introduced control variables *p*.
+    VectorXd Ap;
 };
 
 /// The class used to define conditions to be satisfied at chemical equilibrium.
@@ -191,7 +206,7 @@ class EquilibriumSpecs
 {
 public:
     /// Construct an EquilibriumSpecs object.
-    explicit EquilibriumSpecs(const ChemicalSystem& system);
+    explicit EquilibriumSpecs(ChemicalSystem const& system);
 
     //=================================================================================================
     //
@@ -262,33 +277,33 @@ public:
 
     /// Specify that the **amount of an element** at chemical equilibrium is given.
     /// @param element The name or index of the element in the chemical system.
-    auto elementAmount(const StringOrIndex& element) -> void;
+    auto elementAmount(StringOrIndex const& element) -> void;
 
     /// Specify that the **amount of an element in a phase** at chemical equilibrium is given.
     /// @param element The name or index of the element in the chemical system.
     /// @param phase The name or index of the phase in the chemical system.
-    auto elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void;
+    auto elementAmountInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void;
 
     /// Specify that the **mass of an element** at chemical equilibrium is given.
     /// @param element The name or index of the element in the chemical system.
-    auto elementMass(const StringOrIndex& element) -> void;
+    auto elementMass(StringOrIndex const& element) -> void;
 
     /// Specify that the **mass of an element in a phase** at chemical equilibrium is given.
     /// @param element The name or index of the element in the chemical system.
     /// @param phase The name or index of the phase in the chemical system.
-    auto elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void;
+    auto elementMassInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void;
 
     /// Specify that the **amount of a phase** at chemical equilibrium is given.
     /// @param phase The name or index of the phase in the chemical system.
-    auto phaseAmount(const StringOrIndex& phase) -> void;
+    auto phaseAmount(StringOrIndex const& phase) -> void;
 
     /// Specify that the **mass of a phase** at chemical equilibrium is given.
     /// @param phase The name or index of the phase in the chemical system.
-    auto phaseMass(const StringOrIndex& phase) -> void;
+    auto phaseMass(StringOrIndex const& phase) -> void;
 
     /// Specify that the **volume of a phase** at chemical equilibrium is given.
     /// @param phase The name or index of the phase in the chemical system.
-    auto phaseVolume(const StringOrIndex& phase) -> void;
+    auto phaseVolume(StringOrIndex const& phase) -> void;
 
     //=================================================================================================
     //
@@ -321,10 +336,10 @@ public:
     /// an *implicit titrant* is introduced with name `[substance]` (e.g., `[CO2]`).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The chemical species as an Species object.
-    auto lnActivity(const Species& species) -> void;
+    auto lnActivity(Species const& species) -> void;
 
     /// Specify that the **ln activity** of a species at chemical equilibrium is given.
-    /// For more details, check the documentation of EquilibriumSpecs::lnActivity(const Species&).
+    /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
     /// @note The chemical species does not need to be in the chemical system; only in the database.
@@ -332,7 +347,7 @@ public:
     auto lnActivity(String species) -> void;
 
     /// Specify that the **lg activity** of a species at chemical equilibrium is given.
-    /// For more details, check the documentation of EquilibriumSpecs::lnActivity(const Species&).
+    /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
     /// @note The chemical species does not need to be in the chemical system; only in the database.
@@ -340,7 +355,7 @@ public:
     auto lgActivity(String species) -> void;
 
     /// Specify that the **activity** of a species at chemical equilibrium is given.
-    /// For more details, check the documentation of EquilibriumSpecs::lnActivity(const Species&).
+    /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
     /// @note The chemical species does not need to be in the chemical system; only in the database.
@@ -450,13 +465,13 @@ public:
     ///
     /// @see EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param substance The chemical formula of the substance.
-    auto openTo(const ChemicalFormula& substance) -> void;
+    auto openTo(ChemicalFormula const& substance) -> void;
 
-    /// Specify that the chemical system is open to a given chemical state. // TODO: Implement EquilibriumSpecs::auto openTo(const ChemicalState& state).
-    // auto openTo(const ChemicalState& state) -> void;
+    /// Specify that the chemical system is open to a given chemical state. // TODO: Implement EquilibriumSpecs::auto openTo(ChemicalState const& state).
+    // auto openTo(ChemicalState const& state) -> void;
 
-    /// Specify that the chemical system is open to a given material. // TODO: Implement EquilibriumSpecs::auto openTo(const Material& material).
-    // auto openTo(const Material& material) -> void;
+    /// Specify that the chemical system is open to a given material. // TODO: Implement EquilibriumSpecs::auto openTo(Material const& material).
+    // auto openTo(Material const& material) -> void;
 
     //=================================================================================================
     //
@@ -465,19 +480,19 @@ public:
     //=================================================================================================
 
     /// Specify that the chemical system is open to a titrant substance and its amount is unknown.
-    auto addUnknownTitrantAmount(const ChemicalFormula& substance) -> void;
+    auto addUnknownTitrantAmount(ChemicalFormula const& substance) -> void;
 
     /// Specify that the chemical potential of a species is unknown at equilibrium and must be computed.
-    auto addUnknownChemicalPotential(const String& species) -> void;
+    auto addUnknownChemicalPotential(String const& species) -> void;
 
     /// Specify that the standard chemical potential of a species is unknown at equilibrium and must be computed.
-    auto addUnknownStandardChemicalPotential(const String& species) -> void;
+    auto addUnknownStandardChemicalPotential(String const& species) -> void;
 
     /// Specify that the activity of a species is unknown at equilibrium and must be computed.
-    auto addUnknownActivity(const String& species) -> void;
+    auto addUnknownActivity(String const& species) -> void;
 
     /// Specify that the activity coefficient of a species is unknown at equilibrium and must be computed.
-    auto addUnknownActivityCoefficient(const String& species) -> void;
+    auto addUnknownActivityCoefficient(String const& species) -> void;
 
     //=================================================================================================
     //
@@ -552,19 +567,22 @@ public:
     //=================================================================================================
 
     /// Add a *q* control variable in the specification of the chemical equilibrium problem.
-    auto addControlVariableQ(const ControlVariableQ& qvar) -> void;
+    auto addControlVariableQ(ControlVariableQ const& qvar) -> void;
 
     /// Add a *p* control variable in the specification of the chemical equilibrium problem.
-    auto addControlVariableP(const ControlVariableP& pvar) -> void;
+    auto addControlVariableP(ControlVariableP const& pvar) -> void;
 
-    /// Add a new equation constraint to be satisfied at chemical equilibrium.
-    auto addConstraint(const ConstraintEquation& constraint) -> void;
+    /// Add an equation constraint to be satisfied at chemical equilibrium.
+    auto addConstraint(ConstraintEquation const& constraint) -> void;
+
+    /// Add a reactivity constraint to be satisfied at chemical equilibrium.
+    auto addReactivityConstraint(ReactivityConstraint const& constraint) -> void;
 
     /// Add a new input variable for the chemical equilibrium problem with name @p var.
-    auto addInput(const String& var) -> Index;
+    auto addInput(String const& var) -> Index;
 
     /// Add model parameter @p param as a new input variable for the chemical equilibrium problem.
-    auto addInput(const Param& param) -> Index;
+    auto addInput(Param const& param) -> Index;
 
     //=================================================================================================
     //
@@ -573,10 +591,10 @@ public:
     //=================================================================================================
 
     /// Return the chemical system associated with the equilibrium conditions.
-    auto system() const -> const ChemicalSystem&;
+    auto system() const -> ChemicalSystem const&;
 
     /// Return the input variables in the chemical equilibrium specifications.
-    auto inputs() const -> const Strings&;
+    auto inputs() const -> Strings const&;
 
     /// Return the model parameters among the input variables.
     auto params() const -> const Vec<Param>&;
@@ -614,6 +632,9 @@ public:
     /// Return the equation constraints to be satisfied at chemical equilibrium.
     auto constraintsEquationType() const -> Vec<ConstraintEquation> const&;
 
+    /// Return the introduced reactivity constraints to be satisfied during the equilibrium calculation.
+    auto reactivityConstraints() const -> Vec<ReactivityConstraint> const&;
+
 private:
     /// The chemical system associated with the equilibrium conditions.
     ChemicalSystem m_system;
@@ -642,6 +663,9 @@ private:
     /// The equation constraints to be satisfied at chemical equilibrium.
     Vec<ConstraintEquation> econstraints;
 
+    /// The reactivity constraints to be satisfied at chemical equilibrium.
+    Vec<ReactivityConstraint> rconstraints;
+
     // ----- AUXILIARY DATA MEMBERS ----- //
 
     /// The chemical formulas of the explicit titrants whose amounts are unknown.
@@ -655,7 +679,7 @@ private:
 
 private:
     /// Throw an error if a given titrant has already been registered explicitly or implicitly.
-    auto throwErrorIfTitrantHasBeenRegistered(const ChemicalFormula& substance) const -> void;
+    auto throwErrorIfTitrantHasBeenRegistered(ChemicalFormula const& substance) const -> void;
 };
 
 } // namespace Reaktoro

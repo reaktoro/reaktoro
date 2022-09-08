@@ -30,7 +30,7 @@ namespace Reaktoro {
 namespace {
 
 /// Return a Species object in a Database with given formula and aggregate state
-auto getSpecies(const Database& db, const String& formula, AggregateState aggstate) -> Species
+auto getSpecies(Database const& db, String const& formula, AggregateState aggstate) -> Species
 {
     const auto selected = db.speciesWithAggregateState(aggstate);
     const auto idx = selected.findWithFormula(formula);
@@ -39,20 +39,20 @@ auto getSpecies(const Database& db, const String& formula, AggregateState aggsta
 }
 
 /// Return a Species object in a Database with given formula and aqueous aggregate state.
-auto getAqueousSpecies(const Database& db, const String& formula) -> Species
+auto getAqueousSpecies(Database const& db, String const& formula) -> Species
 {
     return getSpecies(db, formula, AggregateState::Aqueous);
 }
 
 /// Return a Species object in a Database with given formula and gaseous aggregate state.
-auto getGaseousSpecies(const Database& db, const String& formula) -> Species
+auto getGaseousSpecies(Database const& db, String const& formula) -> Species
 {
     return getSpecies(db, formula, AggregateState::Gas);
 }
 
 } // namespace
 
-EquilibriumSpecs::EquilibriumSpecs(const ChemicalSystem& system)
+EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
 : m_system(system)
 {
     // By default, start with T and P as unknown *p* control variables.
@@ -168,7 +168,7 @@ auto EquilibriumSpecs::charge() -> void
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::elementAmount(const StringOrIndex& element) -> void
+auto EquilibriumSpecs::elementAmount(StringOrIndex const& element) -> void
 {
     const auto ielement = detail::resolveElementIndex(m_system, element);
     const auto elementsymbol = m_system.element(ielement).symbol();
@@ -182,7 +182,7 @@ auto EquilibriumSpecs::elementAmount(const StringOrIndex& element) -> void
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::elementAmountInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void
+auto EquilibriumSpecs::elementAmountInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void
 {
     const auto ielement = detail::resolveElementIndex(m_system, element);
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
@@ -198,7 +198,7 @@ auto EquilibriumSpecs::elementAmountInPhase(const StringOrIndex& element, const 
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::elementMass(const StringOrIndex& element) -> void
+auto EquilibriumSpecs::elementMass(StringOrIndex const& element) -> void
 {
     const auto ielement = detail::resolveElementIndex(m_system, element);
     const auto elementsymbol = m_system.element(ielement).symbol();
@@ -212,7 +212,7 @@ auto EquilibriumSpecs::elementMass(const StringOrIndex& element) -> void
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::elementMassInPhase(const StringOrIndex& element, const StringOrIndex& phase) -> void
+auto EquilibriumSpecs::elementMassInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void
 {
     const auto ielement = detail::resolveElementIndex(m_system, element);
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
@@ -228,7 +228,7 @@ auto EquilibriumSpecs::elementMassInPhase(const StringOrIndex& element, const St
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::phaseAmount(const StringOrIndex& phase) -> void
+auto EquilibriumSpecs::phaseAmount(StringOrIndex const& phase) -> void
 {
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
@@ -242,7 +242,7 @@ auto EquilibriumSpecs::phaseAmount(const StringOrIndex& phase) -> void
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::phaseMass(const StringOrIndex& phase) -> void
+auto EquilibriumSpecs::phaseMass(StringOrIndex const& phase) -> void
 {
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
@@ -256,7 +256,7 @@ auto EquilibriumSpecs::phaseMass(const StringOrIndex& phase) -> void
     addConstraint(constraint);
 }
 
-auto EquilibriumSpecs::phaseVolume(const StringOrIndex& phase) -> void
+auto EquilibriumSpecs::phaseVolume(StringOrIndex const& phase) -> void
 {
     const auto iphase = detail::resolvePhaseIndex(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
@@ -291,7 +291,7 @@ auto EquilibriumSpecs::chemicalPotential(String substance) -> void
     addControlVariableQ(qvar);
 }
 
-auto EquilibriumSpecs::lnActivity(const Species& species) -> void
+auto EquilibriumSpecs::lnActivity(Species const& species) -> void
 {
     const auto pid = "ln(a[" + species.name() + "])";
     const auto idx = addInput(pid);
@@ -301,9 +301,9 @@ auto EquilibriumSpecs::lnActivity(const Species& species) -> void
     qvar.id = pid;
     qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
     {
-        const auto& T = state.temperature();
-        const auto& P = state.pressure();
-        const auto& R = universalGasConstant;
+        auto const& T = state.temperature();
+        auto const& P = state.pressure();
+        auto const& R = universalGasConstant;
         const auto u0 = species.standardThermoProps(T, P).G0;
         return u0 + R*T*w[idx];
     };
@@ -345,9 +345,9 @@ auto EquilibriumSpecs::fugacity(String gas) -> void
     qvar.id = pid;
     qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
     {
-        const auto& T = state.temperature();
-        const auto& P = state.pressure();
-        const auto& R = universalGasConstant;
+        auto const& T = state.temperature();
+        auto const& P = state.pressure();
+        auto const& R = universalGasConstant;
         const auto u0 = species.standardThermoProps(T, P).G0;
         return u0 + R*T*log(w[idx]);
     };
@@ -368,9 +368,9 @@ auto EquilibriumSpecs::pH() -> void
     qvar.id = pid;
     qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
     {
-        const auto& T = state.temperature();
-        const auto& P = state.pressure();
-        const auto& R = universalGasConstant;
+        auto const& T = state.temperature();
+        auto const& P = state.pressure();
+        auto const& R = universalGasConstant;
         const auto u0 = species.standardThermoProps(T, P).G0;
         const auto pH = w[idx];
         return u0 + R*T*(-pH*ln10);
@@ -392,9 +392,9 @@ auto EquilibriumSpecs::pMg() -> void
     qvar.id = pid;
     qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
     {
-        const auto& T  = state.temperature();
-        const auto& P  = state.pressure();
-        const auto& R  = universalGasConstant;
+        auto const& T  = state.temperature();
+        auto const& P  = state.pressure();
+        auto const& R  = universalGasConstant;
         const auto u0  = species.standardThermoProps(T, P).G0;
         const auto pMg = w[idx];
         return u0 + R*T*(-pMg*ln10);
@@ -411,8 +411,8 @@ auto EquilibriumSpecs::pE() -> void
     qvar.id = "pE";
     qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
     {
-        const auto& T = state.temperature();
-        const auto& R = universalGasConstant;
+        auto const& T = state.temperature();
+        auto const& R = universalGasConstant;
         const auto pE = w[idx];
         return R*T*(-pE*ln10);
     };
@@ -440,7 +440,7 @@ auto EquilibriumSpecs::Eh() -> void
 //
 //=================================================================================================
 
-auto EquilibriumSpecs::openTo(const ChemicalFormula& substance) -> void
+auto EquilibriumSpecs::openTo(ChemicalFormula const& substance) -> void
 {
     addUnknownTitrantAmount(substance);
 }
@@ -451,7 +451,7 @@ auto EquilibriumSpecs::openTo(const ChemicalFormula& substance) -> void
 //
 //=================================================================================================
 
-auto EquilibriumSpecs::addUnknownTitrantAmount(const ChemicalFormula& substance) -> void
+auto EquilibriumSpecs::addUnknownTitrantAmount(ChemicalFormula const& substance) -> void
 {
     ControlVariableP pvar;
     pvar.name = "[" + substance.str() + "]";
@@ -459,7 +459,7 @@ auto EquilibriumSpecs::addUnknownTitrantAmount(const ChemicalFormula& substance)
     addControlVariableP(pvar);
 }
 
-auto EquilibriumSpecs::addUnknownChemicalPotential(const String& species) -> void
+auto EquilibriumSpecs::addUnknownChemicalPotential(String const& species) -> void
 {
     errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the chemical potential of ", species, " because this has already been done directly or indirectly.");
     species_with_unknown_chemical_potentials.push_back(species);
@@ -467,14 +467,14 @@ auto EquilibriumSpecs::addUnknownChemicalPotential(const String& species) -> voi
     ControlVariableP pvar;
     pvar.name = "u[" + species + "]";
     pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalState const& state, const real& pk) -> real
+    pvar.fn = [=](ChemicalState const& state, real const& pk) -> real
     {
         return pk;
     };
     addControlVariableP(pvar);
 }
 
-auto EquilibriumSpecs::addUnknownStandardChemicalPotential(const String& species) -> void
+auto EquilibriumSpecs::addUnknownStandardChemicalPotential(String const& species) -> void
 {
     errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the standard chemical potential of ", species, " because this has already been done directly or indirectly.");
     species_with_unknown_chemical_potentials.push_back(species);
@@ -482,18 +482,18 @@ auto EquilibriumSpecs::addUnknownStandardChemicalPotential(const String& species
     ControlVariableP pvar;
     pvar.name = "u0[" + species + "]";
     pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalState const& state, const real& pk) -> real
+    pvar.fn = [=](ChemicalState const& state, real const& pk) -> real
     {
-        const auto& props = state.props();
-        const auto& T = props.temperature();
-        const auto& lnai = props.speciesActivityLn(ispecies);
-        const auto& R = universalGasConstant;
+        auto const& props = state.props();
+        auto const& T = props.temperature();
+        auto const& lnai = props.speciesActivityLn(ispecies);
+        auto const& R = universalGasConstant;
         return pk + R*T*lnai;
     };
     addControlVariableP(pvar);
 }
 
-auto EquilibriumSpecs::addUnknownActivity(const String& species) -> void
+auto EquilibriumSpecs::addUnknownActivity(String const& species) -> void
 {
     errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the activity of ", species, " because this has already been done directly or indirectly.");
     species_with_unknown_chemical_potentials.push_back(species);
@@ -501,18 +501,18 @@ auto EquilibriumSpecs::addUnknownActivity(const String& species) -> void
     ControlVariableP pvar;
     pvar.name = "a[" + species + "]";
     pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalState const& state, const real& pk) -> real
+    pvar.fn = [=](ChemicalState const& state, real const& pk) -> real
     {
-        const auto& props = state.props();
-        const auto& T = props.temperature();
-        const auto& G0 = props.speciesStandardGibbsEnergy(ispecies);
-        const auto& R = universalGasConstant;
+        auto const& props = state.props();
+        auto const& T = props.temperature();
+        auto const& G0 = props.speciesStandardGibbsEnergy(ispecies);
+        auto const& R = universalGasConstant;
         return G0 + R*T*log(pk);
     };
     addControlVariableP(pvar);
 }
 
-auto EquilibriumSpecs::addUnknownActivityCoefficient(const String& species) -> void
+auto EquilibriumSpecs::addUnknownActivityCoefficient(String const& species) -> void
 {
     errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the activity coefficient of ", species, " because this has already been done directly or indirectly.");
     species_with_unknown_chemical_potentials.push_back(species);
@@ -520,13 +520,13 @@ auto EquilibriumSpecs::addUnknownActivityCoefficient(const String& species) -> v
     ControlVariableP pvar;
     pvar.name = "g[" + species + "]";
     pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalState const& state, const real& pk) -> real
+    pvar.fn = [=](ChemicalState const& state, real const& pk) -> real
     {
-        const auto& props = state.props();
-        const auto& T = props.temperature();
-        const auto& G0 = props.speciesStandardGibbsEnergy(ispecies);
-        const auto& lnci = props.speciesConcentrationLn(ispecies);
-        const auto& R = universalGasConstant;
+        auto const& props = state.props();
+        auto const& T = props.temperature();
+        auto const& G0 = props.speciesStandardGibbsEnergy(ispecies);
+        auto const& lnci = props.speciesConcentrationLn(ispecies);
+        auto const& R = universalGasConstant;
         return G0 + R*T*(lnci + log(pk));
     };
     addControlVariableP(pvar);
@@ -642,7 +642,7 @@ auto EquilibriumSpecs::namesConstraints() const -> Strings
 //
 //=================================================================================================
 
-auto EquilibriumSpecs::addControlVariableQ(const ControlVariableQ& qvar) -> void
+auto EquilibriumSpecs::addControlVariableQ(ControlVariableQ const& qvar) -> void
 {
     errorif(qvar.name.empty(), "Could not add *q* control variable because its name is empty.");
     errorif(containsfn(qvars, RKT_LAMBDA(x, x.name == qvar.name)), "Could not add *q* control variable with name `", qvar.name, "` because another *q* control variable has already been added with same name.");
@@ -652,7 +652,7 @@ auto EquilibriumSpecs::addControlVariableQ(const ControlVariableQ& qvar) -> void
     qvars.push_back(qvar);
 }
 
-auto EquilibriumSpecs::addControlVariableP(const ControlVariableP& pvar) -> void
+auto EquilibriumSpecs::addControlVariableP(ControlVariableP const& pvar) -> void
 {
     const auto Nn = m_system.species().size();
     errorif(pvar.name.empty(), "Could not add *p* control variable because its name is empty.");
@@ -667,16 +667,27 @@ auto EquilibriumSpecs::addControlVariableP(const ControlVariableP& pvar) -> void
     pvars.push_back(pvar);
 }
 
-auto EquilibriumSpecs::addConstraint(const ConstraintEquation& constraint) -> void
+auto EquilibriumSpecs::addConstraint(ConstraintEquation const& constraint) -> void
 {
     const auto constraint_has_same_id = containsfn(econstraints, RKT_LAMBDA(x, x.id == constraint.id));
     errorif(constraint_has_same_id, "Cannot impose a new equation constraint with same id (", constraint.id, ").");
     errorif(constraint.id.empty(), "An equation constraint cannot have an empty id.");
-    errorif(!constraint.fn, "Imposing an empty function for an equation constraint is not allowed.");
+    errorif(!constraint.fn, "The equation constraint with id `", constraint.id, " should not have an empty function.");
     econstraints.push_back(constraint);
 }
 
-auto EquilibriumSpecs::addInput(const String& var) -> Index
+auto EquilibriumSpecs::addReactivityConstraint(ReactivityConstraint const& constraint) -> void
+{
+    const auto constraint_has_same_id = containsfn(rconstraints, RKT_LAMBDA(x, x.id == constraint.id));
+    errorif(constraint_has_same_id, "Cannot impose a new reactivity constraint with same id (", constraint.id, ").");
+    errorif(constraint.id.empty(), "A reactivity constraint cannot have an empty id.");
+    errorif(constraint.An.size() != m_system.species().size(), "The `An` vector in the reactivity constraint with id `", constraint.id, " has size ", constraint.An.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
+    errorif(constraint.An.cwiseAbs().minCoeff() == 0, "The `An` vector in the reactivity constraint with id `", constraint.id, " should not be entirely composed of zeros.", constraint.An.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
+    errorif(constraint.Ap.size() > 0 && constraint.Ap.size() != pvars.size(), "The `Ap` vector in the reactivity constraint with id `", constraint.id, " has non-zero size ", constraint.Ap.size(), " which should be equal to the number of p control variables, ", pvars.size(), ".");
+    rconstraints.push_back(constraint);
+}
+
+auto EquilibriumSpecs::addInput(String const& var) -> Index
 {
     errorif(contains(m_inputs, var), "Could not add input variable with id `", var, "` to the "
         "list of input variables for the equilibrium problem because "
@@ -685,7 +696,7 @@ auto EquilibriumSpecs::addInput(const String& var) -> Index
     return m_inputs.size() - 1; // the index of the just added input variable
 }
 
-auto EquilibriumSpecs::addInput(const Param& param) -> Index
+auto EquilibriumSpecs::addInput(Param const& param) -> Index
 {
     const auto idx = addInput(param.id());
     m_params.push_back(param);
@@ -699,12 +710,12 @@ auto EquilibriumSpecs::addInput(const Param& param) -> Index
 //
 //=================================================================================================
 
-auto EquilibriumSpecs::system() const -> const ChemicalSystem&
+auto EquilibriumSpecs::system() const -> ChemicalSystem const&
 {
     return m_system;
 }
 
-auto EquilibriumSpecs::inputs() const -> const Strings&
+auto EquilibriumSpecs::inputs() const -> Strings const&
 {
     return m_inputs;
 }
@@ -769,13 +780,18 @@ auto EquilibriumSpecs::constraintsEquationType() const -> Vec<ConstraintEquation
     return econstraints;
 }
 
+auto EquilibriumSpecs::reactivityConstraints() const -> Vec<ReactivityConstraint> const&
+{
+    return rconstraints;
+}
+
 //=================================================================================================
 //
 // PRIVATE METHODS
 //
 //=================================================================================================
 
-auto EquilibriumSpecs::throwErrorIfTitrantHasBeenRegistered(const ChemicalFormula& substance) const -> void
+auto EquilibriumSpecs::throwErrorIfTitrantHasBeenRegistered(ChemicalFormula const& substance) const -> void
 {
     const auto already_an_explicit_titrant = containsfn(titrants_explicit, RKT_LAMBDA(x, x.equivalent(substance)));
     errorif(already_an_explicit_titrant, "Cannot specify again that the chemical system is open to substance ", substance.str(), ". "
