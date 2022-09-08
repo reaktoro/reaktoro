@@ -1,5 +1,7 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
+// Copyright © 2014-2022 Allan Leal
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -15,11 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <deque>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
 
@@ -34,15 +33,15 @@ public:
     static auto withInitialSize(Index size) -> PriorityQueue;
 
     /// Return a PriorityQueue instance with given initial priorities.
-    static auto withInitialPriorities(const std::deque<Index>& priorities) -> PriorityQueue;
+    static auto withInitialPriorities(Deque<Index> const& priorities) -> PriorityQueue;
 
     /// Return a PriorityQueue instance with an initial order and zero priorities.
-    static auto withInitialOrder(const std::deque<Index>& order) -> PriorityQueue;
+    static auto withInitialOrder(Deque<Index> const& order) -> PriorityQueue;
 
     /// Return a PriorityQueue instance with given initial priorities and order.
     /// @note A stable sort algorithm is applied to ensure consistency between
     /// given order and priorities.
-    static auto withInitialPrioritiesAndOrder(const std::deque<Index>& priorities, const std::deque<Index>& order) -> PriorityQueue;
+    static auto withInitialPrioritiesAndOrder(Deque<Index> const& priorities, Deque<Index> const& order) -> PriorityQueue;
 
     /// Return the size of the priority queue.
     auto size() const -> Index;
@@ -58,17 +57,17 @@ public:
     auto extend() -> void;
 
     /// Return the current priorities of each tracked entity in the queue.
-    auto priorities() const -> const std::deque<Index>&;
+    auto priorities() const -> Deque<Index> const&;
 
     /// Return the current order of the tracked entities in the queue.
-    auto order() const -> const std::deque<Index>&;
+    auto order() const -> Deque<Index> const&;
 
 private:
     /// The priorities/usage count of each tracked entity in the priority queue.
-    std::deque<Index> _priorities;
+    Deque<Index> _priorities;
 
     /// The order of the tracked entities based on their current priorities.
-    std::deque<Index> _order;
+    Deque<Index> _order;
 };
 
 } // namespace Reaktoro
