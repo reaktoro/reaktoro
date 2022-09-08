@@ -312,7 +312,7 @@ TEST_CASE("Testing Data encoder/decoder for Param", "[Serialization][Core]")
 
 TEST_CASE("Testing Data encoder/decoder for Vec<Param>", "[Serialization][Core]")
 {
-    Data data = Vec<double>{1.0, 2.0, 3.0};
+    Data data = Vec<Param>{1.0, 2.0, 3.0};
 
     Vec<Param> params = data.as<Vec<Param>>();
 
