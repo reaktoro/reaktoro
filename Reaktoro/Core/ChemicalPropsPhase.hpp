@@ -685,7 +685,7 @@ private:
 
         // Compute the activity properties of the phase
         ActivityPropsRef aprops{ Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
-        ActivityArgs args{ T, P, x };
+        ActivityModelArgs args{ T, P, x };
         const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.
             phase().idealActivityModel() : phase().activityModel();
 

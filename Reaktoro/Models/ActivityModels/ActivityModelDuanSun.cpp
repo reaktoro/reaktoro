@@ -88,7 +88,7 @@ auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator
         // The index of the dissolved gas in the aqueous phase.
         const auto igas = species.indexWithFormula(gas);
 
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             // Check AqueousMixture and AqueousMixtureState are available in props.extra
             auto mixtureit = props.extra.find("AqueousMixture");

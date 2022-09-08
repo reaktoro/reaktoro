@@ -53,7 +53,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         return props;
     };
 
-    ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_model_gas = [](ActivityPropsRef props, ActivityModelArgs args)
     {
         const auto [T, P, x] = args;
         props.Vx  = 1.0 * (T*P)*(T*P);
@@ -67,7 +67,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         props.som = StateOfMatter::Gas;
     };
 
-    ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityArgs args)
+    ActivityModel activity_model_solid = [](ActivityPropsRef props, ActivityModelArgs args)
     {
         const auto [T, P, x] = args;
         props.Vx  = 1.1 * (T*P)*(T*P);

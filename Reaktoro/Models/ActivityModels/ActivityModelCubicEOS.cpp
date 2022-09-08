@@ -65,7 +65,7 @@ auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSPara
     res.ln_phi.resize(nspecies);
 
     // Define the activity model function of the gaseous phase
-    ActivityModel model = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel model = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;

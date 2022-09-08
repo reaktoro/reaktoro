@@ -91,7 +91,7 @@ auto activityModelSpycherPruessEnnis(const SpeciesList& species) -> ActivityMode
     const auto nspecies = species.size();
 
     // Define the activity model function of the gaseous phase
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;

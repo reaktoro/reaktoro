@@ -23,7 +23,7 @@ auto ActivityModelIdealSolution(StateOfMatter stateofmatter) -> ActivityModelGen
 {
     ActivityModelGenerator model = [=](const SpeciesList& species)
     {
-        ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
+        ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             // Set the state of matter of the phase
             props.som = stateofmatter;

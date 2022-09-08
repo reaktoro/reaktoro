@@ -30,13 +30,13 @@ namespace Reaktoro {
 
 /// The arguments in an function for calculation of activity properties of a phase.
 /// @see ActivityModel, ActivityProps
-struct ActivityArgs
+struct ActivityModelArgs
 {
     /// The temperature for the calculation (in K).
-    const real& T;
+    real const& T;
 
     /// The pressure for the calculation (in Pa).
-    const real& P;
+    real const& P;
 
     /// The mole fractions of the species in the phase.
     ArrayXrConstRef x;
@@ -46,21 +46,21 @@ struct ActivityArgs
 REAKTORO_DEFINE_REFERENCE_TYPE_OF(ActivityProps, ActivityPropsRef);
 
 /// The function type for the calculation of activity and corrective thermodynamic properties of a phase.
-using ActivityModel = Model<ActivityProps(ActivityArgs)>;
+using ActivityModel = Model<ActivityProps(ActivityModelArgs)>;
 
 /// The type for functions that construct an ActivityModel for a phase.
 /// @param species The species in the phase.
-using ActivityModelGenerator = Fn<ActivityModel(const SpeciesList& species)>;
+using ActivityModelGenerator = Fn<ActivityModel(SpeciesList const& species)>;
 
 /// Return an activity model resulting from chaining other activity models.
 auto chain(const Vec<ActivityModelGenerator>& models) -> ActivityModelGenerator;
 
 /// Return an activity model resulting from chaining other activity models.
-auto chain(const ActivityModelGenerator& model) -> ActivityModelGenerator;
+auto chain(ActivityModelGenerator const& model) -> ActivityModelGenerator;
 
 /// Return an activity model resulting from chaining other activity models.
 template<typename... Models>
-auto chain(const ActivityModelGenerator& model, const Models&... models) -> ActivityModelGenerator
+auto chain(ActivityModelGenerator const& model, Models const&... models) -> ActivityModelGenerator
 {
     Vec<ActivityModelGenerator> vec = {model, models...};
     return chain(vec);
@@ -77,22 +77,22 @@ namespace Reaktoro {
 template<typename T>
 struct MemoizationTraits;
 
-/// Specialize MemoizationTraits for ActivityArgs.
+/// Specialize MemoizationTraits for ActivityModelArgs.
 template<>
-struct MemoizationTraits<ActivityArgs>
+struct MemoizationTraits<ActivityModelArgs>
 {
-    using Type = ActivityArgs;
+    using Type = ActivityModelArgs;
 
-    /// The type used instead to cache an ActivityArgs object.
+    /// The type used instead to cache an ActivityModelArgs object.
     using CacheType = Tuple<real, real, ArrayXr>;
 
-    static auto equal(const Tuple<real, real, ArrayXr>& a, const ActivityArgs& b)
+    static auto equal(Tuple<real, real, ArrayXr> const& a, ActivityModelArgs const& b)
     {
-        const auto& [T, P, x] = a;
+        auto const& [T, P, x] = a;
         return T == b.T && P == b.P && (x == b.x).all();
     }
 
-    static auto assign(Tuple<real, real, ArrayXr>& a, const ActivityArgs& b)
+    static auto assign(Tuple<real, real, ArrayXr>& a, ActivityModelArgs const& b)
     {
         auto& [T, P, x] = a;
         T = b.T;

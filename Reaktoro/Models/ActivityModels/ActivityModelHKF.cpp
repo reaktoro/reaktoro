@@ -337,7 +337,7 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
     }
 
     // Define the activity model function of the aqueous phase
-    ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args) mutable
+    ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         const auto& [T, P, x] = args;

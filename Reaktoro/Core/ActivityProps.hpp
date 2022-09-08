@@ -53,7 +53,7 @@ namespace Reaktoro {
 /// M}. For example, for gaseous phases in which the partial molar volumes of
 /// the species are conventionally zero, @eq{V_{i}^{\circ}=0}, the corrective
 /// molar volume, @eq{V^{\mathrm{x}}}, must be set as the total molar volume of
-/// the phase. @see ActivityModel, ActivityArgs
+/// the phase. @see ActivityModel, ActivityModelArgs
 template<template<typename> typename TypeOp>
 struct ActivityPropsBase
 {
