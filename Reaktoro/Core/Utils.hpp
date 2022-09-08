@@ -24,6 +24,7 @@
 namespace Reaktoro {
 
 // Forward declarations
+class ChemicalFormula;
 class ChemicalSystem;
 class ElementList;
 class Phase;
@@ -75,6 +76,9 @@ auto resolveSurfaceIndex(SurfaceList const& surfacelist, StringOrIndex surface) 
 
 /// Resolve the index of a surface in a chemical system with given surface name or its index.
 auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex surface) -> Index;
+
+/// Assemble the formula vector of a `substance` with respect to given list of `elements`.
+auto assembleFormulaVector(ChemicalFormula const& susbtance, ElementList const& elements) -> VectorXd;
 
 /// Assemble the formula matrix of the list of `species` with respect to given list of `elements`.
 auto assembleFormulaMatrix(SpeciesList const& species, ElementList const& elements) -> MatrixXd;
