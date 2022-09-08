@@ -242,7 +242,8 @@ template<> inline auto Data::assign(double const& obj) -> void { tree = Param(ob
 template<> inline auto Data::assign(real const& obj) -> void { tree = Param(obj); }
 template<> inline auto Data::assign(Param const& obj) -> void { tree = obj; }
 template<> inline auto Data::assign(Vec<Data> const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(Map<String, Data> const& obj) -> void { tree = obj; }
+template<> inline auto Data::assign(Map<String, Data> const& obj) -> void { tree = Dict<String, Data>(obj.begin(), obj.end()); }
+template<> inline auto Data::assign(Dict<String, Data> const& obj) -> void { tree = obj; }
 
 #define REAKTORO_DATA_ENCODE_DECLARE(Type, ...)                                      \
     /** Used to encode/serialize an instance of type `Type` into a Data object. */   \
@@ -298,6 +299,9 @@ REAKTORO_DATA_DECODE_DECLARE(Pair<A REAKTORO_COMMA B>, typename A, typename B);
 REAKTORO_DATA_ENCODE_DECLARE(Map<K REAKTORO_COMMA T>, typename K, typename T);
 REAKTORO_DATA_DECODE_DECLARE(Map<K REAKTORO_COMMA T>, typename K, typename T);
 
+REAKTORO_DATA_ENCODE_DECLARE(Dict<K REAKTORO_COMMA T>, typename K, typename T);
+REAKTORO_DATA_DECODE_DECLARE(Dict<K REAKTORO_COMMA T>, typename K, typename T);
+
 template<typename T>
 REAKTORO_DATA_ENCODE_DEFINE(Vec<T>, typename T)
 {
@@ -352,6 +356,20 @@ REAKTORO_DATA_ENCODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
 
 template<typename K, typename T>
 REAKTORO_DATA_DECODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
+{
+    for(auto const& [k, v] : data.asDict())
+        obj[k] = v.template as<T>();
+}
+
+template<typename K, typename T>
+REAKTORO_DATA_ENCODE_DEFINE(Dict<K REAKTORO_COMMA T>, typename K, typename T)
+{
+    for(auto const& [k, v] : obj)
+        data.add(k, v);
+}
+
+template<typename K, typename T>
+REAKTORO_DATA_DECODE_DEFINE(Dict<K REAKTORO_COMMA T>, typename K, typename T)
 {
     for(auto const& [k, v] : data.asDict())
         obj[k] = v.template as<T>();
