@@ -52,7 +52,13 @@ public:
     Data();
 
     /// Return a Data object by parsing an YAML formatted string.
+    static auto parse(Chars text) -> Data;
+
+    /// Return a Data object by parsing an YAML formatted string.
     static auto parse(String const& text) -> Data;
+
+    /// Return a Data object by parsing an YAML formatted string.
+    static auto parse(std::istream& text) -> Data;
 
     /// Return a Data object by parsing an YAML formatted string.
     static auto parseYaml(Chars text) -> Data;
