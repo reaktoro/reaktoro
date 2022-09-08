@@ -35,20 +35,14 @@ namespace detail {
 
 auto defaultWaterDensityFn() -> Fn<real(real,real)>
 {
-    const auto T = 298.15;
-    const auto P = 1.0e5;
-    const auto rho = waterLiquidDensityWagnerPruss(T, P);
-    return [=](real T, real P) { return rho; };
+    const real rho0 = 997.04703901770279; // density value in kg/m3 previously obtained by executing waterLiquidDensityWagnerPruss(T, P) with T = 298.15 K (25 °C) and P = 100,000 Pa (1 bar)
+    return [=](real T, real P) { return rho0; };
 }
 
 auto defaultWaterDielectricConstantFn() -> Fn<real(real,real)>
 {
-    const auto T = 298.15;
-    const auto P = 1.0e5;
-    const auto wtp = waterThermoPropsHGK(T, P, StateOfMatter::Liquid);
-    const auto wep = waterElectroPropsJohnsonNorton(T, P, wtp);
-    const auto epsilon = wep.epsilon;
-    return [=](real T, real P) { return epsilon; };
+    const real epsilon0 = 78.245144808202397; // dielectric constant (no unit) previously obtained by executing waterElectroPropsJohnsonNorton(T, P, waterThermoPropsHGK(T, P, StateOfMatter::Liquid)) with T = 298.15 K (25 °C) and P = 100,000 Pa (1 bar)
+    return [=](real T, real P) { return epsilon0; };
 }
 
 } // namespace detail
