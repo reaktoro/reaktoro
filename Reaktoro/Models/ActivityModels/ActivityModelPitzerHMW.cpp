@@ -1226,6 +1226,13 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     // The vector of molalities of all aqueous species
     const auto& m = state.m;
 
+    // Calculate the sum of molalities of the solutes
+    const auto sum_mi = sum(m) - m[iH2O];
+
+    // Check if pure water conditions (or ions in tiny amounts compared to the amount of water) to avoid division by zero below!
+    if(sum_mi == 0.0)
+        return 0.0;
+
     // The number of species in the mixture
     const auto nspecies = m.size();
 
@@ -1318,9 +1325,6 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
         for(auto c = 0; c < num_cations; ++c)
             for(auto a = 0; a < num_anions; ++a)
                 phi += m[idx_neutrals[n]] * m[idx_cations[c]] * m[idx_anions[a]] * pitzer.zeta[n][c][a];
-
-    // Calculate the sum of molalities of the solutes
-    const real sum_mi = sum(m) - m[iH2O];
 
     // Finalise the calculation of the osmotic coefficient
     phi = 1 + 2.0/sum_mi * phi;
