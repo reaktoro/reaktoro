@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Phase.hpp>
 
 namespace Reaktoro {
 
@@ -33,20 +32,29 @@ public:
     /// Construct an Surface object with a unique name.
     explicit Surface(String const& name);
 
+    /// Construct an Surface object with a unique name and names of phases between which the surface exists.
+    Surface(String const& name, String const& phase1, String const& phase2);
+
     /// Return a deep copy of this Surface object.
     auto clone() const -> Surface;
 
     /// Return a duplicate of this Surface object with replaced name.
     auto withName(String const& name) const -> Surface;
 
-    /// Return a duplicate of this Surface object with replaced phases between which this surface exists.
-    auto withPhases(Phase const& phase1, Phase const& phase2) const -> Surface;
+    /// Return a duplicate of this Surface object with replaced names of the phases between which this surface exists.
+    auto withPhases(String const& phase1, String const& phase2) const -> Surface;
 
     /// Return the unique name of this surface.
     auto name() const -> String;
 
-    /// Return the phases between which this surface exists.
-    auto phases() const -> Pair<Phase const&, Phase const&>;
+    /// Return the names of the phases between which this surface exists.
+    auto phases() const -> Pair<String, String> const&;
+
+    /// Return true if this surface is equivalent to another with the same interface phases.
+    auto equivalent(Surface const& another) const -> bool;
+
+    /// Return true if this surface is equivalent to another with the same interface phases using phase names.
+    auto equivalent(String const& phase1, String const& phase2) const -> bool;
 
 private:
     struct Impl;
