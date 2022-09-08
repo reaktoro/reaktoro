@@ -31,6 +31,10 @@ public:
     {}
 
     /// Construct a Rate object with given rate value.
+    Rate(double value)
+    : m_value(m_value) {}
+
+    /// Construct a Rate object with given rate value.
     Rate(real const& value)
     : m_value(m_value) {}
 
