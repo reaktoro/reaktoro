@@ -109,14 +109,14 @@ struct ChemicalState::Impl
     auto setSpeciesAmounts(ArrayXrConstRef values) -> void
     {
         assert(n.size() == values.size());
-        assert(values.minCoeff() >= 0.0);
+        assert((values >= 0.0).all());
         n = values;
     }
 
     auto setSpeciesAmounts(ArrayXdConstRef values) -> void
     {
         assert(n.size() == values.size());
-        assert(values.minCoeff() >= 0.0);
+        assert((values >= 0.0).all());
         n = values;
     }
 
@@ -338,14 +338,14 @@ struct ChemicalState::Impl
     auto setSurfaceAreas(ArrayXdConstRef const& values) -> void
     {
         assert(s.size() == values.size());
-        assert(values.minCoeff() >= 0.0);
+        assert((values >= 0.0).all());
         s = values;
     }
 
     auto setSurfaceAreas(ArrayXrConstRef const& values) -> void
     {
         assert(s.size() == values.size());
-        assert(values.minCoeff() >= 0.0);
+        assert((values >= 0.0).all());
         s = values;
     }
 
