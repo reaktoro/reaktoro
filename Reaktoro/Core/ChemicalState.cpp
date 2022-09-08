@@ -32,7 +32,6 @@ using namespace tabulate;
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
