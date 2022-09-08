@@ -13,6 +13,9 @@ include(CMakeRC)
 # Set the name of the projectw
 project(Reaktoro VERSION 2.0.0 LANGUAGES CXX)
 
+# Generate compile_commands.json file in the binary directory
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Check if a conda environment is active
 include(CondaAware)
 
