@@ -862,6 +862,7 @@ private:
 
 private:
     /// Throw an error if a given titrant has already been registered explicitly or implicitly.
+    /// @param substance The chemical formula of the titrant.
     auto throwErrorIfTitrantHasBeenRegistered(ChemicalFormula const& substance) const -> void;
 };
 
