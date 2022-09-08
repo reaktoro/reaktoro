@@ -103,12 +103,12 @@ struct SmartEquilibriumSolver::Impl
         // Check input variables have all been set
         errorifnot(conditions.inputValues().allFinite(), "Ensure all input variables have been set in the EquilibriumConditions object.");
 
-        // Perform a smart estimate of the chemical state
-        timeit( predict(state, conditions), result.timing.estimate= )
+        // Perform a smart prediction of the chemical state
+        timeit( predict(state, conditions), result.timing.prediction= )
 
         // Perform a learning step if the smart prediction is not satisfactory
-        if(!result.estimate.accepted)
-            timeit( learn(state, conditions), result.timing.learn= )
+        if(!result.prediction.accepted)
+            timeit( learn(state, conditions), result.timing.learning= )
 
         result.timing.solve = toc(SOLVE_STEP);
 
@@ -166,9 +166,9 @@ struct SmartEquilibriumSolver::Impl
         tic(EQUILIBRIUM_STEP)
 
         // Perform a full chemical equilibrium solve with sensitivity derivatives calculation
-        result.learning.gibbs_energy_minimization = solver.solve(state, sensitivity, conditions);
+        result.learning.solve = solver.solve(state, sensitivity, conditions);
 
-        result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
+        result.timing.learning_solve = toc(EQUILIBRIUM_STEP);
 
         //---------------------------------------------------------------------
         // ERROR CONTROL MATRICES ASSEMBLING STEP DURING THE LEARNING PROCESS
@@ -216,16 +216,16 @@ struct SmartEquilibriumSolver::Impl
             database.priority.extend();
         }
 
-        result.timing.learn_storage = toc(STORAGE_STEP);
+        result.timing.learning_storage = toc(STORAGE_STEP);
     }
 
-    /// Perform a prediction operation in which a chemical equilibrium state is estimated using a first-order Taylor approximation.
+    /// Perform a prediction operation in which a chemical equilibrium state is predicted using a first-order Taylor approximation.
     auto predict(ChemicalState& state, EquilibriumConditions const& conditions) -> void
     {
-        // Set the estimate status to false at the beginning
-        result.estimate.accepted = false;
+        // Set the prediction status to false at the beginning
+        result.prediction.accepted = false;
 
-        // Skip estimation if no cluster exists yet
+        // Skip prediction operation if no cluster exists yet
         if(database.clusters.empty())
             return;
 
@@ -306,7 +306,7 @@ struct SmartEquilibriumSolver::Impl
             auto const& records = database.clusters[jcluster].records;
             auto const& records_ordering = database.clusters[jcluster].priority.order();
 
-            // Iterate over all records in current cluster (using the  order based on the priorities)
+            // Iterate over all records in current cluster (using the order based on the priorities)
             for(auto irecord : records_ordering)
             {
                 auto const& record = records[irecord];
@@ -319,11 +319,11 @@ struct SmartEquilibriumSolver::Impl
                 // Check if the current record passes the error test
                 const auto success = pass_error_test(record);
 
-                result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
+                result.timing.prediction_error_control += toc(ERROR_CONTROL_STEP);
 
                 if(success)
                 {
-                    result.timing.estimate_error_control = toc(ERROR_CONTROL_STEP);
+                    result.timing.prediction_error_control = toc(ERROR_CONTROL_STEP);
 
                     //---------------------------------------------------------------------
                     // TAYLOR PREDICTION STEP DURING THE ESTIMATE PROCESS
@@ -334,18 +334,20 @@ struct SmartEquilibriumSolver::Impl
 
                     predictor.predict(state, conditions);
 
-                    result.timing.estimate_taylor = toc(TAYLOR_STEP);
+                    result.timing.prediction_taylor = toc(TAYLOR_STEP);
 
-                    // Check if all projected species amounts are positive
+                    // Check if all projected species amounts are positive or at least very small negative values
                     auto const& n = state.speciesAmounts();
+
                     const double nmin = n.minCoeff();
                     const double nsum = n.sum();
-                    const auto eps_n = options.amount_fraction_cutoff * nsum;
-                    if(nmin <= -eps_n)
-                        continue;
 
-                    result.timing.estimate_search = toc(SEARCH_STEP);
+                    if(nmin <= options.reltol_negative_amounts * nsum)
+                        continue; // continue searching for a another record that may not produce negative amounts or tolerable negative values
 
+                    result.timing.prediction_search = toc(SEARCH_STEP);
+
+                    //---------------------------------------------------------------------
                     // After the search is finished successfully
                     //---------------------------------------------------------------------
 
@@ -368,17 +370,17 @@ struct SmartEquilibriumSolver::Impl
                     // Increment priority of the current cluster (jcluster)
                     database.priority.increment(jcluster);
 
-                    result.timing.estimate_database_priority_update = toc(PRIORITY_UPDATE_STEP);
+                    result.timing.prediction_database_priority_update = toc(PRIORITY_UPDATE_STEP);
 
-                    // Mark the estimated state as accepted
-                    result.estimate.accepted = true;
+                    // Mark the predicted state as accepted
+                    result.prediction.accepted = true;
 
                     return;
                 }
             }
         }
 
-        result.estimate.accepted = false;
+        result.prediction.accepted = false;
     }
 
     //=================================================================================================================
