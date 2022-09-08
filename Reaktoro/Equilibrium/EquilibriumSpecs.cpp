@@ -51,7 +51,7 @@ auto getGaseousSpecies(Database const& db, String const& formula) -> Species
 }
 
 /// Assemble the complete system of equation constraints to be satisfied at chemical equilibrium.
-auto assembleConstraintEquations(EquilibriumSpecs const& specs) -> EquationConstraints
+auto assembleEquationConstraints(EquilibriumSpecs const& specs) -> EquationConstraints
 {
     // Create copies of all provided equation constraints to avoid full capture of `specs` in lambda function below
     const auto econstraints_single = specs.equationConstraintsSingle();
@@ -98,6 +98,62 @@ auto assembleConstraintEquations(EquilibriumSpecs const& specs) -> EquationConst
     };
 
     return econstraints;
+}
+
+/// Assemble the complete system of reactivity constraints to be satisfied at chemical equilibrium.
+auto assembleReactivityConstraints(EquilibriumSpecs const& specs) -> ReactivityConstraints
+{
+    // Create copies of all provided reactivity constraints to avoid full capture of `specs` in lambda function below
+    const auto rconstraints_single = specs.reactivityConstraintsSingle();
+    const auto rconstraints_system = specs.reactivityConstraintsSystem();
+
+    // The complete system of reactivity constraints that will be created below.
+    ReactivityConstraints rconstraints;
+
+    // Collect the id constraints across the single reactivity constraints
+    for(auto const& x : rconstraints_single)
+        rconstraints.ids.push_back(x.id);
+
+    // Collect the id constraints across the system of reactivity constraints
+    for(auto const& x : rconstraints_system)
+        rconstraints.ids.insert(rconstraints.ids.end(), x.ids.begin(), x.ids.end());
+
+    // Auxiliary variables
+    const auto Nr = rconstraints.ids.size();         // the total number of reactivity constraints
+    const auto Nn = specs.system().species().size(); // the number of species in the chemical system
+    const auto Np = specs.numControlVariablesP();    // the number of control variables p
+
+    // Create the final constraint coefficient matrices Kn and Kp
+    rconstraints.Kn = zeros(Nr, Nn);
+    rconstraints.Kn = zeros(Nr, Np);
+
+    // Define auxiliary offset variable to keep track of the current row in the assembly of Kn and Kp below
+    auto offset = 0;
+
+    // Go over the single reactivity constraints...
+    for(auto const& x : rconstraints_single)
+    {
+        errorif(x.Kp.size() != 0 && x.Kp.size() != Np, "The size of vector Kp in the reactivity constraint with id `", x.id, "` is ", x.Kp.size(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set in the EquilibriumSpecs object.");
+        if(x.Kn.size())
+            rconstraints.Kn.row(offset) = x.Kn;
+        if(x.Kp.size())
+            rconstraints.Kp.row(offset) = x.Kp;
+        offset += 1;
+    }
+
+    // Go over the system of reactivity constraints...
+    for(auto const& x : rconstraints_system)
+    {
+        errorif(x.Kp.size() != 0 && x.Kp.cols() != Np, "The number of columns in matrix Kp in the system of reactivity constraints with ids `", x.ids, "` is ", x.Kp.cols(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set in the EquilibriumSpecs object.");
+        const auto size = x.ids.size();
+        if(rconstraints.Kn.size())
+            rconstraints.Kn.middleRows(offset, size) = x.Kn;
+        if(rconstraints.Kp.size())
+            rconstraints.Kp.middleRows(offset, size) = x.Kp;
+        offset += size;
+    }
+
+    return rconstraints;
 }
 
 } // namespace
@@ -689,7 +745,7 @@ auto EquilibriumSpecs::numEquationConstraints() const -> Index
 
 auto EquilibriumSpecs::numReactivityConstraints() const -> Index
 {
-    return rconstraints.size();
+    return rconstraints_ids.size();
 }
 
 auto EquilibriumSpecs::numConstraints() const -> Index
@@ -745,9 +801,9 @@ auto EquilibriumSpecs::namesTitrantsImplicit() const -> Strings
 
 auto EquilibriumSpecs::namesConstraints() const -> Strings
 {
-    Strings names = vectorize(econstraints_single, RKT_LAMBDA(x, x.id));
+    Strings names = econstraints_ids;
     names = concatenate(names, vectorize(qvars, RKT_LAMBDA(x, x.id)));
-    names = concatenate(names, vectorize(rconstraints, RKT_LAMBDA(x, x.id)));
+    names = concatenate(names, rconstraints_ids);
     return names;
 }
 
@@ -805,13 +861,33 @@ auto EquilibriumSpecs::addConstraints(EquationConstraints const& constraints) ->
 
 auto EquilibriumSpecs::addReactivityConstraint(ReactivityConstraint const& constraint) -> void
 {
-    const auto constraint_has_same_id = containsfn(rconstraints, RKT_LAMBDA(x, x.id == constraint.id));
-    errorif(constraint_has_same_id, "Cannot impose a new reactivity constraint with same id (", constraint.id, ").");
+    const auto Nn = m_system.species().size();
+    const auto Np = numControlVariablesP();
+    errorif(contains(rconstraints_ids, constraint.id), "Cannot impose a new reactivity constraint with repeating id (", constraint.id, ").");
     errorif(constraint.id.empty(), "A reactivity constraint cannot have an empty id.");
-    errorif(constraint.Kn.size() != m_system.species().size(), "The `Kn` vector in the reactivity constraint with id `", constraint.id, " has size ", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
-    errorif(constraint.Kn.cwiseAbs().minCoeff() == 0, "The `Kn` vector in the reactivity constraint with id `", constraint.id, "` should not be entirely composed of zeros.", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
-    errorif(constraint.Kp.size() > 0 && constraint.Kp.size() != pvars.size(), "The `Kp` vector in the reactivity constraint with id `", constraint.id, " has non-zero size ", constraint.Kp.size(), " which should be equal to the number of p control variables, ", pvars.size(), ".");
-    rconstraints.push_back(constraint);
+    errorif(constraint.Kn.size() == 0 && constraint.Kp.size() == 0, "The vectors Kn and Kp in the reactivity constraint with id `", constraint.id, "` should not be both empty.");
+    errorif(constraint.Kn.size() != 0 && constraint.Kn.size() != Nn, "The size of vector Kn in the reactivity constraint with id `", constraint.id, "` is ", constraint.Kn.size(), " which does not match with the number of species, ", Nn, ".");
+    errorif(constraint.Kp.size() != 0 && constraint.Kp.size() != Nn, "The size of vector Kp in the reactivity constraint with id `", constraint.id, "` is ", constraint.Kp.size(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set first before specifying reactivity constraints in the EquilibriumSpecs object.");
+    rconstraints_ids.push_back(constraint.id);
+    rconstraints_single.push_back(constraint);
+}
+
+auto EquilibriumSpecs::addReactivityConstraints(ReactivityConstraints const& constraints) -> void
+{
+    const auto Nn = m_system.species().size();
+    const auto Np = numControlVariablesP();
+    errorif(constraints.Kn.size() == 0 && constraints.Kp.size() == 0, "The matrices Kn and Kp in the system of reactivity constraints with ids `", constraints.ids, "` should not be both empty.");
+    errorif(constraints.Kn.size() != 0 && constraints.Kn.cols() != Nn, "The number of columns in matrix Kn in the system of reactivity constraints with ids `", constraints.ids, "` is ", constraints.Kn.cols(), " which does not match with the number of species, ", Nn, ".");
+    errorif(constraints.Kp.size() != 0 && constraints.Kp.cols() != Np, "The number of columns in matrix Kp in the system of reactivity constraints with ids `", constraints.ids, "` is ", constraints.Kp.cols(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set first before specifying reactivity constraints in the EquilibriumSpecs object.");
+    for(auto const& constraintid : constraints.ids)
+    {
+        errorif(contains(rconstraints_ids, constraintid), "Cannot impose a new reactivity constraint with repeating id (", constraintid, ").");
+        errorif(constraintid.empty(), "A reactivity constraint cannot have an empty id.");
+        rconstraints_ids.push_back(constraintid);
+    }
+    errorif(constraints.Kn.size() != 0 && constraints.Kn.rows() != constraints.ids.size(), "The number of rows in matrix Kn in the system of reactivity constraints with ids `", constraints.ids, "` is ", constraints.Kn.rows(), " which does not match with the number of constraint ids, ", constraints.ids.size(), ".");
+    errorif(constraints.Kp.size() != 0 && constraints.Kp.rows() != constraints.ids.size(), "The number of rows in matrix Kp in the system of reactivity constraints with ids `", constraints.ids, "` is ", constraints.Kp.rows(), " which does not match with the number of constraint ids, ", constraints.ids.size(), ".");
+    rconstraints_system.push_back(constraints);
 }
 
 auto EquilibriumSpecs::addInput(String const& var) -> Index
@@ -914,12 +990,22 @@ auto EquilibriumSpecs::equationConstraintsSystem() const -> Vec<EquationConstrai
 
 auto EquilibriumSpecs::equationConstraints() const -> EquationConstraints
 {
-    return assembleConstraintEquations(*this);
+    return assembleEquationConstraints(*this);
 }
 
-auto EquilibriumSpecs::reactivityConstraints() const -> Vec<ReactivityConstraint> const&
+auto EquilibriumSpecs::reactivityConstraintsSingle() const -> Vec<ReactivityConstraint> const&
 {
-    return rconstraints;
+    return rconstraints_single;
+}
+
+auto EquilibriumSpecs::reactivityConstraintsSystem() const -> Vec<ReactivityConstraints> const&
+{
+    return rconstraints_system;
+}
+
+auto EquilibriumSpecs::reactivityConstraints() const -> ReactivityConstraints
+{
+    return assembleReactivityConstraints(*this);
 }
 
 //=================================================================================================

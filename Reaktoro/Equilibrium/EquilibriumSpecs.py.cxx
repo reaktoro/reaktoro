@@ -60,6 +60,12 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("Kp", &ReactivityConstraint::Kp)
         ;
 
+    py::class_<ReactivityConstraints>(m, "ReactivityConstraints")
+        .def_readwrite("ids", &ReactivityConstraints::ids)
+        .def_readwrite("Kn", &ReactivityConstraints::Kn)
+        .def_readwrite("Kp", &ReactivityConstraints::Kp)
+        ;
+
     py::class_<EquilibriumSpecs>(m, "EquilibriumSpecs")
         .def(py::init<const ChemicalSystem&>())
         .def_static("TP", &EquilibriumSpecs::TP, "Return specifications for a chemical equilbrium problem with given *temperature (T)* and *pressure (P)*.")
@@ -143,6 +149,8 @@ void exportEquilibriumSpecs(py::module& m)
         .def("equationConstraintsSingle", &EquilibriumSpecs::equationConstraintsSingle, return_internal_ref)
         .def("equationConstraintsSystem", &EquilibriumSpecs::equationConstraintsSystem, return_internal_ref)
         .def("equationConstraints", &EquilibriumSpecs::equationConstraints)
-        .def("reactivityConstraints", &EquilibriumSpecs::reactivityConstraints, return_internal_ref)
+        .def("reactivityConstraintsSingle", &EquilibriumSpecs::reactivityConstraintsSingle, return_internal_ref)
+        .def("reactivityConstraintsSystem", &EquilibriumSpecs::reactivityConstraintsSystem, return_internal_ref)
+        .def("reactivityConstraints", &EquilibriumSpecs::reactivityConstraints)
         ;
 }

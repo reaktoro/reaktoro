@@ -133,6 +133,21 @@ struct ReactivityConstraint
     VectorXd Kp;
 };
 
+/// Used to define a system of reactivity restrictions among species in the chemical
+/// equilibrium calculation. This can be used, for example, to impose that a collection of
+/// reactions are inert and should not progress during the equilibration process.
+struct ReactivityConstraints
+{
+    /// The unique identifiers for each reactivity constraint.
+    Strings ids;
+
+    /// The coefficient matrix of the linear reactivity constraint equations corresponding to the species amounts variables *n*.
+    MatrixXd Kn;
+
+    /// The coefficient matrix of the linear reactivity constraint equations corresponding to the introduced control variables *p*.
+    MatrixXd Kp;
+};
+
 /// The class used to define conditions to be satisfied at chemical equilibrium.
 ///
 /// ### Explicit Titrants
@@ -629,6 +644,9 @@ public:
     /// Add a reactivity constraint to be satisfied at chemical equilibrium.
     auto addReactivityConstraint(ReactivityConstraint const& constraint) -> void;
 
+    /// Add a system of reactivity constraints to be satisfied at chemical equilibrium.
+    auto addReactivityConstraints(ReactivityConstraints const& constraints) -> void;
+
     /// Add a new input variable for the chemical equilibrium problem with name @p var.
     auto addInput(String const& var) -> Index;
 
@@ -692,8 +710,17 @@ public:
     /// the provided systems of equations via method @ref addConstraints.
     auto equationConstraints() const -> EquationConstraints;
 
-    /// Return the introduced reactivity constraints to be satisfied during the equilibrium calculation.
-    auto reactivityConstraints() const -> Vec<ReactivityConstraint> const&;
+    /// Return the specified single reactivity constraints to be satisfied at chemical equilibrium.
+    auto reactivityConstraintsSingle() const -> Vec<ReactivityConstraint> const&;
+
+    /// Return the specified systems of reactivity constraints to be satisfied at chemical equilibrium.
+    auto reactivityConstraintsSystem() const -> Vec<ReactivityConstraints> const&;
+
+    /// Return the complete system of reactivity constraints to be satisfied at chemical equilibrium.
+    /// This method assembles a system of reactivity constraints that considers first the
+    /// evaluation of the provided single constraints via @ref addReactivityConstraint and then
+    /// the provided systems of constraints via method @ref addReactivityConstraints.
+    auto reactivityConstraints() const -> ReactivityConstraints;
 
 private:
     /// The chemical system associated with the equilibrium conditions.
@@ -726,11 +753,17 @@ private:
     /// The systems of equation constraints to be satisfied at chemical equilibrium.
     Vec<EquationConstraints> econstraints_system;
 
-    /// The collected ids of every equation constraint above (single and collective).
+    /// The collected ids of every equation constraint above (single and system ones).
     Strings econstraints_ids;
 
-    /// The reactivity constraints to be satisfied at chemical equilibrium.
-    Vec<ReactivityConstraint> rconstraints;
+    /// The single reactivity constraints to be satisfied at chemical equilibrium.
+    Vec<ReactivityConstraint> rconstraints_single;
+
+    /// The systems of reactivity constraints to be satisfied at chemical equilibrium.
+    Vec<ReactivityConstraints> rconstraints_system;
+
+    /// The collected ids of every reactivity constraint above (single and system ones).
+    Strings rconstraints_ids;
 
     // ----- AUXILIARY DATA MEMBERS ----- //
 
