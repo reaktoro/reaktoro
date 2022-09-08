@@ -21,7 +21,7 @@
 #include <Reaktoro/Models/ReactionRateModels/Support/MineralReactionRateModel.hpp>
 #include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
 
-/// @defgroup ReactionRateModels Reaction Rate Models
+/// @defgroup ReactionRateModels Reaction ReactionRate Models
 /// @ingroup Models
 /// @brief The module in Reaktoro in which kinetic rate models for reactions are implemented.
 
