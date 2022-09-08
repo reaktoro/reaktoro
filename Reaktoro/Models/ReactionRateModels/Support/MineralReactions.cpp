@@ -90,7 +90,7 @@ auto MineralReactions::setRateModel(String mineral, MineralReactionRateModelGene
     m_mineral_rate_model_generators[idx] = generator;
 }
 
-auto MineralReactions::convert(ChemicalSystem const& system) const -> Vec<Reaction>
+auto MineralReactions::operator()(ChemicalSystem const& system) const -> Vec<Reaction>
 {
     for(auto&& [i, generator] : enumerate(m_mineral_rate_model_generators))
     {
