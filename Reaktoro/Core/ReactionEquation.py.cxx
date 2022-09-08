@@ -33,5 +33,6 @@ void exportReactionEquation(py::module& m)
         .def("species", &ReactionEquation::species)
         .def("coefficients", &ReactionEquation::coefficients)
         .def("coefficient", &ReactionEquation::coefficient)
+        .def("__str__", [](ReactionEquation const& self) { return String(self); })
         ;
 }
