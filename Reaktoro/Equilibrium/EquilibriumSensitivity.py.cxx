@@ -24,7 +24,6 @@
 #include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
-#include <pybind11/detail/common.h>
 using namespace Reaktoro;
 
 void exportEquilibriumSensitivity(py::module& m)
@@ -45,15 +44,15 @@ void exportEquilibriumSensitivity(py::module& m)
         .def("dqdw", py::overload_cast<Param const&>(&EquilibriumSensitivity::dqdw, py::const_), return_internal_ref, "Return the derivatives of the q control variables with respect to an input variable in w.")
         .def("dqdw", py::overload_cast<>(&EquilibriumSensitivity::dqdw, py::const_), return_internal_ref, "Return the derivatives of the q control variables with respect to the input variables w.")
         .def("dqdw", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dqdw), "Set the derivatives of the q control variables with respect to the input variables w.")
-        .def("dndb", py::overload_cast<>(&EquilibriumSensitivity::dndb, py::const_), return_internal_ref, "Return the derivatives of the species amounts n with respect to component amounts b.")
-        .def("dndb", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dndb), "Set the derivatives of the species amounts n with respect to component amounts b.")
-        .def("dpdb", py::overload_cast<>(&EquilibriumSensitivity::dpdb, py::const_), return_internal_ref, "Return the derivatives of the control variables p with respect to component amounts b.")
-        .def("dpdb", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dpdb), "Set the derivatives of the control variables p with respect to component amounts b.")
-        .def("dqdb", py::overload_cast<>(&EquilibriumSensitivity::dqdb, py::const_), return_internal_ref, "Return the derivatives of the control variables q with respect to component amounts b.")
-        .def("dqdb", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dqdb), "Set the derivatives of the control variables q with respect to component amounts b.")
+        .def("dndc", py::overload_cast<>(&EquilibriumSensitivity::dndc, py::const_), return_internal_ref, "Return the derivatives of the species amounts n with respect to component amounts c.")
+        .def("dndc", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dndc), "Set the derivatives of the species amounts n with respect to component amounts c.")
+        .def("dpdc", py::overload_cast<>(&EquilibriumSensitivity::dpdc, py::const_), return_internal_ref, "Return the derivatives of the control variables p with respect to component amounts c.")
+        .def("dpdc", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dpdc), "Set the derivatives of the control variables p with respect to component amounts c.")
+        .def("dqdc", py::overload_cast<>(&EquilibriumSensitivity::dqdc, py::const_), return_internal_ref, "Return the derivatives of the control variables q with respect to component amounts c.")
+        .def("dqdc", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dqdc), "Set the derivatives of the control variables q with respect to component amounts c.")
         .def("dudw", py::overload_cast<>(&EquilibriumSensitivity::dudw, py::const_), return_internal_ref, "Return the total derivatives of the chemical properties u with respect to input variables w.")
-        .def("dudb", py::overload_cast<>(&EquilibriumSensitivity::dudb, py::const_), return_internal_ref, "Return the total derivatives of the chemical properties u with respect to component amounts b.")
+        .def("dudc", py::overload_cast<>(&EquilibriumSensitivity::dudc, py::const_), return_internal_ref, "Return the total derivatives of the chemical properties u with respect to component amounts c.")
         .def("dudw", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dudw), "Set the total derivatives of the chemical properties u with respect to input variables w.")
-        .def("dudb", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dudb), "Set the total derivatives of the chemical properties u with respect to component amounts b.")
+        .def("dudc", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dudc), "Set the total derivatives of the chemical properties u with respect to component amounts c.")
         ;
 }

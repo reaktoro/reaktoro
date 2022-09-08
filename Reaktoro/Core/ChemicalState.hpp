@@ -392,7 +392,7 @@ public:
     auto setInputValues(VectorXdConstRef w) -> void;
 
     /// Set initial component amounts used in the equilibrium calculation.
-    auto setInitialComponentAmounts(ArrayXdConstRef b) -> void;
+    auto setInitialComponentAmounts(ArrayXdConstRef c0) -> void;
 
     /// Set the computed control variables *p* in the equilibrium calculation.
     auto setControlVariablesP(ArrayXdConstRef p) -> void;
@@ -474,7 +474,7 @@ public:
     auto w() const -> VectorXdConstRef;
 
     /// Return the initial component amounts used in the equilibrium calculation.
-    auto b() const -> ArrayXdConstRef;
+    auto c() const -> ArrayXdConstRef;
 
     /// Return the Optima::State object computed as part of the equilibrium calculation.
     auto optimaState() const -> const Optima::State&;
