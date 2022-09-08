@@ -17,9 +17,6 @@
 
 #pragma once
 
-// C++ includes
-#include <deque>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringList.hpp>
@@ -104,7 +101,7 @@ public:
     static auto instance() -> CriticalProps&;
 
     /// Return the critical properties data in the database.
-    static auto data() -> const std::deque<SubstanceCriticalProps>&;
+    static auto data() -> const Deque<SubstanceCriticalProps>&;
 
     /// Return the default critical properties used for missing substances in the database.
     static auto defaultCriticalProps() -> const Optional<SubstanceCriticalProps>&;
@@ -144,7 +141,7 @@ public:
 
 private:
     /// The critical properties currently stored in the database.
-    std::deque<SubstanceCriticalProps> m_data;
+    Deque<SubstanceCriticalProps> m_data;
 
     /// The default critical properties for substances not in the database.
     Optional<SubstanceCriticalProps> m_default_crprops;

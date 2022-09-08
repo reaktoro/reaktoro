@@ -21,6 +21,7 @@
 #include <any>
 #include <array>
 #include <cstddef>
+#include <deque>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -60,6 +61,10 @@ using Array = std::array<T, N>;
 /// Convenient alias for `std::vector<T>`.
 template<typename T>
 using Vec = std::vector<T>;
+
+/// Convenient alias for `std::deque<T>`.
+template<typename T>
+using Deque = std::deque<T>;
 
 /// Convenient alias for `std::unordered_map<Key, T>`.
 template<typename Key, typename T>
