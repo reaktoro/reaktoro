@@ -19,12 +19,13 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Utils/AqueousProps.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelCubicEOS.hpp>
+#include <Reaktoro/Utils/AqueousProps.hpp>
 
 using namespace Reaktoro;
 
