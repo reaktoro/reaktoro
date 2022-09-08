@@ -725,7 +725,7 @@ public:
     auto inputs() const -> Strings const&;
 
     /// Return the model parameters among the input variables.
-    auto params() const -> const Vec<Param>&;
+    auto params() const -> Vec<Param> const&;
 
     /// Return the indices of the model parameters among the input variables.
     auto indicesInputParams() const -> Vec<Index> const&;
@@ -774,10 +774,10 @@ public:
     auto indexControlVariableQ(String const& name) const -> Index;
 
     /// Return the *q* control variables in the chemical equilibrium specifications.
-    auto controlVariablesQ() const -> const Vec<ControlVariableQ>&;
+    auto controlVariablesQ() const -> Vec<ControlVariableQ> const&;
 
     /// Return the *q* control variables in the chemical equilibrium specifications.
-    auto controlVariablesP() const -> const Vec<ControlVariableP>&;
+    auto controlVariablesP() const -> Vec<ControlVariableP> const&;
 
     /// Return the chemical formulas of the explicit and implicit titrant substances.
     auto titrants() const -> Vec<ChemicalFormula>;

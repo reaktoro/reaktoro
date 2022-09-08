@@ -988,7 +988,7 @@ auto EquilibriumSpecs::inputs() const -> Strings const&
     return m_inputs;
 }
 
-auto EquilibriumSpecs::params() const -> const Vec<Param>&
+auto EquilibriumSpecs::params() const -> Vec<Param> const&
 {
     return m_params;
 }
@@ -1103,12 +1103,12 @@ auto EquilibriumSpecs::indexControlVariableQ(String const& name) const -> Index
     return indexfn(qvars, RKT_LAMBDA(x, x.name == name));
 }
 
-auto EquilibriumSpecs::controlVariablesQ() const -> const Vec<ControlVariableQ>&
+auto EquilibriumSpecs::controlVariablesQ() const -> Vec<ControlVariableQ> const&
 {
     return qvars;
 }
 
-auto EquilibriumSpecs::controlVariablesP() const -> const Vec<ControlVariableP>&
+auto EquilibriumSpecs::controlVariablesP() const -> Vec<ControlVariableP> const&
 {
     return pvars;
 }
