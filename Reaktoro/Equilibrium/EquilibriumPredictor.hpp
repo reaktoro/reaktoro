@@ -28,7 +28,7 @@ class ChemicalState;
 class EquilibriumConditions;
 class EquilibriumSensitivity;
 
-/// A class that still needs to be commented.
+/// Used to predict a chemical equilibrium state at given conditions using first-order Taylor approximation.
 class EquilibriumPredictor
 {
 public:
@@ -47,13 +47,12 @@ public:
     auto operator=(EquilibriumPredictor other) -> EquilibriumPredictor&;
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
+    /// @param[out] state The predicted chemical equilibrium state
+    /// @param conditions The conditons at which the chemical equilibrium state must be satisfied
     auto predict(ChemicalState& state, EquilibriumConditions const& conditions) const -> void;
 
-    /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, EquilibriumConditions const& conditions, VectorXrConstRef const& c) const -> void;
-
     /// Perform a first-order Taylor prediction of the chemical potential of a species at given conditions.
-    auto predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions, VectorXdConstRef const& c) const -> double;
+    auto predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions) const -> double;
 
     /// Return the chemical potential of a species at given reference conditions.
     auto referenceSpeciesChemicalPotential(Index ispecies) const -> double;

@@ -109,14 +109,15 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         state.set("NaCl", 0.150, "mol");
         state.set("O2"  , 0.002, "mol");
 
-        const VectorXd naux = state.speciesAmounts();
-        const VectorXd c = system.formulaMatrix() * naux;
-
         EquilibriumConditions conditions(specs);
         conditions.temperature(330.0);
         conditions.pressure(1.1e5);
 
-        predictor.predict(state, conditions);
+        CHECK_THROWS( predictor.predict(state, conditions) ); // no initial amounts of components set in conditions!
+
+        conditions.setInitialComponentAmountsFromState(state);
+
+        CHECK_NOTHROW( predictor.predict(state, conditions) ); // initial amounts of components already set - all should be good!
 
         const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
@@ -136,6 +137,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd c0 = state0.equilibrium().c();
 
         const VectorXd w  = conditions.inputValues();
+        const VectorXd c  = conditions.initialComponentAmounts();
 
         const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
         const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
@@ -155,7 +157,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         for(auto i = 0; i < n.size(); ++i)
         {
             CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions, c) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions) == props.speciesChemicalPotential(i) );
         }
     }
 
@@ -192,7 +194,11 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         conditions.temperature(330.0);
         conditions.pressure(1.1e5);
 
-        predictor.predict(state, conditions);
+        CHECK_THROWS( predictor.predict(state, conditions) ); // no initial amounts of components set in conditions!
+
+        conditions.setInitialComponentAmountsFromState(state);
+
+        CHECK_NOTHROW( predictor.predict(state, conditions) ); // initial amounts of components already set - all should be good!
 
         // TODO: Organize tests for EquilibriumPredictor in a way to avoid repeated codes.
 
@@ -233,7 +239,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         for(auto i = 0; i < n.size(); ++i)
         {
             CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions, c) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions) == props.speciesChemicalPotential(i) );
         }
     }
 
@@ -277,7 +283,11 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         conditions.volume(2.1, "liter"); // H2O will be added as much as needed to fulfil this volume
         conditions.pH(4.2); // H+ will be added as much as needed to achieve this pH
 
-        predictor.predict(state, conditions);
+        CHECK_THROWS( predictor.predict(state, conditions) ); // no initial amounts of components set in conditions!
+
+        conditions.setInitialComponentAmountsFromState(state);
+
+        CHECK_NOTHROW( predictor.predict(state, conditions) ); // initial amounts of components already set - all should be good!
 
         const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
@@ -316,7 +326,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         for(auto i = 0; i < n.size(); ++i)
         {
             CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions, c) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions) == props.speciesChemicalPotential(i) );
         }
     }
 }
