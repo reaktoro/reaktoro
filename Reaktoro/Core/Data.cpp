@@ -17,6 +17,9 @@
 
 #include "Data.hpp"
 
+// C++ includes
+#include <fstream>
+
 // Third-party includes
 #include <nlohmann/json.hpp>
 #include <yaml-cpp/yaml.h>
@@ -29,6 +32,10 @@ using json = nlohmann::json;
 
 namespace Reaktoro {
 namespace {
+
+// ==========================================================================================
+// AUXILIARY METHODS
+// ==========================================================================================
 
 /// Check if string `str` is a number.
 /// @param str The string being checked
@@ -60,6 +67,19 @@ bool isFloat(String const& str, double& result)
     if(end == str.c_str() || *end != '\0')
         return false;
     return true;
+}
+
+/// Create a Data object from a given YAML or JSON text.
+template<typename Text>
+auto createDataFromYamlOrJson(String const& path, Text&& text) -> Data
+{
+    const auto words = split(path, ".");
+    if(words.back() == "yaml" || words.back() == "yml")
+        return Data::parseYaml(text);
+    if(words.back() == "json")
+        return Data::parseJson(text);
+    errorif(true, "The given file path ", path, " does not indicate whether the file is yaml or json. Expected file extensions: yml, yaml, json).");
+    return {};
 }
 
 // ==========================================================================================
@@ -238,55 +258,82 @@ Data::Data()
 {
 }
 
-Data::Data(yaml const& obj)
-: Data(convertYamlToData(obj))
+auto Data::parse(String const& text) -> Data
 {
+    return parseYaml(text);
 }
 
-Data::Data(json const& obj)
-: Data(convertJsonToData(obj))
-{
-}
-
-auto Data::parseYaml(Chars input) -> Data
+auto Data::parseYaml(Chars text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(YAML::Load(input));
+    return Data(YAML::Load(text));
 }
 
-auto Data::parseYaml(String const& input) -> Data
+auto Data::parseYaml(String const& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(YAML::Load(input));
+    return Data(YAML::Load(text));
 }
 
-auto Data::parseYaml(std::istream& input) -> Data
+auto Data::parseYaml(std::istream& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(YAML::Load(input));
+    return Data(YAML::Load(text));
 }
 
-auto Data::parseJson(Chars input) -> Data
+auto Data::parseJson(Chars text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(nlohmann::json::parse(input));
-
+    return Data(nlohmann::json::parse(text));
 }
 
-auto Data::parseJson(String const& input) -> Data
+auto Data::parseJson(String const& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(nlohmann::json::parse(input));
-
+    return Data(nlohmann::json::parse(text));
 }
 
-auto Data::parseJson(std::istream& input) -> Data
+auto Data::parseJson(std::istream& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     nlohmann::json obj;
-    input >> obj;
+    text >> obj;
     return Data(obj);
 }
+
+auto Data::load(String const& path) -> Data
+{
+    const auto words = split(path, ".");
+    if(words.back() == "yaml" || words.back() == "yml")
+        return Data::loadYaml(path);
+    if(words.back() == "json")
+        return Data::loadJson(path);
+    errorif(true, "The given path `", path, "` was expected to point to a file containing one of the following file extensions: yml, yaml, json. Please rename your file accordingly.");
+    return {};
+}
+
+auto Data::loadYaml(String const& path) -> Data
+{
+    std::ifstream f(path);
+    errorif(f.fail(), "There was an error finding your YAML file at `", path, "`. Ensure this file exists and prefer global path strings such as \"/home/mary/data.json\" in Linux and macOS or \"C:\\\\Users\\\\Mary\\\\data.json\" in Windows.");
+    yaml doc;
+    try { doc = YAML::Load(f); }
+    catch(std::exception e)
+        errorif(true, "There was an error parsing your YAML file at `", path, "`. Ensure this file is properly formatted (e.g., inconsistent indentation). Try using some online YAML validator to find the error. More details about the error below:\n\n", e.what());
+    return convertYamlToData(doc);
+}
+
+auto Data::loadJson(String const& path) -> Data
+{
+    std::ifstream f(path);
+    errorif(f.fail(), "There was an error finding your JSON file at `", path, "`. Ensure this file exists and prefer global path strings such as \"/home/mary/data.json\" in Linux and macOS or \"C:\\\\Users\\\\Mary\\\\data.json\" in Windows.");
+    json doc;
+    try { doc = json::parse(f); }
+    catch(std::exception e)
+        errorif(true, "There was an error parsing your JSON file at `", path, "`. Ensure this file is properly formatted (e.g., missing closing brackets). Try using some online JSON validator to find the error. More details about the error below:\n\n", e.what());
+    return convertJsonToData(doc);
+}
+
 
 auto Data::asString() const -> String const&
 {
