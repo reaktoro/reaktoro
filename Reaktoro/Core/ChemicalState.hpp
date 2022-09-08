@@ -21,14 +21,12 @@
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 
 // Forward declarations (Optima)
 namespace Optima { class State; }
 
 namespace Reaktoro {
-
-// Forward declarations
-class ChemicalSystem;
 
 //=================================================================================================
 //
@@ -454,5 +452,45 @@ private:
 
 /// Output a ChemicalState object to an output stream.
 auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&;
+
+} // namespace Reaktoro
+
+//=========================================================================
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING CHEMICALSTATE
+//=========================================================================
+
+namespace Reaktoro {
+
+template<typename T>
+struct MemoizationTraits;
+
+/// Specialize MemoizationTraits for ChemicalState.
+template<>
+struct MemoizationTraits<ChemicalState>
+{
+    using Type = ChemicalState;
+
+    /// The type used instead to cache a ChemicalState object.
+    using CacheType = Tuple<real, real, ArrayXr, ArrayXr>;
+
+    static auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
+    {
+        auto const& [T, P, n, S] = a;
+        return
+            T == b.temperature() &&
+            P == b.pressure() &&
+            (n == b.speciesAmounts()).all() &&
+            (S == b.surfaceAreas()).all();
+    }
+
+    static auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
+    {
+        auto& [T, P, n, S] = a;
+        T = b.temperature();
+        P = b.pressure();
+        n = b.speciesAmounts();
+        S = b.surfaceAreas();
+    }
+};
 
 } // namespace Reaktoro
