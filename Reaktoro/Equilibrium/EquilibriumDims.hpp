@@ -52,7 +52,8 @@ struct EquilibriumDims
     Index Nq = 0; ///< The number of *q* control variables (amounts of implicit titrants).
     Index Nv = 0; ///< The number of equations constraints in the chemical equilibrium problem.
     Index Nr = 0; ///< The number of reactivity constraints (i.e., *restricted reactions*) in the chemical equilibrium problem.
-    Index Nb = 0; ///< The number of conservative components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `1 + Ne + Nr`).
+    Index Nb = 0; ///< The number of elements and charge in the chemical system (equivalent to `1 + Ne`).
+    Index Nc = 0; ///< The number of conservative components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `1 + Ne + Nr`).
     Index Nt = 0; ///< The number of substances for which the chemical system is open to (the number of explicit and implicit titrants).
     Index Nx = 0; ///< The number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`).
     Index Nu = 0; ///< The number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`).

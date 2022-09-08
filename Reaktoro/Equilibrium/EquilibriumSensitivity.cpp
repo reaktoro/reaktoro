@@ -41,14 +41,14 @@ auto EquilibriumSensitivity::initialize(EquilibriumSpecs const& specs) -> void
     const auto Nn = dims.Nn;
     const auto Np = dims.Np;
     const auto Nq = dims.Nq;
-    const auto Nb = dims.Nb;
+    const auto Nc = dims.Nc;
 
     mdndw.resize(Nn, Nw);
     mdpdw.resize(Np, Nw);
     mdqdw.resize(Nq, Nw);
-    mdndc.resize(Nn, Nb);
-    mdpdc.resize(Np, Nb);
-    mdqdc.resize(Nq, Nb);
+    mdndc.resize(Nn, Nc);
+    mdpdc.resize(Np, Nc);
+    mdqdc.resize(Nq, Nc);
 }
 
 auto EquilibriumSensitivity::dndw(String const& wid) const -> VectorXdConstRef
