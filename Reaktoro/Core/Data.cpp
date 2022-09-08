@@ -49,8 +49,8 @@ auto convertYamlScalar(yaml const& obj) -> Data
     auto number = 0.0;
     if(isNumber(word, number))
     {
-        const int integer = number;
-        return integer == number ? Data(integer) : Data(number);
+        const auto isinteger = word.find(".") == String::npos;
+        return isinteger ? Data(static_cast<int>(number)) : Data(number);
     }
     else
     {
