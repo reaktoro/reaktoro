@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2022 Allan Leal
+// Copyright (C) 2014-2020 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,45 +17,58 @@
 
 #pragma once
 
+// C++ includes
+#include <iostream>
+
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Common/Real.hpp>
 
 namespace Reaktoro {
 
-/// The primary standard thermodynamic properties of a chemical reaction.
-/// In this type, the primary standard thermodynamic properties of a chemical
-/// reaction are stored. This is a type to be used as the return type of a
-/// function that calculates such properties of reactions. See
-/// @ref ReactionStandardThermoModel. See also FormationReaction. Note there is no standard
-/// molar volume property stored here. This is because a standard molar volume
-/// model needs to be assigned to each individual Species object.
-struct ReactionStandardThermoProps
+/// The complete set of standard thermodynamic properties of a chemical reaction.
+struct ReactionThermoProps
 {
-    /// The standard molar Gibbs energy change @f$\Delta G^{\circ}@f$ of the reaction (in J/mol).
+    /// The temperature used to compute the reaction properties (in K).
+    real T;
+
+    /// The pressure used to compute the reaction properties (in Pa).
+    real P;
+
+    /// The equilibrium constant of the reaction (log base 10).
+    real lgK;
+
+    /// The change in standard molar Gibbs energy @f$\Delta G^{\circ}@f$ in the reaction (in J/mol).
     real dG0;
 
-    /// The standard molar enthalpy change @f$\Delta H^{\circ}@f$ of the reaction (in J/mol).
+    /// The change in standard molar enthalpy @f$\Delta H^{\circ}@f$ in the reaction (in J/mol).
     real dH0;
 
-    /// The standard molar isobaric heat capacity change @f$\Delta C_{P}^{\circ}@f$ of the reaction (in J/(mol·K)).
+    /// The change in standard molar volume @f$\Delta V^{\circ}@f$ in the reaction (in m3/mol).
+    real dV0;
+
+    /// The change in temperature derivative of the standard molar volume @f$\partial \Delta V^{\circ}/\partial T@f$ in the reaction (in m³/(mol·K)).
+    real dVT0;
+
+    /// The change in pressure derivative of the standard molar volume @f$\partial \Delta V^{\circ}/\partial P@f$ in the reaction (in m³/(mol·Pa)).
+    real dVP0;
+
+    /// The change in standard molar isobaric heat capacity @f$\Delta C_{P}^{\circ}@f$ in the reaction (in J/(mol·K)).
     real dCp0;
+
+    /// The change in standard molar isochoric heat capacity @f$\Delta C_{V}^{\circ}@f$ in the reaction (in J/(mol·K)).
+    real dCv0;
+
+    /// The change in standard molar internal energy @f$\Delta U^{\circ}@f$ in the reaction (in J/mol).
+    real dU0;
+
+    /// The change in standard molar entropy @f$\Delta S^{\circ}@f$ in the reaction (in J/(mol·K)).
+    real dS0;
+
+    /// The change in standard molar Helmholtz energy @f$\Delta A^{\circ}@f$ in the reaction (in J/mol).
+    real dA0;
 };
 
-/// The arguments in a ReactionStandardThermoModel function object.
-struct ReactionStandardThermoModelArgs
-{
-    /// The temperature for the calculation (in K)
-    const real& T;
-
-    /// The pressure for the calculation (in Pa)
-    const real& P;
-
-    /// The standard molar volume change @f$\Delta V^{\circ}@f$ of the reaction (in J/mol).
-    const real& dV0;
-};
-
-/// The function type for calculation of standard thermodynamic properties of a reaction.
-using ReactionStandardThermoModel = Model<ReactionStandardThermoProps(ReactionStandardThermoModelArgs)>;
+/// Output a ReactionThermoProps object to an output stream.
+auto operator<<(std::ostream& out, const ReactionThermoProps& props) -> std::ostream&;
 
 } // namespace Reaktoro

@@ -56,7 +56,7 @@ TEST_CASE("Testing Reaction class", "[Reaction]")
     const auto P  = 20.0;
     const auto RT = universalGasConstant * T;
 
-    ReactionProps rprops;
+    ReactionThermoProps rprops;
 
     auto G0  = [&](auto name) { return db.species().get(name).props(T, P).G0;  };
     auto H0  = [&](auto name) { return db.species().get(name).props(T, P).H0;  };

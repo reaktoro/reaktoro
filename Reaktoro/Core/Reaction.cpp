@@ -43,9 +43,9 @@ struct Reaction::Impl
     }
 
     /// Calculate the complete set of thermodynamic properties of the reaction.
-    auto props(real T, real P) const -> ReactionProps
+    auto props(real T, real P) const -> ReactionThermoProps
     {
-        ReactionProps rprops;
+        ReactionThermoProps rprops;
         rprops.T = T;
         rprops.P = P;
 
@@ -119,12 +119,12 @@ auto Reaction::rateModel() const -> const ReactionRateModel&
     return pimpl->ratemodel;
 }
 
-auto Reaction::props(real T, real P) const -> ReactionProps
+auto Reaction::props(real T, real P) const -> ReactionThermoProps
 {
     return pimpl->props(T, P);
 }
 
-auto Reaction::props(real T, Chars unitT, real P, Chars unitP) const -> ReactionProps
+auto Reaction::props(real T, Chars unitT, real P, Chars unitP) const -> ReactionThermoProps
 {
     T = units::convert(T, unitT, "K");
     P = units::convert(P, unitP, "Pa");
