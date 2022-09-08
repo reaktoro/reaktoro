@@ -19,15 +19,18 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Core/Model.py.hxx>
 #include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
+#include <Reaktoro/Core/ReactionStandardThermoModel.hpp>
 using namespace Reaktoro;
 
-void exportReactionStandardThermoProps(py::module& m)
+void exportReactionStandardThermoModel(py::module& m)
 {
-    py::class_<ReactionStandardThermoProps>(m, "ReactionStandardThermoProps")
-        .def(py::init<>())
-        .def_readwrite("dG0" , &ReactionStandardThermoProps::dG0 , "The standard molar Gibbs energy change of the reaction (in J/mol)")
-        .def_readwrite("dH0" , &ReactionStandardThermoProps::dH0 , "The standard molar enthalpy change of the reaction (in J/mol)")
-        .def_readwrite("dCp0", &ReactionStandardThermoProps::dCp0, "The standard molar isobaric heat capacity change of the reaction (in J/(mol·K))")
+    py::class_<ReactionStandardThermoModelArgs>(m, "ReactionStandardThermoModelArgs")
+        .def_property_readonly("T", [](const ReactionStandardThermoModelArgs& self) { return self.T; })
+        .def_property_readonly("P", [](const ReactionStandardThermoModelArgs& self) { return self.P; })
+        .def_property_readonly("dV0", [](const ReactionStandardThermoModelArgs& self) { return self.dV0; })
         ;
+
+    exportModel<ReactionStandardThermoProps, ReactionStandardThermoModelArgs>(m, "ReactionStandardThermoModel");
 }

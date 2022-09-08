@@ -19,7 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
+#include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Core/ReactionStandardThermoModel.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp> // ***BECAUSE PhreeqcLegacy.hpp IS INCLUDED HERE, MAKE SURE THIS HEADER FILE IS NOT EXPORTED!***
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 
