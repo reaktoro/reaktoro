@@ -31,70 +31,71 @@ class PhaseList;
 class Reaction;
 class ReactionList;
 class SpeciesList;
+class Surface;
 
 namespace detail {
 
 /// Return the molar masses of the species.
-auto molarMasses(const SpeciesList& species) -> ArrayXd;
+auto molarMasses(SpeciesList const& species) -> ArrayXd;
 
 /// Compute the amount of a species given a value in mass or amount unit.
 /// @param system The chemical system in which the species is.
 /// @param ispecies The index of the species in the chemical system.
 /// @param value The quantity value of the species.
 /// @param unit The quantity unit of the species.
-auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, Chars unit) -> real;
+auto computeSpeciesAmount(ChemicalSystem const& system, Index ispecies, real value, Chars unit) -> real;
 
 /// Resolve the index of an element in a list of elements with given element symbol or its index.
-auto resolveElementIndex(const ElementList& elementlist, StringOrIndex element) -> Index;
+auto resolveElementIndex(ElementList const& elementlist, StringOrIndex element) -> Index;
 
 /// Resolve the index of an element in a chemical system with given element symbol or its index.
-auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index;
+auto resolveElementIndex(ChemicalSystem const& system, StringOrIndex element) -> Index;
 
 /// Resolve the index of an element in a phase with given element symbol or its index.
-auto resolveElementIndex(const Phase& phase, StringOrIndex element) -> Index;
+auto resolveElementIndex(Phase const& phase, StringOrIndex element) -> Index;
 
 /// Resolve the index of a species in a list of species with given species name or its index.
-auto resolveSpeciesIndex(const SpeciesList& specieslist, StringOrIndex species) -> Index;
+auto resolveSpeciesIndex(SpeciesList const& specieslist, StringOrIndex species) -> Index;
 
 /// Resolve the index of a species in a chemical system with given species name or its index.
-auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index;
+auto resolveSpeciesIndex(ChemicalSystem const& system, StringOrIndex species) -> Index;
 
 /// Resolve the index of a species in a phase with given species name or its index.
-auto resolveSpeciesIndex(const Phase& phase, StringOrIndex species) -> Index;
+auto resolveSpeciesIndex(Phase const& phase, StringOrIndex species) -> Index;
 
 /// Resolve the index of a phase in a list of phases with given phase name or its index.
-auto resolvePhaseIndex(const PhaseList& phaselist, StringOrIndex phase) -> Index;
+auto resolvePhaseIndex(PhaseList const& phaselist, StringOrIndex phase) -> Index;
 
 /// Resolve the index of a phase in a chemical system with given phase name or its index.
-auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index;
-
-/// Convert a StringOrIndex value to a string.
-auto stringfy(StringOrIndex value) -> String;
+auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex phase) -> Index;
 
 /// Assemble the formula matrix of the list of `species` with respect to given list of `elements`.
-auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
+auto assembleFormulaMatrix(SpeciesList const& species, ElementList const& elements) -> MatrixXd;
 
 /// Assemble the stoichiometric matrix of the list of `reactions` with respect to given list of `species`.
-auto assembleStoichiometricMatrix(const ReactionList& reactions, const SpeciesList& species) -> MatrixXd;
+auto assembleStoichiometricMatrix(ReactionList const& reactions, SpeciesList const& species) -> MatrixXd;
 
 /// Extract names of the species from the species' list
-auto extractNames(const SpeciesList& list) -> Strings;
+auto extractNames(SpeciesList const& list) -> Strings;
 
 /// Extract names of the elements from the elements' list
-auto extractNames(const ElementList& list) -> Strings;
+auto extractNames(ElementList const& list) -> Strings;
 
 /// Extract names of the phases from the phases' list
-auto extractNames(const PhaseList& list) -> Strings;
+auto extractNames(PhaseList const& list) -> Strings;
 
 /// Return pairs of indices of phases that participate in a reaction.
 /// In case the reaction contains only species from a same phase, an empty
 /// vector `{}` is returned. In case the reaction contains only one species, a
 /// single-entry vector `{ {i, i} }` is returned where `i` is the index of the
 /// phase in which the species exists.
-auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Pairs<Index, Index>;
+auto determineReactingPhaseInterfacesInReaction(Reaction const& reaction, PhaseList const& phases) -> Pairs<Index, Index>;
 
 /// Return the phase interfaces, as phase index pairs, across which reactions take place.
-auto determineReactingPhaseInterfaces(const Vec<Reaction>& reactions, const PhaseList& phases) -> Pairs<Index, Index>;
+auto determineReactingPhaseInterfacesInReactions(Vec<Reaction> const& reactions, PhaseList const& phases) -> Pairs<Index, Index>;
+
+/// Return the phase interfaces, as phase index pairs, across which reactions take place.
+auto createSurfacesForReactingPhaseInterfacesInReactions(Vec<Reaction> const& reactions, PhaseList const& phases) -> Vec<Surface>;
 
 } // namespace detail
 } // namespace Reaktoro
