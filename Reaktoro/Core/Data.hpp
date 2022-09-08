@@ -17,11 +17,13 @@
 
 #pragma once
 
+// Third-party includes
+#include <tsl/ordered_map.h>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Param.hpp>
-#include <Reaktoro/deps/tsl/ordered_map.h>
 
 namespace Reaktoro {
 
