@@ -112,6 +112,9 @@ public:
     /// Return this Data object as a list object.
     auto asList() const -> Vec<Data> const&;
 
+    /// Return this Data object as a nullptr value.
+    auto asNull() const -> Nullptr;
+
     /// Return true if this Data object is a boolean value.
     auto isBoolean() const -> bool;
 
@@ -251,7 +254,7 @@ public:
     template<typename T>
     auto assign(T const& obj) -> void
     {
-        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>>)
+        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>, Nullptr>)
             tree = obj;
         else if constexpr(isArithmetic<T> || isSame<T, real>)
             tree = Param(obj);

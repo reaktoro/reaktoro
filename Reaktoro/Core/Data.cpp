@@ -383,6 +383,12 @@ auto Data::asList() const -> Vec<Data> const&
     return std::any_cast<Vec<Data> const&>(tree);
 }
 
+auto Data::asNull() const -> Nullptr
+{
+    errorif(!isNull(), "Cannot convert this Data object to a nullptr value.");
+    return std::any_cast<Nullptr>(tree);
+}
+
 auto Data::isBoolean() const -> bool
 {
     return std::any_cast<bool>(&tree);
