@@ -194,6 +194,42 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.indexControlVariablePressure()          == Index(-1) );
     }
 
+    WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables and reactivity constraints, aka restricted reactions, are introduced")
+    {
+        const auto Nn = system.species().size();
+
+        specs.temperature();
+        specs.pressure();
+        specs.volume();
+        specs.internalEnergy();
+        specs.pH();
+        specs.pE();
+        specs.openTo("CO2");
+        specs.openTo("CH4");
+        specs.addReactivityConstraint({ "xi1", VectorXd::Random(Nn), {} });
+        specs.addReactivityConstraint({ "xi2", VectorXd::Random(Nn), {} });
+
+        CHECK( specs.numInputs()                             == 6 ); // T, P, V, U, pH, pE
+        CHECK( specs.numParams()                             == 0 );
+        CHECK( specs.numControlVariables()                   == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
+        CHECK( specs.numControlVariablesP()                  == 2 ); // n[CO2], n[CH4]
+        CHECK( specs.numControlVariablesQ()                  == 2 ); // n[H+], n[e-]
+        CHECK( specs.numTitrants()                           == 4 ); // [CO2], [CH4], [H+], [e-]
+        CHECK( specs.numTitrantsExplicit()                   == 2 ); // [CO2], [CH4]
+        CHECK( specs.numTitrantsImplicit()                   == 2 ); // [H+], [e-]
+        CHECK( specs.numConstraints()                        == 6 ); // V = V(given), U = U(given), pH = pH(given), pE = pE(given), 2x reactivity constraints
+        CHECK( specs.namesInputs()                           == Strings{"T", "P", "V", "U", "pH", "pE"} );
+        CHECK( specs.namesControlVariables()                 == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
+        CHECK( specs.namesTitrants()                         == Strings{"[CO2]", "[CH4]", "[H+]", "[e-]"} );
+        CHECK( specs.namesTitrantsExplicit()                 == Strings{"[CO2]", "[CH4]"} );
+        CHECK( specs.namesTitrantsImplicit()                 == Strings{"[H+]", "[e-]"} );
+        CHECK( specs.namesConstraints()                      == Strings{"volume", "internalEnergy", "pH", "pE", "xi1", "xi2"} );
+        CHECK( specs.isTemperatureUnknown()                  == false );
+        CHECK( specs.isPressureUnknown()                     == false );
+        CHECK( specs.indexControlVariableTemperature()       == Index(-1) );
+        CHECK( specs.indexControlVariablePressure()          == Index(-1) );
+    }
+
     WHEN("model parameters are among the input variables")
     {
         specs.temperature();
