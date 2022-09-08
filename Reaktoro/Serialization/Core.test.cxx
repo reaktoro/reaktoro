@@ -88,12 +88,15 @@ TEST_CASE("Testing Data encoder/decoder for Database", "[Serialization][Core]")
 Elements:
   A:
     Symbol: A
+    Name: ElementA
     MolarMass: 1.0
   B:
     Symbol: B
+    Name: ElementB
     MolarMass: 2.0
   C:
     Symbol: C
+    Name: ElementC
     MolarMass: 3.0
 Species:
   A2B(aq):
@@ -141,6 +144,8 @@ Species:
 
     Data data = Data::fromYaml(contents);
 
+    CHECK_NOTHROW(data.as<Database>());
+
     Database db = data.as<Database>();
 
     auto elements = db.elements();
@@ -172,18 +177,18 @@ Species:
 
     data = db; // convert back Database to Data and check below for consistency
 
-    CHECK( data["Elements"].asList().size() == elements.size() );
+    CHECK( data["Elements"].asDict().size() == elements.size() );
     for(auto i = 0; i < elements.size(); ++i)
     {
-        const auto enode = data["Elements"][elements[i].symbol()];
-        CHECK( elements[i].symbol() == enode["Symbol"].asString() );
-        CHECK( elements[i].molarMass() == enode["MolarMass"].asFloat() );
-        CHECK( elements[i].name() == enode["Name"].asString() );
-        if(enode.exists("Tags"))
-            CHECK( elements[i].tags() == enode["Tags"].as<Strings>() );
+        const auto edata = data["Elements"][elements[i].symbol()];
+        CHECK( elements[i].symbol() == edata["Symbol"].asString() );
+        CHECK( elements[i].molarMass() == edata["MolarMass"].asFloat() );
+        CHECK( elements[i].name() == edata["Name"].asString() );
+        if(edata.exists("Tags"))
+            CHECK( elements[i].tags() == edata["Tags"].as<Strings>() );
     }
 
-    CHECK( data["Species"].asList().size() == species.size() );
+    CHECK( data["Species"].asDict().size() == species.size() );
     for(auto i = 0; i < species.size(); ++i)
     {
         const auto snode = data["Species"][species[i].name()];
