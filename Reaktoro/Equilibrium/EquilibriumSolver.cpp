@@ -42,18 +42,6 @@
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
-namespace {
-
-/// Return an EquilibriumSpecs object that represent the specifications of classic Gibbs energy minimization problem.
-auto defaultEquilibriumSpecs(const ChemicalSystem& system) -> EquilibriumSpecs
-{
-    EquilibriumSpecs specs(system);
-    specs.temperature();
-    specs.pressure();
-    return specs;
-}
-
-} // namespace
 
 struct EquilibriumSolver::Impl
 {
@@ -458,7 +446,7 @@ struct EquilibriumSolver::Impl
 };
 
 EquilibriumSolver::EquilibriumSolver(const ChemicalSystem& system)
-: pimpl(new Impl(defaultEquilibriumSpecs(system)))
+: pimpl(new Impl(EquilibriumSpecs::TP(system)))
 {}
 
 EquilibriumSolver::EquilibriumSolver(const EquilibriumSpecs& specs)
