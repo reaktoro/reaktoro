@@ -243,13 +243,23 @@ public:
     //
     //=================================================================================================
 
-    /// Set the input variable with name `input` to the value in `val`.
-    /// @warning An error is thrown if there are no input variables with name `input`.
+    /// Set the value of an input variable with given name.
+    /// @param name The unique name of the input variable.
+    /// @param value The new value of the input variable.
+    /// @warning An error is thrown if there are no input variable with given name.
     auto set(String const& input, real const& val) -> void;
 
-    /// Set the input variable with name `input` to the value in `val`.
-    /// @warning An error is thrown if there are no input variables with name `input`.
-    auto setInputVariable(String const& input, real const& val) -> void;
+    /// Set the value of an input variable with given name.
+    /// @param name The unique name of the input variable.
+    /// @param value The new value of the input variable.
+    /// @warning An error is thrown if there are no input variable with given name.
+    auto setInputVariable(String const& name, real const& val) -> void;
+
+    /// Set the value of an input variable with given index.
+    /// @param index The index of the input variable.
+    /// @param value The new value of the input variable.
+    /// @warning An error is thrown if given index is out of bounds.
+    auto setInputVariable(Index index, real const& val) -> void;
 
     /// Set the input variables with given vector of input values.
     auto setInputVariables(ArrayXrConstRef const& values) -> void;
