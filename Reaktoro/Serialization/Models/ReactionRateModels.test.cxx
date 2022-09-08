@@ -30,11 +30,11 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
 
     WHEN("there is only one mechanism")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Mineral: Halite
             Mechanisms:
                 Neutral:   { lgk: -0.21, E: 7.4 }
-            )xyz";
+        )#";
 
         params = Data::fromYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
@@ -51,12 +51,12 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
 
     WHEN("there are two mechanisms")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Mineral: Pyrite
             Mechanisms:
                 Acid:      { lgk: -7.52, E: 56.9, a(H+): -0.500, a(Fe+3): 0.500 }
                 Neutral:   { lgk: -4.55, E: 56.9, a(O2): 0.500 }
-            )xyz";
+        )#";
 
         params = Data::fromYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
@@ -87,13 +87,13 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
 
     WHEN("there are three mechanisms")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Mineral: Epidote
             Mechanisms:
                 Acid:      { lgk: -10.60, E: 71.1, a(H+):  0.338 }
                 Neutral:   { lgk: -11.99, E: 70.7 }
                 Base:      { lgk: -17.33, E: 79.1, a(H+): -0.556 }
-            )xyz";
+        )#";
 
         params = Data::fromYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
@@ -127,14 +127,14 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
 
     WHEN("there are many mechanisms")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Mineral: FakeMineral FakeMineralAlternativeName
             Mechanisms:
                 Acid:      { lgk: -0.30, E: 14.4, a(H+): 1.000 }
                 Neutral:   { lgk: -5.81, E: 23.5 }
                 Carbonate: { lgk: -3.48, E: 35.4, P(CO2): 1.000 }
                 Base:      { lgk: -17.33, E: 79.1, a((Ca)(CO3)): -0.556, p: 2.34, q: 1.46 }
-            )xyz";
+        )#";
 
         params = Data::fromYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
