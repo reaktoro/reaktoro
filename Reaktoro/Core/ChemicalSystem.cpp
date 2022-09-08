@@ -28,24 +28,14 @@
 namespace Reaktoro {
 namespace detail {
 
-/// Replace duplicate phase names with unique names.
-auto fixDuplicatePhaseNames(PhaseList& phaselist)
+template<typename NamedObjects>
+auto fixDuplicateNames(NamedObjects& objects)
 {
-    Strings phasenames = vectorize(phaselist, RKT_LAMBDA(x, x.name()));
-    phasenames = makeunique(phasenames, "!");
-    for(auto i = 0; i < phaselist.size(); ++i)
-        if(phaselist[i].name() != phasenames[i])
-            phaselist[i] = phaselist[i].withName(phasenames[i]);
-}
-
-/// Replace duplicate species names with unique names.
-auto fixDuplicateSpeciesNames(SpeciesList& specieslist)
-{
-    Strings speciesnames = vectorize(specieslist, RKT_LAMBDA(x, x.name()));
-    speciesnames = makeunique(speciesnames, "!");
-    for(auto i = 0; i < specieslist.size(); ++i)
-        if(specieslist[i].name() != speciesnames[i])
-            specieslist[i] = specieslist[i].withName(speciesnames[i]);
+    Strings names = vectorize(objects, RKT_LAMBDA(x, x.name()));
+    names = makeunique(names, "!");
+    for(auto i = 0; i < objects.size(); ++i)
+        if(objects[i].name() != names[i])
+            objects[i] = objects[i].withName(names[i]);
 }
 
 } // namespace detail
@@ -82,8 +72,8 @@ struct ChemicalSystem::Impl
         elements = species.elements();
         formula_matrix = detail::assembleFormulaMatrix(species, elements);
 
-        detail::fixDuplicatePhaseNames(phases);
-        detail::fixDuplicateSpeciesNames(species);
+        detail::fixDuplicateNames(phases);
+        detail::fixDuplicateNames(species);
     }
 };
 
