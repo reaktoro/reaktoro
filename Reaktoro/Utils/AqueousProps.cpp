@@ -245,7 +245,7 @@ struct AqueousProps::Impl
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
         errorif(i >= nonaqueous.size(), "It was not possible to set the activity model "
-            "of species with name or index `", detail::stringfy(species), "` because "
+            "of species with name or index `", stringfy(species), "` because "
             "there is no such species in the list of species returned by method "
             "AqueousProps::saturationSpecies.");
         chemical_potential_models[i] = chemicalPotentialModel(nonaqueous[i], generator);
@@ -377,7 +377,7 @@ struct AqueousProps::Impl
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
         errorif(i >= nonaqueous.size(), "It was not possible to calculate the "
-            "saturation index of species with name or index `", detail::stringfy(species), "` "
+            "saturation index of species with name or index `", stringfy(species), "` "
             "because there is no such species in the list of species returned by method "
             "AqueousProps::saturationSpecies.");
         const auto RT = universalGasConstant * props.temperature();

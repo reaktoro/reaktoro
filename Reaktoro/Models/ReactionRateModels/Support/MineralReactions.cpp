@@ -27,26 +27,35 @@
 namespace Reaktoro {
 namespace detail {
 
+// Get a persistent AqueousProps object that corresponds to a given ChemicalSystem object.
+auto getAqueousProps(ChemicalSystem const& system) -> AqueousProps&
+{
+    const auto id = system.id();
+    thread_local Map<Index, AqueousProps> aprops;
+    if(auto it = aprops.find(id); it != aprops.end())
+        return it->second;
+    const auto [it, _] = aprops.emplace(id, AqueousProps(system));
+    return it->second;
+}
+
 /// Convert a vector of MineralReactionRateModel objects to a vector of ReactionRateModel objects.
-auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& models, ChemicalSystem const& system) -> Vec<ReactionRateModel>
+auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& models) -> Vec<ReactionRateModel>
 {
     errorif(minerals.size() != models.size(), "Expecting same number of minerals and mineral reaction rate models.");
 
     Vec<ReactionRateModel> ratemodels(models.size());
 
-    auto aprops_ptr = std::make_shared<AqueousProps>(system);
-
-    const auto iaqueousphase = system.phases().indexWithAggregateState(AggregateState::Aqueous);
-
     for(auto i = 0; i < models.size(); ++i)
     {
-        const auto imineral = aprops_ptr->saturationSpecies().indexWithName(minerals[i]);
-        const auto imineralphase = system.phases().indexWithName(minerals[i]);
-        const auto imineralsurface = system.reactingPhaseInterfaceIndex(imineralphase, imineralphase);
-
         ratemodels[i] = [=](ChemicalProps const& props) -> ReactionRate
         {
-            auto const& aprops = *aprops_ptr;
+            auto const& system = props.system();
+            auto const& aprops = getAqueousProps(system); // get the AqueousProps object corresponding to the ChemicalSystem object in `props`, which will be reused by all mineral reactions!
+
+            thread_local auto const imineral = aprops.saturationSpecies().indexWithName(minerals[i]);
+            thread_local auto const imineralphase = system.phases().indexWithName(minerals[i]);
+            thread_local auto const imineralsurface = system.surfaces().indexWithPhases(imineralphase, imineralphase);
+
             auto const& T = props.temperature();
             auto const& P = props.pressure();
             auto const& pH = aprops.pH();
@@ -62,7 +71,7 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
     // Ensure the first rate model updates AqueousProps object before it is used by every mineral rate model!
     ratemodels[0] = [=](ChemicalProps const& props) mutable -> ReactionRate
     {
-        aprops_ptr->update(props);
+        getAqueousProps(props.system()).update(props); // update the AqueousProps object corresponding to the ChemicalSystem object in `props`; note this is done once for the first mineral rate model, and updated state reused by all other minerals for performance reasons!
         return ratemodels[0](props);
     };
 
@@ -90,28 +99,30 @@ auto MineralReactions::setRateModel(String mineral, MineralReactionRateModelGene
     m_mineral_rate_model_generators[idx] = generator;
 }
 
-auto MineralReactions::operator()(ChemicalSystem const& system) const -> Vec<Reaction>
+auto MineralReactions::operator()(PhaseList const& phases) const -> Vec<Reaction>
 {
+    auto const& species = phases.species();
+
     for(auto&& [i, generator] : enumerate(m_mineral_rate_model_generators))
     {
-        const auto imineral = system.species().findWithName(m_minerals[i]);
+        const auto imineral = species.findWithName(m_minerals[i]);
         errorif(!generator, "You forgot to set a mineral reaction rate model for mineral `", m_minerals[i], "` and maybe for all other minerals as well. Use method MineralReactions::setRateModel to fix this.");
-        errorif(imineral >= system.species().size(), "There is no mineral with name `", m_minerals[i], "` in the chemical system.");
+        errorif(imineral >= species.size(), "There is no mineral with name `", m_minerals[i], "` in the chemical system.");
     }
 
     const auto num_minerals = m_minerals.size();
 
     Vec<MineralReactionRateModel> mineral_reaction_rate_models(num_minerals);
     for(auto&& [i, generator] : enumerate(m_mineral_rate_model_generators))
-        mineral_reaction_rate_models[i] = generator(m_minerals[i], system);
+        mineral_reaction_rate_models[i] = generator(m_minerals[i], phases);
 
-    const auto reaction_rate_models = detail::convert(m_minerals, mineral_reaction_rate_models, system);
+    const auto reaction_rate_models = detail::convert(m_minerals, mineral_reaction_rate_models);
 
     Vec<Reaction> reactions(num_minerals);
-    for(auto&& [i, generator] : enumerate(m_mineral_rate_model_generators))
+    for(auto i = 0; i < num_minerals; ++i)
     {
-        const auto imineral = system.species().index(m_minerals[i]);
-        const auto mineralspecies = system.species(imineral);
+        const auto imineral = species.index(m_minerals[i]);
+        const auto mineralspecies = species[imineral];
         reactions[i] = Reaction()
             .withName(m_minerals[i])
             .withEquation({{ {mineralspecies, -1.0} }})
