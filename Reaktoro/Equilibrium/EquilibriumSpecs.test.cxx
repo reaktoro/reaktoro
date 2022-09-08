@@ -262,8 +262,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
     SECTION("Checking lambda functions in equation constraints")
     {
-        const auto econstraints = specs.equationConstraints();
-
         specs.volume();
         specs.internalEnergy();
         specs.enthalpy();
@@ -274,7 +272,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const VectorXr p = {};
         const VectorXr w = random(6);
 
-        const VectorXr v = econstraints.fn(state, p, w);
+        const VectorXr v = specs.equationConstraints().fn(state, p, w);
 
         CHECK( v[0] == props.volume() - w[0] );
         CHECK( v[1] == props.internalEnergy() - w[1] );

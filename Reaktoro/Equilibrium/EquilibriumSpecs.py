@@ -26,6 +26,6 @@ def testEquilibriumSpecs():
     def volumeConstraint(state, p, w):
         return state.props().volume() - 1.0
 
-    equation = ConstraintEquation()
+    equation = EquationConstraint()
     equation.id = "pH"
     equation.fn = volumeConstraint

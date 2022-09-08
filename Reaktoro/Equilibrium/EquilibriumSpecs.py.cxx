@@ -42,10 +42,10 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &ControlVariableP::fn)
         ;
 
-    py::class_<ConstraintEquation>(m, "ConstraintEquation")
+    py::class_<EquationConstraint>(m, "EquationConstraint")
         .def(py::init<>())
-        .def_readwrite("id", &ConstraintEquation::id)
-        .def_readwrite("fn", &ConstraintEquation::fn)
+        .def_readwrite("id", &EquationConstraint::id)
+        .def_readwrite("fn", &EquationConstraint::fn)
         ;
 
     py::class_<ConstraintEquations>(m, "ConstraintEquations")

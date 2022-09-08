@@ -87,7 +87,7 @@ struct ControlVariableP
 };
 
 /// Used to define equation constraints in a chemical equilibrium problem.
-struct ConstraintEquation
+struct EquationConstraint
 {
     /// The signature of functions that evaluate the residual of the equation constraint.
     /// @param state The current chemical state and properties of the system in the equilibrium calculation.
@@ -621,7 +621,7 @@ public:
     auto addControlVariableP(ControlVariableP const& pvar) -> void;
 
     /// Add an equation constraint to be satisfied at chemical equilibrium.
-    auto addConstraint(ConstraintEquation const& constraint) -> void;
+    auto addConstraint(EquationConstraint const& constraint) -> void;
 
     /// Add a system of equation constraints to be satisfied at chemical equilibrium.
     auto addConstraints(ConstraintEquations const& constraints) -> void;
@@ -681,7 +681,7 @@ public:
     auto titrantsImplicit() const -> Vec<ChemicalFormula>;
 
     /// Return the specified single equation constraints to be satisfied at chemical equilibrium.
-    auto equationConstraintsSingle() const -> Vec<ConstraintEquation> const&;
+    auto equationConstraintsSingle() const -> Vec<EquationConstraint> const&;
 
     /// Return the specified systems of equation constraints to be satisfied at chemical equilibrium.
     auto equationConstraintsSystem() const -> Vec<ConstraintEquations> const&;
@@ -721,7 +721,7 @@ private:
     Vec<ControlVariableP> pvars;
 
     /// The single equation constraints to be satisfied at chemical equilibrium.
-    Vec<ConstraintEquation> econstraints_single;
+    Vec<EquationConstraint> econstraints_single;
 
     /// The systems of equation constraints to be satisfied at chemical equilibrium.
     Vec<ConstraintEquations> econstraints_system;

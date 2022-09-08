@@ -58,7 +58,7 @@ system = ChemicalSystem(db, solution, mineral)
 
 solubilityCaCO3 = computeSolubilityCaCO3(system)
 
-constraint = ConstraintEquation()
+constraint = EquationConstraint()
 constraint.id = "solubility[CaCO3]"
 
 aprops = AqueousProps(system)

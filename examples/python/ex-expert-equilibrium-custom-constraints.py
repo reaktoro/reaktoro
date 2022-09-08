@@ -67,11 +67,11 @@ specs = EquilibriumSpecs(system)
 idxV = specs.addInput("V")
 idxU = specs.addInput("U")
 
-volumeConstraint = ConstraintEquation()
+volumeConstraint = EquationConstraint()
 volumeConstraint.id = "VolumeConstraint"
 volumeConstraint.fn = lambda state, p, w: state.props().volume() - w[idxV]
 
-internalEnergyConstraint = ConstraintEquation()
+internalEnergyConstraint = EquationConstraint()
 internalEnergyConstraint.id = "InternalEnergyConstraint"
 internalEnergyConstraint.fn = lambda state, p, w: state.props().internalEnergy() - w[idxU]
 
