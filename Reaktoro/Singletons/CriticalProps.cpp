@@ -28,7 +28,7 @@
 namespace Reaktoro {
 namespace detail {
 
-const std::deque<SubstanceCriticalProps> preset_critical_props_data =
+const Deque<SubstanceCriticalProps> preset_critical_props_data =
 {
 //     Tc/K     Pc/Pa     omega    unique identifiers (case insensitive)
     { {190.60,  45.99e5,  0.0120}, {"METHANE", "CH4"}           },
@@ -217,7 +217,7 @@ auto CriticalProps::instance() -> CriticalProps&
     return obj;
 }
 
-auto CriticalProps::data() -> const std::deque<SubstanceCriticalProps>&
+auto CriticalProps::data() -> const Deque<SubstanceCriticalProps>&
 {
     return instance().m_data;
 }

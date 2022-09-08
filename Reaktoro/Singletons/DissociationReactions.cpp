@@ -23,7 +23,7 @@
 namespace Reaktoro {
 namespace detail {
 
-const std::deque<DissociationReaction> default_reactions =
+const Deque<DissociationReaction> default_reactions =
 {
     { "AgCl", {{1, "Ag+"}, {1, "Cl-"}} },
     { "AgF", {{1, "Ag+"}, {1, "F-"}} },
@@ -212,7 +212,7 @@ auto DissociationReactions::instance() -> DissociationReactions&
     return obj;
 }
 
-auto DissociationReactions::reactions() -> const std::deque<DissociationReaction>&
+auto DissociationReactions::reactions() -> const Deque<DissociationReaction>&
 {
     return instance().m_reactions;
 }

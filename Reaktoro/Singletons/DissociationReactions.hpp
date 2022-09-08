@@ -17,13 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <deque>
-#include <optional>
-#include <string>
-#include <vector>
-
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 
 namespace Reaktoro {
@@ -52,7 +47,7 @@ public:
     static auto instance() -> DissociationReactions&;
 
     /// Return the dissociation reactions in the database.
-    static auto reactions() -> const std::deque<DissociationReaction>&;
+    static auto reactions() -> const Deque<DissociationReaction>&;
 
     /// Reset the DissociationReactions object to its default state.
     static auto reset() -> void;
@@ -83,7 +78,7 @@ public:
 
 private:
     /// The dissociation reactions stored in the database.
-    std::deque<DissociationReaction> m_reactions;
+    Deque<DissociationReaction> m_reactions;
 
 private:
     /// Construct a default DissociationReactions object [private].
