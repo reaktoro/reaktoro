@@ -149,6 +149,9 @@ public:
     /// Return the child data block with given index, presuming this data block is a list.
     auto operator[](Index const& index) const -> Data const&;
 
+    /// Return the child data block whose `attribute` has a given `value`, presuming this data block is a list.
+    auto with(String const& attribute, String const& value) const -> Data const&;
+
     /// Add a data block to this Data object, which becomes a list if not already.
     auto add(Data const& data) -> Data&;
 
