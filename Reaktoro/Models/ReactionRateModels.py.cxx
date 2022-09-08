@@ -18,7 +18,9 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
+void exportReactionRateModelPalandriKharaka(py::module& m);
+
 void exportReactionRateModels(py::module& m)
 {
-
+    exportReactionRateModelPalandriKharaka(m);
 }
