@@ -54,11 +54,14 @@ struct EquilibriumSolver::Impl
     /// The dimensions of the variables and constraints in the equilibrium specifications.
     const EquilibriumDims dims;
 
-    /// The auxiliary equilibrium restrictions used whenever none are given.
-    const EquilibriumRestrictions restrictions;
+    /// The auxiliary equilibrium conditions used whenever none are given in the solve methods.
+    const EquilibriumConditions xconditions;
 
-    /// The auxiliary equilibrium conditions used whenever none are given.
-    EquilibriumConditions conditions;
+    /// The auxiliary equilibrium restrictions used whenever none are given in the solve methods.
+    const EquilibriumRestrictions xrestrictions;
+
+    /// The auxiliary amounts of conservative components used whenever none are given in the solve methods.
+    const ArrayXd xc0;
 
     // The equilibrium problem setup for the equilibrium solver.
     EquilibriumSetup setup;
@@ -89,7 +92,7 @@ struct EquilibriumSolver::Impl
 
     /// Construct a Impl instance with given EquilibriumConditions object.
     Impl(const EquilibriumSpecs& specs)
-    : system(specs.system()), specs(specs), dims(specs), restrictions(system), conditions(specs), setup(specs)
+    : system(specs.system()), specs(specs), dims(specs), xconditions(specs), xrestrictions(system), setup(specs)
     {
         // Initialize the equilibrium solver with the default options
         setOptions(options);
@@ -316,75 +319,57 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, conditions, restrictions);
+        return solve(state, xconditions, xrestrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, conditions, restrictions);
+        return solve(state, xconditions, restrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions) -> EquilibriumResult
     {
-        return solve(state, conditions, restrictions);
+        return solve(state, conditions, xrestrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        return solve(state, conditions, restrictions, ArrayXd{});
+        return solve(state, conditions, restrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, sensitivity, conditions, restrictions, ArrayXd{});
+        return solve(state, sensitivity, xconditions, xrestrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, sensitivity, conditions, restrictions, ArrayXd{});
+        return solve(state, sensitivity, xconditions, restrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions) -> EquilibriumResult
     {
-        return solve(state, sensitivity, conditions, restrictions, ArrayXd{});
+        return solve(state, sensitivity, conditions, xrestrictions, xc0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        return solve(state, conditions, restrictions, ArrayXd{});
+        return solve(state, conditions, restrictions, xc0);
     }
 
     auto solve(ChemicalState& state, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, conditions, restrictions, c0);
+        return solve(state, xconditions, xrestrictions, c0);
     }
 
     auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, conditions, restrictions, c0);
+        return solve(state, xconditions, restrictions, c0);
     }
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        return solve(state, conditions, restrictions, c0);
+        return solve(state, conditions, xrestrictions, c0);
     }
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
@@ -401,23 +386,17 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, sensitivity, conditions, restrictions, c0);
+        return solve(state, sensitivity, xconditions, xrestrictions, c0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, sensitivity, conditions, restrictions, c0);
+        return solve(state, sensitivity, xconditions, restrictions, c0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        return solve(state, sensitivity, conditions, restrictions, c0);
+        return solve(state, sensitivity, conditions, xrestrictions, c0);
     }
 
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
