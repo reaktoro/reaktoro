@@ -32,32 +32,31 @@ namespace Reaktoro {
 
 auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
 {
-    errorif(!(node.IsMap() && node.size() == 1),
-        "Expecting the following yaml node to contain a single "
-        "StandardThermoModel child:\n", node.repr());
+    // errorif(!(node.IsMap() && node.size() == 1),
+    //     "Expecting the following yaml node to contain a single "
+    //     "StandardThermoModel child:\n", node.repr());
 
-    auto model = node.begin()->first.as<String>();
-    yaml params = node.begin()->second;
+    // auto model = node.begin()->first.as<String>();
+    // yaml params = node.begin()->second;
 
-    if(model == "Constant")
-        return StandardThermoModelConstant(params);
-    if(model == "HKF")
-        return StandardThermoModelHKF(params);
-    if(model == "HollandPowell")
-        return StandardThermoModelHollandPowell(params);
-    if(model == "Interpolation")
-        return StandardThermoModelInterpolation(params);
-    if(model == "MaierKelley")
-        return StandardThermoModelMaierKelley(params);
-    if(model == "MineralHKF")
-        return StandardThermoModelMineralHKF(params);
-    if(model == "WaterHKF")
-        return StandardThermoModelWaterHKF(params);
-    if(model == "Nasa")
-        return StandardThermoModelNasa(params);
-    errorif(true, "Cannot create a StandardThermoModel with "
-        "unsupported model name `", model, "` in yaml node:\n", node.repr());
-
+    // if(model == "Constant")
+    //     return StandardThermoModelConstant(params);
+    // if(model == "HKF")
+    //     return StandardThermoModelHKF(params);
+    // if(model == "HollandPowell")
+    //     return StandardThermoModelHollandPowell(params);
+    // if(model == "Interpolation")
+    //     return StandardThermoModelInterpolation(params);
+    // if(model == "MaierKelley")
+    //     return StandardThermoModelMaierKelley(params);
+    // if(model == "MineralHKF")
+    //     return StandardThermoModelMineralHKF(params);
+    // if(model == "WaterHKF")
+    //     return StandardThermoModelWaterHKF(params);
+    // if(model == "Nasa")
+    //     return StandardThermoModelNasa(params);
+    // errorif(true, "Cannot create a StandardThermoModel with "
+    //     "unsupported model name `", model, "` in yaml node:\n", node.repr());
     return {};
 }
 

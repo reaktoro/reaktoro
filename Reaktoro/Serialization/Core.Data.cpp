@@ -133,10 +133,10 @@ REAKTORO_DATA_ENCODE_DEFINE(FormationReaction)
         repr << (i++ == 0 ? "" : " ") << coeff << ":" << species.name();
 
     data.at("Reactants") = repr.str();
-    // if(obj.reactionThermoModel().initialized())
-    //     data.at("ReactionStandardThermoModel") = obj.reactionThermoModel().serialize();
-    // if(obj.productStandardVolumeModel().initialized())
-    //     data.at("StandardVolumeModel") = obj.productStandardVolumeModel().serialize();
+    if(obj.reactionThermoModel().initialized())
+        data.at("ReactionStandardThermoModel") = obj.reactionThermoModel().serialize();
+    if(obj.productStandardVolumeModel().initialized())
+        data.at("StandardVolumeModel") = obj.productStandardVolumeModel().serialize();
 }
 
 REAKTORO_DATA_DECODE_DEFINE(FormationReaction)
@@ -160,7 +160,7 @@ REAKTORO_DATA_DECODE_DEFINE(Phase)
 
 REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModel)
 {
-    // data = obj.serialize();
+    data = obj.serialize();
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModel)

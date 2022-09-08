@@ -81,7 +81,7 @@ TEST_CASE("Testing ReactionStandardThermoModelPhreeqcLgK class", "[ReactionStand
     // Test method Model::serialize()
     //======================================================================
 
-    yaml node;
+    Data node;
 
     node = model.serialize();
     CHECK( double(node.at("PhreeqcLgK").at("A1")) == A1 );

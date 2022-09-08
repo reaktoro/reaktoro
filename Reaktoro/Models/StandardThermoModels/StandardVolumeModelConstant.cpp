@@ -34,8 +34,8 @@ auto createModelSerializer(const StandardVolumeModelParamsConstant& params) -> M
 {
     return [=]()
     {
-        yaml node;
-        node["Constant"] = params;
+        Data node;
+        node.at("Constant") = params;
         return node;
     };
 }

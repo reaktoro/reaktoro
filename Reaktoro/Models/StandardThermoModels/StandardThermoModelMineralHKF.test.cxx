@@ -90,7 +90,7 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         // Test method Model::serialize()
         //======================================================================
 
-        yaml node;
+        Data node;
 
         node = model.serialize();
         CHECK( double(node.at("MineralHKF").at("Gf"))   == params.Gf );
@@ -179,7 +179,7 @@ TEST_CASE("Testing StandardThermoModelMineralHKF class", "[StandardThermoModelMi
         // Test method Model::serialize()
         //======================================================================
 
-        yaml node;
+        Data node;
 
         node = model.serialize();
         CHECK( double(node.at("MineralHKF").at("Gf"))        == params.Gf );

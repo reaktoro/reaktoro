@@ -126,8 +126,8 @@ auto createModelSerializer(const StandardThermoModelParamsNasa& params) -> Model
 {
     return [=]()
     {
-        yaml node;
-        node["Nasa"] = params;
+        Data node;
+        node.at("Nasa") = params;
         return node;
     };
 }

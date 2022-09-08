@@ -34,8 +34,8 @@ auto createModelSerializer(const StandardThermoModelParamsInterpolation& params)
 {
     return [=]()
     {
-        yaml node;
-        node["Interpolation"] = params;
+        Data node;
+        node.at("Interpolation") = params;
         return node;
     };
 }
