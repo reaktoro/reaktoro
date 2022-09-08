@@ -28,7 +28,6 @@ class ChemicalProps;
 class ChemicalState;
 class ChemicalSystem;
 class EquilibriumConditions;
-class EquilibriumProblem;
 class EquilibriumRestrictions;
 class EquilibriumSensitivity;
 class EquilibriumSpecs;
@@ -70,7 +69,6 @@ public:
     auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions.
-    /// Solve an equilibrium problem with given chemical state and equilibrium conditions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions) -> EquilibriumResult;
@@ -129,7 +127,6 @@ public:
     auto solve(ChemicalState& state, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult;
 
     /// Equilibrate a chemical state respecting given constraint conditions.
-    /// Solve an equilibrium problem with given chemical state and equilibrium conditions.
     /// @param[in,out] state The initial guess for the calculation (in) and the computed equilibrium state (out)
     /// @param conditions The specified constraint conditions to be attained at chemical equilibrium
     /// @param b0 The amounts of the conservative components in the chemical equilibrium problem
