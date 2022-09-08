@@ -33,6 +33,7 @@
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
 #include <pybind11/operators.h>
+#include <pybind11/cast.h>
 namespace py = pybind11;
 
 // Reaktoro includes
