@@ -28,6 +28,15 @@ namespace YAML { class Node; }
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Param.hpp>
 
+#include <Reaktoro/deps/tsl/ordered_map.h>
+
+namespace Reaktoro {
+
+template<class Key, class T>
+using Dict = tsl::ordered_map<Key, T>;
+
+} // namespace Reaktoro
+
 namespace Reaktoro {
 
 // ================================================================================================
@@ -92,7 +101,7 @@ public:
     auto asParam() const -> Param const&;
 
     /// Return this Data object as a dictionary object.
-    auto asDict() const -> Map<String, Data> const&;
+    auto asDict() const -> Dict<String, Data> const&;
 
     /// Return this Data object as a list object.
     auto asList() const -> Vec<Data> const&;
