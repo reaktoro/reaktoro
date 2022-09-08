@@ -87,18 +87,7 @@ struct EquilibriumPredictor::Impl
             "has been used in a call to EquilibriumSolver::solve.");
     }
 
-    /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, EquilibriumConditions const& conditions) -> void
-    {
-        auto const& A = state.system().formulaMatrix();
-        auto const& ndis = state.speciesAmounts();
-        VectorXd c = A * ndis.matrix(); // TODO: The use of Array instead of Vector makes it a lot more verbose for matrix-vector multiplications. Consider using VectorXr instead of ArrayXr.
-        // TODO: Revise this when EquilibriumReactions are introduced, which should be responsible for computing the amounts of conservative components (using EquilibriumReactions::conservationMatrix instead of ChemicalSystem::formulaMatrix).
-
-        predict(state, conditions, c);
-    }
-
-    auto predict(ChemicalState& state, EquilibriumConditions const& conditions, VectorXdConstRef c) const -> void
+    auto predict(ChemicalState& state, EquilibriumConditions const& conditions) const -> void
     {
         const auto dndw0 = sensitivity0.dndw(); // The derivatives *dn/dw* at the reference equilibrium state.
         const auto dpdw0 = sensitivity0.dpdw(); // The derivatives *dp/dw* at the reference equilibrium state.
@@ -109,8 +98,14 @@ struct EquilibriumPredictor::Impl
         const auto dqdc0 = sensitivity0.dqdc(); // The derivatives *dq/dc* at the reference equilibrium state.
         const auto dudc0 = sensitivity0.dudc(); // The derivatives *du/dc* at the reference equilibrium state.
 
-        auto const& wvals = conditions.inputValues();
-        auto const& w = wvals.cast<double>().matrix();
+        const auto wvals = conditions.inputValues();
+        const auto cvals = conditions.initialComponentAmounts();
+
+        errorifnot(wvals.allFinite(), "Ensure all input variables have been set in the EquilibriumConditions object.");
+        errorifnot(cvals.size() == c0.size(), "Ensure the initial amounts of conservative components have been set in the EquilibriumConditions object.");
+
+        const auto w = wvals.cast<double>().matrix();
+        const auto c = cvals.cast<double>().matrix();
 
         const auto dw = w - w0;
         const auto dc = c - c0;
@@ -139,7 +134,7 @@ struct EquilibriumPredictor::Impl
     }
 
     /// Perform a first-order Taylor prediction of the chemical potential of a species at given conditions.
-    auto predictSpeciesChemicalPotential(Index i, EquilibriumConditions const& conditions, VectorXdConstRef const& c) const -> double
+    auto predictSpeciesChemicalPotential(Index i, EquilibriumConditions const& conditions) const -> double
     {
         assert(i < Nn);
 
@@ -151,7 +146,13 @@ struct EquilibriumPredictor::Impl
         const auto mui0 = u0[Nu - Nn + i];
 
         const auto wvals = conditions.inputValues();
+        const auto cvals = conditions.initialComponentAmounts();
+
+        errorifnot(wvals.allFinite(), "Ensure all input variables have been set in the EquilibriumConditions object.");
+        errorifnot(cvals.size() == c0.size(), "Ensure the initial amounts of conservative components have been set in the EquilibriumConditions object.");
+
         const auto w = wvals.cast<double>().matrix();
+        const auto c = cvals.cast<double>().matrix();
 
         const auto dw = w - w0;
         const auto dc = c - c0;
@@ -189,14 +190,9 @@ auto EquilibriumPredictor::predict(ChemicalState& state, EquilibriumConditions c
     pimpl->predict(state, conditions);
 }
 
-auto EquilibriumPredictor::predict(ChemicalState& state, EquilibriumConditions const& conditions, VectorXrConstRef const& c) const -> void
+auto EquilibriumPredictor::predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions) const -> double
 {
-    pimpl->predict(state, conditions, c);
-}
-
-auto EquilibriumPredictor::predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions, VectorXdConstRef const& c) const -> double
-{
-    return pimpl->predictSpeciesChemicalPotential(ispecies, conditions, c);
+    return pimpl->predictSpeciesChemicalPotential(ispecies, conditions);
 }
 
 auto EquilibriumPredictor::referenceSpeciesChemicalPotential(Index ispecies) const -> double

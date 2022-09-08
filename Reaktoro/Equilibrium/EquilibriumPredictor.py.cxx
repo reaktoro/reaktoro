@@ -29,8 +29,7 @@ void exportEquilibriumProjector(py::module& m)
 {
     py::class_<EquilibriumPredictor>(m, "EquilibriumPredictor")
         .def(py::init<ChemicalState const&, EquilibriumSensitivity const&>())
-        .def("predict", py::overload_cast<ChemicalState&, EquilibriumConditions const&>(&EquilibriumPredictor::predict, py::const_), "Perform a first-order Taylor prediction of the chemical state at given conditions.")
-        .def("predict", py::overload_cast<ChemicalState&, EquilibriumConditions const&, VectorXrConstRef const&>(&EquilibriumPredictor::predict, py::const_), "Perform a first-order Taylor prediction of the chemical state at given conditions.")
+        .def("predict", &EquilibriumPredictor::predict, "Perform a first-order Taylor prediction of the chemical state at given conditions.")
         .def("predictSpeciesChemicalPotential", &EquilibriumPredictor::predictSpeciesChemicalPotential, "Perform a first-order Taylor prediction of the chemical potential of a species at given conditions.")
         .def("referenceSpeciesChemicalPotential", &EquilibriumPredictor::referenceSpeciesChemicalPotential, "Return the chemical potential of a species at given reference conditions.")
         ;
