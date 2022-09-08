@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 using namespace Reaktoro;
@@ -29,7 +30,15 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 {
     ChemicalSystem system = test::createChemicalSystem();
 
+    const auto Ns = system.surfaces().size(); // the number of surfaces
+
     EquilibriumSpecs specs(system);
+
+    // Auxiliary function that returns the value at `w` corresponding to input with given `id`
+    auto at = [&](auto const& w, auto const& id)
+    {
+        return w[index(specs.namesInputs(), id)];
+    };
 
     WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
     {
@@ -43,9 +52,10 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( w.size() == 2 );
-        CHECK( w[0] ==  50.0 + 273.15 ); // T in K
-        CHECK( w[1] == 100.0 * 1.0e+5 ); // P in Pa
+        CHECK( w.size() == Ns + 2 );
+
+        CHECK( at(w, "T") ==  50.0 + 273.15 ); // T in K
+        CHECK( at(w, "P") == 100.0 * 1.0e+5 ); // P in Pa
 
         CHECK_THROWS( conditions.volume(1, "m3") );
 
@@ -65,9 +75,10 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( w.size() == 2 );
-        CHECK( w[0] == 40.0 + 273.15 ); // T in K
-        CHECK( w[1] == 2.0 ); // V in m3
+        CHECK( w.size() == Ns + 2 );
+
+        CHECK( at(w, "T") == 40.0 + 273.15 ); // T in K
+        CHECK( at(w, "V") == 2.0 ); // V in m3
 
         CHECK_THROWS( conditions.entropy(1, "J/K") );
 
@@ -99,9 +110,10 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( w.size() == 2 );
-        CHECK( w[0] == Approx(1.0e-6) ); // V in m3
-        CHECK( w[1] == Approx(1.0e+3) ); // U in J
+        CHECK( w.size() == Ns + 2 );
+
+        CHECK( at(w, "V") == Approx(1.0e-6) ); // V in m3
+        CHECK( at(w, "U") == Approx(1.0e+3) ); // U in J
 
         CHECK_THROWS( conditions.enthalpy(1, "J") );
 
@@ -144,10 +156,11 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( w.size() == 3 );
-        CHECK( w[0]  == Approx(35.0 + 273.15) ); // T in K
-        CHECK( w[1]  == Approx(23.0 * 1.0e+5) ); // P in Pa
-        CHECK( w[2] == 3.5 );                    // pH
+        CHECK( w.size() == Ns + 3 );
+
+        CHECK( at(w, "T")  == Approx(35.0 + 273.15) ); // T in K
+        CHECK( at(w, "P")  == Approx(23.0 * 1.0e+5) ); // P in Pa
+        CHECK( at(w, "pH") == 3.5 );                   // pH
 
         CHECK_THROWS( conditions.pE(5.0) );
     }
@@ -166,10 +179,11 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( w.size() == 3 );
-        CHECK( w[0] == Approx(2.3 * 1.0e-3) ); // V in m3
-        CHECK( w[1] == Approx(1.0e+3) );       // S in J/K
-        CHECK( w[2] == Approx(log(40.0)) );    // lnActivity[CO2(g)]
+        CHECK( w.size() == Ns + 3 );
+
+        CHECK( at(w, "V")             == Approx(2.3 * 1.0e-3) ); // V in m3
+        CHECK( at(w, "S")             == Approx(1.0e+3) );       // S in J/K
+        CHECK( at(w, "ln(a[CO2(g)])") == Approx(log(40.0)) );    // ln(a[CO2(g)])
 
         CHECK_THROWS( conditions.chemicalPotential("H2O(aq)", 100.0, "J/mol") );
     }
@@ -196,13 +210,14 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( w.size() == 6 );
-        CHECK( w[0] == Approx(60.0 + 273.15) );  // T in K
-        CHECK( w[1] == Approx(200.0 * 1.0e+6) ); // P in Pa
-        CHECK( w[2] == Approx(5.0 * 1.0e-9) );   // V in m3
-        CHECK( w[3] == Approx(2.0e+6) );         // U in J
-        CHECK( w[4] == 2.7 );                    // pH
-        CHECK( w[5] == 4.0 );                    // pE
+        CHECK( w.size() == Ns + 6 );
+
+        CHECK( at(w, "T")  == Approx(60.0 + 273.15) );  // T in K
+        CHECK( at(w, "P")  == Approx(200.0 * 1.0e+6) ); // P in Pa
+        CHECK( at(w, "V")  == Approx(5.0 * 1.0e-9) );   // V in m3
+        CHECK( at(w, "U")  == Approx(2.0e+6) );         // U in J
+        CHECK( at(w, "pH") == 2.7 );                    // pH
+        CHECK( at(w, "pE") == 4.0 );                    // pE
 
         CHECK_THROWS( conditions.Eh(14.0, "mV") );
     }
@@ -228,11 +243,12 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         VectorXr w = conditions.inputValues();
 
-        CHECK( w.size() == 4 );
-        CHECK( w[0] == 300.0 );      // T in K
-        CHECK( w[1] == 1e6 );        // P in Pa
-        CHECK( w[2] == K0.value() ); // K0
-        CHECK( w[3] == K1.value() ); // K1
+        CHECK( w.size() == Ns + 4 );
+
+        CHECK( at(w, "T")  == 300.0 );      // T in K
+        CHECK( at(w, "P")  == 1e6 );        // P in Pa
+        CHECK( at(w, "K0") == K0.value() ); // K0
+        CHECK( at(w, "K1") == K1.value() ); // K1
 
         // Check that changing K0 and K1 does not change the input values in object conditions!
         K0 = 7.0;
@@ -240,8 +256,8 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         w = conditions.inputValues();
 
-        CHECK( w[2] == 1.0 ); // K0 at previous value
-        CHECK( w[3] == 2.0 ); // K1 at previous value
+        CHECK( at(w, "K0") == 1.0 ); // K0 at previous value
+        CHECK( at(w, "K1") == 2.0 ); // K1 at previous value
 
         // Check that changing input variables "K0" and "K1" in object conditions
         // does not change Param objects K0 and K1!
@@ -253,10 +269,11 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         w = conditions.inputValues();
 
-        CHECK( w.size() == 4 );
-        CHECK( w[0] == 300.0 ); // corresponding to T
-        CHECK( w[1] == 1e6 );   // corresponding to P
-        CHECK( w[2] == 11.0 );  // corresponding to K0
-        CHECK( w[3] == 12.0 );  // corresponding to K1
+        CHECK( w.size() == Ns + 4 );
+
+        CHECK( at(w, "T")  == 300.0 ); // corresponding to T
+        CHECK( at(w, "P")  == 1e6 );   // corresponding to P
+        CHECK( at(w, "K0") == 11.0 );  // corresponding to K0
+        CHECK( at(w, "K1") == 12.0 );  // corresponding to K1
     }
 }

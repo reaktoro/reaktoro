@@ -32,6 +32,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
 
     const auto Ne = system.elements().size();
     const auto Nn = system.species().size();
+    const auto Ns = system.surfaces().size();
 
     EquilibriumSpecs specs(system);
 
@@ -48,11 +49,11 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nq == 0      );  // the number of *q* control variables (amounts of implicit titrants).
         CHECK( dims.Nv == 0      );  // the number of equations constraints in the chemical equilibrium problem.
         CHECK( dims.Nr == 0      );  // the number of reactivity constraints (i.e., *restricted reactions*) in the chemical equilibrium problem.
-        CHECK( dims.Nb == Ne + 1 ); // elements, charge  // the number of components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `Ne + 1 + Nr`).
+        CHECK( dims.Nb == Ne + 1 );  // the number of components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `Ne + 1 + Nr`).
         CHECK( dims.Nt == 0      );  // the number of substances for which the chemical system is open to (the number of explicit and implicit titrants).
         CHECK( dims.Nx == Nn     );  // the number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`).
         CHECK( dims.Nu == Nn     );  // the number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`).
-        CHECK( dims.Nw == 2      );  // the number of input variables *w* in the chemical equilibrium problem.
+        CHECK( dims.Nw == Ns + 2 );  // the number of input variables *w* in the chemical equilibrium problem (surface areas, temperature, presure).
     }
 
     WHEN("temperature and volume are input variables - the Helmholtz energy minimization formulation")
@@ -72,7 +73,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 0      );
         CHECK( dims.Nx == Nn     );
         CHECK( dims.Nu == Nn + 1 );
-        CHECK( dims.Nw == 2      ); // T, V
+        CHECK( dims.Nw == Ns + 2 ); // surface areas, T, V,
     }
 
     WHEN("volume and internal energy are input variables - the entropy maximization formulation")
@@ -92,7 +93,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 0      );
         CHECK( dims.Nx == Nn     );
         CHECK( dims.Nu == Nn + 2 );
-        CHECK( dims.Nw == 2      ); // V, U
+        CHECK( dims.Nw == Ns + 2 ); // surface areas, V, U
     }
 
     WHEN("temperature, pressure, and pH are input variables")
@@ -113,7 +114,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 1      ); // [H+]
         CHECK( dims.Nx == Nn + 1 );
         CHECK( dims.Nu == Nn + 1 );
-        CHECK( dims.Nw == 3      ); // T, P, pH
+        CHECK( dims.Nw == Ns + 3 ); // surface areas, T, P, pH
     }
 
     WHEN("volume, entropy, and activity[CO2(g)] are input variables")
@@ -134,7 +135,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 1      ); // [CO2]
         CHECK( dims.Nx == Nn + 1 );
         CHECK( dims.Nu == Nn + 3 );
-        CHECK( dims.Nw == 3      ); // T, P, a(CO2)
+        CHECK( dims.Nw == Ns + 3 ); // surface areas, T, P, a(CO2)
     }
 
     WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables")
@@ -160,7 +161,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 4      );
         CHECK( dims.Nx == Nn + 2 );
         CHECK( dims.Nu == Nn + 4 );
-        CHECK( dims.Nw == 6      ); // T, P, V, U, pH, pE
+        CHECK( dims.Nw == Ns + 6 ); // surface areas, T, P, V, U, pH, pE
     }
 
     WHEN("temperature, pressure, volume, internal energy, pH, and pE are input variables, there are reactivity constraints")
@@ -188,6 +189,6 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nt == 4      );
         CHECK( dims.Nx == Nn + 2 );
         CHECK( dims.Nu == Nn + 4 );
-        CHECK( dims.Nw == 6      ); // T, P, V, U, pH, pE
+        CHECK( dims.Nw == Ns + 6 ); // surface areas, T, P, V, U, pH, pE
     }
 }

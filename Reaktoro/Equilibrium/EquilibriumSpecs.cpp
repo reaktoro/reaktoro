@@ -164,6 +164,10 @@ EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
     // By default, start with T and P as unknown *p* control variables.
     addControlVariableP({ "T" });
     addControlVariableP({ "P" });
+
+    // By default, start with all surface areas as given *w* input variables.
+    for(auto const& surface : system.surfaces())
+        addInput("SA[" + surface.name() + "]"); // e.g., SA[AqueousPhase:GaseousPhase], SA[Calcite]
 }
 
 //=================================================================================================
