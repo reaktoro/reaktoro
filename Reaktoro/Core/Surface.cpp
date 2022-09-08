@@ -26,10 +26,13 @@ namespace Reaktoro {
 struct Surface::Impl
 {
     /// The unique name of the surface.
-    String name;
+    String name = "NotSpecified";
 
     /// The names of the phases composing this surface.
-    Pair<String, String> phases;
+    Pair<String, String> phases = {"NotSpecified", "NotSpecified"};
+
+    /// The indices of the phases composing this surface.
+    Pair<Index, Index> iphases = {-1, -1};
 
     /// Construct a default Surface::Impl object.
     Impl()
@@ -53,6 +56,14 @@ Surface::Surface(String const& name, String const& phase1, String const& phase2)
     pimpl->phases = {phase1, phase2};
 }
 
+Surface::Surface(String const& name, String const& phase1, Index iphase1, String const& phase2, Index iphase2)
+: Surface()
+{
+    pimpl->name = name;
+    pimpl->phases = {phase1, phase2};
+    pimpl->iphases = {iphase1, iphase2};
+}
+
 auto Surface::clone() const -> Surface
 {
     Surface surface;
@@ -67,10 +78,17 @@ auto Surface::withName(String const& name) const -> Surface
     return copy;
 }
 
-auto Surface::withPhases(String const& phase1, String const& phase2) const -> Surface
+auto Surface::withPhaseNames(String const& phase1, String const& phase2) const -> Surface
 {
     Surface copy = clone();
     copy.pimpl->phases = {phase1, phase2};
+    return copy;
+}
+
+auto Surface::withPhaseIndices(Index iphase1, Index iphase2) const -> Surface
+{
+    Surface copy = clone();
+    copy.pimpl->iphases = {iphase1, iphase2};
     return copy;
 }
 
@@ -79,22 +97,59 @@ auto Surface::name() const -> String
     return pimpl->name;
 }
 
-auto Surface::phases() const -> Pair<String, String> const&
+auto Surface::phaseNames() const -> Pair<String, String> const&
 {
     return pimpl->phases;
 }
 
+auto Surface::phaseIndices() const -> Pair<Index, Index> const&
+{
+    return pimpl->iphases;
+}
+
 auto Surface::equivalent(Surface const& another) const -> bool
 {
-    auto const& [phase1, phase2] = phases();
-    auto const& [other1, other2] = another.phases();
-    return (phase1 == other1 && phase2 == other2) || (phase1 == other2 && phase2 == other1);
+    auto const& [phase1, phase2] = phaseNames();
+    auto const& [other1, other2] = another.phaseNames();
+
+    auto const& [iphase1, iphase2] = phaseIndices();
+    auto const& [iother1, iother2] = another.phaseIndices();
+
+    auto const same_phase_names = (phase1 == other1 && phase2 == other2) || (phase1 == other2 && phase2 == other1);
+    auto const same_phase_indcs = (iphase1 == iother1 && iphase2 == iother2) || (iphase1 == iother2 && iphase2 == iother1);
+
+    return same_phase_names && same_phase_indcs;
 }
 
 auto Surface::equivalent(String const& otherphase1, String const& otherphase2) const -> bool
 {
-    auto const& [phase1, phase2] = phases();
+    auto const& [phase1, phase2] = phaseNames();
     return (phase1 == otherphase1 && phase2 == otherphase2) || (phase1 == otherphase2 && phase2 == otherphase1);
+}
+
+auto Surface::equivalent(Index iotherphase1, Index iotherphase2) const -> bool
+{
+    auto const& [iphase1, iphase2] = phaseIndices();
+    return (iphase1 == iotherphase1 && iphase2 == iotherphase2) || (iphase1 == iotherphase2 && iphase2 == iotherphase1);
+}
+
+auto Surface::equivalent(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> bool
+{
+    const auto [nphase1, nphase2] = phaseNames();
+    const auto [iphase1, iphase2] = phaseIndices();
+
+    auto same = [](StringOrIndex const& si, String const& s, Index i)
+    {
+        errorif(si.valueless_by_exception(), "Invalid StringOrIndex object.");
+        if(auto pval = std::get_if<Index>(&si))  return *pval == i;
+        if(auto pval = std::get_if<int>(&si))    return *pval == i;
+        if(auto pval = std::get_if<String>(&si)) return *pval == s;
+        return false;
+    };
+
+    return
+        same(phase1, nphase1, iphase1) && same(phase2, nphase2, iphase2) ||
+        same(phase2, nphase1, iphase1) && same(phase1, nphase2, iphase2);
 }
 
 auto operator<(const Surface& lhs, const Surface& rhs) -> bool
@@ -104,7 +159,7 @@ auto operator<(const Surface& lhs, const Surface& rhs) -> bool
 
 auto operator==(const Surface& lhs, const Surface& rhs) -> bool
 {
-    return lhs.name() == rhs.name() && lhs.phases() == rhs.phases();
+    return lhs.name() == rhs.name() && lhs.phaseNames() == rhs.phaseNames() && lhs.phaseIndices() == rhs.phaseIndices();
 }
 
 } // namespace Reaktoro

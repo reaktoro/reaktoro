@@ -21,27 +21,21 @@ from reaktoro import *
 
 def testSurface():
 
-    # When using constructor Surface()
     surface = Surface()
 
     surface = surface.withName("AqueousPhase:GaseousPhase")
     assert surface.name() == "AqueousPhase:GaseousPhase"
 
-    surface = surface.withPhases("AqueousPhase", "GaseousPhase")
-    assert surface.phases()[0] == "AqueousPhase"
-    assert surface.phases()[1] == "GaseousPhase"
+    surface = surface.withPhaseNames("AqueousPhase", "GaseousPhase")
+    assert surface.phaseNames() == ("AqueousPhase","GaseousPhase")
 
-    other = Surface()
-    other = other.withName("SomeName")
-    other = other.withPhases("GaseousPhase", "AqueousPhase")
+    surface = surface.withPhaseIndices(0, 1)
+    assert surface.phaseIndices() == (0, 1)
 
+    other = Surface("SomeName")
+    other = other.withPhaseNames("GaseousPhase", "AqueousPhase")
+    other = other.withPhaseIndices(1, 0)
     assert surface.equivalent(other)
 
-    # When using constructor Surface(name)
-    surface = Surface("AqueousPhase:GaseousPhase")
-
-    assert surface.name() == "AqueousPhase:GaseousPhase"
-
-    surface = surface.withPhases("AqueousPhase", "GaseousPhase")
-    assert surface.phases()[0] == "AqueousPhase"
-    assert surface.phases()[1] == "GaseousPhase"
+    another = Surface("SomeName", "GaseousPhase", 1, "AqueousPhase", 0)
+    assert surface.equivalent(another)
