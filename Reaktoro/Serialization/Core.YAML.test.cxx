@@ -91,14 +91,18 @@ TEST_CASE("Testing YAML encoder/decoder for Database", "[Core.yaml]")
 {
     auto contents = R"(
 Elements:
-  - Symbol: A
+  A:
+    Symbol: A
     MolarMass: 1.0
-  - Symbol: B
+  B:
+    Symbol: B
     MolarMass: 2.0
-  - Symbol: C
+  C:
+    Symbol: C
     MolarMass: 3.0
 Species:
-  - Name: A2B(aq)
+  A2B(aq):
+    Name: A2B(aq)
     Formula: A2B
     Elements: 2:A 1:B
     AggregateState: Aqueous
@@ -107,25 +111,29 @@ Species:
       ReactionStandardThermoModel:
         ConstLgK:
           lgKr: 5.0
-  - Name: A(aq)
+  A(aq):
+    Name: A(aq)
     Formula: A
     Elements: 1:A
     AggregateState: Aqueous
     StandardThermoModel:
       Constant: { G0: 1.0 }
-  - Name: B(aq)
+  B(aq):
+    Name: B(aq)
     Formula: B
     Elements: 1:B
     AggregateState: Aqueous
     StandardThermoModel:
       Constant: { G0: 2.0 }
-  - Name: C(aq)
+  C(aq):
+    Name: C(aq)
     Formula: C
     Elements: 1:C
     AggregateState: Aqueous
     StandardThermoModel:
       Constant: { G0: 3.0 }
-  - Name: A3B5C3(aq)
+  A3B5C3(aq):
+    Name: A3B5C3(aq)
     Formula: A3B5C3
     Elements: 3:A 5:B 3:C
     AggregateState: Aqueous
@@ -172,7 +180,7 @@ Species:
     CHECK( node["Elements"].size() == elements.size() );
     for(auto i = 0; i < elements.size(); ++i)
     {
-        const auto enode = node["Elements"][i];
+        const auto enode = node["Elements"][elements[i].symbol()];
         CHECK( elements[i].symbol() == enode["Symbol"].as<String>() );
         CHECK( elements[i].molarMass() == enode["MolarMass"].as<double>() );
         CHECK( elements[i].name() == enode["Name"].as<String>() );
@@ -183,7 +191,7 @@ Species:
     CHECK( node["Species"].size() == species.size() );
     for(auto i = 0; i < species.size(); ++i)
     {
-        const auto snode = node["Species"][i];
+        const auto snode = node["Species"][species[i].name()];
         CHECK( species[i].name() == snode["Name"].as<String>() );
         CHECK( species[i].formula() == snode["Formula"].as<String>() );
         CHECK( species[i].substance() == snode["Substance"].as<String>() );

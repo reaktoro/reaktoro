@@ -27,12 +27,15 @@ namespace {
 
 String doc = R"(
 Elements:
-  - Symbol: A
+  A:
+    Symbol: A
     MolarMass: 1.0
-  - Symbol: B
+  B:
+    Symbol: B
     MolarMass: 2.0
 Species:
-  - Name: A2B(l)
+  A2B(l):
+    Name: A2B(l)
     Formula: A2B
     Elements: 2:A 1:B
     AggregateState: Liquid
@@ -46,7 +49,8 @@ Species:
         b: 0.0
         c: 0.0
         Tmax: 0.0
-  - Name: A2B3(aq)
+  A2B3(aq):
+    Name: A2B3(aq)
     Formula: A2B3
     Elements: 2:A 3:B
     AggregateState: Aqueous
@@ -64,7 +68,8 @@ Species:
         wref: 1.0
         charge: 1.0
         Tmax: 1.2
-  - Name: A2B(g)
+  A2B(g):
+    Name: A2B(g)
     Formula: A2B
     Elements: 2:A 1:B
     AggregateState: Gas
@@ -73,7 +78,8 @@ Species:
       ReactionStandardThermoModel:
         ConstLgK:
           lgKr: 3.0
-  - Name: A6B7(aq)
+  A6B7(aq):
+    Name: A6B7(aq)
     Formula: A6B7
     Elements: 6:A 7:B
     AggregateState: Aqueous

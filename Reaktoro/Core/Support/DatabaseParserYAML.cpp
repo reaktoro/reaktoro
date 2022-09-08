@@ -55,39 +55,35 @@ struct DatabaseParserYAML::Impl
             "Are you forgetting to add the list of chemical species inside a Species YAML map?\n",
             "Please check other Reaktoro's YAML databases to identify what is not conforming.");
 
-        for(auto child : doc["Elements"])
-            addElement(child);
+        for(auto const& child : doc["Elements"])
+            addElement(child.first.as<String>(), child.second);
 
-        for(auto child : doc["Species"])
-            addSpecies(child);
+        for(auto const& child : doc["Species"])
+            addSpecies(child.first.as<String>(), child.second);
     }
 
     /// Return the yaml node among element nodes with given unique @p symbol.
-    auto getElementNode(const String& symbol) -> yaml
+    auto getElementDetails(String const& symbol) -> yaml
     {
         const auto node = doc["Elements"];
-        if(!node) return {};
-        for(auto i = 0; i < node.size(); ++i)
-            if(node[i].at("Symbol").as<String>() == symbol)
-                return node[i];
-        return {};
+        if(!node.IsDefined()) return {};
+        auto const& child = node[symbol];
+        return child ? yaml(child) : yaml();
     }
 
-    /// Return the yaml node among species nodes with given unique @p name.
-    auto getSpeciesNode(const String& name) -> yaml
+    /// Return the yaml node among species objects with given unique @p name.
+    auto getSpeciesDetails(const String& name) -> yaml
     {
         const auto node = doc["Species"];
         if(!node.IsDefined()) return {};
-        for(auto i = 0; i < node.size(); ++i)
-            if(node[i].at("Name").as<String>() == name)
-                return node[i];
-        return {};
+        auto const& child = node[name];
+        return child ? yaml(child) : yaml();
     }
 
     /// Add a new element with given symbol. Check if an element yaml node exists with such symbol first.
-    auto addElement(const String& symbol) -> Element
+    auto addElement(String const& symbol) -> Element
     {
-        const auto node = getElementNode(symbol);
+        const auto node = getElementDetails(symbol);
         if(!node.IsNull())
             return addElement(node); // create an element using info in the database file.
         Element element(symbol); // create an element using info from default elements in Elements.
@@ -95,57 +91,55 @@ struct DatabaseParserYAML::Impl
         return element;
     }
 
-    /// Add a new element with given yaml @p node.
-    auto addElement(const yaml& node) -> Element
+    /// Add a new element with given `symbol` and `details`.
+    auto addElement(String const& symbol, const yaml& details) -> Element
     {
-        assert(!node.IsNull());
+        errorif(!details.IsMap(), "Expecting the details of an element as an object, but got instead:\n\n", details.repr());
         Element::Attribs attribs;
-        node.copyRequiredChildValueTo("Symbol", attribs.symbol);
-        node.copyRequiredChildValueTo("MolarMass", attribs.molar_mass);
-        node.copyOptionalChildValueTo("Name", attribs.name, {});
-        node.copyOptionalChildValueTo("Tags", attribs.tags, {});
+        attribs.symbol = symbol;
+        details.copyRequiredChildValueTo("MolarMass", attribs.molar_mass);
+        details.copyOptionalChildValueTo("Name", attribs.name, {});
+        details.copyOptionalChildValueTo("Tags", attribs.tags, {});
         Element element(attribs);
         element_list.append(element);
         return element;
     }
 
     /// Add a new species with given unique @p name. An yaml node for this species must exist.
-    auto addSpecies(const String& name) -> Species
+    auto addSpecies(String const& name) -> Species
     {
-        const auto node = getSpeciesNode(name);
+        const auto node = getSpeciesDetails(name);
         errorif(node.IsNull(), "Cannot create a Species object with "
             "name `", name, "` without an yaml node with its data. "
             "Are you sure this name is correct and there is a species with this name in the database?");
-        return addSpecies(node);
+        return addSpecies(name, node);
     }
 
-    /// Add a new species with given yaml @p node.
-    auto addSpecies(const yaml& node) -> Species
+    /// Add a new species with given `name` and `details`.
+    auto addSpecies(String const& name, yaml const& details) -> Species
     {
-        assert(node.IsDefined());
-        errorif(!node["Name"], "Missing `Name` specification in:\n\n", node.repr());
-        errorif(!node["Formula"], "Missing `Formula` specification in:\n\n", node.repr());
-        errorif(!node["AggregateState"], "Missing `AggregateState` specification in:\n\n", node.repr());
-        errorif(!node["Elements"], "Missing `Elements` specification in:\n\n", node.repr(), "\n",
+        errorif(!details.IsMap(), "Expecting the details of a species as an object, but got instead:\n\n", details.repr());
+        errorif(!details["Formula"], "Missing `Formula` specification in:\n\n", details.repr());
+        errorif(!details["AggregateState"], "Missing `AggregateState` specification in:\n\n", details.repr());
+        errorif(!details["Elements"], "Missing `Elements` specification in:\n\n", details.repr(), "\n",
             "Please assign `Elements: null` if this species does not have chemical elements (e.g., e-, which may be represented with only `Charge: -1`).");
-        errorif(!node["FormationReaction"] && !node["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", node.repr());
-        const String name = node["Name"];
+        errorif(!details["FormationReaction"] && !details["StandardThermoModel"], "Missing `FormationReaction` or `StandardThermoModel` specification in:\n\n", details.repr());
         const auto idx = species_list.find(name);
         if(idx < species_list.size())
             return species_list[idx]; // Do not add a species that has already been added! Return existing one.
         Species::Attribs attribs;
-        node.copyRequiredChildValueTo("Name", attribs.name);
-        node.copyRequiredChildValueTo("Formula", attribs.formula);
-        node.copyOptionalChildValueTo("Substance", attribs.substance, {});
-        node.copyOptionalChildValueTo("Charge", attribs.charge, 0.0);
-        node.copyRequiredChildValueTo("AggregateState", attribs.aggregate_state);
+        attribs.name = name;
+        details.copyRequiredChildValueTo("Formula", attribs.formula);
+        details.copyOptionalChildValueTo("Substance", attribs.substance, {});
+        details.copyOptionalChildValueTo("Charge", attribs.charge, 0.0);
+        details.copyRequiredChildValueTo("AggregateState", attribs.aggregate_state);
         errorif(attribs.aggregate_state == AggregateState::Undefined,
-            "Unsupported AggregateState value `", node["AggregateState"].as<String>(), "` in:\n\n", node.repr(), "\n\n"
+            "Unsupported AggregateState value `", details["AggregateState"].as<String>(), "` in:\n\n", details.repr(), "\n\n"
             "The supported values are given below:\n\n", supportedAggregateStateValues());
-        attribs.elements = createElementalComposition(node);
-        attribs.formation_reaction = createFormationReaction(node);
-        attribs.std_thermo_model = createStandardThermoModel(node);
-        attribs.tags = createTags(node);
+        attribs.elements = createElementalComposition(details);
+        attribs.formation_reaction = createFormationReaction(details);
+        attribs.std_thermo_model = createStandardThermoModel(details);
+        attribs.tags = createTags(details);
         Species species(attribs);
         species_list.append(species);
         return species;
