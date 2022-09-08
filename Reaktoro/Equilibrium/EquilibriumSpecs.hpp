@@ -109,10 +109,10 @@ struct ReactivityConstraint
     String id;
 
     /// The linear equation coefficients in the constraint corresponding to the species amounts variables *n*.
-    VectorXd An;
+    VectorXd Kn;
 
     /// The linear equation coefficients in the constraint corresponding to the introduced control variables *p*.
-    VectorXd Ap;
+    VectorXd Kp;
 };
 
 /// The class used to define conditions to be satisfied at chemical equilibrium.

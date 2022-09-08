@@ -682,9 +682,9 @@ auto EquilibriumSpecs::addReactivityConstraint(ReactivityConstraint const& const
     const auto constraint_has_same_id = containsfn(rconstraints, RKT_LAMBDA(x, x.id == constraint.id));
     errorif(constraint_has_same_id, "Cannot impose a new reactivity constraint with same id (", constraint.id, ").");
     errorif(constraint.id.empty(), "A reactivity constraint cannot have an empty id.");
-    errorif(constraint.An.size() != m_system.species().size(), "The `An` vector in the reactivity constraint with id `", constraint.id, " has size ", constraint.An.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
-    errorif(constraint.An.cwiseAbs().minCoeff() == 0, "The `An` vector in the reactivity constraint with id `", constraint.id, " should not be entirely composed of zeros.", constraint.An.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
-    errorif(constraint.Ap.size() > 0 && constraint.Ap.size() != pvars.size(), "The `Ap` vector in the reactivity constraint with id `", constraint.id, " has non-zero size ", constraint.Ap.size(), " which should be equal to the number of p control variables, ", pvars.size(), ".");
+    errorif(constraint.Kn.size() != m_system.species().size(), "The `Kn` vector in the reactivity constraint with id `", constraint.id, " has size ", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
+    errorif(constraint.Kn.cwiseAbs().minCoeff() == 0, "The `Kn` vector in the reactivity constraint with id `", constraint.id, " should not be entirely composed of zeros.", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
+    errorif(constraint.Kp.size() > 0 && constraint.Kp.size() != pvars.size(), "The `Kp` vector in the reactivity constraint with id `", constraint.id, " has non-zero size ", constraint.Kp.size(), " which should be equal to the number of p control variables, ", pvars.size(), ".");
     rconstraints.push_back(constraint);
 }
 
