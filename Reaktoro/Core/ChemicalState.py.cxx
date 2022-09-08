@@ -44,7 +44,6 @@ void exportChemicalState(py::module& m)
         .def("pressure", py::overload_cast<real, Chars>(&ChemicalState::pressure))
         .def("pressure", py::overload_cast<>(&ChemicalState::pressure, py::const_))
 
-
         .def("setSpeciesAmounts", [](ChemicalState& s, double val) { s.setSpeciesAmounts(val); })
         .def("setSpeciesAmounts", [](ChemicalState& s, const real& val) { s.setSpeciesAmounts(val); })
         .def("setSpeciesAmounts", [](ChemicalState& s, ArrayXrConstRef vals) { s.setSpeciesAmounts(vals); })
@@ -84,6 +83,9 @@ void exportChemicalState(py::module& m)
         .def("surfaceAreas", &ChemicalState::surfaceAreas, return_internal_ref)
         .def("surfaces", &ChemicalState::surfaces, return_internal_ref)
         .def("surfaceIndex", &ChemicalState::surfaceIndex)
+
+        .def("update", &ChemicalState::update)
+        .def("updateIdeal", &ChemicalState::updateIdeal)
 
         .def("system", &ChemicalState::system, return_internal_ref)
         .def("props", py::overload_cast<>(&ChemicalState::props, py::const_), return_internal_ref)
