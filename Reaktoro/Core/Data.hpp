@@ -17,17 +17,10 @@
 
 #pragma once
 
-// Third-party includes
-#include <nlohmann/json_fwd.hpp>
-
-// Third-party forward declarations
-namespace YAML { class Node; }
-
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Param.hpp>
-
 #include <Reaktoro/deps/tsl/ordered_map.h>
 
 namespace Reaktoro {
@@ -58,29 +51,36 @@ public:
     /// Construct a default Data instance with null value.
     Data();
 
-    /// Construct a Data object with given yaml object.
-    Data(YAML::Node const& obj);
+    /// Return a Data object by parsing an YAML formatted string.
+    static auto parse(String const& text) -> Data;
 
-    /// Construct a Data object with given json object.
-    Data(nlohmann::json const& obj);
+    /// Return a Data object by parsing an YAML formatted string.
+    static auto parseYaml(Chars text) -> Data;
 
-    /// Return a Data object by parsing an YAML document.
-    static auto parseYaml(Chars input) -> Data;
+    /// Return a Data object by parsing an YAML formatted string.
+    static auto parseYaml(String const& text) -> Data;
 
-    /// Return a Data object by parsing an YAML document.
-    static auto parseYaml(String const& input) -> Data;
+    /// Return a Data object by parsing an YAML formatted string.
+    static auto parseYaml(std::istream& text) -> Data;
 
-    /// Return a Data object by parsing an YAML document.
-    static auto parseYaml(std::istream& input) -> Data;
+    /// Return a Data object by parsing a JSON formatted string.
+    static auto parseJson(Chars text) -> Data;
 
-    /// Return a Data object by parsing a JSON document.
-    static auto parseJson(Chars input) -> Data;
+    /// Return a Data object by parsing a JSON formatted string.
+    static auto parseJson(String const& text) -> Data;
 
-    /// Return a Data object by parsing a JSON document.
-    static auto parseJson(String const& input) -> Data;
+    /// Return a Data object by parsing a JSON formatted string.
+    static auto parseJson(std::istream& text) -> Data;
 
-    /// Return a Data object by parsing a JSON document.
-    static auto parseJson(std::istream& input) -> Data;
+    /// Return a Data object by parsing either an YAML or JSON formatted file at a given path.
+    /// Ensure `path` terminates with extensions `.yml`, `.yaml`, or `.json`, which are used to identify the file format.
+    static auto load(String const& path) -> Data;
+
+    /// Return a Data object by parsing an YAML formatted file at a given path.
+    static auto loadYaml(String const& path) -> Data;
+
+    /// Return a Data object by parsing a JSON formatted file at a given path.
+    static auto loadJson(String const& path) -> Data;
 
     /// Return this Data object as a boolean value.
     auto asBoolean() const -> bool;
