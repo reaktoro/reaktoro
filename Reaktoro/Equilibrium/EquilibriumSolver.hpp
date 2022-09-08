@@ -58,9 +58,9 @@ public:
     auto setOptions(const EquilibriumOptions& options) -> void;
 
     //=================================================================================================================
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     // CHEMICAL EQUILIBRIUM METHODS
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     //=================================================================================================================
 
     /// Equilibrate a chemical state.
@@ -85,9 +85,9 @@ public:
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
     //=================================================================================================================
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     // CHEMICAL EQUILIBRIUM METHODS WITH SENSITIVITY CALCULATION
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     //=================================================================================================================
 
     /// Equilibrate a chemical state and compute sensitivity derivatives.
@@ -115,9 +115,9 @@ public:
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions) -> EquilibriumResult;
 
     //=================================================================================================================
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     // CHEMICAL EQUILIBRIUM METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     //=================================================================================================================
 
     /// Equilibrate a chemical state.
@@ -146,9 +146,9 @@ public:
     auto solve(ChemicalState& state, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult;
 
     //=================================================================================================================
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     // CHEMICAL EQUILIBRIUM METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS AND SENSITIVITY CALCULATION
-    //-----------------------------------------------------------------------------------------------------------------
+    //
     //=================================================================================================================
 
     /// Equilibrate a chemical state and compute sensitivity derivatives.
@@ -178,6 +178,26 @@ public:
     /// @param restrictions The reactivity restrictions on the amounts of selected species
     /// @param b0 The amounts of the conservative components in the chemical equilibrium problem
     auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, const EquilibriumConditions& conditions, const EquilibriumRestrictions& restrictions, ArrayXdConstRef b0) -> EquilibriumResult;
+
+    //=================================================================================================================
+    //
+    // MISCELLANEOUS METHODS
+    //
+    //=================================================================================================================
+
+    /// Return the conservative matrix of the chemical equilibrium problem.
+    /// This conservative matrix of the chemical equilibrium problem is a
+    /// matrix whose upper rows contains the formula matrix of the species with
+    /// respect to elements and electric charge, and the lower rows contains
+    /// the coefficients of the reactivity constraints (e.g., the
+    /// stoichiometric matrix of the restricted reactions in the equilibrium
+    /// computation). This matrix is used to compute the amounts of the
+    /// conservative components in the chemical equilibrium problem, which are
+    /// elements, electric charge, and the extend of the restricted reactions.
+    auto conservativeMatrix() const -> MatrixXdConstRef;
+
+    /// Return the amounts of the conservative components (elements, charge, extent of restricted reactions) in the chemical equilibrium problem.
+    auto componentAmounts(ChemicalState const& state) const -> ArrayXr;
 
 private:
     struct Impl;
