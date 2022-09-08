@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Models/ReactionRateModels/Support/MineralReactionRateModel.hpp>
 
 namespace Reaktoro {
@@ -70,6 +71,12 @@ struct ReactionRateModelParamsPalandriKharaka
     /// The reaction mechanisms considered in the mineral dissolution/precipitation rate model.
     Vec<Mechanism> mechanisms;
 };
+
+/// Return the reaction rate model of @cite{Palandri2004} for dissolution/precipitation kinetics of minerals.
+/// The required model parameters will be fetched from the Params object `params`.
+/// They must be available under a `PalandriKharaka` section.
+/// @param params The object where mineral reaction rate parameters should be found.
+auto ReactionRateModelPalandriKharaka(Params const& params) -> MineralReactionRateModelGenerator;
 
 /// Return the reaction rate model of @cite{Palandri2004} for dissolution/precipitation kinetics of minerals.
 auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka const& params) -> MineralReactionRateModelGenerator;
