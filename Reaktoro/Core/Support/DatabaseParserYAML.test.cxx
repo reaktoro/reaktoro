@@ -70,7 +70,7 @@ Species:
     AggregateState: Gas
     FormationReaction:
       Reactants: 1:A2B(l)
-      ReactionThermoModel:
+      ReactionStandardThermoModel:
         ConstLgK:
           lgKr: 3.0
   - Name: A6B7(aq)
@@ -79,7 +79,7 @@ Species:
     AggregateState: Aqueous
     FormationReaction:
       Reactants: 1:A2B(l) 2:A2B3(aq)
-      ReactionThermoModel:
+      ReactionStandardThermoModel:
         VantHoff:
           lgKr: 7.0
           dHr: 77.0

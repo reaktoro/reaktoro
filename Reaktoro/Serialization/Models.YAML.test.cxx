@@ -31,10 +31,10 @@ using namespace Catch;
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
@@ -43,7 +43,7 @@ using namespace Catch;
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 using namespace Reaktoro;
 

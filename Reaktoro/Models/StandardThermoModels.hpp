@@ -32,4 +32,4 @@
 
 /// @defgroup StandardThermoModels Standard Thermodynamic Models
 /// @ingroup Models
-/// @brief The module in Reaktoro in which standard thermodynamic models for species are implemented.
+/// @brief The module in Reaktoro in which standard thermodynamic models for species and reactions are implemented.

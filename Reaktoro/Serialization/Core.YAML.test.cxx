@@ -28,12 +28,12 @@ using namespace Catch;
 #include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
 using namespace Reaktoro;
@@ -105,7 +105,7 @@ Species:
     AggregateState: Aqueous
     FormationReaction:
       Reactants: 2:A(aq) 1:B(aq)
-      ReactionThermoModel:
+      ReactionStandardThermoModel:
         ConstLgK:
           lgKr: 5.0
   - Name: A(aq)
@@ -132,7 +132,7 @@ Species:
     AggregateState: Aqueous
     FormationReaction:
       Reactants: 1:A2B(aq) 1:A(aq) 4:B(aq) 3:C(aq)
-      ReactionThermoModel:
+      ReactionStandardThermoModel:
         ConstLgK:
           lgKr: 7.0
 )";
@@ -275,7 +275,7 @@ TEST_CASE("Testing YAML encoder/decoder for FormationReaction", "[Core.yaml]")
 
     yaml expected = yaml::parse(R"(
 Reactants: 1:Ca++ 1:Mg++ 2:CO3--
-ReactionThermoModel:
+ReactionStandardThermoModel:
   ConstLgK:
     lgKr: 1
     Pr: 100000
@@ -332,7 +332,7 @@ TEST_CASE("Testing YAML encoder/decoder for Phase", "[Core.yaml]")
     // TODO: Implement YAML encoding/decoding test for Phase.
 }
 
-TEST_CASE("Testing YAML encoder/decoder for ReactionThermoModel", "[Core.yaml]")
+TEST_CASE("Testing YAML encoder/decoder for ReactionStandardThermoModel", "[Core.yaml]")
 {
     yaml node, expected;
 
@@ -341,7 +341,7 @@ TEST_CASE("Testing YAML encoder/decoder for ReactionThermoModel", "[Core.yaml]")
     Param Tr   = 3.0;
     Param Pr   = 4.0;
 
-    node = ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr});
+    node = ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr});
 
     expected = yaml::parse(R"(
         VantHoff:
@@ -353,7 +353,7 @@ TEST_CASE("Testing YAML encoder/decoder for ReactionThermoModel", "[Core.yaml]")
 
     CHECK( node.repr() == expected.repr() );
 
-    auto model = ReactionThermoModelYAML(node);
+    auto model = ReactionStandardThermoModelYAML(node);
 
     CHECK( model.serialize().repr() == expected.repr() );
 }
@@ -446,7 +446,7 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
 
         auto reaction = FormationReaction()
             .withReactants({{A, 1}, {B, 1}})
-            .withReactionThermoModel(ReactionThermoModelVantHoff({lgKr, dHr, Tr, Pr}))
+            .withReactionStandardThermoModel(ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr}))
             .withProductStandardVolumeModel(StandardVolumeModelConstant({V0}));
 
         node = Species("CaCO3(s)").withFormationReaction(reaction);
@@ -459,7 +459,7 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
             AggregateState: Solid
             FormationReaction:
               Reactants: 1:Ca++(aq) 1:CO3--(aq)
-              ReactionThermoModel:
+              ReactionStandardThermoModel:
                 VantHoff:
                   lgKr: 1
                   dHr: 2

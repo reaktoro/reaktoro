@@ -18,13 +18,11 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportActivityModels(py::module& m);
-void exportReactionRateModels(py::module& m);
-void exportStandardThermoModels(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
+using namespace Reaktoro;
 
-void exportModels(py::module& m)
+void exportReactionStandardThermoModelYAML(py::module& m)
 {
-    exportActivityModels(m);
-    exportReactionRateModels(m);
-    exportStandardThermoModels(m);
+    m.def("ReactionStandardThermoModelYAML", ReactionStandardThermoModelYAML);
 }

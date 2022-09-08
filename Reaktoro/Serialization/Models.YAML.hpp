@@ -24,24 +24,24 @@
 namespace Reaktoro {
 
 //======================================================================
-// ReactionThermoModelParams Types
+// ReactionStandardThermoModelParams Types
 //======================================================================
-struct ReactionThermoModelParamsConstLgK;
-struct ReactionThermoModelParamsGemsLgK;
-struct ReactionThermoModelParamsPhreeqcLgK;
-struct ReactionThermoModelParamsVantHoff;
+struct ReactionStandardThermoModelParamsConstLgK;
+struct ReactionStandardThermoModelParamsGemsLgK;
+struct ReactionStandardThermoModelParamsPhreeqcLgK;
+struct ReactionStandardThermoModelParamsVantHoff;
 
-REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsConstLgK);
-REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsConstLgK);
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsConstLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsConstLgK);
 
-REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsGemsLgK);
-REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsGemsLgK);
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsGemsLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsGemsLgK);
 
-REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsPhreeqcLgK);
-REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsPhreeqcLgK);
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsPhreeqcLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsPhreeqcLgK);
 
-REAKTORO_YAML_ENCODE_DECLARE(ReactionThermoModelParamsVantHoff);
-REAKTORO_YAML_DECODE_DECLARE(ReactionThermoModelParamsVantHoff);
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsVantHoff);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsVantHoff);
 
 //======================================================================
 // StandardThermoModelParams Types

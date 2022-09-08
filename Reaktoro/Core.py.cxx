@@ -41,7 +41,7 @@ void exportReactions(py::module& m);
 void exportReactionEquation(py::module& m);
 void exportReactionList(py::module& m);
 void exportReactionProps(py::module& m);
-void exportReactionThermoProps(py::module& m);
+void exportReactionStandardThermoProps(py::module& m);
 void exportSpecies(py::module& m);
 void exportSpeciesList(py::module& m);
 void exportSpeciesThermoProps(py::module& m);
@@ -76,7 +76,7 @@ void exportCore(py::module& m)
     exportReactionEquation(m);
     exportReactionList(m);
     exportReactionProps(m);
-    exportReactionThermoProps(m);
+    exportReactionStandardThermoProps(m);
     exportSpecies(m);
     exportSpeciesList(m);
     exportSpeciesThermoProps(m);

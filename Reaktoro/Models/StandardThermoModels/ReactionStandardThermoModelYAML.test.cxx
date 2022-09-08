@@ -15,16 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+// Catch includes
+#include <catch2/catch.hpp>
 
-void exportActivityModels(py::module& m);
-void exportReactionRateModels(py::module& m);
-void exportStandardThermoModels(py::module& m);
+// Reaktoro includes
+#include "ReactionStandardThermoModelYAML.hpp"
+using namespace Reaktoro;
 
-void exportModels(py::module& m)
+TEST_CASE("Testing ReactionStandardThermoModelYAML class", "[ReactionStandardThermoModelYAML]")
 {
-    exportActivityModels(m);
-    exportReactionRateModels(m);
-    exportStandardThermoModels(m);
+    // TODO: Implement tests for ReactionStandardThermoModelYAML, similar to those for StandardThermoModelYAML.
 }

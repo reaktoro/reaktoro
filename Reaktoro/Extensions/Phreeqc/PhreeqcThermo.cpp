@@ -22,9 +22,9 @@
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {
@@ -101,14 +101,14 @@ auto standardVolume(const PhreeqcPhase* phase, real T, real P) -> real
 
 /// Create the standard thermodynamic model of the formation reaction.
 template<typename SpeciesType>
-auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermoModel
+auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionStandardThermoModel
 {
     if(PhreeqcUtils::reactants(s).empty())
     {
-        ReactionThermoModelParamsConstLgK params;
+        ReactionStandardThermoModelParamsConstLgK params;
         params.lgKr = 0.0;
         params.Pr = 101'325; // reference pressure (1 atm = 101325 Pa)
-        return ReactionThermoModelConstLgK(params);
+        return ReactionStandardThermoModelConstLgK(params);
     }
 
     const auto logk = s->logk;
@@ -123,7 +123,7 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
 
     if(use_analytic_expression())
     {
-        ReactionThermoModelParamsPhreeqcLgK params;
+        ReactionStandardThermoModelParamsPhreeqcLgK params;
         params.A1 = sign * logk[T_A1];
         params.A2 = sign * logk[T_A2];
         params.A3 = sign * logk[T_A3];
@@ -131,26 +131,26 @@ auto reactionThermoModelAux(const SpeciesType* s, double sign) -> ReactionThermo
         params.A5 = sign * logk[T_A5];
         params.A6 = sign * logk[T_A6];
         params.Pr = 101'325; // reference pressure (1 atm = 101325 Pa)
-        return ReactionThermoModelPhreeqcLgK(params);
+        return ReactionStandardThermoModelPhreeqcLgK(params);
     }
     else
     {
-        ReactionThermoModelParamsVantHoff params;
+        ReactionStandardThermoModelParamsVantHoff params;
         params.lgKr = sign * logk[logK_T0];
         params.dHr = sign * logk[delta_h] * 1e3; // convert from kJ/mol to J/mol
         params.Tr = 298.15; // reference temperature (in K)
         params.Pr = 101'325; // reference pressure (1 atm = 101325 Pa)
-        return ReactionThermoModelVantHoff(params);
+        return ReactionStandardThermoModelVantHoff(params);
     }
 }
 
-auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionThermoModel
+auto reactionThermoModel(const PhreeqcSpecies* species) -> ReactionStandardThermoModel
 {
     const auto sign = 1.0;
     return reactionThermoModelAux(species, sign);
 }
 
-auto reactionThermoModel(const PhreeqcPhase* phase) -> ReactionThermoModel
+auto reactionThermoModel(const PhreeqcPhase* phase) -> ReactionStandardThermoModel
 {
     // Note: PHREEQC is not consisent with the direction of the reactions. For
     // gases and minerals, we need to invert the sign of the delta properties

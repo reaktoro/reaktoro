@@ -103,12 +103,12 @@ want to read about.
 
 ## Reaction thermodynamic properties and models
 
-- @ref Reaktoro::ReactionThermoProps
-- @ref Reaktoro::ReactionThermoModelConstLgK
-- @ref Reaktoro::ReactionThermoModelGemsLgK
-- @ref Reaktoro::ReactionThermoModelPhreeqcLgK
-- @ref Reaktoro::ReactionThermoModelPressureCorrection
-- @ref Reaktoro::ReactionThermoModelVantHoff
+- @ref Reaktoro::ReactionStandardThermoProps
+- @ref Reaktoro::ReactionStandardThermoModelConstLgK
+- @ref Reaktoro::ReactionStandardThermoModelGemsLgK
+- @ref Reaktoro::ReactionStandardThermoModelPhreeqcLgK
+- @ref Reaktoro::ReactionStandardThermoModelPressureCorrection
+- @ref Reaktoro::ReactionStandardThermoModelVantHoff
 
 ## Water thermodynamic and electrostatic properties
 

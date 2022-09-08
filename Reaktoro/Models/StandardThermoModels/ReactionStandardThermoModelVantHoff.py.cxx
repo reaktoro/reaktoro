@@ -18,13 +18,18 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportActivityModels(py::module& m);
-void exportReactionRateModels(py::module& m);
-void exportStandardThermoModels(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
+using namespace Reaktoro;
 
-void exportModels(py::module& m)
+void exportReactionStandardThermoModelVantHoff(py::module& m)
 {
-    exportActivityModels(m);
-    exportReactionRateModels(m);
-    exportStandardThermoModels(m);
+    py::class_<ReactionStandardThermoModelParamsVantHoff>(m, "ReactionStandardThermoModelParamsVantHoff")
+        .def_readwrite("lgKr", &ReactionStandardThermoModelParamsVantHoff::lgKr)
+        .def_readwrite("dHr", &ReactionStandardThermoModelParamsVantHoff::dHr)
+        .def_readwrite("Tr", &ReactionStandardThermoModelParamsVantHoff::Tr)
+        .def_readwrite("Pr", &ReactionStandardThermoModelParamsVantHoff::Pr)
+        ;
+
+    m.def("ReactionStandardThermoModelVantHoff", ReactionStandardThermoModelVantHoff);
 }

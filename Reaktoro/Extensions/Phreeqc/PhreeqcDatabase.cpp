@@ -174,7 +174,7 @@ struct PhreeqcDatabaseHelper
         return FormationReaction()
             .withReactants(createReactants(s))
             .withProductStandardVolumeModel(PhreeqcUtils::standardVolumeModel(s))
-            .withReactionThermoModel(PhreeqcUtils::reactionThermoModel(s));
+            .withReactionStandardThermoModel(PhreeqcUtils::reactionThermoModel(s));
     }
 
     /// Create the standard thermo model of a master species (which does not have a formation reaction).
