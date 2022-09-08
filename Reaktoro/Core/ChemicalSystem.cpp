@@ -93,6 +93,19 @@ struct ChemicalSystem::Impl
         detail::fixDuplicateNames(species);
         detail::fixDuplicateNames(reactions);
     }
+
+    /// Return the index of the reacting phase interface with given pair of phase names or phase indices.
+    auto reactingPhaseInterfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
+    {
+        const auto iphase1 = detail::resolvePhaseIndex(phases, phase1);
+        const auto iphase2 = detail::resolvePhaseIndex(phases, phase2);
+        const auto numphases = phases.size();
+        errorif(iphase1 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase1), "`.");
+        errorif(iphase2 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase2), "`.");
+        const auto pair = iphase1 < iphase2 ? Pair<Index,Index>{iphase1, iphase2} : Pair<Index,Index>{iphase2, iphase1};
+        const auto isurface = index(reacting_phase_interfaces, pair);
+        return isurface;
+    }
 };
 
 ChemicalSystem::ChemicalSystem()
@@ -183,6 +196,11 @@ auto ChemicalSystem::stoichiometricMatrix() const -> MatrixXdConstRef
 auto ChemicalSystem::reactingPhaseInterfaces() const -> const Pairs<Index, Index>&
 {
     return pimpl->reacting_phase_interfaces;
+}
+
+auto ChemicalSystem::reactingPhaseInterfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
+{
+    return pimpl->reactingPhaseInterfaceIndex(phase1, phase2);
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&

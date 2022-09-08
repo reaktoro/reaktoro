@@ -112,6 +112,11 @@ public:
     /// defined and all aqueous species assumed to be in equilibrium.
     auto reactingPhaseInterfaces() const -> const Pairs<Index, Index>&;
 
+    /// Return the index of the reacting phase interface with given pair of
+    /// phase names or phase indices. Return the number of reacting phase
+    /// interfaces if interface not found.
+    auto reactingPhaseInterfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index;
+
 private:
     struct Impl;
 
