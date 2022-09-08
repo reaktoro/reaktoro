@@ -45,10 +45,10 @@ REAKTORO_DATA_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
 {
-    data.at("lgk").to(obj.lgk);
-    data.at("E").to(obj.E);
-    if(data.exists("p")) data.at("p").to(obj.p);
-    if(data.exists("q")) data.at("q").to(obj.q);
+    data.required("lgk").to(obj.lgk);
+    data.required("E").to(obj.E);
+    data.optional("p").to(obj.p);
+    data.optional("q").to(obj.q);
 
     // Collect all catalyst properties and their power
     for(auto const& [key, value] : data.asDict())
@@ -73,8 +73,8 @@ REAKTORO_DATA_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
 {
-    obj.names = split(data.at("Mineral").asString(), " ");
-    for(auto const& [name, mechanism] : data.at("Mechanisms").asDict())
+    obj.names = split(data.required("Mineral").asString(), " ");
+    for(auto const& [name, mechanism] : data.required("Mechanisms").asDict())
     {
         obj.mechanisms.push_back(mechanism.as<ReactionRateModelParamsPalandriKharaka::Mechanism>());
         obj.mechanisms.back().name = name;
