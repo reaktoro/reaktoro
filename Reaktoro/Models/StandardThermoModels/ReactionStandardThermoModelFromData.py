@@ -20,6 +20,6 @@ from reaktoro import *
 import pytest
 
 
-# TODO Implement tests for the python bindings of component ReactionStandardThermoModelYAML in ReactionStandardThermoModelYAML[test].py
-def testReactionStandardThermoModelYAML():
+# TODO Implement tests for the python bindings of component ReactionStandardThermoModelFromData in ReactionStandardThermoModelFromData[test].py
+def testReactionStandardThermoModelFromData():
     pass
