@@ -17,10 +17,14 @@
 
 #include "Data.hpp"
 
+// Third-party includes
+#include <nlohmann/json.hpp>
+#include <yaml-cpp/yaml.h>
+using yaml = YAML::Node;
+using json = nlohmann::json;
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/YAML.hpp>
-#include <Reaktoro/Common/Json.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -37,40 +41,54 @@ bool isNumber(String const& str, double& result)
     return true;
 }
 
-auto convertYAML(yaml const& obj) -> Data
+auto convertYaml(yaml const& obj) -> Data;
+
+auto convertYamlScalar(yaml const& obj) -> Data
 {
-    if(obj.IsScalar())
+    auto const& word = obj.Scalar();
+    auto number = 0.0;
+    if(isNumber(word, number))
     {
-        auto const& word = obj.Scalar();
-        auto number = 0.0;
-        if(isNumber(word, number))
-        {
-            const int integer = number;
-            return integer == number ? Data(integer) : Data(number);
-        }
-        else return Data(word);
+        const int integer = number;
+        return integer == number ? Data(integer) : Data(number);
+    }
+    else
+    {
+        if(word == "true" || word == "True")
+            return Data(true);
+        if(word == "false" || word == "False")
+            return Data(false);
+        return Data(word);
+    }
+}
+
+auto convertYamlSequence(yaml const& obj) -> Data
+{
+    Data result;
+    for(auto i = 0; i < obj.size(); ++i)
+        result.add(convertYaml(obj[i]));
+    return result;
+}
+
+auto convertYamlMap(yaml const& obj) -> Data
+{
+    Data result;
+    for(auto const& child : obj)
+        result.add(child.first.as<String>(), convertYaml(child.second));
+    return result;
+}
+
+auto convertYaml(yaml const& obj) -> Data
+{
+    switch(obj.Type())
+    {
+        case YAML::NodeType::Scalar: return convertYamlScalar(obj);
+        case YAML::NodeType::Sequence: return convertYamlSequence(obj);
+        case YAML::NodeType::Map: return convertYamlMap(obj);
+        case YAML::NodeType::Null: return {};
     }
 
-    if(obj.IsMap())
-    {
-        Data result;
-        for(auto const& child : obj)
-            result.add(child.first.as<String>(), convertYAML(child.second));
-        return result;
-    }
-
-    if(obj.IsSequence())
-    {
-        Data result;
-        for(auto i = 0; i < obj.size(); ++i)
-            result.add(convertYAML(obj[i]));
-        return result;
-    }
-
-    if(obj.IsNull())
-        return {};
-
-    errorif(true, "Could not convert YAML node to Data object: ", obj.repr());
+    errorif(true, "Could not convert YAML node to Data object: ", YAML::Dump(obj));
 
     return {};
 }
@@ -160,15 +178,13 @@ Data::Data(Vec<Data> const& value)
 }
 
 Data::Data(yaml const& obj)
-: Data(convertYAML(obj))
+: Data(convertYaml(obj))
 {
-
 }
 
 Data::Data(json const& obj)
 : Data(convertJson(obj))
 {
-
 }
 
 auto Data::string() const -> String const&
