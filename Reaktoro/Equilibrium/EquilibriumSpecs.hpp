@@ -275,6 +275,7 @@ public:
     /// specifying that temperature is known in the equilibrium calculation (by default it is
     /// considered an unknown). Thus, it will not be considered as a control variable whose value
     /// needs to be computed as part of the equilibrium calculation.
+    /// @see unknownTemperature
     auto temperature() -> void;
 
     /// Specify that the **pressure** of the system is given at chemical equilibrium.
@@ -282,6 +283,7 @@ public:
     /// specifying that pressure is known in the equilibrium calculation (by default it is
     /// considered an unknown). Thus, it will not be considered as a control variable whose value
     /// needs to be computed as part of the equilibrium calculation.
+    /// @see unknownPressure
     auto pressure() -> void;
 
     /// Specify that the **surface areas of all reacting phase interfaces** are given at chemical equilibrium.
@@ -291,6 +293,7 @@ public:
     /// areas are known in the equilibrium calculation (by default they are considered unknowns).
     /// Thus, they will not be considered as control variables whose values need to be computed as
     /// part of the equilibrium calculation.
+    /// @see unknownSurfaceAreas
     auto surfaceAreas() -> void;
 
     /// Specify that the **surface area of a reacting phase interface** is given at chemical equilibrium.
@@ -300,6 +303,7 @@ public:
     /// it is considered an unknown). Thus, it will not be considered as a control variable whose
     /// value needs to be computed as part of the equilibrium calculation.
     /// @param surface The name or index of the surface in the system.
+    /// @see unknownSurfaceArea
     auto surfaceArea(StringOrIndex const& surface) -> void;
 
     /// Specify that the **volume** of the system is given at chemical equilibrium.
@@ -376,6 +380,40 @@ public:
     /// Specify that the **volume of a phase** is given at chemical equilibrium.
     /// @param phase The name or index of the phase in the chemical system.
     auto phaseVolume(StringOrIndex const& phase) -> void;
+
+    //=================================================================================================
+    //
+    // METHODS TO SPECIFY UNKNOWN INPUT CONDITIONS
+    //
+    //=================================================================================================
+
+    /// Specify that the *temperature* of the system is unknown in the chemical equilibrium calculation.
+    /// This method introduces one *p* control variable with name `T`. By calling this method, you
+    /// are specifying that temperature is unknown and to be computed as part of the chemical
+    /// equilibrium calculation.
+    auto unknownTemperature() -> void;
+
+    /// Specify that the *pressure* of the system is unknown in the chemical equilibrium calculation.
+    /// This method introduces one *p* control variable with name `P`. By calling this method, you
+    /// are specifying that pressure is unknown and to be computed as part of the chemical
+    /// equilibrium calculation.
+    auto unknownPressure() -> void;
+
+    /// Specify that the **surface areas of all reacting phase interfaces** are unknown in the chemical equilibrium calculation.
+    /// This method introduces *p* control variables with names `surfaceArea[Name]` where `Name` is
+    /// the name of each surface in the associated ChemicalSystem object (@see ChemicalSystem::surfaces).
+    /// By calling this method, you are specifying that these surface areas are unknown and to be
+    /// computed as part of the chemical equilibrium calculation.
+    auto unknownSurfaceAreas() -> void;
+
+    /// Specify that the **surface area of a reacting phase interface** is unknown in the chemical equilibrium calculation.
+    /// This method introduces a *p* control variable with name `surfaceArea[Name]` where `Name` is
+    /// the name of the specified surface in the associated ChemicalSystem object (@see ChemicalSystem::surfaces).
+    /// By calling this method, you are specifying that this surface area is unknown and to be
+    /// computed as part of the chemical equilibrium calculation.
+    /// @param surface The name or index of the surface in the system.
+    /// @see unknownSurfaceArea
+    auto unknownSurfaceArea(StringOrIndex const& surface) -> void;
 
     //=================================================================================================
     //
@@ -692,6 +730,10 @@ public:
     /// Return true if pressure is unknown in the chemical equilibrium specifications.
     auto isPressureUnknown() const -> bool;
 
+    /// Return true if the surface area of a reacting phase interface is unknown in the chemical equilibrium specifications.
+    /// @param surface The name or index of the surface in the system.
+    auto isSurfaceAreaUnknown(StringOrIndex const& surface) const -> bool;
+
     /// The index of temperature among the *p* control variables or `Index(-1)` if it is a given input.
     auto indexControlVariableTemperature() const -> Index;
 
@@ -755,6 +797,9 @@ private:
 
     /// The boolean flag that indicates whether pressure is unknown.
     bool unknownP = true;
+
+    /// The boolean flags that indicate whether surface areas are unknown.
+    Vec<bool> unknown_surface_area;
 
     /// The *q* control variables in the chemical equilibrium problem.
     Vec<ControlVariableQ> qvars;

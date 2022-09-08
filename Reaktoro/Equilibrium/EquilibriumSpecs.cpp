@@ -159,21 +159,15 @@ auto assembleReactivityConstraints(EquilibriumSpecs const& specs) -> ReactivityC
 } // namespace
 
 EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
-: m_system(system)
+: m_system(system), unknown_surface_area(system.surfaces().size(), false)
 {
-    // By default, all inputs to a chemical equilibrium calculation are set as unknown *p* control
-    // variables initially. These include temperature, pressure, and surface areas of reacting phase
-    // interfaces when existent in the chemical system. As the user explicitly specifies that these
-    // variables are actually known, these originally added *p* control variables are replaced by
-    // input variables *w* whose values must later be given to a EquilibriumConditions object!
-
     // By default, start with T and P as unknown *p* control variables.
     addControlVariableP({ "T" });
     addControlVariableP({ "P" });
 
-    // By default, start with all surface areas as unknown *p* control variables.
+    // By default, start with all surface areas as known *w* input variables.
     for(auto const& surface : system.surfaces())
-        addControlVariableP({ "surfaceArea[" + surface.name() + "]" }); // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
+        addInput("surfaceArea[" + surface.name() + "]"); // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
 }
 
 //=================================================================================================
@@ -256,7 +250,7 @@ auto EquilibriumSpecs::pressure() -> void
 
 auto EquilibriumSpecs::surfaceAreas() -> void
 {
-    for(auto i = 0; i < system().surfaces().size())
+    for(auto i = 0; i < system().surfaces().size(); ++i)
         surfaceArea(i);
 }
 
@@ -264,11 +258,13 @@ auto EquilibriumSpecs::surfaceArea(StringOrIndex const& surface) -> void
 {
     auto const& surfaces = m_system.surfaces();
     auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
-    auto const inputid = "surfaceArea[" + surfaces[isurface].name() + "]"; // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
-    addInput(inputid);
-    auto const idx = indexfn(pvars, RKT_LAMBDA(x, x.name == inputid));
+    errorif(isurface == surfaces.size(), "There is no surface area with name `", stringfy(surface), "` in the chemical system.");
+    auto const id = "surfaceArea[" + surfaces[isurface].name() + "]"; // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
+    addInput(id);
+    auto const idx = indexfn(pvars, RKT_LAMBDA(x, x.name == id));
     assert(idx < pvars.size());
     pvars.erase(pvars.begin() + idx); // remove the existing *p* control variable for surfaceArea[Name]
+    unknown_surface_area[isurface] = false;
 }
 
 auto EquilibriumSpecs::volume() -> void
@@ -455,6 +451,58 @@ auto EquilibriumSpecs::phaseVolume(StringOrIndex const& phase) -> void
         return state.props().phaseProps(iphase).volume() - w[idx];
     };
     addConstraint(constraint);
+}
+
+//=================================================================================================
+//
+// METHODS TO SPECIFY UNKNOWN INPUT CONDITIONS
+//
+//=================================================================================================
+
+auto EquilibriumSpecs::unknownTemperature() -> void
+{
+    if(!isTemperatureUnknown())
+    {
+        addControlVariableP({ "T" });
+        auto const iinput = index(m_inputs, "T");
+        assert(iinput < m_inputs.size());
+        m_inputs.erase(m_inputs.begin() + iinput); // remove the existing input for temperature
+        unknownT = true;
+    }
+}
+
+auto EquilibriumSpecs::unknownPressure() -> void
+{
+    if(!isPressureUnknown())
+    {
+        addControlVariableP({ "P" });
+        auto const iinput = index(m_inputs, "P");
+        assert(iinput < m_inputs.size());
+        m_inputs.erase(m_inputs.begin() + iinput); // remove the existing input for pressure
+        unknownP = true;
+    }
+}
+
+auto EquilibriumSpecs::unknownSurfaceAreas() -> void
+{
+    for(auto i = 0; i < system().surfaces().size(); ++i)
+        unknownSurfaceArea(i);
+}
+
+auto EquilibriumSpecs::unknownSurfaceArea(StringOrIndex const& surface) -> void
+{
+    auto const& surfaces = m_system.surfaces();
+    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
+    errorif(isurface == surfaces.size(), "There is no surface area with name `", stringfy(surface), "` in the chemical system.");
+    if(!isSurfaceAreaUnknown(isurface))
+    {
+        auto const id = "surfaceArea[" + surfaces[isurface].name() + "]"; // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
+        addControlVariableP({ id });
+        auto const iinput = index(m_inputs, id);
+        assert(iinput < m_inputs.size());
+        m_inputs.erase(m_inputs.begin() + iinput); // remove the existing input for surface area
+        unknown_surface_area[isurface] = true;
+    }
 }
 
 //=================================================================================================
@@ -968,6 +1016,14 @@ auto EquilibriumSpecs::isTemperatureUnknown() const -> bool
 auto EquilibriumSpecs::isPressureUnknown() const -> bool
 {
     return unknownP;
+}
+
+auto EquilibriumSpecs::isSurfaceAreaUnknown(StringOrIndex const& surface) const -> bool
+{
+    auto const& surfaces = m_system.surfaces();
+    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
+    errorif(isurface == surfaces.size(), "There is no surface area with name `", stringfy(surface), "` in the chemical system.");
+    return unknown_surface_area[isurface];
 }
 
 auto EquilibriumSpecs::indexControlVariableTemperature() const -> Index
