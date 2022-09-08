@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Utils/AqueousProps.hpp>
 
@@ -43,27 +43,26 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
         const auto imineral = aprops_ptr->saturationSpecies().indexWithName(minerals[i]);
         const auto imineralphase = system.phases().indexWithName(minerals[i]);
 
-        ratemodels[i] = [=](ChemicalState const& state)
+        ratemodels[i] = [=](ChemicalProps const& props) -> ReactionRate
         {
-            auto const& props = state.props();
             auto const& aprops = *aprops_ptr;
             auto const& T = props.temperature();
             auto const& P = props.pressure();
             auto const& pH = aprops.pH();
             auto const& Omega = aprops.saturationIndex(imineral);
-            auto const& area = state.surfaceArea(iaqueousphase, imineralphase);
+            auto const& area = props.surfaceArea(iaqueousphase, imineralphase);
 
-            const auto args = MineralReactionRateModelArgs{ state, props, aprops, T, P, pH, Omega, area };
+            const auto args = MineralReactionRateModelArgs{ props, aprops, T, P, pH, Omega, area };
 
             return models[i](args);
         };
     }
 
     // Ensure the first rate model updates AqueousProps object before it is used by every mineral rate model!
-    ratemodels[0] = [=](ChemicalState const& state)
+    ratemodels[0] = [=](ChemicalProps const& props) mutable -> ReactionRate
     {
-        aprops_ptr->update(state);
-        return ratemodels[0](state);
+        aprops_ptr->update(props);
+        return ratemodels[0](props);
     };
 
     return ratemodels;

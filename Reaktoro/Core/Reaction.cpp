@@ -49,7 +49,7 @@ struct Reaction::Impl
         rprops.T = T;
         rprops.P = P;
 
-        for(const auto& [species, coeff] : equation)
+        for(auto const& [species, coeff] : equation)
         {
             const auto sprops = species.props(T, P);
             rprops.dG0  += coeff * sprops.G0;
@@ -88,7 +88,7 @@ auto Reaction::withName(String name) const -> Reaction
     return copy;
 }
 
-auto Reaction::withEquation(const ReactionEquation& equation) const -> Reaction
+auto Reaction::withEquation(ReactionEquation const& equation) const -> Reaction
 {
     Reaction copy = clone();
     copy.pimpl->equation = equation;
@@ -97,7 +97,7 @@ auto Reaction::withEquation(const ReactionEquation& equation) const -> Reaction
     return copy;
 }
 
-auto Reaction::withRateModel(const ReactionRateModel& model) const -> Reaction
+auto Reaction::withRateModel(ReactionRateModel const& model) const -> Reaction
 {
     Reaction copy = clone();
     copy.pimpl->ratemodel = model;
@@ -109,12 +109,12 @@ auto Reaction::name() const -> String
     return pimpl->name;
 }
 
-auto Reaction::equation() const -> const ReactionEquation&
+auto Reaction::equation() const -> ReactionEquation const&
 {
     return pimpl->equation;
 }
 
-auto Reaction::rateModel() const -> const ReactionRateModel&
+auto Reaction::rateModel() const -> ReactionRateModel const&
 {
     return pimpl->ratemodel;
 }
@@ -131,17 +131,17 @@ auto Reaction::props(real T, Chars unitT, real P, Chars unitP) const -> Reaction
     return props(T, P);
 }
 
-auto Reaction::rate(const ChemicalState& state) const -> real
+auto Reaction::rate(ChemicalProps const& props) const -> real
 {
-    return pimpl->ratemodel(state);
+    return pimpl->ratemodel(props);
 }
 
-auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool
+auto operator<(Reaction const& lhs, Reaction const& rhs) -> bool
 {
     return lhs.name() < rhs.name();
 }
 
-auto operator==(const Reaction& lhs, const Reaction& rhs) -> bool
+auto operator==(Reaction const& lhs, Reaction const& rhs) -> bool
 {
     return lhs.name() == rhs.name();
 }
