@@ -19,8 +19,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/StandardThermoProps.hpp>
-#include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
+#include <Reaktoro/Core/ReactionStandardThermoModel.hpp>
 
 namespace Reaktoro {
 

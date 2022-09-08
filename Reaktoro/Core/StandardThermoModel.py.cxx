@@ -19,18 +19,12 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Core/Model.py.hxx>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 using namespace Reaktoro;
 
-void exportStandardThermoProps(py::module& m)
+void exportStandardThermoModel(py::module& m)
 {
-    py::class_<StandardThermoProps>(m, "StandardThermoProps")
-        .def(py::init<>())
-        .def_readwrite("G0", &StandardThermoProps::G0)
-        .def_readwrite("H0", &StandardThermoProps::H0)
-        .def_readwrite("V0", &StandardThermoProps::V0)
-        .def_readwrite("VT0", &StandardThermoProps::VT0)
-        .def_readwrite("VP0", &StandardThermoProps::VP0)
-        .def_readwrite("Cp0", &StandardThermoProps::Cp0)
-        ;
+    exportModel<StandardThermoProps, real, real>(m, "StandardThermoModel");
 }

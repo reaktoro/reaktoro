@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/StandardThermoProps.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 
 namespace Reaktoro {
 
@@ -26,22 +26,22 @@ namespace Reaktoro {
 struct StandardThermoModelParamsConstant
 {
     /// The constant standard molar Gibbs energy @eq{G^{\circ}} of the species (in J/mol).
-    Param G0 = Param("G0", 0.0);
+    Param G0;
 
     /// The constant standard molar enthalpy @eq{H^{\circ}} of the species (in J/mol).
-    Param H0 = Param("H0", 0.0);
+    Param H0;
 
     /// The constant standard molar volume @eq{V^{\circ}} of the species (in m³/mol).
-    Param V0 = Param("V0", 0.0);
+    Param V0;
 
     /// The temperature derivative of the standard molar volume @eq{\partial V^{\circ} / \partial T} of the species (in m³/(mol·K)).
-    Param VT0 = Param("VT0", 0.0);
+    Param VT0;
 
     /// The pressure derivative of the standard molar volume @eq{\partial V^{\circ} / \partial P} of the species (in m³/(mol·K)).
-    Param VP0 = Param("VP0", 0.0);
+    Param VP0;
 
     /// The constant standard molar isobaric heat capacity @eq{C_{P}^{\circ}} of the species (in J/(mol·K)).
-    Param Cp0 = Param("Cp0", 0.0);
+    Param Cp0;
 };
 
 /// Return a function that calculates thermodynamic properties of a species using a constant model for its standard properties.

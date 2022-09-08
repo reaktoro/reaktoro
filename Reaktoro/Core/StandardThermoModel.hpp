@@ -18,13 +18,15 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Common/YAML.hpp>
-#include <Reaktoro/Core/StandardThermoModel.hpp>
+#include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
 
-/// Return a standard thermodynamic model with given yaml @p node.
-auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel;
+/// The function type for calculation of standard thermodynamic properties of a species.
+/// @param T The temperature for the calculation (in K)
+/// @param P The pressure for the calculation (in Pa)
+/// @return The standard thermodynamic properties of the species
+using StandardThermoModel = Model<StandardThermoProps(real T, real P)>;
 
 } // namespace Reaktoro

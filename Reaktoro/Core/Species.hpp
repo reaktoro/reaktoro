@@ -25,6 +25,7 @@
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/SpeciesThermoProps.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {
