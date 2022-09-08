@@ -20,7 +20,7 @@
 // CMakeRC includes
 #include <cmrc/cmrc.hpp>
 
-CMRC_DECLARE(ReaktoroDatabases);
+CMRC_DECLARE(ReaktoroEmbedded);
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
@@ -153,8 +153,8 @@ auto ThermoFunDatabase::withName(const String& name) -> ThermoFunDatabase
         "    - slop98-organic  (corresponding file: slop98-thermofun.json)    \n",
         "    - slop98          (corresponding file: slop98-thermofun.json)    \n",
         "");
-    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
-    auto file = fs.open("databases/thermofun/" + name + "-thermofun.json");
+    auto fs = cmrc::ReaktoroEmbedded::get_filesystem();
+    auto file = fs.open("embedded/databases/thermofun/" + name + "-thermofun.json");
     String text(file.begin(), file.end());
     return fromFile(text);
 }

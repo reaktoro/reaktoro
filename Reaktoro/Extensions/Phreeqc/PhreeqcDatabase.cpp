@@ -20,7 +20,7 @@
 // CMakeRC includes
 #include <cmrc/cmrc.hpp>
 
-CMRC_DECLARE(ReaktoroDatabases);
+CMRC_DECLARE(ReaktoroEmbedded);
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
@@ -232,8 +232,8 @@ auto getPhreeqcDatabaseContent(String name) -> String
         "    - Tipping_Hurley.dat \n"
         "    - wateq4f.da         \n"
         "");
-    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
-    auto contents = fs.open("databases/phreeqc/" + name);
+    auto fs = cmrc::ReaktoroEmbedded::get_filesystem();
+    auto contents = fs.open("embedded/databases/phreeqc/" + name);
     return String{contents.begin(), contents.end()};
 }
 

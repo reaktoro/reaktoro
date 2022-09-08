@@ -23,7 +23,7 @@
 // CMakeRC includes
 #include <cmrc/cmrc.hpp>
 
-CMRC_DECLARE(ReaktoroDatabases);
+CMRC_DECLARE(ReaktoroEmbedded);
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
@@ -57,8 +57,8 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
         "    - supcrt16 \n",
         "    - supcrtbl \n",
         "");
-    auto fs = cmrc::ReaktoroDatabases::get_filesystem();
-    auto file = fs.open("databases/reaktoro/" + name + ".yaml");
+    auto fs = cmrc::ReaktoroEmbedded::get_filesystem();
+    auto file = fs.open("embedded/databases/reaktoro/" + name + ".yaml");
     String text(file.begin(), file.end());
     auto doc = yaml::parse(text);
     DatabaseParserYAML dbparser(doc);

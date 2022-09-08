@@ -29,6 +29,7 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Model.hpp>
 #include <Reaktoro/Core/Param.hpp>

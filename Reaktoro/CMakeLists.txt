@@ -20,7 +20,7 @@ add_library(Reaktoro ${HPP_FILES} ${CPP_FILES})
 add_library(Reaktoro::Reaktoro ALIAS Reaktoro)
 
 # Specify the external dependencies of Reaktoro to ensure proper build sequence
-add_dependencies(Reaktoro Reaktoro::Databases)
+add_dependencies(Reaktoro Reaktoro::Embedded)
 
 # Add the include paths to Reaktoro library target
 target_include_directories(Reaktoro
@@ -29,7 +29,7 @@ target_include_directories(Reaktoro
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
-    PRIVATE Reaktoro::Databases
+    PRIVATE Reaktoro::Embedded
     PRIVATE tabulate::tabulate
     PUBLIC Eigen3::Eigen
     PUBLIC autodiff::autodiff
@@ -68,7 +68,7 @@ if(REAKTORO_BUILD_TESTS)
     find_package(Catch2 REQUIRED)
 
     # The global path to the databases directory (used below as a compile definition for the C++ tests)
-    set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/databases)
+    set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/embedded/databases)
 
     # Create a test executable target for Reaktoro
     add_executable(reaktoro-cpptests ${CXX_FILES_TEST})

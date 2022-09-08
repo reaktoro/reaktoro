@@ -20,11 +20,6 @@
 // C++ includes
 #include <fstream>
 
-// CMakeRC includes
-#include <cmrc/cmrc.hpp>
-
-CMRC_DECLARE(ReaktoroDatabases);
-
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
