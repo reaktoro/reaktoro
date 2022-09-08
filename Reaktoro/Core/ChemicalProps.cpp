@@ -26,13 +26,14 @@ using namespace tabulate;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 
-ChemicalProps::ChemicalProps(const ChemicalSystem& system)
+ChemicalProps::ChemicalProps(ChemicalSystem const& system)
 : msystem(system)
 {
     const auto N = system.species().size();
@@ -62,89 +63,101 @@ ChemicalProps::ChemicalProps(const ChemicalSystem& system)
     som.resize(K);
 }
 
-ChemicalProps::ChemicalProps(const ChemicalState& state)
+ChemicalProps::ChemicalProps(ChemicalState const& state)
 : ChemicalProps(state.system())
 {
     update(state);
 }
 
-auto ChemicalProps::update(const ChemicalState& state) -> void
+auto ChemicalProps::update(ChemicalState const& state) -> void
 {
-    const auto& T = state.temperature();
-    const auto& P = state.pressure();
-    const auto& n = state.speciesAmounts();
-    update(T, P, n);
+    auto const& T = state.temperature();
+    auto const& P = state.pressure();
+    auto const& n = state.speciesAmounts();
+    auto const& s = state.surfaceAreas();
+    update(T, P, n, s);
 }
 
-auto ChemicalProps::update(const real& T, const real& P, ArrayXrConstRef n) -> void
+auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
-    this->T = T;
-    this->P = P;
-    const auto K = msystem.phases().size();
+    T = T0;
+    P = P0;
     auto offset = 0;
-    for(auto i = 0; i < K; ++i)
+    for(auto const& [i, phase] : enumerate(msystem.phases()))
     {
-        const auto size = msystem.phase(i).species().size();
-        const auto np = n.segment(offset, size);
+        const auto size = phase.species().size();
+        const auto np = n0.segment(offset, size);
         phaseProps(i).update(T, P, np, m_extra);
         offset += size;
     }
 }
 
+auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
+{
+    update(T0, P0, n0);
+    s = s0;
+}
+
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::update(ArrayXdConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
-auto ChemicalProps::updateIdeal(const ChemicalState& state) -> void
+auto ChemicalProps::updateIdeal(ChemicalState const& state) -> void
 {
-    const auto& T = state.temperature();
-    const auto& P = state.pressure();
-    const auto& n = state.speciesAmounts();
-    updateIdeal(T, P, n);
+    auto const& T = state.temperature();
+    auto const& P = state.pressure();
+    auto const& n = state.speciesAmounts();
+    auto const& s = state.surfaceAreas();
+    updateIdeal(T, P, n, s);
 }
 
-auto ChemicalProps::updateIdeal(const real& T, const real& P, ArrayXrConstRef n) -> void
+auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
-    this->T = T;
-    this->P = P;
-    const auto K = msystem.phases().size();
+    T = T0;
+    P = P0;
     auto offset = 0;
-    for(auto i = 0; i < K; ++i)
+    for(auto const& [i, phase] : enumerate(msystem.phases()))
     {
-        const auto size = msystem.phase(i).species().size();
+        const auto size = phase.species().size();
         const auto np = n.segment(offset, size);
         phaseProps(i).updateIdeal(T, P, np, m_extra);
         offset += size;
     }
 }
 
+auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
+{
+    updateIdeal(T0, P0, n0);
+    s = s0;
+}
+
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.from(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::serialize(ArrayStream<double>& stream) const -> void
 {
-    stream.from(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.from(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.to(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<double>& stream) -> void
 {
-    stream.to(T, P, Ts, Ps, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.to(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
-auto ChemicalProps::system() const -> const ChemicalSystem&
+auto ChemicalProps::system() const -> ChemicalSystem const&
 {
     return msystem;
 }
@@ -219,7 +232,7 @@ auto ChemicalProps::chargeInPhase(StringOrIndex phase) const -> real
     return Azp * np;
 }
 
-auto ChemicalProps::chargeAmongSpecies(const Indices& indices) const -> real
+auto ChemicalProps::chargeAmongSpecies(Indices const& indices) const -> real
 {
     const auto Az = msystem.formulaMatrixCharge();
     const auto Azi = Az.row(0)(indices);
@@ -246,7 +259,7 @@ auto ChemicalProps::elementAmountInPhase(StringOrIndex element, StringOrIndex ph
     return Aep * np;
 }
 
-auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, const Indices& indices) const -> real
+auto ChemicalProps::elementAmountAmongSpecies(StringOrIndex element, Indices const& indices) const -> real
 {
     const auto ielement = detail::resolveElementIndex(msystem, element);
     const auto A = msystem.formulaMatrixElements();
@@ -272,7 +285,7 @@ auto ChemicalProps::elementMassInPhase(StringOrIndex element, StringOrIndex phas
     return amount * molarmass;
 }
 
-auto ChemicalProps::elementMassAmongSpecies(StringOrIndex element, const Indices& indices) const -> real
+auto ChemicalProps::elementMassAmongSpecies(StringOrIndex element, Indices const& indices) const -> real
 {
     const auto ielement = detail::resolveElementIndex(msystem, element);
     const auto molarmass = msystem.element(ielement).molarMass();
@@ -297,7 +310,7 @@ auto ChemicalProps::elementAmountsInPhase(StringOrIndex phase) const -> ArrayXr
     return (Ap * np).array();
 }
 
-auto ChemicalProps::elementAmountsAmongSpecies(const Indices& indices) const -> ArrayXr
+auto ChemicalProps::elementAmountsAmongSpecies(Indices const& indices) const -> ArrayXr
 {
     const auto A = msystem.formulaMatrixElements();
     const auto Ai = A(Eigen::all, indices);
@@ -322,7 +335,7 @@ auto ChemicalProps::componentAmountsInPhase(StringOrIndex phase) const -> ArrayX
     return (Ap * np).array();
 }
 
-auto ChemicalProps::componentAmountsAmongSpecies(const Indices& indices) const -> ArrayXr
+auto ChemicalProps::componentAmountsAmongSpecies(Indices const& indices) const -> ArrayXr
 {
     const auto A = msystem.formulaMatrix();
     const auto Ai = A(Eigen::all, indices);
@@ -476,7 +489,7 @@ auto ChemicalProps::speciesAmounts() const -> ArrayXrConstRef
 auto ChemicalProps::speciesMasses() const -> ArrayXr
 {
     ArrayXr m(n);
-    auto i = 0; for(const auto& species : system().species())
+    auto i = 0; for(auto const& species : system().species())
         m[i++] *= species.molarMass();
     return m;
 }
@@ -554,6 +567,26 @@ auto ChemicalProps::speciesStandardHeatCapacitiesConstP() const -> ArrayXrConstR
 auto ChemicalProps::speciesStandardHeatCapacitiesConstV() const -> ArrayXr
 {
     return (VP0 == 0.0).select(Cp0, Cp0 + T*VT0*VT0/VP0); // from Cv0 = Cp0 + T*VT0*VT0/VP0
+}
+
+auto ChemicalProps::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
+{
+    const auto numsurfaces = msystem.reactingPhaseInterfaces().size();
+    const auto isurface = msystem.reactingPhaseInterfaceIndex(phase1, phase2);
+    errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
+    return s[isurface];
+}
+
+auto ChemicalProps::surfaceArea(Index isurface) const -> real
+{
+    const auto numsurfaces = msystem.reactingPhaseInterfaces().size();
+    errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
+    return s[isurface];
+}
+
+auto ChemicalProps::surfaceAreas() const -> ArrayXrConstRef
+{
+    return s;
 }
 
 auto ChemicalProps::molarVolume() const -> real
@@ -736,6 +769,15 @@ auto ChemicalProps::heatCapacityConstV() const -> real
     return Cp + T*VT*VT/VP;
 }
 
+auto ChemicalProps::reactionRates() const -> ArrayXr
+{
+    auto const& reactions = msystem.reactions();
+    ArrayXr rates(reactions.size());
+    for(auto const& [i, reaction] : enumerate(reactions))
+        // rates[i] = reaction.rate(*this);
+    return rates;
+}
+
 auto ChemicalProps::indicesPhasesWithState(StateOfMatter stateofmatter) const -> Indices
 {
     const auto K = msystem.phases().size();
@@ -797,7 +839,7 @@ auto ChemicalProps::output(std::ostream& out) const -> void
     out << *this;
 }
 
-auto ChemicalProps::output(const String& filename) const -> void
+auto ChemicalProps::output(String const& filename) const -> void
 {
     auto out = std::ofstream(filename);
     out << *this;
@@ -817,7 +859,7 @@ ChemicalProps::operator VectorXd() const
     return stream.data();
 }
 
-auto operator<<(std::ostream& out, const ChemicalProps& props) -> std::ostream&
+auto operator<<(std::ostream& out, ChemicalProps const& props) -> std::ostream&
 {
     const auto species = props.system().species();
     const auto elements = props.system().elements();
