@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Model.hpp>
 
 namespace Reaktoro {
 
@@ -41,21 +40,5 @@ struct ReactionStandardThermoProps
     /// The standard molar isobaric heat capacity change @f$\Delta C_{P}^{\circ}@f$ of the reaction (in J/(mol·K)).
     real dCp0;
 };
-
-/// The arguments in a ReactionStandardThermoModel function object.
-struct ReactionStandardThermoModelArgs
-{
-    /// The temperature for the calculation (in K)
-    real const& T;
-
-    /// The pressure for the calculation (in Pa)
-    real const& P;
-
-    /// The standard molar volume change @f$\Delta V^{\circ}@f$ of the reaction (in J/mol).
-    real const& dV0;
-};
-
-/// The function type for calculation of standard thermodynamic properties of a reaction.
-using ReactionStandardThermoModel = Model<ReactionStandardThermoProps(ReactionStandardThermoModelArgs)>;
 
 } // namespace Reaktoro
