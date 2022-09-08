@@ -195,5 +195,37 @@ auto extractNames(const PhaseList& list) -> Strings
     return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
+auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Vec<Pair<Index, Index>>
+{
+    Indices iphases;
+    for(auto const& species : reaction.equation().species())
+    {
+        const auto iphase = phases.findWithSpecies(species.name());
+        if(iphase < phases.size())
+            iphases.push_back(iphase);
+    }
+
+    errorif(iphases.empty(), "Could not determine the phases that participate in the given reaction. No species in the reaction exist in the phases.");
+
+    iphases = unique(iphases);
+
+    // When a reaction is defined with just one species (such as a mineral-aqueous reaction in which only the mineral is needed because
+    // the reactions among the aqueous species are modeled using an equilibrium) create a phase surface with duplicate phase indices.
+    if(reaction.equation().size() == 1)
+        return { {iphases.front(), iphases.front()} };
+
+    // Skip if the reaction contains only species from a same phase (i.e., homogeneous reaction)
+    if(iphases.size() == 1)
+        return {};
+
+    Vec<Pair<Index, Index>> surfaces;
+
+    for(auto i = 0; i < iphases.size(); ++i)
+        for(auto j = i + 1; j < iphases.size(); ++j)
+            surfaces.push_back({ iphases[i], iphases[j] });
+
+    return surfaces;
+}
+
 } // namespace detail
 } // namespace Reaktoro

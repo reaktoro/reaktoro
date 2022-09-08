@@ -28,6 +28,7 @@ class ChemicalSystem;
 class ElementList;
 class Phase;
 class PhaseList;
+class Reaction;
 class SpeciesList;
 
 namespace detail {
@@ -75,14 +76,21 @@ auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elemen
 /// Assemble the formula matrix of the list of `species` with respect to given `elements`.
 auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd;
 
-// Extract names of the species from the species' list
+/// Extract names of the species from the species' list
 auto extractNames(const SpeciesList& list) -> Strings;
 
-// Extract names of the elements from the elements' list
+/// Extract names of the elements from the elements' list
 auto extractNames(const ElementList& list) -> Strings;
 
-// Extract names of the phases from the phases' list
+/// Extract names of the phases from the phases' list
 auto extractNames(const PhaseList& list) -> Strings;
+
+/// Return pairs of indices of phases that participate in a reaction.
+/// In case the reaction contains only species from a same phase, an empty
+/// vector `{}` is returned. In case the reaction contains only one species, a
+/// single-entry vector `{ {i, i} }` is returned where `i` is the index of the
+/// phase in which the species exists.
+auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Vec<Pair<Index, Index>>;
 
 } // namespace detail
 } // namespace Reaktoro

@@ -19,14 +19,17 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 using namespace Reaktoro;
 
+namespace test { extern auto createDatabase() -> Database; }
 namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
 TEST_CASE("Testing CoreUtils", "[CoreUtils]")
 {
+    Database db = test::createDatabase();
     ChemicalSystem system = test::createChemicalSystem();
 
     const auto mmH2O = system.species().get("H2O(aq)").molarMass(); // kg/mol
@@ -147,4 +150,35 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
             CHECK(A_min.row(i) == A_min_expected.row(i));
     }
 
+    SECTION("Testing determinePhaseInterfacesInReaction")
+    {
+        const PhaseList phases = system.phases();
+
+        Reaction reaction;
+        Vec<Pair<Index, Index>> result;
+
+        reaction = db.reaction("CO2(aq) = CO2(g)");
+        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        CHECK( result == Vec<Pair<Index, Index>>{ {0, 1} } ); // index(AqueousPhase) = 0, index(GaseousPhase) = 1
+
+        reaction = db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)");
+        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        CHECK( result == Vec<Pair<Index, Index>>{ {0, 2} } ); // index(AqueousPhase) = 0, index(Halite:NaCl(s)) = 2
+
+        reaction = db.reaction("CaCO3(s) + H+(aq) = Ca++(aq) + HCO3-(aq)");
+        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        CHECK( result == Vec<Pair<Index, Index>>{ {0, 3} } ); // index(AqueousPhase) = 0, index(Calcite:CaCO3(s)) = 3
+
+        reaction = db.reaction("H2O(aq) = H+(aq) + OH-(aq)");
+        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        CHECK( result == Vec<Pair<Index, Index>>{} ); // homogeneous reactions do not produce phase interfaces!
+
+        reaction = db.reaction("NaCl(s)");
+        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        CHECK( result == Vec<Pair<Index, Index>>{ {2, 2} } ); // index(Halite) = 2
+
+        reaction = db.reaction("CaCO3(s)");
+        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        CHECK( result == Vec<Pair<Index, Index>>{ {3, 3} } ); // index(Calcite) = 3
+    }
 }
