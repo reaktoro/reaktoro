@@ -54,6 +54,7 @@
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 #include <Reaktoro/Core/StandardVolumeModel.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
+#include <Reaktoro/Core/Surface.hpp>
 #include <Reaktoro/Core/ThermoProps.hpp>
 #include <Reaktoro/Core/ThermoPropsPhase.hpp>
 #include <Reaktoro/Core/Utils.hpp>
