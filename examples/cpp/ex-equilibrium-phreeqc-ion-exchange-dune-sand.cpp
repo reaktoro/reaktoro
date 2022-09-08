@@ -23,7 +23,6 @@
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 using namespace Reaktoro;
 
