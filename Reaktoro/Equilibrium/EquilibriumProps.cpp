@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
@@ -62,8 +63,8 @@ auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrCo
 
 struct EquilibriumProps::Impl
 {
-    /// The chemical properties of the system computed at given *(n, p, w)*.
-    ChemicalProps props;
+    /// The chemical state of the system and its properties at given *(n, p, w)*.
+    ChemicalState state;
 
     /// The specifications of the equilibrium problem
     const EquilibriumSpecs specs;
@@ -91,7 +92,7 @@ struct EquilibriumProps::Impl
 
     /// Construct an EquilibriumProps::Impl object.
     Impl(const EquilibriumSpecs& specs)
-    : props(specs.system()), specs(specs), dims(specs),
+    : state(specs.system()), specs(specs), dims(specs),
       getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs))
     {}
 
@@ -121,8 +122,8 @@ struct EquilibriumProps::Impl
         // If there were model parameters changed above, the chemical
         // properties computed below will be affected.
         if(useIdealModel)
-            props.updateIdeal(T, P, n);
-        else props.update(T, P, n);
+            state.updateIdeal(T, P, n);
+        else state.update(T, P, n);
 
         // Recover here the original state of the model parameters changed above.
         for(auto i = 0; i < params0.size(); ++i)
@@ -133,7 +134,7 @@ struct EquilibriumProps::Impl
         {
             const auto Nnpw = dims.Nn + dims.Np + dims.Nw;
             assert(inpw < Nnpw);
-            props.serialize(stream);
+            state.props().serialize(stream);
             const auto Nu = stream.data().rows();
             dudnpw.resize(Nu, Nnpw);
             auto col = dudnpw.col(inpw);
@@ -194,9 +195,14 @@ auto EquilibriumProps::assembleFullJacobianEnd() -> void
     pimpl->assemblying_jacobian = false;
 }
 
+auto EquilibriumProps::chemicalState() const -> const ChemicalState&
+{
+    return pimpl->state;
+}
+
 auto EquilibriumProps::chemicalProps() const -> const ChemicalProps&
 {
-    return pimpl->props;
+    return pimpl->state.props();
 }
 
 auto EquilibriumProps::dudn() const -> MatrixXdConstRef
