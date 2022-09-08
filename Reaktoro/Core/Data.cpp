@@ -58,9 +58,13 @@ bool isFloat(String const& str, double& result)
     return true;
 }
 
-auto convertYaml(yaml const& obj) -> Data;
+// ==========================================================================================
+// METHODS TO CONVERT YAML TO DATA
+// ==========================================================================================
 
-auto convertYamlScalar(yaml const& obj) -> Data
+auto convertYamlToData(yaml const& obj) -> Data;
+
+auto convertYamlScalarToData(yaml const& obj) -> Data
 {
     auto const& word = obj.Scalar();
     auto number = 0.0;
@@ -76,29 +80,29 @@ auto convertYamlScalar(yaml const& obj) -> Data
     }
 }
 
-auto convertYamlSequence(yaml const& obj) -> Data
+auto convertYamlSequenceToData(yaml const& obj) -> Data
 {
     Data result;
     for(auto i = 0; i < obj.size(); ++i)
-        result.add(convertYaml(obj[i]));
+        result.add(convertYamlToData(obj[i]));
     return result;
 }
 
-auto convertYamlMap(yaml const& obj) -> Data
+auto convertYamlMapToData(yaml const& obj) -> Data
 {
     Data result;
     for(auto const& child : obj)
-        result.add(child.first.as<String>(), convertYaml(child.second));
+        result.add(child.first.as<String>(), convertYamlToData(child.second));
     return result;
 }
 
-auto convertYaml(yaml const& obj) -> Data
+auto convertYamlToData(yaml const& obj) -> Data
 {
     switch(obj.Type())
     {
-        case YAML::NodeType::Scalar: return convertYamlScalar(obj);
-        case YAML::NodeType::Sequence: return convertYamlSequence(obj);
-        case YAML::NodeType::Map: return convertYamlMap(obj);
+        case YAML::NodeType::Scalar: return convertYamlScalarToData(obj);
+        case YAML::NodeType::Sequence: return convertYamlSequenceToData(obj);
+        case YAML::NodeType::Map: return convertYamlMapToData(obj);
         case YAML::NodeType::Null: return {};
     }
 
@@ -107,31 +111,35 @@ auto convertYaml(yaml const& obj) -> Data
     return {};
 }
 
-auto convertJson(json const& obj) -> Data;
+// ==========================================================================================
+// METHODS TO CONVERT JSON TO DATA
+// ==========================================================================================
 
-auto convertJsonObject(json const& obj) -> Data
+auto convertJsonToData(json const& obj) -> Data;
+
+auto convertJsonObjectToData(json const& obj) -> Data
 {
     Data result;
     for(auto const& [key, value] : obj.items())
-        result.add(key, convertJson(value));
+        result.add(key, convertJsonToData(value));
     return result;
 }
 
-auto convertJsonArray(json const& obj) -> Data
+auto convertJsonArrayToData(json const& obj) -> Data
 {
     Data result;
     for(auto const& value : obj)
-        result.add(convertJson(value));
+        result.add(convertJsonToData(value));
     return result;
 }
 
-auto convertJson(json const& obj) -> Data
+auto convertJsonToData(json const& obj) -> Data
 {
     switch(obj.type())
     {
         case json::value_t::null: return {};
-        case json::value_t::object: return convertJsonObject(obj);
-        case json::value_t::array: return convertJsonArray(obj);
+        case json::value_t::object: return convertJsonObjectToData(obj);
+        case json::value_t::array: return convertJsonArrayToData(obj);
         case json::value_t::string: return obj.get<String>();
         case json::value_t::boolean: return obj.get<bool>();
         case json::value_t::number_integer: return obj.get<int>();
@@ -143,6 +151,60 @@ auto convertJson(json const& obj) -> Data
 
     return {};
 }
+
+// ==========================================================================================
+// METHODS TO CONVERT DATA TO YAML AND JSON
+// ==========================================================================================
+
+template<typename Format>
+auto convertDataTo(Data const& data) -> Format;
+
+template<typename Format>
+auto convertDataDictTo(Data const& data) -> Format
+{
+    assert(data.isDict());
+    Format res;
+    for(auto const& [key, value] : data.asDict())
+        res[key] = convertDataTo<Format>(value);
+    return res;
+}
+
+template<typename Format>
+auto convertDataListTo(Data const& data) -> Format
+{
+    assert(data.isList());
+    Format res;
+    for(auto const& value : data.asList())
+        res.push_back(convertDataTo<Format>(value));
+    return res;
+}
+
+template<typename Format>
+auto convertDataTo(Data const& data) -> Format
+{
+    if(data.isNull()) return Format();
+    if(data.isBoolean()) return Format(data.asBoolean());
+    if(data.isString()) return Format(data.asString());
+    if(data.isParam()) return Format(data.asFloat());
+    if(data.isDict()) return convertDataDictTo<Format>(data);
+    if(data.isList()) return convertDataListTo<Format>(data);
+    errorif(true, "Could not convert this Data object to an YAML or JSON as the Data object is not in a valid state.");
+    return {};
+}
+
+auto convertDataToYaml(Data const& data) -> yaml
+{
+    return convertDataTo<yaml>(data);
+}
+
+auto convertDataToJson(Data const& data) -> json
+{
+    return convertDataTo<json>(data);
+}
+
+// ==========================================================================================
+// CLASS TO ENSURE A COMMON LOCALE IS KEPT WHEN DEALING WITH YAML AND JSON
+// ==========================================================================================
 
 /// An auxiliary type to change locale and ensure its return to original.
 /// This is needed to avoid certain issues with pugixml related to how decimal numbers are represented in different languages.
@@ -163,18 +225,22 @@ struct ChangeLocale
 
 } // namespace
 
+// ==========================================================================================
+// IMPLEMENTATION OF CLASS DATA
+// ==========================================================================================
+
 Data::Data()
 : tree(nullptr)
 {
 }
 
 Data::Data(yaml const& obj)
-: Data(convertYaml(obj))
+: Data(convertYamlToData(obj))
 {
 }
 
 Data::Data(json const& obj)
-: Data(convertJson(obj))
+: Data(convertJsonToData(obj))
 {
 }
 
@@ -387,6 +453,18 @@ auto Data::exists(String const& key) const -> bool
         return false;
     auto obj = asDict();
     return obj.find(key) != obj.end();
+}
+
+auto Data::dumpYaml() const -> String
+{
+    yaml doc = convertDataToYaml(*this);
+    return YAML::Dump(doc);
+}
+
+auto Data::dumpJson() const -> String
+{
+    json doc = convertDataToJson(*this);
+    return doc.dump();
 }
 
 Data::operator bool() const

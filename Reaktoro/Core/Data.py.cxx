@@ -68,6 +68,8 @@ void exportData(py::module& m)
         .def("add", py::overload_cast<Chars, Data const&>(&Data::add), "Add a Data object with given key to this Data object, which becomes a dictionary if not already.")
         .def("add", py::overload_cast<String const&, Data const&>(&Data::add), "Add a Data object with given key to this Data object, which becomes a dictionary if not already.")
         .def("exists", &Data::exists, "Return true if a child parameter exists with given key, presuming this Data object is a dictionary.")
+        .def("dumpYaml", &Data::dumpYaml, "Return a YAML formatted string representing the state of this Data object.")
+        .def("dumpJson", &Data::dumpJson, "Return a JSON formatted string representing the state of this Data object.")
         ;
 
     py::implicitly_convertible<Chars, Data>();
