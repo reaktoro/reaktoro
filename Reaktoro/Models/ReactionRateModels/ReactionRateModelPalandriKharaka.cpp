@@ -39,8 +39,22 @@ auto mineralCatalystFnActivity(Catalyst const& catalyst, ChemicalSystem const& s
 
     auto const& phases = system.phases();
 
-    auto const iaqueousPhase = phases.indexWithAggregateState(AggregateState::Aqueous);
-    auto const iaqueousSpecies = phases[iaqueousPhase].species().indexWithFormula(formula);
+    auto const iaqueousPhase = phases.findWithAggregateState(AggregateState::Aqueous);
+
+    if(iaqueousPhase >= phases.size())
+    {
+        warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on activity) in mineral reaction rate because no aqueous phase with substance `", formula, "` exists in the system.");
+        return [](ChemicalProps const& props) { return 1.0; };
+    }
+
+    auto const iaqueousSpecies = phases[iaqueousPhase].species().findWithFormula(formula);
+
+    if(iaqueousSpecies >= phases[iaqueousPhase].species().size())
+    {
+        warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on activity) in mineral reaction rate because no aqueous species with formula `", formula, "` exists in the aqueous phase of the system.");
+        return [](ChemicalProps const& props) { return 1.0; };
+    }
+
     auto const ispecies = phases.numSpeciesUntilPhase(iaqueousPhase) + iaqueousSpecies;
 
     auto fn = [=](ChemicalProps const& props)
@@ -60,8 +74,22 @@ auto mineralCatalystFnPartialPressure(Catalyst const& catalyst, ChemicalSystem c
 
     auto const& phases = system.phases();
 
-    auto const igaseousPhase = phases.indexWithAggregateState(AggregateState::Gas);
-    auto const igaseousSpecies = phases[igaseousPhase].species().indexWithFormula(formula);
+    auto const igaseousPhase = phases.findWithAggregateState(AggregateState::Gas);
+
+    if(igaseousPhase >= phases.size())
+    {
+        warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on partial pressure) in mineral reaction rate because no gaseous phase with substance `", formula, "` exists in the system.");
+        return [](ChemicalProps const& props) { return 1.0; };
+    }
+
+    auto const igaseousSpecies = phases[igaseousPhase].species().findWithFormula(formula);
+
+    if(igaseousSpecies >= phases[igaseousPhase].species().size())
+    {
+        warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on partial pressure) in mineral reaction rate because no gaseous species with formula `", formula, "` exists in the gaseous phase of the system.");
+        return [](ChemicalProps const& props) { return 1.0; };
+    }
+
     auto const ispecies = phases.numSpeciesUntilPhase(igaseousPhase) + igaseousSpecies;
 
     auto fn = [=](ChemicalProps const& props)
@@ -85,12 +113,10 @@ auto mineralCatalystFn(Catalyst const& catalyst, ChemicalSystem const& system) -
     errorif(true, "Expecting mineral catalyst property symbol to be either `a` or `P`, but got `", catalyst.property, "` instead.");
 }
 
-struct Foo {};
-
 auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system) -> Fn<real(MineralReactionRateModelArgs)>
 {
-    // The universal gas constant (in kJ/(mol*K))
-    const auto R = universalGasConstant * 1e-3;
+    // The universal gas constant (in J/(mol*K))
+    const auto R = universalGasConstant;
 
     // Create the mineral catalyst functions
     Vec<Fn<real(ChemicalProps const&)>> catalyst_fns;
@@ -101,12 +127,12 @@ auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system
     auto fn = [=](MineralReactionRateModelArgs args)
     {
         const auto& lgk = mechanism.lgk.value();
-        const auto& E = mechanism.E.value();
+        const auto& E = mechanism.E.value() * 1e3; // from kJ to J
         const auto& p = mechanism.p.value();
         const auto& q = mechanism.q.value();
 
         const auto T = args.props.temperature();
-        const auto k0 = pow(lgk, 10.0);
+        const auto k0 = pow(10, lgk);
         const auto k = k0 * exp(-E/R * (1.0/T - 1.0/298.15));
 
         const auto Omega  = args.Omega;
