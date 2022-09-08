@@ -22,6 +22,7 @@
 using namespace tabulate;
 
 // Reaktoro includes
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 
 namespace Reaktoro {

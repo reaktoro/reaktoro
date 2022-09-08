@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/StandardThermoProps.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 
 namespace Reaktoro {
 

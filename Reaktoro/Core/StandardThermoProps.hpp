@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Model.hpp>
 
 namespace Reaktoro {
 
@@ -44,11 +43,5 @@ struct StandardThermoProps
     /// The pressure derivative of the standard molar volume @f$\partial V^{\circ}/\partial P@f$ of the species (in m³/(mol·Pa)).
     real VP0;
 };
-
-/// The function type for calculation of standard thermodynamic properties of a species.
-/// @param T The temperature for the calculation (in K)
-/// @param P The pressure for the calculation (in Pa)
-/// @return The standard thermodynamic properties of the species
-using StandardThermoModel = Model<StandardThermoProps(real T, real P)>;
 
 } // namespace Reaktoro

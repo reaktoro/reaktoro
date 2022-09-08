@@ -47,6 +47,7 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/SpeciesThermoProps.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Core/StandardThermoProps.hpp>
 #include <Reaktoro/Core/StateOfMatter.hpp>
 #include <Reaktoro/Core/ThermoProps.hpp>
