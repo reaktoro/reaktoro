@@ -22,8 +22,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Embedded.hpp>
-#include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
+#include <Reaktoro/Core/Support/DatabaseParser.hpp>
 
 namespace Reaktoro {
 
@@ -54,8 +55,8 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
         "    - supcrtbl \n",
         "");
     const auto text = Embedded::get("databases/reaktoro/" + name + ".yaml");
-    const auto doc = yaml::parse(text);
-    DatabaseParserYAML dbparser(doc);
+    const auto doc = Data::fromYaml(text);
+    DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
 
@@ -69,15 +70,15 @@ auto SupcrtDatabase::fromFile(const String& path) -> SupcrtDatabase
         "try a full path to the file (e.g., "
         "in Windows, `C:\\User\\username\\mydata\\mydatabase.yaml`, "
         "in Linux and macOS, `/home/username/mydata/mydatabase.yaml`).");
-    auto doc = yaml::parse(file);
-    DatabaseParserYAML dbparser(doc);
+    auto doc = Data::fromYaml(file);
+    DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
 
 auto SupcrtDatabase::fromContents(const String& contents) -> SupcrtDatabase
 {
-    auto doc = yaml::parse(contents);
-    DatabaseParserYAML dbparser(doc);
+    auto doc = Data::fromYaml(contents);
+    DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
 
