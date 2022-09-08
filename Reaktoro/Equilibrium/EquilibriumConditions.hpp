@@ -25,12 +25,16 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalState;
+class ChemicalSystem;
 
 /// The class used to define conditions to be satisfied at chemical equilibrium.
 class EquilibriumConditions
 {
 public:
-    /// Construct an EquilibriumConditions object with constraint specifications to be attained at chemical equilibrium.
+    /// Construct an EquilibriumSolver object with given chemical system.
+    explicit EquilibriumConditions(ChemicalSystem const& system);
+
+    /// Construct an EquilibriumConditions object with given equilibrium specifications.
     explicit EquilibriumConditions(EquilibriumSpecs const& specs);
 
     //=================================================================================================
