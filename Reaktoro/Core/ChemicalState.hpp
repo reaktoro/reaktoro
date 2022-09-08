@@ -273,6 +273,8 @@ public:
     /// @note This method is equivalent to ChemicalState::setSurfaceArea
     auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void;
 
+    /// Return the surface area between two phases (in m2).
+    /// @param phase1 The name or index of a phase.
     /// @param phase2 The name or index of the phase interfacing with the previous one.
     /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
     auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real;
