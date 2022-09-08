@@ -237,11 +237,31 @@ ReactionRateModelParams:
           Neutral: { lgk: -8.60, E: 95.3 }
           Carbonate: { lgk: -5.37, E: 45.7, P(CO2): 0.500 }
       Dolomite,disordered:
+        Names:
+          - Dolomite-d
+          - Dolomite-dis
+          - Dolomite-disordered
+          - Dolomite,d
+          - Dolomite,dis
+          - Dolomite,disordered
+          - Dolomite(d)
+          - Dolomite(dis)
+          - Dolomite(disordered)
         Mechanisms:
           Acid: { lgk: -3.19, E: 36.1, a(H+): 0.500 }
           Neutral: { lgk: -7.53, E: 52.2 }
           Carbonate: { lgk: -5.11, E: 34.8, P(CO2): 0.500 }
       Dolomite,ordered:
+        Names:
+          - Dolomite-od
+          - Dolomite-ord
+          - Dolomite-ordered
+          - Dolomite,od
+          - Dolomite,ord
+          - Dolomite,ordered
+          - Dolomite(od)
+          - Dolomite(ord)
+          - Dolomite(ordered)
         Mechanisms:
           Acid: { lgk: -3.76, E: 56.7, a(H+): 0.500 }
           Neutral: { lgk: -8.60, E: 95.3 }
@@ -272,6 +292,9 @@ ReactionRateModelParams:
         Mechanisms:
           Acid: { lgk: -7.52, E: 56.9, a(H+): -0.500, a(Fe+3): 0.500 }
           Neutral: { lgk: -4.55, E: 56.9, a(O2): 0.500 }
+      Pyrrhotite:
+        Mechanisms:
+          Acid: { lgk: -8.04, E: 50.8, a(H+): -0.597, a(Fe+3): 0.355 }
       Pyrrhotite,monoclinic:
         Mechanisms:
           Acid: { lgk: -8.04, E: 50.8, a(H+): -0.597, a(Fe+3): 0.355 }
