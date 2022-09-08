@@ -171,6 +171,10 @@ struct KineticSolver::Impl
 
         pupper.head(edims.Np) = econditions.upperBoundsControlVariablesP();
         pupper.tail(kdims.Nr).fill(+inf); // no upper bounds for Δξ
+
+        kconditions.setInputVariables(w);
+        kconditions.setLowerBoundsControlVariablesP(plower);
+        kconditions.setUpperBoundsControlVariablesP(pupper);
     }
 
     //=================================================================================================================
