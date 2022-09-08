@@ -163,6 +163,12 @@ public:
     /// Return true if a child parameter exists with given key, presuming this Data object is a dictionary.
     auto exists(String const& key) const -> bool;
 
+    /// Return a YAML formatted string representing the state of this Data object.
+    auto dumpYaml() const -> String;
+
+    /// Return a JSON formatted string representing the state of this Data object.
+    auto dumpJson() const -> String;
+
     /// Convert this Data object to a `bool` value; raises an error if not convertible to `bool`.
     operator bool() const;
 
