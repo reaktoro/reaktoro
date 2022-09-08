@@ -69,19 +69,6 @@ bool isFloat(String const& str, double& result)
     return true;
 }
 
-/// Create a Data object from a given YAML or JSON text.
-template<typename Text>
-auto createDataFromYamlOrJson(String const& path, Text&& text) -> Data
-{
-    const auto words = split(path, ".");
-    if(words.back() == "yaml" || words.back() == "yml")
-        return Data::parseYaml(text);
-    if(words.back() == "json")
-        return Data::parseJson(text);
-    errorif(true, "The given file path ", path, " does not indicate whether the file is yaml or json. Expected file extensions: yml, yaml, json).");
-    return {};
-}
-
 // ==========================================================================================
 // METHODS TO CONVERT YAML TO DATA
 // ==========================================================================================
@@ -258,7 +245,17 @@ Data::Data()
 {
 }
 
+auto Data::parse(Chars text) -> Data
+{
+    return parseYaml(text);
+}
+
 auto Data::parse(String const& text) -> Data
+{
+    return parseYaml(text);
+}
+
+auto Data::parse(std::istream& text) -> Data
 {
     return parseYaml(text);
 }
@@ -266,31 +263,31 @@ auto Data::parse(String const& text) -> Data
 auto Data::parseYaml(Chars text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(YAML::Load(text));
+    return convertYamlToData(YAML::Load(text));
 }
 
 auto Data::parseYaml(String const& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(YAML::Load(text));
+    return convertYamlToData(YAML::Load(text));
 }
 
 auto Data::parseYaml(std::istream& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(YAML::Load(text));
+    return convertYamlToData(YAML::Load(text));
 }
 
 auto Data::parseJson(Chars text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(nlohmann::json::parse(text));
+    return convertJsonToData(nlohmann::json::parse(text));
 }
 
 auto Data::parseJson(String const& text) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
-    return Data(nlohmann::json::parse(text));
+    return convertJsonToData(nlohmann::json::parse(text));
 }
 
 auto Data::parseJson(std::istream& text) -> Data
@@ -298,7 +295,7 @@ auto Data::parseJson(std::istream& text) -> Data
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     nlohmann::json obj;
     text >> obj;
-    return Data(obj);
+    return convertJsonToData(obj);
 }
 
 auto Data::load(String const& path) -> Data
