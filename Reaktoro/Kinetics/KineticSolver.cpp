@@ -160,7 +160,7 @@ struct KineticSolver::Impl
 
     auto updateEquilibriumConditions(ChemicalState& state, real const& dt, EquilibriumConditions const& econditions) -> void
     {
-        w << econditions.inputValues(), state.surfaceAreas(), dt;
+        w << econditions.inputValues(), dt;
 
         plower.head(edims.Np) = econditions.lowerBoundsControlVariablesP();
         plower.tail(kdims.Nr).fill(-inf); // no lower bounds for Δξ
@@ -168,6 +168,7 @@ struct KineticSolver::Impl
         pupper.head(edims.Np) = econditions.upperBoundsControlVariablesP();
         pupper.tail(kdims.Nr).fill(+inf); // no upper bounds for Δξ
 
+        kconditions.surfaceAreas(state.surfaceAreas());
         kconditions.setInputVariables(w);
         kconditions.setLowerBoundsControlVariablesP(plower);
         kconditions.setUpperBoundsControlVariablesP(pupper);
@@ -190,6 +191,7 @@ struct KineticSolver::Impl
         EquilibriumConditions conditions(especs);
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, dt, conditions, restrictions);
     }
 
@@ -222,6 +224,7 @@ struct KineticSolver::Impl
         EquilibriumConditions conditions(especs);
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, sensitivity, dt, conditions, restrictions);
     }
 
@@ -254,6 +257,7 @@ struct KineticSolver::Impl
         EquilibriumConditions conditions(especs);
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, dt, conditions, restrictions, c0);
     }
 
@@ -286,6 +290,7 @@ struct KineticSolver::Impl
         EquilibriumConditions conditions(especs);
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, sensitivity, dt, conditions, restrictions, c0);
     }
 
