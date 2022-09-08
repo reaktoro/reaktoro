@@ -128,7 +128,7 @@ void exportChemicalState(py::module& m)
         .def("p", &ChemicalState::Equilibrium::p, return_internal_ref)
         .def("q", &ChemicalState::Equilibrium::q, return_internal_ref)
         .def("w", &ChemicalState::Equilibrium::w, return_internal_ref)
-        .def("b", &ChemicalState::Equilibrium::b, return_internal_ref)
+        .def("c", &ChemicalState::Equilibrium::c, return_internal_ref)
         .def("optimaState", &ChemicalState::Equilibrium::optimaState, return_internal_ref)
         ;
 }

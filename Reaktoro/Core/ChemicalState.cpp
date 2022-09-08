@@ -752,7 +752,7 @@ struct ChemicalState::Equilibrium::Impl
     ArrayXd w;
 
     /// The initial component amounts in the equilibrium calculation.
-    ArrayXd b;
+    ArrayXd c;
 
     /// The computed control variables *q* in the equilibrium calculation.
     ArrayXd q;
@@ -808,9 +808,9 @@ auto ChemicalState::Equilibrium::setInputValues(VectorXdConstRef w) -> void
     pimpl->w = w;
 }
 
-auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef b) -> void
+auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef c) -> void
 {
-    pimpl->b = b;
+    pimpl->c = c;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef p) -> void
@@ -917,7 +917,7 @@ auto ChemicalState::Equilibrium::inputValues() const -> VectorXdConstRef
 
 auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConstRef
 {
-    return pimpl->b;
+    return pimpl->c;
 }
 
 auto ChemicalState::Equilibrium::controlVariablesP() const -> ArrayXdConstRef
@@ -945,9 +945,9 @@ auto ChemicalState::Equilibrium::w() const -> VectorXdConstRef
     return pimpl->w;
 }
 
-auto ChemicalState::Equilibrium::b() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::c() const -> ArrayXdConstRef
 {
-    return pimpl->b;
+    return pimpl->c;
 }
 
 auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&

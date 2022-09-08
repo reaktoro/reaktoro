@@ -50,7 +50,7 @@ public:
     auto predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void;
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXrConstRef b) -> void;
+    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXrConstRef c) -> void;
 
 private:
     struct Impl;

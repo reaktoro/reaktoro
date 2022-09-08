@@ -61,13 +61,13 @@ struct EquilibriumPredictor::Impl
     const VectorXd p0;    ///< The control variables *p* at the reference equilibrium state.
     const VectorXd q0;    ///< The control variables *q* at the reference equilibrium state.
     const VectorXd w0;    ///< The input variables *w* at the reference equilibrium state.
-    const VectorXd b0;    ///< The component amounts *b* at the reference equilibrium state.
+    const VectorXd c0;    ///< The component amounts *c* at the reference equilibrium state.
     const VectorXd u0;    ///< The chemical properties *u* at the reference equilibrium state.
     VectorXd n;           ///< The species amounts *n* at the predicted equilibrium state.
     VectorXd p;           ///< The control variables *p* at the predicted equilibrium state.
     VectorXd q;           ///< The control variables *q* at the predicted equilibrium state.
     VectorXd w;           ///< The input variables *w* at the predicted equilibrium state.
-    VectorXd b;           ///< The component amounts *b* at the predicted equilibrium state.
+    VectorXd c;           ///< The component amounts *c* at the predicted equilibrium state.
     VectorXd u;           ///< The chemical properties *u* at the predicted equilibrium state.
     GetterFn getT;        ///< The function that gets temperature from either *p* or *w* depending if it is known or unwknon in the equilibrium calculation.
     GetterFn getP;        ///< The function that gets pressure from either *p* or *w* depending if it is known or unwknon in the equilibrium calculation.
@@ -79,7 +79,7 @@ struct EquilibriumPredictor::Impl
       p0(state0.equilibrium().p()),
       q0(state0.equilibrium().q()),
       w0(state0.equilibrium().w()),
-      b0(state0.equilibrium().b()),
+      c0(state0.equilibrium().c()),
       u0(state0.props()),
       getT(getTemperatureFn(state0.equilibrium().inputNames())),
       getP(getPressureFn(state0.equilibrium().inputNames()))
@@ -94,33 +94,33 @@ struct EquilibriumPredictor::Impl
     {
         const auto& A = state.system().formulaMatrix();
         const auto& ndis = state.speciesAmounts();
-        VectorXd b = A * ndis.matrix(); // TODO: The use of Array instead of Vector makes it a lot more verbose for matrix-vector multiplications. Consider using VectorXr instead of ArrayXr.
+        VectorXd c = A * ndis.matrix(); // TODO: The use of Array instead of Vector makes it a lot more verbose for matrix-vector multiplications. Consider using VectorXr instead of ArrayXr.
         // TODO: Revise this when EquilibriumReactions are introduced, which should be responsible for computing the amounts of conservative components (using EquilibriumReactions::conservationMatrix instead of ChemicalSystem::formulaMatrix).
 
-        predict(state, conditions, b);
+        predict(state, conditions, c);
     }
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXdConstRef b) -> void
+    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXdConstRef c) -> void
     {
         const auto dndw0 = sensitivity0.dndw(); // The derivatives *dn/dw* at the reference equilibrium state.
         const auto dpdw0 = sensitivity0.dpdw(); // The derivatives *dp/dw* at the reference equilibrium state.
         const auto dqdw0 = sensitivity0.dqdw(); // The derivatives *dq/dw* at the reference equilibrium state.
         const auto dudw0 = sensitivity0.dudw(); // The derivatives *du/dw* at the reference equilibrium state.
-        const auto dndb0 = sensitivity0.dndb(); // The derivatives *dn/db* at the reference equilibrium state.
-        const auto dpdb0 = sensitivity0.dpdb(); // The derivatives *dp/db* at the reference equilibrium state.
-        const auto dqdb0 = sensitivity0.dqdb(); // The derivatives *dq/db* at the reference equilibrium state.
-        const auto dudb0 = sensitivity0.dudb(); // The derivatives *du/db* at the reference equilibrium state.
+        const auto dndc0 = sensitivity0.dndc(); // The derivatives *dn/dc* at the reference equilibrium state.
+        const auto dpdc0 = sensitivity0.dpdc(); // The derivatives *dp/dc* at the reference equilibrium state.
+        const auto dqdc0 = sensitivity0.dqdc(); // The derivatives *dq/dc* at the reference equilibrium state.
+        const auto dudc0 = sensitivity0.dudc(); // The derivatives *du/dc* at the reference equilibrium state.
 
         w = conditions.inputValues();
 
         const auto dw = w - w0;
-        const auto db = b - b0;
+        const auto dc = c - c0;
 
-        n.noalias() = n0 + dndw0*dw + dndb0*db;
-        p.noalias() = p0 + dpdw0*dw + dpdb0*db;
-        q.noalias() = q0 + dqdw0*dw + dqdb0*db;
-        u.noalias() = u0 + dudw0*dw + dudb0*db;
+        n.noalias() = n0 + dndw0*dw + dndc0*dc;
+        p.noalias() = p0 + dpdw0*dw + dpdc0*dc;
+        q.noalias() = q0 + dqdw0*dw + dqdc0*dc;
+        u.noalias() = u0 + dudw0*dw + dudc0*dc;
 
         const auto T = getT(p, w); // get temperature from predicted *p* or given *w*
         const auto P = getP(p, w); // get pressure from predicted *p* or given *w*

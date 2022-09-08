@@ -104,31 +104,31 @@ public:
     // DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO COMPONENT AMOUNTS
     //======================================================================
 
-    /// Return the derivatives of the species amounts *n* with respect to component amounts *b*.
-    auto dndb() const -> MatrixXdConstRef;
+    /// Return the derivatives of the species amounts *n* with respect to component amounts *c*.
+    auto dndc() const -> MatrixXdConstRef;
 
-    /// Set the derivatives of the species amounts *n* with respect to component amounts *b*.
-    auto dndb(MatrixXdConstRef data) -> void;
+    /// Set the derivatives of the species amounts *n* with respect to component amounts *c*.
+    auto dndc(MatrixXdConstRef data) -> void;
 
     //======================================================================
     // DERIVATIVES OF p-CONTROL VARIABLES WITH RESPECT TO COMPONENT AMOUNTS
     //======================================================================
 
-    /// Return the derivatives of the control variables *p* with respect to component amounts *b*.
-    auto dpdb() const -> MatrixXdConstRef;
+    /// Return the derivatives of the control variables *p* with respect to component amounts *c*.
+    auto dpdc() const -> MatrixXdConstRef;
 
-    /// Set the derivatives of the control variables *p* with respect to component amounts *b*.
-    auto dpdb(MatrixXdConstRef data) -> void;
+    /// Set the derivatives of the control variables *p* with respect to component amounts *c*.
+    auto dpdc(MatrixXdConstRef data) -> void;
 
     //======================================================================
     // DERIVATIVES OF q-CONTROL VARIABLES WITH RESPECT TO COMPONENT AMOUNTS
     //======================================================================
 
-    /// Return the derivatives of the control variables *q* with respect to component amounts *b*.
-    auto dqdb() const -> MatrixXdConstRef;
+    /// Return the derivatives of the control variables *q* with respect to component amounts *c*.
+    auto dqdc() const -> MatrixXdConstRef;
 
-    /// Set the derivatives of the control variables *q* with respect to component amounts *b*.
-    auto dqdb(MatrixXdConstRef data) -> void;
+    /// Set the derivatives of the control variables *q* with respect to component amounts *c*.
+    auto dqdc(MatrixXdConstRef data) -> void;
 
     //======================================================================
     // TOTAL DERIVATIVES OF CHEMICAL PROPERTIES
@@ -137,14 +137,14 @@ public:
     /// Return the total derivatives of the chemical properties *u* with respect to input variables *w*.
     auto dudw() const -> MatrixXdConstRef;
 
-    /// Return the total derivatives of the chemical properties *u* with respect to component amounts *b*.
-    auto dudb() const -> MatrixXdConstRef;
+    /// Return the total derivatives of the chemical properties *u* with respect to component amounts *c*.
+    auto dudc() const -> MatrixXdConstRef;
 
     /// Set the total derivatives of the chemical properties *u* with respect to input variables *w*.
     auto dudw(MatrixXdConstRef data) -> void;
 
-    /// Set the total derivatives of the chemical properties *u* with respect to component amounts *b*.
-    auto dudb(MatrixXdConstRef data) -> void;
+    /// Set the total derivatives of the chemical properties *u* with respect to component amounts *c*.
+    auto dudc(MatrixXdConstRef data) -> void;
 
 private:
     /// The chemical system associated with the sensitivity derivatives.
@@ -162,20 +162,20 @@ private:
     /// The derivatives of the control variables *q* with respect to input variables *w*.
     MatrixXd mdqdw;
 
-    /// The derivatives of the species amounts *n* with respect to component amounts *b*.
-    MatrixXd mdndb;
+    /// The derivatives of the species amounts *n* with respect to component amounts *c*.
+    MatrixXd mdndc;
 
-    /// The derivatives of the control variables *p* with respect to component amounts *b*.
-    MatrixXd mdpdb;
+    /// The derivatives of the control variables *p* with respect to component amounts *c*.
+    MatrixXd mdpdc;
 
-    /// The derivatives of the control variables *q* with respect to component amounts *b*.
-    MatrixXd mdqdb;
+    /// The derivatives of the control variables *q* with respect to component amounts *c*.
+    MatrixXd mdqdc;
 
     /// The total derivatives of the chemical properties *u* with respect to input variables *w*.
     MatrixXd mdudw;
 
-    /// The total derivatives of the chemical properties *u* with respect to component amounts *b*.
-    MatrixXd mdudb;
+    /// The total derivatives of the chemical properties *u* with respect to component amounts *c*.
+    MatrixXd mdudc;
 };
 
 } // namespace Reaktoro

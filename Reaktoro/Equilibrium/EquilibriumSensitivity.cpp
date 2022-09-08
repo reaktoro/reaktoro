@@ -46,9 +46,9 @@ auto EquilibriumSensitivity::initialize(EquilibriumSpecs const& specs) -> void
     mdndw.resize(Nn, Nw);
     mdpdw.resize(Np, Nw);
     mdqdw.resize(Nq, Nw);
-    mdndb.resize(Nn, Nb);
-    mdpdb.resize(Np, Nb);
-    mdqdb.resize(Nq, Nb);
+    mdndc.resize(Nn, Nb);
+    mdpdc.resize(Np, Nb);
+    mdqdc.resize(Nq, Nb);
 }
 
 auto EquilibriumSensitivity::dndw(String const& wid) const -> VectorXdConstRef
@@ -120,40 +120,40 @@ auto EquilibriumSensitivity::dqdw(MatrixXdConstRef data) -> void
     mdqdw = data;
 }
 
-auto EquilibriumSensitivity::dndb() const -> MatrixXdConstRef
+auto EquilibriumSensitivity::dndc() const -> MatrixXdConstRef
 {
-    return mdndb;
+    return mdndc;
 }
 
-auto EquilibriumSensitivity::dndb(MatrixXdConstRef data) -> void
+auto EquilibriumSensitivity::dndc(MatrixXdConstRef data) -> void
 {
-    errorif(mdndb.rows() != data.rows(), "Mismatch number of rows in call to EquilibriumSensitivity::dndb(MatrixXdConstRef).");
-    errorif(mdndb.cols() != data.cols(), "Mismatch number of cols in call to EquilibriumSensitivity::dndb(MatrixXdConstRef).");
-    mdndb = data;
+    errorif(mdndc.rows() != data.rows(), "Mismatch number of rows in call to EquilibriumSensitivity::dndc(MatrixXdConstRef).");
+    errorif(mdndc.cols() != data.cols(), "Mismatch number of cols in call to EquilibriumSensitivity::dndc(MatrixXdConstRef).");
+    mdndc = data;
 }
 
-auto EquilibriumSensitivity::dpdb() const -> MatrixXdConstRef
+auto EquilibriumSensitivity::dpdc() const -> MatrixXdConstRef
 {
-    return mdpdb;
+    return mdpdc;
 }
 
-auto EquilibriumSensitivity::dpdb(MatrixXdConstRef data) -> void
+auto EquilibriumSensitivity::dpdc(MatrixXdConstRef data) -> void
 {
-    errorif(mdpdb.rows() != data.rows(), "Mismatch number of rows in call to EquilibriumSensitivity::dpdb(MatrixXdConstRef).");
-    errorif(mdpdb.cols() != data.cols(), "Mismatch number of cols in call to EquilibriumSensitivity::dpdb(MatrixXdConstRef).");
-    mdpdb = data;
+    errorif(mdpdc.rows() != data.rows(), "Mismatch number of rows in call to EquilibriumSensitivity::dpdc(MatrixXdConstRef).");
+    errorif(mdpdc.cols() != data.cols(), "Mismatch number of cols in call to EquilibriumSensitivity::dpdc(MatrixXdConstRef).");
+    mdpdc = data;
 }
 
-auto EquilibriumSensitivity::dqdb() const -> MatrixXdConstRef
+auto EquilibriumSensitivity::dqdc() const -> MatrixXdConstRef
 {
-    return mdqdb;
+    return mdqdc;
 }
 
-auto EquilibriumSensitivity::dqdb(MatrixXdConstRef data) -> void
+auto EquilibriumSensitivity::dqdc(MatrixXdConstRef data) -> void
 {
-    errorif(mdqdb.rows() != data.rows(), "Mismatch number of rows in call to EquilibriumSensitivity::dqdb(MatrixXdConstRef).");
-    errorif(mdqdb.cols() != data.cols(), "Mismatch number of cols in call to EquilibriumSensitivity::dqdb(MatrixXdConstRef).");
-    mdqdb = data;
+    errorif(mdqdc.rows() != data.rows(), "Mismatch number of rows in call to EquilibriumSensitivity::dqdc(MatrixXdConstRef).");
+    errorif(mdqdc.cols() != data.cols(), "Mismatch number of cols in call to EquilibriumSensitivity::dqdc(MatrixXdConstRef).");
+    mdqdc = data;
 }
 
 auto EquilibriumSensitivity::dudw() const -> MatrixXdConstRef
@@ -161,9 +161,9 @@ auto EquilibriumSensitivity::dudw() const -> MatrixXdConstRef
     return mdudw;
 }
 
-auto EquilibriumSensitivity::dudb() const -> MatrixXdConstRef
+auto EquilibriumSensitivity::dudc() const -> MatrixXdConstRef
 {
-    return mdudb;
+    return mdudc;
 }
 
 auto EquilibriumSensitivity::dudw(MatrixXdConstRef data) -> void
@@ -171,9 +171,9 @@ auto EquilibriumSensitivity::dudw(MatrixXdConstRef data) -> void
     mdudw = data;
 }
 
-auto EquilibriumSensitivity::dudb(MatrixXdConstRef data) -> void
+auto EquilibriumSensitivity::dudc(MatrixXdConstRef data) -> void
 {
-    mdudb = data;
+    mdudc = data;
 }
 
 } // namespace Reaktoro
