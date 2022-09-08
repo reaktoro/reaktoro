@@ -54,16 +54,28 @@ struct ChemicalSystem::Impl
     /// The list of elements in the system.
     ElementList elements;
 
-    /// The formula matrix of the system.
+    /// The list of reactions in the system.
+    ReactionList reactions;
+
+    /// The formula matrix of the species in the system with respect to its elements.
     MatrixXd formula_matrix;
+
+    /// The stoichiometric matrix of the reactions in the system with respect to its species.
+    MatrixXd stoichiometric_matrix;
 
     /// Construct a default ChemicalSystem::Impl object.
     Impl()
     {}
 
-    /// Construct a ChemicalSystem::Impl object with given phases.
+    /// Construct a ChemicalSystem::Impl object with given database and phases.
     Impl(const Database& database, const Vec<Phase>& phaselist)
-    : database(database), phases(phaselist)
+    : Impl(database, phaselist, {})
+    {
+    }
+
+    /// Construct a ChemicalSystem::Impl object with given database, phases, and reactions.
+    Impl(const Database& database, const Vec<Phase>& phaselist, const Vec<Reaction>& reactionlist)
+    : database(database), phases(phaselist), reactions(reactionlist)
     {
         errorif(database.species().empty(), "Expecting at least one species in the Database object provided when creating a ChemicalSystem object.");
         errorif(phases.empty(), "Expecting at least one phase when creating a ChemicalSystem object, but none was provided.");
@@ -71,9 +83,11 @@ struct ChemicalSystem::Impl
         species = phases.species();
         elements = species.elements();
         formula_matrix = detail::assembleFormulaMatrix(species, elements);
+        stoichiometric_matrix = detail::assembleStoichiometricMatrix(reactions, species);
 
         detail::fixDuplicateNames(phases);
         detail::fixDuplicateNames(species);
+        detail::fixDuplicateNames(reactions);
     }
 };
 
@@ -81,12 +95,20 @@ ChemicalSystem::ChemicalSystem()
 : pimpl(new Impl())
 {}
 
+ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases)
+: pimpl(new Impl(database, phases))
+{}
+
+ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases, const Vec<Reaction>& reactions)
+: pimpl(new Impl(database, phases, reactions))
+{}
+
 ChemicalSystem::ChemicalSystem(const Phases& phases)
 : pimpl(new Impl(phases.database(), phases))
 {}
 
-ChemicalSystem::ChemicalSystem(const Database& database, const Vec<Phase>& phases)
-: pimpl(new Impl(database, phases))
+ChemicalSystem::ChemicalSystem(const Phases& phases, const Reactions& reactions)
+: pimpl(new Impl(phases.database(), phases, reactions.convert(ChemicalSystem(phases))))
 {}
 
 auto ChemicalSystem::database() const -> const Database&
@@ -124,6 +146,16 @@ auto ChemicalSystem::phases() const -> const PhaseList&
     return pimpl->phases;
 }
 
+auto ChemicalSystem::reaction(Index index) const -> const Reaction&
+{
+    return reactions()[index];
+}
+
+auto ChemicalSystem::reactions() const -> const ReactionList&
+{
+    return pimpl->reactions;
+}
+
 auto ChemicalSystem::formulaMatrix() const -> MatrixXdConstRef
 {
     return pimpl->formula_matrix;
@@ -137,6 +169,11 @@ auto ChemicalSystem::formulaMatrixElements() const -> MatrixXdConstRef
 auto ChemicalSystem::formulaMatrixCharge() const -> MatrixXdConstRef
 {
     return pimpl->formula_matrix.bottomRows(1);
+}
+
+auto ChemicalSystem::stoichiometricMatrix() const -> MatrixXdConstRef
+{
+    return pimpl->stoichiometric_matrix;
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&

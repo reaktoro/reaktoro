@@ -18,14 +18,17 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/TraitsUtils.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
-#include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/Phases.hpp>
+#include <Reaktoro/Core/ReactionList.hpp>
+#include <Reaktoro/Core/Reactions.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
 
@@ -38,11 +41,17 @@ public:
     /// Construct a default uninitialized ChemicalSystem instance.
     ChemicalSystem();
 
+    /// Construct a ChemicalSystem instance with given database and phases.
+    ChemicalSystem(const Database& database, const Vec<Phase>& phases);
+
+    /// Construct a ChemicalSystem instance with given database, phases, and reactions.
+    ChemicalSystem(const Database& database, const Vec<Phase>& phases, const Vec<Reaction>& reactions);
+
     /// Construct a ChemicalSystem instance with given phases.
     explicit ChemicalSystem(const Phases& phases);
 
-    /// Construct a ChemicalSystem instance with given database and phases.
-    ChemicalSystem(const Database& database, const Vec<Phase>& phases);
+    /// Construct a ChemicalSystem instance with given phases and reactions.
+    explicit ChemicalSystem(const Phases& phases, const Reactions& reactions);
 
     /// Construct a ChemicalSystem instance with given database and one or more generic phases.
     template<typename... GenericPhases, EnableIf<areGenericPhases<GenericPhases...>>...>
@@ -70,6 +79,12 @@ public:
     /// Return the list of phases in the system.
     auto phases() const -> const PhaseList&;
 
+    /// Return the reaction in the system with given index.
+    auto reaction(Index index) const -> const Reaction&;
+
+    /// Return the list of reactions in the system.
+    auto reactions() const -> const ReactionList&;
+
     /// Return the formula matrix of the system.
     /// The formula matrix is defined as the matrix whose entry *(j, i)* is
     /// given by the coefficient of the *j*th element in the *i*th species. The
@@ -81,6 +96,11 @@ public:
 
     /// Return the bottom row of the formula matrix corresponding to electric charge.
     auto formulaMatrixCharge() const -> MatrixXdConstRef;
+
+    /// Return the stoichiometric matrix of the reactions corresponding to the species in the system.
+    /// The stoichiometric matrix is defined as the matrix whose entry *(i, j)*
+    /// is given by the coefficient of the *i*th species in the *j*th reaction.
+    auto stoichiometricMatrix() const -> MatrixXdConstRef;
 
 private:
     struct Impl;
