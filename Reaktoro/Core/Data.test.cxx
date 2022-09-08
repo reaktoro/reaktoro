@@ -337,6 +337,94 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data["K4"].asParam() == 33.0 );
     }
 
+    SECTION("Checking method Data::update(other)")
+    {
+        const auto data1_str = R"(
+            A:
+              A1: 1.0
+              A2:
+                A21: 2.1
+                A22: 2.2
+                A23: false
+                A24: [4.0, 5.0]
+            B: Hello
+        )";
+
+        const auto data2_str = R"(
+            A:
+              A2:
+                A22: 2.6
+                A23: true
+                A24: [8.0, 1.0]
+              A3: 7.0
+            B:
+              B1: Square
+              B2: 2.0
+            C: [Alpha, Beta, Gamma]
+        )";
+
+        const auto data3_str = R"(
+            A:
+              A2:
+                A24: [8.0, 1.0, 4.0, 2.0]
+        )";
+
+        const auto data4_str = R"(
+            A:
+              A2: 7.0
+        )";
+
+        Data data1 = Data::parse(data1_str);
+        Data data2 = Data::parse(data2_str);
+        Data data3 = Data::parse(data3_str);
+        Data data4 = Data::parse(data4_str);
+
+        Data data;
+
+        CHECK_NOTHROW( data.update(data1) );
+
+        CHECK( data.isDict() );
+        CHECK( data.at("A").isDict() );
+        CHECK( data.at("A").at("A1").isParam() );
+        CHECK( data.at("A").at("A1").asParam() == 1.0 );
+        CHECK( data.at("A").at("A2").isDict() );
+        CHECK( data.at("A").at("A2").at("A21").asParam() == 2.1 );
+        CHECK( data.at("A").at("A2").at("A22").asParam() == 2.2 );
+        CHECK( data.at("A").at("A2").at("A23").asBoolean() == false );
+        CHECK( data.at("A").at("A2").at("A24").isList() );
+        CHECK( data.at("A").at("A2").at("A24").asList().size() == 2 );
+        CHECK( data.at("A").at("A2").at("A24")[0].asParam() == 4.0 );
+        CHECK( data.at("A").at("A2").at("A24")[1].asParam() == 5.0 );
+        CHECK( data.at("B").isString() );
+        CHECK( data.at("B").asString() == "Hello" );
+
+        data.update(data2);
+
+        CHECK( data.isDict() );
+        CHECK( data.at("A").isDict() );
+        CHECK( data.at("A").at("A1").isParam() );
+        CHECK( data.at("A").at("A1").asParam() == 1.0 );
+        CHECK( data.at("A").at("A2").isDict() );
+        CHECK( data.at("A").at("A2").at("A21").asParam() == 2.1 );
+        CHECK( data.at("A").at("A2").at("A22").asParam() == 2.6 );
+        CHECK( data.at("A").at("A2").at("A23").asBoolean() == true );
+        CHECK( data.at("A").at("A2").at("A24").isList() );
+        CHECK( data.at("A").at("A2").at("A24").asList().size() == 2 );
+        CHECK( data.at("A").at("A2").at("A24")[0].asParam() == 8.0 );
+        CHECK( data.at("A").at("A2").at("A24")[1].asParam() == 1.0 );
+        CHECK( data.at("B").isDict() );
+        CHECK( data.at("B").at("B1").asString() == "Square" );
+        CHECK( data.at("B").at("B2").asParam() == 2.0 );
+        CHECK( data.at("C").isList() );
+        CHECK( data.at("C").asList().size() == 3 );
+        CHECK( data.at("C").asList()[0].asString() == "Alpha" );
+        CHECK( data.at("C").asList()[1].asString() == "Beta" );
+        CHECK( data.at("C").asList()[2].asString() == "Gamma" );
+
+        CHECK_THROWS( data.update(data3) );
+        CHECK_THROWS( data.update(data4) );
+    }
+
     SECTION("Checking the construction of nested Data objects using operator[]")
     {
         Data foo;

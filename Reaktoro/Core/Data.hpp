@@ -194,6 +194,9 @@ public:
     /// Add a Data object with given key to this Data object, which becomes a dictionary if not already.
     auto add(String const& key, Data data) -> void;
 
+    /// Update this Data object with data given in another, with key-value pairs being either added or overwritten.
+    auto update(Data const& data) -> void;
+
     /// Reset this Data object to a null state, deleting its current stored data.
     auto reset() -> void;
 
