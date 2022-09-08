@@ -146,6 +146,17 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
         CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
         CHECK( u.isApprox(VectorXd(state.props())) );
+
+        // Check EquilibriumPredictor::predictSpeciesChemicalPotential and EquilibriumPredictor::referenceSpeciesChemicalPotential
+        ChemicalProps props0 = state0.props();
+        ChemicalProps props(system);
+        props.update(u);
+
+        for(auto i = 0; i < n.size(); ++i)
+        {
+            CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
+            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions, c) == props.speciesChemicalPotential(i) );
+        }
     }
 
     SECTION("when the system is closed, temperature and pressure given, O2 is a meta-stable basic species - sensitivity derivatives should be zero")
@@ -213,6 +224,17 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
         CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
         CHECK( u.isApprox(VectorXd(state.props())) );
+
+        // Check EquilibriumPredictor::predictSpeciesChemicalPotential and EquilibriumPredictor::referenceSpeciesChemicalPotential
+        ChemicalProps props0 = state0.props();
+        ChemicalProps props(system);
+        props.update(u);
+
+        for(auto i = 0; i < n.size(); ++i)
+        {
+            CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
+            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions, c) == props.speciesChemicalPotential(i) );
+        }
     }
 
     SECTION("when the system is open to H2O and H+, temperature, pressure, volume and pH are given, and basic species O2 is meta-stable")
@@ -285,5 +307,16 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
         CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
         CHECK( u.isApprox(VectorXd(state.props())) );
+
+        // Check EquilibriumPredictor::predictSpeciesChemicalPotential and EquilibriumPredictor::referenceSpeciesChemicalPotential
+        ChemicalProps props0 = state0.props();
+        ChemicalProps props(system);
+        props.update(u);
+
+        for(auto i = 0; i < n.size(); ++i)
+        {
+            CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
+            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions, c) == props.speciesChemicalPotential(i) );
+        }
     }
 }

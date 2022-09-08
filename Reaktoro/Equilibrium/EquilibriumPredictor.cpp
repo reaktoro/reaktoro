@@ -143,12 +143,15 @@ struct EquilibriumPredictor::Impl
     {
         assert(i < Nn);
 
-        auto const& dmuidw0 = sensitivity0.dudw().row(Nu - Nn + i); // The derivatives *dμ[i]/dw* of the chemical potential of the i-th species.
-        auto const& dmuidc0 = sensitivity0.dudc().row(Nu - Nn + i); // The derivatives *dμ[i]/dc* of the chemical potential of the i-th species.
-        auto const& mui0 = u0[Nu - Nn + i];
+        const auto dudw0 = sensitivity0.dudw(); // The derivatives *du/dw* of the chemical properties of the chemical system wrt *w*.
+        const auto dudc0 = sensitivity0.dudc(); // The derivatives *du/dc* of the chemical properties of the chemical system wrt *c*.
 
-        auto const& wvals = conditions.inputValues();
-        auto const& w = wvals.cast<double>().matrix();
+        const auto dmuidw0 = dudw0.row(Nu - Nn + i); // The derivatives *dμ[i]/dw* of the chemical potential of the i-th species.
+        const auto dmuidc0 = dudc0.row(Nu - Nn + i); // The derivatives *dμ[i]/dc* of the chemical potential of the i-th species.
+        const auto mui0 = u0[Nu - Nn + i];
+
+        const auto wvals = conditions.inputValues();
+        const auto w = wvals.cast<double>().matrix();
 
         const auto dw = w - w0;
         const auto dc = c - c0;
