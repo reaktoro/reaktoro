@@ -18,10 +18,14 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Json.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
+
+// Forward declarations
+class yaml;
 
 /// The class used to store and retrieve data for assemblying chemical systems.
 /// @ingroup Core
@@ -54,6 +58,12 @@ public:
 
     /// Construct a Data object as a list object.
     Data(Vec<Data> const& value);
+
+    /// Construct a Data object with given yaml object.
+    Data(yaml const& obj);
+
+    /// Construct a Data object with given json object.
+    Data(json const& obj);
 
     /// Return this data block as a string value.
     auto string() const -> String const&;

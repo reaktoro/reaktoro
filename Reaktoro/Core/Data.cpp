@@ -19,10 +19,100 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <any>
-#include <cstddef>
+#include <Reaktoro/Common/YAML.hpp>
+#include <Reaktoro/Common/Json.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Check if string `str` is a number.
+/// @param str The string being checked
+/// @param[out] result The number in `str` as a double value if it is indeed a number.
+bool isNumber(String const& str, double& result)
+{
+    char* end;
+    result = std::strtod(str.c_str(), &end);
+    if(end == str.c_str() || *end != '\0')
+        return false;
+    return true;
+}
+
+auto convertYAML(yaml const& obj) -> Data
+{
+    if(obj.IsScalar())
+    {
+        auto const& word = obj.Scalar();
+        auto number = 0.0;
+        if(isNumber(word, number))
+        {
+            const int integer = number;
+            return integer == number ? Data(integer) : Data(number);
+        }
+        else return Data(word);
+    }
+
+    if(obj.IsMap())
+    {
+        Data result;
+        for(auto const& child : obj)
+            result.add(child.first.as<String>(), convertYAML(child.second));
+        return result;
+    }
+
+    if(obj.IsSequence())
+    {
+        Data result;
+        for(auto i = 0; i < obj.size(); ++i)
+            result.add(convertYAML(obj[i]));
+        return result;
+    }
+
+    if(obj.IsNull())
+        return {};
+
+    errorif(true, "Could not convert YAML node to Data object: ", obj.repr());
+
+    return {};
+}
+
+auto convertJson(json const& obj) -> Data;
+
+auto convertJsonObject(json const& obj) -> Data
+{
+    Data result;
+    for(auto const& [key, value] : obj.items())
+        result.add(key, convertJson(value));
+    return result;
+}
+
+auto convertJsonArray(json const& obj) -> Data
+{
+    Data result;
+    for(auto const& value : obj)
+        result.add(convertJson(value));
+    return result;
+}
+
+auto convertJson(json const& obj) -> Data
+{
+    switch(obj.type())
+    {
+        case json::value_t::null: return {};
+        case json::value_t::object: return convertJsonObject(obj);
+        case json::value_t::array: return convertJsonArray(obj);
+        case json::value_t::string: return obj.get<String>();
+        case json::value_t::boolean: return obj.get<bool>();
+        case json::value_t::number_integer: return obj.get<int>();
+        case json::value_t::number_unsigned: return obj.get<int>();
+        case json::value_t::number_float: return obj.get<double>();
+    }
+
+    errorif(true, "Could not convert JSON node to Data object: ", obj.dump());
+
+    return {};
+}
+
+} // namespace
 
 Data::Data()
 : tree(nullptr)
@@ -67,6 +157,18 @@ Data::Data(Map<String, Data> const& value)
 Data::Data(Vec<Data> const& value)
 : tree(value)
 {
+}
+
+Data::Data(yaml const& obj)
+: Data(convertYAML(obj))
+{
+
+}
+
+Data::Data(json const& obj)
+: Data(convertJson(obj))
+{
+
 }
 
 auto Data::string() const -> String const&
@@ -194,50 +296,6 @@ auto Data::exists(String const& key) const -> bool
     auto obj = dict();
     return obj.find(key) != obj.end();
 }
-
-// Data::Data()
-// {}
-
-// auto Data::size() const -> Index
-// {
-//     auto count = 0;
-//     for(auto const& [key, val] : tree)
-//         if(val.type() == typeid(Data))
-//             count += std::any_cast<const Data&>(val).size();
-//         else count += 1;
-//     return count;
-// }
-
-// auto Data::at(const String& key) const -> const Data&
-// {
-//     const auto it = tree.find(key);
-//     error(it == tree.end(), "Could not find a node in the Data dict with key `", key, "`.");
-//     return std::any_cast<const Data&>(it->second);
-// }
-
-// auto Data::get(const String& key) const -> const Param&
-// {
-//     error(tree.empty(), "Could not find a parameter in the empty Data dict with key `", key, "`.");
-//     const auto it = tree.find(key);
-//     error(it == tree.end(), "Could not find a parameter in the Data dict with key `", key, "`.");
-//     return std::any_cast<const Param&>(it->second);
-// }
-
-// auto Data::exists(const String& key) const -> bool
-// {
-//     const auto it = tree.find(key);
-//     return it != tree.end();
-// }
-
-// auto Data::set(const String& key, const Data& node) -> void
-// {
-//     tree[key] = node;
-// }
-
-// auto Data::set(const String& key, const Param& param) -> void
-// {
-//     tree[key] = param;
-// }
 
 } // namespace Reaktoro
 
