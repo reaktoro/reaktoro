@@ -35,13 +35,13 @@ public:
     SurfaceList(std::initializer_list<Surface> surfaces);
 
     /// Construct an SurfaceList object with given surfaces.
-    SurfaceList(const Vec<Surface>& surfaces);
+    SurfaceList(Vec<Surface> const& surfaces);
 
     /// Append a new surface to the list of surfaces.
-    auto append(const Surface& surface) -> void;
+    auto append(Surface const& surface) -> void;
 
     /// Return the internal collection of Surface objects.
-    auto data() const -> const Vec<Surface>&;
+    auto data() const -> Vec<Surface> const&;
 
     /// Return true if there are no surfaces in the collection.
     auto empty() const -> bool;
@@ -50,37 +50,40 @@ public:
     auto size() const -> Index;
 
     /// Return the Surface object with given index.
-    auto operator[](Index i) const -> const Surface&;
+    auto operator[](Index i) const -> Surface const&;
+
+    /// Return the Surface object with given index.
+    auto operator[](Index i) -> Surface&;
 
     /// Return the index of the first surface with given name or the number of surfaces if not found.
-    auto find(const String& name) const -> Index;
+    auto find(String const& name) const -> Index;
 
     /// Return the index of the first surface with given unique name or the number of surfaces if not found.
-    auto findWithName(const String& name) const -> Index;
+    auto findWithName(String const& name) const -> Index;
 
-    /// Return the index of the first surface with given phase names or the number of surfaces if not found.
-    auto findWithPhases(const String& phase1, const String& phase2) const -> Index;
+    /// Return the index of the first surface with given phase names/indices or the number of surfaces if not found.
+    auto findWithPhases(StringOrIndex const& iphase1, StringOrIndex const& iphase2) const -> Index;
 
     /// Return the index of the first surface with given name or throw a runtime error if not found.
-    auto index(const String& name) const -> Index;
+    auto index(String const& name) const -> Index;
 
     /// Return the index of the first surface with given unique name or throw a runtime error if not found.
-    auto indexWithName(const String& name) const -> Index;
+    auto indexWithName(String const& name) const -> Index;
 
-    /// Return the index of the first surface with given phase names or throw a runtime error if not found.
-    auto indexWithPhases(const String& phase1, const String& phase2) const -> Index;
+    /// Return the index of the first surface with given phase names/indices or throw a runtime error if not found.
+    auto indexWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Index;
 
     /// Return the surface with given name.
-    auto get(const String& name) const -> const Surface&;
+    auto get(String const& name) const -> Surface const&;
 
     /// Return the surface with given name or throw a runtime error if not found.
-    auto getWithName(const String& name) const -> const Surface&;
+    auto getWithName(String const& name) const -> Surface const&;
 
-    /// Return the first surface with given phase names or throw a runtime error if not found.
-    auto getWithPhases(const String& phase1, const String& phase2) const -> const Surface&;
+    /// Return the first surface with given phase names/indices or throw a runtime error if not found.
+    auto getWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Surface const&;
 
     /// Return all surfaces with given names.
-    auto withNames(const StringList& names) const -> SurfaceList;
+    auto withNames(StringList const& names) const -> SurfaceList;
 
     /// Convert this SurfaceList object into its Vec<Surface>.
     operator Vec<Surface>&();
@@ -110,7 +113,7 @@ public:
     auto end() { return m_surfaces.end(); }
 
     /// Append a new Surface at the back of the container (for STL compatibility reasons).
-    auto push_back(const Surface& surfaces) -> void { append(surfaces); }
+    auto push_back(Surface const& surfaces) -> void { append(surfaces); }
 
     /// Insert a container of Surface objects into this SurfaceList instance (for STL compatibility reasons).
     template<typename Iterator, typename InputIterator>
@@ -121,6 +124,6 @@ public:
 };
 
 /// Return the concatenation of two SurfaceList objects.
-auto operator+(const SurfaceList& a, const SurfaceList& b) -> SurfaceList;
+auto operator+(SurfaceList const& a, SurfaceList const& b) -> SurfaceList;
 
 } // namespace Reaktoro

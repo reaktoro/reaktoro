@@ -32,9 +32,9 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     // TESTING CONSTRUCTOR: SurfaceList(formulas)
     //-------------------------------------------------------------------------
     surfaces = SurfaceList({
-        Surface("AqueousPhase:GaseousPhase").withPhases("AqueousPhase", "GaseousPhase"),
-        Surface("Calcite").withPhases("Calcite", "Calcite"),
-        Surface("Quartz:AqueousPhase").withPhases("Quartz", "AqueousPhase"),
+        Surface("AqueousPhase:GaseousPhase").withPhaseNames("AqueousPhase", "GaseousPhase"),
+        Surface("Calcite").withPhaseNames("Calcite", "Calcite"),
+        Surface("Quartz:AqueousPhase").withPhaseNames("Quartz", "AqueousPhase"),
     });
 
     REQUIRE( surfaces.size() == 3 );
@@ -138,7 +138,7 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: SurfaceList::append
     //-------------------------------------------------------------------------
-    surfaces.append(Surface("LiquidPhase:Gel").withPhases("LiquidPhase", "Gel"));
+    surfaces.append(Surface("LiquidPhase:Gel").withPhaseNames("LiquidPhase", "Gel"));
 
     REQUIRE( surfaces.indexWithName("LiquidPhase:Gel") < surfaces.size() );
     REQUIRE( surfaces.indexWithPhases("LiquidPhase", "Gel") < surfaces.size() );

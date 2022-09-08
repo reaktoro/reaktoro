@@ -19,6 +19,8 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/Surface.hpp>
 #include <Reaktoro/Core/Surfaces.hpp>
 using namespace Reaktoro;
 
@@ -28,6 +30,7 @@ void exportSurfaces(py::module& m)
         .def(py::init<>())
         .def("add", py::overload_cast<String const&, String const&>(&Surfaces::add))
         .def("add", py::overload_cast<String const&>(&Surfaces::add))
-        .def("surfaces", &Surfaces::surfaces, return_internal_ref)
+        .def("data", &Surfaces::data, return_internal_ref)
+        .def("convert", &Surfaces::convert)
         ;
 }

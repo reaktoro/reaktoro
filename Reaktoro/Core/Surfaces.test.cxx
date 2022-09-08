@@ -20,6 +20,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/Surface.hpp>
 #include <Reaktoro/Core/Surfaces.hpp>
 using namespace Reaktoro;
 
@@ -30,17 +32,34 @@ TEST_CASE("Testing Surfaces", "[Surfaces]")
     surfaces.add("GaseousPhase", "AqueousPhase");
     surfaces.add("Quartz");
 
-    CHECK( surfaces.surfaces().size() == 3 );
+    CHECK( surfaces.data().size() == 3 );
 
-    CHECK( surfaces.surfaces()[0].name() == "Calcite:AqueousPhase" );
-    CHECK( surfaces.surfaces()[1].name() == "GaseousPhase:AqueousPhase" );
-    CHECK( surfaces.surfaces()[2].name() == "Quartz" );
+    CHECK( surfaces.data()[0] == Pair<String, String>{"Calcite", "AqueousPhase"} );
+    CHECK( surfaces.data()[1] == Pair<String, String>{"GaseousPhase", "AqueousPhase"} );
+    CHECK( surfaces.data()[2] == Pair<String, String>{"Quartz", "Quartz"} );
 
-    CHECK( surfaces.surfaces()[0].phases().first == "Calcite" );
-    CHECK( surfaces.surfaces()[1].phases().first == "GaseousPhase" );
-    CHECK( surfaces.surfaces()[2].phases().first == "Quartz" );
+    auto const phases = PhaseList({
+        Phase().withName("AqueousPhase"), // # 0
+        Phase().withName("GaseousPhase"), // # 1
+        Phase().withName("LiquidPhase"),  // # 2
+        Phase().withName("Calcite"),      // # 3
+        Phase().withName("Quartz"),       // # 4
+        Phase().withName("Dolomite")      // # 5
+    });
 
-    CHECK( surfaces.surfaces()[0].phases().second == "AqueousPhase" );
-    CHECK( surfaces.surfaces()[1].phases().second == "AqueousPhase" );
-    CHECK( surfaces.surfaces()[2].phases().second == "Quartz" );
+    auto const converted = surfaces.convert(phases);
+
+    CHECK( converted.size() == 3 );
+
+    CHECK( converted[0].name() == "Calcite:AqueousPhase" );
+    CHECK( converted[1].name() == "GaseousPhase:AqueousPhase" );
+    CHECK( converted[2].name() == "Quartz" );
+
+    CHECK( converted[0].phaseNames() == Pair<String, String>{"Calcite", "AqueousPhase"} );
+    CHECK( converted[1].phaseNames() == Pair<String, String>{"GaseousPhase", "AqueousPhase"} );
+    CHECK( converted[2].phaseNames() == Pair<String, String>{"Quartz", "Quartz"} );
+
+    CHECK( converted[0].phaseIndices() == Pair<Index, Index>{3, 0} );
+    CHECK( converted[1].phaseIndices() == Pair<Index, Index>{1, 0} );
+    CHECK( converted[2].phaseIndices() == Pair<Index, Index>{4, 4} );
 }

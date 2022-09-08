@@ -25,32 +25,22 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Surface", "[Surface]")
 {
-    WHEN("using constructor Surface()")
-    {
-        Surface surface;
+    Surface surface;
 
-        surface = surface.withName("AqueousPhase:GaseousPhase");
-        CHECK(surface.name() == "AqueousPhase:GaseousPhase");
+    surface = surface.withName("AqueousPhase:GaseousPhase");
+    CHECK(surface.name() == "AqueousPhase:GaseousPhase");
 
-        surface = surface.withPhases("AqueousPhase", "GaseousPhase");
-        CHECK(surface.phases().first == "AqueousPhase");
-        CHECK(surface.phases().second == "GaseousPhase");
+    surface = surface.withPhaseNames("AqueousPhase", "GaseousPhase");
+    CHECK(surface.phaseNames() == Pair<String, String>{"AqueousPhase","GaseousPhase"});
 
-        Surface other;
-        other = other.withName("SomeName");
-        other = other.withPhases("GaseousPhase", "AqueousPhase");
+    surface = surface.withPhaseIndices(0, 1);
+    CHECK(surface.phaseIndices() == Pair<Index, Index>{0, 1});
 
-        CHECK( surface.equivalent(other) );
-    }
+    Surface other("SomeName");
+    other = other.withPhaseNames("GaseousPhase", "AqueousPhase");
+    other = other.withPhaseIndices(1, 0);
+    CHECK( surface.equivalent(other) );
 
-    WHEN("using constructor Surface(name)")
-    {
-        Surface surface("AqueousPhase:GaseousPhase");
-
-        CHECK(surface.name() == "AqueousPhase:GaseousPhase");
-
-        surface = surface.withPhases("AqueousPhase", "GaseousPhase");
-        CHECK(surface.phases().first == "AqueousPhase");
-        CHECK(surface.phases().second == "GaseousPhase");
-    }
+    Surface another("SomeName", "GaseousPhase", 1, "AqueousPhase", 0);
+    CHECK( surface.equivalent(another) );
 }

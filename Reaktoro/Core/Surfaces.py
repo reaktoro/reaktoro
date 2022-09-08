@@ -25,16 +25,33 @@ def testSurfaces():
     surfaces.add("GaseousPhase", "AqueousPhase")
     surfaces.add("Quartz")
 
-    assert len(surfaces.surfaces()) == 3
+    assert len(surfaces.data()) == 3
 
-    assert surfaces.surfaces()[0].name() == "Calcite:AqueousPhase"
-    assert surfaces.surfaces()[1].name() == "GaseousPhase:AqueousPhase"
-    assert surfaces.surfaces()[2].name() == "Quartz"
+    assert surfaces.data()[0] == ("Calcite", "AqueousPhase")
+    assert surfaces.data()[1] == ("GaseousPhase", "AqueousPhase")
+    assert surfaces.data()[2] == ("Quartz", "Quartz")
 
-    assert surfaces.surfaces()[0].phases()[0] == "Calcite"
-    assert surfaces.surfaces()[1].phases()[0] == "GaseousPhase"
-    assert surfaces.surfaces()[2].phases()[0] == "Quartz"
+    phases = PhaseList([
+        Phase().withName("AqueousPhase"), # # 0
+        Phase().withName("GaseousPhase"), # # 1
+        Phase().withName("LiquidPhase"),  # # 2
+        Phase().withName("Calcite"),      # # 3
+        Phase().withName("Quartz"),       # # 4
+        Phase().withName("Dolomite")      # # 5
+    ])
 
-    assert surfaces.surfaces()[0].phases()[1] == "AqueousPhase"
-    assert surfaces.surfaces()[1].phases()[1] == "AqueousPhase"
-    assert surfaces.surfaces()[2].phases()[1] == "Quartz"
+    converted = surfaces.convert(phases)
+
+    assert len(converted) == 3
+
+    assert converted[0].name() == "Calcite:AqueousPhase"
+    assert converted[1].name() == "GaseousPhase:AqueousPhase"
+    assert converted[2].name() == "Quartz"
+
+    assert converted[0].phaseNames() == ("Calcite", "AqueousPhase")
+    assert converted[1].phaseNames() == ("GaseousPhase", "AqueousPhase")
+    assert converted[2].phaseNames() == ("Quartz", "Quartz")
+
+    assert converted[0].phaseIndices() == (3, 0)
+    assert converted[1].phaseIndices() == (1, 0)
+    assert converted[2].phaseIndices() == (4, 4)
