@@ -127,7 +127,7 @@ struct EquilibriumSolver::Impl
     }
 
     /// Update the optimization problem before a new equilibrium calculation.
-    auto updateOptProblem(ChemicalState const& state0, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions)
+    auto updateOptProblem(ChemicalState const& state0, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0)
     {
         // The input variables for the equilibrium calculation
         const VectorXr w = conditions.inputValuesGetOrCompute(state0);
@@ -204,7 +204,7 @@ struct EquilibriumSolver::Impl
         optproblem.Aep = setup.Aep();
 
         /// Set the right-hand side vector be of the linear equality constraints.
-        optproblem.be = conditions.initialComponentAmountsGetOrCompute(state0);
+        optproblem.be = c0.size() ? c0 : conditions.initialComponentAmountsGetOrCompute(state0);
 
         // Set the lower and upper bounds of the species amounts
         optproblem.xlower = setup.assembleLowerBoundsVector(restrictions, state0);
@@ -337,7 +337,59 @@ struct EquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
     {
-        updateOptProblem(state, conditions, restrictions);
+        return solve(state, conditions, restrictions, ArrayXd{});
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
+    {
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
+        return solve(state, sensitivity, conditions, restrictions, ArrayXd{});
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
+    {
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
+        return solve(state, sensitivity, conditions, restrictions, ArrayXd{});
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions) -> EquilibriumResult
+    {
+        return solve(state, sensitivity, conditions, restrictions, ArrayXd{});
+    }
+
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
+    {
+        return solve(state, conditions, restrictions, ArrayXd{});
+    }
+
+    auto solve(ChemicalState& state, ArrayXdConstRef const& c0) -> EquilibriumResult
+    {
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
+        return solve(state, conditions, restrictions, c0);
+    }
+
+    auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
+    {
+        conditions.temperature(state.temperature());
+        conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
+        return solve(state, conditions, restrictions, c0);
+    }
+
+    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult
+    {
+        return solve(state, conditions, restrictions, c0);
+    }
+
+    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
+    {
+        updateOptProblem(state, conditions, restrictions, c0);
         updateOptState(state);
 
         result.optima = optsolver.solve(optproblem, optstate);
@@ -347,32 +399,32 @@ struct EquilibriumSolver::Impl
         return result;
     }
 
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
         conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, sensitivity, conditions, restrictions);
+        return solve(state, sensitivity, conditions, restrictions, c0);
     }
 
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
         conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, sensitivity, conditions, restrictions);
+        return solve(state, sensitivity, conditions, restrictions, c0);
     }
 
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
-        return solve(state, sensitivity, conditions, restrictions);
+        return solve(state, sensitivity, conditions, restrictions, c0);
     }
 
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> EquilibriumResult
+    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
     {
         EquilibriumResult result;
 
-        updateOptProblem(state, conditions, restrictions);
+        updateOptProblem(state, conditions, restrictions, c0);
         updateOptState(state);
 
         result.optima = optsolver.solve(optproblem, optstate, optsensitivity);
@@ -381,13 +433,6 @@ struct EquilibriumSolver::Impl
         updateEquilibriumSensitivity(sensitivity);
 
         return result;
-    }
-
-    auto componentAmounts(ChemicalState const& state) const -> ArrayXr
-    {
-        const auto Aen = setup.Aen();
-        const auto n = state.speciesAmounts();
-        return Aen * n.matrix();
     }
 };
 
@@ -452,19 +497,49 @@ auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sens
     return pimpl->solve(state, sensitivity, conditions, restrictions);
 }
 
+auto EquilibriumSolver::solve(ChemicalState& state, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, restrictions, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, conditions, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, conditions, restrictions, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, restrictions, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, conditions, c0);
+}
+
+auto EquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> EquilibriumResult
+{
+    return pimpl->solve(state, sensitivity, conditions, restrictions, c0);
+}
+
 auto EquilibriumSolver::setOptions(EquilibriumOptions const& options) -> void
 {
     pimpl->setOptions(options);
-}
-
-auto EquilibriumSolver::conservativeMatrix() const -> MatrixXdConstRef
-{
-    return pimpl->setup.Aen();
-}
-
-auto EquilibriumSolver::componentAmounts(ChemicalState const& state) const -> ArrayXr
-{
-    return pimpl->componentAmounts(state);
 }
 
 } // namespace Reaktoro
