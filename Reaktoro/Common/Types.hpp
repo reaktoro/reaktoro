@@ -98,9 +98,17 @@ using SharedPtr = std::shared_ptr<T>;
 template<typename F>
 using Fn = std::function<F>;
 
-/// Convenient alias for `std::optional`.
+/// Convenient alias for `std::optional<T>`.
 template<typename T>
 using Optional = std::optional<T>;
+
+/// Convenient alias for `std::optional<std::reference_wrapper<T>>`.
+template<typename T>
+using OptionalRef = std::optional<std::reference_wrapper<T>>;
+
+/// Convenient alias for `std::optional<std::reference_wrapper<const T>>`.
+template<typename T>
+using OptionalConstRef = std::optional<std::reference_wrapper<const T>>;
 
 /// Convenient alias for `std::any`.
 using Any = std::any;
