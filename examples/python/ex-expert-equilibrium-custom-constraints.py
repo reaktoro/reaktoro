@@ -69,11 +69,11 @@ idxU = specs.addInput("U")
 
 volumeConstraint = ConstraintEquation()
 volumeConstraint.id = "VolumeConstraint"
-volumeConstraint.fn = lambda props, w: props.volume() - w[idxV]
+volumeConstraint.fn = lambda state, w: state.props().volume() - w[idxV]
 
 internalEnergyConstraint = ConstraintEquation()
 internalEnergyConstraint.id = "InternalEnergyConstraint"
-internalEnergyConstraint.fn = lambda props, w: props.internalEnergy() - w[idxU]
+internalEnergyConstraint.fn = lambda state, w: state.props().internalEnergy() - w[idxU]
 
 specs.addConstraint(volumeConstraint)
 specs.addConstraint(internalEnergyConstraint)
