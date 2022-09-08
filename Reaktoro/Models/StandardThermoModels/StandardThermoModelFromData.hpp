@@ -18,13 +18,12 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Common/YAML.hpp>
+#include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/StandardThermoModel.hpp>
 
 namespace Reaktoro {
 
-/// Return a standard thermodynamic model with given yaml @p node.
-auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel;
+/// Return a reaction thermodynamic model with given Data object.
+auto StandardThermoModelFromData(Data const& data) -> StandardThermoModel;
 
 } // namespace Reaktoro

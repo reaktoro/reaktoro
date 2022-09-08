@@ -19,10 +19,10 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelFromData.hpp>
 using namespace Reaktoro;
 
-void exportStandardThermoModelYAML(py::module& m)
+void exportStandardThermoModelFromData(py::module& m)
 {
-    m.def("StandardThermoModelYAML", StandardThermoModelYAML);
+    m.def("StandardThermoModelFromData", StandardThermoModelFromData);
 }

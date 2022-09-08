@@ -22,8 +22,7 @@
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Database.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Core/StandardThermoModel.hpp>
 #include <Reaktoro/Serialization.hpp>
 
 namespace Reaktoro {
@@ -36,7 +35,7 @@ struct DatabaseParser::Impl
     ///< The Element objects in the database.
     ElementList element_list;
 
-    ///< The database contents parsed from YAML or Json into a Data object.
+    ///< The database contents parsed from YAML or JSON into a Data object.
     Data doc;
 
     /// Construct a default DatabaseParser::Impl object.

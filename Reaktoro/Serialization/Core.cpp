@@ -166,35 +166,7 @@ REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModel)
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModel)
 {
-    auto createModel = [](Data const& data) -> ReactionStandardThermoModel
-    {
-        errorif(!data.isDict(),
-            "Expecting a dictionary containing a single key-value pair in the Data object:\n", data.repr());
-
-        const auto model = data.asDict();
-
-        errorif(model.size() != 1,
-            "Expecting only one key-value pair in the Data object:\n", data.repr());
-
-        auto const& name = model.front().first;
-        auto const& params = model.front().second;
-
-        if(name == "ConstLgK")
-            return ReactionStandardThermoModelConstLgK(params.as<ReactionStandardThermoModelParamsConstLgK>());
-        if(name == "GemsLgK")
-            return ReactionStandardThermoModelGemsLgK(params.as<ReactionStandardThermoModelParamsGemsLgK>());
-        if(name == "PhreeqcLgK")
-            return ReactionStandardThermoModelPhreeqcLgK(params.as<ReactionStandardThermoModelParamsPhreeqcLgK>());
-        if(name == "VantHoff")
-            return ReactionStandardThermoModelVantHoff(params.as<ReactionStandardThermoModelParamsVantHoff>());
-
-        errorif(true, "Cannot create a ReactionStandardThermoModel object with "
-            "unsupported model name `", name, "` in Data object:\n", data.repr());
-
-        return {};
-    };
-
-    obj = createModel(data);
+    obj = ReactionStandardThermoModelFromData(data);
 }
 
 //=====================================================================================================================
@@ -240,43 +212,7 @@ REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModel)
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModel)
 {
-    auto createModel = [](Data const& data) -> StandardThermoModel
-    {
-        errorif(!data.isDict(),
-            "Expecting a dictionary containing a single key-value pair in the Data object:\n", data.repr());
-
-        const auto model = data.asDict();
-
-        errorif(model.size() != 1,
-            "Expecting only one key-value pair in the Data object:\n", data.repr());
-
-        auto const& name = model.front().first;
-        auto const& params = model.front().second;
-
-        if(name == "Constant")
-            return StandardThermoModelConstant(params.as<StandardThermoModelParamsConstant>());
-        if(name == "HKF")
-            return StandardThermoModelHKF(params.as<StandardThermoModelParamsHKF>());
-        if(name == "HollandPowell")
-            return StandardThermoModelHollandPowell(params.as<StandardThermoModelParamsHollandPowell>());
-        if(name == "Interpolation")
-            return StandardThermoModelInterpolation(params.as<StandardThermoModelParamsInterpolation>());
-        if(name == "MaierKelley")
-            return StandardThermoModelMaierKelley(params.as<StandardThermoModelParamsMaierKelley>());
-        if(name == "MineralHKF")
-            return StandardThermoModelMineralHKF(params.as<StandardThermoModelParamsMineralHKF>());
-        if(name == "WaterHKF")
-            return StandardThermoModelWaterHKF(params.as<StandardThermoModelParamsWaterHKF>());
-        if(name == "Nasa")
-            return StandardThermoModelNasa(params.as<StandardThermoModelParamsNasa>());
-
-        errorif(true, "Cannot create a StandardThermoModel object with "
-            "unsupported model name `", name, "` in Data object:\n", data.repr());
-
-        return {};
-    };
-
-    obj = createModel(data);
+    obj = StandardThermoModelFromData(data);
 }
 
 //=====================================================================================================================
