@@ -269,29 +269,14 @@ auto Data::asList() const -> Vec<Data> const&
     return std::any_cast<Vec<Data> const&>(tree);
 }
 
-auto Data::isString() const -> bool
-{
-    return std::any_cast<String>(&tree);
-}
-
-auto Data::isFloat() const -> bool
-{
-    return std::any_cast<double>(&tree);
-}
-
-auto Data::isInteger() const -> bool
-{
-    return std::any_cast<int>(&tree);
-}
-
 auto Data::isBoolean() const -> bool
 {
     return std::any_cast<bool>(&tree);
 }
 
-auto Data::isReal() const -> bool
+auto Data::isString() const -> bool
 {
-    return std::any_cast<real>(&tree);
+    return std::any_cast<String>(&tree);
 }
 
 auto Data::isParam() const -> bool
