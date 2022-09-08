@@ -26,7 +26,7 @@ auto Reactions::convert(ChemicalSystem const& system) const -> Vec<Reaction>
 {
     Vec<Reaction> reactions;
 
-    for(auto const& fn : rgeneratorfns)
+    for(auto const& fn : rgenerators)
     {
         auto rxns = fn(system);
         reactions.insert(reactions.end(), rxns.begin(), rxns.end());

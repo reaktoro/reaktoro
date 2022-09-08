@@ -17,13 +17,17 @@
 
 #pragma once
 
+// C++ includes
+#include <type_traits>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
-#include <Reaktoro/Core/ReactionGenerator.hpp>
 
 namespace Reaktoro {
+
+/// The function type for the generation of reactions with a given chemical system.
+using ReactionGenerator = Fn<Vec<Reaction>(ChemicalSystem const&)>;
 
 /// The class used to represent a collection of reactions controlled kinetically.
 /// @ingroup Core
@@ -46,18 +50,18 @@ public:
     template<typename T>
     auto add(T const& item) -> void
     {
-        static_assert(isBaseOf<ReactionGenerator, T> || isSame<T, Reaction>);
+        static_assert(std::is_convertible_v<T, ReactionGenerator> || std::is_convertible_v<T, Reaction>);
 
-        if constexpr(isBaseOf<ReactionGenerator, T>)
+        if constexpr(std::is_convertible_v<T, ReactionGenerator>)
         {
-            rgeneratorfns.push_back([=](ChemicalSystem const& system) -> Vec<Reaction> {
-                return item.convert(system); // item is a ReactionGenerator object
+            rgenerators.push_back([=](ChemicalSystem const& system) -> Vec<Reaction> {
+                return item(system); // item is a ReactionGenerator object
             });
         }
         else
         {
-            rgeneratorfns.push_back([=](ChemicalSystem const& system) -> Vec<Reaction> {
-                return { item }; // item is a Reaction object
+            rgenerators.push_back([=](ChemicalSystem const& system) -> Vec<Reaction> {
+                return { Reaction(item) }; // item is convertible to Reaction object
             });
         }
     }
@@ -67,8 +71,8 @@ public:
     auto convert(ChemicalSystem const& system) const -> Vec<Reaction>;
 
 private:
-    /// The ReactionGeneratorFn objects collected so far with each call to Reactions::add method.
-    Vec<ReactionGeneratorFn> rgeneratorfns;
+    /// The ReactionGenerator objects collected so far with each call to Reactions::add method.
+    Vec<ReactionGenerator> rgenerators;
 
     /// Add one or more ReactionGenerator or Reaction objects into the Reactions container.
     template<typename Arg, typename... Args>
