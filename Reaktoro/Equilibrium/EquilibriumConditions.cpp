@@ -47,7 +47,9 @@ EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
   C(specs.assembleConservationMatrix()),
   wvars(specs.inputs()),
   pvars(specs.namesControlVariablesP()),
+  itemperature_w(specs.indexTemperatureAmongInputVariables()),
   itemperature_p(specs.indexTemperatureAmongControlVariablesP()),
+  ipressure_w(specs.indexPressureAmongInputVariables()),
   ipressure_p(specs.indexPressureAmongControlVariablesP()),
   isurface_areas_w(specs.indicesSurfaceAreasAmongInputVariables()),
   isurface_areas_p(specs.indicesSurfaceAreasAmongControlVariablesP()),
@@ -423,6 +425,31 @@ auto EquilibriumConditions::inputNames() const -> Strings const&
 auto EquilibriumConditions::inputValues() const -> ArrayXrConstRef
 {
     return w;
+}
+
+auto EquilibriumConditions::inputValuesGetOrCompute(ChemicalState const& state0) const -> ArrayXr
+{
+    // The input values with nan replaced by appropriate values whenever possible
+    ArrayXr wvals(w);
+
+    // If temperature is input, but current value is nan, fetch it from state0
+    if(itemperature_w < w.size() && std::isnan(w[itemperature_w].val()))
+        wvals[itemperature_w] = state0.temperature();
+
+    // If pressure is input, but current value is nan, fetch it from state0
+    if(ipressure_w < w.size() && std::isnan(w[ipressure_w].val()))
+        wvals[ipressure_w] = state0.pressure();
+
+    // If surface area is input, but current value is nan, fetch it from state0
+    for(auto [i, isurface_w] : enumerate(isurface_areas_w))
+        if(std::isnan(wvals[isurface_w].val()))
+            wvals[isurface_w] = state0.surfaceArea(isurface_areas_known[i]);
+
+    // Ensure no other input values are left unspecified! Only temperature, pressure, and surface areas can be inferred at the moment at least.
+    for(auto const& [i, wval] : enumerate(wvals))
+        errorif(std::isnan(wval.val()), "You have not specified a value for input `", wvars[i], "` in the EquilibriumConditions object.");
+
+    return wvals;
 }
 
 auto EquilibriumConditions::inputValue(String const& name) const -> real const&

@@ -73,6 +73,7 @@ void exportEquilibriumConditions(py::module& m)
         .def("setInputVariables", &EquilibriumConditions::setInputVariables, "Set the input variables with given vector of input values.")
         .def("inputNames", &EquilibriumConditions::inputNames, return_internal_ref, "Return the names of the input variables associated with the equilibrium conditions.")
         .def("inputValues", &EquilibriumConditions::inputValues, return_internal_ref, "Return the values of the input variables associated with the equilibrium conditions.")
+        .def("inputValuesGetOrCompute", &EquilibriumConditions::inputValuesGetOrCompute, "Get the values of the input variables associated with the equilibrium conditions if specified, otherwise fetch them from given initial state.")
         .def("inputValue", &EquilibriumConditions::inputValue, return_internal_ref, "Return the values of the input variables associated with the equilibrium conditions.")
 
         .def("setInitialComponentAmounts", &EquilibriumConditions::setInitialComponentAmounts, "Set the initial amounts of the conservative components c0 before the chemical system reacts.")

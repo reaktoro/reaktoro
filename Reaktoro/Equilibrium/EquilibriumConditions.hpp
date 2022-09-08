@@ -282,6 +282,9 @@ public:
     /// Get the values of the input variables associated with the equilibrium conditions.
     auto inputValues() const -> ArrayXrConstRef;
 
+    /// Get the values of the input variables associated with the equilibrium conditions if specified, otherwise fetch them from given initial state.
+    auto inputValuesGetOrCompute(ChemicalState const& state0) const -> ArrayXr;
+
     /// Get the value of an input variable with given name.
     /// @param name The unique name of the input variable
     auto inputValue(String const& name) const -> real const&;
@@ -343,7 +346,9 @@ private:
     const MatrixXd C;                     ///< The conservation matrix of the chemical species with respect to conservative components.
     const Strings wvars;                  ///< The names of the *w* input variables in the equilibrium problem.
     const Strings pvars;                  ///< The names of the *p* control variables variables in the equilibrium problem.
+    const Index itemperature_w;           ///< The index of the temperature variable among the *w* input variables.
     const Index itemperature_p;           ///< The index of the temperature variable among the *p* control variables.
+    const Index ipressure_w;              ///< The index of the pressure variable among the *w* input variables.
     const Index ipressure_p;              ///< The index of the pressure variable among the *p* control variables.
     const Indices isurface_areas_w;       ///< The indices of the surface area variables among the *w* input variables.
     const Indices isurface_areas_p;       ///< The indices of the surface area variables among the *p* control variables.

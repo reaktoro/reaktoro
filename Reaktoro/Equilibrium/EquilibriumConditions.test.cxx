@@ -50,6 +50,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         for(auto value : conditions.inputValues() )
             CHECK( std::isnan(value.val()) );
 
+
         conditions.temperature(25.0, "celsius");
         conditions.pressure(1.0, "bar");
         conditions.pH(5.0);
@@ -69,6 +70,37 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         CHECK( conditions.inputValue("surfaceArea[AqueousPhase:GaseousPhase]") == Approx(4.0) );
         CHECK( conditions.inputValue("surfaceArea[AqueousPhase:Halite]")       == Approx(5.0) );
         CHECK( conditions.inputValue("surfaceArea[Calcite]")                   == Approx(6.0) );
+    }
+
+    WHEN("the EquilibriumConditions object holds a default state and inputValuesGetOrCompute is used")
+    {
+        specs.temperature();
+        specs.pressure();
+        specs.pH();
+
+        EquilibriumConditions conditions(specs);
+
+        ChemicalState state0(system);
+        conditions.temperature(40.0, "celsius");
+        conditions.pressure(13.0, "bar");
+        conditions.surfaceArea("AqueousPhase:GaseousPhase", 5.0, "m2");
+        conditions.surfaceArea("AqueousPhase:Halite", 6.0e6, "mm2");
+        conditions.surfaceArea("Calcite", 7.0e4, "cm2");
+
+        CHECK_THROWS( conditions.inputValuesGetOrCompute(state0) ); // pH has not yet been specified, and it cannot be fetched from state0
+
+        conditions.pH(9.0);
+
+        const auto w = conditions.inputValuesGetOrCompute(state0);
+
+        conditions.setInputVariables(w);
+
+        CHECK( conditions.inputValue("T")                                      == Approx(273.15 + 40.0) );
+        CHECK( conditions.inputValue("P")                                      == Approx(13.0e5) );
+        CHECK( conditions.inputValue("pH")                                     == Approx(9.0) );
+        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:GaseousPhase]") == Approx(5.0) );
+        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:Halite]")       == Approx(6.0) );
+        CHECK( conditions.inputValue("surfaceArea[Calcite]")                   == Approx(7.0) );
     }
 
     WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
