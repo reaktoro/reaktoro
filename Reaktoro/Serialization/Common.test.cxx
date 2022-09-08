@@ -15,18 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Common.YAML.hpp"
+// Catch includes
+#include <catch2/catch.hpp>
+using namespace Catch;
 
-namespace Reaktoro {
+// Reaktoro includes
+#include <Reaktoro/Serialization/Common.hpp>
 
-REAKTORO_YAML_ENCODE_DEFINE(real)
+using namespace Reaktoro;
+
+TEST_CASE("Testing serialization of Common components", "[Serialization][Common]")
 {
-    node = obj.val();
-}
 
-REAKTORO_YAML_DECODE_DEFINE(real)
-{
-    obj = node.as<double>();
 }
-
-} // namespace YAML

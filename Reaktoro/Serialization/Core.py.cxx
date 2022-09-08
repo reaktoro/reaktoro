@@ -28,10 +28,10 @@
 #include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Serialization/Core.Data.hpp>
+#include <Reaktoro/Serialization/Core.hpp>
 using namespace Reaktoro;
 
-void exportSerializationCoreData(py::module& m)
+void exportSerializationCore(py::module& m)
 {
     py::implicitly_convertible<Data, AggregateState>();
     py::implicitly_convertible<AggregateState, Data>();

@@ -17,5 +17,6 @@
 
 #pragma once
 
-#include <Reaktoro/Serialization/Serialization.YAML.hpp>
-#include <Reaktoro/Serialization/Serialization.Data.hpp>
+#include <Reaktoro/Serialization/Common.hpp>
+#include <Reaktoro/Serialization/Core.hpp>
+#include <Reaktoro/Serialization/Models.hpp>

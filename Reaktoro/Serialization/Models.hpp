@@ -15,16 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// Catch includes
-#include <catch2/catch.hpp>
-using namespace Catch;
+#pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Serialization/Common.YAML.hpp>
-
-using namespace Reaktoro;
-
-TEST_CASE("Testing Common.yaml", "[Common.yaml]")
-{
-
-}
+#include <Reaktoro/Serialization/Models/ReactionRateModels.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>

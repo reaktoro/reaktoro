@@ -15,15 +15,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Serialization/Common.Data.hpp>
-using namespace Reaktoro;
+namespace Reaktoro {
 
-void exportSerializationCommonData(py::module& m)
-{
-    // py::implicitly_convertible<Data, real>();
-    // py::implicitly_convertible<real, Data>();
-}
+
+} // namespace Reaktoro

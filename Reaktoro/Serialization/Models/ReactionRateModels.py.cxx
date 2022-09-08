@@ -15,8 +15,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <Reaktoro/pybind11.hxx>
 
-#include <Reaktoro/Serialization/Common.Data.hpp>
-#include <Reaktoro/Serialization/Core.Data.hpp>
-#include <Reaktoro/Serialization/Models.Data.hpp>
+// Reaktoro includes
+#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
+#include <Reaktoro/Serialization/Models/ReactionRateModels.hpp>
+using namespace Reaktoro;
+
+void exportSerializationModelsReactionRateModels(py::module& m)
+{
+    py::implicitly_convertible<Data, ReactionRateModelParamsPalandriKharaka>();
+    py::implicitly_convertible<ReactionRateModelParamsPalandriKharaka, Data>();
+}

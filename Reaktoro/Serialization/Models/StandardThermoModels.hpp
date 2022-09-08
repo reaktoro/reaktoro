@@ -16,9 +16,8 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-// 
+
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Data.hpp>
 
 namespace Reaktoro {
@@ -87,12 +86,4 @@ struct StandardVolumeModelParamsConstant;
 REAKTORO_DATA_ENCODE_DECLARE(StandardVolumeModelParamsConstant);
 REAKTORO_DATA_DECODE_DECLARE(StandardVolumeModelParamsConstant);
 
-//======================================================================
-// ReactionRateModelParams Types
-//======================================================================
-struct ReactionRateModelParamsPalandriKharaka;
-
-REAKTORO_DATA_ENCODE_DECLARE(ReactionRateModelParamsPalandriKharaka);
-REAKTORO_DATA_DECODE_DECLARE(ReactionRateModelParamsPalandriKharaka);
-
-} // namespace YAML
+} // namespace Reaktoro

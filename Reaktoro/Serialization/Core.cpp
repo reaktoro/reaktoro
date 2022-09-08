@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Core.Data.hpp"
+#include "Core.hpp"
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalFormula.hpp>
@@ -28,10 +28,11 @@
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
-#include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
-#include <Reaktoro/Serialization/Common.Data.hpp>
+#include <Reaktoro/Core/Support/DatabaseParser.hpp>
+#include <Reaktoro/Models/StandardThermoModels.hpp>
+#include <Reaktoro/Serialization/Common.hpp>
+#include <Reaktoro/Serialization/Models/ReactionRateModels.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -67,25 +68,25 @@ REAKTORO_DATA_ENCODE_DEFINE(Database)
     auto species_data = data.at("Species");
 
     for(auto const& element : obj.elements())
-        elements_data.at(element.symbol()) = element;
+        elements_data[element.symbol()] = element;
 
     for(auto const& species : obj.species())
-        species_data.at(species.name()) = species;
+        species_data[species.name()] = species;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(Database)
 {
-    // obj = DatabaseParserYAML(data);
+    obj = DatabaseParser(data);
 }
 
 //=====================================================================================================================
 
 REAKTORO_DATA_ENCODE_DEFINE(Element)
 {
-    data.at("Symbol")    = obj.symbol();
-    data.at("MolarMass") = obj.molarMass();
-    if(obj.name().size()) data.at("Name") = obj.name();
-    if(obj.tags().size()) data.at("Tags") = obj.tags();
+    data["Symbol"]    = obj.symbol();
+    data["MolarMass"] = obj.molarMass();
+    if(obj.name().size()) data["Name"] = obj.name();
+    if(obj.tags().size()) data["Tags"] = obj.tags();
 }
 
 REAKTORO_DATA_DECODE_DEFINE(Element)
@@ -132,11 +133,11 @@ REAKTORO_DATA_ENCODE_DEFINE(FormationReaction)
     for(const auto& [species, coeff] : obj.reactants())
         repr << (i++ == 0 ? "" : " ") << coeff << ":" << species.name();
 
-    data.at("Reactants") = repr.str();
+    data["Reactants"] = repr.str();
     if(obj.reactionThermoModel().initialized())
-        data.at("ReactionStandardThermoModel") = obj.reactionThermoModel().serialize();
+        data["ReactionStandardThermoModel"] = obj.reactionThermoModel().serialize();
     if(obj.productStandardVolumeModel().initialized())
-        data.at("StandardVolumeModel") = obj.productStandardVolumeModel().serialize();
+        data["StandardVolumeModel"] = obj.productStandardVolumeModel().serialize();
 }
 
 REAKTORO_DATA_DECODE_DEFINE(FormationReaction)
@@ -165,23 +166,51 @@ REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModel)
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModel)
 {
-    // obj = ReactionStandardThermoModelYAML(data);
+    auto createModel = [](Data const& data) -> ReactionStandardThermoModel
+    {
+        errorif(!data.isDict(),
+            "Expecting a dictionary containing a single key-value pair in the Data object:\n", data.repr());
+
+        const auto model = data.asDict();
+
+        errorif(model.size() != 1,
+            "Expecting only one key-value pair in the Data object:\n", data.repr());
+
+        auto const& name = model.front().first;
+        auto const& params = model.front().second;
+
+        if(name == "ConstLgK")
+            return ReactionStandardThermoModelConstLgK(params.as<ReactionStandardThermoModelParamsConstLgK>());
+        if(name == "GemsLgK")
+            return ReactionStandardThermoModelGemsLgK(params.as<ReactionStandardThermoModelParamsGemsLgK>());
+        if(name == "PhreeqcLgK")
+            return ReactionStandardThermoModelPhreeqcLgK(params.as<ReactionStandardThermoModelParamsPhreeqcLgK>());
+        if(name == "VantHoff")
+            return ReactionStandardThermoModelVantHoff(params.as<ReactionStandardThermoModelParamsVantHoff>());
+
+        errorif(true, "Cannot create a ReactionStandardThermoModel object with "
+            "unsupported model name `", name, "` in Data object:\n", data.repr());
+
+        return {};
+    };
+
+    obj = createModel(data);
 }
 
 //=====================================================================================================================
 
 REAKTORO_DATA_ENCODE_DEFINE(Species)
 {
-    data.at("Name") = obj.name();
-    data.at("Formula") = obj.formula();
-    data.at("Substance") = obj.substance();
-    data.at("Elements") = obj.elements();
-    if(obj.charge() != 0.0) data.at("Charge") = obj.charge();
-    data.at("AggregateState") = obj.aggregateState();
+    data["Name"] = obj.name();
+    data["Formula"] = obj.formula();
+    data["Substance"] = obj.substance();
+    data["Elements"] = obj.elements();
+    if(obj.charge() != 0.0) data["Charge"] = obj.charge();
+    data["AggregateState"] = obj.aggregateState();
     if(obj.reaction().reactants().size())
-        data.at("FormationReaction") = obj.reaction();
-    else data.at("StandardThermoModel") = obj.standardThermoModel();
-    if(obj.tags().size()) data.at("Tags") = obj.tags();
+        data["FormationReaction"] = obj.reaction();
+    else data["StandardThermoModel"] = obj.standardThermoModel();
+    if(obj.tags().size()) data["Tags"] = obj.tags();
 }
 
 REAKTORO_DATA_DECODE_DEFINE(Species)
@@ -211,9 +240,45 @@ REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModel)
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModel)
 {
-    // obj = StandardThermoModelYAML(data);
+    auto createModel = [](Data const& data) -> StandardThermoModel
+    {
+        errorif(!data.isDict(),
+            "Expecting a dictionary containing a single key-value pair in the Data object:\n", data.repr());
+
+        const auto model = data.asDict();
+
+        errorif(model.size() != 1,
+            "Expecting only one key-value pair in the Data object:\n", data.repr());
+
+        auto const& name = model.front().first;
+        auto const& params = model.front().second;
+
+        if(name == "Constant")
+            return StandardThermoModelConstant(params.as<StandardThermoModelParamsConstant>());
+        if(name == "HKF")
+            return StandardThermoModelHKF(params.as<StandardThermoModelParamsHKF>());
+        if(name == "HollandPowell")
+            return StandardThermoModelHollandPowell(params.as<StandardThermoModelParamsHollandPowell>());
+        if(name == "Interpolation")
+            return StandardThermoModelInterpolation(params.as<StandardThermoModelParamsInterpolation>());
+        if(name == "MaierKelley")
+            return StandardThermoModelMaierKelley(params.as<StandardThermoModelParamsMaierKelley>());
+        if(name == "MineralHKF")
+            return StandardThermoModelMineralHKF(params.as<StandardThermoModelParamsMineralHKF>());
+        if(name == "WaterHKF")
+            return StandardThermoModelWaterHKF(params.as<StandardThermoModelParamsWaterHKF>());
+        if(name == "Nasa")
+            return StandardThermoModelNasa(params.as<StandardThermoModelParamsNasa>());
+
+        errorif(true, "Cannot create a StandardThermoModel object with "
+            "unsupported model name `", name, "` in Data object:\n", data.repr());
+
+        return {};
+    };
+
+    obj = createModel(data);
 }
 
 //=====================================================================================================================
 
-} // namespace YAML
+} // namespace Reaktoro
