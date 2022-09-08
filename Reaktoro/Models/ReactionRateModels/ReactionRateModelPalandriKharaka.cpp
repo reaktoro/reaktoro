@@ -18,6 +18,7 @@
 #include "ReactionRateModelPalandriKharaka.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
@@ -141,28 +142,17 @@ auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka con
     return model;
 }
 
-auto ReactionRateModelPalandriKharaka(Vec<ReactionRateModelParamsPalandriKharaka> const& params) -> MineralReactionRateModelGenerator
+auto ReactionRateModelPalandriKharaka(Vec<ReactionRateModelParamsPalandriKharaka> const& paramsvec) -> MineralReactionRateModelGenerator
 {
-    // MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
-    // {
-    //     Vec<Fn<real(MineralReactionRateArgs)>> mechanism_fns;
-    //     for(auto const& mechanism : params.mechanisms)
-    //         mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, system));
+    MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
+    {
+        const auto idx = indexfn(paramsvec, RKT_LAMBDA(x, contains(x.names, mineral)));
+        errorif(idx >= paramsvec.size(), "Could not find a mineral with name `", mineral, "` in the provided set of Palandri-Kharaka parameters.");
+        const auto params = paramsvec[idx];
+        return ReactionRateModelPalandriKharaka(params)(mineral, system);
+    };
 
-    //     MineralReactionRateModel fn = [=](MineralReactionRateArgs args) -> Rate
-    //     {
-    //         const auto area = args.area;
-    //         real sum = 0.0;
-    //         for(auto&& mechanismfn : mechanism_fns)
-    //             sum += mechanismfn(args);
-    //         return area * sum;
-    //     };
-
-    //     return fn;
-    // };
-
-    // return model;
-    return {};
+    return model;
 }
 
 } // namespace Reaktoro
