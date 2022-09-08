@@ -31,7 +31,11 @@ endfunction()
 ReaktoroFindPackage(autodiff 0.6.12)
 ReaktoroFindPackage(Eigen3 3.3.90)
 ReaktoroFindPackage(nlohmann_json 3.6.1)
+<<<<<<< HEAD
 ReaktoroFindPackage(Optima 0.2.11)
+=======
+ReaktoroFindPackage(Optima 0.2.8)
+>>>>>>> fa1dca8b4 (Depends on Optima v0.2.8 now)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1)
 ReaktoroFindPackage(tabulate 1.4.0)
 ReaktoroFindPackage(ThermoFun 0.3.8)
