@@ -95,8 +95,24 @@ struct SmartEquilibriumSolver::Impl
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions) -> SmartEquilibriumResult
     {
-        const ArrayXd c0 = solver.componentAmounts(state);
-        return solve(state, conditions, c0);
+        tic(SOLVE_STEP)
+
+        // Reset the result of the last smart equilibrium calculation
+        result = {};
+
+        // Check input variables have all been set
+        errorifnot(conditions.inputValues().allFinite(), "Ensure all input variables have been set in the EquilibriumConditions object.");
+
+        // Perform a smart estimate of the chemical state
+        timeit( predict(state, conditions), result.timing.estimate= )
+
+        // Perform a learning step if the smart prediction is not satisfactory
+        if(!result.estimate.accepted)
+            timeit( learn(state, conditions), result.timing.learn= )
+
+        result.timing.solve = toc(SOLVE_STEP);
+
+        return result;
     }
 
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> SmartEquilibriumResult
@@ -137,90 +153,12 @@ struct SmartEquilibriumSolver::Impl
 
     //=================================================================================================================
     //
-    // CHEMICAL EQUILIBRIUM METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS
-    //
-    //=================================================================================================================
-
-    auto solve(ChemicalState& state, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        conditions.temperature(state.temperature());
-        conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
-        return solve(state, conditions, c0);
-    }
-
-    auto solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumRestrictions is currently not supported.");
-        return {};
-    }
-
-    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        tic(SOLVE_STEP)
-
-        // Absolutely ensure an exact Hessian of the Gibbs energy function is used in the calculations
-        setOptions(options);
-
-        // Reset the result of the last smart equilibrium calculation
-        result = {};
-
-        // Perform a smart estimate of the chemical state
-        timeit( predict(state, conditions, c0), result.timing.estimate= )
-
-        // Perform a learning step if the smart prediction is not satisfactory
-        if(!result.estimate.accepted)
-            timeit( learn(state, conditions, c0), result.timing.learn= )
-
-        result.timing.solve = toc(SOLVE_STEP);
-
-        return result;
-    }
-
-    auto solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumRestrictions is currently not supported.");
-        return {};
-    }
-
-    //=================================================================================================================
-    //
-    // CHEMICAL EQUILIBRIUM METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS AND SENSITIVITY CALCULATION
-    //
-    //=================================================================================================================
-
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-        return {};
-    }
-
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-        return {};
-    }
-
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-        return {};
-    }
-
-    auto solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> SmartEquilibriumResult
-    {
-        errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-        return {};
-    }
-
-    //=================================================================================================================
-    //
     // LEARN AND PREDICT METHODS
     //
     //=================================================================================================================
 
     /// Perform a learning operation in which a full chemical equilibrium calculation is performed.
-    auto learn(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> void
+    auto learn(ChemicalState& state, EquilibriumConditions const& conditions) -> void
     {
         //---------------------------------------------------------------------
         // GIBBS ENERGY MINIMIZATION CALCULATION DURING THE LEARNING PROCESS
@@ -228,7 +166,7 @@ struct SmartEquilibriumSolver::Impl
         tic(EQUILIBRIUM_STEP)
 
         // Perform a full chemical equilibrium solve with sensitivity derivatives calculation
-        result.learning.gibbs_energy_minimization = solver.solve(state, sensitivity, conditions, c0);
+        result.learning.gibbs_energy_minimization = solver.solve(state, sensitivity, conditions);
 
         result.timing.learn_gibbs_energy_minimization = toc(EQUILIBRIUM_STEP);
 
@@ -282,7 +220,7 @@ struct SmartEquilibriumSolver::Impl
     }
 
     /// Perform a prediction operation in which a chemical equilibrium state is estimated using a first-order Taylor approximation.
-    auto predict(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c) -> void
+    auto predict(ChemicalState& state, EquilibriumConditions const& conditions) -> void
     {
         // Set the estimate status to false at the beginning
         result.estimate.accepted = false;
@@ -291,43 +229,44 @@ struct SmartEquilibriumSolver::Impl
         if(database.clusters.empty())
             return;
 
-        // Auxiliary relative and absolute tolerance parameters
-        const auto reltol = options.reltol;
-
         // The current set of primary species in the chemical state
         auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
 
         // The number of primary species
         auto const numprimary = iprimary.size();
 
+        const auto wvals = conditions.inputValues();
+        const auto cvals = conditions.initialComponentAmountsGetOrCompute(state);
+
+        const auto w = wvals.cast<double>();
+        const auto c = cvals.cast<double>();
+
         // The function that checks if a record in the database pass the error test.
-        // It returns (`success`, `error`, `iprimaryspecies`), where
-        // * `success` is true if error test succeeds, false otherwise.
-        // * `error` is the first error value violating the tolerance
-        // * `iprimaryspecies` is the index of the primary species that fails the error test
-        auto pass_error_test = [&numprimary, &iprimary, &conditions, &c, &reltol](Record const& record) -> Tuple<bool, double, Index>
+        auto pass_error_test = [&](Record const& record) -> bool
         {
-            using std::abs;
-            using std::max;
+            const auto w0 = record.state.equilibrium().w();
+            const auto c0 = record.state.equilibrium().c();
+
+            const VectorXd dw = w - w0;
+            const VectorXd dc = c - c0;
 
             auto const& predictor = record.predictor;
 
-            double error = 0.0;
+            auto error = 0.0;
             for(auto i = 1; i <= numprimary; ++i)
             {
                 const auto ispecies = iprimary[numprimary - i];
 
-                const auto mu0 = predictor.referenceSpeciesChemicalPotential(ispecies);
-                const auto mu1 = predictor.predictSpeciesChemicalPotential(ispecies, conditions, c);
+                const auto mu0 = predictor.speciesChemicalPotentialReference(ispecies);
+                const auto mu1 = predictor.speciesChemicalPotentialPredicted(ispecies, dw, dc);
 
-                const auto delta_mu = (mu0 - mu1)/mu0;
+                using std::abs;
 
-                error = max(error, abs(delta_mu)); // start checking primary species with least amount first
-                if(error >= reltol)
-                    return { false, error, numprimary - i };
+                if(abs(mu1 - mu0) >= options.reltol*abs(mu0) + options.abstol)
+                    return false;
             }
 
-            return { true, error, -1 };
+            return true;
         };
 
         // Generate the hash number for the indices of primary species in the state
@@ -378,7 +317,7 @@ struct SmartEquilibriumSolver::Impl
                 tic(ERROR_CONTROL_STEP)
 
                 // Check if the current record passes the error test
-                const auto [success, error, iprimaryspecies] = pass_error_test(record);
+                const auto success = pass_error_test(record);
 
                 result.timing.estimate_error_control += toc(ERROR_CONTROL_STEP);
 
@@ -393,7 +332,7 @@ struct SmartEquilibriumSolver::Impl
 
                     auto const& predictor = record.predictor;
 
-                    predictor.predict(state, conditions, c);
+                    predictor.predict(state, conditions);
 
                     result.timing.estimate_taylor = toc(TAYLOR_STEP);
 
@@ -518,52 +457,6 @@ auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity&
 }
 
 auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> SmartEquilibriumResult
-{
-    errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-    return {};
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    return pimpl->solve(state, c0);
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumRestrictions is currently not supported.");
-    return {};
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    return pimpl->solve(state, conditions, c0);
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumRestrictions is currently not supported.");
-    return {};
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-    return {};
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-    return {};
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
-{
-    errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
-    return {};
-}
-
-auto SmartEquilibriumSolver::solve(ChemicalState& state, EquilibriumSensitivity& sensitivity, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef const& c0) -> SmartEquilibriumResult
 {
     errorif(true, "SmartEquilibriumSolver::solve methods with given EquilibriumSensitivity is currently not supported.");
     return {};
