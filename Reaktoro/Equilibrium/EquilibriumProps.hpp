@@ -25,6 +25,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
+class ChemicalState;
 class EquilibriumSpecs;
 
 /// The class that computes chemical properties of a system during equilibrium calculations.
@@ -78,6 +79,9 @@ public:
     /// respect to *(n, p, w)* to indicate the end of the full Jacobian matrix
     /// construction.
     auto assembleFullJacobianEnd() -> void;
+
+    /// Return the underlying chemical state of the system and its updated properties.
+    auto chemicalState() const -> const ChemicalState&;
 
     /// Return the underlying chemical properties of the system.
     auto chemicalProps() const -> const ChemicalProps&;
