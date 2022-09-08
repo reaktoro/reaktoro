@@ -19,15 +19,17 @@
 
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumHessian.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumProblem.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumReactions.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumPredictor.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 
 /// @defgroup Equilibrium Equilibrium
 /// The module in Reaktoro in which classes and methods for chemical equilibrium calculations are implemented.
