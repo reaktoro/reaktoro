@@ -24,6 +24,7 @@ using yaml = YAML::Node;
 using json = nlohmann::json;
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 
 namespace Reaktoro {
@@ -34,6 +35,22 @@ namespace {
 /// @param[out] result The number in `str` as a double value if it is indeed a number.
 bool isFloat(String const& str, double& result)
 {
+    if(oneof(str, ".nan", ".NaN", ".NAN"))
+    {
+        result = std::numeric_limits<double>::quiet_NaN();
+        return true;
+    }
+    if(oneof(str, ".inf", ".Inf", ".INF", "+.inf", "+.Inf", "+.INF"))
+    {
+        result = std::numeric_limits<double>::infinity();
+        return true;
+    }
+    if(oneof(str, "-.inf", "-.Inf", "-.INF"))
+    {
+        result = -std::numeric_limits<double>::infinity();
+        return true;
+    }
+
     char* end;
     result = std::strtod(str.c_str(), &end);
     if(end == str.c_str() || *end != '\0')
