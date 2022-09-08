@@ -210,6 +210,30 @@ public:
 
     //=================================================================================================
     //
+    // STATIC METHODS TO CREATE PREDEFINED CHEMICAL EQUILIBRIUM SPECIFICATIONS
+    //
+    //=================================================================================================
+
+    /// Return specifications for a chemical equilbrium problem with given *temperature (T)* and *pressure (P)*.
+    static auto TP(ChemicalSystem const& system) -> EquilibriumSpecs;
+
+    /// Return specifications for a chemical equilbrium problem with given *enthalpy (H)* and *pressure (P)*.
+    static auto HP(ChemicalSystem const& system) -> EquilibriumSpecs;
+
+    /// Return specifications for a chemical equilbrium problem with given *temperature (T)* and *volume (V)*.
+    static auto TV(ChemicalSystem const& system) -> EquilibriumSpecs;
+
+    /// Return specifications for a chemical equilbrium problem with given *internal (U) energy* and *volume (V)*.
+    static auto UV(ChemicalSystem const& system) -> EquilibriumSpecs;
+
+    /// Return specifications for a chemical equilbrium problem with given *entropy (S)* and *pressure (P)*.
+    static auto SP(ChemicalSystem const& system) -> EquilibriumSpecs;
+
+    /// Return specifications for a chemical equilbrium problem with given *entropy (S)* and *volume (V)*.
+    static auto SV(ChemicalSystem const& system) -> EquilibriumSpecs;
+
+    //=================================================================================================
+    //
     // METHODS TO SPECIFY THERMODYNAMIC CONSTRAINTS
     //
     //=================================================================================================
