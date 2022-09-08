@@ -1017,7 +1017,7 @@ auto EquilibriumSpecs::isSurfaceAreaUnknown(StringOrIndex const& surface) const 
     return containsfn(pvars, RKT_LAMBDA(x, x.name == id));
 }
 
-auto EquilibriumSpecs::indexTemperatureAmongInputVariablesW() const -> Index
+auto EquilibriumSpecs::indexTemperatureAmongInputVariables() const -> Index
 {
     auto k = index(m_inputs, "T");
     return k < m_inputs.size() ? k : Index(-1);
@@ -1029,7 +1029,7 @@ auto EquilibriumSpecs::indexTemperatureAmongControlVariablesP() const -> Index
     return k < pvars.size() ? k : Index(-1);
 }
 
-auto EquilibriumSpecs::indexPressureAmongInputVariablesW() const -> Index
+auto EquilibriumSpecs::indexPressureAmongInputVariables() const -> Index
 {
     auto k = index(m_inputs, "P");
     return k < m_inputs.size() ? k : Index(-1);
@@ -1041,7 +1041,7 @@ auto EquilibriumSpecs::indexPressureAmongControlVariablesP() const -> Index
     return k < pvars.size() ? k : Index(-1);
 }
 
-auto EquilibriumSpecs::indicesSurfaceAreasAmongInputVariablesW() const -> Indices
+auto EquilibriumSpecs::indicesSurfaceAreasAmongInputVariables() const -> Indices
 {
     Indices indices;
     for(auto const& surface : system().surfaces())
@@ -1088,17 +1088,17 @@ auto EquilibriumSpecs::indicesSurfaceAreasUnknown() const -> Indices
     return indices;
 }
 
-auto EquilibriumSpecs::indexInputVariable(String const& name) -> Index
+auto EquilibriumSpecs::indexInputVariable(String const& name) const -> Index
 {
     return index(m_inputs, name);
 }
 
-auto EquilibriumSpecs::indexControlVariableP(String const& name) -> Index
+auto EquilibriumSpecs::indexControlVariableP(String const& name) const -> Index
 {
     return indexfn(pvars, RKT_LAMBDA(x, x.name == name));
 }
 
-auto EquilibriumSpecs::indexControlVariableQ(String const& name) -> Index
+auto EquilibriumSpecs::indexControlVariableQ(String const& name) const -> Index
 {
     return indexfn(qvars, RKT_LAMBDA(x, x.name == name));
 }
