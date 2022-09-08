@@ -97,7 +97,7 @@ struct EquilibriumSetup::Impl
     const ChemicalSystem system;            ///< The chemical system associated with this equilibrium problem.
     const EquilibriumSpecs specs;           ///< The equilibrium specifications associated with this equilibrium problem.
     const EquilibriumDims dims;             ///< The dimensions of the variables in the equilibrium problem.
-    const ConstraintEquations econstraints; ///< The system of equation constraints in the equilibrium problem.
+    const EquationConstraints econstraints; ///< The system of equation constraints in the equilibrium problem.
     const MatrixXd Aex;                     ///< The coefficient matrix Aex in the optimization problem.
     const MatrixXd Aep;                     ///< The coefficient matrix Aep in the optimization problem.
     EquilibriumProps props;                 ///< The auxiliary chemical properties of the system.

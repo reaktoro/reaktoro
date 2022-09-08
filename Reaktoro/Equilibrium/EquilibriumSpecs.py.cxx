@@ -48,10 +48,10 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &EquationConstraint::fn)
         ;
 
-    py::class_<ConstraintEquations>(m, "ConstraintEquations")
+    py::class_<EquationConstraints>(m, "EquationConstraints")
         .def(py::init<>())
-        .def_readwrite("ids", &ConstraintEquations::ids)
-        .def_readwrite("fn", &ConstraintEquations::fn)
+        .def_readwrite("ids", &EquationConstraints::ids)
+        .def_readwrite("fn", &EquationConstraints::fn)
         ;
 
     py::class_<ReactivityConstraint>(m, "ReactivityConstraint")
