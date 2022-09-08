@@ -263,6 +263,19 @@ private:
     ActivityModelGenerator ideal_activity_model;
 };
 
+template <typename T, typename... Ts>
+constexpr auto _areGenericPhasesImpl()
+{
+    constexpr auto aux = isBaseOf<GenericPhase, T> || isBaseOf<GenericPhasesGenerator, T>;
+    if constexpr (sizeof...(Ts))
+        return aux && _areGenericPhasesImpl<Ts...>();
+    else return aux;
+}
+
+/// Used to determine if `T` and all types in `Ts` are either GenericPhase or GenericPhaseGenerator.
+template<typename T, typename... Ts>
+constexpr auto areGenericPhases = _areGenericPhasesImpl<T, Ts...>();
+
 /// The class used to define the phases that will constitute the chemical system of interest.
 /// @ingroup Core
 class Phases
