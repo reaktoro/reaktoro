@@ -18,60 +18,27 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Rate.hpp>
-#include <Reaktoro/Core/Reaction.hpp>
 
 namespace Reaktoro {
 
-/// The type of functions that calculate reaction rates.
-using ReactionRateModel = Model<Rate(ChemicalState const&)>;
+// Forward declarations
+class ChemicalState;
+class ChemicalSystem;
+class Reaction;
+
+/// The type of functions for calculation of reaction rates (in mol/s).
+/// @param state The state of the chemical system
+/// @return The rate of the reaction (in mol/s)
+/// @see Reaction
+/// @ingroup Core
+using ReactionRateModel = Model<Rate(ChemicalState const& state)>;
 
 /// The type of functions that construct a ReactionRateModel for a reaction.
 /// @param reaction The reaction for which the reaction rate model is constructed.
-/// @param phases The phases and their constituent species that form the chemical system.
-using ReactionRateModelGenerator = Fn<ReactionRateModel(Reaction const& reaction, PhaseList const& phases)>;
-
-} // namespace Reaktoro
-
-//=========================================================================
-// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING CHEMICALPROPS
-//=========================================================================
-
-namespace Reaktoro {
-
-template<typename T>
-struct MemoizationTraits;
-
-/// Specialize MemoizationTraits for ChemicalState.
-template<>
-struct MemoizationTraits<ChemicalState>
-{
-    using Type = ChemicalState;
-
-    /// The type used instead to cache a ChemicalState object.
-    using CacheType = Tuple<real, real, ArrayXr, ArrayXr>;
-
-    static auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
-    {
-        auto const& [T, P, n, S] = a;
-        return
-            T == b.temperature() &&
-            P == b.pressure() &&
-            (n == b.speciesAmounts()).all() &&
-            (S == b.surfaceAreas()).all();
-    }
-
-    static auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
-    {
-        auto& [T, P, n, S] = a;
-        T = b.temperature();
-        P = b.pressure();
-        n = b.speciesAmounts();
-        S = b.surfaceAreas();
-    }
-};
+/// @param system The chemical system in which the reactions happen.
+/// @ingroup Core
+using ReactionRateModelGenerator = Fn<ReactionRateModel(Reaction const& reaction, ChemicalSystem const& system)>;
 
 } // namespace Reaktoro
