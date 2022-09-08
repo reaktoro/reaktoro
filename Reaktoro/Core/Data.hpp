@@ -261,6 +261,12 @@ REAKTORO_DATA_DECODE_DECLARE(Chars);
 REAKTORO_DATA_ENCODE_DECLARE(String);
 REAKTORO_DATA_DECODE_DECLARE(String);
 
+REAKTORO_DATA_ENCODE_DECLARE(Param);
+REAKTORO_DATA_DECODE_DECLARE(Param);
+
+REAKTORO_DATA_ENCODE_DECLARE(real);
+REAKTORO_DATA_DECODE_DECLARE(real);
+
 REAKTORO_DATA_ENCODE_DECLARE(Vec<T>, typename T);
 REAKTORO_DATA_DECODE_DECLARE(Vec<T>, typename T);
 
@@ -273,10 +279,63 @@ REAKTORO_DATA_DECODE_DECLARE(Pair<A REAKTORO_COMMA B>, typename A, typename B);
 REAKTORO_DATA_ENCODE_DECLARE(Map<K REAKTORO_COMMA T>, typename K, typename T);
 REAKTORO_DATA_DECODE_DECLARE(Map<K REAKTORO_COMMA T>, typename K, typename T);
 
-REAKTORO_DATA_ENCODE_DECLARE(Param);
-REAKTORO_DATA_DECODE_DECLARE(Param);
+template<typename T>
+REAKTORO_DATA_ENCODE_DEFINE(Vec<T>, typename T)
+{
+    for(auto const& x : obj)
+        data.add(x);
+}
 
-REAKTORO_DATA_ENCODE_DECLARE(real);
-REAKTORO_DATA_DECODE_DECLARE(real);
+template<typename T>
+REAKTORO_DATA_DECODE_DEFINE(Vec<T>, typename T)
+{
+    for(auto const& x : data.asList())
+        obj.push_back(x);
+}
+
+template<typename T, std::size_t N>
+REAKTORO_DATA_ENCODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N)
+{
+    for(auto const& x : obj)
+        data.add(x);
+}
+
+template<typename T, std::size_t N>
+REAKTORO_DATA_DECODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N)
+{
+    auto i = 0;
+    for(auto const& x : data.asList())
+        obj[i++] = x;
+}
+
+template<typename A, typename B>
+REAKTORO_DATA_ENCODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
+{
+    data.add(obj.first);
+    data.add(obj.second);
+}
+
+template<typename A, typename B>
+REAKTORO_DATA_DECODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
+{
+    auto const& l = data.asList();
+    errorif(l.size() != 2, "Converting from Data to Pair requires the Data object to be a list with two entries.");
+    obj.first = l[0];
+    obj.second = l[1];
+}
+
+template<typename K, typename T>
+REAKTORO_DATA_ENCODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
+{
+    for(auto const& [k, v] : obj)
+        data.add(k, v);
+}
+
+template<typename K, typename T>
+REAKTORO_DATA_DECODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
+{
+    for(auto const& [k, v] : data.asDict())
+        obj[k] = v;
+}
 
 } // namespace Reaktoro
