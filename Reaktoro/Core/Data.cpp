@@ -240,10 +240,10 @@ auto Data::asParam() const -> Param const&
     return std::any_cast<Param const&>(tree);
 }
 
-auto Data::asDict() const -> Map<String, Data> const&
+auto Data::asDict() const -> Dict<String, Data> const&
 {
     errorif(!isDict(), "Cannot convert this Data object to a dictionary object.");
-    return std::any_cast<Map<String, Data> const&>(tree);
+    return std::any_cast<Dict<String, Data> const&>(tree);
 }
 
 auto Data::asList() const -> Vec<Data> const&
@@ -284,7 +284,7 @@ auto Data::isParam() const -> bool
 
 auto Data::isDict() const -> bool
 {
-    return std::any_cast<Map<String, Data>>(&tree);
+    return std::any_cast<Dict<String, Data>>(&tree);
 }
 
 auto Data::isList() const -> bool
@@ -334,7 +334,7 @@ auto Data::at(Index const& index) const -> Data const&
 
 auto Data::at(String const& key) -> Data&
 {
-    auto& obj = std::any_cast<Map<String, Data>&>(tree);
+    auto& obj = std::any_cast<Dict<String, Data>&>(tree);
     return obj[key];
 }
 
@@ -368,8 +368,8 @@ auto Data::add(Data const& data) -> Data&
 auto Data::add(Chars key, Data const& data) -> Data&
 {
     if(!isDict())
-        tree = Map<String, Data>();
-    auto& dict = std::any_cast<Map<String, Data>&>(tree);
+        tree = Dict<String, Data>();
+    auto& dict = std::any_cast<Dict<String, Data>&>(tree);
     dict[key] = data;
     return dict[key];
 }
