@@ -17,4 +17,9 @@
 
 #pragma once
 
+#include <Reaktoro/Utils/AqueousProps.hpp>
+#include <Reaktoro/Utils/IonExchangeProps.hpp>
 #include <Reaktoro/Utils/Material.hpp>
+
+/// @defgroup Utils Utils
+/// The module in Reaktoro in which utility classes and methods are defined.
