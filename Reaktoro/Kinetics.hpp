@@ -21,6 +21,9 @@
 #include <Reaktoro/Kinetics/KineticsResult.hpp>
 #include <Reaktoro/Kinetics/KineticsSensitivity.hpp>
 #include <Reaktoro/Kinetics/KineticsSolver.hpp>
+#include <Reaktoro/Kinetics/SmartKineticsOptions.hpp>
+#include <Reaktoro/Kinetics/SmartKineticsResult.hpp>
+#include <Reaktoro/Kinetics/SmartKineticsSolver.hpp>
 
 /// @defgroup Kinetics Kinetics
 /// The module in Reaktoro in which classes and methods for chemical kinetics calculations are implemented.
