@@ -90,6 +90,21 @@ TEST_CASE("Testing ReactionEquation class", "[ReactionEquation]")
     REQUIRE( equation.coefficient("Fe++")       ==  0.0 );
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: operator String() const
+    //-------------------------------------------------------------------------
+    equation = ReactionEquation("H2O = H+ + OH-");
+    CHECK( String(equation) == "H2O = H+ + OH-");
+
+    equation = ReactionEquation("CaCl2 = Ca++ + 2*Cl-");
+    CHECK( String(equation) == "CaCl2 = Ca++ + 2*Cl-");
+
+    equation = ReactionEquation("Ca++ + Mg++ + 2*HCO3- = CaMg(CO3)2 + 2*H+");
+    CHECK( String(equation) == "Ca++ + Mg++ + 2*HCO3- = CaMg(CO3)2 + 2*H+");
+
+    equation = ReactionEquation("CaMg(CO3)2");
+    CHECK( String(equation) == "CaMg(CO3)2");
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: operator==(ReactionEquation,ReactionEquation)
     //-------------------------------------------------------------------------
     REQUIRE( ReactionEquation("H2O = H+ + OH-") == ReactionEquation("1*H2O = 1*H+ + 1*OH-") );

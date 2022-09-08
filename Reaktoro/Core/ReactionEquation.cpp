@@ -70,13 +70,15 @@ auto ReactionEquation::coefficient(const String& name) const -> double
 
 ReactionEquation::operator String() const
 {
-    auto coeffstr = [](double x) { return (x == 1.0) ? "" : std::to_string(x) + "*"; };
+    auto coeffstr = [](double x) { return (x == 1.0) ? "" : str(x) + "*"; };
     String str;
     for(auto [x, y] : m_species) if(y < 0.0) str += coeffstr(-y) + x.name() + " + ";
     str = str.substr(0, str.size() - 3); // remove the leading string " + "
-    str += "= ";
-    for(auto [x, y] : m_species) if(y > 0.0) str += coeffstr(y) + x.name() + " ";
+    str += " = ";
+    for(auto [x, y] : m_species) if(y > 0.0) str += coeffstr(y) + x.name() + " + ";
     str = str.substr(0, str.size() - 3); // remove the leading string " + "
+    if(str.substr(str.size() - 3, 3) == " = ") // check if leading string is " = ", which happens when the reaction has no explicit products (e.g., mineral-aqueous reaction when all aqueous species are in equilibrium)
+        str = str.substr(0, str.size() - 3); // remove the leading string " = "
     return str;
 }
 
