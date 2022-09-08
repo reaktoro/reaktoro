@@ -22,10 +22,15 @@
 
 namespace Reaktoro {
 
-/// The options for kinetic calculations
+/// The options for chemical kinetics calculation.
 struct KineticsOptions : EquilibriumOptions
 {
+    /// Construct a default KineticsOptions object.
+    KineticsOptions() = default;
 
+    /// Construct a  KineticsOptions object from a EquilibriumOptions one.
+    KineticsOptions(EquilibriumOptions const& other)
+    : EquilibriumOptions(other) {}
 };
 
 } // namespace Reaktoro
