@@ -109,7 +109,7 @@ auto error(bool condition, Args... items) -> void
         throw std::runtime_error(Reaktoro::str("\033[1;31m***ERROR*** ", Reaktoro::str(items...), "\n\033[0m"));
 }
 
-/// Define a macro to print a warning messageif condition is true.
+/// Define a macro to print a warning message if condition is true.
 /// @warning Note the use of ... and __VA_ARGS__ in the implementation.
 /// @warning The use of `#define macro(args...) function(args)` causes error in
 /// @warning MSVC compilers if compiler option `/Zc:preprocessor` (available in Visual
@@ -118,6 +118,15 @@ auto error(bool condition, Args... items) -> void
 #define warningif(condition, ...) \
     { \
         if((condition)) { \
+            std::cerr << "\033[1;33m***WARNING***\n" << Reaktoro::str(__VA_ARGS__) << "\n\033[0m"; \
+        } \
+    }
+
+/// Define a macro to print a warning message if an expected condition is not true.
+/// @ingroup Common
+#define warningifnot(condition, ...) \
+    { \
+        if(!(condition)) { \
             std::cerr << "\033[1;33m***WARNING***\n" << Reaktoro::str(__VA_ARGS__) << "\n\033[0m"; \
         } \
     }
@@ -131,6 +140,15 @@ auto error(bool condition, Args... items) -> void
 #define errorif(condition, ...) \
     { \
         if((condition)) { \
+            throw std::runtime_error(Reaktoro::str("\033[1;31m***ERROR***\n", Reaktoro::str(__VA_ARGS__), "\n\033[0m")); \
+        } \
+    }
+
+/// Define a macro to raise a runtime exception if an expected condition is not true.
+/// @ingroup Common
+#define errorifnot(condition, ...) \
+    { \
+        if(!(condition)) { \
             throw std::runtime_error(Reaktoro::str("\033[1;31m***ERROR***\n", Reaktoro::str(__VA_ARGS__), "\n\033[0m")); \
         } \
     }
