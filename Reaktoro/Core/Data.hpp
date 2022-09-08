@@ -183,13 +183,10 @@ public:
     auto with(String const& attribute, String const& value) const -> Data const&;
 
     /// Add a Data object to this Data object, which becomes a list if not already.
-    auto add(Data const& data) -> Data&;
+    auto add(Data data) -> void;
 
     /// Add a Data object with given key to this Data object, which becomes a dictionary if not already.
-    auto add(Chars key, Data const& data) -> Data&;
-
-    /// Add a Data object with given key to this Data object, which becomes a dictionary if not already.
-    auto add(String const& key, Data const& data) -> Data&;
+    auto add(String const& key, Data data) -> void;
 
     /// Reset this Data object to a null state, deleting its current stored data.
     auto reset() -> void;

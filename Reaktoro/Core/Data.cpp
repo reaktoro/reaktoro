@@ -486,29 +486,23 @@ auto Data::with(String const& attribute, String const& value) const -> Data cons
     return *this;
 }
 
-auto Data::add(Data const& value) -> Data&
+auto Data::add(Data value) -> void
 {
     if(isNull())
         tree = Vec<Data>();
     errorif(!isList(), "Method Data::add(value) can only be used when the Data object is a list or null.");
     auto& list = std::any_cast<Vec<Data>&>(tree);
-    list.push_back(value);
-    return list.back();
+    list.push_back(std::move(value));
 }
 
-auto Data::add(Chars key, Data const& data) -> Data&
+auto Data::add(String const& key, Data value) -> void
 {
     if(isNull())
         tree = Dict<String, Data>();
     errorif(!isDict(), "Method Data::add(key, value) can only be used when the Data object is a dictionary or null.");
     auto& dict = std::any_cast<Dict<String, Data>&>(tree);
-    dict[key] = data;
-    return dict[key];
-}
-
-auto Data::add(String const& key, Data const& data) -> Data&
-{
-    return add(key.c_str(), data);
+    auto res = dict.emplace(key, std::move(value));
+    errorif(!res.second, "It was not possible to insert key-data pair with key `", key, "` in the Data object.");
 }
 
 auto Data::reset() -> void
