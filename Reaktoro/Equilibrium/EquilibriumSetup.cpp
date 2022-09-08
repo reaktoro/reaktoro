@@ -36,46 +36,18 @@ namespace Reaktoro {
 namespace {
 
 /// Assemble the coefficient matrix `Aex` in optimization problem.
-auto assembleMatrixAex(EquilibriumSpecs const& specs, EquilibriumDims const& dims, ReactivityConstraints const& rconstraints) -> MatrixXd
+auto assembleMatrixAex(EquilibriumSpecs const& specs) -> MatrixXd
 {
-    MatrixXd Aex = zeros(dims.Nc, dims.Nx);
-
-    auto Wn = Aex.topLeftCorner(dims.Nb, dims.Nn);    // the formula matrix of the species with respect to elements and charge
-    auto Wq = Aex.topRightCorner(dims.Nb, dims.Nq);   // the formula matrix of the implicit titrants with respect to elements and charge
-    auto Kn = Aex.bottomLeftCorner(dims.Nr, dims.Nn); // the coefficient matrix of the reactivity constraints with respect to the species amount variables
-
-    auto const& elements = specs.system().elements();
-
-    Wn = specs.system().formulaMatrix();
-
-    for(auto [i, formula] : enumerate(specs.titrantsImplicit()))
-        Wq.col(i) = detail::assembleFormulaVector(formula, elements);
-
-    if(rconstraints.Kn.size())
-        Kn = rconstraints.Kn;
-
+    EquilibriumDims dims(specs);
+    MatrixXd Aex(dims.Nc, dims.Nx);
+    Aex << specs.assembleConservationMatrixN(), specs.assembleConservationMatrixQ();
     return Aex;
 }
 
 /// Assemble the coefficient matrix `Aep` in optimization problem.
-auto assembleMatrixAep(EquilibriumSpecs const& specs, EquilibriumDims const& dims, ReactivityConstraints const& rconstraints) -> MatrixXd
+auto assembleMatrixAep(EquilibriumSpecs const& specs) -> MatrixXd
 {
-    MatrixXd Aep = zeros(dims.Nc, dims.Np);
-
-    auto Wp = Aep.topRows(dims.Nb);    // the formula matrix of the p variables with respect to elements and charge (e.g., temperature, pressure, custom variables, and explicit titrants)
-    auto Kp = Aep.bottomRows(dims.Nr); // the coefficient matrix of the reactivity constraints with respect to the p control variables
-
-    auto const& elements = specs.system().elements();
-
-    auto offset = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P variables in p (if applicable, if they are unknown), since these columns are zeros
-
-    for(auto [i, formula] : enumerate(specs.titrantsExplicit()))
-        Wp.col(i + offset) = detail::assembleFormulaVector(formula, elements);
-
-    if(rconstraints.Kp.size())
-        Kp = rconstraints.Kp;
-
-    return Aep;
+    return specs.assembleConservationMatrixP();
 }
 
 } // namespace
@@ -129,10 +101,10 @@ struct EquilibriumSetup::Impl
     : system(specs.system()),
       specs(specs),
       dims(specs),
-      econstraints(specs.equationConstraints()),
-      rconstraints(specs.reactivityConstraints()),
-      Aex(assembleMatrixAex(specs, dims, rconstraints)),
-      Aep(assembleMatrixAep(specs, dims, rconstraints)),
+      econstraints(specs.assembleEquationConstraints()),
+      rconstraints(specs.assembleReactivityConstraints()),
+      Aex(assembleMatrixAex(specs)),
+      Aep(assembleMatrixAep(specs)),
       props(specs),
       Nc(dims.Nc),
       Ne(dims.Ne),
