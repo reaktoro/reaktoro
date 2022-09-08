@@ -73,7 +73,7 @@ struct ChemicalState::Impl
         s.setZero(system.surfaces().size());
     }
 
-    auto temperature(real val) -> void
+    auto temperature(real const& val) -> void
     {
         errorif(val <= 0.0, "Expecting a non-positive temperature value, but got ", val, " K.");
         T = val;
@@ -84,7 +84,7 @@ struct ChemicalState::Impl
         temperature(units::convert(val, unit, "K"));
     }
 
-    auto pressure(real val) -> void
+    auto pressure(real const& val) -> void
     {
         errorif(val <= 0.0, "Expecting a non-positive pressure value, but got ", val, " Pa.");
         P = val;
@@ -100,24 +100,31 @@ struct ChemicalState::Impl
     // METHODS FOR SETTING THE AMOUNT OR MASS OF SPECIES
     // --------------------------------------------------------------------------------------------
 
-    auto setSpeciesAmounts(real val) -> void
+    auto setSpeciesAmounts(real const& val) -> void
     {
         errorif(val < 0.0, "It is not possible to set a negative species amount.");
         n.fill(val);
     }
 
-    auto setSpeciesAmounts(ArrayXrConstRef values) -> void
+    auto setSpeciesAmounts(ArrayXrConstRef const& values) -> void
     {
         assert(n.size() == values.size());
         assert((values >= 0.0).all());
         n = values;
     }
 
-    auto setSpeciesAmounts(ArrayXdConstRef values) -> void
+    auto setSpeciesAmounts(ArrayXdConstRef const& values) -> void
     {
         assert(n.size() == values.size());
         assert((values >= 0.0).all());
         n = values;
+    }
+
+    auto setSpeciesAmount(Index ispecies, real const& amount) -> void
+    {
+        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " mol.");
+        errorif(ispecies >= system.species().size(), "Given species index ", ispecies, " is greater than number of species, `", system.species().size(), ".");
+        n[ispecies] = amount;
     }
 
     auto setSpeciesAmount(StringOrIndex const& species, real amount, Chars unit) -> void
@@ -410,7 +417,7 @@ auto ChemicalState::operator=(ChemicalState other) -> ChemicalState&
 // METHODS FOR SETTING/GETTING TEMPERATURE
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::setTemperature(real value) -> void
+auto ChemicalState::setTemperature(real const& value) -> void
 {
     pimpl->temperature(value);
 }
@@ -420,7 +427,7 @@ auto ChemicalState::setTemperature(real value, Chars unit) -> void
     pimpl->temperature(value, unit);
 }
 
-auto ChemicalState::temperature(real value) -> void
+auto ChemicalState::temperature(real const& value) -> void
 {
     pimpl->temperature(value);
 }
@@ -439,7 +446,7 @@ auto ChemicalState::temperature() const -> real
 // METHODS FOR SETTING/GETTING PRESSURE
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::setPressure(real value) -> void
+auto ChemicalState::setPressure(real const& value) -> void
 {
     pimpl->pressure(value);
 }
@@ -449,7 +456,7 @@ auto ChemicalState::setPressure(real value, Chars unit) -> void
     pimpl->pressure(value, unit);
 }
 
-auto ChemicalState::pressure(real value) -> void
+auto ChemicalState::pressure(real const& value) -> void
 {
     pimpl->pressure(value);
 }
@@ -468,29 +475,24 @@ auto ChemicalState::pressure() const -> real
 // METHODS FOR SETTING THE AMOUNT OR MASS OF SPECIES
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::setSpeciesAmounts(real value) -> void
+auto ChemicalState::setSpeciesAmounts(real const& value) -> void
 {
     pimpl->setSpeciesAmounts(value);
 }
 
-auto ChemicalState::setSpeciesAmounts(ArrayXrConstRef n) -> void
+auto ChemicalState::setSpeciesAmounts(ArrayXrConstRef const& n) -> void
 {
     pimpl->setSpeciesAmounts(n);
 }
 
-auto ChemicalState::setSpeciesAmounts(ArrayXdConstRef n) -> void
+auto ChemicalState::setSpeciesAmounts(ArrayXdConstRef const& n) -> void
 {
     pimpl->setSpeciesAmounts(n);
 }
 
-auto ChemicalState::set(StringOrIndex const& species, real value, Chars unit) -> void
+auto ChemicalState::setSpeciesAmount(Index ispecies, real const& amount) -> void
 {
-    pimpl->set(species, value, unit);
-}
-
-auto ChemicalState::add(StringOrIndex const& species, real value, Chars unit) -> void
-{
-    pimpl->add(species, value, unit);
+    pimpl->setSpeciesAmount(ispecies, amount);
 }
 
 auto ChemicalState::setSpeciesAmount(StringOrIndex const& species, real amount, Chars unit) -> void
@@ -501,6 +503,16 @@ auto ChemicalState::setSpeciesAmount(StringOrIndex const& species, real amount, 
 auto ChemicalState::setSpeciesMass(StringOrIndex const& species, real mass, Chars unit) -> void
 {
     pimpl->setSpeciesMass(species, mass, unit);
+}
+
+auto ChemicalState::set(StringOrIndex const& species, real value, Chars unit) -> void
+{
+    pimpl->set(species, value, unit);
+}
+
+auto ChemicalState::add(StringOrIndex const& species, real value, Chars unit) -> void
+{
+    pimpl->add(species, value, unit);
 }
 
 // --------------------------------------------------------------------------------------------
@@ -546,17 +558,17 @@ auto ChemicalState::charge() const -> real
 // METHODS TO SCALE THE AMOUNTS OF SPECIES IN THE SYSTEM OR PART OF IT
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::scaleSpeciesAmounts(real scalar) -> void
+auto ChemicalState::scaleSpeciesAmounts(real const& scalar) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar);
 }
 
-auto ChemicalState::scaleSpeciesAmounts(real scalar, Indices const& indices) -> void
+auto ChemicalState::scaleSpeciesAmounts(real const& scalar, Indices const& indices) -> void
 {
     pimpl->scaleSpeciesAmounts(scalar, indices);
 }
 
-auto ChemicalState::scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real scalar) -> void
+auto ChemicalState::scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real const& scalar) -> void
 {
     pimpl->scaleSpeciesAmountsInPhase(phase, scalar);
 }
@@ -657,7 +669,7 @@ auto ChemicalState::surfaceAreas() const -> ArrayXrConstRef
 // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef n) -> void
+auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef const& n) -> void
 {
     setTemperature(T);
     setPressure(P);
@@ -665,7 +677,7 @@ auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef n) -> v
     props().update(T, P, n);
 }
 
-auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void
+auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void
 {
     setTemperature(T);
     setPressure(P);
@@ -674,7 +686,7 @@ auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef n, Arra
     props().update(T, P, n, s);
 }
 
-auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef n) -> void
+auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n) -> void
 {
     setTemperature(T);
     setPressure(P);
@@ -682,7 +694,7 @@ auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef n)
     props().updateIdeal(T, P, n);
 }
 
-auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void
+auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void
 {
     setTemperature(T);
     setPressure(P);
@@ -773,7 +785,7 @@ ChemicalState::Equilibrium::Equilibrium(ChemicalSystem const& system)
 : pimpl(new Impl(system))
 {}
 
-ChemicalState::Equilibrium::Equilibrium(const ChemicalState::Equilibrium& other)
+ChemicalState::Equilibrium::Equilibrium(ChemicalState::Equilibrium const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
@@ -791,23 +803,23 @@ auto ChemicalState::Equilibrium::setInputNames(Strings const& names) -> void
     pimpl->inputs = names;
 }
 
-auto ChemicalState::Equilibrium::setInputValues(ArrayXdConstRef w) -> void
+auto ChemicalState::Equilibrium::setInputValues(ArrayXdConstRef const& w) -> void
 {
     pimpl->w = w;
 }
 
-auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef c) -> void
+auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef const& c) -> void
 {
     pimpl->c = c;
 }
 
-auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef p) -> void
+auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef const& p) -> void
 {
     pimpl->p = p;
     pimpl->optstate.p = -p;
 }
 
-auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef q) -> void
+auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef const& q) -> void
 {
     const auto Nq = pimpl->optstate.x.size() - pimpl->Nn;
     pimpl->q = q;
@@ -815,7 +827,7 @@ auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef q) -> void
         pimpl->optstate.x.tail(Nq) = -q;
 }
 
-auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> void
+auto ChemicalState::Equilibrium::setOptimaState(Optima::State const& state) -> void
 {
     pimpl->optstate = state;
     const auto Nq = state.x.size() - pimpl->Nn;
@@ -912,7 +924,7 @@ auto ChemicalState::Equilibrium::c() const -> ArrayXdConstRef
     return pimpl->c;
 }
 
-auto ChemicalState::Equilibrium::optimaState() const -> const Optima::State&
+auto ChemicalState::Equilibrium::optimaState() const -> Optima::State const&
 {
     return pimpl->optstate;
 }
