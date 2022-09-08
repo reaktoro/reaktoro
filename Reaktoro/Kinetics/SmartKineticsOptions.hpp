@@ -15,24 +15,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#pragma once
 
-void exportKineticsOptions(py::module& m);
-void exportKineticsResult(py::module& m);
-void exportKineticsSensitivity(py::module& m);
-void exportKineticsSolver(py::module& m);
-void exportSmartKineticsOptions(py::module& m);
-void exportSmartKineticsResult(py::module& m);
-void exportSmartKineticsSolver(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 
-void exportKinetics(py::module& m)
+namespace Reaktoro {
+
+/// The options for smart chemical kinetics calculation.
+struct SmartKineticsOptions : SmartEquilibriumOptions
 {
-    exportKineticsOptions(m);
-    exportKineticsResult(m);
-    exportKineticsSensitivity(m);
-    exportKineticsSolver(m);
-    exportSmartKineticsOptions(m);
-    exportSmartKineticsResult(m);
-    exportSmartKineticsSolver(m);
-}
+    /// Construct a default SmartKineticsOptions object.
+    SmartKineticsOptions() = default;
+
+    /// Construct a  SmartKineticsOptions object from a SmartEquilibriumOptions one.
+    SmartKineticsOptions(SmartEquilibriumOptions const& other)
+    : SmartEquilibriumOptions(other) {}
+};
+
+} // namespace Reaktoro
