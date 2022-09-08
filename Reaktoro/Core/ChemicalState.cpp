@@ -75,24 +75,25 @@ struct ChemicalState::Impl
 
     auto temperature(real const& val) -> void
     {
-        errorif(val <= 0.0, "Expecting a non-positive temperature value, but got ", val, " K.");
+        errorif(val <= 0.0, "Expecting a positive temperature value, but got ", val, " K.");
         T = val;
     }
 
     auto temperature(real val, Chars unit) -> void
     {
+        errorif(val <= 0.0, "Expecting a positive temperature value, but got ", val, " ", unit, ".");
         temperature(units::convert(val, unit, "K"));
     }
 
     auto pressure(real const& val) -> void
     {
-        errorif(val <= 0.0, "Expecting a non-positive pressure value, but got ", val, " Pa.");
+        errorif(val <= 0.0, "Expecting a positive pressure value, but got ", val, " Pa.");
         P = val;
     }
 
     auto pressure(real val, Chars unit) -> void
     {
-        errorif(val <= 0.0, "Expecting a non-positive pressure value, but got ", val, " ", unit, ".");
+        errorif(val <= 0.0, "Expecting a positive pressure value, but got ", val, " ", unit, ".");
         pressure(units::convert(val, unit, "Pa"));
     }
 
@@ -102,21 +103,19 @@ struct ChemicalState::Impl
 
     auto setSpeciesAmounts(real const& val) -> void
     {
-        errorif(val < 0.0, "It is not possible to set a negative species amount.");
+        errorif(val < 0.0, "It is not possible to set a negative value for the species amounts.");
         n.fill(val);
     }
 
     auto setSpeciesAmounts(ArrayXrConstRef const& values) -> void
     {
-        assert(n.size() == values.size());
-        assert((values >= 0.0).all());
+        errorif(n.size() != values.size(), "Expecting given vector of species amounts to be of size ", n.size(), " but its size is ", values.size(), ".");
         n = values;
     }
 
     auto setSpeciesAmounts(ArrayXdConstRef const& values) -> void
     {
-        assert(n.size() == values.size());
-        assert((values >= 0.0).all());
+        errorif(n.size() != values.size(), "Expecting given vector of species amounts to be of size ", n.size(), " but its size is ", values.size(), ".");
         n = values;
     }
 
@@ -344,15 +343,13 @@ struct ChemicalState::Impl
 
     auto setSurfaceAreas(ArrayXdConstRef const& values) -> void
     {
-        assert(s.size() == values.size());
-        assert((values >= 0.0).all());
+        errorif(s.size() != values.size(), "Expecting given vector of surface areas to be of size ", s.size(), " but its size is ", values.size(), ".");
         s = values;
     }
 
     auto setSurfaceAreas(ArrayXrConstRef const& values) -> void
     {
-        assert(s.size() == values.size());
-        assert((values >= 0.0).all());
+        errorif(s.size() != values.size(), "Expecting given vector of surface areas to be of size ", s.size(), " but its size is ", values.size(), ".");
         s = values;
     }
 
