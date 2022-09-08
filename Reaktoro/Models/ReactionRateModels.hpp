@@ -17,18 +17,7 @@
 
 #pragma once
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Extensions.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Models.hpp>
-#include <Reaktoro/Singletons.hpp>
-#include <Reaktoro/Transport.hpp>
-#include <Reaktoro/Utils.hpp>
+/// @defgroup ReactionRateModels Reaction Rate Models
+/// @ingroup Models
+/// @brief The module in Reaktoro in which kinetic rate models for reactions are implemented.
 
-/// The namespace containing all components of the Reaktoro library.
-namespace Reaktoro {
-
-} // namespace Reaktoro

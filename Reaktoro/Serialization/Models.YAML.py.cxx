@@ -23,13 +23,13 @@
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
-#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
-#include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
-#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 using namespace Reaktoro;
 

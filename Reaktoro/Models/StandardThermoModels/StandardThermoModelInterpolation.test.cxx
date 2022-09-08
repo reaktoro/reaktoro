@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing StandardThermoModelInterpolation class", "[StandardThermoModelInterpolation]")

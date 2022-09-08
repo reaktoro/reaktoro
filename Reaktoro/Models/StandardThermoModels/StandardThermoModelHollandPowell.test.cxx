@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing StandardThermoModelHollandPowell class", "[StandardThermoModelHollandPowell]")

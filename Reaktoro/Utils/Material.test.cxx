@@ -21,7 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Extensions/Supcrt.hpp>
 #include <Reaktoro/Singletons/CriticalProps.hpp>
-#include <Reaktoro/Thermodynamics.hpp>
+#include <Reaktoro/Models/ActivityModels.hpp>
 #include <Reaktoro/Utils/Material.hpp>
 using namespace Reaktoro;
 

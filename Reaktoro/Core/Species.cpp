@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 
 namespace Reaktoro {
 namespace detail {
