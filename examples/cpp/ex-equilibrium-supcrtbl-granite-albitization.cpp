@@ -57,10 +57,13 @@ int main()
     // Define chemical system by providing database, aqueous phase, and minerals
     ChemicalSystem system(db, solution, minerals);
 
-    // Create an equilibrium solver
+    // Set options for the equilibrium solver
     EquilibriumOptions opts;
+    opts.optima.output.active = false;
 
+    // Create an equilibrium solver
     EquilibriumSolver solver(system);
+    solver.setOptions(opts);
 
     // Define temperature and pressure conditions
     double T = 25.0; // in Celsius
@@ -70,6 +73,9 @@ int main()
     ChemicalState stategranite(system);
     stategranite.temperature(T, "celsius");
     stategranite.pressure(P, "bar");
+
+    // The object used to set the initial conditions and initial amounts of components (elements and charge)
+    EquilibriumConditions conditions(system);
 
     // Initialize the amount of elements in the system
     Index E = system.elements().size();
@@ -84,13 +90,12 @@ int main()
     //    O     o   	30.125894
     //    Si    e   	11.107727
     ArrayXd bgranite(E + 1);
-    // H, O, Na, Al, Si, Cl, K
-    bgranite << 1.00e-09, 30.125894, 2.0200391, 4.2074828, 11.107727, 1.00e-09, 1.178394, 0.0;
+    bgranite << 1.00e-09, 30.125894, 2.0200391, 4.2074828, 11.107727, 1.00e-09, 1.178394, 0.0; // H, O, Na, Al, Si, Cl, K
 
     // Equilibrate the initial state with given conditions and component amounts
-    opts.optima.output.active = false;
-    solver.setOptions(opts);
-    auto res = solver.solve(stategranite, bgranite);
+    conditions.setInitialComponentAmounts(bgranite);
+    auto res = solver.solve(stategranite, conditions);
+
     std::cout << "res = " << res.optima.succeeded << std::endl;
 
     // Output the chemical state to a console
@@ -111,16 +116,15 @@ int main()
     //    O     o   	52.299035
     //    Si    e   	1.00E-09
     ArrayXd bfluid(E + 1);
-    // H, O, Na, Al, Si, Cl, K
-    bfluid << 104.59826, 52.299035, 0.98929196, 1.00e-09, 1.00e-09, 0.98929196, 1.00e-09, 0.0;
+    bfluid << 104.59826, 52.299035, 0.98929196, 1.00e-09, 1.00e-09, 0.98929196, 1.00e-09, 0.0; // H, O, Na, Al, Si, Cl, K
 
     // Equilibrate the initial state with given conditions and component amounts
-    opts.optima.output.active = false;
-    solver.setOptions(opts);
-    res = solver.solve(statefluid, bfluid);
+    conditions.setInitialComponentAmounts(bfluid);
+    res = solver.solve(statefluid, conditions);
+
     std::cout << "res = " << res.optima.succeeded << std::endl;
 
-    // Output the chemical state to a console
+    // Output the chemical state to a file
     statefluid.output("state-fluid.txt");
 
     return 0;
