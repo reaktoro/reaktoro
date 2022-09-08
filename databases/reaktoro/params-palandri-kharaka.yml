@@ -81,117 +81,117 @@ Params:
       Neutral: { lg(k): -11.20, E: 66.1 }
 - Mineral: Cordierite
   Mechanisms:
-    Acid:    { lg(k):  -3.80, E: 113.3, n(H+): 1.000 }
-    Neutral: { lg(k): -11.20, E:  28.3 }
+    Acid:      { lg(k):  -3.80, E: 113.3, n(H+): 1.000 }
+    Neutral:   { lg(k): -11.20, E:  28.3 }
 - Mineral: Tourmaline
   Mechanisms:
-    Acid:    { lg(k):  -6.50, E: 75.5, n(H+): 1.000 }
-    Neutral: { lg(k): -11.20, E: 85.0 }
+    Acid:      { lg(k):  -6.50, E: 75.5, n(H+): 1.000 }
+    Neutral:   { lg(k): -11.20, E: 85.0 }
 - Mineral: Augite
   Mechanisms:
-    Acid:    { lg(k):  -6.82, E: 78.0, n(H+): 0.700 }
-    Neutral: { lg(k): -11.97, E: 78.0 }
+    Acid:      { lg(k):  -6.82, E: 78.0, n(H+): 0.700 }
+    Neutral:   { lg(k): -11.97, E: 78.0 }
 - Mineral: Bronzite
   Mechanisms:
-    Acid:    { lg(k):  -8.30, E: 47.2, n(H+): 0.650 }
-    Neutral: { lg(k): -11.70, E: 66.1 }
+    Acid:      { lg(k):  -8.30, E: 47.2, n(H+): 0.650 }
+    Neutral:   { lg(k): -11.70, E: 66.1 }
 - Mineral: Diopside
   Mechanisms:
-    Acid:    { lg(k):  -6.36, E: 96.1, n(H+): 0.710 }
-    Neutral: { lg(k): -11.11, E: 40.6 }
+    Acid:      { lg(k):  -6.36, E: 96.1, n(H+): 0.710 }
+    Neutral:   { lg(k): -11.11, E: 40.6 }
 - Mineral: Enstatite
   Mechanisms:
-    Acid:    { lg(k):  -9.02, E: 80.0, n(H+): 0.600 }
-    Neutral: { lg(k): -12.72, E: 80.0 }
+    Acid:      { lg(k):  -9.02, E: 80.0, n(H+): 0.600 }
+    Neutral:   { lg(k): -12.72, E: 80.0 }
 - Mineral: Jadeite
   Mechanisms:
-    Acid:    { lg(k): -6.00, E: 132.2, n(H+): 0.700 }
-    Neutral: { lg(k): -9.50, E:  94.4 }
+    Acid:      { lg(k): -6.00, E: 132.2, n(H+): 0.700 }
+    Neutral:   { lg(k): -9.50, E:  94.4 }
 - Mineral: Spodumene
   Mechanisms:
-    Acid:    { lg(k): -4.60, E: 94.4, n(H+): 0.700 }
-    Neutral: { lg(k): -9.30, E: 66.1 }
+    Acid:      { lg(k): -4.60, E: 94.4, n(H+): 0.700 }
+    Neutral:   { lg(k): -9.30, E: 66.1 }
 - Mineral: Wollastonite
   Mechanisms:
-    Acid:    { lg(k): -5.37, E: 54.7, n(H+): 0.400 }
-    Neutral: { lg(k): -8.88, E: 54.7 }
+    Acid:      { lg(k): -5.37, E: 54.7, n(H+): 0.400 }
+    Neutral:   { lg(k): -8.88, E: 54.7 }
 - Mineral: Anthophyllite
   Mechanisms:
-    Acid:    { lg(k): -11.94, E: 51.0, n(H+): 0.440 }
-    Neutral: { lg(k): -14.24, E: 51.0 }
+    Acid:      { lg(k): -11.94, E: 51.0, n(H+): 0.440 }
+    Neutral:   { lg(k): -14.24, E: 51.0 }
 - Mineral: Glaucophane
   Mechanisms:
-    Acid:    { lg(k):  -5.60, E: 85.0, n(H+): 0.700 }
-    Neutral: { lg(k): -10.10, E: 94.4 }
+    Acid:      { lg(k):  -5.60, E: 85.0, n(H+): 0.700 }
+    Neutral:   { lg(k): -10.10, E: 94.4 }
 - Mineral: Hornblende
   Mechanisms:
-    Acid:    { lg(k):  -7.00, E: 75.5, n(H+): 0.600 }
-    Neutral: { lg(k): -10.30, E: 94.4 }
+    Acid:      { lg(k):  -7.00, E: 75.5, n(H+): 0.600 }
+    Neutral:   { lg(k): -10.30, E: 94.4 }
 - Mineral: Riebeckite
   Mechanisms:
-    Acid:    { lg(k):  -7.70, E: 56.6, n(H+): 0.700 }
-    Neutral: { lg(k): -12.20, E: 47.2 }
+    Acid:      { lg(k):  -7.70, E: 56.6, n(H+): 0.700 }
+    Neutral:   { lg(k): -12.20, E: 47.2 }
 - Mineral: Tremolite
   Mechanisms:
-    Acid:    { lg(k):  -8.40, E: 18.9, n(H+): 0.700 }
-    Neutral: { lg(k): -10.60, E: 94.4 }
+    Acid:      { lg(k):  -8.40, E: 18.9, n(H+): 0.700 }
+    Neutral:   { lg(k): -10.60, E: 94.4 }
 - Mineral: Biotite
   Mechanisms:
-    Acid:    { lg(k):  -9.84, E: 22.0, n(H+): 0.525 }
-    Neutral: { lg(k): -12.55, E: 22.0}
+    Acid:      { lg(k):  -9.84, E: 22.0, n(H+): 0.525 }
+    Neutral:   { lg(k): -12.55, E: 22.0}
 - Mineral: Glauconite
   Mechanisms:
-    Acid:    { lg(k): -4.80, E: 85.0, n(H+): 0.700 }
-    Neutral: { lg(k): -9.10, E: 85.0}
+    Acid:      { lg(k): -4.80, E: 85.0, n(H+): 0.700 }
+    Neutral:   { lg(k): -9.10, E: 85.0}
 - Mineral: Muscovite
   Mechanisms:
-    Acid:    { lg(k): -11.85, E: 22.0, n(H+):  0.370 }
-    Neutral: { lg(k): -13.55, E: 22.0}
-    Base:    { lg(k): -14.55, E: 22.0, n(H+): -0.220}
+    Acid:      { lg(k): -11.85, E: 22.0, n(H+):  0.370 }
+    Neutral:   { lg(k): -13.55, E: 22.0}
+    Base:      { lg(k): -14.55, E: 22.0, n(H+): -0.220}
 - Mineral: Paragonite
   Mechanisms:
-    Neutral: { lg(k): -13.00, E: 22.0 }
+    Neutral:   { lg(k): -13.00, E: 22.0 }
 - Mineral: Phlogopite
   Mechanisms:
-    Neutral: { lg(k): -12.40, E: 29.0 }
+    Neutral:   { lg(k): -12.40, E: 29.0 }
 - Mineral: Pyrophyllite
   Mechanisms:
-    Neutral: { lg(k): -12.40, E: 29.0 }
+    Neutral:   { lg(k): -12.40, E: 29.0 }
 - Mineral: Kaolinite
   Mechanisms:
-    Acid:    { lg(k): -11.31, E: 65.9, n(H+):  0.777 }
-    Neutral: { lg(k): -13.18, E: 22.2 }
-    Base:    { lg(k): -17.05, E: 17.9, n(H+): -0.472 }
+    Acid:      { lg(k): -11.31, E: 65.9, n(H+):  0.777 }
+    Neutral:   { lg(k): -13.18, E: 22.2 }
+    Base:      { lg(k): -17.05, E: 17.9, n(H+): -0.472 }
 - Mineral: Montmorillonite
   Mechanisms:
-    Acid:    { lg(k): -12.71, E: 48.0, n(H+):  0.220 }
-    Neutral: { lg(k): -14.41, E: 48.0 }
-    Base:    { lg(k): -14.41, E: 48.0, n(H+): -0.130 }
+    Acid:      { lg(k): -12.71, E: 48.0, n(H+):  0.220 }
+    Neutral:   { lg(k): -14.41, E: 48.0 }
+    Base:      { lg(k): -14.41, E: 48.0, n(H+): -0.130 }
 - Mineral: Smecite
   Mechanisms:
-    Acid:    { lg(k): -10.98, E: 23.6, n(H+):  0.340 }
-    Neutral: { lg(k): -12.78, E: 35.0 }
-    Base:    { lg(k): -16.52, E: 58.9, n(H+): -0.400 }
+    Acid:      { lg(k): -10.98, E: 23.6, n(H+):  0.340 }
+    Neutral:   { lg(k): -12.78, E: 35.0 }
+    Base:      { lg(k): -16.52, E: 58.9, n(H+): -0.400 }
 - Minetal: Lizardite
   Mechanisms:
-    Acid:    { lg(k):  -5.70, E: 75.5, n(H+): 0.800 }
-    Neutral: { lg(k): -12.40, E: 56.6 }
+    Acid:      { lg(k):  -5.70, E: 75.5, n(H+): 0.800 }
+    Neutral:   { lg(k): -12.40, E: 56.6 }
 - Minetal: Chrysotile
   Mechanisms:
-    Neutral: { lg(k): -12.00, E: 73.5 }
-    Base:    { lg(k): -13.58, E: 73.5, n(H+): -0.230 }
+    Neutral:   { lg(k): -12.00, E: 73.5 }
+    Base:      { lg(k): -13.58, E: 73.5, n(H+): -0.230 }
 - Minetal: Chlorite
   Mechanisms:
-    Acid:    { lg(k): -11.11, E: 88.0, n(H+): 0.500}
-    Neutral: { lg(k): -12.52, E: 88.0 }
+    Acid:      { lg(k): -11.11, E: 88.0, n(H+): 0.500}
+    Neutral:   { lg(k): -12.52, E: 88.0 }
 - Minetal: Talc
   Mechanisms:
-    Neutral: { lg(k): -12.00, E: 42.0 }
+    Neutral:   { lg(k): -12.00, E: 42.0 }
 - Minetal: Prehnite
   Mechanisms:
-    Acid:    { lg(k): -10.66, E: 80.5, n(H+):  0.256 }
-    Neutral: { lg(k): -13.16, E: 93.4 }
-    Base:    { lg(k): -14.86, E: 93.4, n(H+): -0.200 }
+    Acid:      { lg(k): -10.66, E: 80.5, n(H+):  0.256 }
+    Neutral:   { lg(k): -13.16, E: 93.4 }
+    Base:      { lg(k): -14.86, E: 93.4, n(H+): -0.200 }
 - Mineral: Goethite
   Mechanisms:
     Neutral:   { lg(k):  -7.94, E: 86.5 }
