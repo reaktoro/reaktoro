@@ -95,7 +95,7 @@ Species:
 
 TEST_CASE("Testing DatabaseParser class", "[DatabaseParser]")
 {
-    Data data = Data::parseYaml(doc);
+    Data data = Data::parse(doc);
 
     DatabaseParser db(data);
 
