@@ -26,7 +26,7 @@
 #include <Reaktoro/Core/Data.hpp>
 using namespace Reaktoro;
 
-const auto yaml_testing_string = R"(
+const auto yaml_testing_string = R"#(
 Species:
 - Name: Almandine
   Formula: Fe3Al2Si3O12
@@ -73,9 +73,9 @@ Extra:
     AnotherBoolean: false
     AnInteger: 123
     SomeStrings: [Hello, Hallo]
-)";
+)#";
 
-const auto json_testing_string = R"(
+const auto json_testing_string = R"#(
 {
   "Species": [
     {
@@ -134,63 +134,321 @@ const auto json_testing_string = R"(
     "SomeStrings": ["Hello", "Hallo"]
   }
 }
-)";
+)#";
+
+// Used to test encoding/decoding of custom types to/from Data objects
+struct ComplicatedStuff
+{
+    bool boolval;               // required
+    double doubleval;           // required
+    Param paramval;             // required
+    String stringval;           // required
+    Strings vecval;             // optional
+    Map<String, double> mapval; // optional
+};
+
+REAKTORO_DATA_ENCODE_DECLARE(ComplicatedStuff);
+REAKTORO_DATA_DECODE_DECLARE(ComplicatedStuff);
+
+REAKTORO_DATA_ENCODE_DEFINE(ComplicatedStuff)
+{
+    data["boolval"] = obj.boolval;
+    data["doubleval"] = obj.doubleval;
+    data["paramval"] = obj.paramval;
+    data["stringval"] = obj.stringval;
+    data["vecval"] = obj.vecval;
+    data["mapval"] = obj.mapval;
+}
+
+REAKTORO_DATA_DECODE_DEFINE(ComplicatedStuff)
+{
+    data.required("boolval").to(obj.boolval);
+    data.required("doubleval").to(obj.doubleval);
+    data.required("paramval").to(obj.paramval);
+    data.required("stringval").to(obj.stringval);
+    data.optional("vecval").to(obj.vecval);
+    data.optional("mapval").to(obj.mapval);
+}
 
 TEST_CASE("Testing Data class", "[Data]")
 {
-    SECTION("testing construction and conversion methods")
+    SECTION("Checking Data::add(value) for the creation of lists")
     {
-        Data foo;
-        foo.add("A", 1.0);
-        foo.add("B", 2);
+        Data data;
 
-        Data bar;
-        bar.add("C", true);
-        bar.add("D", "X");
-        bar.add("E", Param(7.0));
+        // Make a list by using Data::add(value)
+        data.add(true);
+        data.add(false);
+        data.add("ABC");
+        data.add(String("CDE"));
+        data.add(1);
+        data.add(-2);
+        data.add(std::int64_t(-3));
+        data.add(std::uint64_t(4));
+        data.add(std::float_t(5.0));
+        data.add(std::double_t(6.0));
+        data.add(real(7.0));
+        data.add(Param(8.0));
+        data.add(Vec<Data>{data[0], data[1]});
+        data.add(Dict<String, Data>{{"U", data[2]}, {"V", data[3]}});
+        data.add(nullptr);
 
-        Data doo;
-        doo.add(3.0);
-        doo.add(6.0);
-        doo.add(9.0);
+        // Check the types of the Data objects created
+        CHECK( data[0].isBoolean() );
+        CHECK( data[1].isBoolean() );
+        CHECK( data[2].isString()  );
+        CHECK( data[3].isString()  );
+        CHECK( data[4].isParam()   );
+        CHECK( data[5].isParam()   );
+        CHECK( data[6].isParam()   );
+        CHECK( data[7].isParam()   );
+        CHECK( data[8].isParam()   );
+        CHECK( data[9].isParam()   );
+        CHECK( data[10].isParam()  );
+        CHECK( data[11].isParam()  );
+        CHECK( data[12].isList()   );
+        CHECK( data[13].isDict()   );
+        CHECK( data[14].isNull()   );
 
-        Data params;
-        params.add("Foo", foo);
-        params.add("Bar", bar);
+        // Check the values of the Data objects created via Data::add(value)
+        CHECK( data[0].asBoolean()      ==  true    );
+        CHECK( data[1].asBoolean()      ==  false   );
+        CHECK( data[2].asString()       ==  "ABC"   );
+        CHECK( data[3].asString()       ==  "CDE"   );
+        CHECK( data[4].asParam()        ==  1.0     );
+        CHECK( data[5].asParam()        == -2.0     );
+        CHECK( data[6].asParam()        == -3.0     );
+        CHECK( data[7].asParam()        ==  4.0     );
+        CHECK( data[8].asParam()        ==  5.0     );
+        CHECK( data[9].asParam()        ==  6.0     );
+        CHECK( data[10].asParam()       ==  7.0     );
+        CHECK( data[11].asParam()       ==  8.0     );
+        CHECK( data[12][0].asBoolean()  ==  true    );
+        CHECK( data[12][1].asBoolean()  ==  false   );
+        CHECK( data[13]["U"].asString() ==  "ABC"   );
+        CHECK( data[13]["V"].asString() ==  "CDE"   );
+        CHECK( data[14].asNull()        ==  nullptr );
 
-        CHECK( foo["A"].asFloat() == 1.0 );
-        CHECK( foo["B"].asInteger() == 2 );
-        CHECK( foo.exists("A") == true );
-        CHECK( foo.exists("B") == true );
-        CHECK( foo.exists("C") == false );
+        // Modify data[0], data[5] and data[9]
+        data[0].assign(1.0);
+        data[5].assign("Hello");
+        data[9].reset();
 
-        CHECK( bar["C"].asBoolean() == true );
-        CHECK( bar["D"].asString() == "X" );
-        CHECK( bar["E"].asParam()  == 7.0 );
-        CHECK( bar.exists("C") == true );
-        CHECK( bar.exists("D") == true );
-        CHECK( bar.exists("E") == true );
-        CHECK( bar.exists("F") == false );
+        CHECK( data[0].isParam()  );
+        CHECK( data[5].isString() );
+        CHECK( data[9].isNull()   );
 
-        CHECK( doo[0].asFloat() == 3.0 );
-        CHECK( doo[1].asFloat() == 6.0 );
-        CHECK( doo[2].asFloat() == 9.0 );
-
-        CHECK( params["Foo"]["A"].asFloat() == 1.0 );
-        CHECK( params["Foo"]["B"].asInteger() == 2 );
-        CHECK( params["Bar"]["C"].asBoolean() == true );
-        CHECK( params["Bar"]["D"].asString() == "X" );
-        CHECK( params["Bar"]["E"].asParam()  == 7.0 );
-        CHECK( params.exists("Foo") == true );
-        CHECK( params.exists("Bar") == true );
-        CHECK( params.exists("Joe") == false );
-        CHECK( params["Foo"].exists("A") == true );
-        CHECK( params["Foo"].exists("Z") == false );
-        CHECK( params["Bar"].exists("C") == true );
-        CHECK( params["Bar"].exists("Z") == false );
+        CHECK( data[0].asParam()  == 1.0     );
+        CHECK( data[5].asString() == "Hello" );
+        CHECK( data[9].asNull()   == nullptr );
     }
 
-    SECTION("testing construction using yaml and json strings")
+    SECTION("Checking Data::add(key, value) for the creation of dictionaries")
+    {
+        Data data;
+
+        // Make a dictionary by using Data::add(key, value)
+        data.add("K0", true);
+        data.add("K1", false);
+        data.add("K2", "ABC");
+        data.add("K3", String("CDE"));
+        data.add("K4", 1);
+        data.add("K5", -2);
+        data.add("K6", std::int64_t(-3));
+        data.add("K7", std::uint64_t(4));
+        data.add("K8", std::float_t(5.0));
+        data.add("K9", std::double_t(6.0));
+        data.add("K10", real(7.0));
+        data.add("K11", Param(8.0));
+        data.add("K12", Vec<Data>{data["K0"], data["K1"]});
+        data.add("K13", Dict<String, Data>{{"U", data["K2"]}, {"V", data["K3"]}});
+        data.add("K14", nullptr);
+
+        // Check the types of the Data objects created
+        CHECK( data["K0"].isBoolean() );
+        CHECK( data["K1"].isBoolean() );
+        CHECK( data["K2"].isString()  );
+        CHECK( data["K3"].isString()  );
+        CHECK( data["K4"].isParam()   );
+        CHECK( data["K5"].isParam()   );
+        CHECK( data["K6"].isParam()   );
+        CHECK( data["K7"].isParam()   );
+        CHECK( data["K8"].isParam()   );
+        CHECK( data["K9"].isParam()   );
+        CHECK( data["K10"].isParam()  );
+        CHECK( data["K11"].isParam()  );
+        CHECK( data["K12"].isList()   );
+        CHECK( data["K13"].isDict()   );
+        CHECK( data["K14"].isNull()   );
+
+        // Check the values of the Data objects created via Data::add(key, value)
+        CHECK( data["K0"].asBoolean()      ==  true    );
+        CHECK( data["K1"].asBoolean()      ==  false   );
+        CHECK( data["K2"].asString()       ==  "ABC"   );
+        CHECK( data["K3"].asString()       ==  "CDE"   );
+        CHECK( data["K4"].asParam()        ==  1.0     );
+        CHECK( data["K5"].asParam()        == -2.0     );
+        CHECK( data["K6"].asParam()        == -3.0     );
+        CHECK( data["K7"].asParam()        ==  4.0     );
+        CHECK( data["K8"].asParam()        ==  5.0     );
+        CHECK( data["K9"].asParam()        ==  6.0     );
+        CHECK( data["K10"].asParam()       ==  7.0     );
+        CHECK( data["K11"].asParam()       ==  8.0     );
+        CHECK( data["K12"][0].asBoolean()  ==  true    );
+        CHECK( data["K12"][1].asBoolean()  ==  false   );
+        CHECK( data["K13"]["U"].asString() ==  "ABC"   );
+        CHECK( data["K13"]["V"].asString() ==  "CDE"   );
+        CHECK( data["K14"].asNull()        ==  nullptr );
+
+        // Modify data[0], data[5] and data[9]
+        data["K0"].assign(1.0);
+        data["K5"].assign("Hello");
+        data["K9"].reset();
+
+        CHECK( data["K0"].isParam()  );
+        CHECK( data["K5"].isString() );
+        CHECK( data["K9"].isNull()   );
+
+        CHECK( data["K0"].asParam()  == 1.0     );
+        CHECK( data["K5"].asString() == "Hello" );
+        CHECK( data["K9"].asNull()   == nullptr );
+    }
+
+    SECTION("Checking the construction of nested Data objects using operator[]")
+    {
+        Data foo;
+        foo["A"] = 1.0;
+        foo["B"] = 2;
+
+        Data bar;
+        bar["C"] = true;
+        bar["D"] = "X";
+        bar["E"] = Param(7.0);
+
+        Data vec = Vec<Data>{ Data(false), Data("Y"), Data(9.0) };
+
+        Data data;
+        data["Foo"] = foo;
+        data["Bar"] = bar;
+        data["Vec"] = vec;
+
+        SECTION("Check if data inserted is correct")
+        {
+            CHECK( data.exists("Foo") == true  );
+            CHECK( data.exists("Bar") == true  );
+            CHECK( data.exists("Vec") == true  );
+            CHECK( data.exists("Joe") == false );
+
+            CHECK( data["Foo"].exists("A") == true  );
+            CHECK( data["Foo"].exists("B") == true  );
+            CHECK( data["Foo"].exists("Z") == false );
+
+            CHECK( data["Bar"].exists("C") == true  );
+            CHECK( data["Bar"].exists("D") == true  );
+            CHECK( data["Bar"].exists("E") == true  );
+            CHECK( data["Bar"].exists("Z") == false );
+
+            CHECK( data["Vec"].isList() );
+            CHECK( data["Vec"].asList().size() == 3 );
+
+            CHECK( data["Foo"]["A"].asFloat()   == 1.0  );
+            CHECK( data["Foo"]["B"].asInteger() == 2    );
+
+            CHECK( data["Bar"]["C"].asBoolean() == true );
+            CHECK( data["Bar"]["D"].asString()  == "X"  );
+            CHECK( data["Bar"]["E"].asParam()   == 7.0  );
+
+            CHECK( data["Vec"][0].asBoolean() == false );
+            CHECK( data["Vec"][1].asString()  == "Y"   );
+            CHECK( data["Vec"][2].asParam()   == 9.0   );
+        }
+
+        SECTION("Check exceptions on bad use of accessor methods")
+        {
+            CHECK_THROWS( data.at("Joe") );
+            CHECK_THROWS( data.required("Joe") );
+
+            CHECK_NOTHROW( data.optional("Joe") );
+            CHECK_NOTHROW( data["Roe"] );
+
+            CHECK( data.exists("Roe") ); // Roe introduced before with operator[]
+        }
+    }
+
+    SECTION("Check conversion from integer and floating point types to Param objects and vice-versa")
+    {
+        const auto num0 = Data(1);
+        const auto num1 = Data(-2);
+        const auto num2 = Data(std::int64_t(-3));
+        const auto num3 = Data(std::uint64_t(4));
+        const auto num4 = Data(std::float_t(5.2));
+        const auto num5 = Data(std::double_t(6.4));
+        const auto num6 = Data(real(7.8));
+        const auto num7 = Data(Param(8.3));
+        const auto num8 = Data(true);
+        const auto num9 = Data('a');
+
+        CHECK( num0.isParam() == true  );
+        CHECK( num1.isParam() == true  );
+        CHECK( num2.isParam() == true  );
+        CHECK( num3.isParam() == true  );
+        CHECK( num4.isParam() == true  );
+        CHECK( num5.isParam() == true  );
+        CHECK( num6.isParam() == true  );
+        CHECK( num7.isParam() == true  );
+        CHECK( num8.isParam() == false ); // num8 should be boolean
+        CHECK( num9.isParam() == false ); // num9 should be string
+
+        CHECK( num0.asInteger() ==  1 );
+        CHECK( num1.asInteger() == -2 );
+        CHECK( num2.asInteger() == -3 );
+        CHECK( num3.asInteger() ==  4 );
+        CHECK( num4.asInteger() ==  5 );
+        CHECK( num5.asInteger() ==  6 );
+        CHECK( num6.asInteger() ==  7 );
+        CHECK( num7.asInteger() ==  8 );
+
+        CHECK( num0.asFloat() ==  Approx( 1.0) );
+        CHECK( num1.asFloat() ==  Approx(-2.0) );
+        CHECK( num2.asFloat() ==  Approx(-3.0) );
+        CHECK( num3.asFloat() ==  Approx( 4.0) );
+        CHECK( num4.asFloat() ==  Approx( 5.2) );
+        CHECK( num5.asFloat() ==  Approx( 6.4) );
+        CHECK( num6.asFloat() ==  Approx( 7.8) );
+        CHECK( num7.asFloat() ==  Approx( 8.3) );
+
+        CHECK( num0.asParam().value().val() ==  Approx( 1.0) );
+        CHECK( num1.asParam().value().val() ==  Approx(-2.0) );
+        CHECK( num2.asParam().value().val() ==  Approx(-3.0) );
+        CHECK( num3.asParam().value().val() ==  Approx( 4.0) );
+        CHECK( num4.asParam().value().val() ==  Approx( 5.2) );
+        CHECK( num5.asParam().value().val() ==  Approx( 6.4) );
+        CHECK( num6.asParam().value().val() ==  Approx( 7.8) );
+        CHECK( num7.asParam().value().val() ==  Approx( 8.3) );
+
+        CHECK_NOTHROW( num8.asBoolean() );
+        CHECK_NOTHROW( num9.asString()  );
+
+        CHECK_THROWS( num8.asString()   );
+        CHECK_THROWS( num8.asInteger()  );
+        CHECK_THROWS( num8.asFloat()    );
+        CHECK_THROWS( num8.asReal()     );
+        CHECK_THROWS( num8.asParam()    );
+        CHECK_THROWS( num8.asDict()     );
+        CHECK_THROWS( num8.asList()     );
+        CHECK_THROWS( num8.asNull()     );
+
+        CHECK_THROWS( num9.asBoolean()  );
+        CHECK_THROWS( num9.asInteger()  );
+        CHECK_THROWS( num9.asFloat()    );
+        CHECK_THROWS( num9.asReal()     );
+        CHECK_THROWS( num9.asParam()    );
+        CHECK_THROWS( num9.asDict()     );
+        CHECK_THROWS( num9.asList()     );
+        CHECK_THROWS( num9.asNull()     );
+    }
+
+    SECTION("Checking the construction of Data objects using YAML and JSON formatted strings")
     {
         const Data data = GENERATE(
             Data::parseYaml(yaml_testing_string),
@@ -265,5 +523,67 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data["Species"].with("Name", "Andradite")["Name"].asString() == "Andradite" );
 
         CHECK_THROWS( data["Species"].with("Name", "Calcite") );
+    }
+
+    SECTION("Checking dumping of Data objects to YAML formatted strings")
+    {
+        const Data data = Data::parseYaml(yaml_testing_string);
+
+        // CHECK( data.dumpYaml() == YAML::Dump(YAML::Load(yaml_testing_string)) );
+        CHECK( data.dumpYaml() == "" );
+    }
+
+    SECTION("Checking dumping of Data objects to JSON formatted strings")
+    {
+        const Data data = Data::parseJson(json_testing_string);
+
+        CHECK( data.dumpJson() == nlohmann::json::parse(json_testing_string).dump(2) ); // indent=2
+    }
+
+    SECTION("Checking encoding/decoding of custom types to/from Data objects")
+    {
+        const auto str = R"#(
+            boolval: true
+            doubleval: 1.2
+            paramval: 3.4
+            stringval: Moon
+        )#";
+
+        ComplicatedStuff stuff = Data::parse(str).as<ComplicatedStuff>();
+
+        CHECK( stuff.boolval == true);
+        CHECK( stuff.doubleval == 1.2);
+        CHECK( stuff.paramval == 3.4);
+        CHECK( stuff.stringval == "Moon");
+        CHECK( stuff.vecval.empty() );
+        CHECK( stuff.mapval.empty() );
+
+        stuff.boolval = false;
+        stuff.doubleval = 3.2;
+        stuff.paramval = 7.6;
+        stuff.stringval = "Sun";
+        stuff.vecval = Strings{"A", "B"};
+        stuff.mapval = Map<String, double>{{"U", 1.2}, {"V", 5.5}};
+
+        Data encoded = stuff;
+
+        CHECK( encoded.isDict() );
+        CHECK( encoded.asDict().size() == 6 );
+
+        CHECK( encoded.exists("boolval") );
+        CHECK( encoded.exists("doubleval") );
+        CHECK( encoded.exists("paramval") );
+        CHECK( encoded.exists("stringval") );
+        CHECK( encoded.exists("vecval") );
+        CHECK( encoded.exists("mapval") );
+
+        CHECK( encoded["boolval"].asBoolean()   == false );
+        CHECK( encoded["doubleval"].asFloat()   == 3.2   );
+        CHECK( encoded["paramval"].asParam()    == 7.6   );
+        CHECK( encoded["stringval"].asString()  == "Sun" );
+        CHECK( encoded["vecval"][0].asString()  == "A"   );
+        CHECK( encoded["vecval"][1].asString()  == "B"   );
+        CHECK( encoded["mapval"]["U"].asFloat() == 1.2   );
+        CHECK( encoded["mapval"]["V"].asFloat() == 5.5   );
     }
 }
