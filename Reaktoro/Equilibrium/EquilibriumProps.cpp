@@ -59,6 +59,39 @@ auto createPressureGetterFn(const EquilibriumSpecs& specs) -> Fn<real(VectorXrCo
     return [iPp](VectorXrConstRef p, VectorXrConstRef w) { return p[iPp]; };
 }
 
+/// Create the lambda function that extracts surface areas of reactive phase interfaces from either `p` or `w`.
+/// When the specifications of the equilibrium solver (`specs`) indicates that
+/// a reactive surface in unknown, then the corresponding surface area should
+/// be extracted from vector `p`. Otherwise, it is known and available in `w`.
+/// @param specs The specifications of the equilibrium solver
+auto createSurfaceAreaGetterFns(const EquilibriumSpecs& specs) -> Vec<Fn<real(VectorXrConstRef, VectorXrConstRef)>>
+{
+    auto const& system = specs.system();
+    auto const& surfaces = system.reactingPhaseInterfaces();
+
+    auto const num_surfaces = surfaces.size();
+    auto const num_inputs = specs.numInputs();
+
+    Vec<Fn<real(VectorXrConstRef, VectorXrConstRef)>> fns;
+
+    for(auto const& [iphase1, iphase2] : system.reactingPhaseInterfaces())
+    {
+        const String id = (iphase1 != iphase2) ?
+            "SA[" + system.phase(iphase1).name() + ":" + system.phase(iphase2).name() + "]" :
+            "SA[" + system.phase(iphase1).name() + "]";
+
+        const auto iSAw = index(specs.namesInputs(), id);
+        const auto iSAp = index(specs.namesControlVariables(), id);
+
+        errorif(iSAw >= num_inputs && iSAp >= num_inputs, "Expecting surface area with id `", id, "` to be either an input or a p control variable in the equilibrium calculation.");
+
+        if(iSAw < num_inputs) fns.push_back( [iSAw](VectorXrConstRef p, VectorXrConstRef w) -> real { return w[iSAw]; } );
+        else fns.push_back( [iSAp](VectorXrConstRef p, VectorXrConstRef w) -> real { return p[iSAp]; } );
+    }
+
+    return fns;
+}
+
 } // namespace
 
 struct EquilibriumProps::Impl
@@ -78,11 +111,17 @@ struct EquilibriumProps::Impl
     /// The pressure getter function for the given equilibrium specifications. @see createPressureGetterFn
     const Fn<real(VectorXrConstRef, VectorXrConstRef)> getP;
 
+    /// The surface area getter functions for the given equilibrium specifications. @see createSurfaceAreaGetterFns
+    const Vec<Fn<real(VectorXrConstRef, VectorXrConstRef)>> getSAs;
+
     /// The values of the model parameters before they are altered in the update method.
     VectorXr params0;
 
     /// The partial derivatives of the serialized chemical properties *u* with respect to *(n, p, w)*.
     MatrixXd dudnpw;
+
+    /// The surface areas of the reactive phase interfaces in the system (in m2).
+    VectorXr s;
 
     /// The array stream used during serialize and deserialize of chemical properties.
     ArrayStream<real> stream;
@@ -92,15 +131,24 @@ struct EquilibriumProps::Impl
 
     /// Construct an EquilibriumProps::Impl object.
     Impl(const EquilibriumSpecs& specs)
-    : state(specs.system()), specs(specs), dims(specs),
-      getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs))
+    : state(specs.system()),
+      specs(specs),
+      dims(specs),
+      getT(createTemperatureGetterFn(specs)),
+      getP(createPressureGetterFn(specs)),
+      getSAs(createSurfaceAreaGetterFns(specs))
     {}
 
     /// Update the chemical properties of the chemical system.
     auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void
     {
+        // Get temperature and pressure of the system, either available in p or w
         const auto T = getT(p, w);
         const auto P = getP(p, w);
+
+        // Update the surface areas of the reactive phase interfaces in the system, either available in p or w
+        for(auto const& [i, getSA] : enumerate(getSAs))
+            s[i] = getSA(p, w);
 
         // The model parameters considered inputs in the equilibrium calculation.
         auto params = specs.params();
@@ -122,8 +170,8 @@ struct EquilibriumProps::Impl
         // If there were model parameters changed above, the chemical
         // properties computed below will be affected.
         if(useIdealModel)
-            state.updateIdeal(T, P, n);
-        else state.update(T, P, n);
+            state.updateIdeal(T, P, n, s);
+        else state.update(T, P, n, s);
 
         // Recover here the original state of the model parameters changed above.
         for(auto i = 0; i < params0.size(); ++i)
