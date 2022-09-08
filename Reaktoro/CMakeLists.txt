@@ -68,15 +68,19 @@ if(REAKTORO_BUILD_TESTS)
     find_package(Catch2 REQUIRED)
 
     # The global path to the databases directory (used below as a compile definition for the C++ tests)
+    set(REAKTORO_EMBEDDED_DIR  ${PROJECT_SOURCE_DIR}/embedded)
     set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/embedded/databases)
+    set(REAKTORO_PARAMS_DIR    ${PROJECT_SOURCE_DIR}/embedded/params)
 
     # Create a test executable target for Reaktoro
     add_executable(reaktoro-cpptests ${CXX_FILES_TEST})
     target_link_libraries(reaktoro-cpptests Reaktoro Catch2::Catch2)
     target_include_directories(reaktoro-cpptests PUBLIC ${PROJECT_SOURCE_DIR})
     target_compile_definitions(reaktoro-cpptests
-        PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline>  # This is needed (`EIGEN_STRONG_INLINE=inline` instead of `EIGEN_STRONG_INLINE=__forceinline`) with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile.
-        PRIVATE REAKTORO_DATABASES_DIR="${REAKTORO_DATABASES_DIR}"     # This permits the C++ tests to load database files using global paths so that the tests can be executed from anywhere without errors.
+        PRIVATE $<$<CXX_COMPILER_ID:MSVC>:EIGEN_STRONG_INLINE=inline> # This is needed (`EIGEN_STRONG_INLINE=inline` instead of `EIGEN_STRONG_INLINE=__forceinline`) with MSVC, otherwise some tests (ChemicalProps.test.cxx) takes too long to compile.
+        PRIVATE REAKTORO_EMBEDDED_DIR="${REAKTORO_EMBEDDED_DIR}"      # This permits the C++ tests to easily load embedded resources via global addresses so that the tests can be executed from anywhere without errors.
+        PRIVATE REAKTORO_DATABASES_DIR="${REAKTORO_DATABASES_DIR}"    # This permits the C++ tests to easily load embedded databases via global addresses so that the tests can be executed from anywhere without errors.
+        PRIVATE REAKTORO_PARAMS_DIR="${REAKTORO_PARAMS_DIR}"          # This permits the C++ tests to easily load embedded model parameters via global addresses so that the tests can be executed from anywhere without errors.
     )
 
 endif()
