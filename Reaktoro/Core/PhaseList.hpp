@@ -47,7 +47,7 @@ public:
     auto size() const -> Index;
 
     /// Return the species that compose the phases in the collection.
-    auto species() const -> Vec<Species>;
+    auto species() const -> SpeciesList;
 
     /// Return the Phase object with given index.
     auto operator[](Index i) const -> const Phase&;
