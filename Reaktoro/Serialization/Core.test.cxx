@@ -355,9 +355,9 @@ TEST_CASE("Testing Data encoder/decoder for ReactionStandardThermoModel", "[Seri
 
     CHECK( data.dumpYaml() == expected.dumpYaml() );
 
-    // auto model = ReactionStandardThermoModelYAML(data);
+    auto model = ReactionStandardThermoModelFromData(data);
 
-    // CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
+    CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
 }
 
 TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
@@ -559,7 +559,7 @@ TEST_CASE("Testing Data encoder/decoder for StandardThermoModel", "[Serializatio
 
     CHECK( data.dumpYaml() == expected.dumpYaml() );
 
-    // auto model = StandardThermoModelYAML(data);
+    auto model = StandardThermoModelFromData(data);
 
-    // CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
+    CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
 }

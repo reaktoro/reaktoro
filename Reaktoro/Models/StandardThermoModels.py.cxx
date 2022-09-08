@@ -26,14 +26,14 @@ void exportStandardThermoModelMaierKelley(py::module& m);
 void exportStandardThermoModelMineralHKF(py::module& m);
 void exportStandardThermoModelNasa(py::module& m);
 void exportStandardThermoModelWaterHKF(py::module& m);
-void exportStandardThermoModelYAML(py::module& m);
+void exportStandardThermoModelFromData(py::module& m);
 
 void exportReactionStandardThermoModelConstLgK(py::module& m);
 void exportReactionStandardThermoModelGemsLgK(py::module& m);
 void exportReactionStandardThermoModelPhreeqcLgK(py::module& m);
 void exportReactionStandardThermoModelPressureCorrection(py::module& m);
 void exportReactionStandardThermoModelVantHoff(py::module& m);
-void exportReactionStandardThermoModelYAML(py::module& m);
+void exportReactionStandardThermoModelFromData(py::module& m);
 
 void exportStandardVolumeModelConstant(py::module& m);
 
@@ -47,14 +47,14 @@ void exportStandardThermoModels(py::module& m)
     exportStandardThermoModelMineralHKF(m);
     exportStandardThermoModelNasa(m);
     exportStandardThermoModelWaterHKF(m);
-    exportStandardThermoModelYAML(m);
+    exportStandardThermoModelFromData(m);
 
     exportReactionStandardThermoModelConstLgK(m);
     exportReactionStandardThermoModelGemsLgK(m);
     exportReactionStandardThermoModelPhreeqcLgK(m);
     exportReactionStandardThermoModelPressureCorrection(m);
     exportReactionStandardThermoModelVantHoff(m);
-    exportReactionStandardThermoModelYAML(m);
+    exportReactionStandardThermoModelFromData(m);
 
     exportStandardVolumeModelConstant(m);
 }

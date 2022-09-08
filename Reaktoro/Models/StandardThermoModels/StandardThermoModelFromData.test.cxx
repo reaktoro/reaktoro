@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include "StandardThermoModelYAML.hpp"
+#include "StandardThermoModelFromData.hpp"
 using namespace Reaktoro;
 
 auto hkf = R"(
@@ -113,14 +113,14 @@ B:
   B0: 2.0
 )";
 
-TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
+TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFromData]")
 {
     const auto T = 25.0 + 273.15;
     const auto P =  1.0 * 1e5;
 
     WHEN("StandardThermoModel name is HKF")
     {
-        auto model =  StandardThermoModelYAML(yaml::parse(hkf));
+        auto model =  StandardThermoModelFromData(Data::fromYaml(hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == 1.0);
@@ -129,7 +129,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is MaierKelley")
     {
-        auto model =  StandardThermoModelYAML(yaml::parse(mk));
+        auto model =  StandardThermoModelFromData(Data::fromYaml(mk));
         auto props = model(T, P);
 
         CHECK(props.G0 == 3.0);
@@ -138,7 +138,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is HollandPowell")
     {
-        auto model =  StandardThermoModelYAML(yaml::parse(hp));
+        auto model =  StandardThermoModelFromData(Data::fromYaml(hp));
         auto props = model(T, P);
 
         CHECK(props.G0 == 5.0);
@@ -147,7 +147,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is MineralHKF")
     {
-        auto model =  StandardThermoModelYAML(yaml::parse(mineral_hkf));
+        auto model =  StandardThermoModelFromData(Data::fromYaml(mineral_hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == 7.0);
@@ -156,7 +156,7 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("StandardThermoModel name is WaterHKF")
     {
-        auto model =  StandardThermoModelYAML(yaml::parse(water_hkf));
+        auto model =  StandardThermoModelFromData(Data::fromYaml(water_hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == Approx(-237182));
@@ -165,8 +165,8 @@ TEST_CASE("Testing StandardThermoModelYAML class", "[StandardThermoModelYAML]")
 
     WHEN("yaml node is not valid")
     {
-        CHECK_THROWS( StandardThermoModelYAML(yaml::parse(non_existing_model)) );
-        CHECK_THROWS( StandardThermoModelYAML(yaml::parse(not_dict)) );
-        CHECK_THROWS( StandardThermoModelYAML(yaml::parse(dict_but_not_single)) );
+        CHECK_THROWS( StandardThermoModelFromData(Data::fromYaml(non_existing_model)) );
+        CHECK_THROWS( StandardThermoModelFromData(Data::fromYaml(not_dict)) );
+        CHECK_THROWS( StandardThermoModelFromData(Data::fromYaml(dict_but_not_single)) );
     }
 }

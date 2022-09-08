@@ -22,7 +22,7 @@
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPressureCorrection.hpp>
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelFromData.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
@@ -31,7 +31,7 @@
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelFromData.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
 
 #include <Reaktoro/Models/StandardThermoModels/Support/SpeciesElectroProps.hpp>
