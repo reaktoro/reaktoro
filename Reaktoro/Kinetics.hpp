@@ -17,12 +17,10 @@
 
 #pragma once
 
-#include <Reaktoro/Kinetics/KineticsConditions.hpp>
 #include <Reaktoro/Kinetics/KineticsOptions.hpp>
 #include <Reaktoro/Kinetics/KineticsResult.hpp>
 #include <Reaktoro/Kinetics/KineticsSensitivity.hpp>
 #include <Reaktoro/Kinetics/KineticsSolver.hpp>
-#include <Reaktoro/Kinetics/KineticsSpecs.hpp>
 
 /// @defgroup Kinetics Kinetics
 /// The module in Reaktoro in which classes and methods for chemical kinetics calculations are implemented.
