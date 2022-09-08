@@ -112,15 +112,6 @@ public:
     /// Return true if this Data object is a string.
     auto isString() const -> bool;
 
-    /// Return true if this Data object is a integer number.
-    auto isInteger() const -> bool;
-
-    /// Return true if this Data object is a float number.
-    auto isFloat() const -> bool;
-
-    /// Return true if this Data object is a real object.
-    auto isReal() const -> bool;
-
     /// Return true if this Data object is a Param object.
     auto isParam() const -> bool;
 
