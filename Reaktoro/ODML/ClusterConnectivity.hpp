@@ -1,5 +1,7 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
+// Copyright © 2014-2022 Allan Leal
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -15,11 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <deque>
-
 // Reaktoro includes
-#include <Reaktoro/Common/Index.hpp>
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/ODML/PriorityQueue.hpp>
 
 namespace Reaktoro {
@@ -38,10 +37,8 @@ public:
     auto extend() -> void;
 
     /// Increment the rank/usage count for the connectivity from one cluster to another.
-    /// -----------------------------------------------------------------------
     /// @param icluster The index of the starting cluster.
     /// @param jcluster The index of the cluster which usage count is incremented.
-    /// -----------------------------------------------------------------------
     /// @note If index `icluster` is equal or greater than number of clusters,
     /// then usage count for `jcluster` is still incremented, but in a separate
     /// list, which can be used when a starting cluster cannot be specified and
@@ -49,16 +46,14 @@ public:
     auto increment(Index icluster, Index jcluster) -> void;
 
     /// Return the order of clusters for a given starting cluster.
-    /// -----------------------------------------------------------------------
     /// @param icluster The index of the starting cluster.
-    /// -----------------------------------------------------------------------
     /// @note If index `icluster` is equal or greater than number of clusters,
     /// then an ordering based on usage count of clusters is returned.
-    auto order(Index icluster) const -> const std::deque<Index>&;
+    auto order(Index icluster) const -> Deque<Index> const&;
 
 private:
     /// The connectivity of each cluster with others in terms of priority queue for visitation.
-    std::deque<PriorityQueue> matrix;
+    Deque<PriorityQueue> matrix;
 
     /// The ordering of clusters based on their usage count.
     PriorityQueue queue;

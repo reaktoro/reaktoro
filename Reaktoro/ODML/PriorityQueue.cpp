@@ -1,5 +1,7 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
+// Copyright © 2014-2022 Allan Leal
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -34,7 +36,7 @@ auto PriorityQueue::withInitialSize(Index size) -> PriorityQueue
     return queue;
 }
 
-auto PriorityQueue::withInitialPriorities(const std::deque<Index>& priorities) -> PriorityQueue
+auto PriorityQueue::withInitialPriorities(Deque<Index> const& priorities) -> PriorityQueue
 {
     const auto size = priorities.size();
     PriorityQueue queue = PriorityQueue::withInitialSize(size);
@@ -44,7 +46,7 @@ auto PriorityQueue::withInitialPriorities(const std::deque<Index>& priorities) -
     return queue;
 }
 
-auto PriorityQueue::withInitialOrder(const std::deque<Index>& order) -> PriorityQueue
+auto PriorityQueue::withInitialOrder(Deque<Index> const& order) -> PriorityQueue
 {
     const auto size = order.size();
     PriorityQueue queue;
@@ -53,7 +55,7 @@ auto PriorityQueue::withInitialOrder(const std::deque<Index>& order) -> Priority
     return queue;
 }
 
-auto PriorityQueue::withInitialPrioritiesAndOrder(const std::deque<Index>& priorities, const std::deque<Index>& order) -> PriorityQueue
+auto PriorityQueue::withInitialPrioritiesAndOrder(Deque<Index> const& priorities, Deque<Index> const& order) -> PriorityQueue
 {
     assert(priorities.size() == order.size());
     PriorityQueue queue;
@@ -111,12 +113,12 @@ auto PriorityQueue::extend() -> void
     _order.push_back(_order.size());
 }
 
-auto PriorityQueue::priorities() const -> const std::deque<Index>&
+auto PriorityQueue::priorities() const -> Deque<Index> const&
 {
     return _priorities;
 }
 
-auto PriorityQueue::order() const -> const std::deque<Index>&
+auto PriorityQueue::order() const -> Deque<Index> const&
 {
     return _order;
 }

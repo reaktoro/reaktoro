@@ -1,5 +1,7 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
+// Copyright © 2014-2022 Allan Leal
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -39,10 +41,10 @@ auto ClusterConnectivity::extend() -> void
     queue.extend();
 
     // The ordering of the most used clusters that will be used for the new cluster
-    const auto& order = queue.order();
+    auto const& order = queue.order();
 
     // Create priorities for the priority queue of the new cluster
-    std::deque<Index> priorities(order.size(), 0);
+    Deque<Index> priorities(order.size(), 0);
 
     // Set the priority of the new cluster (the last one) to infinity,
     // to ensure it is always the first one to be visited as we
@@ -66,7 +68,7 @@ auto ClusterConnectivity::increment(Index icluster, Index jcluster) -> void
     queue.increment(jcluster);
 }
 
-auto ClusterConnectivity::order(Index icluster) const -> const std::deque<Index>&
+auto ClusterConnectivity::order(Index icluster) const -> Deque<Index> const&
 {
     return icluster < size() ? matrix[icluster].order() : queue.order();
 }
