@@ -162,66 +162,6 @@ struct KineticsSolver::Impl
         updateEquilibriumConditionsForKinetics(state, dt, conditions);
         return ksolver.solve(state, sensitivity, kconditions, restrictions);
     }
-
-    //=================================================================================================================
-    //
-    // CHEMICAL KINETICS METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS
-    //
-    //=================================================================================================================
-
-    auto solve(ChemicalState& state, real const& dt, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt);
-        return ksolver.solve(state, kconditions, c0);
-    }
-
-    auto solve(ChemicalState& state, real const& dt, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt);
-        return ksolver.solve(state, kconditions, restrictions, c0);
-    }
-
-    auto solve(ChemicalState& state, real const& dt, EquilibriumConditions const& conditions, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt, conditions);
-        return ksolver.solve(state, kconditions, c0);
-    }
-
-    auto solve(ChemicalState& state, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt, conditions);
-        return ksolver.solve(state, kconditions, restrictions, c0);
-    }
-
-    //=================================================================================================================
-    //
-    // CHEMICAL KINETICS METHODS WITH GIVEN AMOUNTS OF CONSERVATIVE COMPONENTS AND SENSITIVITY CALCULATION
-    //
-    //=================================================================================================================
-
-    auto solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt);
-        return ksolver.solve(state, sensitivity, kconditions, c0);
-    }
-
-    auto solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt);
-        return ksolver.solve(state, sensitivity, kconditions, restrictions, c0);
-    }
-
-    auto solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt, conditions);
-        return ksolver.solve(state, sensitivity, kconditions, c0);
-    }
-
-    auto solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-    {
-        updateEquilibriumConditionsForKinetics(state, dt, conditions);
-        return ksolver.solve(state, sensitivity, kconditions, restrictions, c0);
-    }
 };
 
 KineticsSolver::KineticsSolver(ChemicalSystem const& system)
@@ -283,46 +223,6 @@ auto KineticsSolver::solve(ChemicalState& state, KineticsSensitivity& sensitivit
 auto KineticsSolver::solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> KineticsResult
 {
     return pimpl->solve(state, sensitivity, dt, conditions, restrictions);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, real const& dt, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, dt, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, real const& dt, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, dt, restrictions, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, real const& dt, EquilibriumConditions const& conditions, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, dt, conditions, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, dt, conditions, restrictions, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, sensitivity, dt, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, sensitivity, dt, restrictions, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, sensitivity, dt, conditions, c0);
-}
-
-auto KineticsSolver::solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions, ArrayXdConstRef c0) -> KineticsResult
-{
-    return pimpl->solve(state, sensitivity, dt, conditions, restrictions, c0);
 }
 
 auto KineticsSolver::setOptions(KineticsOptions const& options) -> void
