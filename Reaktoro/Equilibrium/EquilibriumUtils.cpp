@@ -21,10 +21,12 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
 
@@ -76,12 +78,21 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
 {
     EquilibriumOptions opts(options);
 
-    EquilibriumSolver solver(state.system());
+    EquilibriumSpecs specs(state.system());
+    specs.temperature();
+    specs.pressure();
+
+    EquilibriumConditions conditions(specs);
+    conditions.temperature(state.temperature());
+    conditions.pressure(state.pressure());
+    conditions.setInitialComponentAmounts(b0);
+
+    EquilibriumSolver solver(specs);
 
     opts.use_ideal_activity_models = true; // force ideal activity models for the first computation
     solver.setOptions(opts);
 
-    auto result = solver.solve(state, restrictions, b0);
+    auto result = solver.solve(state, conditions, restrictions);
 
     // Skip the second computation if the first one using ideal activity models has already failed.
     if(result.optima.succeeded == false)
@@ -90,7 +101,7 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
     opts.use_ideal_activity_models = options.use_ideal_activity_models; // for the second computation, use what user wants (maybe ideal model again, in which case the calculation below will converge immediately).
     solver.setOptions(opts);
 
-    result += solver.solve(state, restrictions, b0);
+    result += solver.solve(state, conditions, restrictions);
 
     return result;
 }
