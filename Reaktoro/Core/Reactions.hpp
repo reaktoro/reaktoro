@@ -22,12 +22,13 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 
 namespace Reaktoro {
 
-/// The function type for the generation of reactions with a given chemical system.
-using ReactionGenerator = Fn<Vec<Reaction>(ChemicalSystem const&)>;
+/// The function type for the generation of reactions with given phases and their species in the chemical system.
+using ReactionGenerator = Fn<Vec<Reaction>(PhaseList const&)>;
 
 /// The class used to represent a collection of reactions controlled kinetically.
 /// @ingroup Core
@@ -54,21 +55,21 @@ public:
 
         if constexpr(std::is_convertible_v<T, ReactionGenerator>)
         {
-            rgenerators.push_back([=](ChemicalSystem const& system) -> Vec<Reaction> {
-                return item(system); // item is a ReactionGenerator object
+            rgenerators.push_back([=](PhaseList const& phases) -> Vec<Reaction> {
+                return item(phases); // item is a ReactionGenerator object
             });
         }
         else
         {
-            rgenerators.push_back([=](ChemicalSystem const& system) -> Vec<Reaction> {
+            rgenerators.push_back([=](PhaseList const& phases) -> Vec<Reaction> {
                 return { Reaction(item) }; // item is convertible to Reaction object
             });
         }
     }
 
     /// Convert this Reactions object into a vector of Reaction objects.
-    /// @param system The intermediate chemical system without attached reactions in which the reactions take place.
-    auto convert(ChemicalSystem const& system) const -> Vec<Reaction>;
+    /// @param phases The phases and their species composing the chemical system where the reactions will take place.
+    auto convert(PhaseList const& phases) const -> Vec<Reaction>;
 
 private:
     /// The ReactionGenerator objects collected so far with each call to Reactions::add method.

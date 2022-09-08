@@ -31,15 +31,15 @@ namespace test {
 class ReactionGeneratorUsingClass
 {
 public:
-    auto operator()(ChemicalSystem const& system) const -> Vec<Reaction>
+    auto operator()(PhaseList const& phases) const -> Vec<Reaction>
     {
-        return { system.database().reaction("H2O(aq) = H+(aq) + OH-(aq)") };
+        return { Reaction().withEquation("H2O(aq) = H+(aq) + OH-(aq)") };
     }
 };
 
-auto ReactionGeneratorUsingFunction(ChemicalSystem const& system) -> Vec<Reaction>
+auto ReactionGeneratorUsingFunction(PhaseList const& phases) -> Vec<Reaction>
 {
-    return { system.database().reaction("H2O(aq) = H2(aq) + 0.5*O2(aq)") };
+    return { Reaction().withEquation("H2O(aq) = H2(aq) + 0.5*O2(aq)") };
 }
 
 } // namespace test
@@ -56,7 +56,7 @@ TEST_CASE("Testing Reactions class", "[Reactions]")
     reactions.add(test::ReactionGeneratorUsingClass());
     reactions.add(test::ReactionGeneratorUsingFunction);
 
-    auto converted = reactions.convert(system);
+    auto converted = reactions.convert(system.phases());
 
     CHECK( converted.size() == 4 );
     CHECK( String(converted[0].equation()) == "NaCl(s) = Na+(aq) + Cl-(aq)" );

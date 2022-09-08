@@ -29,6 +29,7 @@
 namespace Reaktoro {
 
 /// The data available for the evaluation of a mineral reaction rate.
+/// @see MineralReactionRateModel
 struct MineralReactionRateModelArgs
 {
     /// The properties of the chemical system.
@@ -58,7 +59,8 @@ using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateModelArgs
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
 /// @param mineral The name of the mineral in the system.
-/// @param system The chemical system in which the reactions happen.
-using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, ChemicalSystem const& system)>;
+/// @param phases The phases and their species composing the chemical system where the reactions will take place.
+/// @see MineralReactions
+using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, PhaseList const& phases)>;
 
 } // namespace Reaktoro

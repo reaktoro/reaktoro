@@ -22,13 +22,13 @@ namespace Reaktoro {
 Reactions::Reactions()
 {}
 
-auto Reactions::convert(ChemicalSystem const& system) const -> Vec<Reaction>
+auto Reactions::convert(PhaseList const& phases) const -> Vec<Reaction>
 {
     Vec<Reaction> reactions;
 
     for(auto const& fn : rgenerators)
     {
-        auto rxns = fn(system);
+        auto rxns = fn(phases);
         reactions.insert(reactions.end(), rxns.begin(), rxns.end());
     }
 

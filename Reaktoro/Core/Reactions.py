@@ -20,11 +20,11 @@ from reaktoro import *
 import pytest
 
 class ReactionGeneratorUsingClass:
-    def __call__(self, system):
-        return [ system.database().reaction("H2O(aq) = H+ + OH-") ]
+    def __call__(self, phases):
+        return [ Reaction().withEquation("H2O(aq) = H+ + OH-") ]
 
-def ReactionGeneratorUsingFunction(system):
-    return [ system.database().reaction("H2O(aq) = H2(aq) + 0.5*O2(aq)") ]
+def ReactionGeneratorUsingFunction(phases):
+    return [ Reaction().withEquation("H2O(aq) = H2(aq) + 0.5*O2(aq)") ]
 
 
 def testReactions():
@@ -39,7 +39,7 @@ def testReactions():
     phases.add( MineralPhase("Dolomite") )
     phases.add( MineralPhase("Quartz") )
 
-    system = ChemicalSystem(phases)
+    phases: PhaseList = phases.convert()
 
     reactions = Reactions()
 
@@ -48,7 +48,7 @@ def testReactions():
     reactions.add(ReactionGeneratorUsingClass())
     reactions.add(ReactionGeneratorUsingFunction)
 
-    converted = reactions.convert(system)
+    converted = reactions.convert(phases)
 
     assert len(converted) == 4
     assert str(converted[0].equation()) == "Halite = Na+ + Cl-"

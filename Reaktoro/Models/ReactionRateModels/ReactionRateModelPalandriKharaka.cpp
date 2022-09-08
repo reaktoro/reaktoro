@@ -32,12 +32,10 @@ using Catalyst = ReactionRateModelParamsPalandriKharaka::Catalyst;
 using Mechanism = ReactionRateModelParamsPalandriKharaka::Mechanism;
 
 /// Construct a function that computes the activity-based contribution of a catalyst in the mineral reaction rate.
-auto mineralCatalystFnActivity(Catalyst const& catalyst, ChemicalSystem const& system) -> Fn<real(ChemicalProps const&)>
+auto mineralCatalystFnActivity(Catalyst const& catalyst, PhaseList const& phases) -> Fn<real(ChemicalProps const&)>
 {
     auto const& formula = catalyst.formula;
     auto const& power = catalyst.power;
-
-    auto const& phases = system.phases();
 
     auto const iaqueousPhase = phases.findWithAggregateState(AggregateState::Aqueous);
 
@@ -67,12 +65,10 @@ auto mineralCatalystFnActivity(Catalyst const& catalyst, ChemicalSystem const& s
 }
 
 /// Construct a function that computes the partial-pressure-based contribution of a catalyst in the mineral reaction rate.
-auto mineralCatalystFnPartialPressure(Catalyst const& catalyst, ChemicalSystem const& system) -> Fn<real(ChemicalProps const&)>
+auto mineralCatalystFnPartialPressure(Catalyst const& catalyst, PhaseList const& phases) -> Fn<real(ChemicalProps const&)>
 {
     auto const& formula = catalyst.formula;
     auto const& power = catalyst.power;
-
-    auto const& phases = system.phases();
 
     auto const igaseousPhase = phases.findWithAggregateState(AggregateState::Gas);
 
@@ -104,16 +100,16 @@ auto mineralCatalystFnPartialPressure(Catalyst const& catalyst, ChemicalSystem c
 }
 
 /// Construct a function that computes the contribution of a catalyst in the mineral reaction rate.
-auto mineralCatalystFn(Catalyst const& catalyst, ChemicalSystem const& system) -> Fn<real(ChemicalProps const&)>
+auto mineralCatalystFn(Catalyst const& catalyst, PhaseList const& phases) -> Fn<real(ChemicalProps const&)>
 {
     if(catalyst.property == "a")
-        return mineralCatalystFnActivity(catalyst, system);
+        return mineralCatalystFnActivity(catalyst, phases);
     if(catalyst.property == "P")
-        return mineralCatalystFnPartialPressure(catalyst, system);
+        return mineralCatalystFnPartialPressure(catalyst, phases);
     errorif(true, "Expecting mineral catalyst property symbol to be either `a` or `P`, but got `", catalyst.property, "` instead.");
 }
 
-auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system) -> Fn<real(MineralReactionRateModelArgs)>
+auto mineralMechanismFn(Mechanism const& mechanism, PhaseList const& phases) -> Fn<real(MineralReactionRateModelArgs)>
 {
     // The universal gas constant (in J/(mol*K))
     const auto R = universalGasConstant;
@@ -121,7 +117,7 @@ auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system
     // Create the mineral catalyst functions
     Vec<Fn<real(ChemicalProps const&)>> catalyst_fns;
     for(auto&& catalyst : mechanism.catalysts)
-        catalyst_fns.push_back(mineralCatalystFn(catalyst, system));
+        catalyst_fns.push_back(mineralCatalystFn(catalyst, phases));
 
     // Define the mineral mechanism function
     auto fn = [=](MineralReactionRateModelArgs args)
@@ -167,11 +163,11 @@ auto ReactionRateModelPalandriKharaka(Params const& params) -> MineralReactionRa
 
 auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka const& params) -> MineralReactionRateModelGenerator
 {
-    MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
+    MineralReactionRateModelGenerator model = [=](String const& mineral, PhaseList const& phases)
     {
         Vec<Fn<real(MineralReactionRateModelArgs)>> mechanism_fns;
         for(auto const& mechanism : params.mechanisms)
-            mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, system));
+            mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, phases));
 
         MineralReactionRateModel fn = [=](MineralReactionRateModelArgs args) -> ReactionRate
         {
@@ -190,12 +186,12 @@ auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka con
 
 auto ReactionRateModelPalandriKharaka(Vec<ReactionRateModelParamsPalandriKharaka> const& paramsvec) -> MineralReactionRateModelGenerator
 {
-    MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
+    MineralReactionRateModelGenerator model = [=](String const& mineral, PhaseList const& phases)
     {
         const auto idx = indexfn(paramsvec, RKT_LAMBDA(x, contains(x.names, mineral)));
         errorif(idx >= paramsvec.size(), "Could not find a mineral with name `", mineral, "` in the provided set of Palandri-Kharaka parameters.");
         const auto params = paramsvec[idx];
-        return ReactionRateModelPalandriKharaka(params)(mineral, system);
+        return ReactionRateModelPalandriKharaka(params)(mineral, phases);
     };
 
     return model;
