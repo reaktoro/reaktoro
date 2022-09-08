@@ -50,7 +50,7 @@ void exportEquilibriumSpecs(py::module& m)
 
     py::class_<ConstraintEquations>(m, "ConstraintEquations")
         .def(py::init<>())
-        .def_readwrite("id", &ConstraintEquations::id)
+        .def_readwrite("ids", &ConstraintEquations::ids)
         .def_readwrite("fn", &ConstraintEquations::fn)
         ;
 
@@ -140,7 +140,9 @@ void exportEquilibriumSpecs(py::module& m)
         .def("titrants", &EquilibriumSpecs::titrants)
         .def("titrantsExplicit", &EquilibriumSpecs::titrantsExplicit)
         .def("titrantsImplicit", &EquilibriumSpecs::titrantsImplicit)
-        .def("equationConstraints", &EquilibriumSpecs::equationConstraints, return_internal_ref)
+        .def("equationConstraintsSingle", &EquilibriumSpecs::equationConstraintsSingle, return_internal_ref)
+        .def("equationConstraintsSystem", &EquilibriumSpecs::equationConstraintsSystem, return_internal_ref)
+        .def("equationConstraints", &EquilibriumSpecs::equationConstraints)
         .def("reactivityConstraints", &EquilibriumSpecs::reactivityConstraints, return_internal_ref)
         ;
 }

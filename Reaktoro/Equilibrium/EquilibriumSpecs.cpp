@@ -50,6 +50,56 @@ auto getGaseousSpecies(Database const& db, String const& formula) -> Species
     return getSpecies(db, formula, AggregateState::Gas);
 }
 
+/// Assemble the complete system of equation constraints to be satisfied at chemical equilibrium.
+auto assembleConstraintEquations(EquilibriumSpecs const& specs) -> ConstraintEquations
+{
+    // Create copies of all provided equation constraints to avoid full capture of `specs` in lambda function below
+    const auto econstraints_single = specs.equationConstraintsSingle();
+    const auto econstraints_system = specs.equationConstraintsSystem();
+
+    // The complete system of equation constraints that will be created below.
+    ConstraintEquations econstraints;
+
+    // Collect the id constraints across the single equation constraints
+    for(auto const& x : econstraints_single)
+        econstraints.ids.push_back(x.id);
+
+    // Collect the id constraints across the system of equation constraints
+    for(auto const& x : econstraints_system)
+        econstraints.ids.insert(econstraints.ids.end(), x.ids.begin(), x.ids.end());
+
+    // The total number of equation constraints
+    const auto num_econstraints = econstraints.ids.size();
+
+    // Create the final constraint vector function
+    econstraints.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
+    {
+        // Define auxiliary offset variable to keep track of the entries in `res` to be filled in
+        auto offset = 0;
+
+        // The vector with the resulting evaluation of all equation constraints
+        VectorXr res(num_econstraints);
+
+        // Evaluate all single equation constraints
+        for(auto const& x : econstraints_single)
+            res[offset++] = x.fn(state, p, w);
+
+        // Evaluate all system of equation constraints
+        for(auto const& x : econstraints_system)
+        {
+            const auto size = x.ids.size();
+            const auto tmp = x.fn(state, p, w);
+            errorif(tmp.size() != size, "You have provided a system of equation constraints whose size, ", tmp.size(), ", does not match with the number of constraint ids, ", size, ", whose ids being: ", x.ids);
+            res.segment(offset, size) = tmp;
+            offset += size;
+        }
+
+        return res;
+    };
+
+    return econstraints;
+}
+
 } // namespace
 
 EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
@@ -695,7 +745,7 @@ auto EquilibriumSpecs::namesTitrantsImplicit() const -> Strings
 
 auto EquilibriumSpecs::namesConstraints() const -> Strings
 {
-    Strings names = vectorize(econstraints, RKT_LAMBDA(x, x.id));
+    Strings names = vectorize(econstraints_single, RKT_LAMBDA(x, x.id));
     names = concatenate(names, vectorize(qvars, RKT_LAMBDA(x, x.id)));
     names = concatenate(names, vectorize(rconstraints, RKT_LAMBDA(x, x.id)));
     return names;
@@ -736,20 +786,20 @@ auto EquilibriumSpecs::addConstraint(ConstraintEquation const& constraint) -> vo
 {
     errorif(contains(econstraints_ids, constraint.id), "Cannot impose a new equation constraint with repeating id (", constraint.id, ").");
     errorif(constraint.id.empty(), "An equation constraint cannot have an empty id.");
-    errorif(!constraint.fn, "The equation constraint with id `", constraint.id, " should not have an empty function.");
+    errorif(!constraint.fn, "The equation constraint with id `", constraint.id, "` should not have an empty function.");
     econstraints_ids.push_back(constraint.id);
-    econstraints.push_back(constraint);
+    econstraints_single.push_back(constraint);
 }
 
 auto EquilibriumSpecs::addConstraints(ConstraintEquations const& constraints) -> void
 {
-    for(auto const& constraintid : constraints.id)
+    for(auto const& constraintid : constraints.ids)
     {
         errorif(contains(econstraints_ids, constraintid), "Cannot impose a new equation constraint with repeating id (", constraintid, ").");
         errorif(constraintid.empty(), "An equation constraint cannot have an empty id.");
         econstraints_ids.push_back(constraintid);
     }
-    errorif(!constraints.fn, "The system of equation constraints with ids `", constraints.id, " should not have an empty function.");
+    errorif(!constraints.fn, "The system of equation constraints with ids `", constraints.ids, "` should not have an empty function.");
     econstraints_system.push_back(constraints);
 }
 
@@ -759,7 +809,7 @@ auto EquilibriumSpecs::addReactivityConstraint(ReactivityConstraint const& const
     errorif(constraint_has_same_id, "Cannot impose a new reactivity constraint with same id (", constraint.id, ").");
     errorif(constraint.id.empty(), "A reactivity constraint cannot have an empty id.");
     errorif(constraint.Kn.size() != m_system.species().size(), "The `Kn` vector in the reactivity constraint with id `", constraint.id, " has size ", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
-    errorif(constraint.Kn.cwiseAbs().minCoeff() == 0, "The `Kn` vector in the reactivity constraint with id `", constraint.id, " should not be entirely composed of zeros.", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
+    errorif(constraint.Kn.cwiseAbs().minCoeff() == 0, "The `Kn` vector in the reactivity constraint with id `", constraint.id, "` should not be entirely composed of zeros.", constraint.Kn.size(), " which should be equal to the number of species in the chemical system, ", m_system.species().size(), ".");
     errorif(constraint.Kp.size() > 0 && constraint.Kp.size() != pvars.size(), "The `Kp` vector in the reactivity constraint with id `", constraint.id, " has non-zero size ", constraint.Kp.size(), " which should be equal to the number of p control variables, ", pvars.size(), ".");
     rconstraints.push_back(constraint);
 }
@@ -852,9 +902,19 @@ auto EquilibriumSpecs::titrantsImplicit() const -> Vec<ChemicalFormula>
     return titrants_implicit;
 }
 
-auto EquilibriumSpecs::equationConstraints() const -> Vec<ConstraintEquation> const&
+auto EquilibriumSpecs::equationConstraintsSingle() const -> Vec<ConstraintEquation> const&
 {
-    return econstraints;
+    return econstraints_single;
+}
+
+auto EquilibriumSpecs::equationConstraintsSystem() const -> Vec<ConstraintEquations> const&
+{
+    return econstraints_system;
+}
+
+auto EquilibriumSpecs::equationConstraints() const -> ConstraintEquations
+{
+    return assembleConstraintEquations(*this);
 }
 
 auto EquilibriumSpecs::reactivityConstraints() const -> Vec<ReactivityConstraint> const&

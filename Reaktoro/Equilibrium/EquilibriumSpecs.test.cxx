@@ -262,7 +262,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
     SECTION("Checking lambda functions in equation constraints")
     {
-        const auto& econstraints = specs.equationConstraints();
+        const auto econstraints = specs.equationConstraints();
 
         specs.volume();
         specs.internalEnergy();
@@ -274,12 +274,14 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const VectorXr p = {};
         const VectorXr w = random(6);
 
-        CHECK( econstraints[0].fn(state, p, w) == props.volume() - w[0] );
-        CHECK( econstraints[1].fn(state, p, w) == props.internalEnergy() - w[1] );
-        CHECK( econstraints[2].fn(state, p, w) == props.enthalpy() - w[2] );
-        CHECK( econstraints[3].fn(state, p, w) == props.gibbsEnergy() - w[3] );
-        CHECK( econstraints[4].fn(state, p, w) == props.helmholtzEnergy() - w[4] );
-        CHECK( econstraints[5].fn(state, p, w) == props.entropy() - w[5] );
+        const VectorXr v = econstraints.fn(state, p, w);
+
+        CHECK( v[0] == props.volume() - w[0] );
+        CHECK( v[1] == props.internalEnergy() - w[1] );
+        CHECK( v[2] == props.enthalpy() - w[2] );
+        CHECK( v[3] == props.gibbsEnergy() - w[3] );
+        CHECK( v[4] == props.helmholtzEnergy() - w[4] );
+        CHECK( v[5] == props.entropy() - w[5] );
     }
 
     SECTION("Checking lambda functions in chemical potential constraints")
