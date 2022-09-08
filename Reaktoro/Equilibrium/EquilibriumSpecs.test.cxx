@@ -38,7 +38,9 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
     state.setPressure(100.0, "bar");
     state.setSpeciesAmounts(1.0);
 
-    ChemicalProps props(state);
+    state.props().update(state);
+
+    const auto props = state.props();
 
     WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
     {
@@ -235,12 +237,12 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
         const VectorXr w = random(6);
 
-        CHECK( econstraints[0].fn(props, w) == props.volume() - w[0] );
-        CHECK( econstraints[1].fn(props, w) == props.internalEnergy() - w[1] );
-        CHECK( econstraints[2].fn(props, w) == props.enthalpy() - w[2] );
-        CHECK( econstraints[3].fn(props, w) == props.gibbsEnergy() - w[3] );
-        CHECK( econstraints[4].fn(props, w) == props.helmholtzEnergy() - w[4] );
-        CHECK( econstraints[5].fn(props, w) == props.entropy() - w[5] );
+        CHECK( econstraints[0].fn(state, w) == props.volume() - w[0] );
+        CHECK( econstraints[1].fn(state, w) == props.internalEnergy() - w[1] );
+        CHECK( econstraints[2].fn(state, w) == props.enthalpy() - w[2] );
+        CHECK( econstraints[3].fn(state, w) == props.gibbsEnergy() - w[3] );
+        CHECK( econstraints[4].fn(state, w) == props.helmholtzEnergy() - w[4] );
+        CHECK( econstraints[5].fn(state, w) == props.entropy() - w[5] );
     }
 
     SECTION("Checking lambda functions in chemical potential constraints")
@@ -273,14 +275,14 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
         const auto& qvars = specs.controlVariablesQ();
 
-        CHECK( qvars[0].fn(props, w) == Approx(w[0]) );
-        CHECK( qvars[1].fn(props, w) == Approx(u0CH4 + RT*w[1]) );
-        CHECK( qvars[2].fn(props, w) == Approx(u0CO2 + RT*w[2]) );
-        CHECK( qvars[3].fn(props, w) == Approx(u0Capp + RT*w[3]) );
-        CHECK( qvars[4].fn(props, w) == Approx(u0O2 + RT*log(w[4])) );
-        CHECK( qvars[5].fn(props, w) == Approx(u0Hp + RT*w[5] * (-ln10)) );
-        CHECK( qvars[6].fn(props, w) == Approx(u0Mgpp + RT*w[6] * (-ln10)) );
-        CHECK( qvars[7].fn(props, w) == Approx(constraintEh ? -F * w[7] : RT*w[7] * (-ln10)) );
+        CHECK( qvars[0].fn(state, w) == Approx(w[0]) );
+        CHECK( qvars[1].fn(state, w) == Approx(u0CH4 + RT*w[1]) );
+        CHECK( qvars[2].fn(state, w) == Approx(u0CO2 + RT*w[2]) );
+        CHECK( qvars[3].fn(state, w) == Approx(u0Capp + RT*w[3]) );
+        CHECK( qvars[4].fn(state, w) == Approx(u0O2 + RT*log(w[4])) );
+        CHECK( qvars[5].fn(state, w) == Approx(u0Hp + RT*w[5] * (-ln10)) );
+        CHECK( qvars[6].fn(state, w) == Approx(u0Mgpp + RT*w[6] * (-ln10)) );
+        CHECK( qvars[7].fn(state, w) == Approx(constraintEh ? -F * w[7] : RT*w[7] * (-ln10)) );
     }
 
     SECTION("Checking when chemical potential unknowns are introduced")
@@ -329,10 +331,10 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
             const auto ln_c1 = props.speciesConcentrationLn(pvars[1].ispecies);
             const auto ln_a3 = props.speciesActivityLn(pvars[3].ispecies);
 
-            CHECK( pvars[0].fn(props, pk) == Approx(G0_0 + RT*log(pk)) );
-            CHECK( pvars[1].fn(props, pk) == Approx(G0_1 + RT*(log(pk) + ln_c1)) );
-            CHECK( pvars[2].fn(props, pk) == Approx(pk) );
-            CHECK( pvars[3].fn(props, pk) == Approx(pk + RT*ln_a3) );
+            CHECK( pvars[0].fn(state, pk) == Approx(G0_0 + RT*log(pk)) );
+            CHECK( pvars[1].fn(state, pk) == Approx(G0_1 + RT*(log(pk) + ln_c1)) );
+            CHECK( pvars[2].fn(state, pk) == Approx(pk) );
+            CHECK( pvars[3].fn(state, pk) == Approx(pk + RT*ln_a3) );
         }
     }
 }

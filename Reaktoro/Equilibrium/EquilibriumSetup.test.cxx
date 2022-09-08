@@ -364,8 +364,10 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             VectorXr w{{V, U, H, pH, pE}};
 
-            ChemicalProps props(system);
-            props.update(T, P, n);
+            ChemicalState state(system);
+            state.update(T, P, n);
+
+            ChemicalProps props = state.props();
 
             const auto RT = universalGasConstant * T;
 
@@ -397,8 +399,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             auto qvars = specs.controlVariablesQ();
 
-            fq[0] = qvars[0].fn(props, w)/RT; // the pH constraint
-            fq[1] = qvars[1].fn(props, w)/RT; // the pE constraint
+            fq[0] = qvars[0].fn(state, w)/RT; // the pH constraint
+            fq[1] = qvars[1].fn(state, w)/RT; // the pE constraint
 
             CHECK( fx.isApprox(setup.getGibbsGradX()) );
 
@@ -406,8 +408,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             // Check the Jacobian of the gradient of the objective function at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
 
-            // Auxiliary function used to update a ChemicalProps object taking
-            // decision on whether to update using exact properties or
+            // Auxiliary function used to update a ChemicalState object taking
+            // decision on whether to update its properties using exact values or
             // approximated (using ideal thermo models). This exists so that we
             // can test if EquilibriumSetup is correctly making the necessary
             // requested simplifications in derivative calculations. For
@@ -415,7 +417,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             // EquilibriumOptions::hessian, then exact properties must be
             // computed always. If GibbsHessian::PartiallyExact is set, then
             // derivatives are exact only with respect to basic variables in n.
-            auto updatePropsSpecial = [ibasicvars](auto& props, auto T, auto P, auto n, auto options)
+            auto updateStateSpecial = [ibasicvars](auto& state, auto T, auto P, auto n, auto options)
             {
                 auto iseeded = 0;
                 for(; iseeded < n.size() && n[iseeded][1] != 1.0; ++iseeded);
@@ -432,30 +434,32 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
                     switch(options.hessian)
                     {
                     case GibbsHessian::Exact:
-                        props.update(T, P, n);
+                        state.update(T, P, n);
                         break;
                     case GibbsHessian::Approx:
                     case GibbsHessian::ApproxDiagonal:
-                        props.updateIdeal(T, P, n);
+                        state.updateIdeal(T, P, n);
                         break;
                     case GibbsHessian::PartiallyExact:
                     default:
                         if(is_nbasic_seeded)
-                            props.update(T, P, n); // compute exact properties if basic seeded variable
-                        else props.updateIdeal(T, P, n); // compute approx properties if seeded variable is non-basic
+                            state.update(T, P, n); // compute exact properties if basic seeded variable
+                        else state.updateIdeal(T, P, n); // compute approx properties if seeded variable is non-basic
                     }
                 }
-                else props.update(T, P, n); // in case there is no seeded variable in n
+                else state.update(T, P, n); // in case there is no seeded variable in n
             };
 
-            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &w, &options, &updatePropsSpecial](ArrayXrConstRef x, ArrayXrConstRef p)
+            auto gfn = [&system, &Nn, &Nq, &Nx, &tau, &specs, &w, &options, &updateStateSpecial](ArrayXrConstRef x, ArrayXrConstRef p)
             {
-                ChemicalProps auxprops(system);
+                ChemicalState auxstate(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
                 const auto P = p[1]; // in tested equilibrium specs, p[1] is pressure (this is not necessarily always true!)
                 const auto n = x.head(Nn);
 
-                updatePropsSpecial(auxprops, T, P, n, options);
+                updateStateSpecial(auxstate, T, P, n, options);
+
+                ChemicalProps auxprops = auxstate.props();
 
                 const auto u = auxprops.speciesChemicalPotentials();
                 const auto RT = universalGasConstant * T;
@@ -468,8 +472,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 auto qvars = specs.controlVariablesQ();
 
-                gq[0] = qvars[0].fn(auxprops, w)/RT; // the pH constraint
-                gq[1] = qvars[1].fn(auxprops, w)/RT; // the pE constraint
+                gq[0] = qvars[0].fn(auxstate, w)/RT; // the pH constraint
+                gq[1] = qvars[1].fn(auxstate, w)/RT; // the pE constraint
 
                 return g;
             };
@@ -505,28 +509,28 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //-------------------------------------------------------------------------------------------------
             VectorXd v(Np);
 
-            v[0] = specs.constraintsEquationType()[0].fn(props, w); // the volume constraint equation
-            v[1] = specs.constraintsEquationType()[1].fn(props, w); // the internal energy constraint equation
-            v[2] = specs.constraintsEquationType()[2].fn(props, w); // the enthalpy constraint equation
+            v[0] = specs.constraintsEquationType()[0].fn(state, w); // the volume constraint equation
+            v[1] = specs.constraintsEquationType()[1].fn(state, w); // the internal energy constraint equation
+            v[2] = specs.constraintsEquationType()[2].fn(state, w); // the enthalpy constraint equation
 
             CHECK( v.isApprox(setup.getConstraintResiduals()) );
 
             //----------------------------------------------------------------------------------------------------
             // Check the Jacobian of the constraint functions of equation type at current conditions of [n, p, q]
             //----------------------------------------------------------------------------------------------------
-            auto vfn = [&system, &Nn, &Np, &specs, &w, &options, &updatePropsSpecial](ArrayXrConstRef x, ArrayXrConstRef p)
+            auto vfn = [&system, &Nn, &Np, &specs, &w, &options, &updateStateSpecial](ArrayXrConstRef x, ArrayXrConstRef p)
             {
-                ChemicalProps auxprops(system);
+                ChemicalState auxstate(system);
                 const auto T = p[0]; // in tested equilibrium specs, p[0] is temperature (this is not necessarily always true!)
                 const auto P = p[1]; // in tested equilibrium specs, p[1] is pressure (this is not necessarily always true!)
                 const auto n = x.head(Nn);
 
-                updatePropsSpecial(auxprops, T, P, n, options);
+                updateStateSpecial(auxstate, T, P, n, options);
 
                 VectorXr v(Np);
-                v[0] = specs.constraintsEquationType()[0].fn(auxprops, w); // the volume constraint equation
-                v[1] = specs.constraintsEquationType()[1].fn(auxprops, w); // the internal energy constraint equation
-                v[2] = specs.constraintsEquationType()[2].fn(auxprops, w); // the enthalpy constraint equation
+                v[0] = specs.constraintsEquationType()[0].fn(auxstate, w); // the volume constraint equation
+                v[1] = specs.constraintsEquationType()[1].fn(auxstate, w); // the internal energy constraint equation
+                v[2] = specs.constraintsEquationType()[2].fn(auxstate, w); // the enthalpy constraint equation
 
                 return v;
             };

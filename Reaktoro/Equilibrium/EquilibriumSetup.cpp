@@ -252,16 +252,16 @@ struct EquilibriumSetup::Impl
 
         const auto& econstraints = specs.constraintsEquationType();
 
-        const auto& cprops = props.chemicalProps();
+        const auto& state = props.chemicalState();
 
-        const auto& T = cprops.temperature();
-        const auto& n = cprops.speciesAmounts();
+        const auto& T = state.temperature();
+        const auto& n = state.speciesAmounts();
 
         // Update the vector of species chemical potentials in case there are p variables associated to them
-        mu = cprops.speciesChemicalPotentials();
+        mu = state.props().speciesChemicalPotentials();
         for(auto i = 0; i < Np; ++i)
             if(pvars[i].ispecies != Index(-1))
-                mu[pvars[i].ispecies] = pvars[i].fn(cprops, p[i]);
+                mu[pvars[i].ispecies] = pvars[i].fn(state, p[i]);
 
         const auto RT  = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
@@ -274,10 +274,10 @@ struct EquilibriumSetup::Impl
         gn(ipps).array() -= tau/n(ipps); // add log barrier contribution to pure phase species
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = qvars[i].fn(cprops, w)/RT;
+            gq[i] = qvars[i].fn(state, w)/RT;
 
         for(auto i = 0; i < Np; ++i)
-            vp[i] = econstraints[i].fn(cprops, w);
+            vp[i] = econstraints[i].fn(state, w);
     }
 
     auto updateFn(Index i) -> void
@@ -331,9 +331,9 @@ struct EquilibriumSetup::Impl
 
     auto updateGibbsEnergy() -> void
     {
-        const auto& cprops = props.chemicalProps();
-        const auto& T = cprops.temperature();
-        const auto& n = cprops.speciesAmounts();
+        const auto& state = props.chemicalState();
+        const auto& T = state.temperature();
+        const auto& n = state.speciesAmounts();
         const auto RT = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
         const auto barrier = -tau * n(ipps).log().sum();

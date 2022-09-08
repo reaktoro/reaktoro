@@ -28,6 +28,7 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
+class ChemicalState;
 
 /// Used to define a *q* control variable in a chemical equilibrium problem.
 /// *q* control variables are used to specify the chemical potential of a
@@ -40,9 +41,9 @@ class ChemicalProps;
 struct ControlVariableQ
 {
     /// The signature of functions that evaluate the prescribed chemical potential of a substance.
-    /// @param props The current chemical properties of the system in the equilibrium calculation.
+    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
     /// @param w The input variables in the chemical equilibrium calculation.
-    using ChemicalPotentialFn = Fn<real(const ChemicalProps& props, VectorXrConstRef w)>;
+    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, VectorXrConstRef w)>;
 
     /// The unique name for this *q* control variable (required).
     String name;
@@ -67,9 +68,9 @@ struct ControlVariableQ
 struct ControlVariableP
 {
     /// The signature of functions that evaluate the chemical potential of a species in terms of a *p* control variable.
-    /// @param props The current chemical properties of the system during the equilibrium calculation.
+    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
     /// @param pk The current value of the corresponding *p* control variable during the equilibrium calculation.
-    using ChemicalPotentialFn = Fn<real(const ChemicalProps& props, const real& pk)>;
+    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, const real& pk)>;
 
     /// The unique name for this *p* control variable (required).
     String name;
@@ -88,9 +89,9 @@ struct ControlVariableP
 struct ConstraintEquation
 {
     /// The signature of functions that evaluate the residual of the equation constraint.
-    /// @param props The current chemical properties of the system during the equilibrium calculation.
+    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
     /// @param w The input variables in the chemical equilibrium calculation.
-    using ConstraintFn = Fn<real(const ChemicalProps& props, VectorXrConstRef w)>;
+    using ConstraintFn = Fn<real(ChemicalState const& state, VectorXrConstRef w)>;
 
     /// The unique identifier for this equation constraint.
     String id;
