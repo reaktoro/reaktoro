@@ -252,6 +252,14 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     CHECK(system.stoichiometricMatrix() == Sexpected);
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::reactingPhaseInterfaces()
+    //-------------------------------------------------------------------------
+
+    auto interfaces = system.reactingPhaseInterfaces();
+
+    CHECK( interfaces == Pairs<Index, Index>{ {0, 1}, {0, 2}, {2, 2} } ); // aqueous-gaseous, aqueous-halite, halite-implicit phase
+
+    //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)
     //-------------------------------------------------------------------------
     auto db = test::createDatabase();
