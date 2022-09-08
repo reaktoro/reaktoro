@@ -62,17 +62,15 @@ struct ChemicalState::Impl
     /// The amounts of the chemical species (in mol)
     ArrayXr n;
 
-    /// The phase pairs (as phase indices) for which surface areas have been set.
-    Pairs<Index, Index> surfaces;
-
     /// The surface areas for the existing interphase surfaces.
-    Vec<real> surface_areas;
+    ArrayXr surface_areas;
 
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(const ChemicalSystem& system)
     : system(system), equilibrium(system), props(system)
     {
         n.setConstant(system.species().size(), 1e-16); // set small positive value for initial species amounts
+        surface_areas.setZero(system.reactingPhaseInterfaces().size());
     }
 
     auto temperature(real val) -> void
@@ -342,31 +340,25 @@ struct ChemicalState::Impl
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
         value = units::convert(value, unit, "m2");
         const auto isurface = surfaceIndex(phase1, phase2);
-        if(isurface < surfaces.size())
-            surface_areas[isurface] = value;
-        else
-        {
-            using std::min;
-            using std::max;
-            const auto iphase1 = detail::resolvePhaseIndex(system, phase1);
-            const auto iphase2 = detail::resolvePhaseIndex(system, phase2);
-            surfaces.emplace_back(min(iphase1, iphase2), max(iphase1, iphase2)); // ensure pair of indices are ordered!
-            surface_areas.push_back(value);
-        }
+        const auto numsurfaces = system.reactingPhaseInterfaces().size();
+        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
+        surface_areas[isurface] = value;
     }
 
     auto setSurfaceArea(Index isurface, real value, Chars unit) -> void
     {
+        const auto numsurfaces = system.reactingPhaseInterfaces().size();
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
-        errorif(isurface >= surfaces.size(), "The given surface index,", isurface, ", is out of bounds. There are only ", surfaces.size(), " surfaces specified so far with method ChemicalState::setSurfaceArea(phase1, phase2, value, unit).");
+        errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
         value = units::convert(value, unit, "m2");
         surface_areas[isurface] = value;
     }
 
     auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real
     {
+        const auto numsurfaces = system.reactingPhaseInterfaces().size();
         const auto isurface = surfaceIndex(phase1, phase2);
-        errorif(isurface >= surfaces.size(), "No surface area has yet been set for the phase pair `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "`. Use method ChemicalState::setSurfaceArea(phase1, phase2, value, unit) to create this surface.");
+        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
         return surface_areas[isurface];
     }
 
@@ -377,13 +369,9 @@ struct ChemicalState::Impl
 
     auto surfaceArea(Index isurface) const -> real
     {
-        errorif(isurface >= surfaces.size(), "The given surface index,", isurface, ", is out of bounds. There are only ", surfaces.size(), " surfaces specified so far with method ChemicalState::setSurfaceArea(phase1, phase2, value, unit).");
+        const auto numsurfaces = system.reactingPhaseInterfaces().size();
+        errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
         return surface_areas[isurface];
-    }
-
-    auto surfaceAreas() const -> ArrayXrConstRef
-    {
-        return ArrayXr::Map(surface_areas.data(), surface_areas.size());
     }
 
     auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
@@ -393,9 +381,8 @@ struct ChemicalState::Impl
         const auto numphases = system.phases().size();
         errorif(iphase1 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase1), "`.");
         errorif(iphase2 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase2), "`.");
-        errorif(iphase1 == iphase2, "Expecting distinct phase names or indices, but got `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "`.");
         const auto pair = iphase1 < iphase2 ? Pair<Index,Index>{iphase1, iphase2} : Pair<Index,Index>{iphase2, iphase1};
-        const auto isurface = index(surfaces, pair);
+        const auto isurface = index(system.reactingPhaseInterfaces(), pair);
         return isurface;
     }
 };
@@ -651,19 +638,8 @@ auto ChemicalState::surfaceArea(Index isurface) const -> real
 
 auto ChemicalState::surfaceAreas() const -> ArrayXrConstRef
 {
-    return pimpl->surfaceAreas();
+    return pimpl->surface_areas;
 }
-
-auto ChemicalState::surfaces() const -> const Pairs<Index, Index>&
-{
-    return pimpl->surfaces;
-}
-
-auto ChemicalState::surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
-{
-    return pimpl->surfaceIndex(phase1, phase2);
-}
-
 
 // --------------------------------------------------------------------------------------------
 // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
@@ -956,7 +932,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     const auto& phases = state.system().phases();
     const auto& species = state.system().species();
     const auto& elements = state.system().elements();
-    const auto& surfaces = state.surfaces();
+    const auto& surfaces = state.system().reactingPhaseInterfaces();
     const auto& surface_areas = state.surfaceAreas();
 
     Table table;
@@ -968,7 +944,7 @@ auto operator<<(std::ostream& out, const ChemicalState& state) -> std::ostream&
     table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), strsci(b[i]), "mol" });
     table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(n[i]), "mol" });
 
-    if(state.surfaces().size())
+    if(surfaces.size())
     {
         table.add_row({ "Surface Area:", "", "" });
             for(auto [k, pair] : enumerate(surfaces))
