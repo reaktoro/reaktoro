@@ -91,8 +91,8 @@ endif()
 # Find all Reaktoro dependencies
 include(ReaktoroFindDeps)
 
-# Build the C++ resource library containing embedded databases
-add_subdirectory(databases)
+# Build the C++ resource library ReaktoroEmbedded containing embedded databases and other files
+add_subdirectory(embedded)
 
 # Build the C++ library Reaktoro
 add_subdirectory(Reaktoro)
