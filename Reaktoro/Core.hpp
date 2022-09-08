@@ -47,5 +47,4 @@
 #include <Reaktoro/Core/ThermoPropsPhase.hpp>
 
 /// @defgroup Core Core
-/// This is the main module in Reaktoro, in which the essential classes are defined.
-
+/// The module in Reaktoro in which core classes and methods are defined.

@@ -18,7 +18,7 @@
 #include "ActivityModelDuanSun.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 
 namespace Reaktoro {
 namespace {

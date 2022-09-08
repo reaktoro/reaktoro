@@ -15,14 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#pragma once
 
-// Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
-using namespace Reaktoro;
+#include <Reaktoro/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterUtils.hpp>
+#include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
+#include <Reaktoro/Water/WaterHelmholtzPropsWagnerPruss.hpp>
+#include <Reaktoro/Water/WaterElectroPropsJohnsonNorton.hpp>
+#include <Reaktoro/Water/WaterHelmholtzPropsHGK.hpp>
+#include <Reaktoro/Water/WaterHelmholtzProps.hpp>
 
-void exportReactionThermoModelYAML(py::module& m)
-{
-    m.def("ReactionThermoModelYAML", ReactionThermoModelYAML);
-}
+/// @defgroup Water Water
+/// The module in Reaktoro in which thermodynamic and electrostatic models for water are implemented.

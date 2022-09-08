@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
 using namespace Reaktoro;
 
 void exportStandardVolumeModelConstant(py::module& m)

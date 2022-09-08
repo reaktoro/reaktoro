@@ -22,8 +22,8 @@
 using std::pow;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Water/WaterThermoProps.hpp>
 
 namespace Reaktoro {
 namespace {

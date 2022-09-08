@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherPruessEnnis.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelSpycherPruessEnnis.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelSpycherPruessEnnis(py::module& m)

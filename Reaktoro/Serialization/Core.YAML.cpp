@@ -30,7 +30,7 @@
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
-#include <Reaktoro/Models/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 

@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModelPressureCorrection.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPressureCorrection.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionThermoModelPressureCorrection class", "[ReactionThermoModelPressureCorrection]")

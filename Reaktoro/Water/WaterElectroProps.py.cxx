@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Water/WaterElectroProps.hpp>
 using namespace Reaktoro;
 
 void exportWaterElectroProps(py::module& m)

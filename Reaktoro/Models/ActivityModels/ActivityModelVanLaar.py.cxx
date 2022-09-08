@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Solids/ActivityModelVanLaar.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelVanLaar.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelVanLaar(py::module& m)

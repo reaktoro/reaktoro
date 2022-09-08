@@ -18,9 +18,9 @@
 #include "StandardThermoModelWaterHKF.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {

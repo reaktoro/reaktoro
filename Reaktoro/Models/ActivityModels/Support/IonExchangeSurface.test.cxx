@@ -20,7 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
-#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/IonExchangeSurface.hpp>
 #include <Reaktoro/Singletons/Elements.hpp>
 
 using namespace Reaktoro;

@@ -18,8 +18,7 @@
 #include "ActivityModelDrummond.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 
 namespace Reaktoro {
 

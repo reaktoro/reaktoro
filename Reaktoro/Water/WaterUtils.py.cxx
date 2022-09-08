@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
+#include <Reaktoro/Water/WaterUtils.hpp>
 using namespace Reaktoro;
 
 void exportWaterUtils(py::module& m)

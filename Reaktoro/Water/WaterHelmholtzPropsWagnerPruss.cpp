@@ -23,8 +23,8 @@ using std::log;
 using std::pow;
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterHelmholtzProps.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 namespace {

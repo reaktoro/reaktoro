@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelIonExchange(py::module& m)

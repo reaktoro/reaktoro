@@ -25,8 +25,8 @@ void exportExtensions(py::module& m);
 void exportModels(py::module& m);
 void exportSerialization(py::module& m);
 void exportSingletons(py::module& m);
-void exportThermodynamics(py::module& m);
 void exportUtils(py::module& m);
+void exportWater(py::module& m);
 
 PYBIND11_MODULE(reaktoro4py, m)
 {
@@ -37,6 +37,6 @@ PYBIND11_MODULE(reaktoro4py, m)
     exportModels(m);
     exportSerialization(m);
     exportSingletons(m);
-    exportThermodynamics(m);
     exportUtils(m);
+    exportWater(m);
 }

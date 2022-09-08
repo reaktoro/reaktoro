@@ -20,9 +20,9 @@
 
 // Reaktoro includes
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Utils/AqueousProps.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 #include <Reaktoro/Singletons/Elements.hpp>
 
 using namespace Reaktoro;

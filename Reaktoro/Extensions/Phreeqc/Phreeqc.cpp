@@ -28,7 +28,7 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 namespace {

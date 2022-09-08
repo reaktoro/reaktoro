@@ -23,8 +23,8 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
+#include <Reaktoro/Utils/AqueousProps.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelCubicEOS.hpp>
 
 using namespace Reaktoro;
 

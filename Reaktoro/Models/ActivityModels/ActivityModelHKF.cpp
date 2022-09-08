@@ -26,8 +26,8 @@
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 

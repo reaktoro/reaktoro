@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDrummond.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDrummond.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelDrummond(py::module& m)

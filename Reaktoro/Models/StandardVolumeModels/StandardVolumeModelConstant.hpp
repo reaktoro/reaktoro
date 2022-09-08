@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardVolumeModel.hpp>
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModel.hpp>
 
 namespace Reaktoro {
 

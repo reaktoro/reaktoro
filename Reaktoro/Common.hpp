@@ -42,4 +42,4 @@
 #include <Reaktoro/Common/Units.hpp>
 
 /// @defgroup Common Common
-/// This is the common module in Reaktoro, in which methods and classes commonly used in other modules are implemented.
+/// The module in Reaktoro in which methods and classes commonly used in other modules are implemented.

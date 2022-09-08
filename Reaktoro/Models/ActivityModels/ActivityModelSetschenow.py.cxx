@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelSetschenow.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelSetschenow.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelSetschenow(py::module& m)

@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelHKF.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelHKF.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelHKF(py::module& m)

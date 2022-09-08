@@ -24,7 +24,7 @@
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousProps.hpp>
+#include <Reaktoro/Utils/AqueousProps.hpp>
 using namespace Reaktoro;
 
 void exportAqueousProps(py::module& m)

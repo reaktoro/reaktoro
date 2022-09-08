@@ -19,8 +19,8 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsHGK.hpp>
+#include <Reaktoro/Water/WaterHelmholtzProps.hpp>
+#include <Reaktoro/Water/WaterHelmholtzPropsHGK.hpp>
 using namespace Reaktoro;
 
 void exportWaterHelmholtzPropsHGK(py::module& m)

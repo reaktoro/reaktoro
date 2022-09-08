@@ -27,10 +27,10 @@ using std::log;
 #include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
 #include <Reaktoro/Models/Support/SpeciesElectroPropsHKF.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
+#include <Reaktoro/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Water/WaterElectroPropsJohnsonNorton.hpp>
+#include <Reaktoro/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
 
 namespace Reaktoro {
 namespace {

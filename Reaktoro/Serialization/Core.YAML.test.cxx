@@ -28,12 +28,12 @@ using namespace Catch;
 #include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
 using namespace Reaktoro;

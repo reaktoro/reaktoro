@@ -20,7 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionThermoModelConstLgK class", "[ReactionThermoModelConstLgK]")

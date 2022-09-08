@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelCubicEOS.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelCubicEOS(py::module& m)

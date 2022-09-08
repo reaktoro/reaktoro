@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
 using namespace Reaktoro;
 
 void exportReactionThermoModelConstLgK(py::module& m)

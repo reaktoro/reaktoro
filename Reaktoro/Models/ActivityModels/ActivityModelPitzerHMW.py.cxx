@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelPitzerHMW.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelPitzerHMW(py::module& m)

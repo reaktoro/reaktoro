@@ -23,12 +23,12 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Singletons/DissociationReactions.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterElectroPropsJohnsonNorton.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterElectroProps.hpp>
+#include <Reaktoro/Water/WaterElectroPropsJohnsonNorton.hpp>
+#include <Reaktoro/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
+#include <Reaktoro/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
 namespace detail {
