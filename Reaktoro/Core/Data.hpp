@@ -65,22 +65,22 @@ public:
     Data(nlohmann::json const& obj);
 
     /// Return a Data object by parsing an YAML document.
-    static auto fromYaml(Chars input) -> Data;
+    static auto parseYaml(Chars input) -> Data;
 
     /// Return a Data object by parsing an YAML document.
-    static auto fromYaml(String const& input) -> Data;
+    static auto parseYaml(String const& input) -> Data;
 
     /// Return a Data object by parsing an YAML document.
-    static auto fromYaml(std::istream& input) -> Data;
+    static auto parseYaml(std::istream& input) -> Data;
 
     /// Return a Data object by parsing a JSON document.
-    static auto fromJson(Chars input) -> Data;
+    static auto parseJson(Chars input) -> Data;
 
     /// Return a Data object by parsing a JSON document.
-    static auto fromJson(String const& input) -> Data;
+    static auto parseJson(String const& input) -> Data;
 
     /// Return a Data object by parsing a JSON document.
-    static auto fromJson(std::istream& input) -> Data;
+    static auto parseJson(std::istream& input) -> Data;
 
     /// Return this Data object as a boolean value.
     auto asBoolean() const -> bool;

@@ -34,9 +34,9 @@ auto createDataFromYamlOrJson(String const& path, Text&& text) -> Data
 {
     const auto words = split(path, ".");
     if(words.back() == "yaml" || words.back() == "yml")
-        return Data::fromYaml(text);
+        return Data::parseYaml(text);
     if(words.back() == "json")
-        return Data::fromJson(text);
+        return Data::parseJson(text);
     errorif(true, "The given file path ", path, " does not indicate whether the file is yaml or json (expecting these words as file extensions).");
     return {};
 }
