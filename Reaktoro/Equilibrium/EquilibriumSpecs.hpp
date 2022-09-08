@@ -566,6 +566,12 @@ public:
     /// Return the number of all introduced implicit titrants.
     auto numTitrantsImplicit() const -> Index;
 
+    /// Return the number of all introduced equation constraints.
+    auto numEquationConstraints() const -> Index;
+
+    /// Return the number of all introduced reactivity constraints.
+    auto numReactivityConstraints() const -> Index;
+
     /// Return the number of all introduced equation, reactivity, and chemical potential constraints.
     auto numConstraints() const -> Index;
 
