@@ -31,8 +31,11 @@ public:
     /// Construct a default PhaseList object.
     PhaseList();
 
-    /// Construct an PhaseList object with given phase.
-    PhaseList(const Vec<Phase>& phase);
+    /// Construct an PhaseList object with given phases.
+    PhaseList(std::initializer_list<Phase> phases);
+
+    /// Construct an PhaseList object with given phases.
+    PhaseList(const Vec<Phase>& phases);
 
     /// Append a new phase to the list of phase.
     auto append(const Phase& phase) -> void;

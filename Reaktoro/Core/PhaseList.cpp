@@ -28,8 +28,12 @@ namespace Reaktoro {
 PhaseList::PhaseList()
 {}
 
-PhaseList::PhaseList(const Vec<Phase>& phase)
-: m_phases(phase)
+PhaseList::PhaseList(std::initializer_list<Phase> phases)
+: m_phases(std::move(phases))
+{}
+
+PhaseList::PhaseList(const Vec<Phase>& phases)
+: m_phases(phases)
 {}
 
 auto PhaseList::append(const Phase& phase) -> void
