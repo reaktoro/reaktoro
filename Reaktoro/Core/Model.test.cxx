@@ -20,7 +20,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Serialization/Common.YAML.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Model class", "[Model]")
@@ -44,8 +43,8 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model.calculatorFn() );
 
         CHECK( model.params().size() == 1 );
-        CHECK( model.params().at(0).id() == "K" );
-        CHECK( model.params().at(0).value() == 3.0 );
+        CHECK( model.params()[0].id() == "K" );
+        CHECK( model.params()[0].value() == 3.0 );
 
         const auto x = 3.0;
         const auto y = 7.0;
@@ -71,8 +70,8 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model.calculatorFn() );
 
         CHECK( model.params().size() == 1 );
-        CHECK( model.params().at(0).id() == "K" );
-        CHECK( model.params().at(0).value() == 3.0 );
+        CHECK( model.params()[0].id() == "K" );
+        CHECK( model.params()[0].value() == 3.0 );
 
         const auto x = 3.0;
         const auto y = 7.0;
@@ -91,8 +90,8 @@ TEST_CASE("Testing Model class", "[Model]")
         auto serializerfn = [=]()
         {
             Data data;
-            data.at("A") = params[0];
-            data.at("B") = params[1];
+            data["A"] = params[0];
+            data["B"] = params[1];
             return data;
         };
 
@@ -105,7 +104,7 @@ TEST_CASE("Testing Model class", "[Model]")
 
         auto model = Model<real(real, real)>(calcfn, params, serializerfn);
 
-        CHECK( model.serialize().isNull() );
+        CHECK( model.serialize().isDict() );
 
         Data data = model.serialize();
 
@@ -122,8 +121,8 @@ TEST_CASE("Testing Model class", "[Model]")
         CHECK( model.calculatorFn() );
 
         CHECK( model.params().size() == 1 );
-        CHECK( model.params().at(0).id() == "K" );
-        CHECK( model.params().at(0).value() == 3.0 );
+        CHECK( model.params()[0].id() == "K" );
+        CHECK( model.params()[0].value() == 3.0 );
 
         const auto x = 3.0;
         const auto y = 7.0;
