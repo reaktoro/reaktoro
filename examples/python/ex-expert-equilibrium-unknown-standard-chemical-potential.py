@@ -62,7 +62,7 @@ constraint = ConstraintEquation()
 constraint.id = "solubility[CaCO3]"
 
 aprops = AqueousProps(system)
-def fn(state, w):
+def fn(state, p, w):
     aprops.update(state)
     return aprops.elementMolality("Ca") - solubilityCaCO3
 

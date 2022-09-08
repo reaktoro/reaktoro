@@ -143,7 +143,7 @@ auto EquilibriumSpecs::volume() -> void
     ConstraintEquation constraint;
     constraint.id = "volume";
     const auto idx = addInput("V");
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().volume() - w[idx];
     };
@@ -155,7 +155,7 @@ auto EquilibriumSpecs::internalEnergy() -> void
     ConstraintEquation constraint;
     constraint.id = "internalEnergy";
     const auto idx = addInput("U");
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().internalEnergy() - w[idx];
     };
@@ -167,7 +167,7 @@ auto EquilibriumSpecs::enthalpy() -> void
     ConstraintEquation constraint;
     constraint.id = "enthalpy";
     const auto idx = addInput("H");
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().enthalpy() - w[idx];
     };
@@ -179,7 +179,7 @@ auto EquilibriumSpecs::gibbsEnergy() -> void
     ConstraintEquation constraint;
     constraint.id = "gibbsEnergy";
     const auto idx = addInput("G");
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().gibbsEnergy() - w[idx];
     };
@@ -191,7 +191,7 @@ auto EquilibriumSpecs::helmholtzEnergy() -> void
     ConstraintEquation constraint;
     constraint.id = "helmholtzEnergy";
     const auto idx = addInput("A");
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().helmholtzEnergy() - w[idx];
     };
@@ -203,7 +203,7 @@ auto EquilibriumSpecs::entropy() -> void
     ConstraintEquation constraint;
     constraint.id = "entropy";
     const auto idx = addInput("S");
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().entropy() - w[idx];
     };
@@ -215,7 +215,7 @@ auto EquilibriumSpecs::charge() -> void
     ConstraintEquation constraint;
     constraint.id = "charge";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().charge() - w[idx];
     };
@@ -229,7 +229,7 @@ auto EquilibriumSpecs::elementAmount(StringOrIndex const& element) -> void
     ConstraintEquation constraint;
     constraint.id = "elementAmount[" + elementsymbol + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().elementAmount(ielement) - w[idx];
     };
@@ -245,7 +245,7 @@ auto EquilibriumSpecs::elementAmountInPhase(StringOrIndex const& element, String
     ConstraintEquation constraint;
     constraint.id = "elementAmountInPhase[" + elementsymbol + "][" + phasename + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().elementAmountInPhase(ielement, iphase) - w[idx];
     };
@@ -259,7 +259,7 @@ auto EquilibriumSpecs::elementMass(StringOrIndex const& element) -> void
     ConstraintEquation constraint;
     constraint.id = "elementMass[" + elementsymbol + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().elementMass(ielement) - w[idx];
     };
@@ -275,7 +275,7 @@ auto EquilibriumSpecs::elementMassInPhase(StringOrIndex const& element, StringOr
     ConstraintEquation constraint;
     constraint.id = "elementMassInPhase[" + elementsymbol + "][" + phasename + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().elementMassInPhase(ielement, iphase) - w[idx];
     };
@@ -289,7 +289,7 @@ auto EquilibriumSpecs::phaseAmount(StringOrIndex const& phase) -> void
     ConstraintEquation constraint;
     constraint.id = "phaseAmount[" + phasename + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().phaseProps(iphase).amount() - w[idx];
     };
@@ -303,7 +303,7 @@ auto EquilibriumSpecs::phaseMass(StringOrIndex const& phase) -> void
     ConstraintEquation constraint;
     constraint.id = "phaseMass[" + phasename + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().phaseProps(iphase).mass() - w[idx];
     };
@@ -317,7 +317,7 @@ auto EquilibriumSpecs::phaseVolume(StringOrIndex const& phase) -> void
     ConstraintEquation constraint;
     constraint.id = "phaseVolume[" + phasename + "]";
     const auto idx = addInput(constraint.id);
-    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    constraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().phaseProps(iphase).volume() - w[idx];
     };
@@ -338,7 +338,7 @@ auto EquilibriumSpecs::chemicalPotential(String substance) -> void
     qvar.name = "[" + substance + "]";
     qvar.substance = substance;
     qvar.id = pid;
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return w[idx];
     };
@@ -353,7 +353,7 @@ auto EquilibriumSpecs::lnActivity(Species const& species) -> void
     qvar.name = "[" + species.name() + "]";
     qvar.substance = species.formula();
     qvar.id = pid;
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         auto const& T = state.temperature();
         auto const& P = state.pressure();
@@ -397,7 +397,7 @@ auto EquilibriumSpecs::fugacity(String gas) -> void
     qvar.name = "[" + species.name() + "]";
     qvar.substance = species.formula();
     qvar.id = pid;
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         auto const& T = state.temperature();
         auto const& P = state.pressure();
@@ -420,7 +420,7 @@ auto EquilibriumSpecs::pH() -> void
     qvar.name = "[H+]";
     qvar.substance = "H+";
     qvar.id = pid;
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         auto const& T = state.temperature();
         auto const& P = state.pressure();
@@ -444,7 +444,7 @@ auto EquilibriumSpecs::pMg() -> void
     qvar.name = "[Mg+2]";
     qvar.substance = "Mg+2";
     qvar.id = pid;
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         auto const& T  = state.temperature();
         auto const& P  = state.pressure();
@@ -463,7 +463,7 @@ auto EquilibriumSpecs::pE() -> void
     qvar.name = "[e-]";
     qvar.substance = ChemicalFormula("e-");
     qvar.id = "pE";
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         auto const& T = state.temperature();
         auto const& R = universalGasConstant;
@@ -481,7 +481,7 @@ auto EquilibriumSpecs::Eh() -> void
     qvar.name = "[e-]";
     qvar.substance = ChemicalFormula("e-");
     qvar.id = "Eh";
-    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef w)
+    qvar.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return -F * w[idx]; // in J/mol (chemical potential of electron)
     };

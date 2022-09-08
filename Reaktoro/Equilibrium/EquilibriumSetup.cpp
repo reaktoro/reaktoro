@@ -275,10 +275,10 @@ struct EquilibriumSetup::Impl
         gn(ipps).array() -= tau/n(ipps); // add log barrier contribution to pure phase species
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = qvars[i].fn(state, w)/RT;
+            gq[i] = qvars[i].fn(state, p, w)/RT;
 
         for(auto i = 0; i < Np; ++i)
-            vp[i] = econstraints[i].fn(state, w);
+            vp[i] = econstraints[i].fn(state, p, w);
     }
 
     auto updateFn(Index i) -> void

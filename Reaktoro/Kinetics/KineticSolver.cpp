@@ -78,7 +78,7 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
         ConstraintEquation econstraint;
         econstraint.id = reactions[i].name();
         const auto idx = specs.addInput("xi0[" + econstraint.id + "]");
-        econstraint.fn = [=](ChemicalState const& state, VectorXrConstRef w) -> real
+        econstraint.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> real
         {
             auto const& dt = w[idt];
             auto const& pi = w[idt];
