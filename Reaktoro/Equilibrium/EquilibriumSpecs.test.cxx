@@ -422,7 +422,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const auto u0Hp   = system.species().get("H+(aq)").standardThermoProps(T, P).G0;
         const auto u0Mgpp = system.species().get("Mg++(aq)").standardThermoProps(T, P).G0;
 
-        const auto& qvars = specs.controlVariablesQ();
+        auto const& qvars = specs.controlVariablesQ();
 
         CHECK( qvars[0].fn(state, p, w) == Approx(w[Ns + 0]) );
         CHECK( qvars[1].fn(state, p, w) == Approx(u0CH4 + RT*w[Ns + 1]) );
