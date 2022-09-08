@@ -37,7 +37,7 @@ auto createDataFromYamlOrJson(String const& path, Text&& text) -> Data
         return Data::parseYaml(text);
     if(words.back() == "json")
         return Data::parseJson(text);
-    errorif(true, "The given file path ", path, " does not indicate whether the file is yaml or json (expecting these words as file extensions).");
+    errorif(true, "The given file path ", path, " does not indicate whether the file is YAML or JSON (expecting yaml, yml, or json as file extensions).");
     return {};
 }
 
@@ -53,7 +53,7 @@ Params::Params(Data const& params)
 
 auto Params::embedded(String const& path) -> Params
 {
-    const String text = Embedded::get(path);
+    const String text = Embedded::get("params/" + path);
     return Params(createDataFromYamlOrJson(path, text));
 }
 
@@ -78,9 +78,7 @@ auto Params::append(Params const& other) -> Params&
 auto Params::append(Data const& other) -> Params&
 {
     errorif(!other.isDict(), "Expecting Data object of dictionary type in Params object.");
-    auto const& dict = other.asDict();
-    for(auto const& [key, value] : dict)
-        m_data.add(key, value);
+    m_data.update(other);
     return *this;
 }
 

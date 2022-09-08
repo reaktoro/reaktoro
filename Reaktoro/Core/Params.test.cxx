@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/Params.hpp>
 using namespace Reaktoro;
 
@@ -34,18 +35,58 @@ SomeModelParams2:
   D: 2.2
 )";
 
+const auto some_overlapping_and_new_model_params = R"(
+SomeModelParams1:
+  B: 7.7
+SomeModelParams2:
+  C: 9.9
+SomeModelParams3:
+  E: 100.0
+  F: 200.0
+  G: [111.0, 222.0, 333.0]
+)";
+
 TEST_CASE("Testing Params class", "[Params]")
 {
-    Params params1(Data::parse(some_model_params_1));
-    Params params2(Data::parse(some_model_params_2));
+    SECTION("Check basic usage of a Params object")
+    {
+        Params params1(Data::parse(some_model_params_1));
+        Params params2(Data::parse(some_model_params_2));
+        Params params3(Data::parse(some_overlapping_and_new_model_params));
 
-    Params params;
-    params += params1;
-    params += params2;
+        Params params;
+        params += params1;
+        params += params2;
 
-    CHECK( params["SomeModelParams1"]["A"].asFloat() == 1.1 );
-    CHECK( params["SomeModelParams1"]["B"].asFloat() == 1.2 );
+        CHECK( params["SomeModelParams1"]["A"].asFloat() == 1.1 );
+        CHECK( params["SomeModelParams1"]["B"].asFloat() == 1.2 );
+        CHECK( params["SomeModelParams2"]["C"].asFloat() == 2.1 );
+        CHECK( params["SomeModelParams2"]["D"].asFloat() == 2.2 );
 
-    CHECK( params["SomeModelParams2"]["C"].asFloat() == 2.1 );
-    CHECK( params["SomeModelParams2"]["D"].asFloat() == 2.2 );
+        params += params3;
+
+        CHECK( params["SomeModelParams1"]["A"].asFloat()    == 1.1 );   // same value as before
+        CHECK( params["SomeModelParams1"]["B"].asFloat()    == 7.7 );   // overwritten value!
+        CHECK( params["SomeModelParams2"]["C"].asFloat()    == 9.9 );   // overwritten value!
+        CHECK( params["SomeModelParams2"]["D"].asFloat()    == 2.2 );   // same value as before
+        CHECK( params["SomeModelParams3"]["E"].asFloat()    == 100.0 ); // new inserted parameter!
+        CHECK( params["SomeModelParams3"]["F"].asFloat()    == 200.0 ); // new inserted parameter!
+        CHECK( params["SomeModelParams3"]["G"][0].asFloat() == 111.0 ); // new inserted parameter!
+        CHECK( params["SomeModelParams3"]["G"][1].asFloat() == 222.0 ); // new inserted parameter!
+        CHECK( params["SomeModelParams3"]["G"][2].asFloat() == 333.0 ); // new inserted parameter!
+    }
+
+    SECTION("Check when constructed from an embedded or local resource")
+    {
+        Params params = GENERATE(
+            Params::embedded("PalandriKharaka.yml"),
+            Params::local(REAKTORO_PARAMS_DIR"/PalandriKharaka.yml")
+        );
+
+        auto const& data = params.data();
+
+        CHECK( data.exists("ReactionRateModelParams") );
+        CHECK( data.at("ReactionRateModelParams").exists("PalandriKharaka") );
+        CHECK( data.at("ReactionRateModelParams").at("PalandriKharaka").exists("Albite") );
+    }
 }
