@@ -65,5 +65,6 @@ void exportChemicalSystem(py::module& m)
         .def("formulaMatrixCharge", &ChemicalSystem::formulaMatrixCharge, return_internal_ref)
         .def("stoichiometricMatrix", &ChemicalSystem::stoichiometricMatrix, return_internal_ref)
         .def("reactingPhaseInterfaces", &ChemicalSystem::reactingPhaseInterfaces, return_internal_ref)
+        .def("reactingPhaseInterfaceIndex", &ChemicalSystem::reactingPhaseInterfaceIndex)
         ;
 }
