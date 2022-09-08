@@ -124,7 +124,7 @@ struct EquilibriumSolver::Impl
     auto updateOptProblem(ChemicalState const& state0, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions)
     {
         // The input variables for the equilibrium calculation
-        const VectorXr w = conditions.inputValues();
+        const VectorXr w = conditions.inputValuesGetOrCompute(state0);
 
         // Create the Optima::Dims object with dimension info of the optimization problem
         optdims = Optima::Dims();
