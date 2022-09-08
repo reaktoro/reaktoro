@@ -78,7 +78,7 @@ auto Params::append(Params const& other) -> Params&
 auto Params::append(Data const& other) -> Params&
 {
     errorif(!other.isDict(), "Expecting Data object of dictionary type in Params object.");
-    auto const& dict = other.dict();
+    auto const& dict = other.asDict();
     for(auto const& [key, value] : dict)
         m_data.add(key, value);
     return *this;
