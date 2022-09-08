@@ -52,6 +52,13 @@ void exportParam(py::module& m)
         .def("isconst", py::overload_cast<>(&Param::isconst, py::const_))
 
         .def_static("Constant", &Param::Constant)
+
+        .def(py::self == py::self)
+        .def(py::self != py::self)
+        .def(py::self <  py::self)
+        .def(py::self >  py::self)
+        .def(py::self <= py::self)
+        .def(py::self >= py::self)
         ;
 
     py::implicitly_convertible<real, Param>();
