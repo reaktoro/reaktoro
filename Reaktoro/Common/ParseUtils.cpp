@@ -252,7 +252,7 @@ auto parseReactionEquation(const String& equation) -> Pairs<String, double>
     auto words = split(equation, "=");
 
     // Assert the equation has a single equal sign `=`
-    errorif(words.size() > 1, "Cannot parse the reaction equation `" +  equation + "`. Expecting an equation with at most a single equal sign `=` separating " "reactants from products.");
+    errorif(words.size() > 2, "Cannot parse the reaction equation `" +  equation + "`. Expecting an equation with at most a single equal sign `=` separating " "reactants from products.");
 
     // The reactants and products as string (note below that if reaction does not contain =, then it only contains reactants, no products)
     const auto reactants_str = words[0];

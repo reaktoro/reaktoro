@@ -87,12 +87,10 @@ auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -
 
 auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
 {
-    assert(T0 > 0.0);
-    assert(P0 > 0.0);
-    assert(n0.size() == n.size());
-    assert(s0.size() == s.size());
-    assert(n0.abs().minCoeff() > 0.0);
-    assert(s0.abs().minCoeff() > 0.0);
+    assert(T0 >= 0.0);
+    assert(P0 >= 0.0);
+    assert(n0.size() == n.size() && (n0 >= 0.0).all());
+    assert(s0.size() == s.size() && (s0 >= 0.0).all());
 
     T = T0;
     P = P0;
@@ -134,12 +132,10 @@ auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef 
 
 auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
 {
-    assert(T0 > 0.0);
-    assert(P0 > 0.0);
-    assert(n0.size() == n.size());
-    assert(s0.size() == s.size());
-    assert(n0.abs().minCoeff() > 0.0);
-    assert(s0.abs().minCoeff() > 0.0);
+    assert(T0 >= 0.0);
+    assert(P0 >= 0.0);
+    assert(n0.size() == n.size() && (n0 >= 0.0).all());
+    assert(s0.size() == s.size() && (s0 >= 0.0).all());
 
     T = T0;
     P = P0;

@@ -70,7 +70,9 @@ auto createSurfaceAreaGetterFns(const EquilibriumSpecs& specs) -> Vec<Fn<real(Ve
     auto const& surfaces = system.reactingPhaseInterfaces();
 
     auto const num_surfaces = surfaces.size();
-    auto const num_inputs = specs.numInputs();
+
+    auto const Nw = specs.numInputs();
+    auto const Np = specs.numControlVariablesP();
 
     Vec<Fn<real(VectorXrConstRef, VectorXrConstRef)>> fns;
 
@@ -83,10 +85,10 @@ auto createSurfaceAreaGetterFns(const EquilibriumSpecs& specs) -> Vec<Fn<real(Ve
         const auto iSAw = index(specs.namesInputs(), id);
         const auto iSAp = index(specs.namesControlVariables(), id);
 
-        errorif(iSAw >= num_inputs && iSAp >= num_inputs, "Expecting surface area with id `", id, "` to be either an input or a p control variable in the equilibrium calculation.");
+        // errorif(iSAw >= Nw && iSAp >= Np, "Expecting surface area with id `", id, "` to be either an input or a p control variable in the equilibrium calculation.");
 
-        if(iSAw < num_inputs) fns.push_back( [iSAw](VectorXrConstRef p, VectorXrConstRef w) -> real { return w[iSAw]; } );
-        else fns.push_back( [iSAp](VectorXrConstRef p, VectorXrConstRef w) -> real { return p[iSAp]; } );
+        if(iSAw < Nw) fns.push_back( [iSAw](VectorXrConstRef p, VectorXrConstRef w) -> real { return w[iSAw]; } );
+        else if(iSAp < Np) fns.push_back( [iSAp](VectorXrConstRef p, VectorXrConstRef w) -> real { return p[iSAp]; } );
     }
 
     return fns;
@@ -136,7 +138,8 @@ struct EquilibriumProps::Impl
       dims(specs),
       getT(createTemperatureGetterFn(specs)),
       getP(createPressureGetterFn(specs)),
-      getSAs(createSurfaceAreaGetterFns(specs))
+      getSAs(createSurfaceAreaGetterFns(specs)),
+      s(constants(specs.system().reactingPhaseInterfaces().size(), 1e-16))
     {}
 
     /// Update the chemical properties of the chemical system.
