@@ -40,29 +40,29 @@ def testData():
     params.add("Foo", foo)
     params.add("Bar", bar)
 
-    assert foo["A"].number() == 1.0
-    assert foo["B"].integer() == 2
+    assert foo["A"].asFloat() == 1.0
+    assert foo["B"].asInteger() == 2
     assert foo.exists("A") == True
     assert foo.exists("B") == True
     assert foo.exists("C") == False
 
-    assert bar["C"].boolean() == True
-    assert bar["D"].string() == "X"
-    assert bar["E"].param() == 7.0
+    assert bar["C"].asBoolean() == True
+    assert bar["D"].asString() == "X"
+    assert bar["E"].asParam() == 7.0
     assert bar.exists("C") == True
     assert bar.exists("D") == True
     assert bar.exists("E") == True
     assert bar.exists("F") == False
 
-    assert doo[0].number() == 3.0
-    assert doo[1].number() == 6.0
-    assert doo[2].number() == 9.0
+    assert doo[0].asFloat() == 3.0
+    assert doo[1].asFloat() == 6.0
+    assert doo[2].asFloat() == 9.0
 
-    assert params["Foo"]["A"].number() == 1.0
-    assert params["Foo"]["B"].integer() == 2
-    assert params["Bar"]["C"].boolean() == True
-    assert params["Bar"]["D"].string() == "X"
-    assert params["Bar"]["E"].param() == 7.0
+    assert params["Foo"]["A"].asFloat() == 1.0
+    assert params["Foo"]["B"].asInteger() == 2
+    assert params["Bar"]["C"].asBoolean() == True
+    assert params["Bar"]["D"].asString() == "X"
+    assert params["Bar"]["E"].asParam() == 7.0
     assert params.exists("Foo") == True
     assert params.exists("Bar") == True
     assert params.exists("Joe") == False

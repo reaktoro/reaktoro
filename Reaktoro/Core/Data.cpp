@@ -25,6 +25,7 @@ using json = nlohmann::json;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 
 namespace Reaktoro {
 namespace {
@@ -32,7 +33,7 @@ namespace {
 /// Check if string `str` is a number.
 /// @param str The string being checked
 /// @param[out] result The number in `str` as a double value if it is indeed a number.
-bool isNumber(String const& str, double& result)
+bool isFloat(String const& str, double& result)
 {
     char* end;
     result = std::strtod(str.c_str(), &end);
@@ -47,7 +48,7 @@ auto convertYamlScalar(yaml const& obj) -> Data
 {
     auto const& word = obj.Scalar();
     auto number = 0.0;
-    if(isNumber(word, number))
+    if(isFloat(word, number))
         return Data(number);
     else
     {
@@ -151,41 +152,6 @@ Data::Data()
 {
 }
 
-Data::Data(bool const& value)
-: tree(value)
-{
-}
-
-Data::Data(Chars const& value)
-: tree(String(value))
-{
-}
-
-Data::Data(String const& value)
-: tree(value)
-{
-}
-
-Data::Data(Param const& value)
-: tree(value)
-{
-}
-
-Data::Data(real const& value)
-: tree(Param(value))
-{
-}
-
-Data::Data(Map<String, Data> const& value)
-: tree(value)
-{
-}
-
-Data::Data(Vec<Data> const& value)
-: tree(value)
-{
-}
-
 Data::Data(yaml const& obj)
 : Data(convertYaml(obj))
 {
@@ -196,7 +162,7 @@ Data::Data(json const& obj)
 {
 }
 
-auto Data::fromYaml(Chars const& input) -> Data
+auto Data::fromYaml(Chars input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(YAML::Load(input));
@@ -214,7 +180,7 @@ auto Data::fromYaml(std::istream& input) -> Data
     return Data(YAML::Load(input));
 }
 
-auto Data::fromJson(Chars const& input) -> Data
+auto Data::fromJson(Chars input) -> Data
 {
     const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
     return Data(nlohmann::json::parse(input));
@@ -236,44 +202,65 @@ auto Data::fromJson(std::istream& input) -> Data
     return Data(obj);
 }
 
-auto Data::string() const -> String const&
+auto Data::asString() const -> String const&
 {
+    errorif(!isString(), "Cannot convert this Data object to a String.");
     return std::any_cast<String const&>(tree);
 }
 
-auto Data::number() const -> double
+auto Data::asFloat() const -> double
 {
-    return std::any_cast<Param const&>(tree).value();
+    if(isFloat())
+        return std::any_cast<double const&>(tree);
+    else if(isInteger())
+        return std::any_cast<int const&>(tree);
+    else if(isReal())
+        return std::any_cast<real const&>(tree).val();
+    else if(isParam())
+        return std::any_cast<Param const&>(tree).value().val();
+    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be either a float, integer, real, or Param object.");
 }
 
-auto Data::integer() const -> int
+auto Data::asInteger() const -> int
 {
-    return std::any_cast<Param const&>(tree).value();
+    if(isInteger())
+        return std::any_cast<int const&>(tree);
+    else if(isFloat())
+        return std::any_cast<double const&>(tree);
+    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be either an integer or float number.");
 }
 
-auto Data::boolean() const -> bool
+auto Data::asBoolean() const -> bool
 {
+    errorif(!isBoolean(), "Cannot convert this Data object to a boolean value.");
     return std::any_cast<bool const&>(tree);
 }
 
-auto Data::param() const -> Param const&
+auto Data::asReal() const -> real const&
 {
+    if(isReal())
+        return std::any_cast<real const&>(tree);
+    else if(isParam())
+        return std::any_cast<Param const&>(tree).value();
+    else errorif(true, "Cannot convert this Data object to a real number. This Data object should be either a real or Param object.");
+}
+
+auto Data::asParam() const -> Param const&
+{
+    errorif(!isParam(), "Cannot convert this Data object to a Param object.");
     return std::any_cast<Param const&>(tree);
 }
 
-auto Data::dict() const -> Map<String, Data> const&
+auto Data::asDict() const -> Map<String, Data> const&
 {
+    errorif(!isDict(), "Cannot convert this Data object to a dictionary object.");
     return std::any_cast<Map<String, Data> const&>(tree);
 }
 
-auto Data::list() const -> Vec<Data> const&
+auto Data::asList() const -> Vec<Data> const&
 {
+    errorif(!isList(), "Cannot convert this Data object to a list object.");
     return std::any_cast<Vec<Data> const&>(tree);
-}
-
-auto Data::null() const -> std::nullptr_t
-{
-    return std::any_cast<std::nullptr_t>(tree);
 }
 
 auto Data::isString() const -> bool
@@ -281,7 +268,7 @@ auto Data::isString() const -> bool
     return std::any_cast<String>(&tree);
 }
 
-auto Data::isNumber() const -> bool
+auto Data::isFloat() const -> bool
 {
     return std::any_cast<double>(&tree);
 }
@@ -294,6 +281,11 @@ auto Data::isInteger() const -> bool
 auto Data::isBoolean() const -> bool
 {
     return std::any_cast<bool>(&tree);
+}
+
+auto Data::isReal() const -> bool
+{
+    return std::any_cast<real>(&tree);
 }
 
 auto Data::isParam() const -> bool
@@ -316,7 +308,7 @@ auto Data::isNull() const -> bool
     return std::any_cast<std::nullptr_t>(&tree);
 }
 
-auto Data::operator[](Chars const& key) const -> Data const&
+auto Data::operator[](Chars key) const -> Data const&
 {
     return at(key);
 }
@@ -338,7 +330,7 @@ auto Data::operator[](Index const& index) const -> Data const&
 
 auto Data::at(String const& key) const -> Data const&
 {
-    auto const& obj = dict();
+    auto const& obj = asDict();
     auto const it = obj.find(key);
     errorif(it == obj.end(), "Could not find child data block with given key `,", key, "`.");
     return it->second;
@@ -346,7 +338,7 @@ auto Data::at(String const& key) const -> Data const&
 
 auto Data::at(Index const& index) const -> Data const&
 {
-    auto const& vec = list();
+    auto const& vec = asList();
     errorif(index >= vec.size(), "Could not retrieve child data block with index `,", index, "` because the list has size ", vec.size(), ".");
     return vec[index];
 }
@@ -368,8 +360,8 @@ auto Data::at(Index const& index) -> Data&
 auto Data::with(String const& attribute, String const& value) const -> Data const&
 {
     errorif(!isList(), "Expecting Data object to be a list when using Data::with method.");
-    for(auto const& entry : list())
-        if(entry[attribute].string() == value)
+    for(auto const& entry : asList())
+        if(entry[attribute].asString() == value)
             return entry;
     errorif(true, "Could not find any data block whose attribute `", attribute, "` has value `", value, "`.");
     return *this;
@@ -384,7 +376,7 @@ auto Data::add(Data const& data) -> Data&
     return vec.back();
 }
 
-auto Data::add(Chars const& key, Data const& data) -> Data&
+auto Data::add(Chars key, Data const& data) -> Data&
 {
     if(!isDict())
         tree = Map<String, Data>();
@@ -402,24 +394,103 @@ auto Data::exists(String const& key) const -> bool
 {
     if(!isDict())
         return false;
-    auto obj = dict();
+    auto obj = asDict();
     return obj.find(key) != obj.end();
 }
 
 Data::operator bool() const
 {
-    return boolean();
+    return asBoolean();
 }
 
 Data::operator String() const
 {
-    return string();
+    return asString();
 }
 
 Data::operator Param() const
 {
-    return param();
+    return asParam();
 }
+
+REAKTORO_DATA_ENCODE_DEFINE(int) { data = obj; }
+REAKTORO_DATA_DECODE_DEFINE(int) { obj = data.asInteger(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(Index) { data = obj; }
+REAKTORO_DATA_DECODE_DEFINE(Index) { obj = data.asInteger(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(bool) { data = obj; }
+REAKTORO_DATA_DECODE_DEFINE(bool) { obj = data.asBoolean(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(Chars) { data = Data(obj); }
+REAKTORO_DATA_DECODE_DEFINE(Chars) { obj = data.asString().c_str(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(String) { data = obj; }
+REAKTORO_DATA_DECODE_DEFINE(String) { obj = data.asString(); }
+
+template<typename T>
+REAKTORO_DATA_ENCODE_DEFINE(Vec<T>, typename T)
+{
+    for(auto const& x : obj)
+        data.add(x);
+}
+
+template<typename T>
+REAKTORO_DATA_DECODE_DEFINE(Vec<T>, typename T)
+{
+    for(auto const& x : data.asList())
+        obj.push_back(x);
+}
+
+template<typename T, std::size_t N>
+REAKTORO_DATA_ENCODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N)
+{
+    for(auto const& x : obj)
+        data.add(x);
+}
+
+template<typename T, std::size_t N>
+REAKTORO_DATA_DECODE_DEFINE(Array<T REAKTORO_COMMA N>, typename T, std::size_t N)
+{
+    for(auto const& [i, x] : enumerate(data.asList()))
+        obj[i] = x;
+}
+
+template<typename A, typename B>
+REAKTORO_DATA_ENCODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
+{
+    data.add(obj.first);
+    data.add(obj.second);
+}
+
+template<typename A, typename B>
+REAKTORO_DATA_DECODE_DEFINE(Pair<A REAKTORO_COMMA B>, typename A, typename B)
+{
+    auto const& l = data.asList();
+    errorif(l.size() != 2, "Converting from Data to Pair requires the Data object to be a list with two entries.");
+    obj.first = l[0];
+    obj.second = l[1];
+}
+
+template<typename K, typename T>
+REAKTORO_DATA_ENCODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
+{
+    for(auto const& [k, v] : obj)
+        data.add(k, v);
+}
+
+template<typename K, typename T>
+REAKTORO_DATA_DECODE_DEFINE(Map<K REAKTORO_COMMA T>, typename K, typename T)
+{
+    for(auto const& [k, v] : data.asDict())
+        obj[k] = v;
+}
+
+REAKTORO_DATA_ENCODE_DEFINE(Param) { data = obj; }
+REAKTORO_DATA_DECODE_DEFINE(Param) { obj = data.asParam(); }
+
+REAKTORO_DATA_ENCODE_DEFINE(real) { data = obj; }
+REAKTORO_DATA_DECODE_DEFINE(real) { obj = data.asReal(); }
 
 } // namespace Reaktoro
 

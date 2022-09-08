@@ -43,9 +43,9 @@ TEST_CASE("Testing Params class", "[Params]")
     params += params1;
     params += params2;
 
-    CHECK( params["SomeModelParams1"]["A"].number() == 1.1 );
-    CHECK( params["SomeModelParams1"]["B"].number() == 1.2 );
+    CHECK( params["SomeModelParams1"]["A"].asFloat() == 1.1 );
+    CHECK( params["SomeModelParams1"]["B"].asFloat() == 1.2 );
 
-    CHECK( params["SomeModelParams2"]["C"].number() == 2.1 );
-    CHECK( params["SomeModelParams2"]["D"].number() == 2.2 );
+    CHECK( params["SomeModelParams2"]["C"].asFloat() == 2.1 );
+    CHECK( params["SomeModelParams2"]["D"].asFloat() == 2.2 );
 }
