@@ -30,24 +30,17 @@
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>
 using namespace Reaktoro;
 
 void exportSerializationModelsYAML(py::module& m)
 {
-    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsConstLgK>();
-    py::implicitly_convertible<ReactionStandardThermoModelParamsConstLgK, yaml>();
-
-    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsGemsLgK>();
-    py::implicitly_convertible<ReactionStandardThermoModelParamsGemsLgK, yaml>();
-
-    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsPhreeqcLgK>();
-    py::implicitly_convertible<ReactionStandardThermoModelParamsPhreeqcLgK, yaml>();
-
-    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsVantHoff>();
-    py::implicitly_convertible<ReactionStandardThermoModelParamsVantHoff, yaml>();
-
+    //======================================================================
+    // StandardThermoModelParams Types
+    //======================================================================
     py::implicitly_convertible<yaml, StandardThermoModelParamsConstant>();
     py::implicitly_convertible<StandardThermoModelParamsConstant, yaml>();
 
@@ -66,9 +59,36 @@ void exportSerializationModelsYAML(py::module& m)
     py::implicitly_convertible<yaml, StandardThermoModelParamsMineralHKF>();
     py::implicitly_convertible<StandardThermoModelParamsMineralHKF, yaml>();
 
+    py::implicitly_convertible<yaml, StandardThermoModelParamsNasa>();
+    py::implicitly_convertible<StandardThermoModelParamsNasa, yaml>();
+
     py::implicitly_convertible<yaml, StandardThermoModelParamsWaterHKF>();
     py::implicitly_convertible<StandardThermoModelParamsWaterHKF, yaml>();
 
+    //======================================================================
+    // ReactionStandardThermoModelParams Types
+    //======================================================================
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsConstLgK>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsConstLgK, yaml>();
+
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsGemsLgK>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsGemsLgK, yaml>();
+
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsPhreeqcLgK>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsPhreeqcLgK, yaml>();
+
+    py::implicitly_convertible<yaml, ReactionStandardThermoModelParamsVantHoff>();
+    py::implicitly_convertible<ReactionStandardThermoModelParamsVantHoff, yaml>();
+
+    //======================================================================
+    // StandardVolumeModelParams Types
+    //======================================================================
+    py::implicitly_convertible<yaml, StandardVolumeModelParamsConstant>();
+    py::implicitly_convertible<StandardVolumeModelParamsConstant, yaml>();
+
+    //======================================================================
+    // ReactionRateModelParams Types
+    //======================================================================
     py::implicitly_convertible<yaml, ReactionRateModelParamsPalandriKharaka>();
     py::implicitly_convertible<ReactionRateModelParamsPalandriKharaka, yaml>();
 }
