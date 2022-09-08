@@ -19,11 +19,13 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Utils.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
@@ -32,19 +34,6 @@
 
 namespace Reaktoro {
 namespace {
-
-/// Assemble the vector with the element and charge coefficients of a chemical formula.
-auto assembleFormulaVector(ChemicalFormula const& formula, ChemicalSystem const& system) -> VectorXd
-{
-    const auto Ne = system.elements().size();
-    VectorXd res = zeros(Ne + 1);
-    res[Ne] = formula.charge(); // last entry in the column vector is charge of substance
-    for(auto const& [element, coeff] : formula.elements()) {
-        const auto ielem = system.elements().index(element);
-        res[ielem] = coeff;
-    }
-    return res;
-}
 
 /// Assemble the coefficient matrix `Aex` in optimization problem.
 auto assembleMatrixAex(EquilibriumSpecs const& specs, EquilibriumDims const& dims, ReactivityConstraints const& rconstraints) -> MatrixXd
@@ -55,10 +44,12 @@ auto assembleMatrixAex(EquilibriumSpecs const& specs, EquilibriumDims const& dim
     auto Wq = Aex.topRightCorner(dims.Nb, dims.Nq);   // the formula matrix of the implicit titrants with respect to elements and charge
     auto Kn = Aex.bottomLeftCorner(dims.Nr, dims.Nn); // the coefficient matrix of the reactivity constraints with respect to the species amount variables
 
+    auto const& elements = specs.system().elements();
+
     Wn = specs.system().formulaMatrix();
 
     for(auto [i, formula] : enumerate(specs.titrantsImplicit()))
-        Wq.col(i) = assembleFormulaVector(formula, specs.system());
+        Wq.col(i) = detail::assembleFormulaVector(formula, elements);
 
     if(rconstraints.Kn.size())
         Kn = rconstraints.Kn;
@@ -74,10 +65,12 @@ auto assembleMatrixAep(EquilibriumSpecs const& specs, EquilibriumDims const& dim
     auto Wp = Aep.topRows(dims.Nb);    // the formula matrix of the p variables with respect to elements and charge (e.g., temperature, pressure, custom variables, and explicit titrants)
     auto Kp = Aep.bottomRows(dims.Nr); // the coefficient matrix of the reactivity constraints with respect to the p control variables
 
+    auto const& elements = specs.system().elements();
+
     auto offset = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P variables in p (if applicable, if they are unknown), since these columns are zeros
 
     for(auto [i, formula] : enumerate(specs.titrantsExplicit()))
-        Wp.col(i + offset) = assembleFormulaVector(formula, specs.system());
+        Wp.col(i + offset) = detail::assembleFormulaVector(formula, elements);
 
     if(rconstraints.Kp.size())
         Kp = rconstraints.Kp;
