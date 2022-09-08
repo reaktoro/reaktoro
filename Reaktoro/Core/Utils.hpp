@@ -32,6 +32,7 @@ class Reaction;
 class ReactionList;
 class SpeciesList;
 class Surface;
+class SurfaceList;
 
 namespace detail {
 
@@ -68,6 +69,12 @@ auto resolvePhaseIndex(PhaseList const& phaselist, StringOrIndex phase) -> Index
 
 /// Resolve the index of a phase in a chemical system with given phase name or its index.
 auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex phase) -> Index;
+
+/// Resolve the index of a surface in a list of surfaces with given surface name or its index.
+auto resolveSurfaceIndex(SurfaceList const& surfacelist, StringOrIndex surface) -> Index;
+
+/// Resolve the index of a surface in a chemical system with given surface name or its index.
+auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex surface) -> Index;
 
 /// Assemble the formula matrix of the list of `species` with respect to given list of `elements`.
 auto assembleFormulaMatrix(SpeciesList const& species, ElementList const& elements) -> MatrixXd;

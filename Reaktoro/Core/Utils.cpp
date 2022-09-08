@@ -22,8 +22,14 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/Reaction.hpp>
+#include <Reaktoro/Core/ReactionList.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Surface.hpp>
+#include <Reaktoro/Core/SurfaceList.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -134,6 +140,31 @@ auto resolvePhaseIndex(PhaseList const& phaselist, StringOrIndex phase) -> Index
 auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex phase) -> Index
 {
     return resolvePhaseIndex(system.phases(), phase);
+}
+
+auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, Index index) -> Index
+{
+    return index;
+}
+
+auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, int index) -> Index
+{
+    return index;
+}
+
+auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, String const& name) -> Index
+{
+    return surfacelist.index(name);
+}
+
+auto resolveSurfaceIndex(SurfaceList const& surfacelist, StringOrIndex surface) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolveSurfaceIndexAux(surfacelist, arg); }, surface);
+}
+
+auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex surface) -> Index
+{
+    return resolveSurfaceIndex(system.surfaces(), surface);
 }
 
 auto assembleFormulaVector(Species const& species, ElementList const& elements) -> VectorXd
