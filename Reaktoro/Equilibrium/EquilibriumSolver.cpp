@@ -130,8 +130,8 @@ struct EquilibriumSolver::Impl
         optdims = Optima::Dims();
         optdims.x  = dims.Nx;
         optdims.p  = dims.Np;
-        optdims.be = dims.Nb;
-        optdims.c  = dims.Nw + dims.Nb; // c = (w, b) where w are the input variables and b are the amounts of components
+        optdims.be = dims.Nc;
+        optdims.c  = dims.Nw + dims.Nc; // c' = (w, c) where w are the input variables and c are the amounts of components
 
         // Recreate a new Optima::Problem problem (TODO: Avoid recreation of Optima::Problem object for each equilibrium calculation)
         optproblem = Optima::Problem(optdims);
@@ -214,7 +214,7 @@ struct EquilibriumSolver::Impl
         // Set the Jacobian matrix d(be)/dc = [d(be)/dw d(be)/db]
         // The left Nw x Nb block is zero. The right Nb x Nb block is identity!
         optproblem.bec.setZero();
-        optproblem.bec.rightCols(dims.Nb).diagonal().setOnes();
+        optproblem.bec.rightCols(dims.Nc).diagonal().setOnes();
     }
 
     /// Update the initial state variables before the new equilibrium calculation.
@@ -279,7 +279,7 @@ struct EquilibriumSolver::Impl
     auto updateEquilibriumSensitivity(EquilibriumSensitivity& sensitivity)
     {
         const auto& Nn = dims.Nn;
-        const auto& Nb = dims.Nb;
+        const auto& Nc = dims.Nc;
         const auto& Nq = dims.Nq;
         const auto& Nw = dims.Nw;
         const auto& xc = optsensitivity.xc;
@@ -290,9 +290,9 @@ struct EquilibriumSolver::Impl
         const auto dndw = xc.topLeftCorner(Nn, Nw);
         const auto dqdw = xc.bottomLeftCorner(Nq, Nw);
         const auto dpdw = pc.leftCols(Nw);
-        const auto dndb = xc.topRightCorner(Nn, Nb);
-        const auto dqdb = xc.bottomRightCorner(Nq, Nb);
-        const auto dpdb = pc.rightCols(Nb);
+        const auto dndc = xc.topRightCorner(Nn, Nc);
+        const auto dqdc = xc.bottomRightCorner(Nq, Nc);
+        const auto dpdc = pc.rightCols(Nc);
         const auto dudn = props.dudn();
         const auto dudp = props.dudp();
         const auto dudw = props.dudw();
@@ -301,11 +301,11 @@ struct EquilibriumSolver::Impl
         sensitivity.dndw(dndw);
         sensitivity.dqdw(dqdw);
         sensitivity.dpdw(dpdw);
-        sensitivity.dndb(dndb);
-        sensitivity.dqdb(dqdb);
-        sensitivity.dpdb(dpdb);
+        sensitivity.dndc(dndc);
+        sensitivity.dqdc(dqdc);
+        sensitivity.dpdc(dpdc);
         sensitivity.dudw(dudw + dudn*dndw + dudp*dpdw);
-        sensitivity.dudb(dudn*dndb + dudp*dpdb);
+        sensitivity.dudc(dudn*dndc + dudp*dpdc);
     }
 
     auto solve(ChemicalState& state) -> EquilibriumResult

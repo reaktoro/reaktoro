@@ -49,7 +49,8 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nq == 0      );  // the number of *q* control variables (amounts of implicit titrants).
         CHECK( dims.Nv == 0      );  // the number of equations constraints in the chemical equilibrium problem.
         CHECK( dims.Nr == 0      );  // the number of reactivity constraints (i.e., *restricted reactions*) in the chemical equilibrium problem.
-        CHECK( dims.Nb == Ne + 1 );  // the number of components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `Ne + 1 + Nr`).
+        CHECK( dims.Nb == Ne + 1 );  // the number of elements and charge in the chemical system.
+        CHECK( dims.Nc == Ne + 1 );  // the number of components (electric charge, chemical elements, extent of restricted reactions) in the chemical equilibrium problem (equivalent to `Ne + 1 + Nr`).
         CHECK( dims.Nt == 0      );  // the number of substances for which the chemical system is open to (the number of explicit and implicit titrants).
         CHECK( dims.Nx == Nn     );  // the number of variables *x* in *x = (n, q)* (equivalent to `Nn + Nq`).
         CHECK( dims.Nu == Nn     );  // the number of unknown variables in the chemical equilibrium problem (equivalent to `Nn + Np + Nq`).
@@ -70,6 +71,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nv == 1      ); // V
         CHECK( dims.Nr == 0      );
         CHECK( dims.Nb == Ne + 1 ); // elements, charge
+        CHECK( dims.Nc == Ne + 1 ); // elements, charge
         CHECK( dims.Nt == 0      );
         CHECK( dims.Nx == Nn     );
         CHECK( dims.Nu == Nn + 1 );
@@ -90,6 +92,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nv == 2      ); // V, U
         CHECK( dims.Nr == 0      );
         CHECK( dims.Nb == Ne + 1 ); // elements, charge
+        CHECK( dims.Nc == Ne + 1 ); // elements, charge
         CHECK( dims.Nt == 0      );
         CHECK( dims.Nx == Nn     );
         CHECK( dims.Nu == Nn + 2 );
@@ -111,6 +114,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nv == 0      );
         CHECK( dims.Nr == 0      );
         CHECK( dims.Nb == Ne + 1 ); // elements, charge
+        CHECK( dims.Nc == Ne + 1 ); // elements, charge
         CHECK( dims.Nt == 1      ); // [H+]
         CHECK( dims.Nx == Nn + 1 );
         CHECK( dims.Nu == Nn + 1 );
@@ -132,6 +136,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nv == 2      ); // V, S
         CHECK( dims.Nr == 0      );
         CHECK( dims.Nb == Ne + 1 ); // elements, charge
+        CHECK( dims.Nc == Ne + 1 ); // elements, charge
         CHECK( dims.Nt == 1      ); // [CO2]
         CHECK( dims.Nx == Nn + 1 );
         CHECK( dims.Nu == Nn + 3 );
@@ -158,6 +163,7 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nv == 2      ); // V, U
         CHECK( dims.Nr == 0      );
         CHECK( dims.Nb == Ne + 1 ); // elements, charge
+        CHECK( dims.Nc == Ne + 1 ); // elements, charge
         CHECK( dims.Nt == 4      );
         CHECK( dims.Nx == Nn + 2 );
         CHECK( dims.Nu == Nn + 4 );
@@ -185,7 +191,8 @@ TEST_CASE("Testing EquilibriumDims", "[EquilibriumDims]")
         CHECK( dims.Nq == 2      ); // [H+], [e-]
         CHECK( dims.Nv == 2      ); // V, U
         CHECK( dims.Nr == 2      );
-        CHECK( dims.Nb == Ne + 3 ); // elements, charge, xi1, xi2
+        CHECK( dims.Nb == Ne + 1 ); // elements, charge
+        CHECK( dims.Nc == Ne + 3 ); // elements, charge, xi1, xi2
         CHECK( dims.Nt == 4      );
         CHECK( dims.Nx == Nn + 2 );
         CHECK( dims.Nu == Nn + 4 );
