@@ -75,7 +75,7 @@
 // )";
 
 // // Define the formatted string that represents the plot part of the Gnuplot script
-// const std::string gnuplot_plot = R"xyz(
+// const std::string gnuplot_plot = R"#(
 // # Defining the plot command
 // COMMAND = "plot for [i=2:words(ytitles)+1] '%2%' using 1:i with lines ls i-1 title word(ytitles, i-1), \
 //                 for [j=1:words(pfiles)] word(pfiles, j) using 1:2 with points ls j title word(ptitles, j)"
@@ -89,7 +89,7 @@
 // finished = system('%3%')
 // pause %4%
 // if(current ne previous && previous ne '') @COMMAND
-// if(finished == 0) reread)xyz";
+// if(finished == 0) reread)#";
 
 // } // namespace
 

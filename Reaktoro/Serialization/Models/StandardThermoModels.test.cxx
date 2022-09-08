@@ -39,14 +39,14 @@ auto allNaN(const VecType& v)
 
 TEST_CASE("Testing serialization of StandardThermoModelParamsConstant", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         G0: 1.0
         H0: 2.0
         V0: 3.0
         VT0: 4.0
         VP0: 5.0
         Cp0: 6.0
-        )xyz";
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsConstant>();
 
@@ -60,7 +60,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsConstant", "[Serial
 
 TEST_CASE("Testing serialization of StandardThermoModelParamsMaierKelley", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         Gf: -3679250.6
         Hf: -3876463.4
         Sr: 209.32552
@@ -69,7 +69,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMaierKelley", "[Ser
         b: 0.0476976
         c: -4769760.0
         Tmax: 1700.0
-        )xyz";
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsMaierKelley>();
 
@@ -87,7 +87,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
 {
     WHEN("there is one phase transition")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Gf: -3708312.7
             Hf: -3931621.1
             Sr: 207.14984
@@ -101,7 +101,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
             Vtr: [.nan]
             dPdTtr: [.nan]
             Tmax: 1200.0
-            )xyz";
+        )#";
 
         const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsMineralHKF>();
 
@@ -124,7 +124,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
 
     WHEN("there are two phase transitions")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Gf: -39522.064
             Hf: -31589.2
             Sr: 143.5112
@@ -138,7 +138,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
             Vtr: [.nan, .nan]
             dPdTtr: [.nan, .nan]
             Tmax: 1000.0
-            )xyz";
+        )#";
 
         const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsMineralHKF>();
 
@@ -166,7 +166,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
 
     WHEN("there are three phase transitions")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Gf: .nan
             Hf: .nan
             Sr: 286.604
@@ -180,7 +180,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
             Vtr: [.nan, .nan, .nan]
             dPdTtr: [.nan, .nan, .nan]
             Tmax: 1100.0
-            )xyz";
+        )#";
 
         const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsMineralHKF>();
 
@@ -212,12 +212,12 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
 
 TEST_CASE("Testing serialization of StandardThermoModelParamsWaterHKF", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         Ttr: 273.16
         Str: 63.312288
         Gtr: -235517.36
         Htr: -287721.128
-        )xyz";
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsWaterHKF>();
 
@@ -229,7 +229,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsWaterHKF", "[Serial
 
 TEST_CASE("Testing serialization of StandardThermoModelParamsHKF", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         Gf: 39371.44
         Hf: -151084.24
         Sr: 197.4848
@@ -242,7 +242,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHKF", "[Serializati
         wref: -156816.32
         charge: 0.0
         Tmax: 0.0
-        )xyz";
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsHKF>();
 
@@ -264,7 +264,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
 {
     WHEN("There are alpha and kappa parameters for minerals")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Gf: -4937500.0
             Hf: -5260650.0
             Sr: 342.0
@@ -279,7 +279,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
             kappa0pp: -1.6e-11
             numatoms: 20.0
             Tmax: 0.0
-            )xyz";
+        )#";
 
         const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsHollandPowell>();
 
@@ -301,7 +301,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
 
     WHEN("There are parameters for gases")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Gf: -50710.0
             Hf: -74810.0
             Sr: 186.26
@@ -311,7 +311,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
             c: 3427700.0
             d: -2650.4
             Tmax: 0.0
-            )xyz";
+        )#";
 
         const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsHollandPowell>();
 
@@ -332,7 +332,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
 
     WHEN("There are alpha, kappa, Tcr, Smax and Vmax parameters")
     {
-        String yml = R"xyz(
+        String yml = R"#(
             Gf: -2192340.0
             Hf: -2307040.0
             Sr: 127.6
@@ -347,7 +347,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
             kappa0pp: -4.1e-11
             numatoms: 7.0
             Tmax: 0.0
-            )xyz";
+        )#";
 
         const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsHollandPowell>();
 
@@ -394,89 +394,89 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsInterpolation", "[S
 
 TEST_CASE("Testing serialization of StandardThermoModelParamsNasa with polynomials", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         dHf: -365600.0
         dH0: 23662.0
         Polynomials:
         - State: Solid
-        Label: NH4NO3(IV)
-        Tmin: 256.2
-        Tmax: 298.15
-        a1: -10465619.04
-        a2: 156037.5249
-        a3: -914.31536
-        a4: 2.670225944
-        a5: -0.00354993291
-        a6: 1.692615192e-06
-        a7: 0.0
-        b1: -786173.516
-        b2: 5038.72621
+          Label: NH4NO3(IV)
+          Tmin: 256.2
+          Tmax: 298.15
+          a1: -10465619.04
+          a2: 156037.5249
+          a3: -914.31536
+          a4: 2.670225944
+          a5: -0.00354993291
+          a6: 1.692615192e-06
+          a7: 0.0
+          b1: -786173.516
+          b2: 5038.72621
         - State: Solid
-        Label: NH4NO3(IV)
-        Tmin: 298.15
-        Tmax: 305.38
-        a1: 0.0
-        a2: 0.0
-        a3: 5.865649329
-        a4: 0.03643028874
-        a5: 0.0
-        a6: 0.0
-        a7: 0.0
-        b1: -47339.3723
-        b2: -26.14362444
+          Label: NH4NO3(IV)
+          Tmin: 298.15
+          Tmax: 305.38
+          a1: 0.0
+          a2: 0.0
+          a3: 5.865649329
+          a4: 0.03643028874
+          a5: 0.0
+          a6: 0.0
+          a7: 0.0
+          b1: -47339.3723
+          b2: -26.14362444
         - State: Solid
-        Label: NH4NO3(III)
-        Tmin: 305.38
-        Tmax: 357.25
-        a1: 0.0
-        a2: 0.0
-        a3: 7.233138213
-        a4: 0.02333270391
-        a5: 0.0
-        a6: 0.0
-        a7: 0.0
-        b1: -46941.7938
-        b2: -29.29851693
+          Label: NH4NO3(III)
+          Tmin: 305.38
+          Tmax: 357.25
+          a1: 0.0
+          a2: 0.0
+          a3: 7.233138213
+          a4: 0.02333270391
+          a5: 0.0
+          a6: 0.0
+          a7: 0.0
+          b1: -46941.7938
+          b2: -29.29851693
         - State: Solid
-        Label: NH4NO3(II)
-        Tmin: 357.25
-        Tmax: 399.0
-        a1: 0.0
-        a2: 0.0
-        a3: 60.23205216
-        a4: -0.1767993544
-        a5: 0.0
-        a6: 4.528829721e-07
-        a7: 0.0
-        b1: -54786.3351
-        b2: -275.7806209
+          Label: NH4NO3(II)
+          Tmin: 357.25
+          Tmax: 399.0
+          a1: 0.0
+          a2: 0.0
+          a3: 60.23205216
+          a4: -0.1767993544
+          a5: 0.0
+          a6: 4.528829721e-07
+          a7: 0.0
+          b1: -54786.3351
+          b2: -275.7806209
         - State: Solid
-        Label: NH4NO3(I)
-        Tmin: 399.0
-        Tmax: 442.85
-        a1: 0.0
-        a2: 0.0
-        a3: 12.95325882
-        a4: 0.01563531705
-        a5: 0.0
-        a6: 0.0
-        a7: 0.0
-        b1: -47837.0128
-        b2: -58.48510823
+          Label: NH4NO3(I)
+          Tmin: 399.0
+          Tmax: 442.85
+          a1: 0.0
+          a2: 0.0
+          a3: 12.95325882
+          a4: 0.01563531705
+          a5: 0.0
+          a6: 0.0
+          a7: 0.0
+          b1: -47837.0128
+          b2: -58.48510823
         - State: Liquid
-        Label: NH4NO3(l)
-        Tmin: 442.85
-        Tmax: 900.0
-        a1: 0.0
-        a2: 0.0
-        a3: 19.36373881
-        a4: 0.0
-        a5: 0.0
-        a6: 0.0
-        a7: 0.0
-        b1: -48437.933
-        b2: -89.03005276
-        )xyz";
+          Label: NH4NO3(l)
+          Tmin: 442.85
+          Tmax: 900.0
+          a1: 0.0
+          a2: 0.0
+          a3: 19.36373881
+          a4: 0.0
+          a5: 0.0
+          a6: 0.0
+          a7: 0.0
+          b1: -48437.933
+          b2: -89.03005276
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsNasa>();
 
@@ -572,10 +572,10 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsNasa with polynomia
 
 TEST_CASE("Testing serialization of StandardThermoModelParamsNasa without polynomials", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         H0: -47436.0
         T0: 226.4
-        )xyz";
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardThermoModelParamsNasa>();
 
@@ -587,9 +587,9 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsNasa without polyno
 
 TEST_CASE("Testing serialization of StandardVolumeModelParamsConstant", "[Serialization][Models][StandardThermoModels]")
 {
-    String yml = R"xyz(
+    String yml = R"#(
         V0: 1.23e-5
-        )xyz";
+    )#";
 
     const auto params = Data::fromYaml(yml).as<StandardVolumeModelParamsConstant>();
 
