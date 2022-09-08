@@ -356,6 +356,16 @@ auto Phases::database() const -> const Database&
     return db;
 }
 
+auto Phases::genericPhases() const -> Vec<GenericPhase> const&
+{
+    return genericphases;
+}
+
+auto Phases::genericPhasesGenerators() const -> Vec<GenericPhasesGenerator> const&
+{
+    return generators;
+}
+
 auto Phases::convert() const -> Vec<Phase>
 {
     // Return the element symbols in all stored GenericPhase and GenericPhasesGenerator objects.

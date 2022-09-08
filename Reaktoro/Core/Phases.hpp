@@ -305,6 +305,12 @@ public:
     /// Return the database object used to construct the species and elements in the phases.
     auto database() const -> const Database&;
 
+    /// Return the GenericPhase objects collected so far with each call to Phases::add method.
+    auto genericPhases() const -> Vec<GenericPhase> const&;
+
+    /// Return the GenericPhaseGenerator objects collected so far with each call to Phases::add method.
+    auto genericPhasesGenerators() const -> Vec<GenericPhasesGenerator> const&;
+
     /// Convert this Phases object into a vector of Phase objects.
     auto convert() const -> Vec<Phase>;
 
