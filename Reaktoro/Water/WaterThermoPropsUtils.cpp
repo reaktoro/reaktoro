@@ -24,11 +24,11 @@ using std::sqrt;
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsHGK.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterHelmholtzPropsWagnerPruss.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterUtils.hpp>
+#include <Reaktoro/Water/WaterHelmholtzProps.hpp>
+#include <Reaktoro/Water/WaterHelmholtzPropsHGK.hpp>
+#include <Reaktoro/Water/WaterHelmholtzPropsWagnerPruss.hpp>
+#include <Reaktoro/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterUtils.hpp>
 
 namespace Reaktoro {
 namespace {

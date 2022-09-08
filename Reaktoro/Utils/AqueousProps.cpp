@@ -41,7 +41,7 @@ using namespace tabulate;
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 
 namespace Reaktoro {
 namespace {

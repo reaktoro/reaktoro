@@ -19,10 +19,10 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/StandardThermoModelConstant.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>

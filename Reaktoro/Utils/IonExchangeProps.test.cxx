@@ -23,11 +23,11 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
-#include <Reaktoro/Thermodynamics/Surface/IonExchangeProps.hpp>
-#include <Reaktoro/Thermodynamics/Surface/ActivityModelIonExchange.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelHKF.hpp>
-#include <Reaktoro/Singletons/Elements.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelHKF.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Singletons/Elements.hpp>
+#include <Reaktoro/Utils/IonExchangeProps.hpp>
 
 using namespace Reaktoro;
 

@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDuanSun.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDuanSun.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelDuanSun(py::module& m)

@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealAqueous.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelIdealAqueous(py::module& m)

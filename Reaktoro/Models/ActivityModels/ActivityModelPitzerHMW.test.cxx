@@ -19,8 +19,8 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelPitzerHMW.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 using namespace Reaktoro;
 
 /// Return mole fractions for the species.

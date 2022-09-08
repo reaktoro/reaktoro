@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Solids/ActivityModelRedlichKister.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelRedlichKister.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelRedlichKister(py::module& m)

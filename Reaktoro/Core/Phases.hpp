@@ -24,10 +24,10 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealAqueous.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealSolution.hpp>
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealIonExchange.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealAqueous.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealGas.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealSolution.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealIonExchange.hpp>
 
 namespace Reaktoro {
 

@@ -20,8 +20,8 @@
 
 // Reaktoro includes
 #include <Reaktoro/Singletons/DissociationReactions.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 using namespace Reaktoro;
 
 auto moleFractions(Index size) -> ArrayXr

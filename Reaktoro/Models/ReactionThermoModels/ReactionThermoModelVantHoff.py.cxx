@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
 using namespace Reaktoro;
 
 void exportReactionThermoModelVantHoff(py::module& m)

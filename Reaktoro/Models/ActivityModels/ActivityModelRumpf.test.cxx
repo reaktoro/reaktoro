@@ -19,9 +19,9 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDebyeHuckel.hpp>
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelRumpf.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDebyeHuckel.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelRumpf.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 using namespace Reaktoro;
 
 /// Return mole fractions for the species.

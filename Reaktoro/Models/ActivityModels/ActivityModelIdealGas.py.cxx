@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Ideal/ActivityModelIdealGas.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealGas.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelIdealGas(py::module& m)

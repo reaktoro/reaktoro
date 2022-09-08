@@ -21,7 +21,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Singletons/CriticalProps.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
 
 namespace Reaktoro {
 

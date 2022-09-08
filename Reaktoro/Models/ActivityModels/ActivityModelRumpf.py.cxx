@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelRumpf.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelRumpf.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelRumpf(py::module& m)

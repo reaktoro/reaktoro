@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModelPressureCorrection.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPressureCorrection.hpp>
 using namespace Reaktoro;
 
 void exportReactionThermoModelPressureCorrection(py::module& m)

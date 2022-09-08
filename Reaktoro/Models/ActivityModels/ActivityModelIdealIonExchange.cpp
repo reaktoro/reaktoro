@@ -18,7 +18,7 @@
 #include "ActivityModelIdealIonExchange.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/IonExchangeSurface.hpp>
 
 namespace Reaktoro {
 

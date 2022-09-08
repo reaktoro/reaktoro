@@ -17,21 +17,74 @@
 
 #pragma once
 
-#include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
-#include <Reaktoro/Models/Support/SpeciesElectroPropsHKF.hpp>
-
-#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/ReactionThermoModelPressureCorrection.hpp>
-#include <Reaktoro/Models/ReactionThermoModelVantHoff.hpp>
-
-#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
-#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Models/StandardThermoModelMineralHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelYAML.hpp>
-
 /// @defgroup Models Models
-/// This is the module in Reaktoro in which various thermodynamic models are implemented.
+/// @brief The module in Reaktoro in which various thermodynamic and reaction models are implemented.
+
+/// @defgroup ActivityModels Activity Models
+/// @ingroup Models
+/// @brief The module in Reaktoro in which activity models for phases are implemented.
+
+/// @defgroup ReactionThermoModels Reaction Thermodynamic Models
+/// @ingroup Models
+/// @brief The module in Reaktoro in which standard thermodynamic models for reactions are implemented.
+
+/// @defgroup ReactionRateModels Reaction Rate Models
+/// @ingroup Models
+/// @brief The module in Reaktoro in which kinetic rate models for reactions are implemented.
+
+/// @defgroup StandardThermoModels Standard Thermodynamic Models
+/// @ingroup Models
+/// @brief The module in Reaktoro in which standard thermodynamic models for species are implemented.
+
+/// @defgroup StandardVolumeModels Standard Volume Models
+/// @ingroup Models
+/// @brief The module in Reaktoro in which standard volume models for species are implemented.
+
+// Models/ActivityModels/Support
+#include <Reaktoro/Models/ActivityModels/Support/IonExchangeSurface.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
+
+// Models/ActivityModels
+#include <Reaktoro/Models/ActivityModels/ActivityModelDebyeHuckel.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelHKF.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelRedlichKister.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelSpycherReed.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelCubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDrummond.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealSolution.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealIonExchange.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelRumpf.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDuanSun.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelSpycherPruessEnnis.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelSetschenow.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealGas.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelVanLaar.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelIdealAqueous.hpp>
+
+// Models/ReactionThermoModels
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPressureCorrection.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
+
+// Models/StandardVolumeModels
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModel.hpp>
+
+// Models/StandardThermoModels
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/Support/SpeciesElectroPropsHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/Support/SpeciesElectroProps.hpp>

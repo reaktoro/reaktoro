@@ -28,8 +28,8 @@ using std::pow;
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Models/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoProps.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterThermoPropsUtils.hpp>
+#include <Reaktoro/Water/WaterThermoProps.hpp>
+#include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
 
 namespace Reaktoro {
 namespace {

@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 using namespace Reaktoro;
 
 void exportAqueousMixture(py::module& m)

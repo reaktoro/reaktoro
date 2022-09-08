@@ -19,7 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ActivityModel.hpp>
-#include <Reaktoro/Thermodynamics/Fluids/CubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
 
 namespace Reaktoro {
 

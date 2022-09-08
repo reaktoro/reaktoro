@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDebyeHuckel.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDebyeHuckel.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelDebyeHuckel(py::module& m)

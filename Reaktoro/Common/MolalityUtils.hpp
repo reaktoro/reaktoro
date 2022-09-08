@@ -20,7 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
-#include <Reaktoro/Thermodynamics/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
 

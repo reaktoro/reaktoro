@@ -22,8 +22,8 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Models/ReactionThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
 
 namespace Reaktoro {
 

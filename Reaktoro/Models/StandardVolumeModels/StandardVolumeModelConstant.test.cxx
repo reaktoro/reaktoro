@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing StandardVolumeModelConstant class", "[StandardVolumeModelConstant]")

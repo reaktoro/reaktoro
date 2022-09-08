@@ -22,4 +22,4 @@
 #include <Reaktoro/Singletons/Elements.hpp>
 
 /// @defgroup Singletons Singletons
-/// This is the singletons module in Reaktoro, in which default databases for critical properties, elements, dissociation reactions and others are implemented.
+/// The module in Reaktoro in which default databases for critical properties, elements, dissociation reactions and others are implemented.

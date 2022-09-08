@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelSpycherPruessEnnis.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelSpycherPruessEnnis.hpp>
 using namespace Reaktoro;
 
 // Check if the activities of the fluid species are correct assuming activity coefficients are.

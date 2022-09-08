@@ -18,11 +18,25 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-// Reaktoro includes
-#include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
-using namespace Reaktoro;
+void exportWaterConstants(py::module& m);
+void exportWaterElectroProps(py::module& m);
+void exportWaterElectroPropsJohnsonNorton(py::module& m);
+void exportWaterHelmholtzProps(py::module& m);
+void exportWaterHelmholtzPropsHGK(py::module& m);
+void exportWaterHelmholtzPropsWagnerPruss(py::module& m);
+void exportWaterThermoProps(py::module& m);
+void exportWaterThermoPropsUtils(py::module& m);
+void exportWaterUtils(py::module& m);
 
-void exportReactionThermoModelYAML(py::module& m)
+void exportWater(py::module& m)
 {
-    m.def("ReactionThermoModelYAML", ReactionThermoModelYAML);
+    exportWaterConstants(m);
+    exportWaterElectroProps(m);
+    exportWaterElectroPropsJohnsonNorton(m);
+    exportWaterHelmholtzProps(m);
+    exportWaterHelmholtzPropsHGK(m);
+    exportWaterHelmholtzPropsWagnerPruss(m);
+    exportWaterThermoProps(m);
+    exportWaterThermoPropsUtils(m);
+    exportWaterUtils(m);
 }

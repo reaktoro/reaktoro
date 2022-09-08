@@ -32,7 +32,7 @@ using namespace tabulate;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Utils.hpp>
-#include <Reaktoro/Thermodynamics/Surface/IonExchangeSurface.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/IonExchangeSurface.hpp>
 
 namespace Reaktoro {
 namespace {

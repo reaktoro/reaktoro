@@ -19,7 +19,7 @@
 #include <Reaktoro/catch.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Fluids/ActivityModelCubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelCubicEOS.hpp>
 using namespace Reaktoro;
 
 // Check if the activities of the fluid species are correct assuming activity coefficients are.
