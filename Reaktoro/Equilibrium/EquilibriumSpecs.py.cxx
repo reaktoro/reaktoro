@@ -125,7 +125,7 @@ void exportEquilibriumSpecs(py::module& m)
         .def("titrants", &EquilibriumSpecs::titrants)
         .def("titrantsExplicit", &EquilibriumSpecs::titrantsExplicit)
         .def("titrantsImplicit", &EquilibriumSpecs::titrantsImplicit)
-        .def("constraintsEquationType", &EquilibriumSpecs::constraintsEquationType, return_internal_ref)
+        .def("equationConstraints", &EquilibriumSpecs::equationConstraints, return_internal_ref)
         .def("reactivityConstraints", &EquilibriumSpecs::reactivityConstraints, return_internal_ref)
         ;
 }

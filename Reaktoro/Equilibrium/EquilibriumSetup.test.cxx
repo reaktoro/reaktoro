@@ -509,9 +509,9 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //-------------------------------------------------------------------------------------------------
             VectorXd v(Np);
 
-            v[0] = specs.constraintsEquationType()[0].fn(state, w); // the volume constraint equation
-            v[1] = specs.constraintsEquationType()[1].fn(state, w); // the internal energy constraint equation
-            v[2] = specs.constraintsEquationType()[2].fn(state, w); // the enthalpy constraint equation
+            v[0] = specs.equationConstraints()[0].fn(state, w); // the volume constraint equation
+            v[1] = specs.equationConstraints()[1].fn(state, w); // the internal energy constraint equation
+            v[2] = specs.equationConstraints()[2].fn(state, w); // the enthalpy constraint equation
 
             CHECK( v.isApprox(setup.getConstraintResiduals()) );
 
@@ -528,9 +528,9 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
                 updateStateSpecial(auxstate, T, P, n, options);
 
                 VectorXr v(Np);
-                v[0] = specs.constraintsEquationType()[0].fn(auxstate, w); // the volume constraint equation
-                v[1] = specs.constraintsEquationType()[1].fn(auxstate, w); // the internal energy constraint equation
-                v[2] = specs.constraintsEquationType()[2].fn(auxstate, w); // the enthalpy constraint equation
+                v[0] = specs.equationConstraints()[0].fn(auxstate, w); // the volume constraint equation
+                v[1] = specs.equationConstraints()[1].fn(auxstate, w); // the internal energy constraint equation
+                v[2] = specs.equationConstraints()[2].fn(auxstate, w); // the enthalpy constraint equation
 
                 return v;
             };

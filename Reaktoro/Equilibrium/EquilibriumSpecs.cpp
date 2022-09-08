@@ -775,7 +775,7 @@ auto EquilibriumSpecs::titrantsImplicit() const -> Vec<ChemicalFormula>
     return titrants_implicit;
 }
 
-auto EquilibriumSpecs::constraintsEquationType() const -> Vec<ConstraintEquation> const&
+auto EquilibriumSpecs::equationConstraints() const -> Vec<ConstraintEquation> const&
 {
     return econstraints;
 }

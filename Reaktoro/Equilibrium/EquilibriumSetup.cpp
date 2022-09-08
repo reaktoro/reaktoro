@@ -250,7 +250,7 @@ struct EquilibriumSetup::Impl
         auto const& qvars = specs.controlVariablesQ();
         auto const& pvars = specs.controlVariablesP();
 
-        auto const& econstraints = specs.constraintsEquationType();
+        auto const& econstraints = specs.equationConstraints();
 
         auto const& state = props.chemicalState();
 
