@@ -31,54 +31,94 @@
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
+namespace {
 
-using autodiff::jacobian;
-using autodiff::wrt;
-using autodiff::at;
+/// Assemble the vector with the element and charge coefficients of a chemical formula.
+auto assembleFormulaVector(ChemicalFormula const& formula, ChemicalSystem const& system) -> VectorXd
+{
+    const auto Ne = system.elements().size();
+    VectorXd res = zeros(Ne + 1);
+    res[Ne] = formula.charge(); // last entry in the column vector is charge of substance
+    for(auto const& [element, coeff] : formula.elements()) {
+        const auto ielem = system.elements().index(element);
+        res[ielem] = coeff;
+    }
+    return res;
+}
+
+/// Assemble the coefficient matrix `Aex` in optimization problem.
+auto assembleMatrixAex(EquilibriumSpecs const& specs) -> MatrixXd
+{
+    const EquilibriumDims dims(specs);
+
+    MatrixXd Aex = zeros(dims.Nb, dims.Nx);
+
+    auto Wn = Aex.topLeftCorner(dims.Ne + 1, dims.Nn);  // the formula matrix of the species with respect to elements and charge
+    auto Wq = Aex.topRightCorner(dims.Ne + 1, dims.Nq); // the formula matrix of the implicit titrants with respect to elements and charge
+    auto Kn = Aex.bottomLeftCorner(dims.Nr, dims.Nn);   // the coefficient matrix of the reactivity constraints with respect to the species amount variables
+
+    Wn = specs.system().formulaMatrix();
+
+    for(auto [i, formula] : enumerate(specs.titrantsImplicit()))
+        Wq.col(i) = assembleFormulaVector(formula, specs.system());
+
+    for(auto [i, rconstraint] : enumerate(specs.reactivityConstraints()))
+        Kn.row(i) = rconstraint.Kn;
+
+    return Aex;
+}
+
+/// Assemble the coefficient matrix `Aep` in optimization problem.
+auto assembleMatrixAep(EquilibriumSpecs const& specs) -> MatrixXd
+{
+    const EquilibriumDims dims(specs);
+
+    MatrixXd Aep = zeros(dims.Nb, dims.Np);
+
+    auto Wp = Aep.topRows(dims.Ne + 1); // the formula matrix of the p variables with respect to elements and charge (e.g., temperature, pressure, custom variables, and explicit titrants)
+    auto Kp = Aep.bottomRows(dims.Nr);  // the coefficient matrix of the reactivity constraints with respect to the p control variables
+
+    auto offset = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P variables in p (if applicable, if they are unknown), since these columns are zeros
+
+    for(auto [i, formula] : enumerate(specs.titrantsExplicit()))
+        Wp.col(i + offset) = assembleFormulaVector(formula, specs.system());
+
+    for(auto [i, rconstraint] : enumerate(specs.reactivityConstraints()))
+        if(rconstraint.Kp.size())
+            Kp.row(i) = rconstraint.Kp;
+
+    return Aep;
+}
+
+} // namespace
 
 struct EquilibriumSetup::Impl
 {
-    /// The chemical system associated with this equilibrium problem
-    const ChemicalSystem system;
-
-    /// The equilibrium specifications associated with this equilibrium problem
-    const EquilibriumSpecs specs;
-
-    /// The dimensions of the variables in the equilibrium problem.
-    const EquilibriumDims dims;
-
-    /// The auxiliary chemical properties of the system.
-    EquilibriumProps props;
-
-    /// The options for the solution of the equilibrium problem.
-    EquilibriumOptions options;
-
-    VectorXr x;    ///< The auxiliary vector x = (n, q).
-    VectorXr n;    ///< The current amounts of the species (in mol).
-    VectorXr q;    ///< The current values of the introduced *q* control variables (amounts of implicit titrants whose chemical potentials are constrained).
-    VectorXr p;    ///< The current values of the introduced *p* control variables (temperature, pressure, amounts of explicit titrants).
-    VectorXr w;    ///< The current values of the input variables for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
-
-    VectorXr F;    ///< The auxiliary vector F = (gx, vp) containing first-order optimality conditions (gx) and residuals of equation constraints (vp)
-
-    real f;        ///< The objective function value (Gibbs energy of the system).
-
-    VectorXd gx;   ///< The gradient of the objective function with respect to x = (n, q).
-    VectorXd vp;   ///< The residual vector of the equilibrium equation constraints (of size p).
-
-    MatrixXd Hxx;  ///< The Jacobian of the objective gradient function with respect to x = (n, q).
-    MatrixXd Hxp;  ///< The Jacobian of the objective gradient function with respect to p.
-    MatrixXd Hxc;  ///< The Jacobian of the objective gradient function with respect to c = (w, b).
-
-    MatrixXd Vpx;  ///< The Jacobian of vp with respect to x = (n, q).
-    MatrixXd Vpp;  ///< The Jacobian of vp with respect to p.
-    MatrixXd Vpc;  ///< The Jacobian of vp with respect to c = (w, b).
-
-    ArrayXr mu;   ///< The auxiliary vector of chemical potentials of the species.
-
-    VectorXl isbasicvar; /// The bitmap that indicates which variables in x = (n, q) are currently basic variables.
-
-    Indices ipps;  ///< The indices of the pure phase species (i.e., species composing single-phase species, whose chemical potentials do not depend on composition)
+    const ChemicalSystem system;  ///< The chemical system associated with this equilibrium problem.
+    const EquilibriumSpecs specs; ///< The equilibrium specifications associated with this equilibrium problem.
+    const EquilibriumDims dims;   ///< The dimensions of the variables in the equilibrium problem.
+    const MatrixXd Aex;           ///< The coefficient matrix Aex in the optimization problem.
+    const MatrixXd Aep;           ///< The coefficient matrix Aep in the optimization problem.
+    EquilibriumProps props;       ///< The auxiliary chemical properties of the system.
+    EquilibriumOptions options;   ///< The options for the solution of the equilibrium problem.
+    VectorXr x;                   ///< The auxiliary vector x = (n, q).
+    VectorXr n;                   ///< The current amounts of the species (in mol).
+    VectorXr q;                   ///< The current values of the introduced *q* control variables (amounts of implicit titrants whose chemical potentials are constrained).
+    VectorXr p;                   ///< The current values of the introduced *p* control variables (temperature, pressure, amounts of explicit titrants).
+    VectorXr w;                   ///< The current values of the input variables for the equilibrium calculation (e.g, T, P, pH, pE, V, etc.).
+    VectorXr F;                   ///< The auxiliary vector F = (gx, vp) containing first-order optimality conditions (gx) and residuals of equation constraints (vp)
+    real f;                       ///< The objective function value (Gibbs energy of the system).
+    VectorXd gx;                  ///< The gradient of the objective function with respect to x = (n, q).
+    VectorXd vp;                  ///< The residual vector of the equilibrium equation constraints (of size p).
+    MatrixXd Hxx;                 ///< The Jacobian of the objective gradient function with respect to x = (n, q).
+    MatrixXd Hxp;                 ///< The Jacobian of the objective gradient function with respect to p.
+    MatrixXd Hxc;                 ///< The Jacobian of the objective gradient function with respect to c = (w, b).
+    MatrixXd Vpx;                 ///< The Jacobian of vp with respect to x = (n, q).
+    MatrixXd Vpp;                 ///< The Jacobian of vp with respect to p.
+    MatrixXd Vpc;                 ///< The Jacobian of vp with respect to c = (w, b).
+    ArrayXr mu;                   ///< The auxiliary vector of chemical potentials of the species.
+    VectorXl isbasicvar;          /// The bitmap that indicates which variables in x = (n, q) are currently basic variables.
+    Indices ipps;                 ///< The indices of the pure phase species (i.e., species composing single-phase species, whose chemical potentials do not depend on composition)
 
     // -------------------------------------------- //
     // ------ CONVENIENT AUXILIARY VARIABLES ------ //
@@ -96,7 +136,7 @@ struct EquilibriumSetup::Impl
 
     /// Construct an EquilibriumSetup::Impl object
     Impl(EquilibriumSpecs const& specs)
-    : system(specs.system()), specs(specs), dims(specs), props(specs),
+    : system(specs.system()), specs(specs), dims(specs), Aex(assembleMatrixAex(specs)), Aep(assembleMatrixAep(specs)), props(specs),
       Nb(dims.Nb), Ne(dims.Ne), Nn(dims.Nn), Np(dims.Np), Nq(dims.Nq), Nx(dims.Nx), Nw(dims.Nw), Nc(dims.Nw + dims.Nb), Nr(dims.Nr)
     {
         x.resize(Nx);
@@ -117,6 +157,7 @@ struct EquilibriumSetup::Impl
 
         isbasicvar.resize(Nx);
 
+        // Initialize the indices of the pure phase species
         auto offset = 0;
         for(auto const& phase : system.phases())
         {
@@ -125,58 +166,6 @@ struct EquilibriumSetup::Impl
                 ipps.push_back(offset);
             offset += size;
         }
-    }
-
-    /// Assemble the vector with the element and charge coefficients of a chemical formula.
-    auto assembleFormulaVector(VectorXdRef vec, ChemicalFormula const& formula) const -> void
-    {
-        assert(vec.size() == Ne + 1);
-        vec.fill(0.0);
-        vec[Ne] = formula.charge(); // last entry in the column vector is charge of substance
-        for(auto const& [element, coeff] : formula.elements()) {
-            const auto ielem = system.elements().index(element);
-            vec[ielem] = coeff;
-        }
-    }
-
-    /// Assemble the coefficient matrix `Aex` in optimization problem.
-    auto assembleMatrixAex() const -> MatrixXd
-    {
-        MatrixXd Aex = zeros(Nb, Nx);
-
-        auto Wn = Aex.topLeftCorner(Ne + 1, Nn);  // the formula matrix of the species with respect to elements and charge
-        auto Wq = Aex.topRightCorner(Ne + 1, Nq); // the formula matrix of the implicit titrants with respect to elements and charge
-        auto Kn = Aex.bottomLeftCorner(Nr, Nn);   // the coefficient matrix of the reactivity constraints with respect to the species amount variables
-
-        Wn = system.formulaMatrix();
-
-        for(auto [i, formula] : enumerate(specs.titrantsImplicit()))
-            assembleFormulaVector(Wq.col(i), formula);
-
-        for(auto [i, rconstraint] : enumerate(specs.reactivityConstraints()))
-            Kn.row(i) = rconstraint.Kn;
-
-        return Aex;
-    }
-
-    /// Assemble the coefficient matrix `Aep` in optimization problem.
-    auto assembleMatrixAep() const -> MatrixXd
-    {
-        MatrixXd Aep = zeros(Nb, Np);
-
-        auto Wp = Aep.topRows(Nb);    // the formula matrix of the p variables with respect to elements and charge (e.g., temperature, pressure, custom variables, and explicit titrants)
-        auto Kp = Aep.bottomRows(Nr); // the coefficient matrix of the reactivity constraints with respect to the p control variables
-
-        auto offset = specs.isTemperatureUnknown() + specs.isPressureUnknown(); // skip columns corresponding to T and P variables in p (if applicable, if they are unknown), since these columns are zeros
-
-        for(auto [i, formula] : enumerate(specs.titrantsExplicit()))
-            assembleFormulaVector(Wp.col(i + offset), formula);
-
-        for(auto [i, rconstraint] : enumerate(specs.reactivityConstraints()))
-            if(rconstraint.Kp.size())
-                Kp.row(i) = rconstraint.Kp;
-
-        return Aep;
     }
 
     auto assembleLowerBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd
@@ -480,14 +469,14 @@ auto EquilibriumSetup::options() const -> EquilibriumOptions const&
     return pimpl->options;
 }
 
-auto EquilibriumSetup::assembleMatrixAex() const -> MatrixXd
+auto EquilibriumSetup::Aex() const -> MatrixXdConstRef
 {
-    return pimpl->assembleMatrixAex();
+    return pimpl->Aex;
 }
 
-auto EquilibriumSetup::assembleMatrixAep() const -> MatrixXd
+auto EquilibriumSetup::Aep() const -> MatrixXdConstRef
 {
-    return pimpl->assembleMatrixAep();
+    return pimpl->Aep;
 }
 
 auto EquilibriumSetup::assembleLowerBoundsVector(EquilibriumRestrictions const& restrictions, ChemicalState const& state0) const -> VectorXd

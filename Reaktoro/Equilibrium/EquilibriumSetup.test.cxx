@@ -71,8 +71,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             EquilibriumSetup setup(specs);
 
-            const auto Aex = setup.assembleMatrixAex();
-            const auto Aep = setup.assembleMatrixAep();
+            const auto Aex = setup.Aex();
+            const auto Aep = setup.Aep();
 
             CHECK( Aex == Wn );
             CHECK( Aep.size() == 0 );
@@ -87,8 +87,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             const auto Np = 1;
 
-            const auto Aex = setup.assembleMatrixAex();
-            const auto Aep = setup.assembleMatrixAep();
+            const auto Aex = setup.Aex();
+            const auto Aep = setup.Aep();
 
             CHECK( Aex == Wn );
             CHECK( Aep == zeros(Ne, Np) );
@@ -103,8 +103,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             const auto Np = 2;
 
-            const auto Aex = setup.assembleMatrixAex();
-            const auto Aep = setup.assembleMatrixAep();
+            const auto Aex = setup.Aex();
+            const auto Aep = setup.Aep();
 
             CHECK( Aex == Wn );
             CHECK( Aep == zeros(Ne, Np) );
@@ -121,8 +121,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const auto Np = 0;
             const auto Nq = 1;
 
-            const auto Aex = setup.assembleMatrixAex();
-            const auto Aep = setup.assembleMatrixAep();
+            const auto Aex = setup.Aex();
+            const auto Aep = setup.Aep();
 
             const auto Aen = Aex.leftCols(Nn);
             const auto Aeq = Aex.rightCols(Nq);
@@ -143,8 +143,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const auto Np = 2;
             const auto Nq = 1;
 
-            const auto Aex = setup.assembleMatrixAex();
-            const auto Aep = setup.assembleMatrixAep();
+            const auto Aex = setup.Aex();
+            const auto Aep = setup.Aep();
 
             const auto Aen = Aex.leftCols(Nn);
             const auto Aeq = Aex.rightCols(Nq);
@@ -170,8 +170,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             const auto Np = 2;
             const auto Nq = 2;
 
-            const auto Aex = setup.assembleMatrixAex();
-            const auto Aep = setup.assembleMatrixAep();
+            const auto Aex = setup.Aex();
+            const auto Aep = setup.Aep();
 
             const auto Aen = Aex.leftCols(Nn);
             const auto Aeq = Aex.rightCols(Nq);

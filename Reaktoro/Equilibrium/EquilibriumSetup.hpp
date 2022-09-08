@@ -59,11 +59,11 @@ public:
     /// Return the options for the solution of the equilibrium problem.
     auto options() const -> EquilibriumOptions const&;
 
-    /// Assemble the coefficient matrix `Aex` in the optimization problem.
-    auto assembleMatrixAex() const -> MatrixXd;
+    /// Return the coefficient matrix `Aex` in the optimization problem.
+    auto Aex() const -> MatrixXdConstRef;
 
-    /// Assemble the coefficient matrix `Aep` in the optimization problem.
-    auto assembleMatrixAep() const -> MatrixXd;
+    /// Return the coefficient matrix `Aep` in the optimization problem.
+    auto Aep() const -> MatrixXdConstRef;
 
     /// Assemble the lower bound vector `xlower` in the optimization problem where *x = (n, q)*.
     /// @param restrictions The lower and upper bounds information of the species.
