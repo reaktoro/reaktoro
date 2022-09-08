@@ -20,6 +20,7 @@
 // C++ includes
 #include <any>
 #include <array>
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <optional>

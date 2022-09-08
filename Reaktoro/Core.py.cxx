@@ -26,6 +26,7 @@ void exportChemicalProps(py::module& m);
 void exportChemicalPropsPhase(py::module& m);
 void exportChemicalState(py::module& m);
 void exportChemicalSystem(py::module& m);
+void exportData(py::module& m);
 void exportDatabase(py::module& m);
 void exportElement(py::module& m);
 void exportElementalComposition(py::module& m);
@@ -61,6 +62,7 @@ void exportCore(py::module& m)
     exportChemicalPropsPhase(m);
     exportChemicalState(m);
     exportChemicalSystem(m);
+    exportData(m);
     exportDatabase(m);
     exportElement(m);
     exportElementalComposition(m);
