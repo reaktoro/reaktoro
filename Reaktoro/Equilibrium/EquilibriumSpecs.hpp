@@ -649,6 +649,9 @@ public:
     /// Return the number of all introduced equation, reactivity, and chemical potential constraints.
     auto numConstraints() const -> Index;
 
+    /// Return the number of the conservative components in the equilibrium problem specifications.
+    auto numConservativeComponents() const -> Index;
+
     //=================================================================================================
     //
     // METHODS TO GET THE NAMES OF INTRODUCED CONSTRAINTS, INPUT VARIABLES, AND CONTROL VARIABLES
@@ -681,6 +684,9 @@ public:
 
     /// Return the names of all introduced equation and chemical potential constraints.
     auto namesConstraints() const -> Strings;
+
+    /// Return the names of the conservative components in the equilibrium problem specifications.
+    auto namesConservativeComponents() const -> Strings;
 
     //=================================================================================================
     //
@@ -817,6 +823,12 @@ public:
     /// evaluation of the provided single constraints via @ref addReactivityConstraint and then
     /// the provided systems of constraints via method @ref addReactivityConstraints.
     auto assembleReactivityConstraints() const -> ReactivityConstraints;
+
+    /// Assemble the coefficient matrix *Kn* of the reactivity constraints with respect to *n* species amount variables.
+    auto assembleReactivityConstraintsMatrixKn() const -> MatrixXd;
+
+    /// Assemble the coefficient matrix *Kp* of the reactivity constraints with respect to *p* control variables.
+    auto assembleReactivityConstraintsMatrixKp() const -> MatrixXd;
 
     /// Assemble the conservation matrix for the chemical species with respect to the conservative components.
     /// This method is equivalent to @ref assembleConservationMatrixN

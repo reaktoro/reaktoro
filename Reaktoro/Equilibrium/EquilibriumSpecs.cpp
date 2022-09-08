@@ -51,112 +51,6 @@ auto getGaseousSpecies(Database const& db, String const& formula) -> Species
     return getSpecies(db, formula, AggregateState::Gas);
 }
 
-/// Assemble the complete system of equation constraints to be satisfied at chemical equilibrium.
-auto assembleEquationConstraints(EquilibriumSpecs const& specs) -> EquationConstraints
-{
-    // Create copies of all provided equation constraints to avoid full capture of `specs` in lambda function below
-    const auto econstraints_single = specs.equationConstraintsSingle();
-    const auto econstraints_system = specs.equationConstraintsSystem();
-
-    // The complete system of equation constraints that will be created below.
-    EquationConstraints econstraints;
-
-    // Collect the id constraints across the single equation constraints
-    for(auto const& x : econstraints_single)
-        econstraints.ids.push_back(x.id);
-
-    // Collect the id constraints across the system of equation constraints
-    for(auto const& x : econstraints_system)
-        econstraints.ids.insert(econstraints.ids.end(), x.ids.begin(), x.ids.end());
-
-    // The total number of equation constraints
-    const auto num_econstraints = econstraints.ids.size();
-
-    // Create the final constraint vector function
-    econstraints.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
-    {
-        // Define auxiliary offset variable to keep track of the entries in `res` to be filled in
-        auto offset = 0;
-
-        // The vector with the resulting evaluation of all equation constraints
-        VectorXr res(num_econstraints);
-
-        // Evaluate all single equation constraints
-        for(auto const& x : econstraints_single)
-            res[offset++] = x.fn(state, p, w);
-
-        // Evaluate all system of equation constraints
-        for(auto const& x : econstraints_system)
-        {
-            const auto size = x.ids.size();
-            const auto tmp = x.fn(state, p, w);
-            errorif(tmp.size() != size, "You have provided a system of equation constraints whose size, ", tmp.size(), ", does not match with the number of constraint ids, ", size, ", whose ids being: ", x.ids);
-            res.segment(offset, size) = tmp;
-            offset += size;
-        }
-
-        return res;
-    };
-
-    return econstraints;
-}
-
-/// Assemble the complete system of reactivity constraints to be satisfied at chemical equilibrium.
-auto assembleReactivityConstraints(EquilibriumSpecs const& specs) -> ReactivityConstraints
-{
-    // Create copies of all provided reactivity constraints to avoid full capture of `specs` in lambda function below
-    const auto rconstraints_single = specs.reactivityConstraintsSingle();
-    const auto rconstraints_system = specs.reactivityConstraintsSystem();
-
-    // The complete system of reactivity constraints that will be created below.
-    ReactivityConstraints rconstraints;
-
-    // Collect the id constraints across the single reactivity constraints
-    for(auto const& x : rconstraints_single)
-        rconstraints.ids.push_back(x.id);
-
-    // Collect the id constraints across the system of reactivity constraints
-    for(auto const& x : rconstraints_system)
-        rconstraints.ids.insert(rconstraints.ids.end(), x.ids.begin(), x.ids.end());
-
-    // Auxiliary variables
-    const auto Nr = rconstraints.ids.size();         // the total number of reactivity constraints
-    const auto Nn = specs.system().species().size(); // the number of species in the chemical system
-    const auto Np = specs.numControlVariablesP();    // the number of control variables p
-
-    // Create the final constraint coefficient matrices Kn and Kp
-    rconstraints.Kn = zeros(Nr, Nn);
-    rconstraints.Kp = zeros(Nr, Np);
-
-    // Define auxiliary offset variable to keep track of the current row in the assembly of Kn and Kp below
-    auto offset = 0;
-
-    // Go over the single reactivity constraints...
-    for(auto const& x : rconstraints_single)
-    {
-        errorif(x.Kp.size() != 0 && x.Kp.size() != Np, "The size of vector Kp in the reactivity constraint with id `", x.id, "` is ", x.Kp.size(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set in the EquilibriumSpecs object.");
-        if(x.Kn.size())
-            rconstraints.Kn.row(offset) = x.Kn;
-        if(x.Kp.size())
-            rconstraints.Kp.row(offset) = x.Kp;
-        offset += 1;
-    }
-
-    // Go over the system of reactivity constraints...
-    for(auto const& x : rconstraints_system)
-    {
-        errorif(x.Kp.size() != 0 && x.Kp.cols() != Np, "The number of columns in matrix Kp in the system of reactivity constraints with ids `", x.ids, "` is ", x.Kp.cols(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set in the EquilibriumSpecs object.");
-        const auto size = x.ids.size();
-        if(rconstraints.Kn.size())
-            rconstraints.Kn.middleRows(offset, size) = x.Kn;
-        if(rconstraints.Kp.size())
-            rconstraints.Kp.middleRows(offset, size) = x.Kp;
-        offset += size;
-    }
-
-    return rconstraints;
-}
-
 } // namespace
 
 EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
@@ -818,6 +712,13 @@ auto EquilibriumSpecs::numConstraints() const -> Index
     return numEquationConstraints() + numReactivityConstraints() + numControlVariablesQ();
 }
 
+auto EquilibriumSpecs::numConservativeComponents() const -> Index
+{
+    const auto Ne = m_system.elements().size();
+    const auto Nr = rconstraints_ids.size();
+    return 1 + Ne + Nr; // charge, elements, reactivity constraints
+}
+
 //=================================================================================================
 //
 // METHODS TO GET THE NAMES OF INTRODUCED CONSTRAINTS, PARAMETERS, AND CONTROL VARIABLES
@@ -869,6 +770,14 @@ auto EquilibriumSpecs::namesConstraints() const -> Strings
     Strings names = econstraints_ids;
     names = concatenate(names, vectorize(qvars, RKT_LAMBDA(x, x.id)));
     names = concatenate(names, rconstraints_ids);
+    return names;
+}
+
+auto EquilibriumSpecs::namesConservativeComponents() const -> Strings
+{
+    Strings names = vectorize(m_system.elements(), RKT_LAMBDA(x, x.symbol())); // symbols of elements
+    names.push_back("Z"); // symbol of charge
+    names = concatenate(names, rconstraints_ids); // names of reactivity constraints
     return names;
 }
 
@@ -1138,11 +1047,6 @@ auto EquilibriumSpecs::equationConstraintsSystem() const -> Vec<EquationConstrai
     return econstraints_system;
 }
 
-auto EquilibriumSpecs::equationConstraints() const -> EquationConstraints
-{
-    return assembleEquationConstraints(*this);
-}
-
 auto EquilibriumSpecs::reactivityConstraintsSingle() const -> Vec<ReactivityConstraint> const&
 {
     return rconstraints_single;
@@ -1153,9 +1057,215 @@ auto EquilibriumSpecs::reactivityConstraintsSystem() const -> Vec<ReactivityCons
     return rconstraints_system;
 }
 
-auto EquilibriumSpecs::reactivityConstraints() const -> ReactivityConstraints
+//=================================================================================================
+//
+// METHODS THAT ASSEMBLE CONSTRAINTS AND MATRICES FOR CURRENT STATE OF EQUILIBRIUM SPECIFICATIONS
+//
+//=================================================================================================
+
+auto EquilibriumSpecs::assembleEquationConstraints() const -> EquationConstraints
 {
-    return assembleReactivityConstraints(*this);
+    // The complete system of equation constraints that will be created below.
+    EquationConstraints econstraints;
+
+    // Collect the id constraints across the single equation constraints
+    for(auto const& x : econstraints_single)
+        econstraints.ids.push_back(x.id);
+
+    // Collect the id constraints across the system of equation constraints
+    for(auto const& x : econstraints_system)
+        econstraints.ids.insert(econstraints.ids.end(), x.ids.begin(), x.ids.end());
+
+    // The total number of equation constraints
+    const auto num_econstraints = econstraints.ids.size();
+
+    // Create copies of econstraints_single and econstraints_system to avoid copy of *this in lambda below
+    const auto ecnstrnts_single = econstraints_single;
+    const auto ecnstrnts_system = econstraints_system;
+
+    // Create the final constraint vector function
+    econstraints.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
+    {
+        // Define auxiliary offset variable to keep track of the entries in `res` to be filled in
+        auto offset = 0;
+
+        // The vector with the resulting evaluation of all equation constraints
+        VectorXr res(num_econstraints);
+
+        // Evaluate all single equation constraints
+        for(auto const& x : ecnstrnts_single)
+            res[offset++] = x.fn(state, p, w);
+
+        // Evaluate all system of equation constraints
+        for(auto const& x : ecnstrnts_system)
+        {
+            const auto size = x.ids.size();
+            const auto tmp = x.fn(state, p, w);
+            errorif(tmp.size() != size, "You have provided a system of equation constraints whose size, ", tmp.size(), ", does not match with the number of constraint ids, ", size, ", whose ids being: ", x.ids);
+            res.segment(offset, size) = tmp;
+            offset += size;
+        }
+
+        return res;
+    };
+
+    return econstraints;
+}
+
+auto EquilibriumSpecs::assembleReactivityConstraints() const -> ReactivityConstraints
+{
+    // The complete system of reactivity constraints that will be created below.
+    ReactivityConstraints rconstraints;
+
+    // Collect the id constraints across the single reactivity constraints
+    for(auto const& x : rconstraints_single)
+        rconstraints.ids.push_back(x.id);
+
+    // Collect the id constraints across the system of reactivity constraints
+    for(auto const& x : rconstraints_system)
+        rconstraints.ids.insert(rconstraints.ids.end(), x.ids.begin(), x.ids.end());
+
+    // Create the final constraint coefficient matrices Kn and Kp
+    rconstraints.Kn = assembleReactivityConstraintsMatrixKn();
+    rconstraints.Kp = assembleReactivityConstraintsMatrixKp();
+
+    return rconstraints;
+}
+
+auto EquilibriumSpecs::assembleReactivityConstraintsMatrixKn() const -> MatrixXd
+{
+    const auto Nr = numReactivityConstraints(); // the total number of reactivity constraints
+    const auto Nn = system().species().size();  // the number of species in the chemical system
+
+    // The final coefficient matrix Kn of the reactivity constraints
+    MatrixXd Kn = zeros(Nr, Nn);
+
+    // Define auxiliary offset variable to keep track of the current row in the assembly of Kn below
+    auto offset = 0;
+
+    // Go over the single reactivity constraints...
+    for(auto const& x : rconstraints_single)
+    {
+        errorif(x.Kn.size() != 0 && x.Kn.size() != Nn, "The size of vector Kn in the reactivity constraint with id `", x.id, "` is ", x.Kn.size(), " which does not match with the number of species, ", Nn, ".");
+        if(x.Kn.size())
+            Kn.row(offset) = x.Kn;
+        offset += 1;
+    }
+
+    // Go over the system of reactivity constraints...
+    for(auto const& x : rconstraints_system)
+    {
+        const auto size = x.ids.size();
+        errorif(x.Kn.size() != 0 && x.Kn.cols() != Nn, "The number of columns in matrix Kn in the system of reactivity constraints with ids `", x.ids, "` is ", x.Kn.cols(), " which does not match with the number of species, ", Nn, ".");
+        if(x.Kn.size())
+            Kn.middleRows(offset, size) = x.Kn;
+        offset += size;
+    }
+
+    return Kn;
+}
+
+auto EquilibriumSpecs::assembleReactivityConstraintsMatrixKp() const -> MatrixXd
+{
+    const auto Nr = numReactivityConstraints(); // the total number of reactivity constraints
+    const auto Np = numControlVariablesP();     // the number of control variables p
+
+    // The final coefficient matrix Kp of the reactivity constraints
+    MatrixXd Kp = zeros(Nr, Np);
+
+    // Define auxiliary offset variable to keep track of the current row in the assembly of Kp below
+    auto offset = 0;
+
+    // Go over the single reactivity constraints...
+    for(auto const& x : rconstraints_single)
+    {
+        errorif(x.Kp.size() != 0 && x.Kp.size() != Np, "The size of vector Kp in the reactivity constraint with id `", x.id, "` is ", x.Kp.size(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set in the EquilibriumSpecs object.");
+        if(x.Kp.size())
+            Kp.row(offset) = x.Kp;
+        offset += 1;
+    }
+
+    // Go over the system of reactivity constraints...
+    for(auto const& x : rconstraints_system)
+    {
+        const auto size = x.ids.size();
+        errorif(x.Kp.size() != 0 && x.Kp.cols() != Np, "The number of columns in matrix Kp in the system of reactivity constraints with ids `", x.ids, "` is ", x.Kp.cols(), " which does not match with the number of p control variables, ", Np, ". Ensure the right number of p control variables have been set in the EquilibriumSpecs object.");
+        if(x.Kp.size())
+            Kp.middleRows(offset, size) = x.Kp;
+        offset += size;
+    }
+
+    return Kp;
+}
+
+auto EquilibriumSpecs::assembleConservationMatrix() const -> MatrixXd
+{
+    return assembleConservationMatrixN();
+}
+
+auto EquilibriumSpecs::assembleConservationMatrixN() const -> MatrixXd
+{
+    const auto Nn = system().species().size();   // number of species
+    const auto Ne = system().elements().size();  // number of elements
+    const auto Nb = Ne + 1;                      // number of elements and charge
+    const auto Nr = numReactivityConstraints();  // number of reactivity constraints
+    const auto Nc = numConservativeComponents(); // equivalent to Nb + Nr
+
+    MatrixXd An(Nc, Nn);
+
+    auto Wn = An.topRows(Nb);    // the block in An corresponding to the formula matrix of the species with respect to elements and charge
+    auto Kn = An.bottomRows(Nr); // the block in An corresponding to the coefficient matrix of the reactivity constraints with respect to the species
+
+    Wn = system().formulaMatrix();
+    Kn = assembleReactivityConstraintsMatrixKn();
+
+    return An;
+}
+
+auto EquilibriumSpecs::assembleConservationMatrixQ() const -> MatrixXd
+{
+    const auto Ne = system().elements().size();  // number of elements
+    const auto Nb = Ne + 1;                      // number of elements and charge
+    const auto Nr = numReactivityConstraints();  // number of reactivity constraints
+    const auto Nc = numConservativeComponents(); // equivalent to Nb + Nr
+    const auto Nq = numControlVariablesQ();      // number of *q* control variables
+
+    auto const& elements = system().elements();
+
+    MatrixXd Aq(Nc, Nq);
+
+    auto Wq = Aq.topRows(Nb);    // the block in Aq corresponding to the formula matrix of the implicit titrants with respect to elements and charge
+    auto Kq = Aq.bottomRows(Nr); // the block in Aq corresponding to the coefficient matrix of the reactivity constraints with respect to the *q* control variables
+
+    for(auto [i, qvar] : enumerate(qvars))
+        Wq.col(i) = detail::assembleFormulaVector(qvar.substance, elements);
+
+    Kq.fill(0.0);
+
+    return Aq;
+}
+
+auto EquilibriumSpecs::assembleConservationMatrixP() const -> MatrixXd
+{
+    const auto Ne = system().elements().size();  // number of elements
+    const auto Nb = Ne + 1;                      // number of elements and charge
+    const auto Nr = numReactivityConstraints();  // number of reactivity constraints
+    const auto Nc = numConservativeComponents(); // equivalent to Nb + Nr
+    const auto Np = numControlVariablesP();      // number of *p* control variables
+
+    auto const& elements = system().elements();
+
+    MatrixXd Ap(Nc, Np);
+
+    auto Wp = Ap.topRows(Nb);    // the block in Ap corresponding to the formula matrix of the *p* control variables with respect to elements and charge
+    auto Kp = Ap.bottomRows(Nr); // the block in Ap corresponding to the coefficient matrix of the reactivity constraints with respect to the *p* control variables
+
+    for(auto [i, pvar] : enumerate(pvars))
+        Wp.col(i) = detail::assembleFormulaVector(pvar.substance, elements);
+
+    Kp = assembleReactivityConstraintsMatrixKp();
+
+    return Ap;
 }
 
 //=================================================================================================

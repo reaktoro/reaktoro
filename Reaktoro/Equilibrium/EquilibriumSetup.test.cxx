@@ -507,7 +507,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //-------------------------------------------------------------------------------------------------
             // Check the value of the constraint functions of equation type at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------------------------
-            const VectorXd v = specs.equationConstraints().fn(state, p, w);
+            const VectorXd v = specs.assembleEquationConstraints().fn(state, p, w);
 
             // v[0] = the residual of the volume constraint equation
             // v[1] = the residual of the internal energy constraint equation
@@ -527,7 +527,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 updateStateSpecial(auxstate, T, P, n, options);
 
-                VectorXr v = specs.equationConstraints().fn(auxstate, p, w);
+                VectorXr v = specs.assembleEquationConstraints().fn(auxstate, p, w);
 
                 // v[0] = the residual of the volume constraint equation
                 // v[1] = the residual of the internal energy constraint equation
