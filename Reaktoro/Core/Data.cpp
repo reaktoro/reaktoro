@@ -35,21 +35,25 @@ namespace {
 /// @param[out] result The number in `str` as a double value if it is indeed a number.
 bool isFloat(String const& str, double& result)
 {
-    if(oneof(str, ".nan", ".NaN", ".NAN"))
+    auto const& newstr = lowercase(str);
+    if(oneof(newstr, ".nan"))
     {
         result = std::numeric_limits<double>::quiet_NaN();
         return true;
     }
-    if(oneof(str, ".inf", ".Inf", ".INF", "+.inf", "+.Inf", "+.INF"))
+    if(oneof(newstr, "+inf", "+.inf", ".inf"))
     {
         result = std::numeric_limits<double>::infinity();
         return true;
     }
-    if(oneof(str, "-.inf", "-.Inf", "-.INF"))
+    if(oneof(newstr, "-inf", "-.inf"))
     {
         result = -std::numeric_limits<double>::infinity();
         return true;
     }
+
+    if(oneof(newstr, "nan", "inf"))
+        return false; // nan, inf, NaN, InF, etc. are considered words, not numbers! In fact, InF and NaF are valid substance names present in the NASA-CEA database!
 
     char* end;
     result = std::strtod(str.c_str(), &end);
@@ -365,19 +369,9 @@ auto Data::isNull() const -> bool
     return std::any_cast<std::nullptr_t>(&tree);
 }
 
-auto Data::operator[](Chars key) const -> Data const&
-{
-    return at(key);
-}
-
 auto Data::operator[](String const& key) const -> Data const&
 {
     return at(key);
-}
-
-auto Data::operator[](int const& index) const -> Data const&
-{
-    return at(index);
 }
 
 auto Data::operator[](Index const& index) const -> Data const&
@@ -385,33 +379,40 @@ auto Data::operator[](Index const& index) const -> Data const&
     return at(index);
 }
 
+auto Data::operator[](String const& key) -> Data&
+{
+    if(isNull())
+        tree = Dict<String, Data>();
+    errorif(!isDict(), "Methods Data::at(key) and Data::operator[key], with key `", key, "` can only be used when the Data object is a dictionary.");
+    auto& obj = std::any_cast<Dict<String, Data>&>(tree);
+    return obj[key];
+}
+
+auto Data::operator[](Index const& index) -> Data&
+{
+    if(isNull() && index == 0)
+        tree = Vec<Data>();
+    errorif(!isList(), "Methods Data::at(index) and Data::operator[index] can only be used when the Data object is a list.");
+    auto& list = std::any_cast<Vec<Data>&>(tree);
+    errorif(index >= list.size(), "Could not retrieve data block with index ", index, " because the list has size ", list.size(), ".");
+    return list[index];
+}
+
 auto Data::at(String const& key) const -> Data const&
 {
-    auto const& obj = asDict();
-    auto const it = obj.find(key);
-    errorif(it == obj.end(), "Could not find child data block with given key `,", key, "`.");
+    errorif(!isDict(), "Methods Data::at(key) and Data::operator[key], with key `", key, "` can only be used when the Data object (const in this context) is a dictionary.");
+    auto const& dict = std::any_cast<Dict<String, Data> const&>(tree);
+    auto const it = dict.find(key);
+    errorif(it == dict.end(), "Could not find data block with given key `", key, "`.");
     return it->second;
 }
 
 auto Data::at(Index const& index) const -> Data const&
 {
-    auto const& vec = asList();
-    errorif(index >= vec.size(), "Could not retrieve child data block with index `,", index, "` because the list has size ", vec.size(), ".");
-    return vec[index];
-}
-
-auto Data::at(String const& key) -> Data&
-{
-    auto& obj = std::any_cast<Dict<String, Data>&>(tree);
-    return obj[key];
-}
-
-auto Data::at(Index const& index) -> Data&
-{
-    auto& obj = std::any_cast<Vec<Data>&>(tree);
-    if(index >= obj.size())
-        obj.resize(index + 1);
-    return obj[index];
+    errorif(!isList(), "Methods Data::at(index) and Data::operator[index] can only be used when the Data object (const in this context) is a list.");
+    auto const& list = std::any_cast<Vec<Data> const&>(tree);
+    errorif(index >= list.size(), "Could not retrieve data block with index ", index, " because the list has size ", list.size(), ".");
+    return list[index];
 }
 
 auto Data::with(String const& attribute, String const& value) const -> Data const&
@@ -424,19 +425,21 @@ auto Data::with(String const& attribute, String const& value) const -> Data cons
     return *this;
 }
 
-auto Data::add(Data const& data) -> Data&
+auto Data::add(Data const& value) -> Data&
 {
-    if(!isList())
+    if(isNull())
         tree = Vec<Data>();
-    auto& vec = std::any_cast<Vec<Data>&>(tree);
-    vec.push_back(data);
-    return vec.back();
+    errorif(!isList(), "Method Data::add(value) can only be used when the Data object is a list or null.");
+    auto& list = std::any_cast<Vec<Data>&>(tree);
+    list.push_back(value);
+    return list.back();
 }
 
 auto Data::add(Chars key, Data const& data) -> Data&
 {
-    if(!isDict())
+    if(isNull())
         tree = Dict<String, Data>();
+    errorif(!isDict(), "Method Data::add(key, value) can only be used when the Data object is a dictionary or null.");
     auto& dict = std::any_cast<Dict<String, Data>&>(tree);
     dict[key] = data;
     return dict[key];
@@ -471,45 +474,6 @@ auto Data::repr() const -> String
 {
     return dumpYaml();
 }
-
-Data::operator bool() const
-{
-    return asBoolean();
-}
-
-Data::operator String() const
-{
-    return asString();
-}
-
-Data::operator Param() const
-{
-    return asParam();
-}
-
-REAKTORO_DATA_ENCODE_DEFINE(bool) { data = obj; }
-REAKTORO_DATA_DECODE_DEFINE(bool) { obj = data.asBoolean(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(Chars) { data = String(obj); }
-REAKTORO_DATA_DECODE_DEFINE(Chars) { obj = data.asString().c_str(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(String) { data = obj; }
-REAKTORO_DATA_DECODE_DEFINE(String) { obj = data.asString(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(int) { data = Param(obj); }
-REAKTORO_DATA_DECODE_DEFINE(int) { obj = data.asInteger(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(Index) { data = Param(obj); }
-REAKTORO_DATA_DECODE_DEFINE(Index) { obj = data.asInteger(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(double) { data = Param(obj); }
-REAKTORO_DATA_DECODE_DEFINE(double) { obj = data.asFloat(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(real) { data = Param(obj); }
-REAKTORO_DATA_DECODE_DEFINE(real) { obj = data.asReal(); }
-
-REAKTORO_DATA_ENCODE_DEFINE(Param) { data = obj; }
-REAKTORO_DATA_DECODE_DEFINE(Param) { obj = data.asParam(); }
 
 } // namespace Reaktoro
 
