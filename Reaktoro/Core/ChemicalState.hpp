@@ -271,25 +271,22 @@ public:
     /// @note This method is equivalent to ChemicalState::setSurfaceArea
     auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2, real value, Chars unit) -> void;
 
-    /// Return the surface area between two phases (in m2).
+    /// Return the surface area of the interface between two reacting phases (in m2).
     /// @param phase1 The name or index of a phase.
     /// @param phase2 The name or index of the phase interfacing with the previous one.
     /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
     auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real;
 
-    /// Return the surface area between two phases with given surface index (in m2).
+    /// Return the surface area of the interface between two reacting phases with given surface index (in m2).
     /// @param isurface The index of the surface between two phases.
     auto surfaceArea(Index isurface) const -> real;
 
-    /// Return the areas of all specified surfaces.
+    /// Return the areas of all reacting phase interfaces in the system (in m2).
     auto surfaceAreas() const -> ArrayXrConstRef;
 
     /// Return the phase pairs for which the surface area has been defined.
     /// @see surfaceArea, setSurfaceArea
     auto surfaces() const -> const Pairs<Index, Index>&;
-
-    /// Return the index of the surface between given pair of phases or number of surfaces if not found.
-    auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index;
 
     // --------------------------------------------------------------------------------------------
     // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES

@@ -339,7 +339,7 @@ struct ChemicalState::Impl
     {
         errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
         value = units::convert(value, unit, "m2");
-        const auto isurface = surfaceIndex(phase1, phase2);
+        const auto isurface = system.reactingPhaseInterfaceIndex(phase1, phase2);
         const auto numsurfaces = system.reactingPhaseInterfaces().size();
         errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
         surface_areas[isurface] = value;
@@ -357,7 +357,7 @@ struct ChemicalState::Impl
     auto surfaceArea(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> real
     {
         const auto numsurfaces = system.reactingPhaseInterfaces().size();
-        const auto isurface = surfaceIndex(phase1, phase2);
+        const auto isurface = system.reactingPhaseInterfaceIndex(phase1, phase2);
         errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", detail::stringfy(phase1), "` and `", detail::stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
         return surface_areas[isurface];
     }
@@ -372,18 +372,6 @@ struct ChemicalState::Impl
         const auto numsurfaces = system.reactingPhaseInterfaces().size();
         errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
         return surface_areas[isurface];
-    }
-
-    auto surfaceIndex(const StringOrIndex& phase1, const StringOrIndex& phase2) const -> Index
-    {
-        const auto iphase1 = detail::resolvePhaseIndex(system, phase1);
-        const auto iphase2 = detail::resolvePhaseIndex(system, phase2);
-        const auto numphases = system.phases().size();
-        errorif(iphase1 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase1), "`.");
-        errorif(iphase2 >= numphases, "Could not find a phase in the system with index or name `", detail::stringfy(phase2), "`.");
-        const auto pair = iphase1 < iphase2 ? Pair<Index,Index>{iphase1, iphase2} : Pair<Index,Index>{iphase2, iphase1};
-        const auto isurface = index(system.reactingPhaseInterfaces(), pair);
-        return isurface;
     }
 };
 
