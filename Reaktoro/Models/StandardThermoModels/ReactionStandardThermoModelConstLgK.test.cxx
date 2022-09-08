@@ -64,7 +64,7 @@ TEST_CASE("Testing ReactionStandardThermoModelConstLgK class", "[ReactionStandar
     // Test method Model::serialize()
     //======================================================================
 
-    yaml node;
+    Data node;
 
     node = model.serialize();
     CHECK( double(node.at("ConstLgK").at("lgKr")) == lgKr );

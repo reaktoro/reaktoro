@@ -74,7 +74,7 @@ TEST_CASE("Testing StandardThermoModelMaierKelley class", "[StandardThermoModelM
         // Test method Model::serialize()
         //======================================================================
 
-        yaml node;
+        Data node;
 
         node = model.serialize();
         CHECK( double(node.at("MaierKelley").at("Gf")) == params.Gf );

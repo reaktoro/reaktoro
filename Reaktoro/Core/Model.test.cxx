@@ -90,13 +90,13 @@ TEST_CASE("Testing Model class", "[Model]")
 
         auto serializerfn = [=]()
         {
-            yaml node;
-            node["A"] = params[0].value();
-            node["B"] = params[1].value();
-            return node;
+            Data data;
+            data.at("A") = params[0];
+            data.at("B") = params[1];
+            return data;
         };
 
-        auto calcfn = [=](real x, real y)
+        auto calcfn = [=](real x, real y) -> real
         {
             auto A = params[0];
             auto B = params[1];
@@ -105,12 +105,12 @@ TEST_CASE("Testing Model class", "[Model]")
 
         auto model = Model<real(real, real)>(calcfn, params, serializerfn);
 
-        CHECK( model.serialize().IsDefined() == true );
+        CHECK( model.serialize().isNull() );
 
-        yaml node = model.serialize();
+        Data data = model.serialize();
 
-        CHECK( node["A"].as<double>() == 1.0 );
-        CHECK( node["B"].as<double>() == 2.0 );
+        CHECK( data["A"].asFloat() == 1.0 );
+        CHECK( data["B"].asFloat() == 2.0 );
     }
 
     SECTION("Using Model::Constant")

@@ -35,8 +35,8 @@ auto createModelSerializer(const ReactionStandardThermoModelParamsVantHoff& para
 {
     return [=]()
     {
-        yaml node;
-        node["VantHoff"] = params;
+        Data node;
+        node.at("VantHoff") = params;
         return node;
     };
 }

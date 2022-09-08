@@ -69,7 +69,7 @@ TEST_CASE("Testing ReactionStandardThermoModelVantHoff class", "[ReactionStandar
     // Test method Model::serialize()
     //======================================================================
 
-    yaml node;
+    Data node;
 
     node = model.serialize();
     CHECK( double(node.at("VantHoff").at("lgKr")) == lgKr );

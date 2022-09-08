@@ -22,7 +22,7 @@
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Common/YAML.hpp>
+#include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
@@ -38,8 +38,8 @@ using ModelEvaluator = Fn<void(ResultRef res, Args... args)>;
 template<typename Result, typename... Args>
 using ModelCalculator = Fn<Result(Args... args)>;
 
-/// The functional signature of functions that serialize a Model object.
-using ModelSerializer = Fn<yaml()>;
+/// The functional signature of functions that serialize a Model object into a Data object.
+using ModelSerializer = Fn<Data()>;
 
 /// The class used to represent a model function and its parameters.
 /// @ingroup Core
@@ -59,7 +59,7 @@ public:
     /// Construct a Model function object with given model evaluator function and its parameters.
     /// @param evalfn The function that evaluates the model.
     /// @param params The parameters of the underlying model function.
-    /// @param serializerfn The function that serializes the underlying model function to yaml format.
+    /// @param serializerfn The function that serializes the underlying model function to a Data object.
     Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Vec<Param>& params = {}, const ModelSerializer& serializerfn = {})
     : m_params(params), m_serializerfn(serializerfn)
     {
@@ -81,7 +81,7 @@ public:
     /// Construct a Model function object with given direct model calculator and its parameters.
     /// @param calcfn The function that calculates the model properties and return them.
     /// @param params The parameters of the underlying model function.
-    /// @param serializerfn The function that serializes the underlying model function to yaml format.
+    /// @param serializerfn The function that serializes the underlying model function to a Data object.
     Model(const ModelCalculator<Result, Args...>& calcfn, const Vec<Param>& params = {}, const ModelSerializer& serializerfn = {})
     : m_params(params), m_serializerfn(serializerfn)
     {
@@ -165,7 +165,7 @@ public:
         return m_calcfn;
     }
 
-    /// Return the function that serializes the underlying model function to yaml format.
+    /// Return the function that serializes the underlying model function to a Data object.
     auto serializerFn() const -> const ModelSerializer
     {
         return m_serializerfn;
@@ -177,10 +177,10 @@ public:
         return m_params;
     }
 
-    /// Return serialization of the underlying model function to yaml format.
-    auto serialize() const -> yaml
+    /// Return serialization of the underlying model function to a Data object.
+    auto serialize() const -> Data
     {
-        return m_serializerfn ? m_serializerfn() : yaml{}; // evaluate m_serializerfn because Param objects may have changed
+        return m_serializerfn ? m_serializerfn() : Data{}; // evaluate m_serializerfn because Param objects may have changed
     }
 
     /// Return a constant Model function object.
@@ -219,7 +219,7 @@ private:
     /// This is needed for proper memoization optimization!
     ModelCalculator<Result, Args..., const Vec<Param>&> m_calcfn;
 
-    /// The function that serializes the underlying model function to yaml format.
+    /// The function that serializes the underlying model function to a Data object.
     /// This has to be a function because if we stored the serialization of the
     /// model at construction and the Param objects associated to it changed at
     /// some point later, then the stored serialization would be out of sync
@@ -243,11 +243,11 @@ auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
             evalfns[i](res, args...);
     };
 
-    auto serializerfn = [serializerfns]() -> yaml
+    auto serializerfn = [serializerfns]() -> Data
     {
-        yaml result;
+        Data result;
         for(auto i = 0; i < serializerfns.size(); ++i)
-            result.push_back(serializerfns[i]());
+            result.add(serializerfns[i]());
         return result;
     };
 

@@ -63,7 +63,7 @@ TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWate
         // Test method Model::serialize()
         //======================================================================
 
-        yaml node;
+        Data node;
 
         node = model.serialize();
         CHECK( double(node.at("WaterHKF").at("Ttr")) == params.Ttr );

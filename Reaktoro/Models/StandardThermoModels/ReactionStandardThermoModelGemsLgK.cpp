@@ -35,8 +35,8 @@ auto createModelSerializer(const ReactionStandardThermoModelParamsGemsLgK& param
 {
     return [=]()
     {
-        yaml node;
-        node["GemsLgK"] = params;
+        Data node;
+        node.at("GemsLgK") = params;
         return node;
     };
 }

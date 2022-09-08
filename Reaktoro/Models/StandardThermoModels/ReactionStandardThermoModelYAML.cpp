@@ -28,24 +28,23 @@ namespace Reaktoro {
 
 auto ReactionStandardThermoModelYAML(const yaml& node) -> ReactionStandardThermoModel
 {
-    errorif(!(node.IsMap() && node.size() == 1),
-        "Expecting the following yaml node to contain a single "
-        "StandardThermoModel child:\n", node.repr());
+    // errorif(!(node.IsMap() && node.size() == 1),
+    //     "Expecting the following yaml node to contain a single "
+    //     "StandardThermoModel child:\n", node.repr());
 
-    auto model = node.begin()->first.as<String>();
-    yaml params = node.begin()->second;
+    // auto model = node.begin()->first.as<String>();
+    // yaml params = node.begin()->second;
 
-    if(model == "ConstLgK")
-        return ReactionStandardThermoModelConstLgK(params);
-    if(model == "GemsLgK")
-        return ReactionStandardThermoModelGemsLgK(params);
-    if(model == "PhreeqcLgK")
-        return ReactionStandardThermoModelPhreeqcLgK(params);
-    if(model == "VantHoff")
-        return ReactionStandardThermoModelVantHoff(params);
-    errorif(true, "Cannot create a ReactionStandardThermoModel with "
-        "unsupported model name `", model, "` in yaml node:\n", node.repr());
-
+    // if(model == "ConstLgK")
+    //     return ReactionStandardThermoModelConstLgK(params);
+    // if(model == "GemsLgK")
+    //     return ReactionStandardThermoModelGemsLgK(params);
+    // if(model == "PhreeqcLgK")
+    //     return ReactionStandardThermoModelPhreeqcLgK(params);
+    // if(model == "VantHoff")
+    //     return ReactionStandardThermoModelVantHoff(params);
+    // errorif(true, "Cannot create a ReactionStandardThermoModel with "
+    //     "unsupported model name `", model, "` in yaml node:\n", node.repr());
     return {};
 }
 

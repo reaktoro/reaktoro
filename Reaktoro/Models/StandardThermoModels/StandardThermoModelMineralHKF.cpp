@@ -47,8 +47,8 @@ auto createModelSerializer(const StandardThermoModelParamsMineralHKF& params) ->
 {
     return [=]()
     {
-        yaml node;
-        node["MineralHKF"] = params;
+        Data node;
+        node.at("MineralHKF") = params;
         return node;
     };
 }

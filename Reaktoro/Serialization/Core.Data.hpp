@@ -83,14 +83,14 @@ REAKTORO_DATA_DECODE_DECLARE(StandardThermoModel);
 // AggregateState are implemented in cpp file and not here in this header file!
 //--------------------------------------------------------------------------------
 
-REAKTORO_DATA_ENCODE_DEFINE(AggregateState)
+inline REAKTORO_DATA_ENCODE_DEFINE(AggregateState)
 {
     std::stringstream ss;
     ss << obj;
     data = ss.str();
 }
 
-REAKTORO_DATA_DECODE_DEFINE(AggregateState)
+inline REAKTORO_DATA_DECODE_DEFINE(AggregateState)
 {
     obj = parseAggregateState(data.asString());
 }

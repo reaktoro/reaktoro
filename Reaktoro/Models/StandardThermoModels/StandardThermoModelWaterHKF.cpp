@@ -36,8 +36,8 @@ auto createModelSerializer(const StandardThermoModelParamsWaterHKF& params) -> M
 {
     return [=]()
     {
-        yaml node;
-        node["WaterHKF"] = params;
+        Data node;
+        node.at("WaterHKF") = params;
         return node;
     };
 }

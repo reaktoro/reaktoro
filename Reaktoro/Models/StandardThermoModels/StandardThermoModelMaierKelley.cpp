@@ -39,8 +39,8 @@ auto createModelSerializer(const StandardThermoModelParamsMaierKelley& params) -
 {
     return [=]()
     {
-        yaml node;
-        node["MaierKelley"] = params;
+        Data node;
+        node.at("MaierKelley") = params;
         return node;
     };
 }
