@@ -32,8 +32,11 @@ public:
     /// Construct an Surface object with a unique name.
     explicit Surface(String const& name);
 
-    /// Construct an Surface object with a unique name and names of phases between which the surface exists.
-    Surface(String const& name, String const& phase1, String const& phase2);
+    /// Construct an Surface object with a unique name and names of the phases between which the surface exists.
+    explicit Surface(String const& name, String const& phase1, String const& phase2);
+
+    /// Construct an Surface object with a unique name and names and indices of the phases between which the surface exists.
+    explicit Surface(String const& name, String const& phase1, Index iphase1, String const& phase2, Index iphase2);
 
     /// Return a deep copy of this Surface object.
     auto clone() const -> Surface;
@@ -42,19 +45,31 @@ public:
     auto withName(String const& name) const -> Surface;
 
     /// Return a duplicate of this Surface object with replaced names of the phases between which this surface exists.
-    auto withPhases(String const& phase1, String const& phase2) const -> Surface;
+    auto withPhaseNames(String const& phase1, String const& phase2) const -> Surface;
+
+    /// Return a duplicate of this Surface object with replaced indices of the phases between which this surface exists.
+    auto withPhaseIndices(Index iphase1, Index iphase2) const -> Surface;
 
     /// Return the unique name of this surface.
     auto name() const -> String;
 
     /// Return the names of the phases between which this surface exists.
-    auto phases() const -> Pair<String, String> const&;
+    auto phaseNames() const -> Pair<String, String> const&;
+
+    /// Return the indices of the phases between which this surface exists.
+    auto phaseIndices() const -> Pair<Index, Index> const&;
 
     /// Return true if this surface is equivalent to another with the same interface phases.
     auto equivalent(Surface const& another) const -> bool;
 
     /// Return true if this surface is equivalent to another with the same interface phases using phase names.
     auto equivalent(String const& phase1, String const& phase2) const -> bool;
+
+    /// Return true if this surface is equivalent to another with the same interface phases using phase indices.
+    auto equivalent(Index iphase1, Index iphase2) const -> bool;
+
+    /// Return true if this surface is equivalent to another with the same interface phases using phase names/indices.
+    auto equivalent(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> bool;
 
 private:
     struct Impl;
