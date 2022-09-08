@@ -25,18 +25,6 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Surface", "[Surface]")
 {
-    const auto phase1 = Phase()
-        .withName("AqueousPhase")
-        .withSpecies(SpeciesList("H2O(aq) H+(aq) OH-(aq) CO2(aq) HCO3-(aq) CO3--(aq)"))
-        .withStateOfMatter(StateOfMatter::Liquid)
-        ;
-
-    const auto phase2 = Phase()
-        .withName("GaseousPhase")
-        .withSpecies(SpeciesList("CO2(g) H2O(g)"))
-        .withStateOfMatter(StateOfMatter::Gas)
-        ;
-
     WHEN("using constructor Surface()")
     {
         Surface surface;
@@ -44,9 +32,15 @@ TEST_CASE("Testing Surface", "[Surface]")
         surface = surface.withName("AqueousPhase:GaseousPhase");
         CHECK(surface.name() == "AqueousPhase:GaseousPhase");
 
-        surface = surface.withPhases(phase1, phase2);
-        CHECK(surface.phases().first.name() == "AqueousPhase");
-        CHECK(surface.phases().second.name() == "GaseousPhase");
+        surface = surface.withPhases("AqueousPhase", "GaseousPhase");
+        CHECK(surface.phases().first == "AqueousPhase");
+        CHECK(surface.phases().second == "GaseousPhase");
+
+        Surface other;
+        other = other.withName("SomeName");
+        other = other.withPhases("GaseousPhase", "AqueousPhase");
+
+        CHECK( surface.equivalent(other) );
     }
 
     WHEN("using constructor Surface(name)")
@@ -55,8 +49,8 @@ TEST_CASE("Testing Surface", "[Surface]")
 
         CHECK(surface.name() == "AqueousPhase:GaseousPhase");
 
-        surface = surface.withPhases(phase1, phase2);
-        CHECK(surface.phases().first.name() == "AqueousPhase");
-        CHECK(surface.phases().second.name() == "GaseousPhase");
+        surface = surface.withPhases("AqueousPhase", "GaseousPhase");
+        CHECK(surface.phases().first == "AqueousPhase");
+        CHECK(surface.phases().second == "GaseousPhase");
     }
 }
