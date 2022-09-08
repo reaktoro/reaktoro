@@ -19,6 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelConstLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelGemsLgK.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelPhreeqcLgK.hpp>
@@ -67,4 +68,7 @@ void exportSerializationModelsYAML(py::module& m)
 
     py::implicitly_convertible<yaml, StandardThermoModelParamsWaterHKF>();
     py::implicitly_convertible<StandardThermoModelParamsWaterHKF, yaml>();
+
+    py::implicitly_convertible<yaml, ReactionRateModelParamsPalandriKharaka>();
+    py::implicitly_convertible<ReactionRateModelParamsPalandriKharaka, yaml>();
 }
