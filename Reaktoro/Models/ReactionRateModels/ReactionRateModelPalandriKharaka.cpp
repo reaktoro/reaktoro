@@ -23,7 +23,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Serialization/Models/ReactionRateModels.hpp>
 
 namespace Reaktoro {
 namespace detail {
@@ -124,6 +124,19 @@ auto mineralMechanismFn(Mechanism const& mechanism, ChemicalSystem const& system
 }
 
 } // namespace detail
+
+auto ReactionRateModelPalandriKharaka(Params const& params) -> MineralReactionRateModelGenerator
+{
+    auto const& data = params.data();
+    errorif(!data.exists("PalandriKharaka"), "Expecting Palandri-Kharaka mineral rate parameters in given Params object, under the section `PalandriKharaka`.");
+    errorif(!data.at("PalandriKharaka").isDict(), "Expecting section `PalandriKharaka` with Palandri-Kharaka mineral rate parameters to be a dictionary.");
+
+    Vec<ReactionRateModelParamsPalandriKharaka> paramsvec;
+    for(auto const& [key, value] : data["PalandriKharaka"].asDict())
+        paramsvec.push_back(value.as<ReactionRateModelParamsPalandriKharaka>());
+
+    return ReactionRateModelPalandriKharaka(paramsvec);
+}
 
 auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka const& params) -> MineralReactionRateModelGenerator
 {
