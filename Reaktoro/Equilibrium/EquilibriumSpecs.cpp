@@ -73,49 +73,101 @@ EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
 
 auto EquilibriumSpecs::TP(ChemicalSystem const& system) -> EquilibriumSpecs
 {
+    thread_local Map<Index, EquilibriumSpecs> created; // ensure repeated calls to this function produce exactly the same EquilibriumSpecs object with same id!
+
+    if(auto it = created.find(system.id()); it != created.end())
+        return it->second;
+
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.pressure();
-    return specs;
+
+    const auto [it, _] = created.emplace(system.id(), specs);
+    return it->second;
 }
 
 auto EquilibriumSpecs::HP(ChemicalSystem const& system) -> EquilibriumSpecs
 {
+    thread_local Map<Index, EquilibriumSpecs> created; // ensure repeated calls to this function produce exactly the same EquilibriumSpecs object with same id!
+
+    if(auto it = created.find(system.id()); it != created.end())
+        return it->second;
+
     EquilibriumSpecs specs(system);
     specs.enthalpy();
     specs.pressure();
+
+    const auto [it, _] = created.emplace(system.id(), specs);
+    return it->second;
+
     return specs;
 }
 
 auto EquilibriumSpecs::TV(ChemicalSystem const& system) -> EquilibriumSpecs
 {
+    thread_local Map<Index, EquilibriumSpecs> created; // ensure repeated calls to this function produce exactly the same EquilibriumSpecs object with same id!
+
+    if(auto it = created.find(system.id()); it != created.end())
+        return it->second;
+
     EquilibriumSpecs specs(system);
     specs.temperature();
     specs.volume();
+
+    const auto [it, _] = created.emplace(system.id(), specs);
+    return it->second;
+
     return specs;
 }
 
 auto EquilibriumSpecs::UV(ChemicalSystem const& system) -> EquilibriumSpecs
 {
+    thread_local Map<Index, EquilibriumSpecs> created; // ensure repeated calls to this function produce exactly the same EquilibriumSpecs object with same id!
+
+    if(auto it = created.find(system.id()); it != created.end())
+        return it->second;
+
     EquilibriumSpecs specs(system);
     specs.internalEnergy();
     specs.volume();
+
+    const auto [it, _] = created.emplace(system.id(), specs);
+    return it->second;
+
     return specs;
 }
 
 auto EquilibriumSpecs::SP(ChemicalSystem const& system) -> EquilibriumSpecs
 {
+    thread_local Map<Index, EquilibriumSpecs> created; // ensure repeated calls to this function produce exactly the same EquilibriumSpecs object with same id!
+
+    if(auto it = created.find(system.id()); it != created.end())
+        return it->second;
+
     EquilibriumSpecs specs(system);
     specs.entropy();
     specs.pressure();
+
+    const auto [it, _] = created.emplace(system.id(), specs);
+    return it->second;
+
     return specs;
 }
 
 auto EquilibriumSpecs::SV(ChemicalSystem const& system) -> EquilibriumSpecs
 {
+    thread_local Map<Index, EquilibriumSpecs> created; // ensure repeated calls to this function produce exactly the same EquilibriumSpecs object with same id!
+
+    if(auto it = created.find(system.id()); it != created.end())
+        return it->second;
+
     EquilibriumSpecs specs(system);
     specs.entropy();
     specs.volume();
+
+    const auto [it, _] = created.emplace(system.id(), specs);
+    return it->second;
+
     return specs;
 }
 
