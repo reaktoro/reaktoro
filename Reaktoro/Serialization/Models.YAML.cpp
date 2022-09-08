@@ -447,17 +447,15 @@ REAKTORO_YAML_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
     // Collect all catalyst properties and their power
     for(auto child : node)
     {
-        errorif(!child.IsMap(), "Expecting key and value pairs only in YAML node:\n", node.repr());
         const auto key = child.first.as<String>();
-        const auto words = split(key, "()");
-        if(words.size() == 2)
-        {
-            errorif(!oneof(words[0], "a", "P"), "Expecting mineral catalyst symbols to be either `a` or `P`, such as `a(H+)`, `P(CO2)`.");
-            const auto formula = words[1];
-            const auto property = words[0];
-            const auto power = child.second.as<double>();
-            obj.catalysts.push_back({ formula, property, power });
-        }
+        if(!oneof(key[0], 'a', 'P'))
+            continue;
+        errorif(key.size() <= 3, "Expecting a chemical formula inside `a()` or `P()`, such as `a(H+)`, `P(CO2)`.");
+        errorif(key[1] != '(' || key.back() != ')', "Expecting ( and ) as in `a(H+)`, `a(Fe+3)`, `P(CO2)`.");
+        const auto formula = key.substr(2, key.size() - 3); // exclude first two chars and last
+        const auto property = key.substr(0, 1);
+        const auto power = child.second.as<double>();
+        obj.catalysts.push_back({ formula, property, power });
     }
 }
 
