@@ -23,18 +23,19 @@
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Phase.hpp>
+#include <Reaktoro/Core/Surface.hpp>
 
 namespace Reaktoro {
 namespace detail {
 
-auto molarMasses(const SpeciesList& species) -> ArrayXd
+auto molarMasses(SpeciesList const& species) -> ArrayXd
 {
     ArrayXd molar_masses(species.size());
     transform(species, molar_masses, [](auto&& s) { return s.molarMass(); });
     return molar_masses;
 }
 
-auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real value, Chars unit) -> real
+auto computeSpeciesAmount(ChemicalSystem const& system, Index ispecies, real value, Chars unit) -> real
 {
     if(strcmp(unit, "mol") == 0)
         return value;
@@ -50,112 +51,92 @@ auto computeSpeciesAmount(const ChemicalSystem& system, Index ispecies, real val
     else errorif("Provided unit `", unit, "` should be convertible to mol or kg.");
 }
 
-auto resolveElementIndexAux(const ElementList& elementlist, Index index) -> Index
+auto resolveElementIndexAux(ElementList const& elementlist, Index index) -> Index
 {
     return index;
 }
 
-auto resolveElementIndexAux(const ElementList& elementlist, int index) -> Index
+auto resolveElementIndexAux(ElementList const& elementlist, int index) -> Index
 {
     return index;
 }
 
-auto resolveElementIndexAux(const ElementList& elementlist, const String& symbol) -> Index
+auto resolveElementIndexAux(ElementList const& elementlist, String const& symbol) -> Index
 {
     return elementlist.index(symbol);
 }
 
-auto resolveElementIndex(const ElementList& elementlist, StringOrIndex element) -> Index
+auto resolveElementIndex(ElementList const& elementlist, StringOrIndex element) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveElementIndexAux(elementlist, arg); }, element);
 }
 
-auto resolveElementIndex(const ChemicalSystem& system, StringOrIndex element) -> Index
+auto resolveElementIndex(ChemicalSystem const& system, StringOrIndex element) -> Index
 {
     return resolveElementIndex(system.elements(), element);
 }
 
-auto resolveElementIndex(const Phase& phase, StringOrIndex element) -> Index
+auto resolveElementIndex(Phase const& phase, StringOrIndex element) -> Index
 {
     return resolveElementIndex(phase.elements(), element);
 }
 
-auto resolveSpeciesIndexAux(const SpeciesList& specieslist, Index index) -> Index
+auto resolveSpeciesIndexAux(SpeciesList const& specieslist, Index index) -> Index
 {
     return index;
 }
 
-auto resolveSpeciesIndexAux(const SpeciesList& specieslist, int index) -> Index
+auto resolveSpeciesIndexAux(SpeciesList const& specieslist, int index) -> Index
 {
     return index;
 }
 
-auto resolveSpeciesIndexAux(const SpeciesList& specieslist, const String& name) -> Index
+auto resolveSpeciesIndexAux(SpeciesList const& specieslist, String const& name) -> Index
 {
     return specieslist.index(name);
 }
 
-auto resolveSpeciesIndex(const SpeciesList& specieslist, StringOrIndex species) -> Index
+auto resolveSpeciesIndex(SpeciesList const& specieslist, StringOrIndex species) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(specieslist, arg); }, species);
 }
 
-auto resolveSpeciesIndex(const ChemicalSystem& system, StringOrIndex species) -> Index
+auto resolveSpeciesIndex(ChemicalSystem const& system, StringOrIndex species) -> Index
 {
     return resolveSpeciesIndex(system.species(), species);
 }
 
-auto resolveSpeciesIndex(const Phase& phase, StringOrIndex species) -> Index
+auto resolveSpeciesIndex(Phase const& phase, StringOrIndex species) -> Index
 {
     return resolveSpeciesIndex(phase.species(), species);
 }
 
-auto resolvePhaseIndexAux(const PhaseList& phaselist, Index index) -> Index
+auto resolvePhaseIndexAux(PhaseList const& phaselist, Index index) -> Index
 {
     return index;
 }
 
-auto resolvePhaseIndexAux(const PhaseList& phaselist, int index) -> Index
+auto resolvePhaseIndexAux(PhaseList const& phaselist, int index) -> Index
 {
     return index;
 }
 
-auto resolvePhaseIndexAux(const PhaseList& phaselist, const String& name) -> Index
+auto resolvePhaseIndexAux(PhaseList const& phaselist, String const& name) -> Index
 {
     return phaselist.index(name);
 }
 
-auto resolvePhaseIndex(const PhaseList& phaselist, StringOrIndex phase) -> Index
+auto resolvePhaseIndex(PhaseList const& phaselist, StringOrIndex phase) -> Index
 {
     return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(phaselist, arg); }, phase);
 }
 
-auto resolvePhaseIndex(const ChemicalSystem& system, StringOrIndex phase) -> Index
+auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex phase) -> Index
 {
     return resolvePhaseIndex(system.phases(), phase);
 }
 
-auto stringfyAux(Index index) -> String
-{
-    return std::to_string(index);
-}
-
-auto stringfyAux(int index) -> String
-{
-    return std::to_string(index);
-}
-
-auto stringfyAux(const String& name) -> String
-{
-    return name;
-}
-
-auto stringfy(StringOrIndex value) -> String
-{
-    return std::visit([&](auto&& arg) { return stringfyAux(arg); }, value);
-}
-
-auto assembleFormulaVector(const Species& species, const ElementList& elements) -> VectorXd
+auto assembleFormulaVector(Species const& species, ElementList const& elements) -> VectorXd
 {
     const auto num_elements = elements.size();
     const auto num_components = num_elements + 1;
@@ -166,7 +147,7 @@ auto assembleFormulaVector(const Species& species, const ElementList& elements) 
     return A;
 }
 
-auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elements) -> MatrixXd
+auto assembleFormulaMatrix(SpeciesList const& species, ElementList const& elements) -> MatrixXd
 {
     const auto num_elements = elements.size();
     const auto num_components = num_elements + 1;
@@ -180,7 +161,7 @@ auto assembleFormulaMatrix(const SpeciesList& species, const ElementList& elemen
     return A;
 }
 
-auto assembleStoichiometricMatrix(const ReactionList& reactions, const SpeciesList& species) -> MatrixXd
+auto assembleStoichiometricMatrix(ReactionList const& reactions, SpeciesList const& species) -> MatrixXd
 {
     const auto num_species = species.size();
     const auto num_reactions = reactions.size();
@@ -191,22 +172,22 @@ auto assembleStoichiometricMatrix(const ReactionList& reactions, const SpeciesLi
     return S;
 }
 
-auto extractNames(const SpeciesList& list) -> Strings
+auto extractNames(SpeciesList const& list) -> Strings
 {
     return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
-auto extractNames(const ElementList& list) -> Strings
+auto extractNames(ElementList const& list) -> Strings
 {
     return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
-auto extractNames(const PhaseList& list) -> Strings
+auto extractNames(PhaseList const& list) -> Strings
 {
     return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
-auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Pairs<Index, Index>
+auto determineReactingPhaseInterfacesInReaction(const Reaction& reaction, const PhaseList& phases) -> Pairs<Index, Index>
 {
     Indices iphases;
     for(auto const& species : reaction.equation().species())
@@ -238,14 +219,28 @@ auto determinePhaseInterfacesInReaction(const Reaction& reaction, const PhaseLis
     return surfaces;
 }
 
-auto determineReactingPhaseInterfaces(const Vec<Reaction>& reactions, const PhaseList& phases) -> Pairs<Index, Index>
+auto determineReactingPhaseInterfacesInReactions(const Vec<Reaction>& reactions, const PhaseList& phases) -> Pairs<Index, Index>
 {
     Pairs<Index, Index> result;
-
     for(auto const& reaction : reactions)
-        result = merge(result, determinePhaseInterfacesInReaction(reaction, phases));
-
+        result = merge(result, determineReactingPhaseInterfacesInReaction(reaction, phases));
     return result;
+}
+
+auto createSurfacesForReactingPhaseInterfacesInReactions(const Vec<Reaction>& reactions, const PhaseList& phases) -> Vec<Surface>
+{
+    auto const pairs = determineReactingPhaseInterfacesInReactions(reactions, phases);
+
+    // The auxiliary function to create Surface objects from phase indices
+    auto createSurface = [&](Index iphase1, Index iphase2)
+    {
+        auto const nphase1 = phases[iphase1].name();
+        auto const nphase2 = phases[iphase2].name();
+        auto const surfacename = iphase1 == iphase2 ? nphase1 : nphase1 + ":" + nphase2; // e.g., AqueousPhase:GaseousPhase, AqueousPhase:Calcite, Calcite:Calcite is reduced to just Calcite
+        return Surface(surfacename, nphase1, iphase1, nphase2, iphase2);
+    };
+
+    return vectorize(pairs, RKT_LAMBDA(x, createSurface(x.first, x.second)));
 }
 
 } // namespace detail

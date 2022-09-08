@@ -172,7 +172,7 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
                 CHECK( S(i, j) == reactions[j].equation().coefficient(species[i].name()) );
     }
 
-    SECTION("Testing determinePhaseInterfacesInReaction")
+    SECTION("Testing determineReactingPhaseInterfacesInReaction")
     {
         const PhaseList phases = system.phases();
 
@@ -180,31 +180,31 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
         Pairs<Index, Index> result;
 
         reaction = db.reaction("CO2(aq) = CO2(g)");
-        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        result = detail::determineReactingPhaseInterfacesInReaction(reaction, phases);
         CHECK( result == Pairs<Index, Index>{ {0, 1} } ); // index(AqueousPhase) = 0, index(GaseousPhase) = 1
 
         reaction = db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)");
-        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        result = detail::determineReactingPhaseInterfacesInReaction(reaction, phases);
         CHECK( result == Pairs<Index, Index>{ {0, 2} } ); // index(AqueousPhase) = 0, index(Halite:NaCl(s)) = 2
 
         reaction = db.reaction("CaCO3(s) + H+(aq) = Ca++(aq) + HCO3-(aq)");
-        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        result = detail::determineReactingPhaseInterfacesInReaction(reaction, phases);
         CHECK( result == Pairs<Index, Index>{ {0, 3} } ); // index(AqueousPhase) = 0, index(Calcite:CaCO3(s)) = 3
 
         reaction = db.reaction("H2O(aq) = H+(aq) + OH-(aq)");
-        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        result = detail::determineReactingPhaseInterfacesInReaction(reaction, phases);
         CHECK( result == Pairs<Index, Index>{} ); // homogeneous reactions do not produce phase interfaces!
 
         reaction = db.reaction("NaCl(s)");
-        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        result = detail::determineReactingPhaseInterfacesInReaction(reaction, phases);
         CHECK( result == Pairs<Index, Index>{ {2, 2} } ); // index(Halite) = 2
 
         reaction = db.reaction("CaCO3(s)");
-        result = detail::determinePhaseInterfacesInReaction(reaction, phases);
+        result = detail::determineReactingPhaseInterfacesInReaction(reaction, phases);
         CHECK( result == Pairs<Index, Index>{ {3, 3} } ); // index(Calcite) = 3
     }
 
-    SECTION("Testing determineReactingPhaseInterfaces")
+    SECTION("Testing determineReactingPhaseInterfacesInReactions")
     {
         const PhaseList phases = system.phases();
 
@@ -217,7 +217,7 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
             db.reaction("CaCO3(s)")
         };
 
-        Pairs<Index, Index> result = detail::determineReactingPhaseInterfaces(reactions, phases);
+        Pairs<Index, Index> result = detail::determineReactingPhaseInterfacesInReactions(reactions, phases);
 
         CHECK( result == Pairs<Index, Index>{ {0, 1}, {0, 2}, {0, 3}, {2, 2}, {3, 3} } );
     }
