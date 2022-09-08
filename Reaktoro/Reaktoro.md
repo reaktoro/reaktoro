@@ -54,6 +54,12 @@ want to read about.
 - @ref Reaktoro::EquilibriumSensitivity
 - @ref Reaktoro::EquilibriumPredictor
 
+## Chemical kinetics problem definition and calculations
+
+- @ref Reaktoro::KineticSolver
+- @ref Reaktoro::KineticOptions
+- @ref Reaktoro::KineticSensitivity
+
 ## Activity models for aqueous phases
 
 - @ref Reaktoro::ActivityModelIdealAqueous
