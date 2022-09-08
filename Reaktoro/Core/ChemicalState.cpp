@@ -763,18 +763,6 @@ struct ChemicalState::Equilibrium::Impl
     /// The Optima::State object used for warm start Optima optimization calculations.
     Optima::State optstate;
 
-    /// The indices of the species partitioned as (primary, secondary).
-    ArrayXl ips;
-
-    /// The number of primary species among the species.
-    Index kp = 0;
-
-    /// The indices of elements whose amounts should be positive, but given amount was less or equal to zero.
-    ArrayXl isue;
-
-    /// The indices of species that contain one or more strictly unstable elements.
-    ArrayXl isus;
-
     /// Construct a default ChemicalState::Equilibrium::Impl instance
     Impl(ChemicalSystem const& system)
     : Nn(system.species().size()), Nb(system.elements().size() + 1)
@@ -835,50 +823,24 @@ auto ChemicalState::Equilibrium::setOptimaState(const Optima::State& state) -> v
     pimpl->p = -state.p; // negative because of the preferred positive coefficients in the conservation matrix
 }
 
-auto ChemicalState::Equilibrium::setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void
-{
-    pimpl->ips = ips;
-    pimpl->kp = kp;
-}
-
-auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableElements(ArrayXlConstRef isue) -> void
-{
-    pimpl->isue = isue;
-}
-
-auto ChemicalState::Equilibrium::setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void
-{
-    pimpl->isus = isus;
-}
-
 auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
 {
-    return pimpl->kp;
+    return pimpl->optstate.jb.size();
 }
 
 auto ChemicalState::Equilibrium::numSecondarySpecies() const -> Index
 {
-    return pimpl->ips.size() - pimpl->kp;
+    return pimpl->optstate.jn.size();
 }
 
 auto ChemicalState::Equilibrium::indicesPrimarySpecies() const -> ArrayXlConstRef
 {
-    return pimpl->ips.head(numPrimarySpecies());
+    return pimpl->optstate.jb;
 }
 
 auto ChemicalState::Equilibrium::indicesSecondarySpecies() const -> ArrayXlConstRef
 {
-    return pimpl->ips.tail(numSecondarySpecies());
-}
-
-auto ChemicalState::Equilibrium::indicesStrictlyUnstableElements() const -> ArrayXlConstRef
-{
-    return pimpl->isue;
-}
-
-auto ChemicalState::Equilibrium::indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef
-{
-    return pimpl->isus;
+    return pimpl->optstate.jn;
 }
 
 auto ChemicalState::Equilibrium::elementChemicalPotentials() const -> ArrayXdConstRef

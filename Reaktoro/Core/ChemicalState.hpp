@@ -403,18 +403,6 @@ public:
     /// Set the Optima::State object computed as part of the equilibrium calculation.
     auto setOptimaState(const Optima::State& state) -> void;
 
-    /// Set the indices of the primary and secondary species at the equilibrium state.
-    /// @param ips The indices of the equilibrium species ordered as (primary, secondary)
-    /// @param kp The number of primary species
-    auto setIndicesPrimarySecondarySpecies(ArrayXlConstRef ips, Index kp) -> void;
-
-    /// Set the indices of elements whose amounts should be positive, but given amount was less or equal to zero.
-    auto setIndicesStrictlyUnstableElements(ArrayXlConstRef isue) -> void;
-
-    /// Set the indices of species that contain one or more strictly unstable elements.
-    /// @see setIndicesElementsStrictlyUnstable
-    auto setIndicesStrictlyUnstableSpecies(ArrayXlConstRef isus) -> void;
-
     /// Return the number of primary species.
     auto numPrimarySpecies() const -> Index;
 
@@ -427,13 +415,7 @@ public:
     /// Return the indices of the secondary species.
     auto indicesSecondarySpecies() const -> ArrayXlConstRef;
 
-    /// Return the indices of elements whose amounts should be positive, but given amount was less or equal to zero.
-    auto indicesStrictlyUnstableElements() const -> ArrayXlConstRef;
-
-    /// Return the indices of species that contain one or more strictly unstable elements.
-    auto indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef;
-
-    /// Return the chemical potentials of the elements in the equilibrium state (normalized by *RT*).
+    /// Return the chemical potentials of the elements in the equilibrium state (in unit of J/mol).
     auto elementChemicalPotentials() const -> ArrayXdConstRef;
 
     /// Return the stabilities of the chemical species in the equilibrium state (normalized by *RT*).
