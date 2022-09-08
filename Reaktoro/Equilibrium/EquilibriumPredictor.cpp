@@ -31,7 +31,7 @@ namespace {
 using GetterFn = Fn<double(VectorXdConstRef, VectorXdConstRef)>;
 
 /// Create the lambda function that extracts temperature from either `p` or `w`.
-auto getTemperatureFn(const Strings& inputs) -> GetterFn
+auto getTemperatureFn(Strings const& inputs) -> GetterFn
 {
     const auto idxT = index(inputs, "T");
     const auto knownT = idxT < inputs.size(); // T is known if it is an input variable (it then lives in w)
@@ -40,7 +40,7 @@ auto getTemperatureFn(const Strings& inputs) -> GetterFn
 }
 
 /// Create the lambda function that extracts pressure from either `p` or `w`.
-auto getPressureFn(const Strings& inputs) -> GetterFn
+auto getPressureFn(Strings const& inputs) -> GetterFn
 {
     const auto idxP = index(inputs, "P");
     const auto knownP = idxP < inputs.size(); // P is known if it is an input variable (it then lives in w)
@@ -63,17 +63,13 @@ struct EquilibriumPredictor::Impl
     const VectorXd w0;    ///< The input variables *w* at the reference equilibrium state.
     const VectorXd c0;    ///< The component amounts *c* at the reference equilibrium state.
     const VectorXd u0;    ///< The chemical properties *u* at the reference equilibrium state.
-    VectorXd n;           ///< The species amounts *n* at the predicted equilibrium state.
-    VectorXd p;           ///< The control variables *p* at the predicted equilibrium state.
-    VectorXd q;           ///< The control variables *q* at the predicted equilibrium state.
-    VectorXd w;           ///< The input variables *w* at the predicted equilibrium state.
-    VectorXd c;           ///< The component amounts *c* at the predicted equilibrium state.
-    VectorXd u;           ///< The chemical properties *u* at the predicted equilibrium state.
+    const Index Nn;       ///< The size of vector *n* with amounts of the species in the chemical system.
+    const Index Nu;       ///< The size of vector *u* with the serialized properties of the chemical system.
     GetterFn getT;        ///< The function that gets temperature from either *p* or *w* depending if it is known or unwknon in the equilibrium calculation.
     GetterFn getP;        ///< The function that gets pressure from either *p* or *w* depending if it is known or unwknon in the equilibrium calculation.
 
     /// Construct a EquilibriumPredictor object.
-    Impl(const ChemicalState& state0, const EquilibriumSensitivity& sensitivity0)
+    Impl(ChemicalState const& state0, EquilibriumSensitivity const& sensitivity0)
     : state0(state0), sensitivity0(sensitivity0),
       n0(state0.speciesAmounts()),
       p0(state0.equilibrium().p()),
@@ -81,6 +77,8 @@ struct EquilibriumPredictor::Impl
       w0(state0.equilibrium().w()),
       c0(state0.equilibrium().c()),
       u0(state0.props()),
+      Nn(n0.size()),
+      Nu(u0.size()),
       getT(getTemperatureFn(state0.equilibrium().inputNames())),
       getP(getPressureFn(state0.equilibrium().inputNames()))
     {
@@ -90,18 +88,17 @@ struct EquilibriumPredictor::Impl
     }
 
     /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void
+    auto predict(ChemicalState& state, EquilibriumConditions const& conditions) -> void
     {
-        const auto& A = state.system().formulaMatrix();
-        const auto& ndis = state.speciesAmounts();
+        auto const& A = state.system().formulaMatrix();
+        auto const& ndis = state.speciesAmounts();
         VectorXd c = A * ndis.matrix(); // TODO: The use of Array instead of Vector makes it a lot more verbose for matrix-vector multiplications. Consider using VectorXr instead of ArrayXr.
         // TODO: Revise this when EquilibriumReactions are introduced, which should be responsible for computing the amounts of conservative components (using EquilibriumReactions::conservationMatrix instead of ChemicalSystem::formulaMatrix).
 
         predict(state, conditions, c);
     }
 
-    /// Perform a first-order Taylor prediction of the chemical state at given conditions.
-    auto predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXdConstRef c) -> void
+    auto predict(ChemicalState& state, EquilibriumConditions const& conditions, VectorXdConstRef c) const -> void
     {
         const auto dndw0 = sensitivity0.dndw(); // The derivatives *dn/dw* at the reference equilibrium state.
         const auto dpdw0 = sensitivity0.dpdw(); // The derivatives *dp/dw* at the reference equilibrium state.
@@ -112,34 +109,66 @@ struct EquilibriumPredictor::Impl
         const auto dqdc0 = sensitivity0.dqdc(); // The derivatives *dq/dc* at the reference equilibrium state.
         const auto dudc0 = sensitivity0.dudc(); // The derivatives *du/dc* at the reference equilibrium state.
 
-        w = conditions.inputValues();
+        auto const& wvals = conditions.inputValues();
+        auto const& w = wvals.cast<double>().matrix();
 
         const auto dw = w - w0;
         const auto dc = c - c0;
 
-        n.noalias() = n0 + dndw0*dw + dndc0*dc;
-        p.noalias() = p0 + dpdw0*dw + dpdc0*dc;
-        q.noalias() = q0 + dqdw0*dw + dqdc0*dc;
-        u.noalias() = u0 + dudw0*dw + dudc0*dc;
+        const auto n = n0 + dndw0*dw + dndc0*dc;
+        const auto p = p0 + dpdw0*dw + dpdc0*dc;
+        const auto q = q0 + dqdw0*dw + dqdc0*dc;
+        const auto u = u0 + dudw0*dw + dudc0*dc;
 
-        const auto T = getT(p, w); // get temperature from predicted *p* or given *w*
-        const auto P = getP(p, w); // get pressure from predicted *p* or given *w*
-
-        state.setTemperature(T);
-        state.setPressure(P);
         state.setSpeciesAmounts(n);
         state.props().update(u);
         state.equilibrium() = state0.equilibrium();
         state.equilibrium().setControlVariablesP(p);
         state.equilibrium().setControlVariablesQ(q);
+        state.equilibrium().setInputValues(w);
+        state.equilibrium().setInitialComponentAmounts(c);
+
+        auto const& pp = state.equilibrium().p();
+        auto const& ww = state.equilibrium().w();
+
+        const auto T = getT(pp, ww); // get temperature from predicted *p* or given *w*
+        const auto P = getP(pp, ww); // get pressure from predicted *p* or given *w*
+
+        state.setTemperature(T);
+        state.setPressure(P);
+    }
+
+    /// Perform a first-order Taylor prediction of the chemical potential of a species at given conditions.
+    auto predictSpeciesChemicalPotential(Index i, EquilibriumConditions const& conditions, VectorXdConstRef const& c) const -> double
+    {
+        assert(i < Nn);
+
+        auto const& dmuidw0 = sensitivity0.dudw().row(Nu - Nn + i); // The derivatives *dμ[i]/dw* of the chemical potential of the i-th species.
+        auto const& dmuidc0 = sensitivity0.dudc().row(Nu - Nn + i); // The derivatives *dμ[i]/dc* of the chemical potential of the i-th species.
+        auto const& mui0 = u0[Nu - Nn + i];
+
+        auto const& wvals = conditions.inputValues();
+        auto const& w = wvals.cast<double>().matrix();
+
+        const auto dw = w - w0;
+        const auto dc = c - c0;
+
+        return mui0 + dmuidw0.dot(dw) + dmuidc0.dot(dc);
+    }
+
+    /// Return the chemical potential of a species at given reference conditions.
+    auto referenceSpeciesChemicalPotential(Index i) const -> double
+    {
+        assert(i < Nn);
+        return u0[Nu - Nn + i];
     }
 };
 
-EquilibriumPredictor::EquilibriumPredictor(const ChemicalState& state0, const EquilibriumSensitivity& sensitivity0)
+EquilibriumPredictor::EquilibriumPredictor(ChemicalState const& state0, EquilibriumSensitivity const& sensitivity0)
 : pimpl(new Impl(state0, sensitivity0))
 {}
 
-EquilibriumPredictor::EquilibriumPredictor(const EquilibriumPredictor& other)
+EquilibriumPredictor::EquilibriumPredictor(EquilibriumPredictor const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
@@ -152,14 +181,24 @@ auto EquilibriumPredictor::operator=(EquilibriumPredictor other) -> EquilibriumP
     return *this;
 }
 
-auto EquilibriumPredictor::predict(ChemicalState& state, const EquilibriumConditions& conditions) -> void
+auto EquilibriumPredictor::predict(ChemicalState& state, EquilibriumConditions const& conditions) const -> void
 {
     pimpl->predict(state, conditions);
 }
 
-auto EquilibriumPredictor::predict(ChemicalState& state, const EquilibriumConditions& conditions, VectorXrConstRef b) -> void
+auto EquilibriumPredictor::predict(ChemicalState& state, EquilibriumConditions const& conditions, VectorXrConstRef const& c) const -> void
 {
-    pimpl->predict(state, conditions, b);
+    pimpl->predict(state, conditions, c);
+}
+
+auto EquilibriumPredictor::predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions, VectorXdConstRef const& c) const -> double
+{
+    return pimpl->predictSpeciesChemicalPotential(ispecies, conditions, c);
+}
+
+auto EquilibriumPredictor::referenceSpeciesChemicalPotential(Index ispecies) const -> double
+{
+    return pimpl->referenceSpeciesChemicalPotential(ispecies);
 }
 
 } // namespace Reaktoro

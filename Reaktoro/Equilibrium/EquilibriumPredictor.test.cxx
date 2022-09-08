@@ -110,7 +110,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         state.set("O2"  , 0.002, "mol");
 
         const VectorXd naux = state.speciesAmounts();
-        const VectorXd b = system.formulaMatrix() * naux;
+        const VectorXd c = system.formulaMatrix() * naux;
 
         EquilibriumConditions conditions(specs);
         conditions.temperature(330.0);
@@ -118,14 +118,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
         predictor.predict(state, conditions);
 
-        const auto dndb0 = sensitivity0.dndb();
+        const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
         const auto dpdw0 = sensitivity0.dpdw();
         const auto dqdw0 = sensitivity0.dqdw();
-        const auto dpdb0 = sensitivity0.dpdb();
-        const auto dqdb0 = sensitivity0.dqdb();
+        const auto dpdc0 = sensitivity0.dpdc();
+        const auto dqdc0 = sensitivity0.dqdc();
         const auto dudw0 = sensitivity0.dudw();
-        const auto dudb0 = sensitivity0.dudb();
+        const auto dudc0 = sensitivity0.dudc();
 
         const VectorXd n0 = state0.speciesAmounts();
         const VectorXd p0 = state0.equilibrium().p();
@@ -133,14 +133,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd u0 = state0.props();
 
         const VectorXd w0 = conditions0.inputValues();
-        const VectorXd b0 = state0.equilibrium().b();
+        const VectorXd c0 = state0.equilibrium().c();
 
         const VectorXd w  = conditions.inputValues();
 
-        const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
-        const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
-        const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
-        const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
+        const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
+        const VectorXd q = q0 + dqdc0*(c - c0) + dqdw0*(w - w0);
+        const VectorXd u = u0 + dudc0*(c - c0) + dudw0*(w - w0);
 
         CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
@@ -175,7 +175,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         state.set("NaCl", 0.150, "mol"); // no O2 given here!
 
         const VectorXd naux = state.speciesAmounts();
-        const VectorXd b = system.formulaMatrix() * naux;
+        const VectorXd c = system.formulaMatrix() * naux;
 
         EquilibriumConditions conditions(specs);
         conditions.temperature(330.0);
@@ -185,14 +185,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
         // TODO: Organize tests for EquilibriumPredictor in a way to avoid repeated codes.
 
-        const auto dndb0 = sensitivity0.dndb();
+        const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
         const auto dpdw0 = sensitivity0.dpdw();
         const auto dqdw0 = sensitivity0.dqdw();
-        const auto dpdb0 = sensitivity0.dpdb();
-        const auto dqdb0 = sensitivity0.dqdb();
+        const auto dpdc0 = sensitivity0.dpdc();
+        const auto dqdc0 = sensitivity0.dqdc();
         const auto dudw0 = sensitivity0.dudw();
-        const auto dudb0 = sensitivity0.dudb();
+        const auto dudc0 = sensitivity0.dudc();
 
         const VectorXd n0 = state0.speciesAmounts();
         const VectorXd p0 = state0.equilibrium().p();
@@ -200,14 +200,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd u0 = state0.props();
 
         const VectorXd w0 = conditions0.inputValues();
-        const VectorXd b0 = state0.equilibrium().b();
+        const VectorXd c0 = state0.equilibrium().c();
 
         const VectorXd w  = conditions.inputValues();
 
-        const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
-        const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
-        const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
-        const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
+        const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
+        const VectorXd q = q0 + dqdc0*(c - c0) + dqdw0*(w - w0);
+        const VectorXd u = u0 + dudc0*(c - c0) + dudw0*(w - w0);
 
         CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
@@ -247,7 +247,7 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         state.set("NaCl", 0.15, "mol");
 
         const VectorXd naux = state.speciesAmounts();
-        const VectorXd b = system.formulaMatrix() * naux;
+        const VectorXd c = system.formulaMatrix() * naux;
 
         EquilibriumConditions conditions(specs);
         conditions.temperature(330.0);
@@ -257,14 +257,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
         predictor.predict(state, conditions);
 
-        const auto dndb0 = sensitivity0.dndb();
+        const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
         const auto dpdw0 = sensitivity0.dpdw();
         const auto dqdw0 = sensitivity0.dqdw();
-        const auto dpdb0 = sensitivity0.dpdb();
-        const auto dqdb0 = sensitivity0.dqdb();
+        const auto dpdc0 = sensitivity0.dpdc();
+        const auto dqdc0 = sensitivity0.dqdc();
         const auto dudw0 = sensitivity0.dudw();
-        const auto dudb0 = sensitivity0.dudb();
+        const auto dudc0 = sensitivity0.dudc();
 
         const VectorXd n0 = state0.speciesAmounts();
         const VectorXd p0 = state0.equilibrium().p();
@@ -272,14 +272,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd u0 = state0.props();
 
         const VectorXd w0 = conditions0.inputValues();
-        const VectorXd b0 = state0.equilibrium().b();
+        const VectorXd c0 = state0.equilibrium().c();
 
         const VectorXd w  = conditions.inputValues();
 
-        const VectorXd n = n0 + dndb0*(b - b0) + dndw0*(w - w0);
-        const VectorXd p = p0 + dpdb0*(b - b0) + dpdw0*(w - w0);
-        const VectorXd q = q0 + dqdb0*(b - b0) + dqdw0*(w - w0);
-        const VectorXd u = u0 + dudb0*(b - b0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
+        const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
+        const VectorXd q = q0 + dqdc0*(c - c0) + dqdw0*(w - w0);
+        const VectorXd u = u0 + dudc0*(c - c0) + dudw0*(w - w0);
 
         CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
