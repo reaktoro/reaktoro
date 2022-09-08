@@ -18,10 +18,12 @@
 #pragma once
 
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/ArraySerialization.hpp>
 #include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/AutoDiff.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/ConvertUtils.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
@@ -29,6 +31,7 @@
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/Meta.hpp>
+#include <Reaktoro/Common/MolalityUtils.hpp>
 #include <Reaktoro/Common/MoleFractionUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
@@ -38,8 +41,10 @@
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
+#include <Reaktoro/Common/TypeOp.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Common/YAML.hpp>
 
 /// @defgroup Common Common
 /// The module in Reaktoro in which methods and classes commonly used in other modules are implemented.
