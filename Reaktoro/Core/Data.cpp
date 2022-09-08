@@ -554,6 +554,32 @@ auto Data::add(String const& key, Data value) -> void
     dict.insert_or_assign(key, std::move(value));
 }
 
+auto Data::update(Data const& other) -> void
+{
+    if(isDict())
+    {
+        errorif(!other.isDict(), "Expecting this and other Data objects in Data::update(other) to be dictionary. Ensure both Data objects have the same structure!");
+        auto& dict = std::any_cast<Dict<String, Data>&>(tree);
+        for(auto const& [key, value] : other.asDict())
+        {
+            auto it = dict.find(key);
+            if(it == dict.end())
+                dict.emplace(key, value); // if key does not exist in this Data object, just add it with associated value
+            else it.value().update(value); // otherwise, merge the value associated with the existing key with that of the other Data object
+        }
+    }
+    else if(isList())
+    {
+        errorif(!other.isList(), "Expecting this and other Data objects in Data::update(other) to be lists. Ensure both Data objects have the same structure!");
+        auto& list = std::any_cast<Vec<Data>&>(tree);
+        auto const& otherlist = std::any_cast<Vec<Data> const&>(other.tree);
+        errorif(list.size() != otherlist.size(), "Expecting this and other Data objects in Data::update(other) to be lists with same length. Ensure both Data objects have the same structure, and corresponding lists have the length!");
+        for(auto i = 0; i < list.size(); ++i)
+            list[i].update(otherlist[i]);
+    }
+    else *this = other;
+}
+
 auto Data::reset() -> void
 {
     tree = nullptr;
