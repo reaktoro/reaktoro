@@ -143,6 +143,13 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     ChemicalSystem system = test::createChemicalSystem();
 
     //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalSystem::id()
+    //-------------------------------------------------------------------------
+    CHECK( system.id() == 0 );
+    CHECK( system.id() != ChemicalSystem().id()     ); // new ChemicalSystem object has id=1 and original system continues to have id=0
+    CHECK( system.id() == ChemicalSystem().id() - 2 ); // new ChemicalSystem object has id=2 and original system continues to have id=0
+
+    //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalSystem::database()
     //-------------------------------------------------------------------------
     CHECK( system.database().species().size() );

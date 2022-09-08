@@ -58,6 +58,10 @@ public:
     ChemicalSystem(const Database& database, const GenericPhases&... genericPhases)
     : ChemicalSystem(Phases(database, genericPhases...)) {}
 
+    /// Return the unique identification number of this ChemicalSystem object.
+    /// ChemicalSystem objects are guaranteed to be the same if they have the same id.
+    auto id() const -> Index;
+
     /// Return the database used to construct the chemical system.
     auto database() const -> const Database&;
 

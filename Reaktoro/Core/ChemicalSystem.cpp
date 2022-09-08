@@ -28,6 +28,12 @@
 namespace Reaktoro {
 namespace detail {
 
+auto computeChemicalSystemID() -> Index
+{
+    static thread_local Index counter = 0;
+    return counter++;
+}
+
 template<typename NamedObjects>
 auto fixDuplicateNames(NamedObjects& objects)
 {
@@ -42,6 +48,9 @@ auto fixDuplicateNames(NamedObjects& objects)
 
 struct ChemicalSystem::Impl
 {
+    /// The unique identification number of the chemical system
+    Index id = detail::computeChemicalSystemID();
+
     /// The database used to construct the chemical system.
     Database database;
 
@@ -128,7 +137,11 @@ ChemicalSystem::ChemicalSystem(const Phases& phases, const Reactions& reactions)
 : pimpl(new Impl(phases.database(), phases, reactions.convert(ChemicalSystem(phases))))
 {}
 
-auto ChemicalSystem::database() const -> const Database&
+auto ChemicalSystem::id() const -> Index
+{
+    return pimpl->id;
+}
+
 {
     return pimpl->database;
 }
