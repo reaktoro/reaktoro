@@ -25,6 +25,7 @@ namespace YAML { class Node; }
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
@@ -37,28 +38,26 @@ public:
     /// Construct a default Data instance with null value.
     Data();
 
-    /// Construct a Data object as a string value.
-    Data(Chars const& value);
-
-    /// Construct a Data object as a string value.
-    Data(String const& value);
-
-    /// Construct a Data object as a number value.
-    Data(double const& value);
-
-    /// Construct a Data object as a integer value.
-    Data(int const& value);
-
-    /// Construct a Data object as a boolean value.
+    /// Construct a Data object with given boolean value.
     Data(bool const& value);
 
-    /// Construct a Data object as a Param object.
+    /// Construct a Data object with given string value.
+    Data(Chars const& value);
+
+    /// Construct a Data object with given string value.
+    Data(String const& value);
+
+    /// Construct a Data object with given Param object.
     Data(Param const& value);
 
-    /// Construct a Data object as a dictionary object.
+    /// Construct a Data object with given numeric value (integers and floating-point values), which becomes a Param object.
+    template<typename Number, EnableIf<isNumeric<Number>>...>
+    Data(Number const& value) : Data(Param(value)) {}
+
+    /// Construct a Data object with given dictionary object.
     Data(Map<String, Data> const& value);
 
-    /// Construct a Data object as a list object.
+    /// Construct a Data object with given list object.
     Data(Vec<Data> const& value);
 
     /// Construct a Data object with given yaml object.
@@ -89,13 +88,13 @@ public:
     auto string() const -> String const&;
 
     /// Return this data block as a number value.
-    auto number() const -> double const&;
+    auto number() const -> double;
 
     /// Return this data block as a integer value.
-    auto integer() const -> int const&;
+    auto integer() const -> int;
 
     /// Return this data block as a boolean value.
-    auto boolean() const -> bool const&;
+    auto boolean() const -> bool;
 
     /// Return this data block as a Param object.
     auto param() const -> Param const&;

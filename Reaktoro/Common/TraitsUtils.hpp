@@ -33,7 +33,7 @@ template<typename T>
 using Decay = std::decay_t<T>;
 
 template<typename T>
-constexpr auto isArithmetic = std::is_arithmetic_v<Decay<T>>;
+constexpr auto isArithmetic = std::is_arithmetic_v<T>;
 
 template<typename T, typename U>
 constexpr auto isSame = std::is_same_v<Decay<T>, Decay<U>>;

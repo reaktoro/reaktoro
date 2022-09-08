@@ -48,10 +48,7 @@ auto convertYamlScalar(yaml const& obj) -> Data
     auto const& word = obj.Scalar();
     auto number = 0.0;
     if(isNumber(word, number))
-    {
-        const auto isinteger = word.find(".") == String::npos;
-        return isinteger ? Data(static_cast<int>(number)) : Data(number);
-    }
+        return Data(number);
     else
     {
         if(word == "true" || word == "True")
@@ -154,27 +151,17 @@ Data::Data()
 {
 }
 
+Data::Data(bool const& value)
+: tree(value)
+{
+}
+
 Data::Data(Chars const& value)
 : tree(String(value))
 {
 }
 
 Data::Data(String const& value)
-: tree(value)
-{
-}
-
-Data::Data(double const& value)
-: tree(value)
-{
-}
-
-Data::Data(int const& value)
-: tree(value)
-{
-}
-
-Data::Data(bool const& value)
 : tree(value)
 {
 }
@@ -249,17 +236,17 @@ auto Data::string() const -> String const&
     return std::any_cast<String const&>(tree);
 }
 
-auto Data::number() const -> double const&
+auto Data::number() const -> double
 {
-    return std::any_cast<double const&>(tree);
+    return std::any_cast<Param const&>(tree).value();
 }
 
-auto Data::integer() const -> int const&
+auto Data::integer() const -> int
 {
-    return std::any_cast<int const&>(tree);
+    return std::any_cast<Param const&>(tree).value();
 }
 
-auto Data::boolean() const -> bool const&
+auto Data::boolean() const -> bool
 {
     return std::any_cast<bool const&>(tree);
 }

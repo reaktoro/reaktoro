@@ -115,7 +115,7 @@ private:
 namespace Reaktoro {
 
 template<typename T>
-constexpr auto isNumeric = isArithmetic<T> || isSame<T, real>;
+constexpr auto isNumeric = (isArithmetic<T> || isSame<T, real>) && !isSame<T, bool>;
 
 inline auto operator+(const Param& p) { return  p.value(); }
 inline auto operator-(const Param& p) { return -p.value(); }
