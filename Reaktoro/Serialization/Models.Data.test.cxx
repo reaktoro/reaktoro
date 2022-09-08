@@ -335,15 +335,14 @@ auto allNaN(const VecType& v)
 
 } // namespace
 
-TEST_CASE("Testing serialization of models using Data", "[Serialization][Models.Data]")
+TEST_CASE("Testing serialization of StandardThermodynamicModelParams types", "[Serialization][Models.Data]")
 {
     const double nan = std::numeric_limits<double>::quiet_NaN();
 
     SECTION("Testing YAML serialization of StandardThermoModelParamsConstant")
     {
-        Data data = Data::fromYaml(params_stm_const);
-
-        StandardThermoModelParamsConstant params = data.as<StandardThermoModelParamsConstant>();
+        const auto data = Data::fromYaml(params_stm_const);
+        const auto params = data.as<StandardThermoModelParamsConstant>();
         CHECK( params.G0  == 1.0 );
         CHECK( params.H0  == 2.0 );
         CHECK( params.V0  == 3.0 );
@@ -352,402 +351,415 @@ TEST_CASE("Testing serialization of models using Data", "[Serialization][Models.
         CHECK( params.Cp0 == 6.0 );
     }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsMaierKelley")
-//     {
-//         StandardThermoModelParamsMaierKelley params = yaml::parse(params_stm_mk);
-//         CHECK( params.Gf   == -3679250.6 );
-//         CHECK( params.Hf   == -3876463.4 );
-//         CHECK( params.Sr   ==  209.32552 );
-//         CHECK( params.Vr   ==  9.281e-05 );
-//         CHECK( params.a    ==  251.41656 );
-//         CHECK( params.b    ==  0.0476976 );
-//         CHECK( params.c    == -4769760.0 );
-//         CHECK( params.Tmax ==  1700.0    );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsMaierKelley")
+    {
+        const auto data = Data::fromYaml(params_stm_mk);
+        const auto params = data.as<StandardThermoModelParamsMaierKelley>();
+        CHECK( params.Gf   == -3679250.6 );
+        CHECK( params.Hf   == -3876463.4 );
+        CHECK( params.Sr   ==  209.32552 );
+        CHECK( params.Vr   ==  9.281e-05 );
+        CHECK( params.a    ==  251.41656 );
+        CHECK( params.b    ==  0.0476976 );
+        CHECK( params.c    == -4769760.0 );
+        CHECK( params.Tmax ==  1700.0    );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
-//     {
-//         StandardThermoModelParamsMineralHKF params = yaml::parse(params_stm_hkfmk1);
-//         CHECK( params.Gf     == -3708312.7   );
-//         CHECK( params.Hf     == -3931621.1   );
-//         CHECK( params.Sr     ==  207.14984   );
-//         CHECK( params.Vr     ==  0.00010025  );
-//         CHECK( params.a[0]   ==  258.1528    );
-//         CHECK( params.a[1]   ==  342.58592   );
-//         CHECK( params.b[0]   ==  0.0581576   );
-//         CHECK( params.b[1]   ==  0.014869936 );
-//         CHECK( params.c[0]   == -6280184.0   );
-//         CHECK( params.c[1]   == -20984434.0  );
-//         CHECK( params.Ttr[0] ==  473.0       );
-//         CHECK( allNaN( params.Htr )          );
-//         CHECK( allNaN( params.Vtr )          );
-//         CHECK( allNaN( params.dPdTtr )       );
-//         CHECK( params.Tmax   == 1200.0       );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
+    {
+        const auto data = Data::fromYaml(params_stm_hkfmk1);
+        const auto params = data.as<StandardThermoModelParamsMineralHKF>();
+        CHECK( params.Gf     == -3708312.7   );
+        CHECK( params.Hf     == -3931621.1   );
+        CHECK( params.Sr     ==  207.14984   );
+        CHECK( params.Vr     ==  0.00010025  );
+        CHECK( params.a[0]   ==  258.1528    );
+        CHECK( params.a[1]   ==  342.58592   );
+        CHECK( params.b[0]   ==  0.0581576   );
+        CHECK( params.b[1]   ==  0.014869936 );
+        CHECK( params.c[0]   == -6280184.0   );
+        CHECK( params.c[1]   == -20984434.0  );
+        CHECK( params.Ttr[0] ==  473.0       );
+        CHECK( allNaN( params.Htr )          );
+        CHECK( allNaN( params.Vtr )          );
+        CHECK( allNaN( params.dPdTtr )       );
+        CHECK( params.Tmax   == 1200.0       );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
-//     {
-//         StandardThermoModelParamsMineralHKF params = yaml::parse(params_stm_hkfmk2);
-//         CHECK( params.Gf     == -39522.064 );
-//         CHECK( params.Hf     == -31589.2   );
-//         CHECK( params.Sr     ==  143.5112  );
-//         CHECK( params.Vr     ==  3.42e-05  );
-//         CHECK( params.a[0]   ==  65.39592  );
-//         CHECK( params.a[1]   ==  7.610696  );
-//         CHECK( params.a[2]   ==  90.3744   );
-//         CHECK( params.b[0]   ==  0.0359824 );
-//         CHECK( params.b[1]   ==  0.221752  );
-//         CHECK( params.b[2]   ==  0.0       );
-//         CHECK( params.c[0]   ==  0.0       );
-//         CHECK( params.c[1]   ==  0.0       );
-//         CHECK( params.c[2]   ==  0.0       );
-//         CHECK( params.Ttr[0] ==  450.0     );
-//         CHECK( params.Ttr[1] ==  620.0     );
-//         CHECK( params.Htr[0] ==  3974.8    );
-//         CHECK( params.Htr[1] ==  2510.4    );
-//         CHECK( allNaN( params.Vtr )        );
-//         CHECK( allNaN( params.dPdTtr )     );
-//         CHECK( params.Tmax   == 1000.0     );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
+    {
+        const auto data = Data::fromYaml(params_stm_hkfmk2);
+        const auto params = data.as<StandardThermoModelParamsMineralHKF>();
+        CHECK( params.Gf     == -39522.064 );
+        CHECK( params.Hf     == -31589.2   );
+        CHECK( params.Sr     ==  143.5112  );
+        CHECK( params.Vr     ==  3.42e-05  );
+        CHECK( params.a[0]   ==  65.39592  );
+        CHECK( params.a[1]   ==  7.610696  );
+        CHECK( params.a[2]   ==  90.3744   );
+        CHECK( params.b[0]   ==  0.0359824 );
+        CHECK( params.b[1]   ==  0.221752  );
+        CHECK( params.b[2]   ==  0.0       );
+        CHECK( params.c[0]   ==  0.0       );
+        CHECK( params.c[1]   ==  0.0       );
+        CHECK( params.c[2]   ==  0.0       );
+        CHECK( params.Ttr[0] ==  450.0     );
+        CHECK( params.Ttr[1] ==  620.0     );
+        CHECK( params.Htr[0] ==  3974.8    );
+        CHECK( params.Htr[1] ==  2510.4    );
+        CHECK( allNaN( params.Vtr )        );
+        CHECK( allNaN( params.dPdTtr )     );
+        CHECK( params.Tmax   == 1000.0     );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
-//     {
-//         StandardThermoModelParamsMineralHKF params = yaml::parse(params_stm_hkfmk3);
-//         CHECK( std::isnan( params.Gf )     );
-//         CHECK( std::isnan( params.Hf )     );
-//         CHECK( params.Sr     == 286.604    );
-//         CHECK( params.Vr     == 0.0001432  );
-//         CHECK( params.a[0]   == 369.61456  );
-//         CHECK( params.a[1]   == 409.65544  );
-//         CHECK( params.a[2]   == 488.18912  );
-//         CHECK( params.a[3]   == 461.24416  );
-//         CHECK( params.b[0]   == 0.22643808 );
-//         CHECK( params.b[1]   == 0.14786256 );
-//         CHECK( params.b[2]   == 0.03112896 );
-//         CHECK( params.b[3]   == 0.04217472 );
-//         CHECK( params.c[0]   == -7556304.0 );
-//         CHECK( params.c[1]   == -4167264.0 );
-//         CHECK( params.c[2]   == -1937192.0 );
-//         CHECK( params.c[3]   == -1937192.0 );
-//         CHECK( params.Ttr[0] == 848.0      );
-//         CHECK( params.Ttr[1] == 950.0      );
-//         CHECK( params.Ttr[2] == 1050.0     );
-//         CHECK( allNaN( params.Htr )        );
-//         CHECK( allNaN( params.Vtr )        );
-//         CHECK( allNaN( params.dPdTtr )     );
-//         CHECK( params.Tmax == 1100.0       );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsMineralHKF")
+    {
+        const auto data = Data::fromYaml(params_stm_hkfmk3);
+        const auto params = data.as<StandardThermoModelParamsMineralHKF>();
+        CHECK( std::isnan( params.Gf )     );
+        CHECK( std::isnan( params.Hf )     );
+        CHECK( params.Sr     == 286.604    );
+        CHECK( params.Vr     == 0.0001432  );
+        CHECK( params.a[0]   == 369.61456  );
+        CHECK( params.a[1]   == 409.65544  );
+        CHECK( params.a[2]   == 488.18912  );
+        CHECK( params.a[3]   == 461.24416  );
+        CHECK( params.b[0]   == 0.22643808 );
+        CHECK( params.b[1]   == 0.14786256 );
+        CHECK( params.b[2]   == 0.03112896 );
+        CHECK( params.b[3]   == 0.04217472 );
+        CHECK( params.c[0]   == -7556304.0 );
+        CHECK( params.c[1]   == -4167264.0 );
+        CHECK( params.c[2]   == -1937192.0 );
+        CHECK( params.c[3]   == -1937192.0 );
+        CHECK( params.Ttr[0] == 848.0      );
+        CHECK( params.Ttr[1] == 950.0      );
+        CHECK( params.Ttr[2] == 1050.0     );
+        CHECK( allNaN( params.Htr )        );
+        CHECK( allNaN( params.Vtr )        );
+        CHECK( allNaN( params.dPdTtr )     );
+        CHECK( params.Tmax == 1100.0       );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsWaterHKF")
-//     {
-//         StandardThermoModelParamsWaterHKF params = yaml::parse(params_stm_whkf);
-//         CHECK( params.Ttr == 273.16 );
-//         CHECK( params.Str == 63.312288 );
-//         CHECK( params.Gtr == -235517.36 );
-//         CHECK( params.Htr == -287721.128 );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsWaterHKF")
+    {
+        const auto data = Data::fromYaml(params_stm_whkf);
+        const auto params = data.as<StandardThermoModelParamsWaterHKF>();
+        CHECK( params.Ttr == 273.16 );
+        CHECK( params.Str == 63.312288 );
+        CHECK( params.Gtr == -235517.36 );
+        CHECK( params.Htr == -287721.128 );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsHKF")
-//     {
-//         StandardThermoModelParamsHKF params = yaml::parse(params_stm_hkf);
-//         CHECK( params.Gf     == 39371.44      );
-//         CHECK( params.Hf     == -151084.24    );
-//         CHECK( params.Sr     == 197.4848      );
-//         CHECK( params.a1     == 5.8268894e-05 );
-//         CHECK( params.a2     == 8251.0572     );
-//         CHECK( params.a3     == 0.00049988758 );
-//         CHECK( params.a4     == -150377.14    );
-//         CHECK( params.c1     == 384.55521     );
-//         CHECK( params.c2     == 116047.42     );
-//         CHECK( params.wref   == -156816.32    );
-//         CHECK( params.charge == 0.0           );
-//         CHECK( params.Tmax   == 0.0           );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsHKF")
+    {
+        const auto data = Data::fromYaml(params_stm_hkf);
+        const auto params = data.as<StandardThermoModelParamsHKF>();
+        CHECK( params.Gf     == 39371.44      );
+        CHECK( params.Hf     == -151084.24    );
+        CHECK( params.Sr     == 197.4848      );
+        CHECK( params.a1     == 5.8268894e-05 );
+        CHECK( params.a2     == 8251.0572     );
+        CHECK( params.a3     == 0.00049988758 );
+        CHECK( params.a4     == -150377.14    );
+        CHECK( params.c1     == 384.55521     );
+        CHECK( params.c2     == 116047.42     );
+        CHECK( params.wref   == -156816.32    );
+        CHECK( params.charge == 0.0           );
+        CHECK( params.Tmax   == 0.0           );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
-//     {
-//         StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hp);
-//         CHECK( params.Gf       == -4937500.0     );
-//         CHECK( params.Hf       == -5260650.0     );
-//         CHECK( params.Sr       == 342.0          );
-//         CHECK( params.Vr       == 0.00011525     );
-//         CHECK( params.a        == 677.3          );
-//         CHECK( params.b        == 0.0            );
-//         CHECK( params.c        == -3772700.0     );
-//         CHECK( params.d        == -5044.0        );
-//         CHECK( params.alpha0   == 2.12e-05       );
-//         CHECK( params.kappa0   == 190000000000.0 );
-//         CHECK( params.kappa0p  == 2.98           );
-//         CHECK( params.kappa0pp == -1.6e-11       );
-//         CHECK( params.numatoms == 20.0           );
-//         CHECK( params.Tmax     == 0.0            );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
+    {
+        const auto data = Data::fromYaml(params_stm_hp);
+        const auto params = data.as<StandardThermoModelParamsHollandPowell>();
+        CHECK( params.Gf       == -4937500.0     );
+        CHECK( params.Hf       == -5260650.0     );
+        CHECK( params.Sr       == 342.0          );
+        CHECK( params.Vr       == 0.00011525     );
+        CHECK( params.a        == 677.3          );
+        CHECK( params.b        == 0.0            );
+        CHECK( params.c        == -3772700.0     );
+        CHECK( params.d        == -5044.0        );
+        CHECK( params.alpha0   == 2.12e-05       );
+        CHECK( params.kappa0   == 190000000000.0 );
+        CHECK( params.kappa0p  == 2.98           );
+        CHECK( params.kappa0pp == -1.6e-11       );
+        CHECK( params.numatoms == 20.0           );
+        CHECK( params.Tmax     == 0.0            );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
-//     {
-//         StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hpg);
-//         CHECK( params.Gf       == -50710.0  );
-//         CHECK( params.Hf       == -74810.0  );
-//         CHECK( params.Sr       == 186.26    );
-//         CHECK( params.Vr       == 0.0       );
-//         CHECK( params.a        == 150.1     );
-//         CHECK( params.b        == 0.002063  );
-//         CHECK( params.c        == 3427700.0 );
-//         CHECK( params.d        == -2650.4   );
-//         CHECK( params.alpha0   == 0.0       );
-//         CHECK( params.kappa0   == 0.0       );
-//         CHECK( params.kappa0p  == 0.0       );
-//         CHECK( params.kappa0pp == 0.0       );
-//         CHECK( params.numatoms == 0.0       );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
+    {
+        const auto data = Data::fromYaml(params_stm_hpg);
+        const auto params = data.as<StandardThermoModelParamsHollandPowell>();
+        CHECK( params.Gf       == -50710.0  );
+        CHECK( params.Hf       == -74810.0  );
+        CHECK( params.Sr       == 186.26    );
+        CHECK( params.Vr       == 0.0       );
+        CHECK( params.a        == 150.1     );
+        CHECK( params.b        == 0.002063  );
+        CHECK( params.c        == 3427700.0 );
+        CHECK( params.d        == -2650.4   );
+        CHECK( params.alpha0   == 0.0       );
+        CHECK( params.kappa0   == 0.0       );
+        CHECK( params.kappa0p  == 0.0       );
+        CHECK( params.kappa0pp == 0.0       );
+        CHECK( params.numatoms == 0.0       );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
-//     {
-//         StandardThermoModelParamsHollandPowell params = yaml::parse(params_stm_hpl);
-//         CHECK( params.Gf       == -2192340.0    );
-//         CHECK( params.Hf       == -2307040.0    );
-//         CHECK( params.Sr       == 127.6         );
-//         CHECK( params.Vr       == 5.16e-05      );
-//         CHECK( params.a        == 247.5         );
-//         CHECK( params.b        == -0.003206     );
-//         CHECK( params.c        == 0.0           );
-//         CHECK( params.d        == -2051.9       );
-//         CHECK( params.alpha0   == 2.9e-05       );
-//         CHECK( params.kappa0   == 98500000000.0 );
-//         CHECK( params.kappa0p  == 4.07          );
-//         CHECK( params.kappa0pp == -4.1e-11      );
-//         CHECK( params.numatoms == 7.0           );
-//         CHECK( params.Tmax     == 0.0           );
-//         // CHECK( params.Tcr      == 1710.0        );
-//         // CHECK( params.Smax     == 10.03         );
-//         // CHECK( params.Vmax     == 5.0e-07       );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsHollandPowell")
+    {
+        const auto data = Data::fromYaml(params_stm_hpl);
+        const auto params = data.as<StandardThermoModelParamsHollandPowell>();
+        CHECK( params.Gf       == -2192340.0    );
+        CHECK( params.Hf       == -2307040.0    );
+        CHECK( params.Sr       == 127.6         );
+        CHECK( params.Vr       == 5.16e-05      );
+        CHECK( params.a        == 247.5         );
+        CHECK( params.b        == -0.003206     );
+        CHECK( params.c        == 0.0           );
+        CHECK( params.d        == -2051.9       );
+        CHECK( params.alpha0   == 2.9e-05       );
+        CHECK( params.kappa0   == 98500000000.0 );
+        CHECK( params.kappa0p  == 4.07          );
+        CHECK( params.kappa0pp == -4.1e-11      );
+        CHECK( params.numatoms == 7.0           );
+        CHECK( params.Tmax     == 0.0           );
+        // CHECK( params.Tcr      == 1710.0        );
+        // CHECK( params.Smax     == 10.03         );
+        // CHECK( params.Vmax     == 5.0e-07       );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsInterpolation")
-//     {
-//         StandardThermoModelParamsInterpolation params = yaml::parse(params_stm_interpolation);
-//         CHECK( params.temperatures == Vec<double>{100, 200, 300} );
-//         CHECK( params.pressures == Vec<double>{400, 500} );
-//         CHECK( params.G0 == Vec<Vec<double>>{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}} );
-//         CHECK( params.H0 == Vec<Vec<double>>{{4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}} );
-//         CHECK( params.V0.empty() );
-//         CHECK( params.VT0.empty() );
-//         CHECK( params.VP0.empty() );
-//         CHECK( params.Cp0.empty() );
-//     }
+    SECTION("Testing YAML serialization of StandardThermoModelParamsInterpolation")
+    {
+        const auto data = Data::fromYaml(params_stm_interpolation);
+        const auto params = data.as<StandardThermoModelParamsInterpolation>();
+        CHECK( params.temperatures == Vec<double>{100, 200, 300} );
+        CHECK( params.pressures == Vec<double>{400, 500} );
+        CHECK( params.G0 == Vec<Vec<double>>{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}} );
+        CHECK( params.H0 == Vec<Vec<double>>{{4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}} );
+        CHECK( params.V0.empty() );
+        CHECK( params.VT0.empty() );
+        CHECK( params.VP0.empty() );
+        CHECK( params.Cp0.empty() );
+    }
 
-//     SECTION("Testing YAML serialization of StandardThermoModelParamsNasa with polynomials")
-//     {
-//         StandardThermoModelParamsNasa params = yaml::parse(params_stm_nasa_1);
-//         CHECK( params.dHf == -365600.0 );
-//         CHECK( params.dH0 ==  23662.0 );
+    SECTION("Testing YAML serialization of StandardThermoModelParamsNasa with polynomials")
+    {
+        const auto data = Data::fromYaml(params_stm_nasa_1);
+        const auto params = data.as<StandardThermoModelParamsNasa>();
+        CHECK( params.dHf == -365600.0 );
+        CHECK( params.dH0 ==  23662.0 );
 
-//         CHECK( params.polynomials.size() == 6 );
+        CHECK( params.polynomials.size() == 6 );
 
-//         CHECK( params.polynomials[0].state == AggregateState::Solid  );
-//         CHECK( params.polynomials[0].label == "NH4NO3(IV)"           );
-//         CHECK( params.polynomials[0].Tmin  == 256.2                  );
-//         CHECK( params.polynomials[0].Tmax  == 298.15                 );
-//         CHECK( params.polynomials[0].a1    == -10465619.04           );
-//         CHECK( params.polynomials[0].a2    == 156037.5249            );
-//         CHECK( params.polynomials[0].a3    == -914.31536             );
-//         CHECK( params.polynomials[0].a4    == 2.670225944            );
-//         CHECK( params.polynomials[0].a5    == -0.00354993291         );
-//         CHECK( params.polynomials[0].a6    == 1.692615192e-06        );
-//         CHECK( params.polynomials[0].a7    == 0.0                    );
-//         CHECK( params.polynomials[0].b1    == -786173.516            );
-//         CHECK( params.polynomials[0].b2    == 5038.72621             );
+        CHECK( params.polynomials[0].state == AggregateState::Solid  );
+        CHECK( params.polynomials[0].label == "NH4NO3(IV)"           );
+        CHECK( params.polynomials[0].Tmin  == 256.2                  );
+        CHECK( params.polynomials[0].Tmax  == 298.15                 );
+        CHECK( params.polynomials[0].a1    == -10465619.04           );
+        CHECK( params.polynomials[0].a2    == 156037.5249            );
+        CHECK( params.polynomials[0].a3    == -914.31536             );
+        CHECK( params.polynomials[0].a4    == 2.670225944            );
+        CHECK( params.polynomials[0].a5    == -0.00354993291         );
+        CHECK( params.polynomials[0].a6    == 1.692615192e-06        );
+        CHECK( params.polynomials[0].a7    == 0.0                    );
+        CHECK( params.polynomials[0].b1    == -786173.516            );
+        CHECK( params.polynomials[0].b2    == 5038.72621             );
 
-//         CHECK( params.polynomials[1].state == AggregateState::Solid  );
-//         CHECK( params.polynomials[1].label == "NH4NO3(IV)"           );
-//         CHECK( params.polynomials[1].Tmin  == 298.15                 );
-//         CHECK( params.polynomials[1].Tmax  == 305.38                 );
-//         CHECK( params.polynomials[1].a1    == 0.0                    );
-//         CHECK( params.polynomials[1].a2    == 0.0                    );
-//         CHECK( params.polynomials[1].a3    == 5.865649329            );
-//         CHECK( params.polynomials[1].a4    == 0.03643028874          );
-//         CHECK( params.polynomials[1].a5    == 0.0                    );
-//         CHECK( params.polynomials[1].a6    == 0.0                    );
-//         CHECK( params.polynomials[1].a7    == 0.0                    );
-//         CHECK( params.polynomials[1].b1    == -47339.3723            );
-//         CHECK( params.polynomials[1].b2    == -26.14362444           );
+        CHECK( params.polynomials[1].state == AggregateState::Solid  );
+        CHECK( params.polynomials[1].label == "NH4NO3(IV)"           );
+        CHECK( params.polynomials[1].Tmin  == 298.15                 );
+        CHECK( params.polynomials[1].Tmax  == 305.38                 );
+        CHECK( params.polynomials[1].a1    == 0.0                    );
+        CHECK( params.polynomials[1].a2    == 0.0                    );
+        CHECK( params.polynomials[1].a3    == 5.865649329            );
+        CHECK( params.polynomials[1].a4    == 0.03643028874          );
+        CHECK( params.polynomials[1].a5    == 0.0                    );
+        CHECK( params.polynomials[1].a6    == 0.0                    );
+        CHECK( params.polynomials[1].a7    == 0.0                    );
+        CHECK( params.polynomials[1].b1    == -47339.3723            );
+        CHECK( params.polynomials[1].b2    == -26.14362444           );
 
-//         CHECK( params.polynomials[2].state == AggregateState::Solid  );
-//         CHECK( params.polynomials[2].label == "NH4NO3(III)"          );
-//         CHECK( params.polynomials[2].Tmin  == 305.38                 );
-//         CHECK( params.polynomials[2].Tmax  == 357.25                 );
-//         CHECK( params.polynomials[2].a1    == 0.0                    );
-//         CHECK( params.polynomials[2].a2    == 0.0                    );
-//         CHECK( params.polynomials[2].a3    == 7.233138213            );
-//         CHECK( params.polynomials[2].a4    == 0.02333270391          );
-//         CHECK( params.polynomials[2].a5    == 0.0                    );
-//         CHECK( params.polynomials[2].a6    == 0.0                    );
-//         CHECK( params.polynomials[2].a7    == 0.0                    );
-//         CHECK( params.polynomials[2].b1    == -46941.7938            );
-//         CHECK( params.polynomials[2].b2    == -29.29851693           );
+        CHECK( params.polynomials[2].state == AggregateState::Solid  );
+        CHECK( params.polynomials[2].label == "NH4NO3(III)"          );
+        CHECK( params.polynomials[2].Tmin  == 305.38                 );
+        CHECK( params.polynomials[2].Tmax  == 357.25                 );
+        CHECK( params.polynomials[2].a1    == 0.0                    );
+        CHECK( params.polynomials[2].a2    == 0.0                    );
+        CHECK( params.polynomials[2].a3    == 7.233138213            );
+        CHECK( params.polynomials[2].a4    == 0.02333270391          );
+        CHECK( params.polynomials[2].a5    == 0.0                    );
+        CHECK( params.polynomials[2].a6    == 0.0                    );
+        CHECK( params.polynomials[2].a7    == 0.0                    );
+        CHECK( params.polynomials[2].b1    == -46941.7938            );
+        CHECK( params.polynomials[2].b2    == -29.29851693           );
 
-//         CHECK( params.polynomials[3].state == AggregateState::Solid  );
-//         CHECK( params.polynomials[3].label == "NH4NO3(II)"           );
-//         CHECK( params.polynomials[3].Tmin  == 357.25                 );
-//         CHECK( params.polynomials[3].Tmax  == 399.0                  );
-//         CHECK( params.polynomials[3].a1    == 0.0                    );
-//         CHECK( params.polynomials[3].a2    == 0.0                    );
-//         CHECK( params.polynomials[3].a3    == 60.23205216            );
-//         CHECK( params.polynomials[3].a4    == -0.1767993544          );
-//         CHECK( params.polynomials[3].a5    == 0.0                    );
-//         CHECK( params.polynomials[3].a6    == 4.528829721e-07        );
-//         CHECK( params.polynomials[3].a7    == 0.0                    );
-//         CHECK( params.polynomials[3].b1    == -54786.3351            );
-//         CHECK( params.polynomials[3].b2    == -275.7806209           );
+        CHECK( params.polynomials[3].state == AggregateState::Solid  );
+        CHECK( params.polynomials[3].label == "NH4NO3(II)"           );
+        CHECK( params.polynomials[3].Tmin  == 357.25                 );
+        CHECK( params.polynomials[3].Tmax  == 399.0                  );
+        CHECK( params.polynomials[3].a1    == 0.0                    );
+        CHECK( params.polynomials[3].a2    == 0.0                    );
+        CHECK( params.polynomials[3].a3    == 60.23205216            );
+        CHECK( params.polynomials[3].a4    == -0.1767993544          );
+        CHECK( params.polynomials[3].a5    == 0.0                    );
+        CHECK( params.polynomials[3].a6    == 4.528829721e-07        );
+        CHECK( params.polynomials[3].a7    == 0.0                    );
+        CHECK( params.polynomials[3].b1    == -54786.3351            );
+        CHECK( params.polynomials[3].b2    == -275.7806209           );
 
-//         CHECK( params.polynomials[4].state == AggregateState::Solid  );
-//         CHECK( params.polynomials[4].label == "NH4NO3(I)"            );
-//         CHECK( params.polynomials[4].Tmin  == 399.0                  );
-//         CHECK( params.polynomials[4].Tmax  == 442.85                 );
-//         CHECK( params.polynomials[4].a1    == 0.0                    );
-//         CHECK( params.polynomials[4].a2    == 0.0                    );
-//         CHECK( params.polynomials[4].a3    == 12.95325882            );
-//         CHECK( params.polynomials[4].a4    == 0.01563531705          );
-//         CHECK( params.polynomials[4].a5    == 0.0                    );
-//         CHECK( params.polynomials[4].a6    == 0.0                    );
-//         CHECK( params.polynomials[4].a7    == 0.0                    );
-//         CHECK( params.polynomials[4].b1    == -47837.0128            );
-//         CHECK( params.polynomials[4].b2    == -58.48510823           );
+        CHECK( params.polynomials[4].state == AggregateState::Solid  );
+        CHECK( params.polynomials[4].label == "NH4NO3(I)"            );
+        CHECK( params.polynomials[4].Tmin  == 399.0                  );
+        CHECK( params.polynomials[4].Tmax  == 442.85                 );
+        CHECK( params.polynomials[4].a1    == 0.0                    );
+        CHECK( params.polynomials[4].a2    == 0.0                    );
+        CHECK( params.polynomials[4].a3    == 12.95325882            );
+        CHECK( params.polynomials[4].a4    == 0.01563531705          );
+        CHECK( params.polynomials[4].a5    == 0.0                    );
+        CHECK( params.polynomials[4].a6    == 0.0                    );
+        CHECK( params.polynomials[4].a7    == 0.0                    );
+        CHECK( params.polynomials[4].b1    == -47837.0128            );
+        CHECK( params.polynomials[4].b2    == -58.48510823           );
 
-//         CHECK( params.polynomials[5].state == AggregateState::Liquid );
-//         CHECK( params.polynomials[5].label == "NH4NO3(l)"            );
-//         CHECK( params.polynomials[5].Tmin  == 442.85                 );
-//         CHECK( params.polynomials[5].Tmax  == 900.0                  );
-//         CHECK( params.polynomials[5].a1    == 0.0                    );
-//         CHECK( params.polynomials[5].a2    == 0.0                    );
-//         CHECK( params.polynomials[5].a3    == 19.36373881            );
-//         CHECK( params.polynomials[5].a4    == 0.0                    );
-//         CHECK( params.polynomials[5].a5    == 0.0                    );
-//         CHECK( params.polynomials[5].a6    == 0.0                    );
-//         CHECK( params.polynomials[5].a7    == 0.0                    );
-//         CHECK( params.polynomials[5].b1    == -48437.933             );
-//         CHECK( params.polynomials[5].b2    == -89.03005276           );
-//     }
-// }
+        CHECK( params.polynomials[5].state == AggregateState::Liquid );
+        CHECK( params.polynomials[5].label == "NH4NO3(l)"            );
+        CHECK( params.polynomials[5].Tmin  == 442.85                 );
+        CHECK( params.polynomials[5].Tmax  == 900.0                  );
+        CHECK( params.polynomials[5].a1    == 0.0                    );
+        CHECK( params.polynomials[5].a2    == 0.0                    );
+        CHECK( params.polynomials[5].a3    == 19.36373881            );
+        CHECK( params.polynomials[5].a4    == 0.0                    );
+        CHECK( params.polynomials[5].a5    == 0.0                    );
+        CHECK( params.polynomials[5].a6    == 0.0                    );
+        CHECK( params.polynomials[5].a7    == 0.0                    );
+        CHECK( params.polynomials[5].b1    == -48437.933             );
+        CHECK( params.polynomials[5].b2    == -89.03005276           );
+    }
+}
 
-// TEST_CASE("Testing Serialization for StandardVolumeModel types", "[Serialization]")
-// {
-//     SECTION("Testing YAML serialization of StandardVolumeModelParamsConstant")
-//     {
-//         StandardVolumeModelParamsConstant params = yaml::parse(params_svm_const);
+TEST_CASE("Testing serialization of StandardVolumeModelParams types", "[Serialization][Models.Data]")
+{
+    SECTION("Testing YAML serialization of StandardVolumeModelParamsConstant")
+    {
+        const auto data = Data::fromYaml(params_svm_const);
+        const auto params = data.as<StandardVolumeModelParamsConstant>();
 
-//         CHECK( params.V0 == 1.23e-5 );
-//     }
-// }
+        CHECK( params.V0 == 1.23e-5 );
+    }
+}
 
-// TEST_CASE("Testing Serialization for ReactionRateModel types", "[Serialization]")
-// {
-//     SECTION("Testing YAML serialization of ReactionRateModelParamsPalandriKharaka")
-//     {
-//         ReactionRateModelParamsPalandriKharaka params;
+TEST_CASE("Testing serialization of ReactionRateModelParams types", "[Serialization][Models.Data]")
+{
+    SECTION("Testing YAML serialization of ReactionRateModelParamsPalandriKharaka")
+    {
+        ReactionRateModelParamsPalandriKharaka params;
 
-//         params = yaml::parse(params_rrm_palandri_kharaka_1);
+        params = Data::fromYaml(params_rrm_palandri_kharaka_1).as<ReactionRateModelParamsPalandriKharaka>();
 
-//         CHECK( params.names == Strings{"Halite"} );
-//         CHECK( params.mechanisms.size() == 1 );
-//         CHECK( params.mechanisms[0].name == "Neutral" );
-//         CHECK( params.mechanisms[0].lgk == -0.21 );
-//         CHECK( params.mechanisms[0].E == 7.40 );
-//         CHECK( params.mechanisms[0].p == 1.00 );
-//         CHECK( params.mechanisms[0].q == 1.00 );
-//         CHECK( params.mechanisms[0].catalysts.size() == 0 );
+        CHECK( params.names == Strings{"Halite"} );
+        CHECK( params.mechanisms.size() == 1 );
+        CHECK( params.mechanisms[0].name == "Neutral" );
+        CHECK( params.mechanisms[0].lgk == -0.21 );
+        CHECK( params.mechanisms[0].E == 7.40 );
+        CHECK( params.mechanisms[0].p == 1.00 );
+        CHECK( params.mechanisms[0].q == 1.00 );
+        CHECK( params.mechanisms[0].catalysts.size() == 0 );
 
-//         params = yaml::parse(params_rrm_palandri_kharaka_2);
+        auto data = Data::fromYaml(params_rrm_palandri_kharaka_2);
+        params = Data::fromYaml(params_rrm_palandri_kharaka_2).as<ReactionRateModelParamsPalandriKharaka>();
 
-//         CHECK( params.names == Strings{"Pyrite"} );
-//         CHECK( params.mechanisms.size() == 2 );
-//         CHECK( params.mechanisms[0].name == "Acid" );
-//         CHECK( params.mechanisms[0].lgk == -7.52 );
-//         CHECK( params.mechanisms[0].E == 56.9 );
-//         CHECK( params.mechanisms[0].p == 1.00 );
-//         CHECK( params.mechanisms[0].q == 1.00 );
-//         CHECK( params.mechanisms[0].catalysts.size() == 2 );
-//         CHECK( params.mechanisms[0].catalysts[0].formula == "H+" );
-//         CHECK( params.mechanisms[0].catalysts[0].power == -0.50 );
-//         CHECK( params.mechanisms[0].catalysts[0].property == "a" );
-//         CHECK( params.mechanisms[0].catalysts[1].formula == "Fe+3" );
-//         CHECK( params.mechanisms[0].catalysts[1].power == 0.50 );
-//         CHECK( params.mechanisms[0].catalysts[1].property == "a" );
-//         CHECK( params.mechanisms[1].name == "Neutral" );
-//         CHECK( params.mechanisms[1].lgk == -4.55 );
-//         CHECK( params.mechanisms[1].E == 56.9 );
-//         CHECK( params.mechanisms[1].p == 1.00 );
-//         CHECK( params.mechanisms[1].q == 1.00 );
-//         CHECK( params.mechanisms[1].catalysts.size() == 1 );
-//         CHECK( params.mechanisms[1].catalysts[0].formula == "O2" );
-//         CHECK( params.mechanisms[1].catalysts[0].power == 0.50 );
-//         CHECK( params.mechanisms[1].catalysts[0].property == "a" );
+        CHECK( params.names == Strings{"Pyrite"} );
+        CHECK( params.mechanisms.size() == 2 );
+        CHECK( params.mechanisms[0].name == "Acid" );
+        CHECK( params.mechanisms[0].lgk == -7.52 );
+        CHECK( params.mechanisms[0].E == 56.9 );
+        CHECK( params.mechanisms[0].p == 1.00 );
+        CHECK( params.mechanisms[0].q == 1.00 );
+        CHECK( params.mechanisms[0].catalysts.size() == 2 );
+        CHECK( params.mechanisms[0].catalysts[0].formula == "H+" );
+        CHECK( params.mechanisms[0].catalysts[0].power == -0.50 );
+        CHECK( params.mechanisms[0].catalysts[0].property == "a" );
+        CHECK( params.mechanisms[0].catalysts[1].formula == "Fe+3" );
+        CHECK( params.mechanisms[0].catalysts[1].power == 0.50 );
+        CHECK( params.mechanisms[0].catalysts[1].property == "a" );
+        CHECK( params.mechanisms[1].name == "Neutral" );
+        CHECK( params.mechanisms[1].lgk == -4.55 );
+        CHECK( params.mechanisms[1].E == 56.9 );
+        CHECK( params.mechanisms[1].p == 1.00 );
+        CHECK( params.mechanisms[1].q == 1.00 );
+        CHECK( params.mechanisms[1].catalysts.size() == 1 );
+        CHECK( params.mechanisms[1].catalysts[0].formula == "O2" );
+        CHECK( params.mechanisms[1].catalysts[0].power == 0.50 );
+        CHECK( params.mechanisms[1].catalysts[0].property == "a" );
 
-//         params = yaml::parse(params_rrm_palandri_kharaka_3);
+        params = Data::fromYaml(params_rrm_palandri_kharaka_3).as<ReactionRateModelParamsPalandriKharaka>();
 
-//         CHECK( params.names == Strings{"Epidote"} );
-//         CHECK( params.mechanisms.size() == 3 );
-//         CHECK( params.mechanisms[0].name == "Acid" );
-//         CHECK( params.mechanisms[0].lgk == -10.60 );
-//         CHECK( params.mechanisms[0].E == 71.1 );
-//         CHECK( params.mechanisms[0].p == 1.00 );
-//         CHECK( params.mechanisms[0].q == 1.00 );
-//         CHECK( params.mechanisms[0].catalysts.size() == 1 );
-//         CHECK( params.mechanisms[0].catalysts[0].formula == "H+" );
-//         CHECK( params.mechanisms[0].catalysts[0].power == 0.338 );
-//         CHECK( params.mechanisms[0].catalysts[0].property == "a" );
-//         CHECK( params.mechanisms[1].name == "Neutral" );
-//         CHECK( params.mechanisms[1].lgk == -11.99 );
-//         CHECK( params.mechanisms[1].E == 70.7 );
-//         CHECK( params.mechanisms[1].p == 1.00 );
-//         CHECK( params.mechanisms[1].q == 1.00 );
-//         CHECK( params.mechanisms[1].catalysts.size() == 0 );
-//         CHECK( params.mechanisms[2].name == "Base" );
-//         CHECK( params.mechanisms[2].lgk == -17.33 );
-//         CHECK( params.mechanisms[2].E == 79.1 );
-//         CHECK( params.mechanisms[2].p == 1.00 );
-//         CHECK( params.mechanisms[2].q == 1.00 );
-//         CHECK( params.mechanisms[2].catalysts.size() == 1 );
-//         CHECK( params.mechanisms[2].catalysts[0].formula == "H+" );
-//         CHECK( params.mechanisms[2].catalysts[0].power == -0.556 );
-//         CHECK( params.mechanisms[2].catalysts[0].property == "a" );
+        CHECK( params.names == Strings{"Epidote"} );
+        CHECK( params.mechanisms.size() == 3 );
+        CHECK( params.mechanisms[0].name == "Acid" );
+        CHECK( params.mechanisms[0].lgk == -10.60 );
+        CHECK( params.mechanisms[0].E == 71.1 );
+        CHECK( params.mechanisms[0].p == 1.00 );
+        CHECK( params.mechanisms[0].q == 1.00 );
+        CHECK( params.mechanisms[0].catalysts.size() == 1 );
+        CHECK( params.mechanisms[0].catalysts[0].formula == "H+" );
+        CHECK( params.mechanisms[0].catalysts[0].power == 0.338 );
+        CHECK( params.mechanisms[0].catalysts[0].property == "a" );
+        CHECK( params.mechanisms[1].name == "Neutral" );
+        CHECK( params.mechanisms[1].lgk == -11.99 );
+        CHECK( params.mechanisms[1].E == 70.7 );
+        CHECK( params.mechanisms[1].p == 1.00 );
+        CHECK( params.mechanisms[1].q == 1.00 );
+        CHECK( params.mechanisms[1].catalysts.size() == 0 );
+        CHECK( params.mechanisms[2].name == "Base" );
+        CHECK( params.mechanisms[2].lgk == -17.33 );
+        CHECK( params.mechanisms[2].E == 79.1 );
+        CHECK( params.mechanisms[2].p == 1.00 );
+        CHECK( params.mechanisms[2].q == 1.00 );
+        CHECK( params.mechanisms[2].catalysts.size() == 1 );
+        CHECK( params.mechanisms[2].catalysts[0].formula == "H+" );
+        CHECK( params.mechanisms[2].catalysts[0].power == -0.556 );
+        CHECK( params.mechanisms[2].catalysts[0].property == "a" );
 
-//         params = yaml::parse(params_rrm_palandri_kharaka_4);
+        params = Data::fromYaml(params_rrm_palandri_kharaka_4).as<ReactionRateModelParamsPalandriKharaka>();
 
-//         CHECK( params.names == Strings{"FakeMineral", "FakeMineralAlternativeName"} );
-//         CHECK( params.mechanisms.size() == 4 );
-//         CHECK( params.mechanisms[0].name == "Acid" );
-//         CHECK( params.mechanisms[0].lgk == -0.30 );
-//         CHECK( params.mechanisms[0].E == 14.4 );
-//         CHECK( params.mechanisms[0].p == 1.00 );
-//         CHECK( params.mechanisms[0].q == 1.00 );
-//         CHECK( params.mechanisms[0].catalysts.size() == 1 );
-//         CHECK( params.mechanisms[0].catalysts[0].formula == "H+" );
-//         CHECK( params.mechanisms[0].catalysts[0].power == 1.0 );
-//         CHECK( params.mechanisms[0].catalysts[0].property == "a" );
-//         CHECK( params.mechanisms[1].name == "Neutral" );
-//         CHECK( params.mechanisms[1].lgk == -5.81 );
-//         CHECK( params.mechanisms[1].E == 23.5 );
-//         CHECK( params.mechanisms[1].p == 1.00 );
-//         CHECK( params.mechanisms[1].q == 1.00 );
-//         CHECK( params.mechanisms[1].catalysts.size() == 0 );
-//         CHECK( params.mechanisms[2].name == "Carbonate" );
-//         CHECK( params.mechanisms[2].lgk == -3.48 );
-//         CHECK( params.mechanisms[2].E == 35.4 );
-//         CHECK( params.mechanisms[2].p == 1.00 );
-//         CHECK( params.mechanisms[2].q == 1.00 );
-//         CHECK( params.mechanisms[2].catalysts.size() == 1 );
-//         CHECK( params.mechanisms[2].catalysts[0].formula == "CO2" );
-//         CHECK( params.mechanisms[2].catalysts[0].power == 1.0 );
-//         CHECK( params.mechanisms[2].catalysts[0].property == "P" );
-//         CHECK( params.mechanisms[3].name == "Base" );
-//         CHECK( params.mechanisms[3].lgk == -17.33 );
-//         CHECK( params.mechanisms[3].E == 79.1 );
-//         CHECK( params.mechanisms[3].p == 2.34 );
-//         CHECK( params.mechanisms[3].q == 1.46 );
-//         CHECK( params.mechanisms[3].catalysts.size() == 1 );
-//         CHECK( params.mechanisms[3].catalysts[0].formula == "(Ca)(CO3)" );
-//         CHECK( params.mechanisms[3].catalysts[0].power == -0.556 );
-//         CHECK( params.mechanisms[3].catalysts[0].property == "a" );
-//     }
+        CHECK( params.names == Strings{"FakeMineral", "FakeMineralAlternativeName"} );
+        CHECK( params.mechanisms.size() == 4 );
+        CHECK( params.mechanisms[0].name == "Acid" );
+        CHECK( params.mechanisms[0].lgk == -0.30 );
+        CHECK( params.mechanisms[0].E == 14.4 );
+        CHECK( params.mechanisms[0].p == 1.00 );
+        CHECK( params.mechanisms[0].q == 1.00 );
+        CHECK( params.mechanisms[0].catalysts.size() == 1 );
+        CHECK( params.mechanisms[0].catalysts[0].formula == "H+" );
+        CHECK( params.mechanisms[0].catalysts[0].power == 1.0 );
+        CHECK( params.mechanisms[0].catalysts[0].property == "a" );
+        CHECK( params.mechanisms[1].name == "Neutral" );
+        CHECK( params.mechanisms[1].lgk == -5.81 );
+        CHECK( params.mechanisms[1].E == 23.5 );
+        CHECK( params.mechanisms[1].p == 1.00 );
+        CHECK( params.mechanisms[1].q == 1.00 );
+        CHECK( params.mechanisms[1].catalysts.size() == 0 );
+        CHECK( params.mechanisms[2].name == "Carbonate" );
+        CHECK( params.mechanisms[2].lgk == -3.48 );
+        CHECK( params.mechanisms[2].E == 35.4 );
+        CHECK( params.mechanisms[2].p == 1.00 );
+        CHECK( params.mechanisms[2].q == 1.00 );
+        CHECK( params.mechanisms[2].catalysts.size() == 1 );
+        CHECK( params.mechanisms[2].catalysts[0].formula == "CO2" );
+        CHECK( params.mechanisms[2].catalysts[0].power == 1.0 );
+        CHECK( params.mechanisms[2].catalysts[0].property == "P" );
+        CHECK( params.mechanisms[3].name == "Base" );
+        CHECK( params.mechanisms[3].lgk == -17.33 );
+        CHECK( params.mechanisms[3].E == 79.1 );
+        CHECK( params.mechanisms[3].p == 2.34 );
+        CHECK( params.mechanisms[3].q == 1.46 );
+        CHECK( params.mechanisms[3].catalysts.size() == 1 );
+        CHECK( params.mechanisms[3].catalysts[0].formula == "(Ca)(CO3)" );
+        CHECK( params.mechanisms[3].catalysts[0].power == -0.556 );
+        CHECK( params.mechanisms[3].catalysts[0].property == "a" );
+    }
 }

@@ -282,7 +282,7 @@ REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsNasa)
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsNasa)
 {
-    if(data["Polynomials"])
+    if(data.exists("Polynomials"))
     {
         data.at("dHf").to(obj.dHf);
         data.at("dH0").to(obj.dH0);
