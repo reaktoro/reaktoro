@@ -226,7 +226,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
     SECTION("Checking lambda functions in equation constraints")
     {
-        const auto& econstraints = specs.constraintsEquationType();
+        const auto& econstraints = specs.equationConstraints();
 
         specs.volume();
         specs.internalEnergy();

@@ -630,7 +630,7 @@ public:
     auto titrantsImplicit() const -> Vec<ChemicalFormula>;
 
     /// Return the equation constraints to be satisfied at chemical equilibrium.
-    auto constraintsEquationType() const -> Vec<ConstraintEquation> const&;
+    auto equationConstraints() const -> Vec<ConstraintEquation> const&;
 
     /// Return the introduced reactivity constraints to be satisfied during the equilibrium calculation.
     auto reactivityConstraints() const -> Vec<ReactivityConstraint> const&;
