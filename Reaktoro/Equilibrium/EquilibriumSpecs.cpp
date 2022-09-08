@@ -580,7 +580,7 @@ auto EquilibriumSpecs::numTitrantsImplicit() const -> Index
 
 auto EquilibriumSpecs::numConstraints() const -> Index
 {
-    return econstraints.size() + qvars.size();
+    return econstraints.size() + rconstraints.size() + qvars.size();
 }
 
 //=================================================================================================
@@ -633,6 +633,7 @@ auto EquilibriumSpecs::namesConstraints() const -> Strings
 {
     Strings names = vectorize(econstraints, RKT_LAMBDA(x, x.id));
     names = concatenate(names, vectorize(qvars, RKT_LAMBDA(x, x.id)));
+    names = concatenate(names, vectorize(rconstraints, RKT_LAMBDA(x, x.id)));
     return names;
 }
 
