@@ -23,7 +23,7 @@ import pytest
 # TODO Implement tests for the python bindings of component EquilibriumSpecs in EquilibriumSpecs[test].py
 def testEquilibriumSpecs():
 
-    def volumeConstraint(state, w):
+    def volumeConstraint(state, p, w):
         return state.props().volume() - 1.0
 
     equation = ConstraintEquation()

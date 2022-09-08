@@ -70,14 +70,14 @@ int main()
 
     ConstraintEquation volumeConstraint;
     volumeConstraint.id = "VolumeConstraint";
-    volumeConstraint.fn = [=](const ChemicalState& state, VectorXrConstRef w)
+    volumeConstraint.fn = [=](const ChemicalState& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().volume() - w[idxV];
     };
 
     ConstraintEquation internalEnergyConstraint;
     internalEnergyConstraint.id = "InternalEnergyConstraint";
-    internalEnergyConstraint.fn = [=](const ChemicalState& state, VectorXrConstRef w)
+    internalEnergyConstraint.fn = [=](const ChemicalState& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         return state.props().internalEnergy() - w[idxU];
     };

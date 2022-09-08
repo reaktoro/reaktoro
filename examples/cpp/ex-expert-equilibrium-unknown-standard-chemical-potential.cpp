@@ -61,7 +61,7 @@ int main()
 
     ConstraintEquation constraint;
     constraint.id = "solubility[CaCO3]";
-    constraint.fn = [=](const ChemicalState& state, VectorXrConstRef w)
+    constraint.fn = [=](const ChemicalState& state, VectorXrConstRef p, VectorXrConstRef w)
     {
         static AqueousProps aprops(system);
         aprops.update(state);
