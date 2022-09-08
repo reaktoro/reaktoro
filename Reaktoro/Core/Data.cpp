@@ -130,6 +130,23 @@ auto convertJson(json const& obj) -> Data
     return {};
 }
 
+/// An auxiliary type to change locale and ensure its return to original.
+/// This is needed to avoid certain issues with pugixml related to how decimal numbers are represented in different languages.
+struct ChangeLocale
+{
+    const String old_locale;
+
+    explicit ChangeLocale(const char* new_locale) : old_locale(std::setlocale(LC_NUMERIC, nullptr))
+    {
+        std::setlocale(LC_NUMERIC, new_locale);
+    }
+
+    ~ChangeLocale()
+    {
+        std::setlocale(LC_NUMERIC, old_locale.c_str());
+    }
+};
+
 } // namespace
 
 Data::Data()
@@ -185,6 +202,46 @@ Data::Data(yaml const& obj)
 Data::Data(json const& obj)
 : Data(convertJson(obj))
 {
+}
+
+auto Data::fromYaml(Chars const& input) -> Data
+{
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
+    return Data(YAML::Load(input));
+}
+
+auto Data::fromYaml(String const& input) -> Data
+{
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
+    return Data(YAML::Load(input));
+}
+
+auto Data::fromYaml(std::istream& input) -> Data
+{
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
+    return Data(YAML::Load(input));
+}
+
+auto Data::fromJson(Chars const& input) -> Data
+{
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
+    return Data(nlohmann::json::parse(input));
+
+}
+
+auto Data::fromJson(String const& input) -> Data
+{
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
+    return Data(nlohmann::json::parse(input));
+
+}
+
+auto Data::fromJson(std::istream& input) -> Data
+{
+    const auto guard = ChangeLocale("C"); // Change locale to C before parsing (this is reset at destruction of `guard`).
+    nlohmann::json obj;
+    input >> obj;
+    return Data(obj);
 }
 
 auto Data::string() const -> String const&
