@@ -573,14 +573,14 @@ auto ChemicalProps::surfaceArea(StringOrIndex const& phase1, StringOrIndex const
 {
     const auto numsurfaces = msystem.reactingPhaseInterfaces().size();
     const auto isurface = msystem.reactingPhaseInterfaceIndex(phase1, phase2);
-    errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
+    errorif(isurface >= numsurfaces, "The given surface index, ", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
     return s[isurface];
 }
 
 auto ChemicalProps::surfaceArea(Index isurface) const -> real
 {
     const auto numsurfaces = msystem.reactingPhaseInterfaces().size();
-    errorif(isurface >= numsurfaces, "The given surface index,", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
+    errorif(isurface >= numsurfaces, "The given surface index, ", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
     return s[isurface];
 }
 
