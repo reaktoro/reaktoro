@@ -25,6 +25,10 @@
 
 namespace Reaktoro {
 
+// TODO: Introduce method Reactions::withSpeciesIndices to avoid recomputation
+// of indices of the species in the reaction when computing properties such as
+// equilibrium index, delta chemical potentials, etc.
+
 /// A class to represent a reaction and its attributes.
 /// The Reaction class provides a representation of a chemical reaction and
 /// operations such as the calculation of equilibrium constants at given
