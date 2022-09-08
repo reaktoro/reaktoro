@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Thermodynamics/Aqueous/ActivityModelDavies.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
 using namespace Reaktoro;
 
 void exportActivityModelDavies(py::module& m)

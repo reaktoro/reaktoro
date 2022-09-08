@@ -69,7 +69,7 @@ auto chain(ActivityModelGenerator const& model, Models const&... models) -> Acti
 } // namespace Reaktoro
 
 //=========================================================================
-// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING ACTIVITYARGS
+// CODE BELOW NEEDED FOR MEMOIZATION TECHNIQUE INVOLVING ACTIVITYMODELARGS
 //=========================================================================
 
 namespace Reaktoro {

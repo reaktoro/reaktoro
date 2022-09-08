@@ -155,8 +155,8 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
         for(auto i = 0; i < n.size(); ++i)
         {
-            CHECK( predictor.speciesChemicalPotentialReference(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialReference(i) == Approx(props0.speciesChemicalPotential(i)) );
+            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == Approx(props.speciesChemicalPotential(i)) );
         }
     }
 
@@ -234,8 +234,8 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
         for(auto i = 0; i < n.size(); ++i)
         {
-            CHECK( predictor.speciesChemicalPotentialReference(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialReference(i) == Approx(props0.speciesChemicalPotential(i)) );
+            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == Approx(props.speciesChemicalPotential(i)) );
         }
     }
 
@@ -318,8 +318,8 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
 
         for(auto i = 0; i < n.size(); ++i)
         {
-            CHECK( predictor.speciesChemicalPotentialReference(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialReference(i) == Approx(props0.speciesChemicalPotential(i)) );
+            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == Approx(props.speciesChemicalPotential(i)) );
         }
     }
 }
