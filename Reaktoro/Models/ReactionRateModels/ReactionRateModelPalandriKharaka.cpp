@@ -18,36 +18,151 @@
 #include "ReactionRateModelPalandriKharaka.hpp"
 
 // Reaktoro includes
-// #include <Reaktoro/Common/Constants.hpp>
-// #include <Reaktoro/Serialization/Models.YAML.hpp>
+#include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Serialization/Models.YAML.hpp>
 
 namespace Reaktoro {
+namespace detail {
 
-auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka const& params) -> ReactionRateModelGenerator
+using Catalyst = ReactionRateModelParamsPalandriKharaka::Catalyst;
+using Mechanism = ReactionRateModelParamsPalandriKharaka::Mechanism;
+
+/// Construct a function that computes the activity-based contribution of a catalyst in the mineral reaction rate.
+auto mineralCatalystFnActivity(Catalyst const& catalyst, ChemicalSystem const& system) -> Fn<real(ChemicalProps const&)>
 {
-    ReactionRateModelGenerator model = [](Reaction const& reaction, PhaseList const& phases)
+    auto const& formula = catalyst.formula;
+    auto const& power   = catalyst.power;
+
+    auto const iaqueousPhase = system.phases().indexWithAggregateState(AggregateState::Aqueous);
+    auto const aqueousSpecies = system.phase(iaqueousPhase).species().getWithFormula(formula);
+    auto const ispecies = system.species().indexWithName(aqueousSpecies.name());
+
+    auto fn = [=](ChemicalProps const& props)
     {
-        // const auto iH2O = species.indexWithFormula("H2O");
-        // const auto MH2O = waterMolarMass;
+        auto const& ai = props.speciesActivity(ispecies);
+        return pow(ai, power);
+    };
 
-        ReactionRateModel fn = [=](ChemicalProps const& props) -> Rate
+    return fn;
+}
+
+/// Construct a function that computes the partial-pressure-based contribution of a catalyst in the mineral reaction rate.
+auto mineralCatalystFnPartialPressure(Catalyst const& catalyst, ChemicalSystem const& system) -> Fn<real(ChemicalProps const&)>
+{
+    auto const& formula = catalyst.formula;
+    auto const& power   = catalyst.power;
+
+    auto const igaseousPhase = system.phases().indexWithAggregateState(AggregateState::Gas);
+    auto const gaseousSpecies = system.phase(igaseousPhase).species().getWithFormula(formula);
+    auto const ispecies = system.species().indexWithName(gaseousSpecies.name());
+
+    auto fn = [=](ChemicalProps const& props)
+    {
+        auto const P  = props.pressure(); // pressure in Pa
+        auto const xi = props.speciesMoleFraction(ispecies);
+        auto const Pi = xi * P * 1e-5; // partial pressure in bar!
+        return pow(Pi, power);
+    };
+
+    return fn;
+}
+
+/// Construct a function that computes the contribution of a catalyst in the mineral reaction rate.
+auto mineralCatalystFn(Catalyst const& catalyst, const ChemicalSystem& system) -> Fn<real(ChemicalProps const&)>
+{
+    if(catalyst.property == "a")
+        return mineralCatalystFnActivity(catalyst, system);
+    if(catalyst.property == "P")
+        return mineralCatalystFnPartialPressure(catalyst, system);
+    errorif(true, "Expecting mineral catalyst property symbol to be either `a` or `P`, but got `", catalyst.property, "` instead.");
+}
+
+struct Foo {};
+
+auto mineralMechanismFn(Mechanism const& mechanism, const ChemicalSystem& system) -> Fn<real(MineralReactionRateArgs)>
+{
+    // The universal gas constant (in kJ/(mol*K))
+    const auto R = universalGasConstant * 1e-3;
+
+    // Create the mineral catalyst functions
+    Vec<Fn<real(ChemicalProps const&)>> catalyst_fns;
+    for(auto&& catalyst : mechanism.catalysts)
+        catalyst_fns.push_back(mineralCatalystFn(catalyst, system));
+
+    // Define the mineral mechanism function
+    auto fn = [=](MineralReactionRateArgs args)
+    {
+        const auto& lgk = mechanism.lgk.value();
+        const auto& E = mechanism.E.value();
+        const auto& p = mechanism.p.value();
+        const auto& q = mechanism.q.value();
+
+        const auto T = args.props.temperature();
+        const auto k0 = pow(lgk, 10.0);
+        const auto k = k0 * exp(-E/R * (1.0/T - 1.0/298.15));
+
+        const auto Omega  = args.Omega;
+        const auto pOmega = p != 1.0 ? pow(Omega, p) : Omega;
+        const auto qOmega = q != 1.0 ? pow(1 - pOmega, q) : 1 - pOmega;
+
+        real g = 1.0;
+        for(auto&& catalystfn : catalyst_fns)
+            g *= catalystfn(args.props);
+
+        return k * qOmega * g;
+    };
+
+    return fn;
+}
+
+} // namespace detail
+
+auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka const& params) -> MineralReactionRateModelGenerator
+{
+    MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
+    {
+        Vec<Fn<real(MineralReactionRateArgs)>> mechanism_fns;
+        for(auto const& mechanism : params.mechanisms)
+            mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, system));
+
+        MineralReactionRateModel fn = [=](MineralReactionRateArgs args) -> Rate
         {
-            // const auto x = args.x;
-            // const auto m = x/(MH2O * args.x[iH2O]); // molalities
-
-            // // Set the state of matter of the phase
-            // props.som = StateOfMatter::Liquid;
-
-            // props = 0.0;
-            // props.ln_a = m.log();
-            // props.ln_a[iH2O] = log(x[iH2O]);
-            return {};
+            const auto area = args.area;
+            real sum = 0.0;
+            for(auto&& mechanismfn : mechanism_fns)
+                sum += mechanismfn(args);
+            return area * sum;
         };
 
         return fn;
     };
 
     return model;
+}
+
+auto ReactionRateModelPalandriKharaka(Vec<ReactionRateModelParamsPalandriKharaka> const& params) -> MineralReactionRateModelGenerator
+{
+    // MineralReactionRateModelGenerator model = [=](String const& mineral, ChemicalSystem const& system)
+    // {
+    //     Vec<Fn<real(MineralReactionRateArgs)>> mechanism_fns;
+    //     for(auto const& mechanism : params.mechanisms)
+    //         mechanism_fns.push_back(detail::mineralMechanismFn(mechanism, system));
+
+    //     MineralReactionRateModel fn = [=](MineralReactionRateArgs args) -> Rate
+    //     {
+    //         const auto area = args.area;
+    //         real sum = 0.0;
+    //         for(auto&& mechanismfn : mechanism_fns)
+    //             sum += mechanismfn(args);
+    //         return area * sum;
+    //     };
+
+    //     return fn;
+    // };
+
+    // return model;
+    return {};
 }
 
 } // namespace Reaktoro
