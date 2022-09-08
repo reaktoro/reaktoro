@@ -78,7 +78,7 @@ auto createSurfaceAreaGetterFns(const EquilibriumSpecs& specs) -> Vec<Fn<real(Ve
 
     for(auto const& surface : system.surfaces())
     {
-        auto const id = "SA[" + surface.name() + "]"; // SA[AqueousPhase:GaseousPhase], SA[AqueousPhase:Quartz], SA[Calcite]
+        auto const id = "surfaceArea[" + surface.name() + "]"; // surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[AqueousPhase:Quartz], surfaceArea[Calcite]
         auto const iSAw = index(specs.namesInputs(), id);
         auto const iSAp = index(specs.namesControlVariables(), id);
 

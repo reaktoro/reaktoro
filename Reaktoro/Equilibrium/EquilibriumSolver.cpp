@@ -314,6 +314,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, conditions, restrictions);
     }
 
@@ -322,6 +323,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, conditions, restrictions);
     }
 
@@ -343,6 +345,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, sensitivity, conditions, restrictions);
     }
 
@@ -351,6 +354,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, sensitivity, conditions, restrictions);
     }
 
@@ -372,6 +376,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, conditions, restrictions, b0);
     }
 
@@ -380,6 +385,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, conditions, restrictions, b0);
     }
 
@@ -407,6 +413,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, sensitivity, conditions, restrictions, b0);
     }
 
@@ -415,6 +422,7 @@ struct EquilibriumSolver::Impl
         EquilibriumConditions conditions(specs); // TODO: Avoid this EquilibriumConditions object here, created in every call of EquilibriumSolver::solve.
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
+        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, sensitivity, conditions, restrictions, b0);
     }
 
