@@ -102,6 +102,22 @@ struct ConstraintEquation
     ConstraintFn fn;
 };
 
+/// Used to define a system of equation constraints in a chemical equilibrium problem.
+struct ConstraintEquations
+{
+    /// The signature of functions that evaluate the residual of the system of equation constraints.
+    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
+    /// @param p The control variables *p* in the chemical equilibrium calculation.
+    /// @param w The input variables *w* in the chemical equilibrium calculation.
+    using ConstraintFn = Fn<VectorXr(ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)>;
+
+    /// The unique identifier for each equation constraint.
+    Strings id;
+
+    /// The function defining the system of equations to be satisfied at chemical equilibrium.
+    ConstraintFn fn;
+};
+
 /// Used to define reactivity restrictions among species in the chemical
 /// equilibrium calculation. This can be used, for example, to impose that a
 /// reaction is inert and should not progress during the equilibration process.
@@ -601,6 +617,9 @@ public:
     /// Add an equation constraint to be satisfied at chemical equilibrium.
     auto addConstraint(ConstraintEquation const& constraint) -> void;
 
+    /// Add a system of equation constraints to be satisfied at chemical equilibrium.
+    auto addConstraints(ConstraintEquations const& constraints) -> void;
+
     /// Add a reactivity constraint to be satisfied at chemical equilibrium.
     auto addReactivityConstraint(ReactivityConstraint const& constraint) -> void;
 
@@ -688,6 +707,12 @@ private:
 
     /// The equation constraints to be satisfied at chemical equilibrium.
     Vec<ConstraintEquation> econstraints;
+
+    /// The systems of equation constraints to be satisfied at chemical equilibrium.
+    Vec<ConstraintEquations> econstraints_system;
+
+    /// The collected ids of every equation constraint above (individual and collective).
+    Strings econstraints_ids;
 
     /// The reactivity constraints to be satisfied at chemical equilibrium.
     Vec<ReactivityConstraint> rconstraints;
