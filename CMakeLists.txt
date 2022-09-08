@@ -16,9 +16,6 @@ project(Reaktoro VERSION 2.0.0 LANGUAGES CXX)
 # Generate compile_commands.json file in the binary directory
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Copy generated compile_commands.json file in the binary directory to the root of the project directory
-file(COPY ${PROJECT_BINARY_DIR}/compile_commands.json DESTINATION ${PROJECT_SOURCE_DIR})
-
 # Check if a conda environment is active
 include(CondaAware)
 
