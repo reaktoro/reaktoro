@@ -125,7 +125,7 @@ auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef 
     for(auto const& [i, phase] : enumerate(msystem.phases()))
     {
         const auto size = phase.species().size();
-        const auto np = n.segment(offset, size);
+        const auto np = n0.segment(offset, size);
         phaseProps(i).updateIdeal(T, P, np, m_extra);
         offset += size;
     }
@@ -774,7 +774,7 @@ auto ChemicalProps::reactionRates() const -> ArrayXr
     auto const& reactions = msystem.reactions();
     ArrayXr rates(reactions.size());
     for(auto const& [i, reaction] : enumerate(reactions))
-        // rates[i] = reaction.rate(*this);
+        rates[i] = reaction.rate(*this);
     return rates;
 }
 
