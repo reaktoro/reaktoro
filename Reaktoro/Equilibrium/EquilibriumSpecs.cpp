@@ -161,13 +161,19 @@ auto assembleReactivityConstraints(EquilibriumSpecs const& specs) -> ReactivityC
 EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
 : m_system(system)
 {
+    // By default, all inputs to a chemical equilibrium calculation are set as unknown *p* control
+    // variables initially. These include temperature, pressure, and surface areas of reacting phase
+    // interfaces when existent in the chemical system. As the user explicitly specifies that these
+    // variables are actually known, these originally added *p* control variables are replaced by
+    // input variables *w* whose values must later be given to a EquilibriumConditions object!
+
     // By default, start with T and P as unknown *p* control variables.
     addControlVariableP({ "T" });
     addControlVariableP({ "P" });
 
-    // By default, start with all surface areas as given *w* input variables.
+    // By default, start with all surface areas as unknown *p* control variables.
     for(auto const& surface : system.surfaces())
-        addInput("SA[" + surface.name() + "]"); // e.g., SA[AqueousPhase:GaseousPhase], SA[Calcite]
+        addControlVariableP({ "surfaceArea[" + surface.name() + "]" }); // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
 }
 
 //=================================================================================================
@@ -246,6 +252,23 @@ auto EquilibriumSpecs::pressure() -> void
     assert(idx < pvars.size());
     pvars.erase(pvars.begin() + idx); // remove the existing *p* control variable for pressure
     unknownP = false;
+}
+
+auto EquilibriumSpecs::surfaceAreas() -> void
+{
+    for(auto i = 0; i < system().surfaces().size())
+        surfaceArea(i);
+}
+
+auto EquilibriumSpecs::surfaceArea(StringOrIndex const& surface) -> void
+{
+    auto const& surfaces = m_system.surfaces();
+    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
+    auto const inputid = "surfaceArea[" + surfaces[isurface].name() + "]"; // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
+    addInput(inputid);
+    auto const idx = indexfn(pvars, RKT_LAMBDA(x, x.name == inputid));
+    assert(idx < pvars.size());
+    pvars.erase(pvars.begin() + idx); // remove the existing *p* control variable for surfaceArea[Name]
 }
 
 auto EquilibriumSpecs::volume() -> void

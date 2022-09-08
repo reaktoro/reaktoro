@@ -270,94 +270,110 @@ public:
     //
     //=================================================================================================
 
-    /// Specify that the **temperature** of the system at chemical equilibrium is given.
-    /// This method introduces one input variable with name `T`. By calling
-    /// this method, you are specifying that temperature is known in the
-    /// equilibrium calculation. Thus, temperature will not be considered as a
-    /// control variable whose value needs to be computed.
-    /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesControlVariables.
+    /// Specify that the **temperature** of the system is given at chemical equilibrium.
+    /// This method introduces one input variable with name `T`. By calling this method, you are
+    /// specifying that temperature is known in the equilibrium calculation (by default it is
+    /// considered an unknown). Thus, it will not be considered as a control variable whose value
+    /// needs to be computed as part of the equilibrium calculation.
     auto temperature() -> void;
 
-    /// Specify that the **pressure** of the system at chemical equilibrium is given.
-    /// This method introduces one input variable with name `P`. By calling
-    /// this method, you are specifying that pressure is known in the
-    /// equilibrium calculation. Thus, pressure will not be considered as a
-    /// control variable whose value needs to be computed.
-    /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesControlVariables.
+    /// Specify that the **pressure** of the system is given at chemical equilibrium.
+    /// This method introduces one input variable with name `P`. By calling this method, you are
+    /// specifying that pressure is known in the equilibrium calculation (by default it is
+    /// considered an unknown). Thus, it will not be considered as a control variable whose value
+    /// needs to be computed as part of the equilibrium calculation.
     auto pressure() -> void;
 
-    /// Specify that the **volume** of the system at chemical equilibrium is given.
+    /// Specify that the **surface areas of all reacting phase interfaces** are given at chemical equilibrium.
+    /// This method introduces input variables with names `surfaceArea[Name]` where `Name` is the
+    /// name of each surface in the associated ChemicalSystem object (@see
+    /// ChemicalSystem::surfaces). By calling this method, you are specifying that these surface
+    /// areas are known in the equilibrium calculation (by default they are considered unknowns).
+    /// Thus, they will not be considered as control variables whose values need to be computed as
+    /// part of the equilibrium calculation.
+    auto surfaceAreas() -> void;
+
+    /// Specify that the **surface area of a reacting phase interface** is given at chemical equilibrium.
+    /// This method introduces one input variable with name `surfaceArea[Name]` where `Name` is the
+    /// name of the surface. By calling this method, you are specifying that the surface area of
+    /// this specific reacting phase interface is known in the equilibrium calculation (by default
+    /// it is considered an unknown). Thus, it will not be considered as a control variable whose
+    /// value needs to be computed as part of the equilibrium calculation.
+    /// @param surface The name or index of the surface in the system.
+    auto surfaceArea(StringOrIndex const& surface) -> void;
+
+    /// Specify that the **volume** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `V`. It also
     /// introduces an equation constraint with name `volume` to enforce a given
     /// volume value for the chemical system at equilibrium.
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto volume() -> void;
 
-    /// Specify that the **internal energy** of the system at chemical equilibrium is given.
+    /// Specify that the **internal energy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `U`. It also
     /// introduces an equation constraint with name `internalEnergy` to enforce a given
     /// internal energy value for the chemical system at equilibrium.
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto internalEnergy() -> void;
 
-    /// Specify that the **enthalpy** of the system at chemical equilibrium is given.
+    /// Specify that the **enthalpy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `H`. It also
     /// introduces an equation constraint with name `enthalpy` to enforce a given
     /// enthalpy value for the chemical system at equilibrium.
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto enthalpy() -> void;
 
-    /// Specify that the **Gibbs energy** of the system at chemical equilibrium is given.
+    /// Specify that the **Gibbs energy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `G`. It also
     /// introduces an equation constraint with name `gibbsEnergy` to enforce a given
     /// Gibbs energy value for the chemical system at equilibrium.
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto gibbsEnergy() -> void;
 
-    /// Specify that the **Helmholtz energy** of the system at chemical equilibrium is given.
+    /// Specify that the **Helmholtz energy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `A`. It also
     /// introduces an equation constraint with name `helmholtzEnergy` to enforce a given
     /// Helmholtz energy value for the chemical system at equilibrium.
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto helmholtzEnergy() -> void;
 
-    /// Specify that the **entropy** of the system at chemical equilibrium is given.
+    /// Specify that the **entropy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `S`. It also
     /// introduces an equation constraint with name `entropy` to enforce a given
     /// entropy value for the chemical system at equilibrium.
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints.
     auto entropy() -> void;
 
-    /// Specify that the **electric charge** at chemical equilibrium is given.
+    /// Specify that the **electric charge** is given at chemical equilibrium.
     auto charge() -> void;
 
-    /// Specify that the **amount of an element** at chemical equilibrium is given.
+    /// Specify that the **amount of an element** is given at chemical equilibrium.
     /// @param element The name or index of the element in the chemical system.
     auto elementAmount(StringOrIndex const& element) -> void;
 
-    /// Specify that the **amount of an element in a phase** at chemical equilibrium is given.
+    /// Specify that the **amount of an element in a phase** is given at chemical equilibrium.
     /// @param element The name or index of the element in the chemical system.
     /// @param phase The name or index of the phase in the chemical system.
     auto elementAmountInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void;
 
-    /// Specify that the **mass of an element** at chemical equilibrium is given.
+    /// Specify that the **mass of an element** is given at chemical equilibrium.
     /// @param element The name or index of the element in the chemical system.
     auto elementMass(StringOrIndex const& element) -> void;
 
-    /// Specify that the **mass of an element in a phase** at chemical equilibrium is given.
+    /// Specify that the **mass of an element in a phase** is given at chemical equilibrium.
     /// @param element The name or index of the element in the chemical system.
     /// @param phase The name or index of the phase in the chemical system.
     auto elementMassInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void;
 
-    /// Specify that the **amount of a phase** at chemical equilibrium is given.
+    /// Specify that the **amount of a phase** is given at chemical equilibrium.
     /// @param phase The name or index of the phase in the chemical system.
     auto phaseAmount(StringOrIndex const& phase) -> void;
 
-    /// Specify that the **mass of a phase** at chemical equilibrium is given.
+    /// Specify that the **mass of a phase** is given at chemical equilibrium.
     /// @param phase The name or index of the phase in the chemical system.
     auto phaseMass(StringOrIndex const& phase) -> void;
 
-    /// Specify that the **volume of a phase** at chemical equilibrium is given.
+    /// Specify that the **volume of a phase** is given at chemical equilibrium.
     /// @param phase The name or index of the phase in the chemical system.
     auto phaseVolume(StringOrIndex const& phase) -> void;
 
@@ -367,7 +383,7 @@ public:
     //
     //=================================================================================================
 
-    /// Specify that the **chemical potential** of a substance at chemical equilibrium is given.
+    /// Specify that the **chemical potential** of a substance is given at chemical equilibrium.
     /// This method introduces one input variable with name `u[substance]`
     /// (e.g., `u[H2O]` if @p substance is `"H2O"`). It also introduces a
     /// chemical potential constraint with same name to enforce a given
@@ -379,7 +395,7 @@ public:
     /// @param substance The chemical formula of the substance (e.g., `H2O`, `CO2`, `H+`, `Mg+2`).
     auto chemicalPotential(String substance) -> void;
 
-    /// Specify that the **ln activity** of a species at chemical equilibrium is given.
+    /// Specify that the **ln activity** of a species is given at chemical equilibrium.
     /// This method introduces one input variable with name
     /// `lnActivity[speciesName]` (e.g., `lnActivity[CO2(aq)]` if @p species is
     /// a Species object with name `"CO2(aq)"`). It also introduces a chemical
@@ -394,7 +410,7 @@ public:
     /// @param species The chemical species as an Species object.
     auto lnActivity(Species const& species) -> void;
 
-    /// Specify that the **ln activity** of a species at chemical equilibrium is given.
+    /// Specify that the **ln activity** of a species is given at chemical equilibrium.
     /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
@@ -402,7 +418,7 @@ public:
     /// @warning An error will be thrown if the database does not contain a species with given name.
     auto lnActivity(String species) -> void;
 
-    /// Specify that the **lg activity** of a species at chemical equilibrium is given.
+    /// Specify that the **lg activity** of a species is given at chemical equilibrium.
     /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
@@ -410,7 +426,7 @@ public:
     /// @warning An error will be thrown if the database does not contain a species with given name.
     auto lgActivity(String species) -> void;
 
-    /// Specify that the **activity** of a species at chemical equilibrium is given.
+    /// Specify that the **activity** of a species is given at chemical equilibrium.
     /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
@@ -418,7 +434,7 @@ public:
     /// @warning An error will be thrown if the database does not contain a species with given name.
     auto activity(String species) -> void;
 
-    /// Specify that the **fugacity** of a gaseous species at chemical equilibrium is given.
+    /// Specify that the **fugacity** of a gaseous species is given at chemical equilibrium.
     /// This method introduces one input variable with name `f[gas]` (e.g.,
     /// `f[O2]` if @p gas is `"O2"`). It also introduces a chemical potential
     /// constraint with same name that is equivalent to enforcing a given value
@@ -432,7 +448,7 @@ public:
     /// @warning An error will be thrown if the database does not contain a gaseous species with given name.
     auto fugacity(String gas) -> void;
 
-    /// Specify that the pH at chemical equilibrium is given.
+    /// Specify that the pH is given at chemical equilibrium.
     /// This method introduces one input variable with name `pH`. It also
     /// introduces a chemical potential constraint with same name that is
     /// equivalent to enforcing a given value for pH at chemical equilibrium.
@@ -457,7 +473,7 @@ public:
     /// @warning An error will be thrown if the system does not contain an aqueous species with formula `H+`.
     auto pH() -> void;
 
-    /// Specify that pMg at chemical equilibrium is given.
+    /// Specify that pMg is given at chemical equilibrium.
     /// This method introduces one input variable with name `pMg`. It also
     /// introduces a chemical potential constraint with same name that is
     /// equivalent to enforcing a given value for pMg at chemical equilibrium.
@@ -467,7 +483,7 @@ public:
     /// @warning An error will be thrown if the system does not contain an aqueous species with formula `Mg+2`.
     auto pMg() -> void;
 
-    /// Specify that pE at chemical equilibrium is given.
+    /// Specify that pE is given at chemical equilibrium.
     /// This method introduces one input variable with name `pE`. It also
     /// introduces a chemical potential constraint with same name that is
     /// equivalent to enforcing a given value for pE at chemical equilibrium.
@@ -477,7 +493,7 @@ public:
     /// @see EquilibriumSpecs::namesParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     auto pE() -> void;
 
-    /// Specify that Eh at chemical equilibrium is given.
+    /// Specify that Eh is given at chemical equilibrium.
     /// This method introduces one input variable with name `Eh`. It also
     /// introduces a chemical potential constraint with same name that is
     /// equivalent to enforcing a given value for Eh at chemical equilibrium.
