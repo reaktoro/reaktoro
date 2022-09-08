@@ -81,8 +81,6 @@ void exportChemicalState(py::module& m)
         .def("surfaceArea", py::overload_cast<const StringOrIndex&, const StringOrIndex&>(&ChemicalState::surfaceArea, py::const_))
         .def("surfaceArea", py::overload_cast<Index>(&ChemicalState::surfaceArea, py::const_))
         .def("surfaceAreas", &ChemicalState::surfaceAreas, return_internal_ref)
-        .def("surfaces", &ChemicalState::surfaces, return_internal_ref)
-        .def("surfaceIndex", &ChemicalState::surfaceIndex)
 
         .def("update", &ChemicalState::update)
         .def("updateIdeal", &ChemicalState::updateIdeal)
