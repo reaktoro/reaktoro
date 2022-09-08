@@ -17,19 +17,9 @@
 
 
 from reaktoro import *
-import pytest
 
 
 def testSurface():
-    phase1 = Phase() \
-        .withName("AqueousPhase") \
-        .withSpecies(SpeciesList("H2O(aq) H+(aq) OH-(aq) CO2(aq) HCO3-(aq) CO3--(aq)")) \
-        .withStateOfMatter(StateOfMatter.Liquid)
-
-    phase2 = Phase() \
-        .withName("GaseousPhase") \
-        .withSpecies(SpeciesList("CO2(g) H2O(g)")) \
-        .withStateOfMatter(StateOfMatter.Gas)
 
     # When using constructor Surface()
     surface = Surface()
@@ -37,15 +27,21 @@ def testSurface():
     surface = surface.withName("AqueousPhase:GaseousPhase")
     assert surface.name() == "AqueousPhase:GaseousPhase"
 
-    surface = surface.withPhases(phase1, phase2)
-    assert surface.phases()[0].name() == "AqueousPhase"
-    assert surface.phases()[1].name() == "GaseousPhase"
+    surface = surface.withPhases("AqueousPhase", "GaseousPhase")
+    assert surface.phases()[0] == "AqueousPhase"
+    assert surface.phases()[1] == "GaseousPhase"
+
+    other = Surface()
+    other = other.withName("SomeName")
+    other = other.withPhases("GaseousPhase", "AqueousPhase")
+
+    assert surface.equivalent(other)
 
     # When using constructor Surface(name)
     surface = Surface("AqueousPhase:GaseousPhase")
 
     assert surface.name() == "AqueousPhase:GaseousPhase"
 
-    surface = surface.withPhases(phase1, phase2)
-    assert surface.phases()[0].name() == "AqueousPhase"
-    assert surface.phases()[1].name() == "GaseousPhase"
+    surface = surface.withPhases("AqueousPhase", "GaseousPhase")
+    assert surface.phases()[0] == "AqueousPhase"
+    assert surface.phases()[1] == "GaseousPhase"
