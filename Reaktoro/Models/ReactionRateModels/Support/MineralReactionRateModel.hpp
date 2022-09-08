@@ -21,7 +21,9 @@
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
-#include <Reaktoro/Core/ReactionRateModel.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Model.hpp>
+#include <Reaktoro/Core/Rate.hpp>
 #include <Reaktoro/Utils/AqueousProps.hpp>
 
 namespace Reaktoro {
@@ -59,10 +61,7 @@ using MineralReactionRateModel = Model<Rate(MineralReactionRateArgs)>;
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
 /// @param mineral The name of the mineral in the system.
-/// @param phases The phases in the chemical system in which the reactions happen.
-using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, PhaseList const& phases)>;
-
-/// Convert a vector of MineralReactionRateModel objects to a vector of ReactionRateModel objects.
-auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& models, Database const& database, PhaseList& phases) -> Vec<ReactionRateModel>;
+/// @param system The chemical system in which the reactions happen.
+using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, ChemicalSystem const& system)>;
 
 } // namespace Reaktoro
