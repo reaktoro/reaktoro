@@ -125,28 +125,31 @@ public:
     auto isNull() const -> bool;
 
     /// Return the child Data object with given key, presuming this Data object is a dictionary.
-    auto operator[](Chars key) const -> Data const&;
-
-    /// Return the child Data object with given key, presuming this Data object is a dictionary.
+    /// This method throws an error if this Data object is not a dictionary or if the given key does not exist.
     auto operator[](String const& key) const -> Data const&;
 
     /// Return the child Data object with given index, presuming this Data object is a list.
-    auto operator[](int const& index) const -> Data const&;
-
-    /// Return the child Data object with given index, presuming this Data object is a list.
+    /// This method throws an error if this Data object is not a list or if the given index is out of bounds.
     auto operator[](Index const& index) const -> Data const&;
 
+    /// Return the child Data object with given key if, presuming this Data object is a dictionary.
+    /// If this Data object is null, this method converts it into a dictionary with one entry with given key whose associated value is null.
+    /// If this Data object is a dictionary without an entry with given key, a new entry with given key is created whose associated value is null.
+    /// Otherwise, a runtime error is thrown.
+    auto operator[](String const& key) -> Data&;
+
+    /// Return the child Data object with given index, presuming this Data object is a list.
+    /// If this Data object is null and `index` is 0, this method converts it into a list with one entry whose value is null.
+    /// Otherwise, this method throws an error if this Data object is not a list or it is a list and given index is out of bounds.
+    auto operator[](Index const& index) -> Data&;
+
     /// Return the child Data object with given key, presuming this Data object is a dictionary.
+    /// This method throws an error if this Data object is not a dictionary or if the given key does not exist.
     auto at(String const& key) const -> Data const&;
 
     /// Return the child Data object with given index, presuming this Data object is a list.
+    /// This method throws an error if this Data object is not a list or if the given index is out of bounds.
     auto at(Index const& index) const -> Data const&;
-
-    /// Return the child Data object with given key or create it if not existent, presuming this Data object is a dictionary.
-    auto at(String const& key) -> Data&;
-
-    /// Return the child Data object with given index or create it if not existent, presuming this Data object is a list.
-    auto at(Index const& index) -> Data&;
 
     /// Return the child Data object whose `attribute` has a given `value`, presuming this Data object is a list.
     auto with(String const& attribute, String const& value) const -> Data const&;
@@ -160,7 +163,7 @@ public:
     /// Add a Data object with given key to this Data object, which becomes a dictionary if not already.
     auto add(String const& key, Data const& data) -> Data&;
 
-    /// Return true if a child parameter exists with given key, presuming this Data object is a dictionary.
+    /// Return true if a child Data object exists with given key, presuming this Data object is a dictionary.
     auto exists(String const& key) const -> bool;
 
     /// Return a YAML formatted string representing the state of this Data object.
@@ -172,129 +175,112 @@ public:
     /// Return a YAML formatted string representing the state of this Data object.
     auto repr() const -> String;
 
-    /// Convert this Data object to a `bool` value; raises an error if not convertible to `bool`.
-    operator bool() const;
-
-    /// Convert this Data object to a String value; raises an error if not convertible to String.
-    operator String() const;
-
-    /// Convert this Data object to a Param value; raises an error if not convertible to Param.
-    operator Param() const;
-
     /// Used to allow conversion of objects with custom types to Data objects.
-    template<typename Type>
+    template<typename T>
     struct Encode
     {
         /// Evaluate the conversion of an object with custom type to a Data object.
-        static auto eval(Data& data, Type const& obj) -> void
+        static auto eval(Data& data, T const& obj) -> void
         {
-            errorif(true, "Cannot convert an object of type ", typeid(Type).name(), " to Data because Convert::encode was not defined for it.");
+            errorif(true, "Cannot convert an object of type ", typeid(T).name(), " to Data because Encode::eval was not defined for it.");
         }
     };
 
     /// Used to allow conversion of Data objects to objects with custom types.
-    template<typename Type>
+    template<typename T>
     struct Decode
     {
         /// Evaluate the conversion of a Data object to an object with custom type.
-        static auto eval(Data const& data, Type& obj) -> void
+        static auto eval(Data const& data, T& obj) -> void
         {
-            errorif(true, "Cannot convert an object a Data object to an object of type ", typeid(Type).name(), " because Convert::decode was not defined for it.");
+            errorif(true, "Cannot convert an object a Data object to an object of type ", typeid(T).name(), " because Decode::eval was not defined for it.");
         }
     };
 
+    /// Assign an object of type `T` to this Data object.
     template<typename T>
     auto operator=(T const& obj) -> Data&
     {
-        Encode<T>::eval(*this, obj);
+        assign(obj);
         return *this;
     }
 
+    /// Convert this Data object to one of type `T`.
+    template<typename T>
+    explicit operator T() const
+    {
+        return as<T>();
+    }
+
+    /// Construct a Data object from one of type `T`.
     template<typename T>
     Data(T const& obj)
     {
         assign(obj);
     }
 
+    /// Assign an object of type `T` to this Data object.
     template<typename T>
     auto assign(T const& obj) -> void
     {
-        Encode<T>::eval(*this, obj);
+        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>>)
+            tree = obj;
+        else if constexpr(isArithmetic<T> || isSame<T, real>)
+            tree = Param(obj);
+        else Encode<T>::eval(*this, obj);
     }
 
-    auto assign(Chars obj) -> void { tree = String(obj); }
-
-    /// Convert this Data object into an object of type `Type`.
-    template<typename Type>
-    auto as() const -> Type
+    /// Assign a raw string to this Data object.
+    auto assign(Chars obj) -> void
     {
-        Type obj;
-        Decode<Type>::eval(*this, obj);
-        return obj;
+        tree = String(obj);
     }
 
-    /// Decode this Data object into an object of type `Type`.
-    template<typename Type>
-    auto to(Type& obj) const -> void
+    /// Convert this Data object into an object of type `T`.
+    template<typename T>
+    auto as() const -> T
     {
-        Decode<Type>::eval(*this, obj);
+        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>>)
+            return std::any_cast<T const&>(tree);
+        if constexpr(isSame<T, real>)
+            return asParam().value();
+        if constexpr(isInteger<T> || isFloatingPoint<T>)
+            return asParam().value().val();
+        else {
+            T obj;
+            Decode<T>::eval(*this, obj);
+            return obj;
+        }
+    }
+
+    /// Decode this Data object into an object of type `T`.
+    template<typename T>
+    auto to(T& obj) const -> void
+    {
+        obj = as<T>();
     }
 
 private:
     Any tree;
 };
 
-template<> inline auto Data::assign(bool const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(String const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(int const& obj) -> void { tree = Param(obj); }
-template<> inline auto Data::assign(double const& obj) -> void { tree = Param(obj); }
-template<> inline auto Data::assign(real const& obj) -> void { tree = Param(obj); }
-template<> inline auto Data::assign(Param const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(Vec<Data> const& obj) -> void { tree = obj; }
-template<> inline auto Data::assign(Map<String, Data> const& obj) -> void { tree = Dict<String, Data>(obj.begin(), obj.end()); }
-template<> inline auto Data::assign(Dict<String, Data> const& obj) -> void { tree = obj; }
+#define REAKTORO_DATA_ENCODE_DECLARE(T, ...)                                      \
+    /** Used to encode/serialize an instance of type `T` into a Data object. */   \
+    template<__VA_ARGS__> struct Data::Encode<T> { static auto eval(Data& data, const T& obj) -> void; };
 
-#define REAKTORO_DATA_ENCODE_DECLARE(Type, ...)                                      \
-    /** Used to encode/serialize an instance of type `Type` into a Data object. */   \
-    template<__VA_ARGS__> struct Data::Encode<Type> { static auto eval(Data& data, const Type& obj) -> void; };
+#define REAKTORO_DATA_ENCODE_DEFINE(T, ...)                                       \
+    /** Encode/serialize an instance of type `T` into a Data object. */           \
+    auto Data::Encode<T>::eval(Data& data, const T& obj) -> void
 
-#define REAKTORO_DATA_ENCODE_DEFINE(Type, ...)                                       \
-    /** Encode/serialize an instance of type `Type` into a Data object. */           \
-    auto Data::Encode<Type>::eval(Data& data, const Type& obj) -> void
+#define REAKTORO_DATA_DECODE_DECLARE(T, ...)                                      \
+    /** Used to decode/deserialize a Data object into an instance of type `T`. */ \
+    template<__VA_ARGS__> struct Data::Decode<T> { static auto eval(const Data& data, T& obj) -> void; };
 
-#define REAKTORO_DATA_DECODE_DECLARE(Type, ...)                                      \
-    /** Used to decode/deserialize a Data object into an instance of type `Type`. */ \
-    template<__VA_ARGS__> struct Data::Decode<Type> { static auto eval(const Data& data, Type& obj) -> void; };
-
-#define REAKTORO_DATA_DECODE_DEFINE(Type, ...)                                       \
-    /** Decode/deserialize a Data object into an instance of type `Type`. */         \
-    auto Data::Decode<Type>::eval(const Data& data, Type& obj) -> void
+#define REAKTORO_DATA_DECODE_DEFINE(T, ...)                                       \
+    /** Decode/deserialize a Data object into an instance of type `T`. */         \
+    auto Data::Decode<T>::eval(const Data& data, T& obj) -> void
 
 #define REAKTORO_COMMA ,
-
-REAKTORO_DATA_ENCODE_DECLARE(bool);
-REAKTORO_DATA_DECODE_DECLARE(bool);
-
-REAKTORO_DATA_ENCODE_DECLARE(Chars);
-REAKTORO_DATA_DECODE_DECLARE(Chars);
-
-REAKTORO_DATA_ENCODE_DECLARE(String);
-REAKTORO_DATA_DECODE_DECLARE(String);
-
-REAKTORO_DATA_ENCODE_DECLARE(int);
-REAKTORO_DATA_DECODE_DECLARE(int);
-
-REAKTORO_DATA_ENCODE_DECLARE(Index);
-REAKTORO_DATA_DECODE_DECLARE(Index);
-
-REAKTORO_DATA_ENCODE_DECLARE(double);
-REAKTORO_DATA_DECODE_DECLARE(double);
-
-REAKTORO_DATA_ENCODE_DECLARE(real);
-REAKTORO_DATA_DECODE_DECLARE(real);
-
-REAKTORO_DATA_ENCODE_DECLARE(Param);
-REAKTORO_DATA_DECODE_DECLARE(Param);
 
 REAKTORO_DATA_ENCODE_DECLARE(Vec<T>, typename T);
 REAKTORO_DATA_DECODE_DECLARE(Vec<T>, typename T);
