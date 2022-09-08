@@ -102,6 +102,16 @@ public:
     /// is given by the coefficient of the *i*th species in the *j*th reaction.
     auto stoichiometricMatrix() const -> MatrixXdConstRef;
 
+    /// Return the phase interfaces across which kinetically controlled
+    /// reactions take place. These interfaces are automatically detected from
+    /// the given reactions composing the chemical system. They are implemented
+    /// as phase index pairs `{(i, j)}`. If a kinetically controlled reaction
+    /// is defined with a single species, both indices `i` and `j` are
+    /// identical, and this is the index of the phase in which the species
+    /// exists. This is needed when, for example, mineral-aqueous reactions are
+    /// defined and all aqueous species assumed to be in equilibrium.
+    auto reactingPhaseInterfaces() const -> const Pairs<Index, Index>&;
+
 private:
     struct Impl;
 
