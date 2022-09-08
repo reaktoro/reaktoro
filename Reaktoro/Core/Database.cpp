@@ -24,7 +24,8 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
-#include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
+#include <Reaktoro/Core/Data.hpp>
+#include <Reaktoro/Core/Support/DatabaseParser.hpp>
 
 namespace Reaktoro {
 
@@ -236,15 +237,15 @@ auto Database::fromFile(const String& path) -> Database
 
 auto Database::fromContents(const String& contents) -> Database
 {
-    auto doc = yaml::parse(contents);
-    DatabaseParserYAML dbparser(doc);
+    auto doc = Data::fromYaml(contents);
+    DatabaseParser dbparser(doc);
     return dbparser;
 }
 
 auto Database::fromStream(std::istream& stream) -> Database
 {
-    auto doc = yaml::parse(stream);
-    DatabaseParserYAML dbparser(doc);
+    auto doc = Data::fromYaml(stream);
+    DatabaseParser dbparser(doc);
     return dbparser;
 }
 
