@@ -15,23 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Models.Data.hpp"
+#include "StandardThermoModels.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Models/ReactionRateModels.hpp>
+#include <Reaktoro/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -41,12 +30,12 @@ namespace Reaktoro {
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsConstant)
 {
-    data.at("G0") = obj.G0;
-    data.at("H0") = obj.H0;
-    data.at("V0") = obj.V0;
-    data.at("VT0") = obj.VT0;
-    data.at("VP0") = obj.VP0;
-    data.at("Cp0") = obj.Cp0;
+    data["G0"] = obj.G0;
+    data["H0"] = obj.H0;
+    data["V0"] = obj.V0;
+    data["VT0"] = obj.VT0;
+    data["VP0"] = obj.VP0;
+    data["Cp0"] = obj.Cp0;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsConstant)
@@ -63,18 +52,18 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsConstant)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsHKF)
 {
-    data.at("Gf") = obj.Gf;
-    data.at("Hf") = obj.Hf;
-    data.at("Sr") = obj.Sr;
-    data.at("a1") = obj.a1;
-    data.at("a2") = obj.a2;
-    data.at("a3") = obj.a3;
-    data.at("a4") = obj.a4;
-    data.at("c1") = obj.c1;
-    data.at("c2") = obj.c2;
-    data.at("wref") = obj.wref;
-    data.at("charge") = obj.charge;
-    data.at("Tmax") = obj.Tmax;
+    data["Gf"] = obj.Gf;
+    data["Hf"] = obj.Hf;
+    data["Sr"] = obj.Sr;
+    data["a1"] = obj.a1;
+    data["a2"] = obj.a2;
+    data["a3"] = obj.a3;
+    data["a4"] = obj.a4;
+    data["c1"] = obj.c1;
+    data["c2"] = obj.c2;
+    data["wref"] = obj.wref;
+    data["charge"] = obj.charge;
+    data["Tmax"] = obj.Tmax;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsHKF)
@@ -96,23 +85,23 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsHKF)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsHollandPowell)
 {
-    data.at("Gf") = obj.Gf;
-    data.at("Hf") = obj.Hf;
-    data.at("Sr") = obj.Sr;
-    data.at("Vr") = obj.Vr;
-    data.at("a")  = obj.a;
-    data.at("b")  = obj.b;
-    data.at("c")  = obj.c;
-    data.at("d")  = obj.d;
+    data["Gf"] = obj.Gf;
+    data["Hf"] = obj.Hf;
+    data["Sr"] = obj.Sr;
+    data["Vr"] = obj.Vr;
+    data["a"]  = obj.a;
+    data["b"]  = obj.b;
+    data["c"]  = obj.c;
+    data["d"]  = obj.d;
     if(obj.kappa0 != 0.0)
     {
-        data.at("alpha0")   = obj.alpha0;
-        data.at("kappa0")   = obj.kappa0;
-        data.at("kappa0p")  = obj.kappa0p;
-        data.at("kappa0pp") = obj.kappa0pp;
-        data.at("numatoms") = obj.numatoms;
+        data["alpha0"]   = obj.alpha0;
+        data["kappa0"]   = obj.kappa0;
+        data["kappa0p"]  = obj.kappa0p;
+        data["kappa0pp"] = obj.kappa0pp;
+        data["numatoms"] = obj.numatoms;
     }
-    data.at("Tmax") = obj.Tmax;
+    data["Tmax"] = obj.Tmax;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
@@ -140,14 +129,14 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsHollandPowell)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsInterpolation)
 {
-    data.at("Temperatures") = obj.temperatures;
-    data.at("Pressures")    = obj.pressures;
-    data.at("G0")           = obj.G0;
-    data.at("H0")           = obj.H0;
-    data.at("V0")           = obj.V0;
-    data.at("VT0")          = obj.VT0;
-    data.at("VP0")          = obj.VP0;
-    data.at("Cp0")          = obj.Cp0;
+    data["Temperatures"] = obj.temperatures;
+    data["Pressures"]    = obj.pressures;
+    data["G0"]           = obj.G0;
+    data["H0"]           = obj.H0;
+    data["V0"]           = obj.V0;
+    data["VT0"]          = obj.VT0;
+    data["VP0"]          = obj.VP0;
+    data["Cp0"]          = obj.Cp0;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsInterpolation)
@@ -166,14 +155,14 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsInterpolation)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsMaierKelley)
 {
-    data.at("Gf")   = obj.Gf;
-    data.at("Hf")   = obj.Hf;
-    data.at("Sr")   = obj.Sr;
-    data.at("Vr")   = obj.Vr;
-    data.at("a")    = obj.a;
-    data.at("b")    = obj.b;
-    data.at("c")    = obj.c;
-    data.at("Tmax") = obj.Tmax;
+    data["Gf"]   = obj.Gf;
+    data["Hf"]   = obj.Hf;
+    data["Sr"]   = obj.Sr;
+    data["Vr"]   = obj.Vr;
+    data["a"]    = obj.a;
+    data["b"]    = obj.b;
+    data["c"]    = obj.c;
+    data["Tmax"] = obj.Tmax;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsMaierKelley)
@@ -192,19 +181,19 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsMaierKelley)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsMineralHKF)
 {
-    data.at("Gf")     = obj.Gf;
-    data.at("Hf")     = obj.Hf;
-    data.at("Sr")     = obj.Sr;
-    data.at("Vr")     = obj.Vr;
-    data.at("ntr")    = obj.ntr;
-    data.at("a")      = obj.a;
-    data.at("b")      = obj.b;
-    data.at("c")      = obj.c;
-    data.at("Ttr")    = obj.Ttr;
-    data.at("Htr")    = obj.Htr;
-    data.at("Vtr")    = obj.Vtr;
-    data.at("dPdTtr") = obj.dPdTtr;
-    data.at("Tmax")   = obj.Tmax;
+    data["Gf"]     = obj.Gf;
+    data["Hf"]     = obj.Hf;
+    data["Sr"]     = obj.Sr;
+    data["Vr"]     = obj.Vr;
+    data["ntr"]    = obj.ntr;
+    data["a"]      = obj.a;
+    data["b"]      = obj.b;
+    data["c"]      = obj.c;
+    data["Ttr"]    = obj.Ttr;
+    data["Htr"]    = obj.Htr;
+    data["Vtr"]    = obj.Vtr;
+    data["dPdTtr"] = obj.dPdTtr;
+    data["Tmax"]   = obj.Tmax;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsMineralHKF)
@@ -231,19 +220,19 @@ REAKTORO_DATA_DECODE_DECLARE(StandardThermoModelParamsNasa::Polynomial);
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsNasa::Polynomial)
 {
-    data.at("Tmin")  = obj.Tmin;
-    data.at("Tmax")  = obj.Tmax;
-    data.at("Label") = obj.label;
-    data.at("State") = obj.state;
-    data.at("a1")    = obj.a1;
-    data.at("a2")    = obj.a2;
-    data.at("a3")    = obj.a3;
-    data.at("a4")    = obj.a4;
-    data.at("a5")    = obj.a5;
-    data.at("a6")    = obj.a6;
-    data.at("a7")    = obj.a7;
-    data.at("b1")    = obj.b1;
-    data.at("b2")    = obj.b2;
+    data["Tmin"]  = obj.Tmin;
+    data["Tmax"]  = obj.Tmax;
+    data["Label"] = obj.label;
+    data["State"] = obj.state;
+    data["a1"]    = obj.a1;
+    data["a2"]    = obj.a2;
+    data["a3"]    = obj.a3;
+    data["a4"]    = obj.a4;
+    data["a5"]    = obj.a5;
+    data["a6"]    = obj.a6;
+    data["a7"]    = obj.a7;
+    data["b1"]    = obj.b1;
+    data["b2"]    = obj.b2;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsNasa::Polynomial)
@@ -269,14 +258,14 @@ REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsNasa)
 {
     if(obj.polynomials.size())
     {
-        data.at("dHf") = obj.dHf;
-        data.at("dH0") = obj.dH0;
-        data.at("Polynomials") = obj.polynomials;
+        data["dHf"] = obj.dHf;
+        data["dH0"] = obj.dH0;
+        data["Polynomials"] = obj.polynomials;
     }
     else
     {
-        data.at("H0") = obj.H0;
-        data.at("T0") = obj.T0;
+        data["H0"] = obj.H0;
+        data["T0"] = obj.T0;
     }
 }
 
@@ -299,10 +288,10 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsNasa)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsWaterHKF)
 {
-    data.at("Ttr") = obj.Ttr;
-    data.at("Str") = obj.Str;
-    data.at("Gtr") = obj.Gtr;
-    data.at("Htr") = obj.Htr;
+    data["Ttr"] = obj.Ttr;
+    data["Str"] = obj.Str;
+    data["Gtr"] = obj.Gtr;
+    data["Htr"] = obj.Htr;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsWaterHKF)
@@ -319,8 +308,8 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsWaterHKF)
 
 REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
 {
-    data.at("lgKr") = obj.lgKr;
-    data.at("Pr")   = obj.Pr;
+    data["lgKr"] = obj.lgKr;
+    data["Pr"]   = obj.Pr;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
@@ -333,14 +322,14 @@ REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
 
 REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
 {
-    data.at("A0") = obj.A0;
-    data.at("A1") = obj.A1;
-    data.at("A2") = obj.A2;
-    data.at("A3") = obj.A3;
-    data.at("A4") = obj.A4;
-    data.at("A5") = obj.A5;
-    data.at("A6") = obj.A6;
-    data.at("Pr") = obj.Pr;
+    data["A0"] = obj.A0;
+    data["A1"] = obj.A1;
+    data["A2"] = obj.A2;
+    data["A3"] = obj.A3;
+    data["A4"] = obj.A4;
+    data["A5"] = obj.A5;
+    data["A6"] = obj.A6;
+    data["Pr"] = obj.Pr;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
@@ -359,13 +348,13 @@ REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
 
 REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
 {
-    data.at("A1") = obj.A1;
-    data.at("A2") = obj.A2;
-    data.at("A3") = obj.A3;
-    data.at("A4") = obj.A4;
-    data.at("A5") = obj.A5;
-    data.at("A6") = obj.A6;
-    data.at("Pr") = obj.Pr;
+    data["A1"] = obj.A1;
+    data["A2"] = obj.A2;
+    data["A3"] = obj.A3;
+    data["A4"] = obj.A4;
+    data["A5"] = obj.A5;
+    data["A6"] = obj.A6;
+    data["Pr"] = obj.Pr;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
@@ -383,10 +372,10 @@ REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
 
 REAKTORO_DATA_ENCODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
 {
-    data.at("lgKr") = obj.lgKr;
-    data.at("dHr")  = obj.dHr;
-    if(data.exists("Pr")) data.at("Tr") = obj.Tr;
-    if(data.exists("Pr")) data.at("Pr") = obj.Pr;
+    data["lgKr"] = obj.lgKr;
+    data["dHr"]  = obj.dHr;
+    data["Tr"]   = obj.Tr;
+    data["Pr"]   = obj.Pr;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
@@ -403,7 +392,7 @@ REAKTORO_DATA_DECODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
 
 REAKTORO_DATA_ENCODE_DEFINE(StandardVolumeModelParamsConstant)
 {
-    data.at("V0") = obj.V0;
+    data["V0"] = obj.V0;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(StandardVolumeModelParamsConstant)
@@ -411,64 +400,4 @@ REAKTORO_DATA_DECODE_DEFINE(StandardVolumeModelParamsConstant)
     data.at("V0").to(obj.V0);
 }
 
-//======================================================================
-// ReactionRateModelParams Types
-//======================================================================
-
-REAKTORO_DATA_ENCODE_DECLARE(ReactionRateModelParamsPalandriKharaka::Mechanism);
-REAKTORO_DATA_DECODE_DECLARE(ReactionRateModelParamsPalandriKharaka::Mechanism);
-
-REAKTORO_DATA_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
-{
-    data.at("lgk") = obj.lgk;
-    data.at("E") = obj.E;
-    data.at("p") = obj.p;
-    data.at("q") = obj.q;
-    for(auto catalyst : obj.catalysts)
-    {
-        const auto key = catalyst.property + "(" + catalyst.formula + ")";
-        data.at(key) = catalyst.power;
-    }
-}
-
-REAKTORO_DATA_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka::Mechanism)
-{
-    data.at("lgk").to(obj.lgk);
-    data.at("E").to(obj.E);
-    if(data.exists("p")) data.at("p").to(obj.p);
-    if(data.exists("q")) data.at("q").to(obj.q);
-
-    // Collect all catalyst properties and their power
-    for(auto const& [key, value] : data.asDict())
-    {
-        if(!oneof(key[0], 'a', 'P'))
-            continue;
-        errorif(key.size() <= 3, "Expecting a chemical formula inside `a()` or `P()`, such as `a(H+)`, `P(CO2)`.");
-        errorif(key[1] != '(' || key.back() != ')', "Expecting ( and ) as in `a(H+)`, `a(Fe+3)`, `P(CO2)`.");
-        const auto formula = key.substr(2, key.size() - 3); // exclude first two chars and last
-        const auto property = key.substr(0, 1);
-        const auto power = value.asFloat();
-        obj.catalysts.push_back({ formula, property, power });
-    }
-}
-
-REAKTORO_DATA_ENCODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
-{
-    data.at("Mineral") = join(obj.names, " ");
-    for(auto mechanism : obj.mechanisms)
-        data.at("Mechanisms").at(mechanism.name) = mechanism;
-}
-
-REAKTORO_DATA_DECODE_DEFINE(ReactionRateModelParamsPalandriKharaka)
-{
-    obj.names = split(data.at("Mineral"), " ");
-    for(auto const& [name, mechanism] : data.at("Mechanisms").asDict())
-    {
-        obj.mechanisms.push_back(mechanism.as<ReactionRateModelParamsPalandriKharaka::Mechanism>());
-        obj.mechanisms.back().name = name;
-    }
-}
-
-//----------------------------------------------------------------------
-
-} // namespace YAML
+} // namespace Reaktoro

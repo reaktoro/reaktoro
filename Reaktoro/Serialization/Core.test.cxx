@@ -20,74 +20,69 @@
 using namespace Catch;
 
 // Reaktoro includes
-#include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
-#include <Reaktoro/Serialization/Common.YAML.hpp>
-#include <Reaktoro/Serialization/Core.YAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels.hpp>
+#include <Reaktoro/Serialization/Common.hpp>
+#include <Reaktoro/Serialization/Core.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing YAML encoder/decoder for AggregateState", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for AggregateState", "[Serialization][Core]")
 {
-    yaml node;
+    Data data;
     AggregateState aggstate;
 
-    node = AggregateState::Aqueous;
-    CHECK( node.repr() == "Aqueous" );
-    aggstate = node;
+    data = AggregateState::Aqueous;
+    CHECK( data.asString() == "Aqueous" );
+    aggstate = data.as<AggregateState>();
     CHECK( aggstate == AggregateState::Aqueous );
 
-    node = AggregateState::Gas;
-    CHECK( node.repr() == "Gas" );
-    aggstate = node;
+    data = AggregateState::Gas;
+    CHECK( data.asString() == "Gas" );
+    aggstate = data.as<AggregateState>();
     CHECK( aggstate == AggregateState::Gas );
 
-    node = AggregateState::Solid;
-    CHECK( node.repr() == "Solid" );
-    aggstate = node;
+    data = AggregateState::Solid;
+    CHECK( data.asString() == "Solid" );
+    aggstate = data.as<AggregateState>();
     CHECK( aggstate == AggregateState::Solid );
 
-    node = AggregateState::Undefined;
-    CHECK( node.repr() == "Undefined" );
-    aggstate = node;
+    data = AggregateState::Undefined;
+    CHECK( data.asString() == "Undefined" );
+    aggstate = data.as<AggregateState>();
     CHECK( aggstate == AggregateState::Undefined );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for ChemicalFormula", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for ChemicalFormula", "[Serialization][Core]")
 {
-    yaml node;
+    Data data;
     ChemicalFormula formula;
 
-    node = ChemicalFormula("H2O");
-    CHECK( node.repr() == "H2O" );
-    formula = node;
+    data = ChemicalFormula("H2O");
+    CHECK( data.asString() == "H2O" );
+    formula = data.as<ChemicalFormula>();
     CHECK( formula.equivalent("H2O") );
 
-    node = ChemicalFormula("Ca++");
-    CHECK( node.repr() == "Ca++" );
-    formula = node;
+    data = ChemicalFormula("Ca++");
+    CHECK( data.asString() == "Ca++" );
+    formula = data.as<ChemicalFormula>();
     CHECK( formula.equivalent("Ca++") );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for ChemicalSystem", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for ChemicalSystem", "[Serialization][Core]")
 {
-    yaml node;
+    Data data;
     ChemicalSystem chemicalsystem;
 
-    // TODO: Implement tests for YAML encoding/decoding of ChemicalSystem objects.
+    // TODO: Implement tests for Data encoding/decoding of ChemicalSystem objects.
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Database", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for Database", "[Serialization][Core]")
 {
     auto contents = R"(
 Elements:
@@ -144,9 +139,9 @@ Species:
           lgKr: 7.0
 )";
 
-    yaml node = yaml::parse(contents);
+    Data data = Data::fromYaml(contents);
 
-    Database db = node;
+    Database db = data.as<Database>();
 
     auto elements = db.elements();
     auto species = db.species();
@@ -175,49 +170,49 @@ Species:
     CHECK( species[3].standardThermoModel().params()[0].value() == 3.0 );
     CHECK( species[4].standardThermoModel().params()[0].value() == 7.0 );
 
-    node = db; // convert back Database to yaml and check below for consistency
+    data = db; // convert back Database to Data and check below for consistency
 
-    CHECK( node["Elements"].size() == elements.size() );
+    CHECK( data["Elements"].asList().size() == elements.size() );
     for(auto i = 0; i < elements.size(); ++i)
     {
-        const auto enode = node["Elements"][elements[i].symbol()];
-        CHECK( elements[i].symbol() == enode["Symbol"].as<String>() );
-        CHECK( elements[i].molarMass() == enode["MolarMass"].as<double>() );
-        CHECK( elements[i].name() == enode["Name"].as<String>() );
-        if(enode["Tags"].IsDefined())
+        const auto enode = data["Elements"][elements[i].symbol()];
+        CHECK( elements[i].symbol() == enode["Symbol"].asString() );
+        CHECK( elements[i].molarMass() == enode["MolarMass"].asFloat() );
+        CHECK( elements[i].name() == enode["Name"].asString() );
+        if(enode.exists("Tags"))
             CHECK( elements[i].tags() == enode["Tags"].as<Strings>() );
     }
 
-    CHECK( node["Species"].size() == species.size() );
+    CHECK( data["Species"].asList().size() == species.size() );
     for(auto i = 0; i < species.size(); ++i)
     {
-        const auto snode = node["Species"][species[i].name()];
-        CHECK( species[i].name() == snode["Name"].as<String>() );
-        CHECK( species[i].formula() == snode["Formula"].as<String>() );
-        CHECK( species[i].substance() == snode["Substance"].as<String>() );
-        CHECK( species[i].elements().repr() == snode["Elements"].as<String>() );
+        const auto snode = data["Species"][species[i].name()];
+        CHECK( species[i].name() == snode["Name"].asString() );
+        CHECK( species[i].formula() == snode["Formula"].asString() );
+        CHECK( species[i].substance() == snode["Substance"].asString() );
+        CHECK( species[i].elements().repr() == snode["Elements"].asString() );
         CHECK( species[i].aggregateState() == snode["AggregateState"].as<AggregateState>() );
-        if(snode["Tags"].IsDefined())
+        if(snode.exists("Tags"))
             CHECK( species[i].tags() == snode["Tags"].as<Strings>() );
     }
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Element", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for Element", "[Serialization][Core]")
 {
     Element H("H");
 
-    yaml node;
+    Data data;
     Element element;
 
-    node = H;
-    element = node;
+    data = H;
+    element = data.as<Element>();
 
     CHECK( element.symbol() == H.symbol() );
     CHECK( element.name() == H.name() );
     CHECK( element.molarMass() == H.molarMass() );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for ElementList", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for ElementList", "[Serialization][Core]")
 {
     ElementList elements = {
         Element("H"),
@@ -226,23 +221,23 @@ TEST_CASE("Testing YAML encoder/decoder for ElementList", "[Core.yaml]")
         Element("N")
     };
 
-    yaml node = elements;
+    Data data = elements;
 
     for(auto i = 0; i < elements.size(); ++i)
     {
-        CHECK( node[i]["Symbol"].IsDefined() );
-        CHECK( node[i]["MolarMass"].IsDefined() );
-        CHECK( node[i]["Name"].IsDefined() );
+        CHECK( data[i].exists("Symbol") );
+        CHECK( data[i].exists("MolarMass") );
+        CHECK( data[i].exists("Name") );
 
-        CHECK( elements[i].symbol()    == node[i]["Symbol"].as<String>()    );
-        CHECK( elements[i].molarMass() == node[i]["MolarMass"].as<double>() );
-        CHECK( elements[i].name()      == node[i]["Name"].as<String>()      );
+        CHECK( elements[i].symbol()    == data[i]["Symbol"].asString()   );
+        CHECK( elements[i].molarMass() == data[i]["MolarMass"].asFloat() );
+        CHECK( elements[i].name()      == data[i]["Name"].asString()     );
 
-        if(node[i]["Tags"].IsDefined())
-            CHECK( elements[i].tags() == node[i]["Tags"].as<Strings>()     );
+        if(data[i].exists("Tags"))
+            CHECK( elements[i].tags() == data[i]["Tags"].as<Strings>()     );
     }
 
-    ElementList elementlist = node;
+    ElementList elementlist = data.as<ElementList>();
 
     for(auto i = 0; i < elements.size(); ++i)
     {
@@ -253,22 +248,22 @@ TEST_CASE("Testing YAML encoder/decoder for ElementList", "[Core.yaml]")
     }
 }
 
-TEST_CASE("Testing YAML encoder/decoder for ElementalComposition", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for ElementalComposition", "[Serialization][Core]")
 {
-    yaml node;
+    Data data;
     ElementalComposition elements;
 
     elements = {{Element("H"), 2}, {Element("O"), 1}};
-    node = elements;
-    CHECK(node.as<String>() == "2:H 1:O");
+    data = elements;
+    CHECK(data.asString() == "2:H 1:O");
 
     elements = {{Element("Ca"), 1}, {Element("C"), 1}, {Element("O"), 3}};
-    node = elements;
+    data = elements;
 
-    CHECK(node.as<String>() == "1:Ca 1:C 3:O");
+    CHECK(data.asString() == "1:Ca 1:C 3:O");
 }
 
-TEST_CASE("Testing YAML encoder/decoder for FormationReaction", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for FormationReaction", "[Serialization][Core]")
 {
     auto A = Species("Ca++").withStandardGibbsEnergy(0.0);
     auto B = Species("Mg++").withStandardGibbsEnergy(0.0);
@@ -278,9 +273,9 @@ TEST_CASE("Testing YAML encoder/decoder for FormationReaction", "[Core.yaml]")
         .withReactants({{A, 1}, {B, 1}, {C, 2}})
         .withEquilibriumConstant(1.0);
 
-    yaml node = reaction;
+    Data data = reaction;
 
-    yaml expected = yaml::parse(R"(
+    Data expected = Data::fromYaml(R"(
 Reactants: 1:Ca++ 1:Mg++ 2:CO3--
 ReactionStandardThermoModel:
   ConstLgK:
@@ -291,30 +286,30 @@ StandardVolumeModel:
     V0: 0
 )");
 
-    CHECK( node.repr() == expected.repr() );
+    CHECK( data.dumpYaml() == expected.dumpYaml() );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Param", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for Param", "[Serialization][Core]")
 {
     Param param;
-    yaml node;
+    Data data;
 
     param = 1.0;
-    node = param;
+    data = param;
 
-    CHECK( node.as<double>() == 1.0 );
+    CHECK( data.asFloat() == 1.0 );
 
-    node = 10.0;
-    param = node.as<double>();
+    data = 10.0;
+    param = data.asFloat();
 
     CHECK( param.value() == 10.0 );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Vec<Param>", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for Vec<Param>", "[Serialization][Core]")
 {
-    yaml node = Vec<double>{1.0, 2.0, 3.0};
+    Data data = Vec<double>{1.0, 2.0, 3.0};
 
-    Vec<Param> params = node;
+    Vec<Param> params = data.as<Vec<Param>>();
 
     CHECK( params[0].value() == 1.0 );
     CHECK( params[1].value() == 2.0 );
@@ -324,33 +319,33 @@ TEST_CASE("Testing YAML encoder/decoder for Vec<Param>", "[Core.yaml]")
     params[1] = 20.0;
     params[2] = 30.0;
 
-    node = params;
+    data = params;
 
-    CHECK( node[0].as<double>() == 10.0 );
-    CHECK( node[1].as<double>() == 20.0 );
-    CHECK( node[2].as<double>() == 30.0 );
+    CHECK( data[0].asFloat() == 10.0 );
+    CHECK( data[1].asFloat() == 20.0 );
+    CHECK( data[2].asFloat() == 30.0 );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Phase", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for Phase", "[Serialization][Core]")
 {
-    yaml node;
+    Data data;
     Phase phase;
 
-    // TODO: Implement YAML encoding/decoding test for Phase.
+    // TODO: Implement Data encoding/decoding test for Phase.
 }
 
-TEST_CASE("Testing YAML encoder/decoder for ReactionStandardThermoModel", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for ReactionStandardThermoModel", "[Serialization][Core]")
 {
-    yaml node, expected;
+    Data data, expected;
 
     Param lgKr = 1.0;
     Param dHr  = 2.0;
     Param Tr   = 3.0;
     Param Pr   = 4.0;
 
-    node = ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr});
+    data = ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr});
 
-    expected = yaml::parse(R"(
+    expected = Data::fromYaml(R"(
         VantHoff:
           lgKr: 1
           dHr: 2
@@ -358,24 +353,24 @@ TEST_CASE("Testing YAML encoder/decoder for ReactionStandardThermoModel", "[Core
           Pr: 4
     )");
 
-    CHECK( node.repr() == expected.repr() );
+    CHECK( data.dumpYaml() == expected.dumpYaml() );
 
-    auto model = ReactionStandardThermoModelYAML(node);
+    // auto model = ReactionStandardThermoModelYAML(data);
 
-    CHECK( model.serialize().repr() == expected.repr() );
+    // CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
 {
     Species species;
-    yaml node, expected;
+    Data data, expected;
 
     WHEN("using constructor Species(formula)")
     {
-        node = Species("CaCO3(aq)")
+        data = Species("CaCO3(aq)")
             .withStandardGibbsEnergy(10.0);
 
-        expected = yaml::parse(R"(
+        expected = Data::fromYaml(R"(
             Name: CaCO3(aq)
             Formula: CaCO3
             Substance: CaCO3
@@ -391,7 +386,7 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
                 Cp0: 0
         )");
 
-        CHECK( node.repr() == expected.repr() );
+        CHECK( data.dumpYaml() == expected.dumpYaml() );
     }
 
     WHEN("using constructor Species(formula) with HKF standard thermodynamic model and charged species")
@@ -410,11 +405,11 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
         params.charge = 11.0;
         params.Tmax = 12.0;
 
-        node = Species("CO3--(aq)")
+        data = Species("CO3--(aq)")
             .withSubstance("CARBONATE")
             .withStandardThermoModel(StandardThermoModelHKF(params));
 
-        expected = yaml::parse(R"(
+        expected = Data::fromYaml(R"(
             Name: CO3--(aq)
             Formula: CO3--
             Substance: CARBONATE
@@ -437,7 +432,7 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
                 Tmax: 12
         )");
 
-        CHECK( node.repr() == expected.repr() );
+        CHECK( data.dumpYaml() == expected.dumpYaml() );
     }
 
     WHEN("using constructor Species(formula) with FormationReaction")
@@ -456,9 +451,9 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
             .withReactionStandardThermoModel(ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr}))
             .withProductStandardVolumeModel(StandardVolumeModelConstant({V0}));
 
-        node = Species("CaCO3(s)").withFormationReaction(reaction);
+        data = Species("CaCO3(s)").withFormationReaction(reaction);
 
-        expected = yaml::parse(R"(
+        expected = Data::fromYaml(R"(
             Name: CaCO3(s)
             Formula: CaCO3
             Substance: CaCO3
@@ -477,19 +472,19 @@ TEST_CASE("Testing YAML encoder/decoder for Species", "[Core.yaml]")
                   V0: 5
         )");
 
-        CHECK( node.repr() == expected.repr() );
+        CHECK( data.dumpYaml() == expected.dumpYaml() );
     }
 }
 
-TEST_CASE("Testing YAML encoder/decoder for SpeciesList", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for SpeciesList", "[Serialization][Core]")
 {
-    yaml node = SpeciesList({
+    Data data = SpeciesList({
         Species("Ca++(aq)").withStandardGibbsEnergy(0.0),
         Species("CO3--(aq)").withStandardGibbsEnergy(0.0),
         Species("CaCO3(aq)").withStandardGibbsEnergy(0.0)
     });
 
-    yaml expected = yaml::parse(R"(
+    Data expected = Data::fromYaml(R"(
         - Name: Ca++(aq)
           Formula: Ca++
           Substance: Ca++
@@ -533,10 +528,10 @@ TEST_CASE("Testing YAML encoder/decoder for SpeciesList", "[Core.yaml]")
               Cp0: 0
     )");
 
-    CHECK( node.repr() == expected.repr() );
+    CHECK( data.dumpYaml() == expected.dumpYaml() );
 }
 
-TEST_CASE("Testing YAML encoder/decoder for StandardThermoModel", "[Core.yaml]")
+TEST_CASE("Testing Data encoder/decoder for StandardThermoModel", "[Serialization][Core]")
 {
     StandardThermoModelParamsMaierKelley params;
     params.Gf = 1.0;
@@ -548,9 +543,9 @@ TEST_CASE("Testing YAML encoder/decoder for StandardThermoModel", "[Core.yaml]")
     params.c = 7.0;
     params.Tmax = 8.0;
 
-    yaml node = StandardThermoModelMaierKelley(params);
+    Data data = StandardThermoModelMaierKelley(params);
 
-    yaml expected = yaml::parse(R"(
+    Data expected = Data::fromYaml(R"(
         MaierKelley:
           Gf: 1
           Hf: 2
@@ -562,9 +557,9 @@ TEST_CASE("Testing YAML encoder/decoder for StandardThermoModel", "[Core.yaml]")
           Tmax: 8
     )");
 
-    CHECK( node.repr() == expected.repr() );
+    CHECK( data.dumpYaml() == expected.dumpYaml() );
 
-    auto model = StandardThermoModelYAML(node);
+    // auto model = StandardThermoModelYAML(data);
 
-    CHECK( model.serialize().repr() == expected.repr() );
+    // CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
 }

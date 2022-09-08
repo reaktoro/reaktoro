@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <Reaktoro/pybind11.hxx>
 
-// Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Core/Data.hpp>
+void exportSerializationModelsReactionRateModels(py::module& m);
+void exportSerializationModelsStandardThermoModels(py::module& m);
 
-namespace Reaktoro {
-
-
-} // namespace YAML
+void exportSerializationModels(py::module& m)
+{
+    exportSerializationModelsReactionRateModels(m);
+    exportSerializationModelsStandardThermoModels(m);
+}

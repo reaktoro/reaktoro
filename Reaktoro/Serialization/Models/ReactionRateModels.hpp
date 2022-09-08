@@ -18,12 +18,16 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
-#include <Reaktoro/Common/YAML.hpp>
+#include <Reaktoro/Core/Data.hpp>
 
 namespace Reaktoro {
 
-REAKTORO_YAML_ENCODE_DECLARE(real);
-REAKTORO_YAML_DECODE_DECLARE(real);
+//======================================================================
+// ReactionRateModelParams Types
+//======================================================================
+struct ReactionRateModelParamsPalandriKharaka;
 
-} // namespace YAML
+REAKTORO_DATA_ENCODE_DECLARE(ReactionRateModelParamsPalandriKharaka);
+REAKTORO_DATA_DECODE_DECLARE(ReactionRateModelParamsPalandriKharaka);
+
+} // namespace Reaktoro

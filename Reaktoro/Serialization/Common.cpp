@@ -15,15 +15,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// pybind11 includes
-#include <Reaktoro/pybind11.hxx>
+#include "Common.hpp"
 
-// Reaktoro includes
-#include <Reaktoro/Serialization/Common.YAML.hpp>
-using namespace Reaktoro;
+namespace Reaktoro {
 
-void exportSerializationCommonYAML(py::module& m)
-{
-    // py::implicitly_convertible<yaml, real>();
-    // py::implicitly_convertible<real, yaml>();
-}
+} // namespace Reaktoro

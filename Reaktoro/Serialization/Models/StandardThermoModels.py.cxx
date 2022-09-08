@@ -19,24 +19,11 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelGemsLgK.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelPhreeqcLgK.hpp>
-#include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMineralHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelWaterHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModels/StandardVolumeModelConstant.hpp>
-#include <Reaktoro/Serialization/Models.Data.hpp>
+#include <Reaktoro/Models/StandardThermoModels.hpp>
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 using namespace Reaktoro;
 
-void exportSerializationModelsData(py::module& m)
+void exportSerializationModelsStandardThermoModels(py::module& m)
 {
     //======================================================================
     // StandardThermoModelParams Types
@@ -85,10 +72,4 @@ void exportSerializationModelsData(py::module& m)
     // //======================================================================
     py::implicitly_convertible<Data, StandardVolumeModelParamsConstant>();
     py::implicitly_convertible<StandardVolumeModelParamsConstant, Data>();
-
-    // //======================================================================
-    // // ReactionRateModelParams Types
-    // //======================================================================
-    py::implicitly_convertible<Data, ReactionRateModelParamsPalandriKharaka>();
-    py::implicitly_convertible<ReactionRateModelParamsPalandriKharaka, Data>();
 }
