@@ -100,9 +100,6 @@ public:
     /// Return this Data object as a float number.
     auto asFloat() const -> double;
 
-    /// Return this Data object as a real number.
-    auto asReal() const -> real const&;
-
     /// Return this Data object as a Param object.
     auto asParam() const -> Param const&;
 
@@ -120,6 +117,12 @@ public:
 
     /// Return true if this Data object is a string.
     auto isString() const -> bool;
+
+    /// Return true if this Data object is an integer number.
+    auto isInteger() const -> bool;
+
+    /// Return true if this Data object is a float number.
+    auto isFloat() const -> bool;
 
     /// Return true if this Data object is a Param object.
     auto isParam() const -> bool;
@@ -254,12 +257,13 @@ public:
     template<typename T>
     auto assign(T const& obj) -> void
     {
-        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>, Nullptr>)
+        if constexpr(isOneOf<T, bool, int, double, String, Param, Vec<Data>, Dict<String, Data>, Nullptr>)
             tree = obj;
-        else if constexpr(isArithmetic<T> || isSame<T, real>)
-            tree = Param(obj);
-        else
-        {
+        else if constexpr(Reaktoro::isInteger<T>)
+            tree = static_cast<int>(obj);
+        else if constexpr(isFloatingPoint<T> || isSame<T, real>)
+            tree = static_cast<double>(obj);
+        else {
             reset();
             Encode<T>::eval(*this, obj);
         }
@@ -281,12 +285,15 @@ public:
     template<typename T>
     auto as() const -> T
     {
-        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>>)
+        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>>) {
+            const bool convertable = std::any_cast<T>(&tree);
+            errorif(!convertable, "Could not convert from Data object to an object of type ", typeid(T).name(), " because this is not the type of the data stored nor it is convertible to that type.");
             return std::any_cast<T const&>(tree);
-        if constexpr(isSame<T, real>)
-            return asParam().value();
-        if constexpr(isInteger<T> || isFloatingPoint<T>)
-            return asParam().value().val();
+        }
+        if constexpr(Reaktoro::isInteger<T>)
+            return asInteger();
+        if constexpr(isFloatingPoint<T> || isSame<T, real>)
+            return asFloat();
         else {
             T obj;
             Decode<T>::eval(*this, obj);
