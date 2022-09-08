@@ -63,6 +63,9 @@ struct ChemicalSystem::Impl
     /// The stoichiometric matrix of the reactions in the system with respect to its species.
     MatrixXd stoichiometric_matrix;
 
+    /// The phase index pairs defining the kinetically controlled reacting interfaces in the system.
+    Pairs<Index, Index> reacting_phase_interfaces;
+
     /// Construct a default ChemicalSystem::Impl object.
     Impl()
     {}
@@ -84,6 +87,7 @@ struct ChemicalSystem::Impl
         elements = species.elements();
         formula_matrix = detail::assembleFormulaMatrix(species, elements);
         stoichiometric_matrix = detail::assembleStoichiometricMatrix(reactions, species);
+        reacting_phase_interfaces = detail::determineReactingPhaseInterfaces(reactions, phases);
 
         detail::fixDuplicateNames(phases);
         detail::fixDuplicateNames(species);
@@ -174,6 +178,11 @@ auto ChemicalSystem::formulaMatrixCharge() const -> MatrixXdConstRef
 auto ChemicalSystem::stoichiometricMatrix() const -> MatrixXdConstRef
 {
     return pimpl->stoichiometric_matrix;
+}
+
+auto ChemicalSystem::reactingPhaseInterfaces() const -> const Pairs<Index, Index>&
+{
+    return pimpl->reacting_phase_interfaces;
 }
 
 auto operator<<(std::ostream& out, const ChemicalSystem& system) -> std::ostream&
