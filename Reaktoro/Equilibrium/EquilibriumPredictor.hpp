@@ -51,11 +51,17 @@ public:
     /// @param conditions The conditons at which the chemical equilibrium state must be satisfied
     auto predict(ChemicalState& state, EquilibriumConditions const& conditions) const -> void;
 
+    /// Perform a first-order Taylor prediction of the chemical state at given conditions.
+    /// @param[out] state The predicted chemical equilibrium state
+    /// @param dw The change in the values of the input variables *w*.
+    /// @param dc The change in the values of the initial amounts of conservative components *c*.
+    auto predict(ChemicalState& state, VectorXdConstRef const& dw, VectorXdConstRef const& dc) const -> void;
+
     /// Perform a first-order Taylor prediction of the chemical potential of a species at given conditions.
-    auto predictSpeciesChemicalPotential(Index ispecies, EquilibriumConditions const& conditions) const -> double;
+    auto speciesChemicalPotentialPredicted(Index ispecies, VectorXdConstRef const& dw, VectorXdConstRef const& dc) const -> double;
 
     /// Return the chemical potential of a species at given reference conditions.
-    auto referenceSpeciesChemicalPotential(Index ispecies) const -> double;
+    auto speciesChemicalPotentialReference(Index ispecies) const -> double;
 
 private:
     struct Impl;

@@ -113,11 +113,10 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         conditions.temperature(330.0);
         conditions.pressure(1.1e5);
 
-        CHECK_THROWS( predictor.predict(state, conditions) ); // no initial amounts of components set in conditions!
+        const VectorXd w = conditions.inputValues();
+        const VectorXd c = conditions.initialComponentAmountsGetOrCompute(state);
 
-        conditions.setInitialComponentAmountsFromState(state);
-
-        CHECK_NOTHROW( predictor.predict(state, conditions) ); // initial amounts of components already set - all should be good!
+        predictor.predict(state, conditions);
 
         const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
@@ -136,28 +135,28 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd w0 = conditions0.inputValues();
         const VectorXd c0 = state0.equilibrium().c();
 
-        const VectorXd w  = conditions.inputValues();
-        const VectorXd c  = conditions.initialComponentAmounts();
+        const VectorXd dw = w - w0;
+        const VectorXd dc = c - c0;
 
-        const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
-        const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
-        const VectorXd q = q0 + dqdc0*(c - c0) + dqdw0*(w - w0);
-        const VectorXd u = u0 + dudc0*(c - c0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndc0*dc + dndw0*dw;
+        const VectorXd p = p0 + dpdc0*dc + dpdw0*dw;
+        const VectorXd q = q0 + dqdc0*dc + dqdw0*dw;
+        const VectorXd u = u0 + dudc0*dc + dudw0*dw;
 
         CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
         CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
         CHECK( u.isApprox(VectorXd(state.props())) );
 
-        // Check EquilibriumPredictor::predictSpeciesChemicalPotential and EquilibriumPredictor::referenceSpeciesChemicalPotential
+        // Check EquilibriumPredictor::speciesChemicalPotentialPredicted and EquilibriumPredictor::speciesChemicalPotentialReference
         ChemicalProps props0 = state0.props();
         ChemicalProps props(system);
         props.update(u);
 
         for(auto i = 0; i < n.size(); ++i)
         {
-            CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialReference(i) == props0.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == props.speciesChemicalPotential(i) );
         }
     }
 
@@ -187,18 +186,14 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         state.set("H2O" , 55.50, "mol");
         state.set("NaCl", 0.150, "mol"); // no O2 given here!
 
-        const VectorXd naux = state.speciesAmounts();
-        const VectorXd c = system.formulaMatrix() * naux;
-
         EquilibriumConditions conditions(specs);
         conditions.temperature(330.0);
         conditions.pressure(1.1e5);
 
-        CHECK_THROWS( predictor.predict(state, conditions) ); // no initial amounts of components set in conditions!
+        const VectorXd w = conditions.inputValues();
+        const VectorXd c = conditions.initialComponentAmountsGetOrCompute(state);
 
-        conditions.setInitialComponentAmountsFromState(state);
-
-        CHECK_NOTHROW( predictor.predict(state, conditions) ); // initial amounts of components already set - all should be good!
+        predictor.predict(state, conditions);
 
         // TODO: Organize tests for EquilibriumPredictor in a way to avoid repeated codes.
 
@@ -219,27 +214,28 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd w0 = conditions0.inputValues();
         const VectorXd c0 = state0.equilibrium().c();
 
-        const VectorXd w  = conditions.inputValues();
+        const VectorXd dw = w - w0;
+        const VectorXd dc = c - c0;
 
-        const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
-        const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
-        const VectorXd q = q0 + dqdc0*(c - c0) + dqdw0*(w - w0);
-        const VectorXd u = u0 + dudc0*(c - c0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndc0*dc + dndw0*dw;
+        const VectorXd p = p0 + dpdc0*dc + dpdw0*dw;
+        const VectorXd q = q0 + dqdc0*dc + dqdw0*dw;
+        const VectorXd u = u0 + dudc0*dc + dudw0*dw;
 
         CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
         CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
         CHECK( u.isApprox(VectorXd(state.props())) );
 
-        // Check EquilibriumPredictor::predictSpeciesChemicalPotential and EquilibriumPredictor::referenceSpeciesChemicalPotential
+        // Check EquilibriumPredictor::speciesChemicalPotentialPredicted and EquilibriumPredictor::speciesChemicalPotentialReference
         ChemicalProps props0 = state0.props();
         ChemicalProps props(system);
         props.update(u);
 
         for(auto i = 0; i < n.size(); ++i)
         {
-            CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialReference(i) == props0.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == props.speciesChemicalPotential(i) );
         }
     }
 
@@ -274,20 +270,16 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         state.set("H2O" , 55.5, "mol");
         state.set("NaCl", 0.15, "mol");
 
-        const VectorXd naux = state.speciesAmounts();
-        const VectorXd c = system.formulaMatrix() * naux;
-
         EquilibriumConditions conditions(specs);
         conditions.temperature(330.0);
         conditions.pressure(1.1e5);
         conditions.volume(2.1, "liter"); // H2O will be added as much as needed to fulfil this volume
         conditions.pH(4.2); // H+ will be added as much as needed to achieve this pH
 
-        CHECK_THROWS( predictor.predict(state, conditions) ); // no initial amounts of components set in conditions!
+        const VectorXd w = conditions.inputValues();
+        const VectorXd c = conditions.initialComponentAmountsGetOrCompute(state);
 
-        conditions.setInitialComponentAmountsFromState(state);
-
-        CHECK_NOTHROW( predictor.predict(state, conditions) ); // initial amounts of components already set - all should be good!
+        predictor.predict(state, conditions);
 
         const auto dndc0 = sensitivity0.dndc();
         const auto dndw0 = sensitivity0.dndw();
@@ -306,27 +298,28 @@ TEST_CASE("Testing EquilibriumPredictor", "[EquilibriumPredictor]")
         const VectorXd w0 = conditions0.inputValues();
         const VectorXd c0 = state0.equilibrium().c();
 
-        const VectorXd w  = conditions.inputValues();
+        const VectorXd dw = w - w0;
+        const VectorXd dc = c - c0;
 
-        const VectorXd n = n0 + dndc0*(c - c0) + dndw0*(w - w0);
-        const VectorXd p = p0 + dpdc0*(c - c0) + dpdw0*(w - w0);
-        const VectorXd q = q0 + dqdc0*(c - c0) + dqdw0*(w - w0);
-        const VectorXd u = u0 + dudc0*(c - c0) + dudw0*(w - w0);
+        const VectorXd n = n0 + dndc0*dc + dndw0*dw;
+        const VectorXd p = p0 + dpdc0*dc + dpdw0*dw;
+        const VectorXd q = q0 + dqdc0*dc + dqdw0*dw;
+        const VectorXd u = u0 + dudc0*dc + dudw0*dw;
 
         CHECK( n.isApprox(VectorXd(state.speciesAmounts())) );
         CHECK( p.isApprox(VectorXd(state.equilibrium().p())) );
         CHECK( q.isApprox(VectorXd(state.equilibrium().q())) );
         CHECK( u.isApprox(VectorXd(state.props())) );
 
-        // Check EquilibriumPredictor::predictSpeciesChemicalPotential and EquilibriumPredictor::referenceSpeciesChemicalPotential
+        // Check EquilibriumPredictor::speciesChemicalPotentialPredicted and EquilibriumPredictor::speciesChemicalPotentialReference
         ChemicalProps props0 = state0.props();
         ChemicalProps props(system);
         props.update(u);
 
         for(auto i = 0; i < n.size(); ++i)
         {
-            CHECK( predictor.referenceSpeciesChemicalPotential(i) == props0.speciesChemicalPotential(i) );
-            CHECK( predictor.predictSpeciesChemicalPotential(i, conditions) == props.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialReference(i) == props0.speciesChemicalPotential(i) );
+            CHECK( predictor.speciesChemicalPotentialPredicted(i, dw, dc) == props.speciesChemicalPotential(i) );
         }
     }
 }
