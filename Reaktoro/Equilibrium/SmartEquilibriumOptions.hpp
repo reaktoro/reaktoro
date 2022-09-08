@@ -40,10 +40,10 @@ struct SmartEquilibriumOptions
     double reltol_negative_amounts = -1.0e-14;
 
     /// The relative tolerance used in the acceptance test for the predicted chemical equilibrium state.
-    double reltol = 1.0e-3;
+    double reltol = 1.0e-2;
 
     /// The absolute tolerance used in the acceptance test for the predicted chemical equilibrium state.
-    double abstol = 0.0;
+    double abstol = 1.0e-2;
 };
 
 } // namespace Reaktoro
