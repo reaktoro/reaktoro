@@ -225,7 +225,7 @@ SpeciesList::operator const Vec<Species>&() const
     return m_species;
 }
 
-auto operator+(const SpeciesList &a, const SpeciesList &b) -> SpeciesList
+auto operator+(const SpeciesList& a, const SpeciesList& b) -> SpeciesList
 {
     return concatenate(a, b);
 }

@@ -253,7 +253,7 @@ PhaseList::operator Vec<Phase>const&() const
     return m_phases;
 }
 
-auto operator+(const PhaseList &a, const PhaseList &b) -> PhaseList
+auto operator+(const PhaseList& a, const PhaseList& b) -> PhaseList
 {
     return concatenate(a, b);
 }
