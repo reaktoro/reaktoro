@@ -79,8 +79,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 217.568,
           "Vr": 0.000103,
           "a": 339.02952,
@@ -367,8 +367,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 14.14192,
           "Vr": 8.309e-06,
           "a": 35.3548,
@@ -457,8 +457,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 313.3816,
           "Vr": 0.0001571,
           "a": 335.766,
@@ -511,8 +511,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 639.7336,
           "Vr": 0.00024776,
           "a": 610.864,
@@ -565,8 +565,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 176.1464,
           "Vr": 6.98e-05,
           "a": 253.67592,
@@ -781,8 +781,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 533.46,
           "Vr": 0.0002719,
           "a": 775.04416,
@@ -853,8 +853,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 197.0664,
           "Vr": 9.93e-05,
           "a": 304.46968,
@@ -1069,8 +1069,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 336.30992,
           "Vr": 0.00014637,
           "a": 402.20792,
@@ -1087,8 +1087,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 541.4096,
           "Vr": 0.00027045,
           "a": 768.76816,
@@ -1177,8 +1177,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 543.92,
           "Vr": 0.0002697,
           "a": 796.04784,
@@ -1285,8 +1285,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 683.2472,
           "Vr": 0.00025667,
           "a": 831.90472,
@@ -1321,8 +1321,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 203.00768,
           "Vr": 9.93e-05,
           "a": 304.46968,
@@ -1501,8 +1501,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 922.1536,
           "Vr": 0.00040786,
           "a": 983.24,
@@ -1663,8 +1663,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 349.364,
           "Vr": 0.00014786,
           "a": 369.48904,
@@ -2059,8 +2059,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 575.7184,
           "Vr": 0.0002728,
           "a": 815.0432,
@@ -2347,8 +2347,8 @@
       "AggregateState": "Solid",
       "StandardThermoModel": {
         "MaierKelley": {
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 489.9464,
           "Vr": 0.0002244,
           "a": 866.59008,
@@ -2646,8 +2646,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 316.3104,
           "Vr": 0.00011528,
           "a": [408.02368, 448.06456],
@@ -2669,8 +2669,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 455.6376,
           "Vr": 0.0002054,
           "a": [722.11656, 708.7696],
@@ -2784,8 +2784,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 581.1576,
           "Vr": 0.0002212,
           "a": [721.86552, 735.21248],
@@ -2807,8 +2807,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 673.624,
           "Vr": 0.000271,
           "a": [835.58664, 848.9336],
@@ -2830,8 +2830,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 639.7336,
           "Vr": 0.00026756,
           "a": [657.05536, 683.74928],
@@ -2853,8 +2853,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 810.4408,
           "Vr": 0.0002809,
           "a": [876.21328, 889.56024],
@@ -2899,8 +2899,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 613.7928,
           "Vr": 0.0002725,
           "a": [816.84232, 830.18928],
@@ -2922,8 +2922,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 763.1616,
           "Vr": 0.00031637,
           "a": [751.69744, 791.73832],
@@ -3037,8 +3037,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 425.0944,
           "Vr": 0.00016972,
           "a": [400.65984, 387.31288],
@@ -3106,8 +3106,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 697.0544,
           "Vr": 0.000265,
           "a": [610.11088, 623.45784],
@@ -3129,8 +3129,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 720.0664,
           "Vr": 0.000265,
           "a": [638.72944, 652.0764],
@@ -3152,8 +3152,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 721.3216,
           "Vr": 0.000265,
           "a": [637.6416, 650.98856],
@@ -3198,8 +3198,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 260.6632,
           "Vr": 0.00011327,
           "a": [383.63096, 423.67184],
@@ -3290,8 +3290,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 311.708,
           "Vr": 0.0001179,
           "a": [395.30432, 435.3452],
@@ -3313,8 +3313,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 1,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 1670.6712,
           "Vr": 0.00064991,
           "a": [1634.0612, 1674.1021],
@@ -3382,8 +3382,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 153.5528,
           "Vr": 6.437e-05,
           "a": [193.13344, 219.32528, 210.32968],
@@ -3520,8 +3520,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 307.524,
           "Vr": 0.0001109,
           "a": [354.76136, 407.1032, 389.15384],
@@ -3566,8 +3566,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 642.244,
           "Vr": 0.0002659,
           "a": [821.19368, 856.4648, 860.60696],
@@ -3589,8 +3589,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 791.6128,
           "Vr": 0.0002803,
           "a": [885.20888, 911.35888, 902.40512],
@@ -3635,8 +3635,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 127.612,
           "Vr": 5.16e-05,
           "a": [145.89608, 134.55744, 205.016],
@@ -3658,8 +3658,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 685.3392,
           "Vr": 0.0002738,
           "a": [852.6992, 878.89104, 869.89544],
@@ -3681,8 +3681,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 577.392,
           "Vr": 0.0002713,
           "a": [779.31184, 831.65368, 813.70432],
@@ -3727,8 +3727,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 2,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 655.2144,
           "Vr": 0.0002749,
           "a": [803.70456, 856.0464, 838.09704],
@@ -3796,8 +3796,8 @@
       "StandardThermoModel": {
         "MineralHKF": {
           "ntr": 3,
-          "Gf": NaN,
-          "Hf": NaN,
+          "Gf": null,
+          "Hf": null,
           "Sr": 286.604,
           "Vr": 0.0001432,
           "a": [369.61456, 409.65544, 488.18912, 461.24416],

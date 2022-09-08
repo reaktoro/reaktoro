@@ -16586,13 +16586,13 @@
           "Gf": -507402.0,
           "Hf": 4183996.0,
           "Sr": 4183.996,
-          "a1": NaN,
-          "a2": NaN,
-          "a3": NaN,
-          "a4": NaN,
-          "c1": NaN,
-          "c2": NaN,
-          "wref": NaN,
+          "a1": null,
+          "a2": null,
+          "a3": null,
+          "a4": null,
+          "c1": null,
+          "c2": null,
+          "wref": null,
           "charge": -2.0
         }
       }
@@ -16608,13 +16608,13 @@
           "Gf": -421802.0,
           "Hf": 4183996.0,
           "Sr": 4183.996,
-          "a1": NaN,
-          "a2": NaN,
-          "a3": NaN,
-          "a4": NaN,
-          "c1": NaN,
-          "c2": NaN,
-          "wref": NaN,
+          "a1": null,
+          "a2": null,
+          "a3": null,
+          "a4": null,
+          "c1": null,
+          "c2": null,
+          "wref": null,
           "charge": -3.0
         }
       }
@@ -16630,13 +16630,13 @@
           "Gf": -125599.0,
           "Hf": 4183996.0,
           "Sr": 4183.996,
-          "a1": NaN,
-          "a2": NaN,
-          "a3": NaN,
-          "a4": NaN,
-          "c1": NaN,
-          "c2": NaN,
-          "wref": NaN,
+          "a1": null,
+          "a2": null,
+          "a3": null,
+          "a4": null,
+          "c1": null,
+          "c2": null,
+          "wref": null,
           "charge": -1.0
         }
       }
