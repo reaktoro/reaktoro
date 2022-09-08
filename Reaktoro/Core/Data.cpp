@@ -40,7 +40,7 @@ namespace {
 /// Check if string `str` is a number.
 /// @param str The string being checked
 /// @param[out] result The number in `str` as a double value if it is indeed a number.
-bool isFloat(String const& str, double& result)
+bool isNumber(String const& str, double& result)
 {
     auto const& newstr = lowercase(str);
     if(oneof(newstr, ".nan"))
@@ -79,10 +79,9 @@ auto convertYamlScalarToData(yaml const& obj) -> Data
 {
     auto const& word = obj.Scalar();
     auto number = 0.0;
-    if(isFloat(word, number))
+    if(isNumber(word, number))
         return Param(number);
-    else
-    {
+    else {
         if(word == "true" || word == "True")
             return true;
         if(word == "false" || word == "False")
@@ -103,7 +102,24 @@ auto convertYamlMapToData(yaml const& obj) -> Data
 {
     Data result;
     for(auto const& child : obj)
-        result.add(child.first.as<String>(), convertYamlToData(child.second));
+    {
+        const auto key = child.first.as<String>();
+        if(key.size() > 2 && key.substr(key.size() - 2) == "|i")
+        {
+            int num = 0;
+            try { num = child.second.as<int>(); }
+            catch(...) errorif(true, "Expecting an integer value for key-value pair with key `", key, "` because it ends with `|i`.");
+            result.add(key, num);
+        }
+        else if(key.size() > 2 && key.substr(key.size() - 2) == "|f")
+        {
+            double num = 0;
+            try { num = child.second.as<double>(); }
+            catch(...) errorif(true, "Expecting a floating-point value for key-value pair with key `", key, "` because it ends with `|f`.");
+            result.add(key, num);
+        }
+        else result.add(key, convertYamlToData(child.second));
+    }
     return result;
 }
 
@@ -132,7 +148,23 @@ auto convertJsonObjectToData(json const& obj) -> Data
 {
     Data result;
     for(auto const& [key, value] : obj.items())
-        result.add(key, convertJsonToData(value));
+    {
+        if(key.size() > 2 && key.substr(key.length() - 2) == "|i")
+        {
+            int num = 0;
+            try { num = value.get<int>(); }
+            catch(...) errorif(true, "Expecting an integer value for key-value pair with key `", key, "` because it ends with `|i`.");
+            result.add(key, num);
+        }
+        else if(key.size() > 2 && key.substr(key.length() - 2) == "|f")
+        {
+            double num = 0;
+            try { num = value.get<double>(); }
+            catch(...) errorif(true, "Expecting a floating-point value for key-value pair with key `", key, "` because it ends with `|f`.");
+            result.add(key, num);
+        }
+        else result.add(key, convertJsonToData(value));
+    }
     return result;
 }
 
@@ -153,9 +185,9 @@ auto convertJsonToData(json const& obj) -> Data
         case json::value_t::array: return convertJsonArrayToData(obj);
         case json::value_t::string: return obj.get<String>();
         case json::value_t::boolean: return obj.get<bool>();
-        case json::value_t::number_integer: return obj.get<int>();
-        case json::value_t::number_unsigned: return obj.get<int>();
-        case json::value_t::number_float: return obj.get<double>();
+        case json::value_t::number_integer: return Param(obj.get<int>());
+        case json::value_t::number_unsigned: return Param(obj.get<int>());
+        case json::value_t::number_float: return Param(obj.get<double>());
     }
 
     errorif(true, "Could not convert JSON node to Data object: ", obj.dump());
@@ -196,6 +228,8 @@ auto convertDataTo(Data const& data) -> Format
     if(data.isNull()) return Format();
     if(data.isBoolean()) return Format(data.asBoolean());
     if(data.isString()) return Format(data.asString());
+    if(data.isInteger()) return Format(data.asInteger());
+    if(data.isFloat()) return Format(data.asFloat());
     if(data.isParam()) return Format(data.asFloat());
     if(data.isDict()) return convertDataDictTo<Format>(data);
     if(data.isList()) return convertDataListTo<Format>(data);
@@ -331,7 +365,6 @@ auto Data::loadJson(String const& path) -> Data
     return convertJsonToData(doc);
 }
 
-
 auto Data::asString() const -> String const&
 {
     errorif(!isString(), "Cannot convert this Data object to a String.");
@@ -346,23 +379,24 @@ auto Data::asBoolean() const -> bool
 
 auto Data::asInteger() const -> int
 {
+    if(isInteger())
+        return std::any_cast<int const&>(tree);
+    if(isFloat())
+        return std::any_cast<double const&>(tree);
     if(isParam())
         return std::any_cast<Param const&>(tree).value().val();
-    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be a Param object.");
+    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be either an integer, a float, or a Param object.");
 }
 
 auto Data::asFloat() const -> double
 {
+    if(isInteger())
+        return std::any_cast<int const&>(tree);
+    if(isFloat())
+        return std::any_cast<double const&>(tree);
     if(isParam())
         return std::any_cast<Param const&>(tree).value().val();
-    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be a Param object.");
-}
-
-auto Data::asReal() const -> real const&
-{
-    if(isParam())
-        return std::any_cast<Param const&>(tree).value();
-    else errorif(true, "Cannot convert this Data object to a real number. This Data object should be a Param object.");
+    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be either an integer, a float, or a Param object.");
 }
 
 auto Data::asParam() const -> Param const&
@@ -397,6 +431,16 @@ auto Data::isBoolean() const -> bool
 auto Data::isString() const -> bool
 {
     return std::any_cast<String>(&tree);
+}
+
+auto Data::isInteger() const -> bool
+{
+    return std::any_cast<int>(&tree);
+}
+
+auto Data::isFloat() const -> bool
+{
+    return std::any_cast<double>(&tree);
 }
 
 auto Data::isParam() const -> bool
@@ -533,7 +577,7 @@ auto Data::dumpYaml() const -> String
 auto Data::dumpJson() const -> String
 {
     json doc = convertDataToJson(*this);
-    return doc.dump();
+    return doc.dump(2); // indent=2
 }
 
 auto Data::repr() const -> String
