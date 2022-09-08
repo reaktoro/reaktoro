@@ -33,10 +33,19 @@ struct SmartEquilibriumResult
 /// @see ChemicalState
 struct EquilibriumResult
 {
+    /// Return true if the calculation succeeded.
+    auto succeeded() { return optima.succeeded; };
+
+    /// Return true if the calculation failed.
+    auto failed() { return !optima.succeeded; };
+
+    /// Return the number of iterations in the calculation.
+    auto iterations() { return optima.iterations; };
+
     /// The result of the optimisation calculation using Optima.
     Optima::Result optima;
 
-    /// The boolean flag that indicates if smart equilibrium calculation was used.
+    /// The result of the smart equilibrium calculation.
     SmartEquilibriumResult smart;
 
     /// Apply an addition assignment to this instance

@@ -20,6 +20,17 @@ from reaktoro import *
 import pytest
 
 
-# TODO Implement tests for the python bindings of component EquilibriumResult in EquilibriumResult[test].py
 def testEquilibriumResult():
-    pass
+
+    result = EquilibriumResult()
+
+    assert result.succeeded() == False
+    assert result.failed() == True
+    assert result.iterations() == 0
+
+    result.optima.succeeded = True
+    result.optima.iterations = 23
+
+    assert result.succeeded() == True
+    assert result.failed() == False
+    assert result.iterations() == 23
