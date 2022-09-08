@@ -270,11 +270,11 @@ public:
     /// @param unit The unit of the surface area (must be convertible to m2).
     auto setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void;
 
-    /// Set the surface area between two phases with given surface index.
-    /// @param isurface The index of the surface.
+    /// Set the surface area between two phases with given surface name or index.
+    /// @param surface The name or index of the surface.
     /// @param value The surface area between these two phases.
     /// @param unit The unit of the surface area (must be convertible to m2).
-    auto setSurfaceArea(Index isurface, real value, Chars unit) -> void;
+    auto setSurfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void;
 
     /// Set the surface area between two phases.
     /// @param phase1 The name or index of a phase.
@@ -284,22 +284,24 @@ public:
     /// @note This method is equivalent to ChemicalState::setSurfaceArea
     auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void;
 
+    /// Set the surface area between two phases with given surface name or index.
+    /// @param surface The name or index of the surface.
+    /// @param value The surface area between these two phases.
+    /// @param unit The unit of the surface area (must be convertible to m2).
+    auto surfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void;
+
     /// Return the surface area of the interface between two reacting phases (in m2).
     /// @param phase1 The name or index of a phase.
     /// @param phase2 The name or index of the phase interfacing with the previous one.
     /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
     auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real;
 
-    /// Return the surface area of the interface between two reacting phases with given surface index (in m2).
-    /// @param isurface The index of the surface between two phases.
-    auto surfaceArea(Index isurface) const -> real;
+    /// Return the surface area of the interface between two reacting phases with given surface name or index (in m2).
+    /// @param surface The name or index of the surface between two phases.
+    auto surfaceArea(StringOrIndex const& surface) const -> real;
 
     /// Return the areas of all reacting phase interfaces in the system (in m2).
     auto surfaceAreas() const -> ArrayXrConstRef;
-
-    /// Return the phase pairs for which the surface area has been defined.
-    /// @see surfaceArea, setSurfaceArea
-    auto surfaces() const -> const Pairs<Index, Index>&;
 
     // --------------------------------------------------------------------------------------------
     // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
