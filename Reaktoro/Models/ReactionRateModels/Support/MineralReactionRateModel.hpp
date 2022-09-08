@@ -31,9 +31,6 @@ namespace Reaktoro {
 /// The data available for the evaluation of a mineral reaction rate.
 struct MineralReactionRateModelArgs
 {
-    /// The state of the chemical system.
-    ChemicalState const& state;
-
     /// The properties of the chemical system.
     ChemicalProps const& props;
 

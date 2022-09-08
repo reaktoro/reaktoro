@@ -48,19 +48,19 @@ public:
     auto withName(String name) const -> Reaction;
 
     /// Return a duplicate of this Reaction object with new reaction equation.
-    auto withEquation(const ReactionEquation& equation) const -> Reaction;
+    auto withEquation(ReactionEquation const& equation) const -> Reaction;
 
     /// Return a duplicate of this Reaction object with new reaction rate model.
-    auto withRateModel(const ReactionRateModel& model) const -> Reaction;
+    auto withRateModel(ReactionRateModel const& model) const -> Reaction;
 
     /// Return the name of the reaction.
     auto name() const -> String;
 
     /// Return the equation of the reaction.
-    auto equation() const -> const ReactionEquation&;
+    auto equation() const -> ReactionEquation const&;
 
     /// Return the rate model of the reaction.
-    auto rateModel() const -> const ReactionRateModel&;
+    auto rateModel() const -> ReactionRateModel const&;
 
     /// Calculate the complete set of thermodynamic properties of the reaction.
     /// @param T The temperature for the calculation (in K)
@@ -74,11 +74,8 @@ public:
     /// @param unitP The pressure unit for the calculation
     auto props(real T, Chars unitT, real P, Chars unitP) const -> ReactionThermoProps;
 
-    /// Calculate the rate of the reaction for given chemical state.
-    /// @attention Make sure `state` has updated chemical properties before
-    /// using it to evaluate reaction rates. If this is not the case,
-    /// ensure `state.props().update(state)` is executed before (only once).
-    auto rate(ChemicalState const& state) const -> real;
+    /// Calculate the rate of the reaction for given chemical properties of the system.
+    auto rate(ChemicalProps const& props) const -> real;
 
 private:
     struct Impl;
@@ -87,9 +84,9 @@ private:
 };
 
 /// Compare two Reaction instances for less than
-auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool;
+auto operator<(Reaction const& lhs, Reaction const& rhs) -> bool;
 
 /// Compare two Reaction instances for equality
-auto operator==(const Reaction& lhs, const Reaction& rhs) -> bool;
+auto operator==(Reaction const& lhs, Reaction const& rhs) -> bool;
 
 } // namespace Reaktoro
