@@ -100,4 +100,7 @@ using Optional = std::optional<T>;
 /// Convenient alias for `std::any`.
 using Any = std::any;
 
+/// Convenient alias for `std::nullptr_t`.
+using Nullptr = std::nullptr_t;
+
 } // namespace Reaktoro
