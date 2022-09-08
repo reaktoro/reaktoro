@@ -46,13 +46,13 @@ struct ReactionStandardThermoProps
 struct ReactionStandardThermoModelArgs
 {
     /// The temperature for the calculation (in K)
-    const real& T;
+    real const& T;
 
     /// The pressure for the calculation (in Pa)
-    const real& P;
+    real const& P;
 
     /// The standard molar volume change @f$\Delta V^{\circ}@f$ of the reaction (in J/mol).
-    const real& dV0;
+    real const& dV0;
 };
 
 /// The function type for calculation of standard thermodynamic properties of a reaction.
