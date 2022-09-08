@@ -741,19 +741,19 @@ public:
     auto isSurfaceAreaUnknown(StringOrIndex const& surface) const -> bool;
 
     /// Return the index of temperature in the vector of *w* input variables if it is an input, otherwise `Index(-1)` if unknown.
-    auto indexTemperatureAmongInputVariablesW() const -> Index;
+    auto indexTemperatureAmongInputVariables() const -> Index;
 
     /// Return the index of temperature in the vector of *p* control variables if it is unknown, otherwise `Index(-1)` if known.
     auto indexTemperatureAmongControlVariablesP() const -> Index;
 
     /// Return the index of pressure in the vector of *w* input variables if it is an input, otherwise `Index(-1)` if unknown.
-    auto indexPressureAmongInputVariablesW() const -> Index;
+    auto indexPressureAmongInputVariables() const -> Index;
 
     /// Return the index of pressure in the vector of *p* control variables if it is unknown, otherwise `Index(-1)` if known.
     auto indexPressureAmongControlVariablesP() const -> Index;
 
     /// Return the indices of surface areas in the vector of *w* input variables.
-    auto indicesSurfaceAreasAmongInputVariablesW() const -> Indices;
+    auto indicesSurfaceAreasAmongInputVariables() const -> Indices;
 
     /// Return the indices of surface areas in the vector of *p* control variables.
     auto indicesSurfaceAreasAmongControlVariablesP() const -> Indices;
@@ -765,13 +765,13 @@ public:
     auto indicesSurfaceAreasUnknown() const -> Indices;
 
     /// Return the index of a *w* input variable with given name if found, otherwise the number of *w* input variables.
-    auto indexInputVariable(String const& name) -> Index;
+    auto indexInputVariable(String const& name) const -> Index;
 
     /// Return the index of a *p* control variable with given name if found, otherwise the number of *p* control variables.
-    auto indexControlVariableP(String const& name) -> Index;
+    auto indexControlVariableP(String const& name) const -> Index;
 
     /// Return the index of a *q* control variable with given name if found, otherwise the number of *q* control variables.
-    auto indexControlVariableQ(String const& name) -> Index;
+    auto indexControlVariableQ(String const& name) const -> Index;
 
     /// Return the *q* control variables in the chemical equilibrium specifications.
     auto controlVariablesQ() const -> const Vec<ControlVariableQ>&;
