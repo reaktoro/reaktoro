@@ -75,6 +75,8 @@ void exportChemicalState(py::module& m)
         .def("scaleFluidMass", &ChemicalState::scaleFluidMass)
         .def("scaleSolidMass", &ChemicalState::scaleSolidMass)
 
+        .def("setSurfaceAreas", [](ChemicalState& s, ArrayXrConstRef vals) { s.setSurfaceAreas(vals); })
+        .def("setSurfaceAreas", [](ChemicalState& s, const py::array_t<double>& vals) { s.setSurfaceAreas(ArrayXd::Map(vals.data(), vals.size())); })
         .def("setSurfaceArea", py::overload_cast<const StringOrIndex&, const StringOrIndex&, real, Chars>(&ChemicalState::setSurfaceArea))
         .def("setSurfaceArea", py::overload_cast<Index, real, Chars>(&ChemicalState::setSurfaceArea))
         .def("surfaceArea", py::overload_cast<const StringOrIndex&, const StringOrIndex&, real, Chars>(&ChemicalState::surfaceArea))
@@ -82,8 +84,11 @@ void exportChemicalState(py::module& m)
         .def("surfaceArea", py::overload_cast<Index>(&ChemicalState::surfaceArea, py::const_))
         .def("surfaceAreas", &ChemicalState::surfaceAreas, return_internal_ref)
 
-        .def("update", &ChemicalState::update)
-        .def("updateIdeal", &ChemicalState::updateIdeal)
+        .def("update", py::overload_cast<real const&, real const&, ArrayXrConstRef>(&ChemicalState::update))
+        .def("update", py::overload_cast<real const&, real const&, ArrayXrConstRef, ArrayXrConstRef>(&ChemicalState::update))
+
+        .def("updateIdeal", py::overload_cast<real const&, real const&, ArrayXrConstRef>(&ChemicalState::updateIdeal))
+        .def("updateIdeal", py::overload_cast<real const&, real const&, ArrayXrConstRef, ArrayXrConstRef>(&ChemicalState::updateIdeal))
 
         .def("system", &ChemicalState::system, return_internal_ref)
         .def("props", py::overload_cast<>(&ChemicalState::props, py::const_), return_internal_ref)
