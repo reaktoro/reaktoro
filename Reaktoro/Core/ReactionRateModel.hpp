@@ -18,7 +18,7 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/Model.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Rate.hpp>
@@ -27,7 +27,7 @@
 namespace Reaktoro {
 
 /// The type of functions that calculate reaction rates.
-using ReactionRateModel = Model<Rate(ChemicalProps const&)>;
+using ReactionRateModel = Model<Rate(ChemicalState const&)>;
 
 /// The type of functions that construct a ReactionRateModel for a reaction.
 /// @param reaction The reaction for which the reaction rate model is constructed.
@@ -45,27 +45,32 @@ namespace Reaktoro {
 template<typename T>
 struct MemoizationTraits;
 
-/// Specialize MemoizationTraits for ChemicalProps.
+/// Specialize MemoizationTraits for ChemicalState.
 template<>
-struct MemoizationTraits<ChemicalProps>
+struct MemoizationTraits<ChemicalState>
 {
-    using Type = ChemicalProps;
+    using Type = ChemicalState;
 
-    /// The type used instead to cache a ChemicalProps object.
-    using CacheType = Tuple<real, real, ArrayXr>;
+    /// The type used instead to cache a ChemicalState object.
+    using CacheType = Tuple<real, real, ArrayXr, ArrayXr>;
 
-    static auto equal(const Tuple<real, real, ArrayXr>& a, const ChemicalProps& b)
+    static auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
     {
-        auto const& [T, P, n] = a;
-        return T == b.temperature() && P == b.pressure() && (n == b.speciesAmounts()).all();
+        auto const& [T, P, n, S] = a;
+        return
+            T == b.temperature() &&
+            P == b.pressure() &&
+            (n == b.speciesAmounts()).all() &&
+            (S == b.surfaceAreas()).all();
     }
 
-    static auto assign(Tuple<real, real, ArrayXr>& a, const ChemicalProps& b)
+    static auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, const ChemicalState& b)
     {
-        auto& [T, P, n] = a;
+        auto& [T, P, n, S] = a;
         T = b.temperature();
         P = b.pressure();
         n = b.speciesAmounts();
+        S = b.surfaceAreas();
     }
 };
 
