@@ -28,11 +28,8 @@ struct Surface::Impl
     /// The unique name of the surface.
     String name;
 
-    /// The 1st phase composing this surface.
-    Phase phase1;
-
-    /// The 2nd phase composing this surface.
-    Phase phase2;
+    /// The names of the phases composing this surface.
+    Pair<String, String> phases;
 
     /// Construct a default Surface::Impl object.
     Impl()
@@ -49,6 +46,13 @@ Surface::Surface(String const& name)
     pimpl->name = name;
 }
 
+Surface::Surface(String const& name, String const& phase1, String const& phase2)
+: Surface()
+{
+    pimpl->name = name;
+    pimpl->phases = {phase1, phase2};
+}
+
 auto Surface::clone() const -> Surface
 {
     Surface surface;
@@ -63,11 +67,10 @@ auto Surface::withName(String const& name) const -> Surface
     return copy;
 }
 
-auto Surface::withPhases(Phase const& phase1, Phase const& phase2) const -> Surface
+auto Surface::withPhases(String const& phase1, String const& phase2) const -> Surface
 {
     Surface copy = clone();
-    copy.pimpl->phase1 = phase1;
-    copy.pimpl->phase2 = phase2;
+    copy.pimpl->phases = {phase1, phase2};
     return copy;
 }
 
@@ -76,9 +79,22 @@ auto Surface::name() const -> String
     return pimpl->name;
 }
 
-auto Surface::phases() const -> Pair<Phase const&, Phase const&>
+auto Surface::phases() const -> Pair<String, String> const&
 {
-    return {pimpl->phase1, pimpl->phase2};
+    return pimpl->phases;
+}
+
+auto Surface::equivalent(Surface const& another) const -> bool
+{
+    auto const& [phase1, phase2] = phases();
+    auto const& [other1, other2] = another.phases();
+    return (phase1 == other1 && phase2 == other2) || (phase1 == other2 && phase2 == other1);
+}
+
+auto Surface::equivalent(String const& otherphase1, String const& otherphase2) const -> bool
+{
+    auto const& [phase1, phase2] = phases();
+    return (phase1 == otherphase1 && phase2 == otherphase2) || (phase1 == otherphase2 && phase2 == otherphase1);
 }
 
 auto operator<(const Surface& lhs, const Surface& rhs) -> bool
