@@ -288,7 +288,7 @@ public:
     /// Construct a Phases object with given database and generic phases.
     /// @param db The database used to construct the species and elements in the phases.
     /// @param gphases The generic phases that will be converted into Phase objects.
-    template<typename... GenericPhases>
+    template<typename... GenericPhases, EnableIf<areGenericPhases<GenericPhases...>>...>
     Phases(const Database& db, const GenericPhases&... gphases)
     : Phases(db)
     {
