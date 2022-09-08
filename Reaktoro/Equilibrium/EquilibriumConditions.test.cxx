@@ -354,10 +354,10 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         WHEN("using setInitialComponentAmounts")
         {
-            const ArrayXr b0  = ArrayXr::Random(Nb).cwiseAbs();
-            const ArrayXr xi0 = ArrayXr::Random(2).cwiseAbs(); // two reactivity constraints
+            const ArrayXd b0  = ArrayXd::Random(Nb).cwiseAbs();
+            const ArrayXd xi0 = ArrayXd::Random(2).cwiseAbs(); // two reactivity constraints
 
-            ArrayXr c0(Nb + 2);
+            ArrayXd c0(Nb + 2);
             c0 << b0, xi0;
 
             CHECK_NOTHROW( conditions.setInitialComponentAmounts(c0) );
@@ -366,8 +366,8 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         WHEN("using setInitialComponentAmountsFromSpeciesAmounts")
         {
-            const ArrayXr n0 = ArrayXr::Random(Nn).cwiseAbs();
-            const ArrayXr c0 = conditions.initialComponentAmountsGetOrCompute(n0);
+            const ArrayXd n0 = ArrayXd::Random(Nn).cwiseAbs();
+            const ArrayXd c0 = conditions.initialComponentAmountsGetOrCompute(n0);
 
             CHECK_NOTHROW( conditions.setInitialComponentAmountsFromSpeciesAmounts(n0) );
             CHECK( conditions.initialComponentAmounts().isApprox(c0) );
@@ -375,8 +375,8 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         WHEN("using setInitialComponentAmountsFromState")
         {
-            const ArrayXr n0 = ArrayXr::Random(Nn).cwiseAbs();
-            const ArrayXr c0 = conditions.initialComponentAmountsGetOrCompute(n0);
+            const ArrayXd n0 = ArrayXd::Random(Nn).cwiseAbs();
+            const ArrayXd c0 = conditions.initialComponentAmountsGetOrCompute(n0);
 
             ChemicalState state0(system);
             state0.setSpeciesAmounts(n0);
