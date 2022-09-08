@@ -30,9 +30,9 @@ using namespace Catch;
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
-#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Models/StandardVolumeModels/StandardVolumeModelConstant.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>

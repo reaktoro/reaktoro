@@ -23,7 +23,7 @@
 #include <Reaktoro/Common/YAML.hpp>
 #include <Reaktoro/Core/Database.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 #include <Reaktoro/Serialization/Core.YAML.hpp>
 #include <Reaktoro/Serialization/Models.YAML.hpp>

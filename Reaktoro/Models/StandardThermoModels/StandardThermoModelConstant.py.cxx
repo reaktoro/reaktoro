@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 using namespace Reaktoro;
 
 void exportStandardThermoModelConstant(py::module& m)

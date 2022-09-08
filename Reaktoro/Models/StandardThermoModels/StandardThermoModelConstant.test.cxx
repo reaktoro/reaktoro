@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing StandardThermoModelConstant class", "[StandardThermoModelConstant]")

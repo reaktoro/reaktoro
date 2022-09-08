@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelNasa.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
 using namespace Reaktoro;
 
 void exportStandardThermoModelNasa(py::module& m)

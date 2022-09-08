@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelMaierKelley.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelMaierKelley.hpp>
 using namespace Reaktoro;
 
 void exportStandardThermoModelMaierKelley(py::module& m)

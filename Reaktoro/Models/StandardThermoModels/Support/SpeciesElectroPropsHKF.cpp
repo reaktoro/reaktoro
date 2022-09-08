@@ -26,8 +26,8 @@ using std::pow;
 // Reaktoro includes
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Models/StandardThermoModelHKF.hpp>
-#include <Reaktoro/Models/Support/SpeciesElectroProps.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
+#include <Reaktoro/Models/StandardThermoModels/Support/SpeciesElectroProps.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
 

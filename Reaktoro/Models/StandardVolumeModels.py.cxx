@@ -15,20 +15,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+// pybind11 includes
+#include <Reaktoro/pybind11.hxx>
 
-#include <Reaktoro/Common.hpp>
-#include <Reaktoro/Core.hpp>
-#include <Reaktoro/Equilibrium.hpp>
-#include <Reaktoro/Extensions.hpp>
-#include <Reaktoro/Kinetics.hpp>
-#include <Reaktoro/Math.hpp>
-#include <Reaktoro/Models.hpp>
-#include <Reaktoro/Singletons.hpp>
-#include <Reaktoro/Transport.hpp>
-#include <Reaktoro/Utils.hpp>
+void exportStandardVolumeModelConstant(py::module &m);
 
-/// The namespace containing all components of the Reaktoro library.
-namespace Reaktoro {
-
-} // namespace Reaktoro
+void exportStandardVolumeModels(py::module& m)
+{
+    exportStandardVolumeModelConstant(m);
+}

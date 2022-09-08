@@ -20,7 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Models/StandardThermoModelNasa.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelNasa.hpp>
 using namespace Reaktoro;
 
 /// Manufacture coefficients a1, a2, ..., a7, b1, b2 in NasaThermoData object.

@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelInterpolation.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>
 using namespace Reaktoro;
 
 void exportStandardThermoModelInterpolation(py::module& m)

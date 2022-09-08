@@ -31,7 +31,7 @@
 #include <Reaktoro/Core/SpeciesList.hpp>
 #include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
 #include <Reaktoro/Models/ReactionThermoModels/ReactionThermoModelYAML.hpp>
-#include <Reaktoro/Models/StandardThermoModelYAML.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelYAML.hpp>
 #include <Reaktoro/Serialization/Common.YAML.hpp>
 
 namespace Reaktoro {

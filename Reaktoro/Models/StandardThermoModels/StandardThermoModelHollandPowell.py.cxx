@@ -19,7 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/StandardThermoModelHollandPowell.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
 using namespace Reaktoro;
 
 void exportStandardThermoModelHollandPowell(py::module& m)
