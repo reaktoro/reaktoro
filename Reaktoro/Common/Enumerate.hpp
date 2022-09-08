@@ -33,7 +33,7 @@ constexpr auto enumerate(T && iterable)
     {
         size_t i;
         TIter iter;
-        bool operator != (const iterator & other) const { return iter != other.iter; }
+        bool operator != (const iterator& other) const { return iter != other.iter; }
         void operator ++ () { ++i; ++iter; }
         auto operator * () const { return std::tie(i, *iter); }
     };

@@ -131,7 +131,7 @@ public:
     operator Vec<Phase>const&() const;
 
 private:
-    /// The species stored in the list.
+    /// The phases stored in the list.
     Vec<Phase> m_phases;
 
 public:
@@ -163,6 +163,6 @@ public:
 };
 
 /// Return the concatenation of two PhaseList objects.
-auto operator+(const PhaseList &a, const PhaseList &b) -> PhaseList;
+auto operator+(const PhaseList& a, const PhaseList& b) -> PhaseList;
 
 } // namespace Reaktoro
