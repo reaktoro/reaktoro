@@ -120,7 +120,7 @@ TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFrom
 
     WHEN("StandardThermoModel name is HKF")
     {
-        auto model =  StandardThermoModelFromData(Data::parseYaml(hkf));
+        auto model =  StandardThermoModelFromData(Data::parse(hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == 1.0);
@@ -129,7 +129,7 @@ TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFrom
 
     WHEN("StandardThermoModel name is MaierKelley")
     {
-        auto model =  StandardThermoModelFromData(Data::parseYaml(mk));
+        auto model =  StandardThermoModelFromData(Data::parse(mk));
         auto props = model(T, P);
 
         CHECK(props.G0 == 3.0);
@@ -138,7 +138,7 @@ TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFrom
 
     WHEN("StandardThermoModel name is HollandPowell")
     {
-        auto model =  StandardThermoModelFromData(Data::parseYaml(hp));
+        auto model =  StandardThermoModelFromData(Data::parse(hp));
         auto props = model(T, P);
 
         CHECK(props.G0 == 5.0);
@@ -147,7 +147,7 @@ TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFrom
 
     WHEN("StandardThermoModel name is MineralHKF")
     {
-        auto model =  StandardThermoModelFromData(Data::parseYaml(mineral_hkf));
+        auto model =  StandardThermoModelFromData(Data::parse(mineral_hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == 7.0);
@@ -156,7 +156,7 @@ TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFrom
 
     WHEN("StandardThermoModel name is WaterHKF")
     {
-        auto model =  StandardThermoModelFromData(Data::parseYaml(water_hkf));
+        auto model =  StandardThermoModelFromData(Data::parse(water_hkf));
         auto props = model(T, P);
 
         CHECK(props.G0 == Approx(-237182));
@@ -165,8 +165,8 @@ TEST_CASE("Testing StandardThermoModelFromData class", "[StandardThermoModelFrom
 
     WHEN("yaml node is not valid")
     {
-        CHECK_THROWS( StandardThermoModelFromData(Data::parseYaml(non_existing_model)) );
-        CHECK_THROWS( StandardThermoModelFromData(Data::parseYaml(not_dict)) );
-        CHECK_THROWS( StandardThermoModelFromData(Data::parseYaml(dict_but_not_single)) );
+        CHECK_THROWS( StandardThermoModelFromData(Data::parse(non_existing_model)) );
+        CHECK_THROWS( StandardThermoModelFromData(Data::parse(not_dict)) );
+        CHECK_THROWS( StandardThermoModelFromData(Data::parse(dict_but_not_single)) );
     }
 }

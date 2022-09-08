@@ -237,14 +237,14 @@ auto Database::fromFile(const String& path) -> Database
 
 auto Database::fromContents(const String& contents) -> Database
 {
-    auto doc = Data::parseYaml(contents);
+    auto doc = Data::parse(contents);
     DatabaseParser dbparser(doc);
     return dbparser;
 }
 
 auto Database::fromStream(std::istream& stream) -> Database
 {
-    auto doc = Data::parseYaml(stream);
+    auto doc = Data::parse(stream);
     DatabaseParser dbparser(doc);
     return dbparser;
 }

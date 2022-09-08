@@ -48,7 +48,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsConstant", "[Serial
         Cp0: 6.0
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsConstant>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsConstant>();
 
     CHECK( params.G0  == 1.0 );
     CHECK( params.H0  == 2.0 );
@@ -71,7 +71,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMaierKelley", "[Ser
         Tmax: 1700.0
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsMaierKelley>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsMaierKelley>();
 
     CHECK( params.Gf   == -3679250.6 );
     CHECK( params.Hf   == -3876463.4 );
@@ -103,7 +103,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
             Tmax: 1200.0
         )#";
 
-        const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsMineralHKF>();
+        const auto params = Data::parse(yml).as<StandardThermoModelParamsMineralHKF>();
 
         CHECK( params.Gf     == -3708312.7   );
         CHECK( params.Hf     == -3931621.1   );
@@ -140,7 +140,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
             Tmax: 1000.0
         )#";
 
-        const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsMineralHKF>();
+        const auto params = Data::parse(yml).as<StandardThermoModelParamsMineralHKF>();
 
         CHECK( params.Gf     == -39522.064 );
         CHECK( params.Hf     == -31589.2   );
@@ -182,7 +182,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
             Tmax: 1100.0
         )#";
 
-        const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsMineralHKF>();
+        const auto params = Data::parse(yml).as<StandardThermoModelParamsMineralHKF>();
 
         CHECK( std::isnan( params.Gf )     );
         CHECK( std::isnan( params.Hf )     );
@@ -219,7 +219,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsWaterHKF", "[Serial
         Htr: -287721.128
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsWaterHKF>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsWaterHKF>();
 
     CHECK( params.Ttr == 273.16 );
     CHECK( params.Str == 63.312288 );
@@ -244,7 +244,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHKF", "[Serializati
         Tmax: 0.0
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsHKF>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsHKF>();
 
     CHECK( params.Gf     == 39371.44      );
     CHECK( params.Hf     == -151084.24    );
@@ -281,7 +281,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
             Tmax: 0.0
         )#";
 
-        const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsHollandPowell>();
+        const auto params = Data::parse(yml).as<StandardThermoModelParamsHollandPowell>();
 
         CHECK( params.Gf       == -4937500.0     );
         CHECK( params.Hf       == -5260650.0     );
@@ -313,7 +313,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
             Tmax: 0.0
         )#";
 
-        const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsHollandPowell>();
+        const auto params = Data::parse(yml).as<StandardThermoModelParamsHollandPowell>();
 
         CHECK( params.Gf       == -50710.0  );
         CHECK( params.Hf       == -74810.0  );
@@ -349,7 +349,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsHollandPowell", "[S
             Tmax: 0.0
         )#";
 
-        const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsHollandPowell>();
+        const auto params = Data::parse(yml).as<StandardThermoModelParamsHollandPowell>();
 
         CHECK( params.Gf       == -2192340.0    );
         CHECK( params.Hf       == -2307040.0    );
@@ -380,7 +380,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsInterpolation", "[S
         H0: [[4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
         )";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsInterpolation>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsInterpolation>();
 
     CHECK( params.temperatures == Vec<double>{100, 200, 300} );
     CHECK( params.pressures == Vec<double>{400, 500} );
@@ -478,7 +478,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsNasa with polynomia
           b2: -89.03005276
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsNasa>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsNasa>();
 
     CHECK( params.dHf == -365600.0 );
     CHECK( params.dH0 ==  23662.0 );
@@ -577,7 +577,7 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsNasa without polyno
         T0: 226.4
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardThermoModelParamsNasa>();
+    const auto params = Data::parse(yml).as<StandardThermoModelParamsNasa>();
 
     CHECK( params.H0 == -47436.0 );
     CHECK( params.T0 ==  226.4 );
@@ -591,7 +591,7 @@ TEST_CASE("Testing serialization of StandardVolumeModelParamsConstant", "[Serial
         V0: 1.23e-5
     )#";
 
-    const auto params = Data::parseYaml(yml).as<StandardVolumeModelParamsConstant>();
+    const auto params = Data::parse(yml).as<StandardVolumeModelParamsConstant>();
 
     CHECK( params.V0 == 1.23e-5 );
 }

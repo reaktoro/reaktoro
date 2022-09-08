@@ -55,7 +55,7 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
         "    - supcrtbl \n",
         "");
     const auto text = Embedded::get("databases/reaktoro/" + name + ".yaml");
-    const auto doc = Data::parseYaml(text);
+    const auto doc = Data::parse(text);
     DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
@@ -70,14 +70,14 @@ auto SupcrtDatabase::fromFile(const String& path) -> SupcrtDatabase
         "try a full path to the file (e.g., "
         "in Windows, `C:\\User\\username\\mydata\\mydatabase.yaml`, "
         "in Linux and macOS, `/home/username/mydata/mydatabase.yaml`).");
-    auto doc = Data::parseYaml(file);
+    auto doc = Data::parse(file);
     DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
 
 auto SupcrtDatabase::fromContents(const String& contents) -> SupcrtDatabase
 {
-    auto doc = Data::parseYaml(contents);
+    auto doc = Data::parse(contents);
     DatabaseParser dbparser(doc);
     return Database(dbparser);
 }

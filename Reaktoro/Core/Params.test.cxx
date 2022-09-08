@@ -36,8 +36,8 @@ SomeModelParams2:
 
 TEST_CASE("Testing Params class", "[Params]")
 {
-    Params params1(Data::parseYaml(some_model_params_1));
-    Params params2(Data::parseYaml(some_model_params_2));
+    Params params1(Data::parse(some_model_params_1));
+    Params params2(Data::parse(some_model_params_2));
 
     Params params;
     params += params1;

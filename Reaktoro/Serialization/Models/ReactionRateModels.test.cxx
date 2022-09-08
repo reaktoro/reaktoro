@@ -36,7 +36,7 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
                 Neutral:   { lgk: -0.21, E: 7.4 }
         )#";
 
-        params = Data::parseYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
+        params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
         CHECK( params.names == Strings{"Halite"} );
         CHECK( params.mechanisms.size() == 1 );
@@ -58,7 +58,7 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
                 Neutral:   { lgk: -4.55, E: 56.9, a(O2): 0.500 }
         )#";
 
-        params = Data::parseYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
+        params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
         CHECK( params.names == Strings{"Pyrite"} );
         CHECK( params.mechanisms.size() == 2 );
@@ -95,7 +95,7 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
                 Base:      { lgk: -17.33, E: 79.1, a(H+): -0.556 }
         )#";
 
-        params = Data::parseYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
+        params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
         CHECK( params.names == Strings{"Epidote"} );
         CHECK( params.mechanisms.size() == 3 );
@@ -136,7 +136,7 @@ TEST_CASE("Testing serialization of ReactionRateModelParamsPalandriKharaka", "[S
                 Base:      { lgk: -17.33, E: 79.1, a((Ca)(CO3)): -0.556, p: 2.34, q: 1.46 }
         )#";
 
-        params = Data::parseYaml(yml).as<ReactionRateModelParamsPalandriKharaka>();
+        params = Data::parse(yml).as<ReactionRateModelParamsPalandriKharaka>();
 
         CHECK( params.names == Strings{"FakeMineral", "FakeMineralAlternativeName"} );
         CHECK( params.mechanisms.size() == 4 );
