@@ -24,26 +24,6 @@
 namespace Reaktoro {
 
 //======================================================================
-// ReactionStandardThermoModelParams Types
-//======================================================================
-struct ReactionStandardThermoModelParamsConstLgK;
-struct ReactionStandardThermoModelParamsGemsLgK;
-struct ReactionStandardThermoModelParamsPhreeqcLgK;
-struct ReactionStandardThermoModelParamsVantHoff;
-
-REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsConstLgK);
-REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsConstLgK);
-
-REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsGemsLgK);
-REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsGemsLgK);
-
-REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsPhreeqcLgK);
-REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsPhreeqcLgK);
-
-REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsVantHoff);
-REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsVantHoff);
-
-//======================================================================
 // StandardThermoModelParams Types
 //======================================================================
 struct StandardThermoModelParamsConstant;
@@ -78,6 +58,26 @@ REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsNasa);
 
 REAKTORO_YAML_ENCODE_DECLARE(StandardThermoModelParamsWaterHKF);
 REAKTORO_YAML_DECODE_DECLARE(StandardThermoModelParamsWaterHKF);
+
+//======================================================================
+// ReactionStandardThermoModelParams Types
+//======================================================================
+struct ReactionStandardThermoModelParamsConstLgK;
+struct ReactionStandardThermoModelParamsGemsLgK;
+struct ReactionStandardThermoModelParamsPhreeqcLgK;
+struct ReactionStandardThermoModelParamsVantHoff;
+
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsConstLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsConstLgK);
+
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsGemsLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsGemsLgK);
+
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsPhreeqcLgK);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsPhreeqcLgK);
+
+REAKTORO_YAML_ENCODE_DECLARE(ReactionStandardThermoModelParamsVantHoff);
+REAKTORO_YAML_DECODE_DECLARE(ReactionStandardThermoModelParamsVantHoff);
 
 //======================================================================
 // StandardVolumeModelParams Types

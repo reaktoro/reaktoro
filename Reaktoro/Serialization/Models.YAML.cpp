@@ -38,94 +38,6 @@
 namespace Reaktoro {
 
 //======================================================================
-// ReactionStandardThermoModelParams Types
-//======================================================================
-
-REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
-{
-    node["lgKr"] = obj.lgKr;
-    node["Pr"]   = obj.Pr;
-}
-
-REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
-{
-    static const ReactionStandardThermoModelParamsConstLgK defaultstate;
-    node.at("lgKr").to(obj.lgKr);
-    node["Pr"].to(obj.Pr, defaultstate.Pr);
-}
-
-//----------------------------------------------------------------------
-
-REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
-{
-    node["A0"] = obj.A0;
-    node["A1"] = obj.A1;
-    node["A2"] = obj.A2;
-    node["A3"] = obj.A3;
-    node["A4"] = obj.A4;
-    node["A5"] = obj.A5;
-    node["A6"] = obj.A6;
-    node["Pr"] = obj.Pr;
-}
-
-REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
-{
-    static const ReactionStandardThermoModelParamsGemsLgK defaultstate;
-    node.at("A0").to(obj.A0);
-    node.at("A1").to(obj.A1);
-    node.at("A2").to(obj.A2);
-    node.at("A3").to(obj.A3);
-    node.at("A4").to(obj.A4);
-    node.at("A5").to(obj.A5);
-    node.at("A6").to(obj.A6);
-    node["Pr"].to(obj.Pr, defaultstate.Pr);
-}
-
-//----------------------------------------------------------------------
-
-REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
-{
-    node["A1"] = obj.A1;
-    node["A2"] = obj.A2;
-    node["A3"] = obj.A3;
-    node["A4"] = obj.A4;
-    node["A5"] = obj.A5;
-    node["A6"] = obj.A6;
-    node["Pr"] = obj.Pr;
-}
-
-REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
-{
-    static const ReactionStandardThermoModelParamsPhreeqcLgK defaultstate;
-    node.at("A1").to(obj.A1);
-    node.at("A2").to(obj.A2);
-    node.at("A3").to(obj.A3);
-    node.at("A4").to(obj.A4);
-    node.at("A5").to(obj.A5);
-    node.at("A6").to(obj.A6);
-    node["Pr"].to(obj.Pr, defaultstate.Pr);
-}
-
-//----------------------------------------------------------------------
-
-REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
-{
-    node["lgKr"] = obj.lgKr;
-    node["dHr"]  = obj.dHr;
-    node["Tr"]   = obj.Tr;
-    node["Pr"]   = obj.Pr;
-}
-
-REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
-{
-    static const ReactionStandardThermoModelParamsVantHoff defaultstate;
-    node.at("lgKr").to(obj.lgKr);
-    node.at("dHr").to(obj.dHr);
-    node["Tr"].to(obj.Tr, defaultstate.Tr);
-    node["Pr"].to(obj.Pr, defaultstate.Pr);
-}
-
-//======================================================================
 // StandardThermoModelParams Types
 //======================================================================
 
@@ -401,6 +313,94 @@ REAKTORO_YAML_DECODE_DEFINE(StandardThermoModelParamsWaterHKF)
     node.at("Str").to(obj.Str);
     node.at("Gtr").to(obj.Gtr);
     node.at("Htr").to(obj.Htr);
+}
+
+//======================================================================
+// ReactionStandardThermoModelParams Types
+//======================================================================
+
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
+{
+    node["lgKr"] = obj.lgKr;
+    node["Pr"]   = obj.Pr;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsConstLgK)
+{
+    static const ReactionStandardThermoModelParamsConstLgK defaultstate;
+    node.at("lgKr").to(obj.lgKr);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
+}
+
+//----------------------------------------------------------------------
+
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
+{
+    node["A0"] = obj.A0;
+    node["A1"] = obj.A1;
+    node["A2"] = obj.A2;
+    node["A3"] = obj.A3;
+    node["A4"] = obj.A4;
+    node["A5"] = obj.A5;
+    node["A6"] = obj.A6;
+    node["Pr"] = obj.Pr;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsGemsLgK)
+{
+    static const ReactionStandardThermoModelParamsGemsLgK defaultstate;
+    node.at("A0").to(obj.A0);
+    node.at("A1").to(obj.A1);
+    node.at("A2").to(obj.A2);
+    node.at("A3").to(obj.A3);
+    node.at("A4").to(obj.A4);
+    node.at("A5").to(obj.A5);
+    node.at("A6").to(obj.A6);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
+}
+
+//----------------------------------------------------------------------
+
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
+{
+    node["A1"] = obj.A1;
+    node["A2"] = obj.A2;
+    node["A3"] = obj.A3;
+    node["A4"] = obj.A4;
+    node["A5"] = obj.A5;
+    node["A6"] = obj.A6;
+    node["Pr"] = obj.Pr;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsPhreeqcLgK)
+{
+    static const ReactionStandardThermoModelParamsPhreeqcLgK defaultstate;
+    node.at("A1").to(obj.A1);
+    node.at("A2").to(obj.A2);
+    node.at("A3").to(obj.A3);
+    node.at("A4").to(obj.A4);
+    node.at("A5").to(obj.A5);
+    node.at("A6").to(obj.A6);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
+}
+
+//----------------------------------------------------------------------
+
+REAKTORO_YAML_ENCODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
+{
+    node["lgKr"] = obj.lgKr;
+    node["dHr"]  = obj.dHr;
+    node["Tr"]   = obj.Tr;
+    node["Pr"]   = obj.Pr;
+}
+
+REAKTORO_YAML_DECODE_DEFINE(ReactionStandardThermoModelParamsVantHoff)
+{
+    static const ReactionStandardThermoModelParamsVantHoff defaultstate;
+    node.at("lgKr").to(obj.lgKr);
+    node.at("dHr").to(obj.dHr);
+    node["Tr"].to(obj.Tr, defaultstate.Tr);
+    node["Pr"].to(obj.Pr, defaultstate.Pr);
 }
 
 //======================================================================
