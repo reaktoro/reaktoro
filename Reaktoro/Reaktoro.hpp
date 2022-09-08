@@ -22,6 +22,7 @@
 #include <Reaktoro/Equilibrium.hpp>
 #include <Reaktoro/Extensions.hpp>
 #include <Reaktoro/Kinetics.hpp>
+#include <Reaktoro/Kinetics.hpp>
 #include <Reaktoro/Math.hpp>
 #include <Reaktoro/Models.hpp>
 #include <Reaktoro/Singletons.hpp>
