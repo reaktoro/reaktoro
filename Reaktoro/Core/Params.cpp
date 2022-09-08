@@ -17,54 +17,81 @@
 
 #include "Params.hpp"
 
+// C++ includes
+#include <fstream>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 
 namespace Reaktoro {
+namespace {
+
+/// Create a Data object either from YAML or JSON text.
+template<typename Text>
+auto createDataFromYamlOrJson(String const& path, Text&& text) -> Data
+{
+    const auto words = split(path, ".");
+    if(words.back() == "yaml" || words.back() == "yml")
+        return Data::fromYaml(text);
+    if(words.back() == "json")
+        return Data::fromJson(text);
+    errorif(true, "The given file path ", path, " does not indicate whether the file is yaml or json (expecting these words as file extensions).");
+    return {};
+}
+
+} // namespace
 
 Params::Params()
 {}
 
-auto Params::size() const -> Index
+Params::Params(Data const& params)
 {
-    auto count = 0;
-    for(auto const& [key, val] : tree)
-        if(val.type() == typeid(Params))
-            count += std::any_cast<const Params&>(val).size();
-        else count += 1;
-    return count;
+    append(params);
 }
 
-auto Params::at(const String& key) const -> const Params&
+auto Params::embedded(String const& path) -> Params
 {
-    const auto it = tree.find(key);
-    error(it == tree.end(), "Could not find a node in the Params object with key `", key, "`.");
-    return std::any_cast<const Params&>(it->second);
+    const String text = Embedded::get(path);
+    return Params(createDataFromYamlOrJson(path, text));
 }
 
-auto Params::get(const String& key) const -> const Param&
+auto Params::local(String const& path) -> Params
 {
-    error(tree.empty(), "Could not find a parameter in the empty Params object with key `", key, "`.");
-    const auto it = tree.find(key);
-    error(it == tree.end(), "Could not find a parameter in the Params object with key `", key, "`.");
-    return std::any_cast<const Param&>(it->second);
+    std::ifstream file;
+    file.open(path);
+    errorif(!file, "Could not load local parameter file with given path ", path);
+    return Params(createDataFromYamlOrJson(path, file));
 }
 
-auto Params::exists(const String& key) const -> bool
+auto Params::data() const -> Data const&
 {
-    const auto it = tree.find(key);
-    return it != tree.end();
+    return m_data;
 }
 
-auto Params::set(const String& key, const Params& node) -> void
+auto Params::append(Params const& other) -> Params&
 {
-    tree[key] = node;
+    return append(other.data());
 }
 
-auto Params::set(const String& key, const Param& param) -> void
+auto Params::append(Data const& other) -> Params&
 {
-    tree[key] = param;
+    errorif(!other.isDict(), "Expecting Data object of dictionary type in Params object.");
+    auto const& dict = other.dict();
+    for(auto const& [key, value] : dict)
+        m_data.add(key, value);
+    return *this;
+}
+
+auto Params::operator+=(Params const& other) -> Params&
+{
+    return append(other);
+}
+
+auto Params::operator[](String const& name) const -> Data const&
+{
+    return m_data[name];
 }
 
 } // namespace Reaktoro
-

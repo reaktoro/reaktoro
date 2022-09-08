@@ -19,38 +19,46 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
 
-/// The class used to store and retrieve thermodynamic parameters.
+/// Used to store and retrieve model parameters.
 /// @ingroup Core
 class Params
 {
 public:
-    /// Construct a default Params instance.
+    /// Construct a default Params object.
     Params();
 
-    /// Return the number of child parameters.
-    auto size() const -> Index;
+    /// Construct a Params object with given parameters as Data object.
+    Params(Data const& params);
 
-    /// Return the child block of parameters with given key.
-    auto at(const String& key) const -> const Params&;
+    /// Return parameters with the given file path within the virtual directory of embedded resources.
+    static auto embedded(String const& path) -> Params;
 
-    /// Return the child parameter with given key.
-    auto get(const String& key) const -> const Param&;
+    /// Return parameters with the given local file path.
+    static auto local(String const& path) -> Params;
 
-    /// Return true if a child parameter exists with given key.
-    auto exists(const String& key) const -> bool;
+    /// Return the underlying Data object of this Params object.
+    auto data() const -> Data const&;
 
-    /// Set the child block of parameters with given key to a given block of parameters.
-    auto set(const String& key, const Params& node) -> void;
+    /// Append another Params object into this.
+    auto append(Params const& other) -> Params&;
 
-    /// Set the child parameter with given key to a given parameter value.
-    auto set(const String& key, const Param& param) -> void;
+    /// Append a Data object containing parameters into this Params object.
+    auto append(Data const& other) -> Params&;
+
+    /// Append another Params object into this.
+    auto operator+=(Params const& other) -> Params&;
+
+    /// Return the set of parameters with given name.
+    auto operator[](String const& name) const -> Data const&;
 
 private:
-    Map<String, Any> tree;
+    /// The Data object where the model parameters are stored.
+    Data m_data;
 };
 
 } // namespace Reaktoro
