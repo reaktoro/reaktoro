@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
+#include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -159,7 +160,7 @@ auto assembleReactivityConstraints(EquilibriumSpecs const& specs) -> ReactivityC
 } // namespace
 
 EquilibriumSpecs::EquilibriumSpecs(ChemicalSystem const& system)
-: m_system(system), unknown_surface_area(system.surfaces().size(), false)
+: m_system(system)
 {
     // By default, start with T and P as unknown *p* control variables.
     addControlVariableP({ "T" });
@@ -233,38 +234,13 @@ auto EquilibriumSpecs::SV(ChemicalSystem const& system) -> EquilibriumSpecs
 auto EquilibriumSpecs::temperature() -> void
 {
     addInput("T");
-    const auto idx = indexControlVariableTemperature();
-    assert(idx < pvars.size());
-    pvars.erase(pvars.begin() + idx); // remove the existing *p* control variable for temperature
-    unknownT = false;
+    pvars = removefn(pvars, RKT_LAMBDA(x, x.name == "T")); // remove any existing *p* control variable for temperature!
 }
 
 auto EquilibriumSpecs::pressure() -> void
 {
     addInput("P");
-    const auto idx = indexControlVariablePressure();
-    assert(idx < pvars.size());
-    pvars.erase(pvars.begin() + idx); // remove the existing *p* control variable for pressure
-    unknownP = false;
-}
-
-auto EquilibriumSpecs::surfaceAreas() -> void
-{
-    for(auto i = 0; i < system().surfaces().size(); ++i)
-        surfaceArea(i);
-}
-
-auto EquilibriumSpecs::surfaceArea(StringOrIndex const& surface) -> void
-{
-    auto const& surfaces = m_system.surfaces();
-    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
-    errorif(isurface == surfaces.size(), "There is no surface area with name `", stringfy(surface), "` in the chemical system.");
-    auto const id = "surfaceArea[" + surfaces[isurface].name() + "]"; // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
-    addInput(id);
-    auto const idx = indexfn(pvars, RKT_LAMBDA(x, x.name == id));
-    assert(idx < pvars.size());
-    pvars.erase(pvars.begin() + idx); // remove the existing *p* control variable for surfaceArea[Name]
-    unknown_surface_area[isurface] = false;
+    pvars = removefn(pvars, RKT_LAMBDA(x, x.name == "P")); // remove any existing *p* control variable for pressure!
 }
 
 auto EquilibriumSpecs::volume() -> void
@@ -455,6 +431,28 @@ auto EquilibriumSpecs::phaseVolume(StringOrIndex const& phase) -> void
 
 //=================================================================================================
 //
+// METHODS TO SPECIFY SURFACE AREA CONDITIONS
+//
+//=================================================================================================
+
+auto EquilibriumSpecs::surfaceAreas() -> void
+{
+    for(auto i = 0; i < system().surfaces().size(); ++i)
+        surfaceArea(i);
+}
+
+auto EquilibriumSpecs::surfaceArea(StringOrIndex const& surface) -> void
+{
+    auto const& surfaces = m_system.surfaces();
+    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
+    errorif(isurface == surfaces.size(), "There is no surface area with name or index `", stringfy(surface), "` in the chemical system.");
+    auto const id = "surfaceArea[" + surfaces[isurface].name() + "]";
+    addInput(id);
+    pvars = removefn(pvars, RKT_LAMBDA(x, x.name == id)); // remove any existing *p* control variable for this surface area!
+}
+
+//=================================================================================================
+//
 // METHODS TO SPECIFY UNKNOWN INPUT CONDITIONS
 //
 //=================================================================================================
@@ -464,10 +462,7 @@ auto EquilibriumSpecs::unknownTemperature() -> void
     if(!isTemperatureUnknown())
     {
         addControlVariableP({ "T" });
-        auto const iinput = index(m_inputs, "T");
-        assert(iinput < m_inputs.size());
-        m_inputs.erase(m_inputs.begin() + iinput); // remove the existing input for temperature
-        unknownT = true;
+        m_inputs = remove(m_inputs, "T"); // remove the existing input for temperature
     }
 }
 
@@ -476,10 +471,7 @@ auto EquilibriumSpecs::unknownPressure() -> void
     if(!isPressureUnknown())
     {
         addControlVariableP({ "P" });
-        auto const iinput = index(m_inputs, "P");
-        assert(iinput < m_inputs.size());
-        m_inputs.erase(m_inputs.begin() + iinput); // remove the existing input for pressure
-        unknownP = true;
+        m_inputs = remove(m_inputs, "P"); // remove the existing input for pressure
     }
 }
 
@@ -493,15 +485,13 @@ auto EquilibriumSpecs::unknownSurfaceArea(StringOrIndex const& surface) -> void
 {
     auto const& surfaces = m_system.surfaces();
     auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
-    errorif(isurface == surfaces.size(), "There is no surface area with name `", stringfy(surface), "` in the chemical system.");
+    errorif(isurface == surfaces.size(), "There is no surface area with name or index `", stringfy(surface), "` in the chemical system.");
+    auto const id = "surfaceArea[" + surfaces[isurface].name() + "]";
+
     if(!isSurfaceAreaUnknown(isurface))
     {
-        auto const id = "surfaceArea[" + surfaces[isurface].name() + "]"; // e.g., surfaceArea[AqueousPhase:GaseousPhase], surfaceArea[Calcite]
         addControlVariableP({ id });
-        auto const iinput = index(m_inputs, id);
-        assert(iinput < m_inputs.size());
-        m_inputs.erase(m_inputs.begin() + iinput); // remove the existing input for surface area
-        unknown_surface_area[isurface] = true;
+        m_inputs = remove(m_inputs, id); // remove the existing input for surface area
     }
 }
 
@@ -1010,30 +1000,107 @@ auto EquilibriumSpecs::indicesParams() const -> const Vec<Index>&
 
 auto EquilibriumSpecs::isTemperatureUnknown() const -> bool
 {
-    return unknownT;
+    return containsfn(pvars, RKT_LAMBDA(x, x.name == "T"));
 }
 
 auto EquilibriumSpecs::isPressureUnknown() const -> bool
 {
-    return unknownP;
+    return containsfn(pvars, RKT_LAMBDA(x, x.name == "P"));
 }
 
 auto EquilibriumSpecs::isSurfaceAreaUnknown(StringOrIndex const& surface) const -> bool
 {
     auto const& surfaces = m_system.surfaces();
     auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
-    errorif(isurface == surfaces.size(), "There is no surface area with name `", stringfy(surface), "` in the chemical system.");
-    return unknown_surface_area[isurface];
+    errorif(isurface == surfaces.size(), "There is no surface area with name or index `", stringfy(surface), "` in the chemical system.");
+    auto const id = "surfaceArea[" + surfaces[isurface].name() + "]";
+    return containsfn(pvars, RKT_LAMBDA(x, x.name == id));
 }
 
-auto EquilibriumSpecs::indexControlVariableTemperature() const -> Index
+auto EquilibriumSpecs::indexTemperatureAmongInputVariablesW() const -> Index
 {
-    return unknownT ? 0 : -1;
+    auto k = index(m_inputs, "T");
+    return k < m_inputs.size() ? k : Index(-1);
 }
 
-auto EquilibriumSpecs::indexControlVariablePressure() const -> Index
+auto EquilibriumSpecs::indexTemperatureAmongControlVariablesP() const -> Index
 {
-    return unknownP ? (unknownT ? 1 : 0) : -1;
+    auto k = indexfn(pvars, RKT_LAMBDA(x, x.name == "T"));
+    return k < pvars.size() ? k : Index(-1);
+}
+
+auto EquilibriumSpecs::indexPressureAmongInputVariablesW() const -> Index
+{
+    auto k = index(m_inputs, "P");
+    return k < m_inputs.size() ? k : Index(-1);
+}
+
+auto EquilibriumSpecs::indexPressureAmongControlVariablesP() const -> Index
+{
+    auto k = indexfn(pvars, RKT_LAMBDA(x, x.name == "P"));
+    return k < pvars.size() ? k : Index(-1);
+}
+
+auto EquilibriumSpecs::indicesSurfaceAreasAmongInputVariablesW() const -> Indices
+{
+    Indices indices;
+    for(auto const& surface : system().surfaces())
+    {
+        auto id = "surfaceArea[" + surface.name() + "]";
+        auto idx = index(m_inputs, "surfaceArea[" + surface.name() + "]");
+        if(idx < m_inputs.size())
+            indices.push_back(idx);
+    }
+    return indices;
+}
+
+auto EquilibriumSpecs::indicesSurfaceAreasAmongControlVariablesP() const -> Indices
+{
+    Indices indices;
+    for(auto const& surface : system().surfaces())
+    {
+        auto id = "surfaceArea[" + surface.name() + "]";
+        auto idx = indexfn(pvars, RKT_LAMBDA(x, x.name == id));
+        if(idx < m_inputs.size())
+            indices.push_back(idx);
+    }
+    return indices;
+}
+
+auto EquilibriumSpecs::indicesSurfaceAreasKnown() const -> Indices
+{
+    Indices indices;
+    for(auto const& [i, surface] : enumerate(system().surfaces()))
+        if(contains(m_inputs, "surfaceArea[" + surface.name() + "]"))
+            indices.push_back(i);
+    return indices;
+}
+
+auto EquilibriumSpecs::indicesSurfaceAreasUnknown() const -> Indices
+{
+    Indices indices;
+    for(auto const& [i, surface] : enumerate(system().surfaces()))
+    {
+        auto id = "surfaceArea[" + surface.name() + "]";
+        if(containsfn(pvars, RKT_LAMBDA(x, x.name == id)))
+            indices.push_back(i);
+    }
+    return indices;
+}
+
+auto EquilibriumSpecs::indexInputVariable(String const& name) -> Index
+{
+    return index(m_inputs, name);
+}
+
+auto EquilibriumSpecs::indexControlVariableP(String const& name) -> Index
+{
+    return indexfn(pvars, RKT_LAMBDA(x, x.name == name));
+}
+
+auto EquilibriumSpecs::indexControlVariableQ(String const& name) -> Index
+{
+    return indexfn(qvars, RKT_LAMBDA(x, x.name == name));
 }
 
 auto EquilibriumSpecs::controlVariablesQ() const -> const Vec<ControlVariableQ>&

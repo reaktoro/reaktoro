@@ -286,26 +286,6 @@ public:
     /// @see unknownPressure
     auto pressure() -> void;
 
-    /// Specify that the **surface areas of all reacting phase interfaces** are given at chemical equilibrium.
-    /// This method introduces input variables with names `surfaceArea[Name]` where `Name` is the
-    /// name of each surface in the associated ChemicalSystem object (@see
-    /// ChemicalSystem::surfaces). By calling this method, you are specifying that these surface
-    /// areas are known in the equilibrium calculation (by default they are considered unknowns).
-    /// Thus, they will not be considered as control variables whose values need to be computed as
-    /// part of the equilibrium calculation.
-    /// @see unknownSurfaceAreas
-    auto surfaceAreas() -> void;
-
-    /// Specify that the **surface area of a reacting phase interface** is given at chemical equilibrium.
-    /// This method introduces one input variable with name `surfaceArea[Name]` where `Name` is the
-    /// name of the surface. By calling this method, you are specifying that the surface area of
-    /// this specific reacting phase interface is known in the equilibrium calculation (by default
-    /// it is considered an unknown). Thus, it will not be considered as a control variable whose
-    /// value needs to be computed as part of the equilibrium calculation.
-    /// @param surface The name or index of the surface in the system.
-    /// @see unknownSurfaceArea
-    auto surfaceArea(StringOrIndex const& surface) -> void;
-
     /// Specify that the **volume** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `V`. It also
     /// introduces an equation constraint with name `volume` to enforce a given
@@ -380,6 +360,32 @@ public:
     /// Specify that the **volume of a phase** is given at chemical equilibrium.
     /// @param phase The name or index of the phase in the chemical system.
     auto phaseVolume(StringOrIndex const& phase) -> void;
+
+    //=================================================================================================
+    //
+    // METHODS TO SPECIFY SURFACE AREA CONSTRAINTS
+    //
+    //=================================================================================================
+
+    /// Specify that the **surface areas of all reacting phase interfaces** are given at chemical equilibrium.
+    /// This method introduces input variables with names `surfaceArea[Name]` where `Name` is the
+    /// name of each surface in the associated ChemicalSystem object (@see
+    /// ChemicalSystem::surfaces). By calling this method, you are specifying that these surface
+    /// areas are known in the equilibrium calculation (by default they are considered unknowns).
+    /// Thus, they will not be considered as control variables whose values need to be computed as
+    /// part of the equilibrium calculation.
+    /// @see unknownSurfaceAreas
+    auto surfaceAreas() -> void;
+
+    /// Specify that the **surface area of a reacting phase interface** is given at chemical equilibrium.
+    /// This method introduces one input variable with name `surfaceArea[Name]` where `Name` is the
+    /// name of the surface. By calling this method, you are specifying that the surface area of
+    /// this specific reacting phase interface is known in the equilibrium calculation (by default
+    /// it is considered an unknown). Thus, it will not be considered as a control variable whose
+    /// value needs to be computed as part of the equilibrium calculation.
+    /// @param surface The name or index of the surface in the system.
+    /// @see unknownSurfaceArea
+    auto surfaceArea(StringOrIndex const& surface) -> void;
 
     //=================================================================================================
     //
@@ -734,11 +740,38 @@ public:
     /// @param surface The name or index of the surface in the system.
     auto isSurfaceAreaUnknown(StringOrIndex const& surface) const -> bool;
 
-    /// The index of temperature among the *p* control variables or `Index(-1)` if it is a given input.
-    auto indexControlVariableTemperature() const -> Index;
+    /// Return the index of temperature in the vector of *w* input variables if it is an input, otherwise `Index(-1)` if unknown.
+    auto indexTemperatureAmongInputVariablesW() const -> Index;
 
-    /// The index of pressure among the *p* control variables or `Index(-1)` if it is a given input.
-    auto indexControlVariablePressure() const -> Index;
+    /// Return the index of temperature in the vector of *p* control variables if it is unknown, otherwise `Index(-1)` if known.
+    auto indexTemperatureAmongControlVariablesP() const -> Index;
+
+    /// Return the index of pressure in the vector of *w* input variables if it is an input, otherwise `Index(-1)` if unknown.
+    auto indexPressureAmongInputVariablesW() const -> Index;
+
+    /// Return the index of pressure in the vector of *p* control variables if it is unknown, otherwise `Index(-1)` if known.
+    auto indexPressureAmongControlVariablesP() const -> Index;
+
+    /// Return the indices of surface areas in the vector of *w* input variables.
+    auto indicesSurfaceAreasAmongInputVariablesW() const -> Indices;
+
+    /// Return the indices of surface areas in the vector of *p* control variables.
+    auto indicesSurfaceAreasAmongControlVariablesP() const -> Indices;
+
+    /// Return the indices of surface areas in the vector of surface areas that are known.
+    auto indicesSurfaceAreasKnown() const -> Indices;
+
+    /// Return the indices of surface areas in the vector of surface areas that are unknown.
+    auto indicesSurfaceAreasUnknown() const -> Indices;
+
+    /// Return the index of a *w* input variable with given name if found, otherwise the number of *w* input variables.
+    auto indexInputVariable(String const& name) -> Index;
+
+    /// Return the index of a *p* control variable with given name if found, otherwise the number of *p* control variables.
+    auto indexControlVariableP(String const& name) -> Index;
+
+    /// Return the index of a *q* control variable with given name if found, otherwise the number of *q* control variables.
+    auto indexControlVariableQ(String const& name) -> Index;
 
     /// Return the *q* control variables in the chemical equilibrium specifications.
     auto controlVariablesQ() const -> const Vec<ControlVariableQ>&;
@@ -791,15 +824,6 @@ private:
 
     /// The indices of the model parameters among the input variables in the chemical equilibrium calculation.
     Vec<Index> m_params_idxs;
-
-    /// The boolean flag that indicates whether temperature is unknown.
-    bool unknownT = true;
-
-    /// The boolean flag that indicates whether pressure is unknown.
-    bool unknownP = true;
-
-    /// The boolean flags that indicate whether surface areas are unknown.
-    Vec<bool> unknown_surface_area;
 
     /// The *q* control variables in the chemical equilibrium problem.
     Vec<ControlVariableQ> qvars;
