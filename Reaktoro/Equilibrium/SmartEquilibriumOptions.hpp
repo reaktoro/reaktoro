@@ -26,26 +26,23 @@ namespace Reaktoro {
 /// @see SmartEquilibriumSolver
 struct SmartEquilibriumOptions
 {
-    /// The equilibrium options to be used during learning operations.
+    /// The options for the chemical equilibrium calculations during learning operations.
     EquilibriumOptions learning;
 
-    /// The cutoff value for species mole fractions.
-    /// This parameter is used to ignore certain species with tiny mole fractions
-    /// during the error test. Those with mole fractions below this threshold
-    /// will be discarded from the error control.
-    double mole_fraction_cutoff = 1.0e-14;
+    /// The relative tolerance for negative species amounts when predicting with first-order Taylor approximation.
+    /// When performing a first-order Taylor approximation for the calculation of a chemical
+    /// equilibrium state, negative amounts of species may result. However, as long as these
+    /// negative values are small enough, we should not rule out the approximate chemical
+    /// equilibrium state. This relative tolerance value can be set to control the decision to
+    /// accept or not the predicted chemical state with negative species amounts. If the accepted
+    /// predicted equilibrium state has negative amounts of species, these are modified and set to
+    /// their respective positive lower bounds.
+    double reltol_negative_amounts = -1.0e-14;
 
-    /// The cutoff value for normalized species and element amounts.
-    /// This parameter is used to ignore certain species/elements with tiny amounts
-    /// during the error test. The species and elements with normalized amounts,
-    /// \eq{n_{i}/\text{sum}(n)} and \eq{b_{j}/\text{sum}(b)} respectively,
-    /// below this threshold will be discarded from the error control.
-    double amount_fraction_cutoff = 1.0e-14;
-
-    /// The relative tolerance used in the acceptance test.
+    /// The relative tolerance used in the acceptance test for the predicted chemical equilibrium state.
     double reltol = 1.0e-3;
 
-    /// The absolute tolerance used in the acceptance test.
+    /// The absolute tolerance used in the acceptance test for the predicted chemical equilibrium state.
     double abstol = 0.0;
 };
 
