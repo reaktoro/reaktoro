@@ -215,7 +215,7 @@ public:
 
     //=================================================================================================
     //
-    // METHODS TO SPECIFY LOWER AND UPPER BOUNDS FOR UNKNOWN VARIABLES
+    // METHODS FOR SETTING AND GETTING LOWER AND UPPER BOUNDS FOR UNKNOWN VARIABLES
     //
     //=================================================================================================
 
@@ -237,9 +237,21 @@ public:
     /// Set the upper bound for the amount of a titrant during the equilibrium calculation.
     auto setUpperBoundTitrant(String const& substance, double value, String const& unit="mol") -> void;
 
+    /// Set the values of the specified lower bounds for the *p* control variables.
+    auto setLowerBoundsControlVariablesP(ArrayXdConstRef const& values) -> void;
+
+    /// Set the values of the specified upper bounds for the *p* control variables.
+    auto setUpperBoundsControlVariablesP(ArrayXdConstRef const& values) -> void;
+
+    /// Get the specified lower bounds for the *p* control variables.
+    auto lowerBoundsControlVariablesP() const -> ArrayXdConstRef;
+
+    /// Get the specified upper bounds for the *p* control variables.
+    auto upperBoundsControlVariablesP() const -> ArrayXdConstRef;
+
     //=================================================================================================
     //
-    // MISCELLANEOUS METHODS
+    // METHODS FOR SETTING AND GETTING INPUT VARIABLES
     //
     //=================================================================================================
 
@@ -264,33 +276,71 @@ public:
     /// Set the input variables with given vector of input values.
     auto setInputVariables(ArrayXrConstRef const& values) -> void;
 
-    /// Set the values of the specified lower bounds for the *p* control variables.
-    auto setLowerBoundsControlVariablesP(ArrayXdConstRef const& values) -> void;
-
-    /// Set the values of the specified upper bounds for the *p* control variables.
-    auto setUpperBoundsControlVariablesP(ArrayXdConstRef const& values) -> void;
-
-    /// Return the chemical system associated with the equilibrium conditions.
-    auto system() const -> ChemicalSystem const&;
-
-    /// Return the names of the input variables associated with the equilibrium conditions.
+    /// Get the names of the input variables associated with the equilibrium conditions.
     auto inputNames() const -> Strings const&;
 
-    /// Return the values of the input variables associated with the equilibrium conditions.
+    /// Get the values of the input variables associated with the equilibrium conditions.
     auto inputValues() const -> ArrayXrConstRef;
 
-    /// Return the values of the input variables associated with the equilibrium conditions.
-    /// @param name The unique name of the *w* input variable
+    /// Get the value of an input variable with given name.
+    /// @param name The unique name of the input variable
     auto inputValue(String const& name) const -> real const&;
 
-    /// Return the specified lower bounds for the *p* control variables.
-    auto lowerBoundsControlVariablesP() const -> ArrayXdConstRef;
+    //=================================================================================================
+    //
+    // METHODS TO SPECIFY THE INITIAL COMPOSITIONAL STATE OF THE CHEMICAL SYSTEM BEFORE IT REACTS
+    //
+    //=================================================================================================
 
-    /// Return the specified upper bounds for the *p* control variables.
-    auto upperBoundsControlVariablesP() const -> ArrayXdConstRef;
+    /// Set the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
+    /// @param c0 The initial amounts of the conservative components \eq{c^\circ}.
+    auto setInitialComponentAmounts(VectorXrConstRef const& c0) -> void;
+
+    /// Set the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
+    /// This method sets the initial amounts of the conservative components \eq{c^\circ} using
+    /// \eq{c^\circ=Cn^\circ} where \eq{C} is the conservation matrix of the species with respect to
+    /// the conservative components and \eq{n^\circ} is the given initial amounts of the species.
+    /// @param n0 The initial amounts of the species \eq{n^\circ}.
+    auto setInitialComponentAmountsFromSpeciesAmounts(VectorXrConstRef const& n0) -> void;
+
+    /// Set the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
+    /// This method sets the initial amounts of the conservative components \eq{c^\circ} using
+    /// \eq{c^\circ=Cn^\circ} where \eq{C} is the conservation matrix of the species with respect to
+    /// the conservative components and \eq{n^\circ} is the initial amounts of the species given in
+    /// a initial chemical state of the system.
+    /// @param state0 The initial state of the system.
+    auto setInitialComponentAmountsFromState(ChemicalState const& state0) -> void;
+
+    /// Get the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts.
+    /// The amounts of conservative components can be set directly using @ref setInitialComponentAmounts
+    /// or indirectly using @ref setInitialComponentAmountsFromSpeciesAmounts and @ref setInitialComponentAmountsFromState.
+    /// If none of these methods have been called, and empty array is returned by this method.
+    auto initialComponentAmounts() const -> ArrayXrConstRef;
+
+    /// Get the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts if available, otherwise compute it.
+    /// If neither @ref setInitialSpeciesAmounts nor @ref setInitialComponentAmounts have been used
+    /// before to set the initial amounts of the conservative components \eq{c^\circ}, then this
+    /// vector is computed using a given vector \eq{n^\circ} with the initial amounts of species.
+    /// Otherwise, the existing values for \eq{c^\circ} is returned instead.
+    /// @param n0 The initial amounts of the species \eq{n^\circ} used to compute \eq{c^\circ} in case it has not been set before.
+    auto initialComponentAmountsGetOrCompute(VectorXrConstRef const& n0) const -> ArrayXr;
+
+    /// Get the initial amounts of the conservative components \eq{c^\circ} before the chemical system reacts if available, otherwise compute it.
+    /// @param state0 The initial state of the system from which the initial amounts of the species \eq{n^\circ} are collected if needed.
+    auto initialComponentAmountsGetOrCompute(ChemicalState const& state0) const -> ArrayXr;
+
+    //=================================================================================================
+    //
+    // MISCELLANEOUS METHODS
+    //
+    //=================================================================================================
+
+    /// Get the chemical system associated with the equilibrium conditions.
+    auto system() const -> ChemicalSystem const&;
 
 private:
     const ChemicalSystem msystem;         ///< The chemical system associated with these equilibrium conditions.
+    const MatrixXd C;                     ///< The conservation matrix of the chemical species with respect to conservative components.
     const Strings wvars;                  ///< The names of the *w* input variables in the equilibrium problem.
     const Strings pvars;                  ///< The names of the *p* control variables variables in the equilibrium problem.
     const Index itemperature_p;           ///< The index of the temperature variable among the *p* control variables.
@@ -299,9 +349,10 @@ private:
     const Indices isurface_areas_p;       ///< The indices of the surface area variables among the *p* control variables.
     const Indices isurface_areas_known;   ///< The indices of the surfaces areas that are known.
     const Indices isurface_areas_unknown; ///< The indices of the surfaces areas that are unknown.
-    ArrayXr w;                           ///< The values of the *w* input variables.
-    ArrayXd plower;                      ///< The lower bounds for the *p* control variables.
-    ArrayXd pupper;                      ///< The upper bounds for the *p* control variables.
+    ArrayXr w;                            ///< The values of the *w* input variables.
+    ArrayXr c0;                           ///< The initial amounts of the conservative components.
+    ArrayXd plower;                       ///< The lower bounds for the *p* control variables.
+    ArrayXd pupper;                       ///< The upper bounds for the *p* control variables.
 };
 
 } // namespace Reaktoro
