@@ -64,8 +64,8 @@ REAKTORO_DATA_DECODE_DEFINE(ChemicalSystem)
 
 REAKTORO_DATA_ENCODE_DEFINE(Database)
 {
-    auto elements_data = data.at("Elements");
-    auto species_data = data.at("Species");
+    auto& elements_data = data["Elements"];
+    auto& species_data = data["Species"];
 
     for(auto const& element : obj.elements())
         elements_data[element.symbol()] = element;
@@ -92,10 +92,10 @@ REAKTORO_DATA_ENCODE_DEFINE(Element)
 REAKTORO_DATA_DECODE_DEFINE(Element)
 {
     Element::Attribs attribs;
-    data.at("Symbol").to(attribs.symbol);
-    data.at("MolarMass").to(attribs.molar_mass);
-    if(data.exists("Name")) data.at("Name").to(attribs.name);
-    if(data.exists("Tags")) data.at("Tags").to(attribs.tags);
+    data.required("Symbol").to(attribs.symbol);
+    data.required("MolarMass").to(attribs.molar_mass);
+    data.optional("Name").to(attribs.name);
+    data.optional("Tags").to(attribs.tags);
     obj = Element(attribs);
 }
 
