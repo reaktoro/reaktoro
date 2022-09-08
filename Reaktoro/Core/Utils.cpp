@@ -21,6 +21,7 @@
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Units.hpp>
+#include <Reaktoro/Core/ChemicalFormula.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/ElementList.hpp>
 #include <Reaktoro/Core/Phase.hpp>
@@ -167,14 +168,14 @@ auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex surface) ->
     return resolveSurfaceIndex(system.surfaces(), surface);
 }
 
-auto assembleFormulaVector(Species const& species, ElementList const& elements) -> VectorXd
+auto assembleFormulaVector(ChemicalFormula const& substance, ElementList const& elements) -> VectorXd
 {
     const auto num_elements = elements.size();
     const auto num_components = num_elements + 1;
     VectorXd A(num_components);
     for(auto j = 0; j < num_elements; ++j)
-        A[j] = species.elements().coefficient(elements[j].symbol());
-    A[num_elements] = species.charge();
+        A[j] = substance.coefficient(elements[j].symbol());
+    A[num_elements] = substance.charge();
     return A;
 }
 
