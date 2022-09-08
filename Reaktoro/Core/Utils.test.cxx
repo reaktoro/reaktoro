@@ -150,6 +150,26 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
             CHECK(A_min.row(i) == A_min_expected.row(i));
     }
 
+    SECTION("Testing assembleStoichiometricMatrix for the full system")
+    {
+        ReactionList reactions = {
+            db.reaction("H2O(aq) = H+(aq) + OH-(aq)"),
+            db.reaction("H2O(aq) = H2(aq) + 0.5*O2(aq)"),
+            db.reaction("O2(g) = O2(aq)"),
+            db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)"),
+            db.reaction("NaCl(s)"),
+        };
+
+        auto S = detail::assembleStoichiometricMatrix(reactions, species);
+
+        CHECK( S.rows() == species.size() );
+        CHECK( S.cols() == reactions.size() );
+
+        for(auto i = 0; i < S.rows(); ++i)
+            for(auto j = 0; j < S.cols(); ++j)
+                CHECK( S(i, j) == reactions[j].equation().coefficient(species[i].name()) );
+    }
+
     SECTION("Testing determinePhaseInterfacesInReaction")
     {
         const PhaseList phases = system.phases();
