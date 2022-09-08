@@ -54,9 +54,6 @@ public:
     /// Assign a copy of an EquilibriumSolver object to this.
     auto operator=(EquilibriumSolver other) -> EquilibriumSolver&;
 
-    /// Set the options of the equilibrium solver.
-    auto setOptions(const EquilibriumOptions& options) -> void;
-
     //=================================================================================================================
     //
     // CHEMICAL EQUILIBRIUM METHODS
@@ -184,6 +181,9 @@ public:
     // MISCELLANEOUS METHODS
     //
     //=================================================================================================================
+
+    /// Set the options of the equilibrium solver.
+    auto setOptions(const EquilibriumOptions& options) -> void;
 
     /// Return the conservative matrix of the chemical equilibrium problem.
     /// This conservative matrix of the chemical equilibrium problem is a
