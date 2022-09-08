@@ -18,9 +18,10 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
-#include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/Rate.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ReactionRateModel.hpp>
 #include <Reaktoro/Utils/AqueousProps.hpp>
 
 namespace Reaktoro {
@@ -28,6 +29,9 @@ namespace Reaktoro {
 /// The data available for the evaluation of a mineral reaction rate.
 struct MineralReactionRateArgs
 {
+    /// The state of the chemical system.
+    ChemicalState const& state;
+
     /// The properties of the chemical system.
     ChemicalProps const& props;
 
@@ -57,5 +61,8 @@ using MineralReactionRateModel = Model<Rate(MineralReactionRateArgs)>;
 /// @param mineral The name of the mineral in the system.
 /// @param phases The phases in the chemical system in which the reactions happen.
 using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, PhaseList const& phases)>;
+
+/// Convert a vector of MineralReactionRateModel objects to a vector of ReactionRateModel objects.
+auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& models, Database const& database, PhaseList& phases) -> Vec<ReactionRateModel>;
 
 } // namespace Reaktoro
