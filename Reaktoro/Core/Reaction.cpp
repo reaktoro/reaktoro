@@ -35,11 +35,10 @@ struct Reaction::Impl
     ReactionEquation equation;
 
     /// The function that computes the rate of the reaction (in mol/s).
-    ReactionRateFn ratefn;
+    ReactionRateModel ratemodel;
 
     /// Construct a default Reaction::Impl object
     Impl()
-    : ratefn([](const ChemicalProps&) { return 0.0; })
     {
     }
 
@@ -96,10 +95,10 @@ auto Reaction::withEquation(const ReactionEquation& equation) const -> Reaction
     return copy;
 }
 
-auto Reaction::withRateFn(const ReactionRateFn& fn) const -> Reaction
+auto Reaction::withRateModel(const ReactionRateModel& model) const -> Reaction
 {
     Reaction copy = clone();
-    copy.pimpl->ratefn = fn;
+    copy.pimpl->ratemodel = model;
     return copy;
 }
 
@@ -113,9 +112,9 @@ auto Reaction::equation() const -> const ReactionEquation&
     return pimpl->equation;
 }
 
-auto Reaction::rateFn() const -> const ReactionRateFn&
+auto Reaction::rateModel() const -> const ReactionRateModel&
 {
-    return pimpl->ratefn;
+    return pimpl->ratemodel;
 }
 
 auto Reaction::props(real T, real P) const -> ReactionProps
@@ -130,9 +129,9 @@ auto Reaction::props(real T, Chars unitT, real P, Chars unitP) const -> Reaction
     return props(T, P);
 }
 
-auto Reaction::rate(const ChemicalProps& props) const -> real
+auto Reaction::rate(const ChemicalState& state) const -> real
 {
-    return pimpl->ratefn(props);
+    return pimpl->ratemodel(state);
 }
 
 auto operator<(const Reaction& lhs, const Reaction& rhs) -> bool
