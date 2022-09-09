@@ -28,21 +28,14 @@
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
 #include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
+#include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
-
 using namespace Reaktoro;
-
-/// Return the largest relative difference between two arrays `actual` and `expected`.
-auto largestRelativeDifference(ArrayXr const& actual, ArrayXr const& expected) -> double
-{
-    return ((actual - expected)/expected).abs().maxCoeff();
-}
 
 TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
 {
@@ -57,17 +50,19 @@ TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
 
         ChemicalSystem system(db, solution, calcite);
 
-        SmartEquilibriumResult result;
-        SmartEquilibriumSolver solver(system);
-
+        ChemicalState state(system);
         ChemicalState exactstate(system);
+
+        SmartEquilibriumSolver solver(system);
         EquilibriumSolver exactsolver(system);
+
+        SmartEquilibriumResult result;
 
         //-------------------------------------------------------------------------------------------------------------
         // CREATE AN INITIAL CHEMICAL STATE AND EQUILIBRATE IT - THIS IS THE FIRST LEARNING OPERATION
         //-------------------------------------------------------------------------------------------------------------
 
-        ChemicalState state(system);
+        state = ChemicalState(system);
         state.temperature(25.0, "celsius");
         state.pressure(1.0, "bar");
         state.set("H2O(aq)", 1.0, "kg");
@@ -80,16 +75,17 @@ TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
         CHECK( result.iterations() == 17 );
 
         //-------------------------------------------------------------------------------------------------------------
-        // CHANGE THE CHEMICAL STATE SLIGHTLY AND CHECK SMART PREDICTION SUCCEEDED
+        // CHANGE THE INITIAL CHEMICAL STATE SLIGHTLY AND CHECK SMART PREDICTION SUCCEEDED
         //-------------------------------------------------------------------------------------------------------------
 
-        state.temperature(28.0, "celsius");
+        state = ChemicalState(system);
+        state.temperature(30.0, "celsius");
         state.pressure(2.0, "bar");
         state.set("H2O(aq)", 1.1, "kg");
         state.set("Calcite", 1.1, "mol");
 
         exactstate = state;
-        equilibrate(exactstate); // compute the equilibrium state exactly with conventional algorithm
+        exactsolver.solve(exactstate); // compute the equilibrium state exactly with conventional algorithm
 
         result = solver.solve(state);
 
@@ -97,12 +93,14 @@ TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
         CHECK( result.predicted() );
         CHECK( result.iterations() == 0 );
 
-        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0285944) ); // ~2.8% max relative difference
+        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577472659) ); // ~5.8% max relative difference
+        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0034560191) ); // ~0.35% max relative difference in log scale
 
         //-------------------------------------------------------------------------------------------------------------
-        // CHANGE THE CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
+        // CHANGE THE INITIAL CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
         //-------------------------------------------------------------------------------------------------------------
 
+        state = ChemicalState(system);
         state.temperature(50.0, "celsius");
         state.pressure(10.0, "bar");
         state.set("H2O(aq)", 2.0, "kg");
@@ -115,6 +113,6 @@ TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
 
         CHECK( result.succeeded() );
         CHECK( result.learned() );
-        CHECK( result.iterations() == 6 );
+        CHECK( result.iterations() == 17 );
     }
 }
