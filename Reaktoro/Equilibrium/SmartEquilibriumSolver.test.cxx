@@ -16,596 +16,105 @@
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 // C++ includes
-#include <iomanip>
+#include <iostream>
 
 // Catch includes
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/TimeUtils.hpp>
-#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
-#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumOptions.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumResult.hpp>
+#include <Reaktoro/Equilibrium/SmartEquilibriumSolver.hpp>
+#include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
+
 using namespace Reaktoro;
 
-#define PRINT_INFO_IF_FAILS(x) INFO(#x " = \n" << std::scientific << std::setprecision(16) << x)
+/// Return the largest relative difference between two arrays `actual` and `expected`.
+auto largestRelativeDifference(ArrayXr const& actual, ArrayXr const& expected) -> double
+{
+    return ((actual - expected)/expected).abs().maxCoeff();
+}
 
 TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
 {
-//     const auto db = Database({
-//         Species("H2O"           ).withStandardGibbsEnergy( -237181.72),
-//         Species("H+"            ).withStandardGibbsEnergy(       0.00),
-//         Species("OH-"           ).withStandardGibbsEnergy( -157297.48),
-//         Species("H2"            ).withStandardGibbsEnergy(   17723.42),
-//         Species("O2"            ).withStandardGibbsEnergy(   16543.54),
-//         Species("Na+"           ).withStandardGibbsEnergy( -261880.74),
-//         Species("Cl-"           ).withStandardGibbsEnergy( -131289.74),
-//         Species("NaCl"          ).withStandardGibbsEnergy( -388735.44),
-//         Species("HCl"           ).withStandardGibbsEnergy( -127235.44),
-//         Species("NaOH"          ).withStandardGibbsEnergy( -417981.60),
-//         Species("Ca++"          ).withStandardGibbsEnergy( -552790.08),
-//         Species("Mg++"          ).withStandardGibbsEnergy( -453984.92),
-//         Species("CH4"           ).withStandardGibbsEnergy(  -34451.06),
-//         Species("CO2"           ).withStandardGibbsEnergy( -385974.00),
-//         Species("HCO3-"         ).withStandardGibbsEnergy( -586939.89),
-//         Species("CO3--"         ).withStandardGibbsEnergy( -527983.14),
-//         Species("CaCl2"         ).withStandardGibbsEnergy( -811696.00),
-//         Species("CaCO3"         ).withStandardGibbsEnergy(-1099764.40),
-//         Species("MgCO3"         ).withStandardGibbsEnergy( -998971.84),
-//         Species("SiO2"          ).withStandardGibbsEnergy( -833410.96),
-//         Species("CO2(g)"        ).withStandardGibbsEnergy( -394358.74),
-//         Species("O2(g)"         ).withStandardGibbsEnergy(       0.00),
-//         Species("H2(g)"         ).withStandardGibbsEnergy(       0.00),
-//         Species("H2O(g)"        ).withStandardGibbsEnergy( -228131.76),
-//         Species("CH4(g)"        ).withStandardGibbsEnergy(  -50720.12),
-//         Species("CO(g)"         ).withStandardGibbsEnergy( -137168.26),
-//         Species("NaCl(s)"       ).withStandardGibbsEnergy( -384120.49).withName("Halite"   ),
-//         Species("CaCO3(s)"      ).withStandardGibbsEnergy(-1129177.92).withName("Calcite"  ),
-//         Species("MgCO3(s)"      ).withStandardGibbsEnergy(-1027833.07).withName("Magnesite"),
-//         Species("CaMg(CO3)2(s)" ).withStandardGibbsEnergy(-2166307.84).withName("Dolomite" ),
-//         Species("SiO2(s)"       ).withStandardGibbsEnergy( -856238.86).withName("Quartz"   ),
-//     });
+    WHEN("temperature and pressure are given - calcite and water")
+    {
+        SupcrtDatabase db("supcrtbl");
 
-//     const auto T = 60.0;  // in celsius
-//     const auto P = 100.0; // in bar
+        AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
+        solution.setActivityModel(ActivityModelPitzerHMW());
 
-//     SmartEquilibriumOptions options;
-//     // options.optima.output.active = true;
-//     options.learning = GibbsHessian::Exact;
-//     options.learning.optima.maxiters = 100;
-//     options.learning.optima.convergence.tolerance = 1e-10;
+        MineralPhase calcite("Calcite");
 
-//     SmartEquilibriumResult result;
+        ChemicalSystem system(db, solution, calcite);
 
-//     SECTION("there is only pure water")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O")) );
+        SmartEquilibriumResult result;
+        SmartEquilibriumSolver solver(system);
 
-//         ChemicalSystem system(phases);
+        ChemicalState exactstate(system);
+        EquilibriumSolver exactsolver(system);
 
-//         ChemicalState state(system);
-//         state.setTemperature(T, "celsius");
-//         state.setPressure(P, "bar");
-//         state.setSpeciesAmount("H2O", 55, "mol");
+        //-------------------------------------------------------------------------------------------------------------
+        // CREATE AN INITIAL CHEMICAL STATE AND EQUILIBRATE IT - THIS IS THE FIRST LEARNING OPERATION
+        //-------------------------------------------------------------------------------------------------------------
 
-//         SmartEquilibriumSolver solver(system);
+        ChemicalState state(system);
+        state.temperature(25.0, "celsius");
+        state.pressure(1.0, "bar");
+        state.set("H2O(aq)", 1.0, "kg");
+        state.set("Calcite", 1.0, "mol");
 
-//         WHEN("using epsilon 1e-40")
-//         {
-//             options.epsilon = 1e-40;
-//             solver.setOptions(options);
+        result = solver.solve(state);
 
-//             result = solver.solve(state);
+        CHECK( result.succeeded() );
+        CHECK( result.learned() );
+        CHECK( result.iterations() == 17 );
 
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 17 );
+        //-------------------------------------------------------------------------------------------------------------
+        // CHANGE THE CHEMICAL STATE SLIGHTLY AND CHECK SMART PREDICTION SUCCEEDED
+        //-------------------------------------------------------------------------------------------------------------
 
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
+        state.temperature(28.0, "celsius");
+        state.pressure(2.0, "bar");
+        state.set("H2O(aq)", 1.1, "kg");
+        state.set("Calcite", 1.1, "mol");
 
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
+        exactstate = state;
+        equilibrate(exactstate); // compute the equilibrium state exactly with conventional algorithm
 
-//         WHEN("using epsilon 1e-16")
-//         {
-//             options.epsilon = 1e-16;
-//             solver.setOptions(options);
+        result = solver.solve(state);
 
-//             result = solver.solve(state);
+        CHECK( result.succeeded() );
+        CHECK( result.predicted() );
+        CHECK( result.iterations() == 0 );
 
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 14 );
+        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0285944) ); // ~2.8% max relative difference
 
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
+        //-------------------------------------------------------------------------------------------------------------
+        // CHANGE THE CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
+        //-------------------------------------------------------------------------------------------------------------
 
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
+        state.temperature(50.0, "celsius");
+        state.pressure(10.0, "bar");
+        state.set("H2O(aq)", 2.0, "kg");
+        state.set("Calcite", 2.0, "mol");
 
-//             WHEN("Sensitivity derivatives are considered")
-//             {
-//                 EquilibriumSensitivity sensitivity;
+        exactstate = state;
+        exactsolver.solve(exactstate);
 
-//                 result = solver.solve(state, sensitivity); // check a recalculation converges in 0 iterations (even if sensitivity derivatives need to be computed!)
+        result = solver.solve(state);
 
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 0 );
-
-//                 const auto dndT = sensitivity.dndw("T");
-//                 const auto dndP = sensitivity.dndw("P");
-//                 const auto dndc = sensitivity.dndc();
-
-//                 PRINT_INFO_IF_FAILS(dndT);
-//                 CHECK( dndT.isApprox(VectorXd({{
-//                     -2.3437508072185746e-08,
-//                     2.3437508072185746e-08,
-//                     2.3437508072185759e-08,
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00 }})));
-
-//                 PRINT_INFO_IF_FAILS(dndP);
-//                 CHECK( dndP.isApprox(VectorXd({{
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00 }})));
-
-//                 PRINT_INFO_IF_FAILS(dndc);
-//                 CHECK( dndc.isApprox(MatrixXd({
-//                     { 4.9999999384665239e-01,  0.0000000000000000e+00,  1.2306694552322028e-09 },
-//                     { 6.1533476097769288e-09, -0.0000000000000000e+00,  4.9999999876933054e-01 },
-//                     { 6.1533476097769296e-09, -0.0000000000000000e+00, -5.0000000123066946e-01 },
-//                     { 0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00 },
-//                     { 0.0000000000000000e+00, -0.0000000000000000e+00,  0.0000000000000000e+00 }})));
-//             }
-//         }
-//     }
-
-//     SECTION("there is only pure water but there are other elements besides H and O with zero amounts")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O C Na Cl Ca")) );
-
-//         ChemicalSystem system(phases);
-
-//         ChemicalState state(system);
-//         state.setTemperature(T, "celsius");
-//         state.setPressure(P, "bar");
-//         state.setSpeciesAmount("H2O", 55, "mol"); // no amount given for species with elements C, Na, Cl, Ca
-
-//         SmartEquilibriumSolver solver(system);
-
-//         WHEN("using epsilon 1e-40")
-//         {
-//             options.epsilon = 1e-40;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 25 );
-
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
-
-//         WHEN("using epsilon 1e-16")
-//         {
-//             options.epsilon = 1e-16;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 14 );
-
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
-//     }
-
-//     SECTION("there is a more complicated aqueous solution")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
-
-//         ChemicalSystem system(phases);
-
-//         ChemicalState state(system);
-//         state.setTemperature(T, "celsius");
-//         state.setPressure(P, "bar");
-//         state.setSpeciesAmount("H2O"   , 55.0 , "mol");
-//         state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
-//         state.setSpeciesAmount("CO2"   , 10.0 , "mol");
-//         state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
-//         state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
-//         state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
-
-//         SmartEquilibriumSolver solver(system);
-
-//         WHEN("using epsilon 1e-40")
-//         {
-//             options.epsilon = 1e-40;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 41 );
-
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
-
-//         WHEN("using epsilon 1e-16")
-//         {
-//             options.epsilon = 1e-16;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 27 );
-
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
-//     }
-
-//     SECTION("there is an aqueous solution and a gaseous solution")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
-//         phases.add( GaseousPhase(speciate("H O C")) );
-
-//         ChemicalSystem system(phases);
-
-//         ChemicalState state(system);
-//         state.setTemperature(T, "celsius");
-//         state.setPressure(P, "bar");
-//         state.setSpeciesAmount("H2O"   , 55.0 , "mol");
-//         state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
-//         state.setSpeciesAmount("CO2"   , 10.0 , "mol");
-//         state.setSpeciesAmount("CaCO3" , 0.01 , "mol");
-//         state.setSpeciesAmount("MgCO3" , 0.02 , "mol");
-//         state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
-
-//         SmartEquilibriumSolver solver(system);
-
-//         WHEN("using epsilon 1e-40")
-//         {
-//             options.epsilon = 1e-40;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 41 );
-
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
-
-//         WHEN("using epsilon 1e-16")
-//         {
-//             options.epsilon = 1e-16;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 27 );
-
-//             result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-//         }
-//     }
-
-//     SECTION("there is an aqueous solution, gaseous solution, several minerals")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
-//         phases.add( GaseousPhase(speciate("H O C")) );
-//         phases.add( MineralPhases("Halite Calcite Magnesite Dolomite Quartz") );
-
-//         ChemicalSystem system(phases);
-
-//         ChemicalState state(system);
-//         state.setTemperature(T, "celsius");
-//         state.setPressure(P, "bar");
-//         state.setSpeciesAmount("H2O"   , 55.0 , "mol");
-//         state.setSpeciesAmount("NaCl"  , 0.01 , "mol");
-//         state.setSpeciesAmount("CO2"   , 10.0 , "mol");
-//         state.setSpeciesAmount("CaCO3" , 0.10 , "mol");
-//         state.setSpeciesAmount("MgCO3" , 0.20 , "mol");
-//         state.setSpeciesAmount("SiO2"  , 0.01 , "mol");
-//         state.setSpeciesAmount("Halite", 0.03 , "mol");
-
-//         SmartEquilibriumSolver solver(system);
-
-//         WHEN("reactivity restrictions are not imposed")
-//         {
-//             WHEN("using epsilon 1e-40")
-//             {
-//                 options.epsilon = 1e-40;
-//                 solver.setOptions(options);
-
-//                 result = solver.solve(state);
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations <= 62 ); // for some reason, 57 iterations are needed in Linux and 62 in Windows and macOS! This started to appear after ChemicalState was changed (initial species amounts became 1e-16 instead of zero)
-
-//                 result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 0 );
-//             }
-
-//             WHEN("using epsilon 1e-16")
-//             {
-//                 options.epsilon = 1e-16;
-//                 solver.setOptions(options);
-
-//                 result = solver.solve(state);
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 29 );
-
-//                 result = solver.solve(state); // check a recalculation converges in 0 iterations
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 0 );
-//             }
-//         }
-
-//         WHEN("reactivity restrictions are imposed")
-//         {
-//             EquilibriumRestrictions restrictions(system);
-//             restrictions.cannotIncreaseAbove("Quartz", 0.007, "mol"); // Quartz will precipitate out of 0.01 mol of SiO2(aq) but this will limit to 0.007 mol instead of 0.00973917 mol
-//             restrictions.cannotDecreaseBelow("MgCO3", 0.10, "mol"); // MgCO3 will be consumed to precipitate Magnesite and Dolomite, but this restriction will prevent it from going below 0.10 moles (without this restriction, it would go to 0.0380553 moles)
-//             restrictions.cannotReact("Halite"); // the initial amount of Halite, 0.03 mol, would be completely dissolved if this restriction was not imposed
-
-//             WHEN("using epsilon 1e-40")
-//             {
-//                 options.epsilon = 1e-40;
-//                 solver.setOptions(options);
-
-//                 result = solver.solve(state, restrictions);
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 41 );
-
-//                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 0 );
-
-//                 CHECK( state.speciesAmount("Quartz") == Approx(0.007) );
-//                 CHECK( state.speciesAmount("MgCO3")  == Approx(0.100) );
-//                 CHECK( state.speciesAmount("Halite") == Approx(0.030) );
-//             }
-
-//             WHEN("using epsilon 1e-16")
-//             {
-//                 options.epsilon = 1e-16;
-//                 solver.setOptions(options);
-
-//                 result = solver.solve(state, restrictions);
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 27 );
-
-//                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 0 );
-
-//                 CHECK( state.speciesAmount("Quartz") == Approx(0.007) );
-//                 CHECK( state.speciesAmount("MgCO3")  == Approx(0.100) );
-//                 CHECK( state.speciesAmount("Halite") == Approx(0.030) );
-//             }
-//         }
-//     }
-
-//     SECTION("there is only pure water with given pH")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O")) );
-
-//         ChemicalSystem system(phases);
-
-//         EquilibriumSpecs specs(system);
-//         specs.temperature();
-//         specs.pressure();
-//         specs.pH();
-
-//         SmartEquilibriumSolver solver(specs);
-//         solver.setOptions(options);
-
-//         EquilibriumConditions conditions(specs);
-//         conditions.temperature(50.0, "celsius");
-//         conditions.pressure(80.0, "bar");
-//         conditions.pH(3.0);
-
-//         ChemicalState state(system);
-//         state.set("H2O", 55, "mol");
-
-//         WHEN("using epsilon 1e-40")
-//         {
-//             options.epsilon = 1e-40;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state, conditions);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 17 );
-
-//             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-
-//             CHECK( state.temperature() == Approx(50.0 + 273.15) );
-//             CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
-//             CHECK( state.speciesAmount("H+") == Approx(0.00099084) );
-//         }
-
-//         WHEN("using epsilon 1e-16")
-//         {
-//             options.epsilon = 1e-16;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state, conditions);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 17 );
-
-//             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-
-//             CHECK( state.temperature() == Approx(50.0 + 273.15) );
-//             CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
-//             CHECK( state.speciesAmount("H+") == Approx(0.00099084) );
-
-//             WHEN("sensitivity derivatives are considered")
-//             {
-//                 EquilibriumSensitivity sensitivity;
-
-//                 result = solver.solve(state, sensitivity, conditions); // check a recalculation converges in 0 iterations (even if sensitivity derivatives need to be computed!)
-
-//                 CHECK( result.optima.succeeded );
-//                 CHECK( result.optima.iterations == 0 );
-
-//                 const auto dndT  = sensitivity.dndw("T");
-//                 const auto dndP  = sensitivity.dndw("P");
-//                 const auto dndpH = sensitivity.dndw("pH");
-//                 const auto dndc  = sensitivity.dndc();
-
-//                 PRINT_INFO_IF_FAILS(dndT);
-//                 CHECK( dndT.isApprox(VectorXd({{
-//                     -1.1153479332069776e-11,
-//                     -2.0093291929969796e-16,
-//                     1.1153479332069776e-11,
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00 }})));
-
-//                 PRINT_INFO_IF_FAILS(dndP);
-//                 CHECK( dndP.isApprox(VectorXd({{
-//                     0.0000000000000000e+00,
-//                     -0.0000000000000000e+00,
-//                     -0.0000000000000000e+00,
-//                     0.0000000000000000e+00,
-//                     -0.0000000000000000e+00 }})));
-
-//                 PRINT_INFO_IF_FAILS(dndpH);
-//                 CHECK( dndpH.isApprox(VectorXd({{
-//                     -2.7913561385411666e-10,
-//                     -2.2814928148700963e-03,
-//                     2.7913561385411666e-10,
-//                     0.0000000000000000e+00,
-//                     0.0000000000000000e+00 }})));
-
-//                 PRINT_INFO_IF_FAILS(dndc);
-//                 CHECK( dndc.isApprox(MatrixXd({
-//                     { 4.9999999999834693e-01, 0.0000000000000000e+00, -4.9999999999834693e-01 },
-//                     { 9.0076339999702179e-06, 0.0000000000000000e+00, -9.0076339999702179e-06 },
-//                     { 1.6530565225577372e-12, 0.0000000000000000e+00, -1.6530565225577372e-12 },
-//                     { 0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00 },
-//                     { 0.0000000000000000e+00, 0.0000000000000000e+00,  0.0000000000000000e+00 }})));
-//             }
-//         }
-//     }
-
-//     SECTION("there is an aqueous solution with given pH in equilibrium with a gaseous solution")
-//     {
-//         Phases phases(db);
-//         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
-//         phases.add( GaseousPhase(speciate("H O C")) );
-
-//         ChemicalSystem system(phases);
-
-//         EquilibriumSpecs specs(system);
-//         specs.temperature();
-//         specs.pressure();
-//         specs.pH();
-
-//         SmartEquilibriumSolver solver(specs);
-//         solver.setOptions(options);
-
-//         EquilibriumConditions conditions(specs);
-//         conditions.temperature(50.0, "celsius");
-//         conditions.pressure(80.0, "bar");
-//         conditions.pH(3.0);
-
-//         ChemicalState state(system);
-//         state.set("H2O"  , 55.0, "mol");
-//         state.set("NaCl" , 0.01, "mol");
-//         state.set("CO2"  , 10.0, "mol");
-//         state.set("CaCO3", 0.01, "mol");
-//         state.set("MgCO3", 0.02, "mol");
-//         state.set("SiO2" , 0.01, "mol");
-
-//         WHEN("using epsilon 1e-40")
-//         {
-//             options.epsilon = 1e-40;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state, conditions);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 42 );
-
-//             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-
-//             CHECK( state.temperature() == Approx(50.0 + 273.15) );
-//             CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
-//             CHECK( state.speciesAmount("H+") == Approx(0.00099125) );
-//         }
-
-//         WHEN("using epsilon 1e-16")
-//         {
-//             options.epsilon = 1e-16;
-//             solver.setOptions(options);
-
-//             result = solver.solve(state, conditions);
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 28 );
-
-//             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
-
-//             CHECK( result.optima.succeeded );
-//             CHECK( result.optima.iterations == 0 );
-
-//             CHECK( state.temperature() == Approx(50.0 + 273.15) );
-//             CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
-//             CHECK( state.speciesAmount("H+") == Approx(0.00099125) );
-//         }
-//     }
+        CHECK( result.succeeded() );
+        CHECK( result.learned() );
+        CHECK( result.iterations() == 6 );
+    }
 }
