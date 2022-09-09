@@ -76,4 +76,18 @@ auto dot3p(VectorXdConstRef x, VectorXdConstRef y, double s) -> double;
 /// Return the residual of the equation `A*x - b` with triple-precision.
 auto residual3p(MatrixXdConstRef A, VectorXdConstRef x, VectorXdConstRef b) -> VectorXd;
 
+/// Return the largest relative difference between two arrays `actual` and `expected`.
+template<typename T, typename U>
+auto largestRelativeDifference(Eigen::ArrayBase<T> const& actual, Eigen::ArrayBase<U> const& expected) -> double
+{
+    return ((actual - expected)/expected).abs().maxCoeff();
+}
+
+/// Return the largest relative difference between two arrays `actual` and `expected` in log scale.
+template<typename T, typename U>
+auto largestRelativeDifferenceLogScale(Eigen::ArrayBase<T> const& actual, Eigen::ArrayBase<U> const& expected) -> double
+{
+    return largestRelativeDifference(actual.log(), expected.log());
+}
+
 } // namespace Reaktoro
