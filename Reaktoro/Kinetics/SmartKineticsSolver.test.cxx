@@ -24,25 +24,22 @@
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
-#include <Reaktoro/Equilibrium/EquilibriumUtils.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
+#include <Reaktoro/Kinetics/KineticsResult.hpp>
+#include <Reaktoro/Kinetics/KineticsSolver.hpp>
 #include <Reaktoro/Kinetics/SmartKineticsOptions.hpp>
 #include <Reaktoro/Kinetics/SmartKineticsResult.hpp>
 #include <Reaktoro/Kinetics/SmartKineticsSolver.hpp>
+#include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
-
+#include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
+#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
 using namespace Reaktoro;
-
-/// Return the largest relative difference between two arrays `actual` and `expected`.
-auto largestRelativeDifference(ArrayXr const& actual, ArrayXr const& expected) -> double
-{
-    return ((actual - expected)/expected).abs().maxCoeff();
-}
 
 TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
 {
@@ -51,70 +48,95 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         SupcrtDatabase db("supcrtbl");
 
         AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
-        solution.setActivityModel(ActivityModelPitzerHMW());
+        solution.set(ActivityModelDavies());
 
         MineralPhase calcite("Calcite");
 
-        ChemicalSystem system(db, solution, calcite);
+        Phases phases(db);
+        phases.add(solution);
+        phases.add(calcite);
 
-        SmartKineticsResult result;
-        SmartKineticsSolver solver(system);
+        Params params = Params::embedded("PalandriKharaka.yaml");
 
-        ChemicalState exactstate(system);
-        KineticsSolver exactsolver(system);
+        MineralReactions reactions("Calcite");
+        reactions.setRateModel(ReactionRateModelPalandriKharaka(params));
 
-        //-------------------------------------------------------------------------------------------------------------
-        // CREATE AN INITIAL CHEMICAL STATE AND EQUILIBRATE IT - THIS IS THE FIRST LEARNING OPERATION
-        //-------------------------------------------------------------------------------------------------------------
+        ChemicalSystem system(phases, reactions);
 
         ChemicalState state(system);
+        ChemicalState exactstate(system);
+
+        KineticsSolver exactsolver(system);
+        SmartKineticsSolver solver(system);
+
+        SmartKineticsResult result;
+
+        real dt; // time step in seconds
+
+        //-------------------------------------------------------------------------------------------------------------
+        // CREATE AN INITIAL CHEMICAL STATE AND REACT IT - THIS IS THE FIRST LEARNING OPERATION
+        //-------------------------------------------------------------------------------------------------------------
+
+        dt = 0.1;
+
+        state = ChemicalState(system);
         state.temperature(25.0, "celsius");
         state.pressure(1.0, "bar");
         state.set("H2O(aq)", 1.0, "kg");
         state.set("Calcite", 1.0, "mol");
+        state.surfaceArea("Calcite", 1.0, "m2");
 
-        result = solver.solve(state);
+        result = solver.solve(state, dt);
 
         CHECK( result.succeeded() );
         CHECK( result.learned() );
-        CHECK( result.iterations() == 17 );
+        CHECK( result.iterations() == 15 );
 
         //-------------------------------------------------------------------------------------------------------------
-        // CHANGE THE CHEMICAL STATE SLIGHTLY AND CHECK SMART PREDICTION SUCCEEDED
+        // CHANGE THE INITIAL CHEMICAL STATE SLIGHTLY AND CHECK SMART PREDICTION SUCCEEDED
         //-------------------------------------------------------------------------------------------------------------
 
-        state.temperature(28.0, "celsius");
+        dt = 0.12;
+
+        state = ChemicalState(system);
+        state.temperature(30.0, "celsius");
         state.pressure(2.0, "bar");
         state.set("H2O(aq)", 1.1, "kg");
         state.set("Calcite", 1.1, "mol");
+        state.surfaceArea("Calcite", 1.1, "m2");
 
         exactstate = state;
-        equilibrate(exactstate); // compute the equilibrium state exactly with conventional algorithm
+        exactsolver.solve(exactstate, dt); // compute the reacted state exactly with conventional algorithm
 
-        result = solver.solve(state);
+        result = solver.solve(state, dt);
 
         CHECK( result.succeeded() );
         CHECK( result.predicted() );
         CHECK( result.iterations() == 0 );
 
-        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0285944) ); // ~2.8% max relative difference
+        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577676443) ); // ~5.8% max relative difference
+        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0051315941) ); // ~0.5% max relative difference
 
         //-------------------------------------------------------------------------------------------------------------
-        // CHANGE THE CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
+        // CHANGE THE INITIAL CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
         //-------------------------------------------------------------------------------------------------------------
 
+        dt = 0.15;
+
+        state = ChemicalState(system);
         state.temperature(50.0, "celsius");
         state.pressure(10.0, "bar");
         state.set("H2O(aq)", 2.0, "kg");
         state.set("Calcite", 2.0, "mol");
+        state.surfaceArea("Calcite", 1.0, "m2");
 
         exactstate = state;
-        exactsolver.solve(exactstate);
+        exactsolver.solve(exactstate, dt);
 
-        result = solver.solve(state);
+        result = solver.solve(state, dt);
 
         CHECK( result.succeeded() );
         CHECK( result.learned() );
-        CHECK( result.iterations() == 6 );
+        CHECK( result.iterations() == 16 );
     }
 }
