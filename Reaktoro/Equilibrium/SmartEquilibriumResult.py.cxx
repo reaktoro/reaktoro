@@ -55,6 +55,8 @@ void exportSmartEquilibriumResult(py::module& m)
 
     py::class_<SmartEquilibriumResult>(m, "SmartEquilibriumResult")
         .def("succeeded", &SmartEquilibriumResult::succeeded, "Return true if the calculation succeeded.")
+        .def("predicted", &SmartEquilibriumResult::predicted, "Return true if the calculation was performed using a fast first-order Taylor prediction.")
+        .def("learned", &SmartEquilibriumResult::learned, "Return true if the calculation was learned, not predicted, and performed using the conventional algorithm.")
         .def("failed", &SmartEquilibriumResult::failed, "Return true if the calculation failed.")
         .def("iterations", &SmartEquilibriumResult::iterations, "Return the number of iterations in the calculation.")
         .def_readwrite("prediction", &SmartEquilibriumResult::prediction)

@@ -106,6 +106,12 @@ struct SmartEquilibriumResult
     /// Return true if the calculation failed.
     auto failed() { return !succeeded(); };
 
+    /// Return true if the calculation was performed using a fast first-order Taylor prediction.
+    auto predicted() { return prediction.accepted; };
+
+    /// Return true if the calculation was learned, not predicted, and performed using the conventional algorithm.
+    auto learned() { return !prediction.accepted; };
+
     /// Return the number of iterations in the calculation (zero if prediction was successful).
     auto iterations() { return prediction.accepted ? 0 : learning.solve.iterations(); };
 
