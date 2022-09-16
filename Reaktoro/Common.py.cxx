@@ -24,6 +24,7 @@ void exportMemoization(py::module& m);
 void exportParseUtils(py::module& m);
 void exportStringList(py::module& m);
 void exportStringUtils(py::module& m);
+void exportTable(py::module& m);
 void exportTypes(py::module& m);
 void exportUnits(py::module& m);
 void exportWarnings(py::module& m);
@@ -38,6 +39,7 @@ void exportCommon(py::module& m)
     exportStringList(m);
     exportStringUtils(m);
     exportUnits(m);
+    exportTable(m);
     exportTypes(m);
     exportWarnings(m);
     exportYAML(m);
