@@ -17,20 +17,10 @@
 
 #pragma once
 
-// Third-party includes
-#include <tsl/ordered_map.h>
-
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Core/Param.hpp>
-
-namespace Reaktoro {
-
-template<class Key, class T>
-using Dict = tsl::ordered_map<Key, T>;
-
-} // namespace Reaktoro
 
 namespace Reaktoro {
 
