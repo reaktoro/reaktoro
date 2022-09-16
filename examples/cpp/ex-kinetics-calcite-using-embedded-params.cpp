@@ -23,7 +23,7 @@ int main()
     SupcrtDatabase db("supcrtbl");
 
     AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
-    solution.set(AcMoDav);
+    solution.set(ActivityModelDavies());
 
     MineralPhase calcite("Calcite");
 
@@ -54,35 +54,35 @@ int main()
 
     EquilibriumResult result;
 
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
-    result = solver.solve(state, dt);
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
+    result = solver.solve(state, dt); std::cout << state << std::endl;
 
     std::cout << state << std::endl;
 

@@ -593,6 +593,11 @@ auto Data::exists(String const& key) const -> bool
     return obj.find(key) != obj.end();
 }
 
+auto Data::dump() const -> String
+{
+    return dumpYaml();
+}
+
 auto Data::dumpYaml() const -> String
 {
     yaml doc = convertDataToYaml(*this);
