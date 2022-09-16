@@ -31,6 +31,9 @@
 #include <variant>
 #include <vector>
 
+// Third-party includes
+#include <tsl/ordered_map.h>
+
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
 
@@ -73,6 +76,10 @@ using Map = std::unordered_map<Key, T>;
 // Conveniet alias to `std::unordered_set<T>`
 template<typename T>
 using Set = std::unordered_set<T>;
+
+// Conveniet alias to `tsl::ordered_map<Key, T>`
+template<class Key, class T>
+using Dict = tsl::ordered_map<Key, T>;
 
 /// Convenient alias for `std::pair<T, U>`.
 template<typename T, typename U>
