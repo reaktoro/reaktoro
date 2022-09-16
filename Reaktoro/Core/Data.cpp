@@ -610,6 +610,25 @@ auto Data::dumpJson() const -> String
     return doc.dump(2); // indent=2
 }
 
+auto Data::save(String const& filepath) const -> void
+{
+    saveYaml(filepath);
+}
+
+auto Data::saveYaml(String const& filepath) const -> void
+{
+    std::ofstream file(filepath);
+    file << dumpYaml();
+    file.close();
+}
+
+auto Data::saveJson(String const& filepath) const -> void
+{
+    std::ofstream file(filepath);
+    file << dumpJson();
+    file.close();
+}
+
 auto Data::repr() const -> String
 {
     return dumpYaml();

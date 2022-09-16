@@ -214,6 +214,15 @@ public:
     /// Return a JSON formatted string representing the state of this Data object.
     auto dumpJson() const -> String;
 
+    /// Save the state of this Data object into a YAML formatted file.
+    auto save(String const& filepath) const -> void;
+
+    /// Save the state of this Data object into a YAML formatted file.
+    auto saveYaml(String const& filepath) const -> void;
+
+    /// Save the state of this Data object into a JSON formatted file.
+    auto saveJson(String const& filepath) const -> void;
+
     /// Return a YAML formatted string representing the state of this Data object.
     auto repr() const -> String;
 
