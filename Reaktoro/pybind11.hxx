@@ -35,6 +35,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/cast.h>
 namespace py = pybind11;
+using namespace py::literals;
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
