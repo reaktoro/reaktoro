@@ -10,7 +10,7 @@ include(CCache)
 # Use CMakeRC to enable easy and convenient access to resources
 include(CMakeRC)
 
-# Set the name of the projectw
+# Set the name of the project, its version and other information
 project(Reaktoro VERSION 2.0.0 LANGUAGES CXX)
 
 # Generate compile_commands.json file in the binary directory
