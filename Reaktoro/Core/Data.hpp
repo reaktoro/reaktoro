@@ -206,6 +206,9 @@ public:
     auto exists(String const& key) const -> bool;
 
     /// Return a YAML formatted string representing the state of this Data object.
+    auto dump() const -> String;
+
+    /// Return a YAML formatted string representing the state of this Data object.
     auto dumpYaml() const -> String;
 
     /// Return a JSON formatted string representing the state of this Data object.
