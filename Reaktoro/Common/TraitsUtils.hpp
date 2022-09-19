@@ -42,6 +42,9 @@ constexpr auto isInteger = std::numeric_limits<Decay<T>>::is_integer;
 template<typename T>
 constexpr auto isFloatingPoint = std::is_floating_point_v<T>;
 
+template<typename From, typename To>
+constexpr auto isConvertible = std::is_convertible_v<From, To>;
+
 template<typename T, typename U>
 constexpr auto isSame = std::is_same_v<Decay<T>, Decay<U>>;
 
