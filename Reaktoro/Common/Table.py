@@ -161,7 +161,8 @@ def testTable():
         "2.00000 |        4 |       ! |        1\n"
         "3.00000 |        5 |    Star |         \n"
         "4.00000 |        6 |         |         \n"
-        "5.00000 |          |         |         ")
+        "5.00000 |          |         |         \n"
+        "6.00000 |          |         |         ")
 
     table.column("Column name with space").append(1.0)
     table.column("Column name with space").append(2.0)
@@ -173,21 +174,23 @@ def testTable():
         "2.00000 |        4 |       ! |        1 |                       \n"
         "3.00000 |        5 |    Star |          |                       \n"
         "4.00000 |        6 |         |          |                       \n"
-        "5.00000 |          |         |          |                       ")
+        "5.00000 |          |         |          |                       \n"
+        "6.00000 |          |         |          |                       ")
 
     opts = Table.OutputOptions()
-    opts.delimiter = " | "
+    opts.delimiter = " "
     opts.precision = 4
     opts.scientific = True
 
     assert table.dump(opts) == (
-        "    Floats | Integers | Strings | Booleans | Column name with space\n"
-        "0.0000e+00 |        2 |   Hello |        1 |             1.0000e+00\n"
-        "1.0000e+00 |        3 |   World |        0 |             2.0000e+00\n"
-        "2.0000e+00 |        4 |       ! |        1 |                       \n"
-        "3.0000e+00 |        5 |    Star |          |                       \n"
-        "4.0000e+00 |        6 |         |          |                       \n"
-        "5.0000e+00 |          |         |          |                       ")
+        "    Floats Integers Strings Booleans \"Column name with space\"\n"
+        "0.0000e+00        2   Hello        1               1.0000e+00\n"
+        "1.0000e+00        3   World        0               2.0000e+00\n"
+        "2.0000e+00        4       !        1                         \n"
+        "3.0000e+00        5    Star                                  \n"
+        "4.0000e+00        6                                          \n"
+        "5.0000e+00                                                   \n"
+        "6.0000e+00                                                   ")
 
     # =======================================================================================================
     # Testing a more convenient usage of Table using operator<<
@@ -232,4 +235,5 @@ def testTable():
         "30.0000 |        3 |       ! |         \n"
         "40.0000 |        4 |         |         \n"
         "50.0000 |        5 |         |         \n"
-        "60.0000 |          |         |         ")
+        "60.0000 |          |         |         \n"
+        "70.0000 |          |         |         ")
