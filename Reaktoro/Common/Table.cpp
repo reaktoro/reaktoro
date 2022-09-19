@@ -267,17 +267,17 @@ auto Table::column(String const& columnname) -> TableColumn&
 
 auto Table::operator[](String const& columnname) const -> Deque<double> const&
 {
-    return std::as_const(*this)[columnname];
-}
-
-auto Table::operator[](String const& columnname) -> Deque<double>&
-{
     auto& col = column(columnname);
     auto const& datatype = col.dataType();
     errorif(datatype != DataType::Float,
         "You are using operator [] on a Table object to retrieve float values of a column that stores ", strColumnDataType(datatype), " values. "
         "Use one of the cast methods in class Table to achieve your desired result.");
     return col.floats();
+}
+
+auto Table::operator[](String const& columnname) -> Deque<double>&
+{
+    return const_cast<Deque<double>&>(std::as_const(*this)[columnname]);
 }
 
 auto Table::rows() const -> Index

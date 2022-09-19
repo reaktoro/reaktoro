@@ -154,6 +154,13 @@ public:
     template<typename T>
     auto cast() -> Deque<T>&
     {
+        return const_cast<Deque<T>&>(std::as_const(*this).cast<T>());
+    }
+
+    /// Cast this TableColumn object to a constant reference to a list of values with type compatible with given one.
+    template<typename T>
+    auto cast() const -> Deque<T> const&
+    {
         if constexpr(isSame<T, bool>)
             return booleans();
         else if constexpr(isFloatingPoint<T>)
@@ -163,13 +170,6 @@ public:
         else if constexpr(isSame<T, String> || isSame<T, Chars>)
             return strings();
         else errorif(true, "You cannot cast this table column to a list of values with an unsupported type.");
-    }
-
-    /// Cast this TableColumn object to a constant reference to a list of values with type compatible with given one.
-    template<typename T>
-    auto cast() const -> Deque<T> const&
-    {
-        return std::as_const(*this).cast<T>();
     }
 
 private:
