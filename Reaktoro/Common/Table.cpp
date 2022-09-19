@@ -30,43 +30,49 @@
 namespace Reaktoro {
 namespace {
 
+// Convenient alias for this translation unit.
+using DataType = TableColumn::DataType;
+
 /// Return true if type `T` is consistent with given column data type.
 template<typename T>
-auto isTypeConsistent(TableColumn::DataType datatype) -> bool
+auto isTypeConsistent(DataType datatype) -> bool
 {
     switch(datatype)
     {
-        case TableColumn::DataType::Float: return isFloatingPoint<T> || isInteger<T>;
-        case TableColumn::DataType::Integer: return isInteger<T>;
-        case TableColumn::DataType::String: return isSame<T, String>;
-        case TableColumn::DataType::Boolean: return isSame<T, bool>;
-        case TableColumn::DataType::Undefined: return false;
+        case DataType::Float: return isFloatingPoint<T> || isInteger<T>;
+        case DataType::Integer: return isInteger<T>;
+        case DataType::String: return isSame<T, String>;
+        case DataType::Boolean: return isSame<T, bool>;
+        case DataType::Undefined: return false;
         default: return false;
     }
 }
 
-/// Return a string representation for a TableColumn::DataType value.
-auto strColumnDataType(TableColumn::DataType datatype) -> String
+/// Return a string representation for a DataType value.
+auto strColumnDataType(DataType datatype) -> String
 {
     switch(datatype)
     {
-        case TableColumn::DataType::Float: return "floating-point";
-        case TableColumn::DataType::Integer: return "integer";
-        case TableColumn::DataType::String: return "string";
-        case TableColumn::DataType::Boolean: return "boolean";
+        case DataType::Float: return "floating-point";
+        case DataType::Integer: return "integer";
+        case DataType::String: return "string";
+        case DataType::Boolean: return "boolean";
         default: return "Undefined";
     }
 }
 
 /// General implementation of an append function to add a new value to a table column.
-template<typename T>
-auto appendNewValue(Any& data, TableColumn::DataType const& datatype, T const& value, Chars strvaluetype)
+template<DataType type, typename T>
+auto appendNewValue(Any& data, DataType& datatype, T const& value, Chars strvaluetype)
 {
     if(!data.has_value())
+    {
         data = Deque<T>();
+        datatype = type;
+    }
 
-    errorifnot(isTypeConsistent<T>(datatype),
-        "You cannot append a value of ", strvaluetype, " type to a table column that store values of ", strColumnDataType(datatype), " type. "
+    errorifnot(isTypeConsistent<T>(type),
+        "You cannot append a value of ", strvaluetype, " type to a table column that store values of ", strColumnDataType(type), " type. "
         "Make sure that after inserting the first value into a table column, the same value type is used for all subsequent inserts. "
         "Note that integer values can be stored as floating-point values in a table column of floats. No other conversion is supported.");
 
@@ -85,12 +91,14 @@ auto stringfyTableColumn(String colname, TableColumn const& column, Table::Outpu
     auto columnname_has_delimiter = colname.find(delimiter) != String::npos;
     rows.push_back(columnname_has_delimiter ? "\"" + colname + "\"" : colname); // e.g., delimiter is `,` and column name is `alpha,beta`; name becomes "alpha,beta" in the output
 
+    std::ostringstream ss;
+    ss << (scientific ? std::scientific : std::fixed);
+    ss << std::showpoint;
+    ss << std::setprecision(precision);
+
     for(auto i = 0; i < column.rows(); ++i)
     {
-        std::ostringstream ss;
-        ss << scientific ? std::scientific : std::fixed;
-        ss << std::showpoint;
-        ss << std::setprecision(precision);
+        ss.str("");
         std::visit([&](auto arg){ ss << arg; }, column[i]);
         rows.push_back(ss.str());
     }
@@ -127,9 +135,9 @@ auto outputTable(Stream& stream, Table const& table, Table::OutputOptions const&
     const auto delim = [&](auto j) { return j > 0 ? outputopts.delimiter + space : space; };
 
     // Output the table, row by row
-    for(auto i = 0; table.rows(); ++i) {
-        for(auto j = 0; table.cols(); ++j)
-            stream << delim(j) << std::setw(widths[j]) << matrix[j][i]; // matrix[j] is the j-th column, and matrix[j][i] is the i-th entry in the j-th column
+    for(auto i = 0; i < table.rows(); ++i) {
+        for(auto j = 0; j < table.cols(); ++j)
+            stream << delim(j) << std::setw(widths[j]) << (i < matrix[j].size() ? matrix[j][i] : ""); // matrix[j] is the j-th column, and matrix[j][i] is the i-th entry in the j-th column
         stream << "\n";
     }
 }
@@ -141,29 +149,29 @@ TableColumn::TableColumn()
 
 auto TableColumn::appendFloat(double value) -> void
 {
-    appendNewValue(data, datatype, value, "floating-point");
+    appendNewValue<DataType::Float>(data, datatype, value, "floating-point");
     ++mrows;
 }
 
 auto TableColumn::appendInteger(long value) -> void
 {
-    appendNewValue(data, datatype, value, "integer");
+    appendNewValue<DataType::Integer>(data, datatype, value, "integer");
     ++mrows;
 }
 
 auto TableColumn::appendString(String const& value) -> void
 {
-    appendNewValue(data, datatype, value, "string");
+    appendNewValue<DataType::String>(data, datatype, value, "string");
     ++mrows;
 }
 
 auto TableColumn::appendBoolean(bool value) -> void
 {
-    appendNewValue(data, datatype, value, "boolean");
+    appendNewValue<DataType::Boolean>(data, datatype, value, "boolean");
     ++mrows;
 }
 
-auto TableColumn::dataType() const -> TableColumn::DataType
+auto TableColumn::dataType() const -> DataType
 {
     return datatype;
 }
@@ -226,10 +234,10 @@ auto TableColumn::operator[](Index row) const -> std::variant<double, long, Stri
     errorifnot(row < mrows, "Given row index, ", row, ", is greater than number of rows in the table column, ", mrows, ".");
     switch(datatype)
     {
-        case TableColumn::DataType::Float:     return std::any_cast<Deque<double> const&>(data)[row];
-        case TableColumn::DataType::Integer:   return std::any_cast<Deque<long> const&>(data)[row];
-        case TableColumn::DataType::String:    return std::any_cast<Deque<String> const&>(data)[row];
-        case TableColumn::DataType::Boolean:   return std::any_cast<Deque<bool> const&>(data)[row];
+        case DataType::Float:     return std::any_cast<Deque<double> const&>(data)[row];
+        case DataType::Integer:   return std::any_cast<Deque<long> const&>(data)[row];
+        case DataType::String:    return std::any_cast<Deque<String> const&>(data)[row];
+        case DataType::Boolean:   return std::any_cast<Deque<bool> const&>(data)[row];
         default: return NaN;
     }
 }
@@ -265,7 +273,7 @@ auto Table::operator[](String const& columnname) -> Deque<double>&
 {
     auto& col = column(columnname);
     auto const& datatype = col.dataType();
-    errorif(datatype != TableColumn::DataType::Float,
+    errorif(datatype != DataType::Float,
         "You are using operator [] on a Table object to retrieve float values of a column that stores ", strColumnDataType(datatype), " values. "
         "Use one of the cast methods in class Table to achieve your desired result.");
     return col.floats();
@@ -298,7 +306,7 @@ auto Table::save(String const& filepath, OutputOptions const& outputopts) const 
 }
 
 Table::OutputOptions::OutputOptions()
-: delimiter(";"), precision(6), scientific(false)
+: delimiter(""), precision(6), scientific(false)
 {}
 
 } // namespace Reaktoro
