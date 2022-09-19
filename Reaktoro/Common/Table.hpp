@@ -105,17 +105,23 @@ public:
     template<typename T>
     auto append(T const& value) -> void
     {
-        if constexpr(isFloatingPoint<T>)
+        if constexpr(isSame<T, bool>)
+            appendBoolean(value);
+        else if constexpr(isFloatingPoint<T>)
             appendFloat(value);
-        else if constexpr(isInteger<T>)
+        else if constexpr(isInteger<T>) // keep integer check after booleans, as isInteger<bool> is true!
             if(datatype == DataType::Float)
                 appendFloat(value); // allow integers to be cast to float and stored in a float column!
             else appendInteger(value);
-        else if constexpr(isSame<T, String> || isSame<T, Chars>)
+        else if constexpr(isSame<T, String>)
             appendString(value);
-        else if constexpr(isSame<T, bool>)
-            appendBoolean(value);
         else errorif(true, "You cannot append this value with an unsupported type to a table column.");
+    }
+
+    /// Append a new string value to the TableColumn object.
+    auto append(Chars value) -> void
+    {
+        appendString(value);
     }
 
     /// Append a new value to the TableColumn object.
@@ -127,13 +133,20 @@ public:
     template<typename T>
     auto operator<<(T const& value) -> TableColumn&
     {
-        if constexpr(isFloatingPoint<T> || isInteger<T>)
-            appendFloat(value); // note that integers are cast to float with this operator!
-        else if constexpr(isSame<T, String> || isSame<T, Chars>)
-            appendString(value);
-        else if constexpr(isSame<T, bool>)
+        if constexpr(isSame<T, bool>)
             appendBoolean(value);
+        else if constexpr(isFloatingPoint<T> || isInteger<T>) // keep integer check after booleans, as isInteger<bool> is true!
+            appendFloat(value); // note that integers are cast to float with this operator!
+        else if constexpr(isSame<T, String>)
+            appendString(value);
         else errorif(true, "You cannot append this value with an unsupported type to a table column.");
+        return *this;
+    }
+
+    /// Append a new string value to the TableColumn object.
+    auto operator<<(Chars value) -> TableColumn&
+    {
+        appendString(value);
         return *this;
     }
 
@@ -141,14 +154,14 @@ public:
     template<typename T>
     auto cast() -> Deque<T>&
     {
-        if constexpr(isFloatingPoint<T>)
+        if constexpr(isSame<T, bool>)
+            return booleans();
+        else if constexpr(isFloatingPoint<T>)
             return floats();
-        else if constexpr(isInteger<T>)
+        else if constexpr(isInteger<T>) // keep integer check after booleans, as isInteger<bool> is true!
             return integers();
         else if constexpr(isSame<T, String> || isSame<T, Chars>)
             return strings();
-        else if constexpr(isSame<T, bool>)
-            return booleans();
         else errorif(true, "You cannot cast this table column to a list of values with an unsupported type.");
     }
 
@@ -204,7 +217,7 @@ public:
         /// Construct a default OutputOptions object.
         OutputOptions();
 
-        /// The symbol used to separate column values on a table row (defaults to `;`).
+        /// The symbol used to separate column values on a table row (defaults to `""`).
         String delimiter;
 
         /// The precision used when printing floating-point values (defaults to 6).
