@@ -217,7 +217,7 @@ public:
         /// Construct a default OutputOptions object.
         OutputOptions();
 
-        /// The symbol used to separate column values on a table row (defaults to `""`).
+        /// The symbol used to separate column values on a table row (defaults to `" "`).
         String delimiter;
 
         /// The precision used when printing floating-point values (defaults to 6).
