@@ -85,13 +85,13 @@ MineralReactions::MineralReactions(StringList const& minerals)
 {
 }
 
-auto MineralReactions::setRateModel(MineralReactionRateModelGenerator generator) -> void
+auto MineralReactions::setRateModel(MineralReactionRateModelGenerator const& generator) -> void
 {
     const auto size = m_mineral_rate_model_generators.size();
     m_mineral_rate_model_generators.assign(size, generator);
 }
 
-auto MineralReactions::setRateModel(String mineral, MineralReactionRateModelGenerator generator) -> void
+auto MineralReactions::setRateModel(String const& mineral, MineralReactionRateModelGenerator const& generator) -> void
 {
     errorif(!generator, "You are trying to specify a non-initialized mineral reaction rate generator.");
     const auto idx = index(m_minerals, mineral);
