@@ -83,7 +83,7 @@ auto appendNewValue(Any& data, DataType& datatype, T const& value, Chars strvalu
 /// Convert a TableColumn object to a vector of strings representing the column's data along its rows.
 auto stringfyTableColumn(String colname, TableColumn const& column, Table::OutputOptions const& outputopts) -> Strings
 {
-    auto const& [delimiter, precision, scientific] = outputopts;
+    auto const& [delimiter, precision, scientific, fixed] = outputopts;
 
     Strings rows;
     rows.reserve(1 + column.rows()); // extra entry for column's name (first entry!)
@@ -92,7 +92,8 @@ auto stringfyTableColumn(String colname, TableColumn const& column, Table::Outpu
     rows.push_back(columnname_has_delimiter ? "\"" + colname + "\"" : colname); // e.g., delimiter is `,` and column name is `alpha,beta`; name becomes "alpha,beta" in the output
 
     std::ostringstream ss;
-    ss << (scientific ? std::scientific : std::fixed);
+    if(scientific) ss << std::scientific;
+    if(fixed) ss << std::fixed;
     ss << std::showpoint;
     ss << std::setprecision(precision);
 
@@ -307,7 +308,7 @@ auto Table::save(String const& filepath, OutputOptions const& outputopts) const 
 }
 
 Table::OutputOptions::OutputOptions()
-: delimiter(" "), precision(6), scientific(false)
+: delimiter(" | "), precision(6), scientific(false), fixed(false)
 {}
 
 } // namespace Reaktoro

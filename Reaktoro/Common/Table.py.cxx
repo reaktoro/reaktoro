@@ -79,6 +79,7 @@ void exportTable(py::module& m)
         .def_readwrite("delimiter", &Table::OutputOptions::delimiter, "The symbol used to separate column values on a table row (defaults to `;`).")
         .def_readwrite("precision", &Table::OutputOptions::precision, "The precision used when printing floating-point values (defaults to 6).")
         .def_readwrite("scientific", &Table::OutputOptions::scientific, "The boolean flag indicating if floating-point values should be printed in scientific notation (defaults to `false`).")
+        .def_readwrite("fixed", &Table::OutputOptions::fixed, "The boolean flag indicating if floating-point values should be printed in fixed notation (defaults to `false`).")
         ;
 
     // Finalize registration of remaining Table methods and attributes.

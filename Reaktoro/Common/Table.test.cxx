@@ -145,39 +145,39 @@ TEST_CASE("Testing class Table", "[Table]")
         // Checking method Table::dump
         //----------------------------------------------------------------------------------------------------
         CHECK( table.dump() ==
-            "  Floats Integers Strings Booleans\n"
-            "0.000000        2   Hello        1\n"
-            "1.000000        3   World        0\n"
-            "2.000000        4       !        1\n"
-            "3.000000        5    Star         \n"
-            "4.000000        6                 \n"
-            "5.000000                          ");
+            " Floats | Integers | Strings | Booleans\n"
+            "0.00000 |        2 |   Hello |        1\n"
+            "1.00000 |        3 |   World |        0\n"
+            "2.00000 |        4 |       ! |        1\n"
+            "3.00000 |        5 |    Star |         \n"
+            "4.00000 |        6 |         |         \n"
+            "5.00000 |          |         |         ");
 
         table.column("Column name with space").append(1.0);
         table.column("Column name with space").append(2.0);
 
         CHECK( table.dump() ==
-            "  Floats Integers Strings Booleans \"Column name with space\"\n"
-            "0.000000        2   Hello        1                 1.000000\n"
-            "1.000000        3   World        0                 2.000000\n"
-            "2.000000        4       !        1                         \n"
-            "3.000000        5    Star                                  \n"
-            "4.000000        6                                          \n"
-            "5.000000                                                   ");
+            " Floats | Integers | Strings | Booleans | Column name with space\n"
+            "0.00000 |        2 |   Hello |        1 |                1.00000\n"
+            "1.00000 |        3 |   World |        0 |                2.00000\n"
+            "2.00000 |        4 |       ! |        1 |                       \n"
+            "3.00000 |        5 |    Star |          |                       \n"
+            "4.00000 |        6 |         |          |                       \n"
+            "5.00000 |          |         |          |                       ");
 
         Table::OutputOptions opts;
-        opts.delimiter = " | ";
+        opts.delimiter = " ";
         opts.precision = 4;
         opts.scientific = true;
 
         CHECK( table.dump(opts) ==
-            "    Floats | Integers | Strings | Booleans | Column name with space\n"
-            "0.0000e+00 |        2 |   Hello |        1 |             1.0000e+00\n"
-            "1.0000e+00 |        3 |   World |        0 |             2.0000e+00\n"
-            "2.0000e+00 |        4 |       ! |        1 |                       \n"
-            "3.0000e+00 |        5 |    Star |          |                       \n"
-            "4.0000e+00 |        6 |         |          |                       \n"
-            "5.0000e+00 |          |         |          |                       ");
+            "    Floats Integers Strings Booleans \"Column name with space\"\n"
+            "0.0000e+00        2   Hello        1               1.0000e+00\n"
+            "1.0000e+00        3   World        0               2.0000e+00\n"
+            "2.0000e+00        4       !        1                         \n"
+            "3.0000e+00        5    Star                                  \n"
+            "4.0000e+00        6                                          \n"
+            "5.0000e+00                                                   ");
     }
 
     SECTION("Testing a more convenient usage of Table using operator<<")
@@ -225,12 +225,12 @@ TEST_CASE("Testing class Table", "[Table]")
         //----------------------------------------------------------------------------------------------------
 
         CHECK( table.dump() ==
-            "  FloatsA  FloatsB Strings Booleans\n"
-            "10.000000 1.000000   Hello        1\n"
-            "20.000000 2.000000   World        0\n"
-            "30.000000 3.000000       !         \n"
-            "40.000000 4.000000                 \n"
-            "50.000000 5.000000                 \n"
-            "60.000000                          ");
+            "FloatsA | FloatsB | Strings | Booleans\n"
+            "10.0000 | 1.00000 |   Hello |        1\n"
+            "20.0000 | 2.00000 |   World |        0\n"
+            "30.0000 | 3.00000 |       ! |         \n"
+            "40.0000 | 4.00000 |         |         \n"
+            "50.0000 | 5.00000 |         |         \n"
+            "60.0000 |         |         |         ");
     }
 }

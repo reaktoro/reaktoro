@@ -217,7 +217,7 @@ public:
         /// Construct a default OutputOptions object.
         OutputOptions();
 
-        /// The symbol used to separate column values on a table row (defaults to `" "`).
+        /// The symbol used to separate column values on a table row (defaults to `" | "`).
         String delimiter;
 
         /// The precision used when printing floating-point values (defaults to 6).
@@ -225,6 +225,9 @@ public:
 
         /// The boolean flag indicating if floating-point values should be printed in scientific notation (defaults to `false`).
         bool scientific;
+
+        /// The boolean flag indicating if floating-point values should be printed in fixed notation (defaults to `false`).
+        bool fixed;
     };
 
     /// Assemble a string representation of the Table object.
