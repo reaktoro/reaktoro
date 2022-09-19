@@ -22,6 +22,12 @@
 #include <Reaktoro/Common/Table.hpp>
 using namespace Reaktoro;
 
+template<typename T>
+auto __lshift__(TableColumn& self, T const& value) -> TableColumn&
+{
+    return self << value;
+}
+
 void exportTable(py::module& m)
 {
     // Create a module object for TableColumn
@@ -44,24 +50,24 @@ void exportTable(py::module& m)
         .def("appendString", &TableColumn::appendString, "Append a new string value to the TableColumn object.")
         .def("appendBoolean", &TableColumn::appendBoolean, "Append a new boolean value to the TableColumn object.")
         .def("dataType", &TableColumn::dataType, "Get the data type of the column.")
-        .def("floats", py::overload_cast<>(&TableColumn::floats, py::const_), "Convert this TableColumn object to a constant reference to its underlying `Deque<double>` object.")
-        .def("floats", py::overload_cast<>(&TableColumn::floats), "Convert this TableColumn object to a mutable reference to its underlying `Deque<double>` object.")
-        .def("integers", py::overload_cast<>(&TableColumn::integers, py::const_), "Convert this TableColumn object to a constant reference to its underlying `Deque<long>` object.")
-        .def("integers", py::overload_cast<>(&TableColumn::integers), "Convert this TableColumn object to a mutable reference to its underlying `Deque<long>` object.")
-        .def("strings", py::overload_cast<>(&TableColumn::strings, py::const_), "Convert this TableColumn object to a constant reference to its underlying `Deque<String>` object.")
-        .def("strings", py::overload_cast<>(&TableColumn::strings), "Convert this TableColumn object to a mutable reference to its underlying `Deque<String>` object.")
-        .def("booleans", py::overload_cast<>(&TableColumn::booleans, py::const_), "Convert this TableColumn object to a constant reference to its underlying `Deque<bool>` object.")
-        .def("booleans", py::overload_cast<>(&TableColumn::booleans), "Convert this TableColumn object to a mutable reference to its underlying `Deque<bool>` object.")
+        .def("floats", py::overload_cast<>(&TableColumn::floats, py::const_), return_internal_ref, "Convert this TableColumn object to a constant reference to its underlying `Deque<double>` object.")
+        .def("floats", py::overload_cast<>(&TableColumn::floats), return_internal_ref, "Convert this TableColumn object to a mutable reference to its underlying `Deque<double>` object.")
+        .def("integers", py::overload_cast<>(&TableColumn::integers, py::const_), return_internal_ref, "Convert this TableColumn object to a constant reference to its underlying `Deque<long>` object.")
+        .def("integers", py::overload_cast<>(&TableColumn::integers), return_internal_ref, "Convert this TableColumn object to a mutable reference to its underlying `Deque<long>` object.")
+        .def("strings", py::overload_cast<>(&TableColumn::strings, py::const_), return_internal_ref, "Convert this TableColumn object to a constant reference to its underlying `Deque<String>` object.")
+        .def("strings", py::overload_cast<>(&TableColumn::strings), return_internal_ref, "Convert this TableColumn object to a mutable reference to its underlying `Deque<String>` object.")
+        .def("booleans", py::overload_cast<>(&TableColumn::booleans, py::const_), return_internal_ref, "Convert this TableColumn object to a constant reference to its underlying `Deque<bool>` object.")
+        .def("booleans", py::overload_cast<>(&TableColumn::booleans), return_internal_ref, "Convert this TableColumn object to a mutable reference to its underlying `Deque<bool>` object.")
         .def("rows", &TableColumn::rows, "Get the number of rows in the column.")
         .def("__getitem__", [](TableColumn const& self, int irow) { return self[irow]; } )
+        .def("append", [](TableColumn& self, bool value) { self.append(value); }, "Append a new value to the TableColumn object.")
         .def("append", [](TableColumn& self, double value) { self.append(value); }, "Append a new value to the TableColumn object.")
         .def("append", [](TableColumn& self, long value) { self.append(value); }, "Append a new value to the TableColumn object.")
         .def("append", [](TableColumn& self, String const& value) { self.append(value); }, "Append a new value to the TableColumn object.")
-        .def("append", [](TableColumn& self, bool value) { self.append(value); }, "Append a new value to the TableColumn object.")
-        .def("__lshift__", [](TableColumn& self, double value) { self << value; }, "Append a new value to the TableColumn object.")
-        .def("__lshift__", [](TableColumn& self, long value) { self << value; }, "Append a new value to the TableColumn object.")
-        .def("__lshift__", [](TableColumn& self, String const& value) { self << value; }, "Append a new value to the TableColumn object.")
-        .def("__lshift__", [](TableColumn& self, bool value) { self << value; }, "Append a new value to the TableColumn object.")
+        .def("__lshift__", __lshift__<bool>, return_internal_ref, "Append a new value to the TableColumn object.")
+        .def("__lshift__", __lshift__<double>, return_internal_ref, "Append a new value to the TableColumn object.")
+        .def("__lshift__", __lshift__<long>, return_internal_ref, "Append a new value to the TableColumn object.")
+        .def("__lshift__", __lshift__<String>, return_internal_ref, "Append a new value to the TableColumn object.")
         ;
 
     // Create a module object for TableColumn
@@ -79,10 +85,8 @@ void exportTable(py::module& m)
     mTable
         .def(py::init<>())
         .def("columns", &Table::columns, "Get the columns in the Table object.")
-        .def("column", py::overload_cast<String const&>(&Table::column, py::const_), "Get a constant reference to a column in the table with given name.")
-        .def("column", py::overload_cast<String const&>(&Table::column), "Get a mutable reference to a column in the table with given name.")
-        .def("__getitem__", [](Table const& self, String const& columnname) { return self[columnname]; }, "Get a constant reference to a column in the table with given name.")
-        .def("__getitem__", [](Table& self, String const& columnname) { return self[columnname]; }, "Get a mutable reference to a column in the table with given name.")
+        .def("column", py::overload_cast<String const&>(&Table::column), return_internal_ref, "Get a mutable reference to a column in the table with given name.")
+        .def("__getitem__", [](Table& self, String const& colname) { return self[colname]; }, return_internal_ref, "Get a mutable reference to a column in the table with given name.")
         .def("rows", &Table::rows, "Get the number of rows in the table (i.e., the length of the longest column in the table).")
         .def("cols", &Table::cols, "Get the number of columns in the table.")
         .def("dump", &Table::dump, "Assemble a string representation of the Table object.", "outputopts"_a = Table::OutputOptions())
