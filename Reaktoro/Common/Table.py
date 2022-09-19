@@ -198,35 +198,26 @@ def testTable():
     # Checking operator TableColumn.operator<<
     #----------------------------------------------------------------------------------------------------
 
-    table.column("FloatsA") << 10.0
-    table.column("FloatsA") << 20.0
-    table.column("FloatsA") << 30.0
-    table.column("FloatsA") << 40.0
-    table.column("FloatsA") << 50.0
-    table.column("FloatsA") << 60.0
-    table.column("FloatsA") << 70.0
-
-    table.column("FloatsB") << 1 << 2.0 << 3 << 4.0 << 5 # note operator<< will append integers as floats - check docs for reason!
-
+    table.column("Floats") << 10.0 << 20 << 30.0 << 40 << 50.0 << 60 << 70.0  # integers 20, 40, 60 will be cast to floats
+    table.column("Integers") << 1 << 2 << 3 << 4 << 5
     table.column("Strings") << "Hello" << "World" << "!"
-
     table.column("Booleans") << True << False
 
     assert table.rows() == 7
     assert table.cols() == 4
 
-    assert table.column("FloatsA").rows()  == 7
-    assert table.column("FloatsB").rows()  == 5
+    assert table.column("Floats").rows()   == 7
+    assert table.column("Integers").rows() == 5
     assert table.column("Strings").rows()  == 3
     assert table.column("Booleans").rows() == 2
 
-    assert table.column("FloatsA").dataType()  == TableColumn.DataType.Float
-    assert table.column("FloatsB").dataType()  == TableColumn.DataType.Float
+    assert table.column("Floats").dataType()   == TableColumn.DataType.Float
+    assert table.column("Integers").dataType() == TableColumn.DataType.Integer
     assert table.column("Strings").dataType()  == TableColumn.DataType.String
     assert table.column("Booleans").dataType() == TableColumn.DataType.Boolean
 
-    assert table.column("FloatsA").floats()    == [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0]
-    assert table.column("FloatsB").floats()    == [1.0, 2.0, 3.0, 4.0, 5.0]
+    assert table.column("Floats").floats()     == [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0]
+    assert table.column("Integers").integers() == [1, 2, 3, 4, 5]
     assert table.column("Strings").strings()   == ["Hello", "World", "!"]
     assert table.column("Booleans").booleans() == [True, False]
 
@@ -235,10 +226,10 @@ def testTable():
     #----------------------------------------------------------------------------------------------------
 
     assert table.dump() == (
-        "FloatsA | FloatsB | Strings | Booleans\n"
-        "10.0000 | 1.00000 |   Hello |        1\n"
-        "20.0000 | 2.00000 |   World |        0\n"
-        "30.0000 | 3.00000 |       ! |         \n"
-        "40.0000 | 4.00000 |         |         \n"
-        "50.0000 | 5.00000 |         |         \n"
-        "60.0000 |         |         |         ")
+        " Floats | Integers | Strings | Booleans\n"
+        "10.0000 |        1 |   Hello |        1\n"
+        "20.0000 |        2 |   World |        0\n"
+        "30.0000 |        3 |       ! |         \n"
+        "40.0000 |        4 |         |         \n"
+        "50.0000 |        5 |         |         \n"
+        "60.0000 |          |         |         ")

@@ -73,7 +73,7 @@ auto appendNewValue(Any& data, DataType& datatype, T const& value, Chars strvalu
 
     errorifnot(isTypeConsistent<T>(type),
         "You cannot append a value of ", strvaluetype, " type to a table column that store values of ", strColumnDataType(type), " type. "
-        "Make sure that after inserting the first value into a table column, the same value type is used for all subsequent inserts. "
+        "Make sure that after inserting the first value into a table column, the **same value type** is used for all subsequent inserts. "
         "Note that integer values can be stored as floating-point values in a table column of floats. No other conversion is supported.");
 
     auto& deque = std::any_cast<Deque<T>&>(data);
