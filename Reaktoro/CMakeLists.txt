@@ -33,10 +33,12 @@ target_link_libraries(Reaktoro
     PRIVATE tabulate::tabulate
     PUBLIC Eigen3::Eigen
     PUBLIC autodiff::autodiff
-    PUBLIC Optima::Optima
+    PUBLIC Eigen3::Eigen
     PUBLIC nlohmann_json::nlohmann_json
+    PUBLIC Optima::Optima
     PUBLIC phreeqc4rkt::phreeqc4rkt
     PUBLIC ThermoFun::ThermoFun
+    PUBLIC tsl::ordered_map
     PUBLIC yaml-cpp
 )
 
