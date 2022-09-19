@@ -131,14 +131,15 @@ auto outputTable(Stream& stream, Table const& table, Table::OutputOptions const&
     const Vec<Index> widths = widthsTableColumns(matrix);
 
     // Define an auxiliary function to determine if a delimiter symbol is to be inserted or not
-    const auto space = String(" ");
-    const auto delim = [&](auto j) { return j > 0 ? outputopts.delimiter + space : space; };
+    const auto empty = String("");
+    const auto delim = [&](auto j) { return j > 0 ? outputopts.delimiter + empty : empty; };
+    const auto newline = [&](auto i) { return i > 0 ? "\n" : ""; };
 
     // Output the table, row by row
     for(auto i = 0; i < table.rows(); ++i) {
+        stream << newline(i);
         for(auto j = 0; j < table.cols(); ++j)
             stream << delim(j) << std::setw(widths[j]) << (i < matrix[j].size() ? matrix[j][i] : ""); // matrix[j] is the j-th column, and matrix[j][i] is the i-th entry in the j-th column
-        stream << "\n";
     }
 }
 
@@ -306,7 +307,7 @@ auto Table::save(String const& filepath, OutputOptions const& outputopts) const 
 }
 
 Table::OutputOptions::OutputOptions()
-: delimiter(""), precision(6), scientific(false)
+: delimiter(" "), precision(6), scientific(false)
 {}
 
 } // namespace Reaktoro
