@@ -33,10 +33,10 @@ public:
     MineralReactions(StringList const& minerals);
 
     /// Set a common mineral reaction rate model generator for all minerals.
-    auto setRateModel(MineralReactionRateModelGenerator generator) -> void;
+    auto setRateModel(MineralReactionRateModelGenerator const& generator) -> void;
 
     /// Set a mineral reaction rate model generator for a specific mineral.
-    auto setRateModel(String mineral, MineralReactionRateModelGenerator generator) -> void;
+    auto setRateModel(String const& mineral, MineralReactionRateModelGenerator const& generator) -> void;
 
     /// Convert this MineralReactions object into a vector of Reaction objects.
     /// @param phases The phases and their species composing the chemical system where the reactions will take place.
