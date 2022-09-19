@@ -125,21 +125,11 @@ public:
     }
 
     /// Append a new value to the TableColumn object.
-    /// This operator exists for convenience and provides an operation almost identical to @ref
-    /// append. The difference is that this operator treats integers as floats. This is to avoid
-    /// accidental first insertion of an integer value, but subsequent inserted values are floats
-    /// (especially from the Python side; see example below). If you want a table column of
-    /// integers, use the @ref appendInteger or @ref append method with an integer value.
+    /// This operator exists for convenience and provides an operation identical to @ref append.
     template<typename T>
     auto operator<<(T const& value) -> TableColumn&
     {
-        if constexpr(isSame<T, bool>)
-            appendBoolean(value);
-        else if constexpr(isFloatingPoint<T> || isInteger<T> || isConvertible<T, double>) // keep integer check after booleans, as isInteger<bool> is true!
-            appendFloat(value); // note that integers are cast to float with this operator!
-        else if constexpr(isSame<T, String>)
-            appendString(value);
-        else errorif(true, "You cannot append this value with an unsupported type to a table column.");
+        append(value);
         return *this;
     }
 

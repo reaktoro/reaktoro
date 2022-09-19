@@ -84,6 +84,7 @@ TEST_CASE("Testing class Table", "[Table]")
         CHECK( table.column("Integers").integers() == Deque<long>{2, 3, 4, 5} );
         CHECK( table.column("Strings").strings()   == Deque<String>{"Hello", "World", "!"} );
         CHECK( table.column("Booleans").booleans() == Deque<bool>{true, false} );
+
         CHECK_THROWS( table.column("Floats").integers() );
         CHECK_THROWS( table.column("Floats").strings() );
         CHECK_THROWS( table.column("Floats").booleans() );
@@ -188,35 +189,26 @@ TEST_CASE("Testing class Table", "[Table]")
         // Checking operator TableColumn::operator<<
         //----------------------------------------------------------------------------------------------------
 
-        table.column("FloatsA") << 10.0;
-        table.column("FloatsA") << 20.0;
-        table.column("FloatsA") << 30.0;
-        table.column("FloatsA") << 40.0;
-        table.column("FloatsA") << 50.0;
-        table.column("FloatsA") << 60.0;
-        table.column("FloatsA") << 70.0;
-
-        table.column("FloatsB") << 1 << 2.0 << 3 << 4.0 << 5; // note operator<< will append integers as floats - check docs for reason!
-
+        table.column("Floats") << 10.0 << 20 << 30.0 << 40 << 50.0 << 60 << 70.0; // integers 20, 40, 60 will be cast to floats
+        table.column("Integers") << 1 << 2 << 3 << 4 << 5;
         table.column("Strings") << "Hello" << String("World") << "!";
-
         table.column("Booleans") << true << false;
 
         CHECK(table.rows() == 7);
         CHECK(table.cols() == 4);
 
-        CHECK( table.column("FloatsA").rows()  == 7 );
-        CHECK( table.column("FloatsB").rows()  == 5 );
+        CHECK( table.column("Floats").rows()   == 7 );
+        CHECK( table.column("Integers").rows() == 5 );
         CHECK( table.column("Strings").rows()  == 3 );
         CHECK( table.column("Booleans").rows() == 2 );
 
-        CHECK( table.column("FloatsA").dataType()  == TableColumn::DataType::Float );
-        CHECK( table.column("FloatsB").dataType()  == TableColumn::DataType::Float );
+        CHECK( table.column("Floats").dataType()   == TableColumn::DataType::Float );
+        CHECK( table.column("Integers").dataType() == TableColumn::DataType::Integer );
         CHECK( table.column("Strings").dataType()  == TableColumn::DataType::String );
         CHECK( table.column("Booleans").dataType() == TableColumn::DataType::Boolean );
 
-        CHECK( table.column("FloatsA").floats()    == Deque<double>{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0} );
-        CHECK( table.column("FloatsB").floats()    == Deque<double>{1.0, 2.0, 3.0, 4.0, 5.0} );
+        CHECK( table.column("Floats").floats()     == Deque<double>{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0} );
+        CHECK( table.column("Integers").integers() == Deque<long>{1, 2, 3, 4, 5} );
         CHECK( table.column("Strings").strings()   == Deque<String>{"Hello", "World", "!"} );
         CHECK( table.column("Booleans").booleans() == Deque<bool>{true, false} );
 
@@ -225,12 +217,12 @@ TEST_CASE("Testing class Table", "[Table]")
         //----------------------------------------------------------------------------------------------------
 
         CHECK( table.dump() ==
-            "FloatsA | FloatsB | Strings | Booleans\n"
-            "10.0000 | 1.00000 |   Hello |        1\n"
-            "20.0000 | 2.00000 |   World |        0\n"
-            "30.0000 | 3.00000 |       ! |         \n"
-            "40.0000 | 4.00000 |         |         \n"
-            "50.0000 | 5.00000 |         |         \n"
-            "60.0000 |         |         |         ");
+            " Floats | Integers | Strings | Booleans\n"
+            "10.0000 |        1 |   Hello |        1\n"
+            "20.0000 |        2 |   World |        0\n"
+            "30.0000 |        3 |       ! |         \n"
+            "40.0000 |        4 |         |         \n"
+            "50.0000 |        5 |         |         \n"
+            "60.0000 |          |         |         ");
     }
 }
