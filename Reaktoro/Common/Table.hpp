@@ -107,12 +107,12 @@ public:
     {
         if constexpr(isSame<T, bool>)
             appendBoolean(value);
-        else if constexpr(isFloatingPoint<T>)
-            appendFloat(value);
         else if constexpr(isInteger<T>) // keep integer check after booleans, as isInteger<bool> is true!
             if(datatype == DataType::Float)
                 appendFloat(value); // allow integers to be cast to float and stored in a float column!
             else appendInteger(value);
+        else if constexpr(isFloatingPoint<T> || isConvertible<T, double>)
+            appendFloat(value);
         else if constexpr(isSame<T, String>)
             appendString(value);
         else errorif(true, "You cannot append this value with an unsupported type to a table column.");
@@ -135,7 +135,7 @@ public:
     {
         if constexpr(isSame<T, bool>)
             appendBoolean(value);
-        else if constexpr(isFloatingPoint<T> || isInteger<T>) // keep integer check after booleans, as isInteger<bool> is true!
+        else if constexpr(isFloatingPoint<T> || isInteger<T> || isConvertible<T, double>) // keep integer check after booleans, as isInteger<bool> is true!
             appendFloat(value); // note that integers are cast to float with this operator!
         else if constexpr(isSame<T, String>)
             appendString(value);
