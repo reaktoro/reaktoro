@@ -26,28 +26,29 @@ void exportReactionRateModelPalandriKharaka(py::module& m)
 {
     py::class_<ReactionRateModelParamsPalandriKharaka::Catalyst>(m, "ReactionRateModelParamsPalandriKharakaCatalyst")
         .def(py::init<>())
-        .def_readwrite("formula",  &ReactionRateModelParamsPalandriKharaka::Catalyst::formula)
-        .def_readwrite("property", &ReactionRateModelParamsPalandriKharaka::Catalyst::property)
-        .def_readwrite("power",    &ReactionRateModelParamsPalandriKharaka::Catalyst::power)
+        .def_readwrite("formula",  &ReactionRateModelParamsPalandriKharaka::Catalyst::formula , "The chemical formula of the species that participates as a catalyst.")
+        .def_readwrite("property", &ReactionRateModelParamsPalandriKharaka::Catalyst::property, "The symbol of the species property that acts as a catalyser. The options are `a` for the activity of the species, and `P` for its partial pressure (in which case the species must be an existing gas in the system). Defaults to 'a'.")
+        .def_readwrite("power",    &ReactionRateModelParamsPalandriKharaka::Catalyst::power   , "The power of the property that affects the rate of mineral reaction. Defaults to 0.0.")
         ;
 
     py::class_<ReactionRateModelParamsPalandriKharaka::Mechanism>(m, "ReactionRateModelParamsPalandriKharakaMechanism")
         .def(py::init<>())
-        .def_readwrite("name",      &ReactionRateModelParamsPalandriKharaka::Mechanism::name)
-        .def_readwrite("lgk",       &ReactionRateModelParamsPalandriKharaka::Mechanism::lgk)
-        .def_readwrite("E",         &ReactionRateModelParamsPalandriKharaka::Mechanism::E)
-        .def_readwrite("p",         &ReactionRateModelParamsPalandriKharaka::Mechanism::p)
-        .def_readwrite("q",         &ReactionRateModelParamsPalandriKharaka::Mechanism::q)
-        .def_readwrite("catalysts", &ReactionRateModelParamsPalandriKharaka::Mechanism::catalysts)
+        .def_readwrite("name",      &ReactionRateModelParamsPalandriKharaka::Mechanism::name     , "The classifying name of the mineral reaction mechanism (e.g., `Acid`, `Neutral`, `Base`, `Carbonate`).")
+        .def_readwrite("lgk",       &ReactionRateModelParamsPalandriKharaka::Mechanism::lgk      , "The kinetic rate constant of the mineral reaction at 298.15 K (in lg mol/(m2*s)).")
+        .def_readwrite("E",         &ReactionRateModelParamsPalandriKharaka::Mechanism::E        , "The Arrhenius activation energy of the mineral reaction (in kJ/mol).")
+        .def_readwrite("p",         &ReactionRateModelParamsPalandriKharaka::Mechanism::p        , "The empirical and dimensionless power parameter *p*.")
+        .def_readwrite("q",         &ReactionRateModelParamsPalandriKharaka::Mechanism::q        , "The empirical and dimensionless power parameter *q*.")
+        .def_readwrite("catalysts", &ReactionRateModelParamsPalandriKharaka::Mechanism::catalysts, "The catalysts of the mineral reaction.")
         ;
 
     py::class_<ReactionRateModelParamsPalandriKharaka>(m, "ReactionRateModelParamsPalandriKharaka")
         .def(py::init<>())
-        .def_readwrite("mineral",    &ReactionRateModelParamsPalandriKharaka::mineral)
-        .def_readwrite("othernames", &ReactionRateModelParamsPalandriKharaka::othernames)
-        .def_readwrite("mechanisms", &ReactionRateModelParamsPalandriKharaka::mechanisms)
+        .def_readwrite("mineral",    &ReactionRateModelParamsPalandriKharaka::mineral   , "The name of the mineral (e.g., `Dolomite`).")
+        .def_readwrite("othernames", &ReactionRateModelParamsPalandriKharaka::othernames, "The alternative names of the mineral (e.g., `Dolomite,ord`, `Dolomite,ordered`).")
+        .def_readwrite("mechanisms", &ReactionRateModelParamsPalandriKharaka::mechanisms, "The reaction mechanisms considered in the mineral dissolution/precipitation rate model.")
         ;
 
+    m.def("ReactionRateModelPalandriKharaka", py::overload_cast<Params const&>(ReactionRateModelPalandriKharaka));
     m.def("ReactionRateModelPalandriKharaka", py::overload_cast<ReactionRateModelParamsPalandriKharaka const&>(ReactionRateModelPalandriKharaka));
     m.def("ReactionRateModelPalandriKharaka", py::overload_cast<Vec<ReactionRateModelParamsPalandriKharaka> const&>(ReactionRateModelPalandriKharaka));
 }
