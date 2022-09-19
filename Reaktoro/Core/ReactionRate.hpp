@@ -39,11 +39,17 @@ public:
     : m_value(value) {}
 
     /// Return a ReactionRate object that represents the residual of an enforced equation `f(props) = 0` instead of a reaction rate.
-    static ReactionRate enforce(real const& value)
+    static auto enforce(real const& value) -> ReactionRate
     {
         ReactionRate res(value);
         res.m_equation_mode = true;
         return res;
+    }
+
+    /// Get the underlying real object in the ReactionRate object.
+    auto value() const -> real const&
+    {
+        return m_value;
     }
 
     /// Convert this ReactionRate object into a real object.
