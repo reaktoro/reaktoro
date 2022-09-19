@@ -152,7 +152,8 @@ TEST_CASE("Testing class Table", "[Table]")
             "2.00000 |        4 |       ! |        1\n"
             "3.00000 |        5 |    Star |         \n"
             "4.00000 |        6 |         |         \n"
-            "5.00000 |          |         |         ");
+            "5.00000 |          |         |         \n"
+            "6.00000 |          |         |         ");
 
         table.column("Column name with space").append(1.0);
         table.column("Column name with space").append(2.0);
@@ -164,7 +165,8 @@ TEST_CASE("Testing class Table", "[Table]")
             "2.00000 |        4 |       ! |        1 |                       \n"
             "3.00000 |        5 |    Star |          |                       \n"
             "4.00000 |        6 |         |          |                       \n"
-            "5.00000 |          |         |          |                       ");
+            "5.00000 |          |         |          |                       \n"
+            "6.00000 |          |         |          |                       ");
 
         Table::OutputOptions opts;
         opts.delimiter = " ";
@@ -178,7 +180,8 @@ TEST_CASE("Testing class Table", "[Table]")
             "2.0000e+00        4       !        1                         \n"
             "3.0000e+00        5    Star                                  \n"
             "4.0000e+00        6                                          \n"
-            "5.0000e+00                                                   ");
+            "5.0000e+00                                                   \n"
+            "6.0000e+00                                                   ");
     }
 
     SECTION("Testing a more convenient usage of Table using operator<<")
@@ -223,6 +226,7 @@ TEST_CASE("Testing class Table", "[Table]")
             "30.0000 |        3 |       ! |         \n"
             "40.0000 |        4 |         |         \n"
             "50.0000 |        5 |         |         \n"
-            "60.0000 |          |         |         ");
+            "60.0000 |          |         |         \n"
+            "70.0000 |          |         |         ");
     }
 }
