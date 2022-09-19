@@ -39,6 +39,7 @@
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringList.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Common/Table.hpp>
 #include <Reaktoro/Common/TableUtils.hpp>
 #include <Reaktoro/Common/TimeUtils.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
