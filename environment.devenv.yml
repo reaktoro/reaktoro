@@ -36,7 +36,7 @@ dependencies:
   - pytest-regressions
   - pytest-xdist
   - python ={{ python_version }}
-  - reaktplot
+  - reaktplot >=0.2.0
   - thermofun =0.3.8
   - tsl_ordered_map
   - vs2019_win-64  # [win]
