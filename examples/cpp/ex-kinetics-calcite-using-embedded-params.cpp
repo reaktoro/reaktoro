@@ -18,6 +18,9 @@
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
+#include <reaktplot/reaktplot.hpp>
+using namespace reaktplot;
+
 int main()
 {
     SupcrtDatabase db("supcrtbl");
@@ -40,56 +43,62 @@ int main()
 
     ChemicalState state(system);
     state.set("H2O(aq)", 1.0, "kg");
-    state.set("Calcite", 1.0, "mol");
-    state.surfaceArea("Calcite", 1.0, "m2");
+    state.set("Calcite", 2.71, "g"); // equivalent to a cube of calcite of 1 cm3
+    state.surfaceArea("Calcite", 6.0, "cm2");  // equivalent to the surface area of a 1cm3 cube
+
+    AqueousProps aprops(system);
 
     KineticsSolver solver(system);
 
-    real dt = 0.1;
+    Table table;
 
-    EquilibriumOptions options;
-    options.optima.output.active = true;
+    auto dt = 2.0;  // time step (in seconds)
 
-    solver.setOptions(options);
+    for(auto i = 0; i < 501; ++i)
+    {
+        auto result = solver.solve(state, dt);
 
-    EquilibriumResult result;
+        errorif(result.failed(), "Calculation did not succeed at time step #", i, ".");
 
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
-    result = solver.solve(state, dt); std::cout << state << std::endl;
+        aprops.update(state.props());
 
-    std::cout << state << std::endl;
+        table.column("Timestep") << i;
+        table.column("Time")     << i*dt / 60.0; // from seconds to minute
+        table.column("Calcite")  << state.props().speciesMass("Calcite") * 1000.0; // from kg to g
+        table.column("Ca+2")     << aprops.speciesMolality("Ca+2");
+        table.column("HCO3-")    << aprops.speciesMolality("HCO3-");
+        table.column("CO3-2")    << aprops.speciesMolality("CO3-2");
+        table.column("CO2(aq)")  << aprops.speciesMolality("CO2(aq)");
+        table.column("pH")       << aprops.pH();
+    }
 
-    ChemicalState state_eq(system);
-    state_eq.set("H2O(aq)", 1.0, "kg");
-    state_eq.set("Calcite", 1.0, "mol");
-    equilibrate(state_eq);
+    table.save("ex-kinetics-calcite-using-embedded-params.txt");
 
-    std::cout << state_eq << std::endl;
+    Figure fig1;
+    fig1.title("AQUEOUS SPECIES CONCENTRATIONS OVER TIME");
+    fig1.xaxisTitle("Time [minute]");
+    fig1.yaxisTitle("Concentration [molal]");
+    fig1.drawLine(table["Time"], table["Ca+2"], "Ca+2");
+    fig1.drawLine(table["Time"], table["HCO3-"], "HCO3-");
+    fig1.drawLine(table["Time"], table["CO3-2"], "CO3-2");
+    fig1.drawLine(table["Time"], table["CO2(aq)"], "CO2(aq)");
+    fig1.yaxisScaleLog();
+    fig1.show();
+    fig1.save("ex-kinetics-calcite-using-embedded-params-fig1.pdf");
+
+    Figure fig2;
+    fig2.title("CALCITE MASS OVER TIME");
+    fig2.xaxisTitle("Time [minute]");
+    fig2.yaxisTitle("Mass [g]");
+    fig2.drawLine(table["Time"], table["Calcite"], "Calcite");
+    fig2.show();
+    fig2.save("ex-kinetics-calcite-using-embedded-params-fig2.pdf");
+
+    Figure fig3;
+    fig3.title("PH OVER TIME");
+    fig3.xaxisTitle("Time [minute]");
+    fig3.yaxisTitle("pH");
+    fig3.drawLine(table["Time"], table["pH"], "pH");
+    fig3.show();
+    fig3.save("ex-kinetics-calcite-using-embedded-params-fig3.pdf");
 }
