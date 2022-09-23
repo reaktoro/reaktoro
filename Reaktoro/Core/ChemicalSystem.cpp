@@ -75,6 +75,9 @@ struct ChemicalSystem::Impl
     Impl(const Database& database, const Vec<Phase>& phaselist)
     : database(database), phases(phaselist)
     {
+        errorif(database.species().empty(), "Expecting at least one species in the Database object provided when creating a ChemicalSystem object.");
+        errorif(phases.empty(), "Expecting at least one phase when creating a ChemicalSystem object, but none was provided.");
+
         species = phases.species();
         elements = species.elements();
         formula_matrix = detail::assembleFormulaMatrix(species, elements);
