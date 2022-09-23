@@ -42,7 +42,7 @@ struct Speciate
 };
 
 /// The auxiliary function used to specify phase species to be determined from element symbols.
-inline auto speciate(const StringList& symbols) { return Speciate{symbols}; }
+auto speciate(const StringList& symbols) -> Speciate;
 
 /// The auxiliary type used to specify species that should be filtered out when contructing a phase.
 struct Exclude
@@ -55,7 +55,7 @@ struct Exclude
 };
 
 /// The auxiliary function used to specify species that should be filtered out when contructing a phase.
-inline auto exclude(const StringList& tags) { return Exclude{tags}; }
+auto exclude(const StringList& tags) -> Exclude;
 
 /// The base type for all other classes defining more specific phases.
 /// @ingroup Core

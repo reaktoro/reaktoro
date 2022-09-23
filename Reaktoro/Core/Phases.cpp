@@ -22,6 +22,18 @@
 
 namespace Reaktoro {
 
+auto speciate(const StringList& symbols) -> Speciate
+{
+    errorif(symbols.empty(), "Expecting a non-empty list of element names in method `speciate`.");
+    return Speciate{symbols};
+}
+
+auto exclude(const StringList& tags) -> Exclude
+{
+    errorif(tags.empty(), "Expecting a non-empty list of tags in method `exclude`.");
+    return Exclude{tags};
+}
+
 GenericPhase::GenericPhase()
 {}
 
