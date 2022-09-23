@@ -208,6 +208,13 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.idealActivityModel() );
     }
 
+    SECTION("Testing bad use of GenericPhase")
+    {
+        GenericPhase genericphase;
+
+        CHECK_THROWS( genericphase.convert(db, {}) ); // no species nor elements provided!
+    }
+
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: GenericPhasesGenerator
@@ -353,6 +360,13 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phases[0].aggregateState() == AggregateState::Solid );
         CHECK( phases[0].activityModel() );
         CHECK( phases[0].idealActivityModel() );
+    }
+
+    SECTION("Testing bad use of GenericPhasesGenerator")
+    {
+        GenericPhasesGenerator generator;
+
+        CHECK_THROWS( generator.convert(db, {}) ); // no species nor elements provided!
     }
 
     //=================================================================================================================

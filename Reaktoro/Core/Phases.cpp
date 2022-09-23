@@ -165,6 +165,8 @@ auto GenericPhase::convert(const Database& db, const Strings& elements) const ->
     if(excludetags.size())
         species = species.withoutTags(excludetags);
 
+    errorif(species.empty(), "Expecting at least one species when defining a phase, but none was provided. Make sure you have listed the species names yourself or used the `speciate` method appropriately.")
+
     Phase phase;
     phase = phase.withName(phasename);
     phase = phase.withStateOfMatter(stateofmatter);
@@ -302,6 +304,8 @@ auto GenericPhasesGenerator::convert(const Database& db, const Strings& elements
     // Filter out species with provided tags in the exclude function
     if(excludetags.size())
         species = species.withoutTags(excludetags);
+
+    errorif(species.empty(), "Expecting at least one species when defining a list of single-species phases, but none was provided. Make sure you have listed the species names yourself or used the `speciate` method appropriately.")
 
     Vec<GenericPhase> phases;
     phases.reserve(species.size());
