@@ -29,7 +29,6 @@ dependencies:
   - pandas
   - phreeqc4rkt
   - pip
-  - pugixml
   - pybind11
   - pybind11-abi
   - pybind11-stubgen

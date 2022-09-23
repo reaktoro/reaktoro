@@ -29,7 +29,6 @@ target_include_directories(Reaktoro
 
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
-    PRIVATE pugixml
     PRIVATE Reaktoro::Databases
     PUBLIC Eigen3::Eigen
     PUBLIC autodiff::autodiff
