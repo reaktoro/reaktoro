@@ -45,6 +45,8 @@ auto ReactionThermoModelYAML(const yaml& node) -> ReactionThermoModel
         return ReactionThermoModelVantHoff(params);
     errorif(true, "Cannot create a ReactionThermoModel with "
         "unsupported model name `", model, "` in yaml node:\n", node.repr());
+
+    return {};
 }
 
 } // namespace Reaktoro
