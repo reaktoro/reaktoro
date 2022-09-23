@@ -35,6 +35,7 @@ target_link_libraries(Reaktoro
     PUBLIC Optima::Optima
     PUBLIC nlohmann_json::nlohmann_json
     PUBLIC phreeqc4rkt::phreeqc4rkt
+    PUBLIC tabulate::tabulate
     PUBLIC ThermoFun::ThermoFun
     PUBLIC yaml-cpp
 )

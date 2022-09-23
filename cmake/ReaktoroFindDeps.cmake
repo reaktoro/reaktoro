@@ -9,6 +9,7 @@ set(REAKTORO_USE_nlohmann_json "" CACHE PATH "Specify this option in case a spec
 set(REAKTORO_USE_Optima        "" CACHE PATH "Specify this option in case a specific Optima library should be used.")
 set(REAKTORO_USE_phreeqc4rkt   "" CACHE PATH "Specify this option in case a specific Phreeqc library should be used.")
 set(REAKTORO_USE_pybind11      "" CACHE PATH "Specify this option in case a specific pybind11 library should be used.")
+set(REAKTORO_USE_tabulate      "" CACHE PATH "Specify this option in case a specific tabulate library should be used.")
 set(REAKTORO_USE_ThermoFun     "" CACHE PATH "Specify this option in case a specific ThermoFun library should be used.")
 set(REAKTORO_USE_yaml-cpp      "" CACHE PATH "Specify this option in case a specific yaml-cpp library should be used.")
 
@@ -32,6 +33,7 @@ ReaktoroFindPackage(Eigen3 3.3.90)
 ReaktoroFindPackage(nlohmann_json 3.6.1)
 ReaktoroFindPackage(Optima 0.2.3)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1)
+ReaktoroFindPackage(tabulate 1.4.0)
 ReaktoroFindPackage(ThermoFun 0.3.7)
 ReaktoroFindPackage(yaml-cpp 0.6.3)
 
