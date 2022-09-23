@@ -57,6 +57,8 @@ auto StandardThermoModelYAML(const yaml& node) -> StandardThermoModel
         return StandardThermoModelNasa(params);
     errorif(true, "Cannot create a StandardThermoModel with "
         "unsupported model name `", model, "` in yaml node:\n", node.repr());
+
+    return {};
 }
 
 } // namespace Reaktoro
