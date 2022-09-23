@@ -25,7 +25,7 @@ namespace Reaktoro {
 namespace {
 
 /// An auxiliary type to change locale and ensure its return to original.
-/// This is needed to avoid certain issues with pugixml related to how decimal numbers are represented in different languages.
+/// This is needed to avoid certain issues related to how decimal numbers are represented in different languages.
 struct ChangeLocale
 {
     const std::string old_locale;
