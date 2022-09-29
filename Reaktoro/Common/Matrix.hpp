@@ -189,11 +189,11 @@ auto ones(Index rows) -> decltype(VectorXd::Ones(rows));
 auto random(Index rows) -> decltype(VectorXd::Random(rows));
 
 /// Return a linearly spaced vector
-/// @param rows The number of rows
 /// @param start The start of the sequence
 /// @param stop The stop of the sequence
+/// @param rows The number of rows
 /// @return The expression of a vector with linearly spaced entries
-auto linspace(Index rows, double start, double stop) -> decltype(VectorXd::LinSpaced(rows, start, stop));
+auto linspace(double start, double stop, Index rows) -> decltype(VectorXd::LinSpaced(rows, start, stop));
 
 /// Return an expression of a unit vector
 /// @param rows The number of rows
@@ -538,7 +538,7 @@ inline auto random(Index rows) -> decltype(VectorXd::Random(rows))
     return VectorXd::Random(rows);
 }
 
-inline auto linspace(Index rows, double start, double stop) -> decltype(VectorXd::LinSpaced(rows, start, stop))
+inline auto linspace(double start, double stop, Index rows) -> decltype(VectorXd::LinSpaced(rows, start, stop))
 {
     return VectorXd::LinSpaced(rows, start, stop);
 }
