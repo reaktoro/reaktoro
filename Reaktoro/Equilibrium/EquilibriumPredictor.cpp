@@ -183,6 +183,11 @@ auto EquilibriumPredictor::predict(ChemicalState& state, EquilibriumConditions c
     pimpl->predict(state, conditions);
 }
 
+auto EquilibriumPredictor::predict(ChemicalState& state, VectorXdConstRef const& dw, VectorXdConstRef const& dc) const -> void
+{
+    pimpl->predict(state, dw, dc);
+}
+
 auto EquilibriumPredictor::speciesChemicalPotentialPredicted(Index ispecies, VectorXdConstRef const& dw, VectorXdConstRef const& dc) const -> double
 {
     return pimpl->speciesChemicalPotentialPredicted(ispecies, dw, dc);
