@@ -1,3 +1,19 @@
+// Reaktoro is a unified framework for modeling chemically reactive systems.
+//
+// Copyright © 2014-2022 Allan Leal
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
@@ -18,36 +34,38 @@ auto time() -> Time;
 /// @param end The end time point
 /// @param end The begin time point
 /// @return The elapsed time between *end* and *begin* in seconds
-auto elapsed(const Time& end, const Time& begin) -> double;
+auto elapsed(Time const& end, Time const& begin) -> double;
 
 /// Return the elapsed time between a time point and now (in units of s)
 /// @param end The begin time point
 /// @return The elapsed time between now and *begin* in seconds
-auto elapsed(const Time& begin) -> double;
+auto elapsed(Time const& begin) -> double;
 
 /// Used for measuring elapsed time since object creation.
 class Stopwatch
 {
 public:
     /// Construct a Stopwatch object and start measuring time.
-    /// @param reading The variable to store the final measured elapsed time
-    Stopwatch(double& reading) : reading(reading), tstart(time()) {}
-
-    /// Destroy this Stopwatch object and stop measuring time.
-    ~Stopwatch() { stop(); }
+    Stopwatch();
 
     /// Start measuring time.
-    auto start() -> void { tstart = time(); }
+    auto start() -> void;
 
-    /// Stop measuring time.
-    auto stop() -> void { reading = elapsed(tstart); }
+    /// Pause measuring time.
+    auto pause() -> void;
+
+    /// Reset the stopwatch.
+    auto reset() -> void;
+
+    /// Get the accumulated elapsed time (in seconds) between calls to methods @ref start and @ref pause.
+    auto time() const -> double;
 
 private:
     /// The auxiliary time variable marking the start of timing.
-    Time tstart;
+    Time mstart;
 
-    /// The reference to the variable that will store the final measured elapsed time.
-    double& reading;
+    /// The elapsed time measured by the stopwatch.
+    double melapsed = 0.0;
 };
 
 } // namespace Reaktoro

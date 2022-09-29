@@ -24,14 +24,38 @@ auto time() -> Time
     return std::chrono::high_resolution_clock::now();
 }
 
-auto elapsed(const Time& end, const Time& begin) -> double
+auto elapsed(Time const& end, Time const& begin) -> double
 {
     return std::chrono::duration<double>(end - begin).count();
 }
 
-auto elapsed(const Time& begin) -> double
+auto elapsed(Time const& begin) -> double
 {
     return elapsed(time(), begin);
+}
+
+Stopwatch::Stopwatch()
+{}
+
+auto Stopwatch::start() -> void
+{
+    mstart = Reaktoro::time();
+}
+
+auto Stopwatch::pause() -> void
+{
+    melapsed += elapsed(mstart);
+}
+
+auto Stopwatch::reset() -> void
+{
+    mstart = {};
+    melapsed = {};
+}
+
+auto Stopwatch::time() const -> double
+{
+    return melapsed;
 }
 
 } // namespace Reaktoro
