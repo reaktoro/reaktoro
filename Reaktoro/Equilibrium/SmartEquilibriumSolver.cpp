@@ -35,6 +35,16 @@
 namespace Reaktoro {
 namespace detail {
 
+/// Compute the step-round value of a given number.
+/// This method computes the step-round value of a given number for a given step length separating the set of step-rounded values.
+/// For example, if `step = 5` and `7.5 <= num <= 12.5`, `sround(num, step) => 10`.
+/// @param num The number for which its step-rounded value is sought
+/// @param step The length between step-rounded values
+auto sround(double num, double step) -> long
+{
+    return round(num / step) * step;
+}
+
 /// Return the hash number of a vector.
 /// https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
 template<typename Vec>
@@ -44,6 +54,18 @@ auto hash(Vec& vec) -> std::size_t
     std::hash<T> hasher;
     std::size_t seed = vec.size();
     for(auto const& i : vec)
+        seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    return seed;
+}
+
+/// Return the hash number for given step-rounded temperature (in K), step-rounded pressure (in Pa) and a vector of indices of primary species.
+auto hash(long iT, long iP, ArrayXlConstRef const& iprimary) -> std::size_t
+{
+    std::hash<long> hasher;
+    std::size_t seed = 2 + iprimary.size();
+    seed ^= hasher(iT) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    seed ^= hasher(iP) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    for(auto const& i : iprimary)
         seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     return seed;
 }
@@ -178,11 +200,13 @@ struct SmartEquilibriumSolver::Impl
         // Create an equilibrium predictor object with computed equilibrium state and its sensitivities
         EquilibriumPredictor predictor(state, sensitivity);
 
-        // The indices of the primary species at the calculated equilibrium state
-        auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
+        // Generate the hash number for the temperature, pressure and indices of primary species in the state
+        const auto iT = detail::sround(state.temperature(), options.temperature_step);
+        const auto iP = detail::sround(state.pressure(), options.pressure_step);
+        const auto iprimary = state.equilibrium().indicesPrimarySpecies();
+        const auto label = detail::hash(iT, iP, iprimary);
 
-        // Generate the hash number for the indices of primary species in the state
-        const auto label = detail::hash(iprimary);
+        // std::cout << iT << " " << iP/1e5 << " " << iprimary.transpose() << label << "\n";
 
         // Find the index of the cluster that has same primary species
         auto icluster = indexfn(database.clusters, RKT_LAMBDA(cluster, cluster.label == label));
@@ -260,11 +284,11 @@ struct SmartEquilibriumSolver::Impl
             return true;
         };
 
-        // The current set of primary species in the chemical state
-        auto const& iprimary = state.equilibrium().indicesPrimarySpecies();
-
-        // Generate the hash number for the indices of primary species in the state
-        const auto label = detail::hash(iprimary);
+        // Generate the hash number for the temperature, pressure and indices of primary species in the state
+        const auto iT = detail::sround(state.temperature(), options.temperature_step);
+        const auto iP = detail::sround(state.pressure(), options.pressure_step);
+        const auto iprimary = state.equilibrium().indicesPrimarySpecies();
+        const auto label = detail::hash(iT, iP, iprimary);
 
         // The function that identifies the starting cluster index
         auto index_starting_cluster = [&]() -> Index
