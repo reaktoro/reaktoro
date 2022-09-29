@@ -44,6 +44,12 @@ struct SmartEquilibriumOptions
 
     /// The absolute tolerance used in the acceptance test for the predicted chemical equilibrium state.
     double abstol = 0.01;
+
+    /// The step length used to discretize temperature in the temperature-pressure space when storing learned calculations (in K).
+    double temperature_step = 10.0;
+
+    /// The step length used to discretize pressure in the temperature-pressure space when storing learned calculations (in Pa).
+    double pressure_step = 25.0e+5;
 };
 
 } // namespace Reaktoro

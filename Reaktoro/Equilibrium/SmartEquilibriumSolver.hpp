@@ -167,6 +167,26 @@ public:
         PriorityQueue priority;
     };
 
+    // /// The collection of clusters containing learned input-output data associated to a temperature-pressure grid cell.
+    // struct ClusterCollection
+    // {
+    //     /// The clusters containing the learned input-output data points.
+    //     Deque<Cluster> clusters;
+
+    //     /// The connectivity matrix of the clusters to determine how we move from one to another when searching.
+    //     ClusterConnectivity connectivity;
+
+    //     /// The priority queue for the clusters based on their usage counts.
+    //     PriorityQueue priority;
+    // };
+
+    // /// The database containing the learned input-output data.
+    // struct Database
+    // {
+    //     /// The cluster collections associated to each *T* and *P* regions.
+    //     Map<Pair<long, long>, ClusterCollection> collections;
+    // };
+
 private:
     struct Impl;
 
