@@ -188,7 +188,7 @@
 //     m_xl = xl;
 //     m_xr = xr;
 //     m_dx = (xr - xl) / num_cells;
-//     m_xcells = linspace(num_cells, xl + 0.5*m_dx, xr - 0.5*m_dx);
+//     m_xcells = linspace(xl + 0.5*m_dx, xr - 0.5*m_dx, num_cells);
 // }
 
 // TransportSolver::TransportSolver()
