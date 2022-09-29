@@ -7,3 +7,7 @@ cmrc_add_resource_library(ReaktoroEmbedded
     PREFIX embedded
     ${FILES}
 )
+
+# Set some target properties
+set_target_properties(ReaktoroEmbedded PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
