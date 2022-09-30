@@ -326,8 +326,9 @@ auto activityModelDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuck
         bneutral.push_back(params.bneutral(species.formula()));
     }
 
-    // The state of the aqueous mixture
-    AqueousMixtureState state;
+    // Shared pointers used in `props.extra` to avoid heap memory allocation for big objects
+    auto stateptr = std::make_shared<AqueousMixtureState>();
+    auto mixtureptr = std::make_shared<AqueousMixture>(mixture);
 
     // Define the activity model function of the aqueous mixture
     ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
@@ -336,14 +337,14 @@ auto activityModelDebyeHuckel(const SpeciesList& species, ActivityModelDebyeHuck
         const auto& [T, P, x] = args;
 
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, x);
+        auto const& state = *stateptr = mixture.state(T, P, x);
 
         // Set the state of matter of the phase
         props.som = StateOfMatter::Liquid;
 
         // Export the aqueous mixture and its state via the `extra` data member
-        props.extra["AqueousMixtureState"] = state;
-        props.extra["AqueousMixture"] = mixture;
+        props.extra["AqueousMixtureState"] = stateptr;
+        props.extra["AqueousMixture"] = mixtureptr;
 
         // Auxiliary constant references
         const auto& m = state.m;             // the molalities of all species
