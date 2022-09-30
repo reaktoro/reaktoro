@@ -18,6 +18,7 @@
 #pragma once
 
 // Reaktoro includes
+#include <Reaktoro/Common/HashUtils.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -154,10 +155,10 @@ public:
         PriorityQueue priority;
     };
 
-    /// The database containing the learned input-output data.
-    struct Database
+    /// The collection of clusters containing learned input-output data associated to a temperature-pressure grid cell.
+    struct Cell
     {
-        /// The clusters containing the learned input-output data points.
+        /// The clusters containing the learned input-output data points in a temperature-pressure grid cell.
         Deque<Cluster> clusters;
 
         /// The connectivity matrix of the clusters to determine how we move from one to another when searching.
@@ -167,25 +168,15 @@ public:
         PriorityQueue priority;
     };
 
-    // /// The collection of clusters containing learned input-output data associated to a temperature-pressure grid cell.
-    // struct ClusterCollection
-    // {
-    //     /// The clusters containing the learned input-output data points.
-    //     Deque<Cluster> clusters;
-
-    //     /// The connectivity matrix of the clusters to determine how we move from one to another when searching.
-    //     ClusterConnectivity connectivity;
-
-    //     /// The priority queue for the clusters based on their usage counts.
-    //     PriorityQueue priority;
-    // };
-
-    // /// The database containing the learned input-output data.
-    // struct Database
-    // {
-    //     /// The cluster collections associated to each *T* and *P* regions.
-    //     Map<Pair<long, long>, ClusterCollection> collections;
-    // };
+    /// The temperature-pressure grid cells containing learned input-output data.
+    struct Grid
+    {
+        /// The hash table used to access a temperature-pressure grid cell containing learned computations.
+        /// Note the use of `long` as number type for a temperature-pressure pairs. Temperatures and
+        /// pressures are rounded to nearest checkpoints based on provided temperature/pressure step
+        /// lengths for discretization.
+        Map<Pair<long, long>, Cell> cells;
+    };
 
 private:
     struct Impl;

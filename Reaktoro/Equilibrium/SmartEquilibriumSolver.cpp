@@ -45,31 +45,6 @@ auto sround(double num, double step) -> long
     return round(num / step) * step;
 }
 
-/// Return the hash number of a vector.
-/// https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
-template<typename Vec>
-auto hash(Vec& vec) -> std::size_t
-{
-    using T = decltype(vec[0]);
-    std::hash<T> hasher;
-    std::size_t seed = vec.size();
-    for(auto const& i : vec)
-        seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    return seed;
-}
-
-/// Return the hash number for given step-rounded temperature (in K), step-rounded pressure (in Pa) and a vector of indices of primary species.
-auto hash(long iT, long iP, ArrayXlConstRef const& iprimary) -> std::size_t
-{
-    std::hash<long> hasher;
-    std::size_t seed = 2 + iprimary.size();
-    seed ^= hasher(iT) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    seed ^= hasher(iP) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    for(auto const& i : iprimary)
-        seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    return seed;
-}
-
 } // namespace detail
 
 struct SmartEquilibriumSolver::Impl
@@ -84,8 +59,8 @@ struct SmartEquilibriumSolver::Impl
 
     SmartEquilibriumResult result;
 
-    /// The database with learned input-output data points.
-    SmartEquilibriumSolver::Database database;
+    /// The temperature-pressure grid containing learned calculations for speficic temperature-pressure intervals.
+    SmartEquilibriumSolver::Grid grid;
 
     /// Construct a SmartEquilibriumSolver::Impl object with given equilibrium problem specifications.
     Impl(EquilibriumSpecs const& specs)
@@ -200,37 +175,40 @@ struct SmartEquilibriumSolver::Impl
         // Create an equilibrium predictor object with computed equilibrium state and its sensitivities
         EquilibriumPredictor predictor(state, sensitivity);
 
-        // Generate the hash number for the temperature, pressure and indices of primary species in the state
+        // Round temperature and pressure according to their respective step lengths for discretization
         const auto iT = detail::sround(state.temperature(), options.temperature_step);
         const auto iP = detail::sround(state.pressure(), options.pressure_step);
+
+        // Get a mutable reference to an existing temperature-pressure cell or create a new one
+        auto& cell = grid.cells[{iT, iP}];
+
+        // Generate the hash number for indices of primary species in the state
         const auto iprimary = state.equilibrium().indicesPrimarySpecies();
-        const auto label = detail::hash(iT, iP, iprimary);
+        const auto label = hashVector(iprimary);
 
-        // std::cout << iT << " " << iP/1e5 << " " << iprimary.transpose() << label << "\n";
-
-        // Find the index of the cluster that has same primary species
-        auto icluster = indexfn(database.clusters, RKT_LAMBDA(cluster, cluster.label == label));
+        // Find the index of the cluster within the temperature-pressure grid cell that has the same primary species
+        auto icluster = indexfn(cell.clusters, RKT_LAMBDA(cluster, cluster.label == label));
 
         // If cluster is found, store the new record in it, otherwise, create a new cluster
-        if(icluster < database.clusters.size())
+        if(icluster < cell.clusters.size())
         {
-            auto& cluster = database.clusters[icluster];
+            auto& cluster = cell.clusters[icluster];
             cluster.records.push_back({ state, conditions, sensitivity, predictor });
             cluster.priority.extend();
         }
         else
         {
-            // Create a new cluster
+            // Create a new cluster within the current temperature-pressure grid cell
             Cluster cluster;
             cluster.iprimary = iprimary;
             cluster.label = label;
             cluster.records.push_back({ state, conditions, sensitivity, predictor });
             cluster.priority.extend();
 
-            // Append the new cluster in the database
-            database.clusters.push_back(cluster);
-            database.connectivity.extend();
-            database.priority.extend();
+            // Append the new cluster and initialize its connectivity and priority
+            cell.clusters.push_back(cluster);
+            cell.connectivity.extend();
+            cell.priority.extend();
         }
 
         result.timing.learning_storage = toc(STORAGE_STEP);
@@ -242,9 +220,23 @@ struct SmartEquilibriumSolver::Impl
         // Set the prediction status to false at the beginning
         result.prediction.accepted = false;
 
-        // Skip prediction operation if no cluster exists yet
-        if(database.clusters.empty())
+        // Skip prediction operation if no learning data exists yet
+        if(grid.cells.empty())
             return;
+
+        // Round temperature and pressure according to their respective step lengths for discretization
+        const auto iT = detail::sround(state.temperature(), options.temperature_step);
+        const auto iP = detail::sround(state.pressure(), options.pressure_step);
+
+        // Find an existing temperature-pressure grid cell within which the state temperature/pressure are located
+        auto it = grid.cells.find({iT, iP});
+
+        // Skip prediction operation if no temperature-pressure grid cell with learning data exists yet
+        if(it == grid.cells.end())
+            return;
+
+        // Get a mutable reference to the found temperature-pressure cell
+        auto& cell = it->second;
 
         const auto wvals = conditions.inputValues();
         const auto cvals = conditions.initialComponentAmountsGetOrCompute(state);
@@ -256,7 +248,7 @@ struct SmartEquilibriumSolver::Impl
         VectorXd dw;
         VectorXd dc;
 
-        // The function that checks if a record in the database pass the error test.
+        // The function that checks if a record in the grid pass the error test.
         auto pass_error_test = [&](Record const& record) mutable -> bool
         {
             // The primary species at the reference chemical state
@@ -284,36 +276,34 @@ struct SmartEquilibriumSolver::Impl
             return true;
         };
 
-        // Generate the hash number for the temperature, pressure and indices of primary species in the state
-        const auto iT = detail::sround(state.temperature(), options.temperature_step);
-        const auto iP = detail::sround(state.pressure(), options.pressure_step);
+        // Generate the hash number for indices of primary species in the state
         const auto iprimary = state.equilibrium().indicesPrimarySpecies();
-        const auto label = detail::hash(iT, iP, iprimary);
+        const auto label = hashVector(iprimary);
 
         // The function that identifies the starting cluster index
         auto index_starting_cluster = [&]() -> Index
         {
             // If no primary species, then return number of clusters to trigger use of total usage counts of clusters
             if(iprimary.size() == 0)
-                return database.clusters.size();
+                return cell.clusters.size();
 
             // Find the index of the cluster with the same set of primary species (search those with highest count first)
-            for(auto icluster : database.priority.order())
-                if(database.clusters[icluster].label == label)
+            for(auto icluster : cell.priority.order())
+                if(cell.clusters[icluster].label == label)
                     return icluster;
 
             // In no cluster with the same set of primary species if found, then return number of clusters
-            return database.clusters.size();
+            return cell.clusters.size();
         };
 
         // The index of the starting cluster
         const auto icluster = index_starting_cluster();
 
         // The ordering of the clusters to look for (starting with icluster)
-        auto const& clusters_ordering = database.connectivity.order(icluster);
+        auto const& clusters_ordering = cell.connectivity.order(icluster);
 
         //---------------------------------------------------------------------
-        // SEARCH STEP DURING THE ESTIMATE PROCESS
+        // SEARCH STEP DURING THE PREDICTION PROCESS
         //---------------------------------------------------------------------
         tic(SEARCH_STEP)
 
@@ -321,8 +311,8 @@ struct SmartEquilibriumSolver::Impl
         for(auto jcluster : clusters_ordering)
         {
             // Fetch records from the cluster and the order they have to be processed in
-            auto const& records = database.clusters[jcluster].records;
-            auto const& records_ordering = database.clusters[jcluster].priority.order();
+            auto const& records = cell.clusters[jcluster].records;
+            auto const& records_ordering = cell.clusters[jcluster].priority.order();
 
             // Iterate over all records in current cluster (using the order based on the priorities)
             for(auto irecord : records_ordering)
@@ -330,7 +320,7 @@ struct SmartEquilibriumSolver::Impl
                 auto const& record = records[irecord];
 
                 //---------------------------------------------------------------------
-                // ERROR CONTROL STEP DURING THE ESTIMATE PROCESS
+                // ERROR CONTROL STEP DURING THE PREDICTION PROCESS
                 //---------------------------------------------------------------------
                 tic(ERROR_CONTROL_STEP)
 
@@ -342,7 +332,7 @@ struct SmartEquilibriumSolver::Impl
                 if(success)
                 {
                     //---------------------------------------------------------------------
-                    // TAYLOR PREDICTION STEP DURING THE ESTIMATE PROCESS
+                    // TAYLOR PREDICTION STEP DURING THE PREDICTION PROCESS
                     //---------------------------------------------------------------------
                     tic(TAYLOR_STEP)
 
@@ -373,23 +363,23 @@ struct SmartEquilibriumSolver::Impl
                             state.setSpeciesAmount(i, options.learning.epsilon);
 
                     //---------------------------------------------------------------------
-                    // DATABASE PRIORITY UPDATE STEP DURING THE ESTIMATE PROCESS
+                    // DATABASE PRIORITY UPDATE STEP DURING THE PREDICTION PROCESS
                     //---------------------------------------------------------------------
                     tic(PRIORITY_UPDATE_STEP)
 
                     // Increment priority of the current record (irecord) in the current cluster (jcluster)
-                    database.clusters[jcluster].priority.increment(irecord);
+                    cell.clusters[jcluster].priority.increment(irecord);
 
                     // Increment priority of the current cluster (jcluster) with respect to starting cluster (icluster)
-                    database.connectivity.increment(icluster, jcluster);
+                    cell.connectivity.increment(icluster, jcluster);
 
                     // Increment priority of the current cluster (jcluster)
-                    database.priority.increment(jcluster);
-
-                    result.timing.prediction_database_priority_update = toc(PRIORITY_UPDATE_STEP);
+                    cell.priority.increment(jcluster);
 
                     // Mark the predicted state as accepted
                     result.prediction.accepted = true;
+
+                    result.timing.prediction_priority_update = toc(PRIORITY_UPDATE_STEP);
 
                     return;
                 }
