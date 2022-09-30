@@ -62,7 +62,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         if(props.extra["AqueousMixtureState"].has_value())
         {
             // Export aqueous mixture state via `extra` data member
-            const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+            const auto& aqstate = std::any_cast<AqueousMixtureState const&>(props.extra["AqueousMixtureState"]);
 
             // Auxiliary constant references properties
             const auto& I = aqstate.Is;            // the stoichiometric ionic strength
@@ -139,7 +139,7 @@ auto activityModelIonExchangeVanselow(const SpeciesList& species) -> ActivityMod
             if(props.extra["AqueousMixtureState"].has_value())
             {
                 // Export aqueous mixture state via `extra` data member
-                const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+                const auto& aqstate = std::any_cast<AqueousMixtureState const&>(props.extra["AqueousMixtureState"]);
 
                 // Auxiliary constant references properties
                 const auto& I = aqstate.Is;            // the stoichiometric ionic strength
