@@ -19,6 +19,7 @@ dependencies:
   - git
   - graphviz  # [linux]
   - gxx_linux-64  # [linux]
+  - lld  # [unix]
   - make  # [unix]
   - matplotlib-base
   - ninja
