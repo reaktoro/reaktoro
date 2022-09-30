@@ -32,7 +32,7 @@ auto SmartEquilibriumTiming::operator+=(const SmartEquilibriumTiming& other) -> 
     prediction_search += other.prediction_search;
     prediction_error_control += other.prediction_error_control;
     prediction_taylor += other.prediction_taylor;
-    prediction_database_priority_update += other.prediction_database_priority_update;
+    prediction_priority_update += other.prediction_priority_update;
 
     return *this;
 }

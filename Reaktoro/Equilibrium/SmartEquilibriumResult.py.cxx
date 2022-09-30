@@ -36,7 +36,7 @@ void exportSmartEquilibriumResult(py::module& m)
         .def_readwrite("prediction_search", &SmartEquilibriumTiming::prediction_search, "The time spent for the search operation during a smart prediction (in seconds).")
         .def_readwrite("prediction_error_control", &SmartEquilibriumTiming::prediction_error_control, "The time spent during on error control while searching during a smart prediction (in seconds).")
         .def_readwrite("prediction_taylor", &SmartEquilibriumTiming::prediction_taylor, "The time spent for the matrix-vector multiplication during a smart prediction (in seconds).")
-        .def_readwrite("prediction_database_priority_update", &SmartEquilibriumTiming::prediction_database_priority_update, "The time spent for updating the priority related info of the clusters in the database (in seconds).")
+        .def_readwrite("prediction_priority_update", &SmartEquilibriumTiming::prediction_priority_update, "The time spent for updating the priority related info of the clusters in the database (in seconds).")
         .def(py::self += py::self)
         ;
 
