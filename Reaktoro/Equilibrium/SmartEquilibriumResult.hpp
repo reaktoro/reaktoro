@@ -60,7 +60,7 @@ struct SmartEquilibriumTiming
     double prediction_taylor = 0.0;
 
     /// The time spent for updating the priority related info of the clusters in the database (in seconds).
-    double prediction_database_priority_update = 0.0;
+    double prediction_priority_update = 0.0;
 
     /// Self addition of another SmartEquilibriumTiming instance to this one.
     auto operator+=(const SmartEquilibriumTiming& other) -> SmartEquilibriumTiming&;
