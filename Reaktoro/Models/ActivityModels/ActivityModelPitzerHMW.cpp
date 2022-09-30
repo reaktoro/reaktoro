@@ -1390,8 +1390,9 @@ auto activityModelPitzerHMW(const SpeciesList& species) -> ActivityModel
     // Initialize the Pitzer params
     PitzerParams pitzer(mixture);
 
-    // The state of the aqueous mixture
-    AqueousMixtureState state;
+    // Shared pointers used in `props.extra` to avoid heap memory allocation for big objects
+    auto stateptr = std::make_shared<AqueousMixtureState>();
+    auto mixtureptr = std::make_shared<AqueousMixture>(mixture);
 
     ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
@@ -1399,14 +1400,14 @@ auto activityModelPitzerHMW(const SpeciesList& species) -> ActivityModel
         const auto& [T, P, x] = args;
 
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, x);
+        auto const& state = *stateptr = mixture.state(T, P, x);
 
         // Set the state of matter of the phase
         props.som = StateOfMatter::Liquid;
 
         // Export the aqueous mixture and its state via the `extra` data member
-        props.extra["AqueousMixtureState"] = state;
-        props.extra["AqueousMixture"] = mixture;
+        props.extra["AqueousMixtureState"] = stateptr;
+        props.extra["AqueousMixture"] = mixtureptr;
 
         // Calculate the activity coefficients of the cations
         for(auto M = 0; M < pitzer.idx_cations.size(); ++M)

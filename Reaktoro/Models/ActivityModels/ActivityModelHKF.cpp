@@ -325,9 +325,6 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
     // The molar mass of water
     const auto Mw = waterMolarMass;
 
-    // The state of the aqueous mixture
-    AqueousMixtureState state;
-
     // Collect the effective radii of the ions
     for(Index idx_ion : icharged_species)
     {
@@ -336,6 +333,10 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
         charges.push_back(species.charge());
     }
 
+    // Shared pointers used in `props.extra` to avoid heap memory allocation for big objects
+    auto stateptr = std::make_shared<AqueousMixtureState>();
+    auto mixtureptr = std::make_shared<AqueousMixture>(mixture);
+
     // Define the activity model function of the aqueous phase
     ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
@@ -343,14 +344,14 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
         const auto& [T, P, x] = args;
 
         // Evaluate the state of the aqueous mixture
-        state = mixture.state(T, P, x);
+        auto const& state = *stateptr = mixture.state(T, P, x);
 
         // Set the state of matter of the phase
         props.som = StateOfMatter::Liquid;
 
         // Export the aqueous mixture and its state via the `extra` data member
-        props.extra["AqueousMixtureState"] = state;
-        props.extra["AqueousMixture"] = mixture;
+        props.extra["AqueousMixtureState"] = stateptr;
+        props.extra["AqueousMixture"] = mixtureptr;
 
         // Auxiliary references to state variables
         const auto& I = state.Is;  // the stoichiometric ionic strength

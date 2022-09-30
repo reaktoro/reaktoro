@@ -207,7 +207,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
 
-        props.extra["AqueousMixtureState"] = aqstate;
+        props.extra["AqueousMixtureState"] = std::make_shared<AqueousMixtureState>(aqstate);
 
         // Evaluate the activity props function
         fn(props, {T, P, x});
@@ -261,7 +261,7 @@ TEST_CASE("Testing ActivityModelIonExchange", "[ActivityModelIonExchange]")
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
 
-        props.extra["AqueousMixtureState"] = aqstate;
+        props.extra["AqueousMixtureState"] = std::make_shared<AqueousMixtureState>(aqstate);
 
         // Evaluate the activity props function
         fn(props, {T, P, x});
