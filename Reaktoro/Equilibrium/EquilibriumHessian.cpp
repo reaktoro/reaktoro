@@ -18,144 +18,169 @@
 #include "EquilibriumHessian.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/AutoDiff.hpp>
-#include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/MolalityUtils.hpp>
 #include <Reaktoro/Common/MoleFractionUtils.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 
 namespace Reaktoro {
 
+using autodiff::jacobian;
+using autodiff::wrt;
+using autodiff::at;
+
 struct EquilibriumHessian::Impl
 {
-    /// The chemical system for which Hessian matrix is computed.
-    ChemicalSystem system;
+    /// The chemical system associated to this object.
+    const ChemicalSystem system;
 
-    /// The chemical properties of the system at which the Hessian needs to be computed.
+    /// The chemical properties of the system.
     ChemicalProps props;
 
-    /// The Hessian matrix.
-    MatrixXd H;
+    /// The auxiliary matrix for ∂(µ/RT)/∂n.
+    MatrixXd dudn;
 
-    /// The number of species in the system.
-    Index N;
+    /// The auxiliary vector to compute the diagonal of ∂(µ/RT)/∂n.
+    VectorXd dudn_diag;
 
-    /// The temperature of the system (in K).
-    real T = 0.0;
+    /// The auxiliary vector of species amounts.
+    VectorXr n;
 
-    /// The pressure of the system (in Pa).
-    real P = 0.0;
+    /// The functions for each phase that assemble the block of approximate derivatives in ∂(µ/RT)/∂n.
+    Vec<Fn<void(VectorXrConstRef, MatrixXdRef)>> approxfuncs;
 
-    /// The amounts of each species in the system (in mol).
-    ArrayXr n;
+    /// The functions for each phase that assemble the diagonal of approximate derivatives in ∂(µ/RT)/∂n.
+    Vec<Fn<void(VectorXrConstRef, VectorXdRef)>> approxfuncsdiag;
 
-    /// Construct an EquilibriumHessian::Impl object.
-    Impl(const ChemicalSystem& system)
-    : system(system), props(system), N(system.species().size())
+    ///
+    Impl(ChemicalSystem const& system)
+    : system(system), props(system)
     {
-        H = MatrixXd::Zero(N, N);
-    }
+        const auto numphases = system.phases().size();
+        const auto numspecies = system.species().size();
 
-    /// Update the temperature, pressure, and species amounts.
-    auto update(const ChemicalProps& props0)
-    {
-        T = props.temperature();
-        P = props.pressure();
-        n = props.speciesAmounts();
-    }
+        dudn.resize(numspecies, numspecies);
+        dudn_diag.resize(numspecies);
 
-    /// Return the exact Hessian matrix of the Gibbs energy function.
-    auto exact(const ChemicalProps& props0) -> MatrixXdConstRef
-    {
-        update(props);
-        for(auto i = 0; i < N; ++i) {
-            autodiff::seed(n[i]);
-            props.update(T, P, n);
-            autodiff::unseed(n[i]);
-            H.row(i) = grad(props.speciesChemicalPotentials());
-        }
-        return H;
-    }
+        approxfuncs.resize(numphases);
+        approxfuncsdiag.resize(numphases);
 
-    /// Return a partially exact Hessian matrix of the Gibbs energy function.
-    auto partiallyExact(const ChemicalProps& props0, const Indices& indices) -> MatrixXdConstRef
-    {
-        /// Compute the first layer of H with approximate derivatives.
-        approx(props);
+        auto iphase = 0;
 
-        /// Overwrite the approximations for those species with given indices.
-        update(props);
-        for(auto i : indices)
+        for(auto iphase = 0; iphase < numphases; ++iphase)
         {
-            autodiff::seed(n[i]);
-            props.update(T, P, n);
-            autodiff::unseed(n[i]);
-            H.row(i) = grad(props.speciesChemicalPotentials());
-        }
+            auto const& phase = system.phase(iphase);
 
-        return H;
+            if(phase.aggregateState() == AggregateState::Aqueous)
+            {
+                // IDEAL ACTIVITY OF WATER
+                // \ln a_{w}=-\dfrac{1-x_{w}}{x_{w}}=-\dfrac{n_{\Sigma}-n_{w}}{n_{w}}
+                // \dfrac{\partial\ln a_{w}}{\partial n_{i}}=\begin{cases}-\dfrac{1}{n_{w}} & i\neq w\\\dfrac{n_{\Sigma}-n_{w}}{n_{w}^{2}} & i=w\end{cases}
+                const auto iH2O = phase.species().indexWithFormula("H2O");
+                approxfuncs[iphase] = [=](VectorXrConstRef const& np, MatrixXdRef block)
+                {
+                    lnMolalitiesJacobian(np, iH2O, block);
+                    const auto nH2O = np[iH2O];
+                    const auto nsum = np.sum();
+                    block.row(iH2O).array() = -1.0/nH2O;
+                    block(iH2O, iH2O) = (nsum - nH2O)/(nH2O*nH2O);
+                };
+                approxfuncsdiag[iphase] = [=](VectorXrConstRef const& np, VectorXdRef segment)
+                {
+                    lnMolalitiesJacobianDiagonal(np, iH2O, segment);
+                    const auto nH2O = np[iH2O];
+                    const auto nsum = np.sum();
+                    segment[iH2O] = (nsum - nH2O)/(nH2O*nH2O);
+                };
+            }
+            else
+            {
+                approxfuncs[iphase] = [=](VectorXrConstRef const& np, MatrixXdRef block)
+                {
+                    lnMoleFractionsJacobian(np, block);
+                };
+                approxfuncsdiag[iphase] = [=](VectorXrConstRef const& np, VectorXdRef segment)
+                {
+                    lnMoleFractionsJacobianDiagonal(np, segment);
+                };
+            }
+        }
     }
 
-    /// Return an approximation of the Hessian matrix of the Gibbs energy function.
-    auto approx(const ChemicalProps& props0) -> MatrixXdConstRef
+    auto exact(real const& T, real const& P, VectorXrConstRef const& nconst) -> MatrixXdConstRef
     {
-        const auto T = props0.temperature();
-        const auto n = props0.speciesAmounts();
-        const auto R = universalGasConstant;
+        n = nconst;
+        auto fn = [&](VectorXrConstRef const& n) -> VectorXr
+        {
+            props.update(T, P, n);
+            return props.speciesChemicalPotentials();
+        };
+        const double RT = universalGasConstant * T;
+        dudn.noalias() = jacobian(fn, wrt(n), at(n))/RT;
+        return dudn;
+    }
 
-        const auto RT = R*T;
+    auto partiallyExact(real const& T, real const& P, VectorXrConstRef const& nconst, VectorXlConstRef const& idxs) -> MatrixXdConstRef
+    {
+        n = nconst;
+        auto fn = [&](VectorXrConstRef const& n) -> VectorXr
+        {
+            props.update(T, P, n);
+            return props.speciesChemicalPotentials();
+        };
+        const double RT = universalGasConstant * T;
+        dudn = approximate(n);
+        dudn(Eigen::all, idxs) = jacobian(fn, wrt(n(idxs)), at(n))/RT;
+        return dudn;
+    }
 
-        H.fill(0.0); // clear previous state of H
-
-        const auto Np = system.phases().size();
+    auto approximate(VectorXrConstRef const& n) -> MatrixXdConstRef
+    {
+        dudn.fill(0.0); // clear previous state of dudn
+        const auto numphases = system.phases().size();
         auto offset = 0;
-        for(auto i = 0; i < Np; ++i)
+        for(auto i = 0; i < numphases; ++i)
         {
             const auto length = system.phase(i).species().size();
             const auto np = n.segment(offset, length);
-            MatrixXd Hp = H.block(offset, offset, length, length);
-            lnMoleFractionsJacobian(np, Hp); // set Hp = d(lnx)/dn
-            Hp *= RT; // finally set Hp = RT*d(lnx)/dn
+            auto dupdnp = dudn.block(offset, offset, length, length);
+            approxfuncs[i](np, dupdnp);
             offset += length;
         }
-
-        return H;
+        return dudn;
     }
 
-    /// Return a diagonal approximation of the Hessian matrix of the Gibbs energy function.
-    auto diagonalApprox(const ChemicalProps& props0) -> MatrixXdConstRef
+    auto diagonal(VectorXrConstRef const& n) -> MatrixXdConstRef
     {
-        const auto T = props0.temperature();
-        const auto x = props0.speciesMoleFractions();
-        const auto n = props0.speciesAmounts();
-        const auto R = universalGasConstant;
-
-        const auto RT = R*T;
-
-        H.fill(0.0); // clear previous state of H
-
-        for(auto i = 0; i < N; ++i)
+        dudn.fill(0.0); // clear previous state of dudn
+        const auto numphases = system.phases().size();
+        auto offset = 0;
+        for(auto i = 0; i < numphases; ++i)
         {
-            const double xi = x[i]; // use double as no need for autodiff below
-            const double ni = n[i]; // use double as no need for autodiff below
-            H(i, i) = RT * (1 - xi)/ni;
+            const auto length = system.phase(i).species().size();
+            const auto np = n.segment(offset, length);
+            const auto dupdnp_diag = dudn_diag.segment(offset, length);
+            approxfuncsdiag[i](np, dupdnp_diag);
+            offset += length;
         }
-
-        return H;
+        dudn.diagonal() = dudn_diag;
+        return dudn;
     }
 };
 
-EquilibriumHessian::EquilibriumHessian(const ChemicalSystem& system)
+EquilibriumHessian::EquilibriumHessian(ChemicalSystem const& system)
 : pimpl(new Impl(system))
-{}
+{
+}
 
-EquilibriumHessian::EquilibriumHessian(const EquilibriumHessian& other)
+EquilibriumHessian::EquilibriumHessian(EquilibriumHessian const& other)
 : pimpl(new Impl(*other.pimpl))
-{}
+{
+}
 
 EquilibriumHessian::~EquilibriumHessian()
-{}
+{
+}
 
 auto EquilibriumHessian::operator=(EquilibriumHessian other) -> EquilibriumHessian&
 {
@@ -163,24 +188,24 @@ auto EquilibriumHessian::operator=(EquilibriumHessian other) -> EquilibriumHessi
     return *this;
 }
 
-auto EquilibriumHessian::exact(const ChemicalProps& props) -> MatrixXdConstRef
+auto EquilibriumHessian::exact(real const& T, real const& P, VectorXrConstRef const& n) -> MatrixXdConstRef
 {
-    return pimpl->exact(props);
+    return pimpl->exact(T, P, n);
 }
 
-auto EquilibriumHessian::partiallyExact(const ChemicalProps& props, const Indices& indices) -> MatrixXdConstRef
+auto EquilibriumHessian::partiallyExact(real const& T, real const& P, VectorXrConstRef const& n, VectorXlConstRef const& idxs) -> MatrixXdConstRef
 {
-    return pimpl->partiallyExact(props, indices);
+    return pimpl->partiallyExact(T, P, n, idxs);
 }
 
-auto EquilibriumHessian::approx(const ChemicalProps& props) -> MatrixXdConstRef
+auto EquilibriumHessian::approximate(VectorXrConstRef const& n) -> MatrixXdConstRef
 {
-    return pimpl->approx(props);
+    return pimpl->approximate(n);
 }
 
-auto EquilibriumHessian::diagonalApprox(const ChemicalProps& props) -> MatrixXdConstRef
+auto EquilibriumHessian::diagonal(VectorXrConstRef const& n) -> MatrixXdConstRef
 {
-    return pimpl->diagonalApprox(props);
+    return pimpl->diagonal(n);
 }
 
 } // namespace Reaktoro

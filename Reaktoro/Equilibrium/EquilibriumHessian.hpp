@@ -24,18 +24,17 @@
 namespace Reaktoro {
 
 // Forward declarations
-class ChemicalProps;
 class ChemicalSystem;
 
-/// The class used to compute the Hessian matrix of the Gibbs energy function.
+/// Used to compute the Hessian matrix of the Gibbs energy function.
 class EquilibriumHessian
 {
 public:
-    /// Construct an EquilibriumHessian object.
-    EquilibriumHessian(const ChemicalSystem& system);
+    /// Construct an EquilibriumHessian object with given specifications.
+    explicit EquilibriumHessian(ChemicalSystem const& system);
 
     /// Construct a copy of an EquilibriumHessian object.
-    EquilibriumHessian(const EquilibriumHessian& other);
+    EquilibriumHessian(EquilibriumHessian const& other);
 
     /// Destroy this EquilibriumHessian object.
     ~EquilibriumHessian();
@@ -43,37 +42,33 @@ public:
     /// Assign a copy of an EquilibriumHessian object to this.
     auto operator=(EquilibriumHessian other) -> EquilibriumHessian&;
 
-    /// Return the exact Hessian matrix of the Gibbs energy function.
-    /// This method computes exact molar derivatives of the chemical potentials
-    /// for all species in the chemical system.
-    auto exact(const ChemicalProps& props) -> MatrixXdConstRef;
+    /// Evaluate the Hessian matrix *∂(µ/RT)/∂n* with exact derivatives. This
+    /// method uses automatic differentiation to compute the exact derivatives
+    /// of *µ/RT* with respect to all species in the system.
+    auto exact(real const& T, real const& P, VectorXrConstRef const& n) -> MatrixXdConstRef;
 
-    /// Return a partially exact Hessian matrix of the Gibbs energy function.
-    /// This method computes exact molar derivatives of the chemical potentials
-    /// for those species with given `indices` only. For all other species, and
-    /// approximation is made based on ideal activities, essentially, using
-    /// molar derivatives of mole fractions.
-    /// @note This is the appropriate method for chemical equilibrium
-    /// calculations in which several or many species have very low amounts and
-    /// play no major role in the chemical equilibrium state being calculated.
-    /// Approximate derivatives for these species suffice for numerical
-    /// convergence reasons.
-    auto partiallyExact(const ChemicalProps& props, const Indices& indices) -> MatrixXdConstRef;
+    /// Evaluate the Hessian matrix *∂(µ/RT)/∂n* with exact derivatives for selected species. This
+    /// method uses automatic differentiation to compute the exact derivatives of *µ/RT* with
+    /// respect to the species whose indices are given in `idxs`. For all other species, approximate
+    /// derivatives are used instead. These approximate derivatives are obtained from ideal
+    /// thermodynamic models for the phases. Thus, with this method, the derivatives in *∂(µ/RT)/∂n*
+    /// associated with species with low amounts, which can be a large number, are quickly
+    /// evaluated. This is appropriate for chemical equilibrium calculations in which several or
+    /// many species have very low amounts and play no major role in the chemical equilibrium state
+    /// being calculated. Approximate derivatives for these species suffice for numerical convergence.
+    auto partiallyExact(real const& T, real const& P, VectorXrConstRef const& n, VectorXlConstRef const& idxs) -> MatrixXdConstRef;
 
-    /// Return an approximation of the Hessian matrix of the Gibbs energy function.
-    /// This method computes an approximation for the Hessian matrix based on
-    /// ideal activities, essentially, using molar derivatives of mole
-    /// fractions. This method is suitable when the chemical equilibrium
-    /// calculation is converging towards a solution without difficulties.
-    auto approx(const ChemicalProps& props) -> MatrixXdConstRef;
+    /// Evaluate the Hessian matrix *∂(µ/RT)/∂n* with approximate derivatives. These derivatives
+    /// are analytically (and thus quickly) computed from ideal thermodynamic models for the phases
+    /// in the system. For example, for liquid, gaseous, and solid solutions *∂(µ/RT)/∂n ≡ ∂(ln(x))/∂n*,
+    /// where *x* are species mole fractions. For an aqueous solution,
+    /// however, *∂(µ/RT)/∂n ≡ ∂(ln(m))/∂n*, where *m* are species molalities.
+    auto approximate(VectorXrConstRef const& n) -> MatrixXdConstRef;
 
-    /// Return a diagonal approximation of the Hessian matrix of the Gibbs energy function.
-    /// This method computes a diagonal approximation for the Hessian matrix
-    /// based on ideal activities, essentially, using molar derivatives of mole
-    /// fractions. This method is suitable when the chemical equilibrium
-    /// calculation is converging towards a solution without difficulties,
-    /// resulting in very efficient linear algebra in each Newton stepping.
-    auto diagonalApprox(const ChemicalProps& props) -> MatrixXdConstRef;
+    /// Evaluate the Hessian matrix *∂(µ/RT)/∂n* as a diagonal matrix using approximate
+    /// derivatives. The computed diagonal matrix with this function is equivalent to extracting the
+    /// diagonal entries from the matrix produced with @ref dudnApproximate.
+    auto diagonal(VectorXrConstRef const& n) -> MatrixXdConstRef;
 
 private:
     struct Impl;
