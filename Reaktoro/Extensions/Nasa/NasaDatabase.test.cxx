@@ -58,7 +58,7 @@ TEST_CASE("Testing NasaDatabase with EquilibriumSolver", "[NasaDatabase][Equilib
 
     EquilibriumOptions options;
     // options.optima.output.active = true;
-    // options.optima.maxiters = 100;
+    options.optima.maxiters = 50;
 
     auto checkEquilibriumSolver = [&](auto reactantName, auto xiters)
     {
