@@ -140,7 +140,7 @@ struct EquilibriumProps::Impl
     {}
 
     /// Update the chemical properties of the chemical system.
-    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel) -> void
     {
         // Get temperature and pressure of the system, either available in p or w
         const auto T = getT(p, w);
@@ -176,6 +176,13 @@ struct EquilibriumProps::Impl
         // Recover here the original state of the model parameters changed above.
         for(auto i = 0; i < params0.size(); ++i)
             params[i].value() = params0[i];
+    }
+
+    /// Update the chemical properties of the chemical system.
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void
+    {
+        // Update the actual properties of the system
+        update(n, p, w, useIdealModel);
 
         // Collect the derivatives of the chemical properties wrt some seeded variable in n, p, w.
         if(assemblying_jacobian && inpw != -1)  // inpw === -1 if seeded variable is some variable in q (the amounts of implicit titrants)
@@ -226,6 +233,11 @@ auto EquilibriumProps::operator=(EquilibriumProps other) -> EquilibriumProps&
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel) -> void
+{
+    pimpl->update(n, p, w, useIdealModel);
 }
 
 auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void
