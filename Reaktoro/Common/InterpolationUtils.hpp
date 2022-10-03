@@ -39,16 +39,20 @@ auto interpolate(
     const Vec<Fn<double(double, double)>>& fs) -> Fn<ArrayXr(real, real)>;
 
 /// Calculate a linear interpolation of *y* at *x* with given pairs *(x0, y0)* and *(x1, y1)*.
-template<typename T>
-auto interpolateLinear(T const& x, T const& x0, T const& x1, T const& y0, T const& y1) -> T
+template<typename T, typename X, typename Y>
+auto interpolateLinear(T const& x, X const& x0, X const& x1, Y const& y0, Y const& y1) -> T
 {
+    assert(x0 <= x1);
+    if(x0 == x1) return y0;
     return y0 + (y1 - y0)/(x1 - x0) * (x - x0);
 }
 
 /// Calculate a quadratic interpolation of *y* at *x* with given pairs *(x0, y0)* *(x1, y1)* and *(x2, y2)*.
-template<typename T>
-auto interpolateQuadratic(T const& x, T const& x0, T const& x1, T const& x2, T const& y0, T const& y1, T const& y2) -> T
+template<typename T, typename X, typename Y>
+auto interpolateQuadratic(T const& x, X const& x0, X const& x1, X const& x2, Y const& y0, Y const& y1, Y const& y2) -> T
 {
+    assert(x0 <= x1 && x1 <= x2);
+    if(x0 == x1 || x1 == x2) return interpolateLinear(x, x0, x2, y0, y2);
     const auto l0 = ((x - x1)*(x - x2))/((x0 - x1)*(x0 - x2));
     const auto l1 = ((x - x0)*(x - x2))/((x1 - x0)*(x1 - x2));
     const auto l2 = ((x - x0)*(x - x1))/((x2 - x0)*(x2 - x1));
