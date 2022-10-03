@@ -27,6 +27,7 @@
 #include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
+#include <Reaktoro/Equilibrium/EquilibriumHessian.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumOptions.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumRestrictions.hpp>
@@ -62,6 +63,7 @@ struct EquilibriumSetup::Impl
     const MatrixXd Aex;                       ///< The coefficient matrix Aex in the optimization problem.
     const MatrixXd Aep;                       ///< The coefficient matrix Aep in the optimization problem.
     EquilibriumProps props;                   ///< The auxiliary chemical properties of the system.
+    EquilibriumHessian hessian;               ///< The calculator of Hessian matrix of Gibbs energy.
     EquilibriumOptions options;               ///< The options for the solution of the equilibrium problem.
     VectorXr x;                               ///< The auxiliary vector x = (n, q).
     VectorXr n;                               ///< The current amounts of the species (in mol).
@@ -106,6 +108,7 @@ struct EquilibriumSetup::Impl
       Aex(assembleMatrixAex(specs)),
       Aep(assembleMatrixAep(specs)),
       props(specs),
+      hessian(specs.system()),
       Nc(dims.Nc),
       Ne(dims.Ne),
       Nn(dims.Nn),
@@ -188,13 +191,66 @@ struct EquilibriumSetup::Impl
         isbasicvar.fill(false);
         isbasicvar(ibasicvars).fill(true);
 
-        // Update Hxx and Vpx
-        for(auto i = 0; i < Nn; ++i)
+        auto add_log_barrier_contrib = [&](MatrixXdRef Hnn)
         {
-            updateFx(i);
-            Hxx.col(i) = grad(F.head(Nx));
-            Vpx.col(i) = grad(F.tail(Np));
+            // Add log-barrier contribution to Hnn
+            const auto tau = options.epsilon * options.logarithm_barrier_factor;
+            for(auto i : ipps)
+                Hnn(i, i) += tau/(n[i].val() * n[i].val());
+        };
+
+        if(Np == 0)
+        {
+            auto Hnn = Hxx.topLeftCorner(Nn, Nn);
+
+            if(options.hessian == GibbsHessian::ApproxDiagonal)
+            {
+                Hnn = hessian.diagonal(n);
+                add_log_barrier_contrib(Hnn);
+            }
+            else if(options.hessian == GibbsHessian::Approx)
+            {
+                Hnn = hessian.approximate(n);
+                add_log_barrier_contrib(Hnn);
+            }
+            else if(options.hessian == GibbsHessian::PartiallyExact)
+            {
+                Hnn = hessian.approximate(n);
+                add_log_barrier_contrib(Hnn);
+
+                // Update columns of Hxx and Vpx corresponding to primary species
+                for(auto i : ibasicvars)
+                {
+                    if(i >= Nn) continue; // i corresponds to a `q` variable, and the implicit titrant is currently a primary species
+                    updateFx(i);
+                    Hxx.col(i) = grad(F.head(Nx));
+                }
+            }
+            else // case GibbsHessian::Exact
+            {
+                // Update Hxx and Vpx columns for all species
+                for(auto i = 0; i < Nn; ++i)
+                {
+                    updateFx(i);
+                    Hxx.col(i) = grad(F.head(Nx));
+                    Vpx.col(i) = grad(F.tail(Np));
+                }
+            }
         }
+        else // when there are p variables, some problems (e.g., those in NasaDatabase), need Vpx to be calculated; Vpx = 0  causes convergence failure
+        {
+            // TODO: Implement ActivityModel as a class that also has methods to compute derivatives
+            // wrt temperature, pressure, mole fractions. By default, these methods should be
+            // computed using autodiff. They can be override, however, for more efficient
+            // computations (manually).
+            for(auto i = 0; i < Nn; ++i)
+            {
+                updateFx(i);
+                Hxx.col(i) = grad(F.head(Nx));
+                Vpx.col(i) = grad(F.tail(Np));
+            }
+        }
+
         Hxx.rightCols(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
         Vpx.rightCols(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
     }

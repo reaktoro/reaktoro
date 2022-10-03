@@ -46,9 +46,16 @@ public:
     /// Assign a EquilibriumProps object to this.
     auto operator=(EquilibriumProps other) -> EquilibriumProps&;
 
+    /// Update the chemical properties of the chemical system.
+    /// @param n The amounts of the species.
+    /// @param p The values of the *p* control variables (e.g., T, P, n[H+] in case U, V and pH are given).
+    /// @param w The input variables *w* in the chemical equilibrium problem (e.g., U, V, pH).
+    /// @param useIdealModel If true, ideal thermodynamic models are used for the phases.
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel = false) -> void;
+
     /// Update the chemical properties of the chemical system. This is an
     /// special update method compared to ChemicalProps::update. Here, the
-    /// variables in @p n, @p p, and @p w are inspected for seed state. This is
+    /// variables in `n`, `p`, and `w` are inspected for seed state. This is
     /// seed in the sense of automatic differentiation. When one of this
     /// variables are detected to be seeded, this implies that automatic
     /// differentiation is computing derivatives of the chemical properties
@@ -60,7 +67,7 @@ public:
     /// @param w The input variables *w* in the chemical equilibrium problem (e.g., U, V, pH).
     /// @param useIdealModel If true, ideal thermodynamic models are used for the phases.
     /// @param inpw The index of the variable in (n, p, w) currently seeded for autodiff computation.
-    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel = false, long inpw = -1) -> void;
+    auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel, long inpw) -> void;
 
     /// Enable recording of derivatives of the chemical properties with respect
     /// to *(n, p, w)* to contruct its full Jacobian matrix.
