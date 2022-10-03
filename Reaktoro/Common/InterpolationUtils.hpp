@@ -38,4 +38,21 @@ auto interpolate(
     const Vec<double>& pressures,
     const Vec<Fn<double(double, double)>>& fs) -> Fn<ArrayXr(real, real)>;
 
+/// Calculate a linear interpolation of *y* at *x* with given pairs *(x0, y0)* and *(x1, y1)*.
+template<typename T>
+auto interpolateLinear(T const& x, T const& x0, T const& x1, T const& y0, T const& y1) -> T
+{
+    return y0 + (y1 - y0)/(x1 - x0) * (x - x0);
+}
+
+/// Calculate a quadratic interpolation of *y* at *x* with given pairs *(x0, y0)* *(x1, y1)* and *(x2, y2)*.
+template<typename T>
+auto interpolateQuadratic(T const& x, T const& x0, T const& x1, T const& x2, T const& y0, T const& y1, T const& y2) -> T
+{
+    const auto l0 = ((x - x1)*(x - x2))/((x0 - x1)*(x0 - x2));
+    const auto l1 = ((x - x0)*(x - x2))/((x1 - x0)*(x1 - x2));
+    const auto l2 = ((x - x0)*(x - x1))/((x2 - x0)*(x2 - x1));
+    return y0*l0 + y1*l1 + y2*l2;
+}
+
 } // namespace Reaktoro
