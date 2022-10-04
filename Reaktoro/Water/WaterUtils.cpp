@@ -30,6 +30,7 @@ using std::pow;
 #include <Reaktoro/Water/WaterHelmholtzProps.hpp>
 #include <Reaktoro/Water/WaterHelmholtzPropsHGK.hpp>
 #include <Reaktoro/Water/WaterHelmholtzPropsWagnerPruss.hpp>
+#include <Reaktoro/Water/WaterInterpolation.hpp>
 
 namespace Reaktoro {
 
@@ -40,31 +41,11 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
     const auto max_iters = 100;
     const auto tolerance = 1.0e-08;
 
-    // Auxiliary constants for initial guess computation for water density
-    const auto R = universalGasConstant;
-    const auto Twc = waterCriticalTemperature;
-    const auto Pwc = waterCriticalPressure;
+    // Get an adequate initial guess for water density using interpolation
+    real D = waterDensityWagnerPrussInterp(T, P);
 
-    // Compute initial guess for molar volume (m3/mol) according to suggestion in Smith,
-    const auto Vwc_liquid = R*Twc/Pwc; // initial guess for volume if liquid state (see equation 3.55, page 97 in Smith, Van Ness, Abbott, 2005)
-    const auto Vwc_vapor = R*T/P; // initial guess for volume if gas state (see equation 3.49, page 96 in Smith, Van Ness, Abbott, 2005)
-
-    // Compute initial guess for density (kg/m3)
-//    const auto Dwc_liquid = waterMolarMass / Vwc_liquid;
-    const auto Dwc_liquid = 10.0 * waterCriticalDensity; // TODO: 10x too much (try 2x or 3x, Ian Bell)
-    const auto Dwc_vapor = waterMolarMass / Vwc_vapor;
-
-    // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
-    real D = {};
-
-    switch(stateofmatter)
-    {
-    case StateOfMatter::Liquid: D = Dwc_liquid; break;
-    default: D = Dwc_vapor; break;
-    }
-
-    // Apply the Newton's method to the pressure-density equation
-    for(int i = 1; i <= max_iters; ++i)
+    // Apply Newton's method to the pressure-density equation
+    for(auto i = 1; i <= max_iters; ++i)
     {
         WaterHelmholtzProps h = model(T, D);
 
@@ -77,11 +58,8 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
             return D;
     }
 
-    Exception exception;
-    exception.error << "Unable to calculate the density of water.";
-    exception.reason << "The calculations did not converge at temperature "
-        << T << " K and pressure " << P << "Pa.";
-    RaiseError(exception);
+    errorif(true, "Unable to calculate the density of water. "
+        "The calculations did not converge at temperature ", T, " K and pressure ", P, " Pa.");
 
     return {};
 }
