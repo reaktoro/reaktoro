@@ -144,6 +144,9 @@ const double F[] = { 700, 800 }; // D has been replaced by F to avoid conflicts
 
 const double E[] = { 0.3, 0.3 };
 
+template<typename T> auto pow2(T const& x) { return x*x; }
+template<typename T> auto pow3(T const& x) { return x*x*x; }
+
 } // namespace
 
 auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
@@ -154,11 +157,11 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
     auto phio     =  log(delta) + no[1] + no[2]*tau + no[3]*log(tau);
     auto phio_d   =  1.0/delta;
     auto phio_t   =  no[2] + no[3]/tau;
-    auto phio_dd  = -1.0/pow(delta, 2);
-    auto phio_tt  = -no[3]/pow(tau, 2);
+    auto phio_dd  = -1.0/pow2(delta);
+    auto phio_tt  = -no[3]/pow2(tau);
     auto phio_dt  =  0.0;
-    auto phio_ddd =  2.0/pow(delta, 3);
-    auto phio_ttt =  2.0*no[3]/pow(tau, 3);
+    auto phio_ddd =  2.0/pow3(delta);
+    auto phio_ttt =  2.0*no[3]/pow3(tau);
     auto phio_dtt =  0.0;
     auto phio_ddt =  0.0;
 
@@ -170,8 +173,8 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
 
         phio     += no[i] * log(1.0 - 1.0/ee);
         phio_t   += no[i] * (gammao[j]/(ee - 1));
-        phio_tt  -= no[i] * ee * pow((gammao[j]/(ee - 1)), 2);
-        phio_ttt += no[i] * ee * (1 + ee) * pow((gammao[j]/(ee - 1)), 3);
+        phio_tt  -= no[i] * ee * pow2((gammao[j]/(ee - 1)));
+        phio_ttt += no[i] * ee * (1 + ee) * pow3((gammao[j]/(ee - 1)));
     }
 
     real phir = {};
@@ -217,13 +220,13 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
         const auto B     =  n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-dci);
         const auto B_d   = (d[i] - c[i]*dci)/delta * B;
         const auto B_t   =  t[i]/tau * B;
-        const auto B_dd  = (d[i] - c[i]*dci - 1)/delta * B_d - dci*pow(c[i]/delta, 2) * B;
+        const auto B_dd  = (d[i] - c[i]*dci - 1)/delta * B_d - dci*pow2(c[i]/delta) * B;
         const auto B_tt  = (t[i] - 1)/tau * B_t;
         const auto B_dt  =  t[i]/tau * B_d;
-        const auto B_ddd = (d[i] - c[i]*dci - 1)/delta * B_dd - ((d[i] - c[i]*dci - 1) + 2*c[i]*c[i]*dci)/pow(delta, 2) * B_d - c[i]*c[i]*dci*(c[i] - 2)/pow(delta, 3) * B;
+        const auto B_ddd = (d[i] - c[i]*dci - 1)/delta * B_dd - ((d[i] - c[i]*dci - 1) + 2*c[i]*c[i]*dci)/pow2(delta) * B_d - c[i]*c[i]*dci*(c[i] - 2)/pow3(delta) * B;
         const auto B_ttt = (t[i] - 2)/tau * B_tt;
         const auto B_dtt = (t[i] - 1)/tau * B_dt;
-        const auto B_ddt = (d[i] - c[i]*dci - 1)/delta * B_dt - c[i]*c[i]*dci/pow(delta, 2) * B_t;
+        const auto B_ddt = (d[i] - c[i]*dci - 1)/delta * B_dt - c[i]*c[i]*dci/pow2(delta) * B_t;
 
         phir     += B;
         phir_d   += B_d;
@@ -244,17 +247,17 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
         const auto aux1d = (d[i]/delta - 2*alpha[j]*(delta - epsilon[j]));
         const auto aux1t = (t[i]/tau - 2*beta[j]*(tau - gamma[j]));
 
-        const auto aux2d = (d[i]/pow(delta, 2) + 2*alpha[j]);
-        const auto aux2t = (t[i]/pow(tau, 2) + 2*beta[j]);
+        const auto aux2d = (d[i]/pow2(delta) + 2*alpha[j]);
+        const auto aux2t = (t[i]/pow2(tau) + 2*beta[j]);
 
-        const auto C     = n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-alpha[j]*pow(delta - epsilon[j], 2) - beta[j]*pow(tau - gamma[j], 2));
+        const auto C     = n[i]*pow(delta, d[i])*pow(tau, t[i])*exp(-alpha[j]*pow2(delta - epsilon[j]) - beta[j]*pow2(tau - gamma[j]));
         const auto C_d   = aux1d * C;
         const auto C_t   = aux1t * C;
         const auto C_dd  = aux1d * C_d - aux2d * C;
         const auto C_tt  = aux1t * C_t - aux2t * C;
         const auto C_dt  = aux1d * aux1t * C;
-        const auto C_ddd = aux1d * C_dd - 2*aux2d * C_d + 2*d[i]/pow(delta, 3) * C;
-        const auto C_ttt = aux1t * C_tt - 2*aux2t * C_t + 2*t[i]/pow(tau, 3) * C;
+        const auto C_ddd = aux1d * C_dd - 2*aux2d * C_d + 2*d[i]/pow3(delta) * C;
+        const auto C_ttt = aux1t * C_tt - 2*aux2t * C_t + 2*t[i]/pow3(tau) * C;
         const auto C_dtt = aux1t * C_dt - aux2t * C_d;
         const auto C_ddt = aux1d * C_dt - aux2d * C_t;
 
@@ -274,8 +277,8 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
     {
         const int j = i - 55;
 
-        const auto dd = pow(delta - 1, 2);
-        const auto tt = pow(tau - 1, 2);
+        const auto dd = pow2(delta - 1);
+        const auto tt = pow2(tau - 1);
 
         const auto theta     = (1 - tau) + A[j]*pow(dd, 0.5/E[j]);
         const auto theta_d   = (theta + tau - 1)/(delta - 1)/E[j];
@@ -296,10 +299,10 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
         const auto Delta     = theta*theta + B[j]*pow(dd, a[j]);
         const auto Delta_d   = 2*(theta*theta_d + a[j]*(Delta - theta*theta)/(delta - 1));
         const auto Delta_t   = -2*theta;
-        const auto Delta_dd  = 2*(theta_d*theta_d + theta*theta_dd + a[j] * ((Delta_d - 2*theta*theta_d)/(delta - 1) - (Delta - theta*theta)/pow(delta - 1, 2)));
+        const auto Delta_dd  = 2*(theta_d*theta_d + theta*theta_dd + a[j] * ((Delta_d - 2*theta*theta_d)/(delta - 1) - (Delta - theta*theta)/pow2(delta - 1)));
         const auto Delta_tt  = 2;
         const auto Delta_dt  = -2*theta_d;
-        const auto Delta_ddd = 2*(3*theta_d*theta_dd + theta*theta_ddd + a[j] * ((Delta_dd - 2*theta_d*theta_d - 2*theta*theta_dd)/(delta - 1) - 2*(Delta_d - 2*theta*theta_d)/pow(delta - 1, 2) + 2*(Delta - theta*theta)/pow(delta - 1, 3)));
+        const auto Delta_ddd = 2*(3*theta_d*theta_dd + theta*theta_ddd + a[j] * ((Delta_dd - 2*theta_d*theta_d - 2*theta*theta_dd)/(delta - 1) - 2*(Delta_d - 2*theta*theta_d)/pow2(delta - 1) + 2*(Delta - theta*theta)/pow3(delta - 1)));
         const auto Delta_ttt = 0;
         const auto Delta_dtt = 0;
         const auto Delta_ddt = -2*theta_dd;
@@ -307,13 +310,13 @@ auto waterHelmholtzPropsWagnerPruss(real T, real D) -> WaterHelmholtzProps
         const auto DeltaPow     =  pow(Delta, b[j]);
         const auto DeltaPow_d   =  b[j]*Delta_d/Delta * DeltaPow;
         const auto DeltaPow_t   =  b[j]*Delta_t/Delta * DeltaPow;
-        const auto DeltaPow_dd  = (b[j]*Delta_dd/Delta + b[j]*(b[j] - 1)*pow(Delta_d/Delta, 2)) * DeltaPow;
-        const auto DeltaPow_tt  = (b[j]*Delta_tt/Delta + b[j]*(b[j] - 1)*pow(Delta_t/Delta, 2)) * DeltaPow;
+        const auto DeltaPow_dd  = (b[j]*Delta_dd/Delta + b[j]*(b[j] - 1)*pow2(Delta_d/Delta)) * DeltaPow;
+        const auto DeltaPow_tt  = (b[j]*Delta_tt/Delta + b[j]*(b[j] - 1)*pow2(Delta_t/Delta)) * DeltaPow;
         const auto DeltaPow_dt  = (b[j]*Delta_dt/Delta + b[j]*(b[j] - 1)*Delta_d*Delta_t/Delta/Delta) * DeltaPow;
-        const auto DeltaPow_ddd = (b[j]*Delta_ddd/Delta + 3*b[j]*(b[j] - 1)*Delta_d*Delta_dd/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow(Delta_d/Delta, 3)) * DeltaPow;
-        const auto DeltaPow_ttt = (b[j]*Delta_ttt/Delta + 3*b[j]*(b[j] - 1)*Delta_t*Delta_tt/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow(Delta_t/Delta, 3)) * DeltaPow;
-        const auto DeltaPow_dtt = (b[j]*Delta_dtt/Delta + b[j]*(b[j] - 1)*(Delta_d*Delta_tt + 2*Delta_t*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_t*Delta_t*Delta_d/pow(Delta, 3)) * DeltaPow;
-        const auto DeltaPow_ddt = (b[j]*Delta_ddt/Delta + b[j]*(b[j] - 1)*(Delta_t*Delta_dd + 2*Delta_d*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_d*Delta_d*Delta_t/pow(Delta, 3)) * DeltaPow;
+        const auto DeltaPow_ddd = (b[j]*Delta_ddd/Delta + 3*b[j]*(b[j] - 1)*Delta_d*Delta_dd/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow3(Delta_d/Delta)) * DeltaPow;
+        const auto DeltaPow_ttt = (b[j]*Delta_ttt/Delta + 3*b[j]*(b[j] - 1)*Delta_t*Delta_tt/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*pow3(Delta_t/Delta)) * DeltaPow;
+        const auto DeltaPow_dtt = (b[j]*Delta_dtt/Delta + b[j]*(b[j] - 1)*(Delta_d*Delta_tt + 2*Delta_t*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_t*Delta_t*Delta_d/pow3(Delta)) * DeltaPow;
+        const auto DeltaPow_ddt = (b[j]*Delta_ddt/Delta + b[j]*(b[j] - 1)*(Delta_t*Delta_dd + 2*Delta_d*Delta_dt)/Delta/Delta + b[j]*(b[j] - 1)*(b[j] - 2)*Delta_d*Delta_d*Delta_t/pow3(Delta)) * DeltaPow;
 
         const auto D     = n[i]*DeltaPow*delta*psi;
         const auto D_d   = n[i]*(DeltaPow*(psi + delta*psi_d) + DeltaPow_d*delta*psi);
