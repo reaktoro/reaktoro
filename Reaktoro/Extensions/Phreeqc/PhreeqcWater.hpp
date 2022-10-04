@@ -81,5 +81,19 @@ auto waterElectroProps(real T, real P, PhreeqcWaterThermoProps wtp) -> PhreeqcWa
 /// @param P The pressure for the calculation (in Pa)
 auto waterProps(real T, real P) -> PhreeqcWaterProps;
 
+/// Return the water density used in the evaluation of Debye--Hückel coefficients @eq{A_\gamma} and  @eq{B_\gamma}.
+/// This function implements equation (2.6) of Wagner and Pruss (2002)\sup{\cite Wagner2002}
+/// for the calculation of liquid water density along the saturation curve (0-300 celsius).
+/// The pressure correction from saturated pressure to pressure of interest (0.006 - 1000 atm)
+/// is done using an interpolation scheme implemented in PHREEQC. This is a much faster calculation than
+/// evaluating the full water equation of state IAPWS-95 formulated in Wagner and Pruss (2002)\sup{\cite Wagner2002}.
+auto waterDensityPhreeqc(real T, real P) -> real;
+
+/// Return the water dielectric constant used in the evaluation of Debye--Hückel coefficients @eq{A_\gamma} and  @eq{B_\gamma}.
+/// This function implements equations (E-1) to (E-4) in Pitzer, K. S. Activity Coefficients in Electrolyte Solutions. CRC Press. 552pp
+/// for the calculation of water dielectric constant. This is exactly the same implementation in PHREEQC, and it is also
+/// referred as the Bradley-Pitzer water dielectric constant model.
+auto waterDielectricConstantPhreeqc(real T, real P) -> real;
+
 } // namespace PhreeqcUtils
 } // namespace Reaktoro

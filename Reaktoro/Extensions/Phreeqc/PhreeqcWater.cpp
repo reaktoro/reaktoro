@@ -177,5 +177,91 @@ auto waterProps(real T, real P) -> PhreeqcWaterProps
     return {wtp, wep};
 }
 
+auto waterDensityPhreeqc(real T, real P) -> real
+{
+    const auto Tmax = 350.0 + 273.15;
+
+    warning(T > Tmax, "Evaluating water density for Debye-Huckel coefficients at temperature ", T, " K, but maximum supported is ", Tmax, " K.");
+
+    // Critical properties of water as given in eqs. (2.2a-2.2c) in Wagner and Pruss (2002)
+    const auto Tcr = 647.096;  // critical temperature (in K)
+    const auto Pcr = 22.064e6; // critical presssure (in Pa)
+    const auto Dcr = 322.0;    // critical density (in kg/m3)
+
+    // The theta variable in Wagner and Pruss (2002) defined below eq. (2.5a)
+    const auto theta = 1 - T / Tcr;
+
+    // The coefficients b1 to b6 in eq. (2.6) of Wagner and Pruss (2002)
+    const auto b1 =  1.99274064;
+    const auto b2 =  1.09965342;
+    const auto b3 = -0.510839303;
+    const auto b4 = -1.75493479;
+    const auto b5 = -45.5170352;
+    const auto b6 = -6.7469445e5;
+
+    // Calculate the density of water along the liquid saturation curve
+    const auto Dsat = Dcr * (1.0 +
+            b1 * pow(theta, 1./3.) +
+            b2 * pow(theta, 2./3.) +
+            b3 * pow(theta, 5./3.) +
+            b4 * pow(theta, 16./3.) +
+            b5 * pow(theta, 43./3.) +
+            b6 * pow(theta, 110./3));
+
+    // Factor to convert from Pa to atm
+    const auto pascal_to_atm = 9.86923e-6;
+
+    // Calculate temperature in C and and presssure in atm
+    const auto Tc = T - 273.15;
+    const auto Pa = P * pascal_to_atm;
+
+    // Interpolate the density of water from saturation curve to desired pressure
+    // This has been taken from PHREEQC, LDBLE Phreeqc::calc_rho_0(LDBLE tc, LDBLE pa) method in utilities.cpp
+    const auto p0 =  5.1880000E-02 + Tc * (-4.1885519E-04 + Tc * ( 6.6780748E-06 + Tc * (-3.6648699E-08 + Tc *  8.3501912E-11)));
+    const auto p1 = -6.0251348E-06 + Tc * ( 3.6696407E-07 + Tc * (-9.2056269E-09 + Tc * ( 6.7024182E-11 + Tc * -1.5947241E-13)));
+    const auto p2 = -2.2983596E-09 + Tc * (-4.0133819E-10 + Tc * ( 1.2619821E-11 + Tc * (-9.8952363E-14 + Tc *  2.3363281E-16)));
+    const auto p3 =  7.0517647E-11 + Tc * ( 6.8566831E-12 + Tc * (-2.2829750E-13 + Tc * ( 1.8113313E-15 + Tc * -4.2475324E-18)));
+
+    // Calculate the pressure along the liquid saturation curve corresponding to given temperature
+    const auto Psat = exp(11.6702 - 3816.44 / (T - 46.13)); // in atm
+
+    // Determine the pressure value in effect, which is either given P (in atm) or saturated pressure (the minimum pressure to maintain liquid state)
+    const auto Peff = max(Pa, Psat);
+
+    // Calculate delta(P) = Peff - P(sat) (all in atm)
+    const auto dP = Peff - Psat + 1e-6; // add small pressure value to avoid zero
+
+    // Calculate the interpolation of water density from saturation value to a corrected one for given pressure
+    const auto D = Dsat + dP * (p0 + dP * (p1 + dP * (p2 + sqrt(dP) * p3)));
+
+    return D;
+}
+
+auto waterDielectricConstantPhreeqc(real T, real P) -> real
+{
+    const auto Tmax = 350.0 + 273.15;
+
+    warning(T > Tmax, "Evaluating water dielectric constant for Debye-Huckel coefficients at temperature ", T, " K, but maximum supported is ", Tmax, " K.");
+
+    const auto u1 =  3.4279e2;
+    const auto u2 = -5.0866e-3;
+    const auto u3 =  9.469e-7;
+    const auto u4 = -2.0525;
+    const auto u5 =  3.1159e3;
+    const auto u6 = -1.8289e2;
+    const auto u7 = -8.0325e3;
+    const auto u8 =  4.2142e6;
+    const auto u9 =  2.1417;
+
+    const auto epsilon1000 = u1 * exp(T * (u2 + T * u3)); // relative dielectric constant at 1000 bar
+    const auto c = u4 + u5 / (u6 + T);
+    const auto b = u7 + u8 / T + u9 * T;
+    const auto pb = P * 1e-5; // pressure from Pa to bar
+
+    const auto epsilon = epsilon1000 + c * log((b + pb) / (b + 1e3)); // relative dielectric constant
+
+    return epsilon;
+}
+
 } // namespace PhreeqcUtils
 } // namespace Reaktoro
