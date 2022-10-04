@@ -148,43 +148,6 @@ const Vec<Vec<double>> densities =
     { 1237.39000, 1234.94000, 1232.38000, 1229.83000, 1227.29000, 1224.77000, 1222.26000, 1219.77000, 1217.28000, 1214.81000, 1212.34000, 1209.88000, 1207.43000, 1204.98000, 1202.54000, 1200.10000, 1197.67000, 1195.24000, 1192.82000, 1190.39000, 1187.97000, 1183.12000, 1178.28000, 1173.44000, 1168.60000, 1163.75000, 1158.91000, 1154.06000, 1149.22000, 1144.37000, 1139.52000, 1134.67000, 1129.83000, 1124.98000, 1120.14000, 1115.31000, 1110.47000, 1105.65000, 1100.83000, 1096.02000, 1091.21000, 1086.42000, 1081.63000, 1076.85000, 1072.09000, 1067.33000, 1055.50000, 1043.80000, 1032.10000, 1020.50000, 1009.10000,  997.76000,  986.55000,  975.46000,  953.67000,  932.43000,  911.77000,  891.69000,  872.20000,  853.30000,  834.99000,  817.25000,  809.28000 },
 };
 
-// auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real
-// {
-//     const auto PMPa = P * 1e-6; // from Pa to MPa
-
-//     const Index iP = std::lower_bound(pressures.begin(), pressures.end(), PMPa) - pressures.begin();
-
-//     const Index iP0 = std::min(pressures.size() - 3, iP);
-//     const Index iP1 = iP0 + 1;
-//     const Index iP2 = iP0 + 2;
-
-//     auto interpolateAtT = [&](Index indexP)
-//     {
-//         auto const& Ts = temperatures[indexP];
-//         auto const& Ds = densities[indexP];
-
-//         const Index iT = std::lower_bound(Ts.begin(), Ts.end(), T) - Ts.begin();
-
-//         const auto iTmax = iT < transitions[indexP] ? transitions[indexP] : Ts.size(); // used for ensuring that interpolation is performed within same state of matter
-
-//         const Index iT0 = std::min(iTmax - 3, iT);
-//         const Index iT1 = iT0 + 1;
-//         const Index iT2 = iT0 + 2;
-
-//         return interpolateQuadratic(T, Ts[iT0], Ts[iT1], Ts[iT2], Ds[iT0], Ds[iT1], Ds[iT2]);
-//     };
-
-//     const auto P0 = pressures[iP0];
-//     const auto P1 = pressures[iP1];
-//     const auto P2 = pressures[iP2];
-
-//     const auto D0 = interpolateAtT(iP0); // density at T and P=P0
-//     const auto D1 = interpolateAtT(iP1); // density at T and P=P1
-//     const auto D2 = interpolateAtT(iP2); // density at T and P=P2
-
-//     return interpolateQuadratic(PMPa, P0, P1, P2, D0, D1, D2);
-// }
-
 auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real
 {
     const auto PMPa = P * 1e-6; // from Pa to MPa
