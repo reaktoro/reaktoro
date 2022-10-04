@@ -24,10 +24,10 @@
 using namespace Reaktoro;
 
 #define CHECK_DENSITY_LIQUID(T, PMPa) \
-    CHECK( waterDensityWagnerPrussInterp(T, PMPa*1e6) == Approx(waterDensityWagnerPruss(T, PMPa*1e6, StateOfMatter::Liquid)) );
+    CHECK( waterDensityWagnerPrussInterp(T, PMPa*1e6) == Approx(waterDensityWagnerPruss(T, PMPa*1e6)) );
 
 #define CHECK_DENSITY_GAS(T, PMPa) \
-    CHECK( waterDensityWagnerPrussInterp(T, PMPa*1e6) == Approx(waterDensityWagnerPruss(T, PMPa*1e6, StateOfMatter::Gas)) );
+    CHECK( waterDensityWagnerPrussInterp(T, PMPa*1e6) == Approx(waterDensityWagnerPruss(T, PMPa*1e6)) );
 
 TEST_CASE("Testing water interpolation methods", "[WaterInterpolation]")
 {
@@ -46,7 +46,7 @@ TEST_CASE("Testing water interpolation methods", "[WaterInterpolation]")
     CHECK( waterDensityWagnerPrussInterp(723.000, 125*MPa).val()       == Approx(686.10870775) ); // error 4.170730301765396% when compared to 658.6386653549 from waterDensityWagnerPruss
     CHECK( waterDensityWagnerPrussInterp(834.000, 345*MPa).val()       == Approx(757.17433517) ); // error 0.520612296527317% when compared to 753.2528084254 from waterDensityWagnerPruss
 
-    CHECK( waterDensityWagnerPrussInterp( 370.000, 0.15*MPa).val()     == Approx(waterDensityWagnerPruss( 370.000, 0.15*MPa, StateOfMatter::Liquid)) );
+    CHECK( waterDensityWagnerPrussInterp( 370.000, 0.15*MPa).val()     == Approx(waterDensityWagnerPruss( 370.000, 0.15*MPa)) );
 
     // TODO: To reduce errors, above (note the 4.17% error at 723K and 125MPa), more refinement in the grid is needed.
 }

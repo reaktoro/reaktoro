@@ -35,7 +35,7 @@ using std::pow;
 namespace Reaktoro {
 
 template<typename HelmholtsModel>
-auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter stateofmatter) -> real
+auto waterDensity(real const& T, real const& P, HelmholtsModel const& model) -> real
 {
     // Auxiliary constants for the Newton's iterations
     const auto max_iters = 100;
@@ -64,54 +64,54 @@ auto waterDensity(real T, real P, const HelmholtsModel& model, StateOfMatter sta
     return {};
 }
 
-auto waterDensityHGK(real T, real P, StateOfMatter stateofmatter) -> real
+auto waterDensityHGK(real const& T, real const& P) -> real
 {
-    return waterDensity(T, P, waterHelmholtzPropsHGK, stateofmatter);
+    return waterDensity(T, P, waterHelmholtzPropsHGK);
 }
 
-auto waterLiquidDensityHGK(real T, real P) -> real
+auto waterLiquidDensityHGK(real const& T, real const& P) -> real
 {
-    return waterDensityHGK(T, P, StateOfMatter::Liquid);
+    return waterDensityHGK(T, P);
 }
 
-auto waterVaporDensityHGK(real T, real P) -> real
+auto waterVaporDensityHGK(real const& T, real const& P) -> real
 {
-    return waterDensityHGK(T, P, StateOfMatter::Gas);
+    return waterDensityHGK(T, P);
 }
 
-auto waterDensityWagnerPruss(real T, real P, StateOfMatter stateofmatter) -> real
+auto waterDensityWagnerPruss(real const& T, real const& P) -> real
 {
-    return waterDensity(T, P, waterHelmholtzPropsWagnerPruss, stateofmatter);
+    return waterDensity(T, P, waterHelmholtzPropsWagnerPruss);
 }
 
-auto waterLiquidDensityWagnerPruss(real T, real P) -> real
+auto waterLiquidDensityWagnerPruss(real const& T, real const& P) -> real
 {
-    return waterDensityWagnerPruss(T, P, StateOfMatter::Liquid);
+    return waterDensityWagnerPruss(T, P);
 }
 
-auto waterVaporDensityWagnerPruss(real T, real P) -> real
+auto waterVaporDensityWagnerPruss(real const& T, real const& P) -> real
 {
-    return waterDensityWagnerPruss(T, P, StateOfMatter::Gas);
+    return waterDensityWagnerPruss(T, P);
 }
 
 template<typename HelmholtzModel>
-auto waterPressure(real T, real D, const HelmholtzModel& model) -> real
+auto waterPressure(real const& T, real const& D, HelmholtzModel const& model) -> real
 {
     WaterHelmholtzProps h = model(T, D);
     return D*D*h.helmholtzD;
 }
 
-auto waterPressureHGK(real T, real D) -> real
+auto waterPressureHGK(real const& T, real const& D) -> real
 {
     return waterPressure(T, D, waterHelmholtzPropsHGK);
 }
 
-auto waterPressureWagnerPruss(real T, real D) -> real
+auto waterPressureWagnerPruss(real const& T, real const& D) -> real
 {
     return waterPressure(T, D, waterHelmholtzPropsHGK);
 }
 
-auto waterSaturationPressureWagnerPruss(real T) -> real
+auto waterSaturationPressureWagnerPruss(real const& T) -> real
 {
     const double a1 = -7.85951783;
     const double a2 =  1.84408259;
@@ -133,7 +133,7 @@ auto waterSaturationPressureWagnerPruss(real T) -> real
     return Pcr * exp(Tcr/T * (a1*t + a2*t15 + a3*t30 + a4*t35 + a5*t40 + a6*t75));
 }
 
-auto waterSaturationLiquidDensityWagnerPruss(real T) -> real
+auto waterSaturationLiquidDensityWagnerPruss(real const& T) -> real
 {
     const double b1 =  1.99274064;
     const double b2 =  1.09965342;
@@ -156,7 +156,7 @@ auto waterSaturationLiquidDensityWagnerPruss(real T) -> real
     return Dcr * (1 + b1*t13 + b2*t23 + b3*t53 + b4*t163 + b5*t433 + b6*t1103);
 }
 
-auto waterSaturationVapourDensityWagnerPruss(real T) -> real
+auto waterSaturationVapourDensityWagnerPruss(real const& T) -> real
 {
     const double c1 = -2.03150240;
     const double c2 = -2.68302940;
@@ -180,17 +180,17 @@ auto waterSaturationVapourDensityWagnerPruss(real T) -> real
     return Dcr * exp(Tcr/T * (c1*t26 + c2*t46 + c3*t86 + c4*t186 + c5*t376 + c6*t716));
 }
 
-auto waterSaturatedPressureWagnerPruss(real T) -> real
+auto waterSaturatedPressureWagnerPruss(real const& T) -> real
 {
     errorif(true, "waterSaturatedPressureWagnerPruss has been renamed to waterSaturationPressureWagnerPruss")
 }
 
-auto waterSaturatedLiquidDensityWagnerPruss(real T) -> real
+auto waterSaturatedLiquidDensityWagnerPruss(real const& T) -> real
 {
     errorif(true, "waterSaturatedLiquidDensityWagnerPruss has been renamed to waterSaturationLiquidDensityWagnerPruss")
 }
 
-auto waterSaturatedVapourDensityWagnerPruss(real T) -> real
+auto waterSaturatedVapourDensityWagnerPruss(real const& T) -> real
 {
     errorif(true, "waterSaturatedVapourDensityWagnerPruss has been renamed to waterSaturationVapourDensityWagnerPruss")
 }
