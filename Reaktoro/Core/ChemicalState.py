@@ -88,49 +88,49 @@ def testChemicalState():
     assert state.speciesAmount(0) == 3.1
 
     state.setSpeciesAmount(0, 3.1, "mmol")
-    assert state.speciesAmount(0)[0] == pytest.approx(0.0031)
+    assert state.speciesAmount(0).val() == pytest.approx(0.0031)
 
     state.setSpeciesAmount(N - 1, 4.3, "mol")
     assert state.speciesAmount(N - 1) == 4.3
 
     state.setSpeciesAmount(N - 1, 4.3, "mmol")
-    assert state.speciesAmount(N - 1)[0] == pytest.approx(0.0043)
+    assert state.speciesAmount(N - 1).val() == pytest.approx(0.0043)
 
     state.setSpeciesAmount("H2O(aq)", 5.0, "mol")
     assert state.speciesAmount("H2O(aq)") == 5.0
 
     state.setSpeciesAmount("H2O(aq)", 5.0, "mmol")
-    assert state.speciesAmount("H2O(aq)")[0] == pytest.approx(0.005)
+    assert state.speciesAmount("H2O(aq)").val() == pytest.approx(0.005)
 
     state.setSpeciesAmount("Quartz", 10.0, "mol")
     assert state.speciesAmount("Quartz") == 10.0
 
     state.setSpeciesAmount("Quartz", 10.0, "mmol")
-    assert state.speciesAmount("Quartz")[0] == pytest.approx(0.01)
+    assert state.speciesAmount("Quartz").val() == pytest.approx(0.01)
 
     state.setSpeciesMass(0, 7.1, "kg")
     assert state.speciesMass(0) == 7.1
 
     state.setSpeciesMass(0, 7.1, "mg")
-    assert state.speciesMass(0)[0] == pytest.approx(7.1e-6)
+    assert state.speciesMass(0).val() == pytest.approx(7.1e-6)
 
     state.setSpeciesMass(N - 1, 9.3, "kg")
     assert state.speciesMass(N - 1) == 9.3
 
     state.setSpeciesMass(N - 1, 9.3, "mg")
-    assert state.speciesMass(N - 1)[0] == pytest.approx(9.3e-6)
+    assert state.speciesMass(N - 1).val() == pytest.approx(9.3e-6)
 
     state.setSpeciesMass("H2O(aq)", 5.0, "kg")
     assert state.speciesMass("H2O(aq)") == 5.0
 
     state.setSpeciesMass("H2O(aq)", 5.0, "mg")
-    assert state.speciesMass("H2O(aq)")[0] == pytest.approx(5e-6)
+    assert state.speciesMass("H2O(aq)").val() == pytest.approx(5e-6)
 
     state.setSpeciesMass("Quartz", 10.0, "kg")
     assert state.speciesMass("Quartz") == 10.0
 
     state.setSpeciesMass("Quartz", 10.0, "mg")
-    assert state.speciesMass("Quartz")[0] == pytest.approx(10e-6)
+    assert state.speciesMass("Quartz").val() == pytest.approx(10e-6)
 
     state.setSpeciesAmount("Calcite", 0.0, "mol")
     state.add("Calcite", 1.0, "mol")
@@ -171,46 +171,51 @@ def testChemicalState():
     scaled = ChemicalState(state)
     scaled.scaleVolume(1.0, "m3")
     scaled.props().update(scaled)
-    assert scaled.props().volume() == 1.0
+    assert scaled.props().volume() == pytest.approx(1.0)
 
     scaled = ChemicalState(state)
     scaled.scalePhaseVolume("AqueousPhase", 1.0, "m3")
     scaled.props().update(scaled)
-    assert scaled.props().phaseProps("AqueousPhase").volume() == 1.0
+    assert scaled.props().phaseProps("AqueousPhase").volume().val() == pytest.approx(1.0)
+
+    scaled = ChemicalState(state)
+    scaled.scalePhaseVolume("GaseousPhase", 1.0, "m3")
+    scaled.props().update(scaled)
+    assert scaled.props().phaseProps("GaseousPhase").volume().val() == pytest.approx(1.0)
 
     scaled = ChemicalState(state)
     scaled.scaleFluidVolume(2.0, "m3")
     scaled.props().update(scaled)
     iphases = scaled.props().indicesPhasesWithFluidState()
-    assert sum([scaled.props().phaseProps(i).volume() for i in iphases]) == 2.0
+    assert sum([scaled.props().phaseProps(i).volume().val() for i in iphases]) == pytest.approx(2.0)
 
     scaled = ChemicalState(state)
     scaled.scaleSolidVolume(3.0, "m3")
     scaled.props().update(scaled)
     iphases = scaled.props().indicesPhasesWithSolidState()
-    assert sum([scaled.props().phaseProps(i).volume() for i in iphases]) == 3.0
+    assert sum([scaled.props().phaseProps(i).volume().val() for i in iphases]) == pytest.approx(3.0)
 
     scaled = ChemicalState(state)
     scaled.scaleMass(1.0, "kg")
     scaled.props().update(scaled)
-    assert scaled.props().mass()[0] == pytest.approx(1.0)
+    assert scaled.props().mass().val() == pytest.approx(1.0)
 
     scaled = ChemicalState(state)
     scaled.scalePhaseMass("AqueousPhase", 1.0, "kg")
     scaled.props().update(scaled)
-    assert scaled.props().phaseProps("AqueousPhase").mass()[0] == pytest.approx(1.0)
+    assert scaled.props().phaseProps("AqueousPhase").mass().val() == pytest.approx(1.0)
 
     scaled = ChemicalState(state)
     scaled.scaleFluidMass(2.0, "kg")
     scaled.props().update(scaled)
     iphases = scaled.props().indicesPhasesWithFluidState()
-    assert sum([scaled.props().phaseProps(i).mass() for i in iphases]) == 2.0
+    assert sum([scaled.props().phaseProps(i).mass() for i in iphases]) == pytest.approx(2.0)
 
     scaled = ChemicalState(state)
     scaled.scaleSolidMass(3.0, "kg")
     scaled.props().update(scaled)
     iphases = scaled.props().indicesPhasesWithSolidState()
-    assert sum([scaled.props().phaseProps(i).mass() for i in iphases]) == 3.0
+    assert sum([scaled.props().phaseProps(i).mass() for i in iphases]) == pytest.approx(3.0)
 
     props = state.props()
     props.update(state)
