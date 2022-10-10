@@ -22,6 +22,7 @@
 
 namespace Reaktoro {
 
+/// Used to store thermodynamic properties of water.
 struct WaterThermoProps
 {
     /// The temperature of water (in K).
@@ -86,6 +87,54 @@ struct WaterThermoProps
 
     /// The second-order partial derivative of pressure with respect to density (in Pa/((kg/m3)*(kg/m3))).
     real PDD;
+
+    /// Add another WaterThermoProps object to this.
+    auto operator+=(WaterThermoProps const& x) -> WaterThermoProps&;
+
+    /// Subtract another WaterThermoProps object to this.
+    auto operator-=(WaterThermoProps const& x) -> WaterThermoProps&;
+
+    /// Multiply this WaterThermoProps object by a scalar.
+    auto operator*=(double const& x) -> WaterThermoProps&;
+
+    /// Multiply this WaterThermoProps object by a scalar.
+    auto operator*=(real const& x) -> WaterThermoProps&;
+
+    /// Divide this WaterThermoProps object by a scalar.
+    auto operator/=(double const& x) -> WaterThermoProps&;
+
+    /// Divide this WaterThermoProps object by a scalar.
+    auto operator/=(real const& x) -> WaterThermoProps&;
 };
+
+auto operator+(WaterThermoProps const& r) -> WaterThermoProps;
+auto operator+(WaterThermoProps&& r) -> WaterThermoProps;
+
+auto operator-(WaterThermoProps const& r) -> WaterThermoProps;
+auto operator-(WaterThermoProps&& r) -> WaterThermoProps;
+
+auto operator+(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThermoProps;
+auto operator+(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps;
+auto operator+(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps;
+
+auto operator-(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThermoProps;
+auto operator-(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps;
+auto operator-(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps;
+
+auto operator*(double const& l, WaterThermoProps const& r) -> WaterThermoProps;
+auto operator*(double const& l, WaterThermoProps&& r) -> WaterThermoProps;
+auto operator*(WaterThermoProps const& l, double const& r) -> WaterThermoProps;
+auto operator*(WaterThermoProps&& l, double const& r) -> WaterThermoProps;
+
+auto operator*(real const& l, WaterThermoProps const& r) -> WaterThermoProps;
+auto operator*(real const& l, WaterThermoProps&& r) -> WaterThermoProps;
+auto operator*(WaterThermoProps const& l, real const& r) -> WaterThermoProps;
+auto operator*(WaterThermoProps&& l, real const& r) -> WaterThermoProps;
+
+auto operator/(WaterThermoProps const& l, double const& r) -> WaterThermoProps;
+auto operator/(WaterThermoProps&& l, double const& r) -> WaterThermoProps;
+
+auto operator/(WaterThermoProps const& l, real const& r) -> WaterThermoProps;
+auto operator/(WaterThermoProps&& l, real const& r) -> WaterThermoProps;
 
 } // namespace Reaktoro
