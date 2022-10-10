@@ -26,46 +26,51 @@ namespace Reaktoro {
 struct WaterThermoProps;
 struct WaterHelmholtzProps;
 
-/// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
+/// Calculate the thermodynamic properties of water using the Haar-Gallagher-Kell (1984) equation of state.
 /// **References:**
 /// - Haar, L., Gallagher, J. S., Kell, G. S. (1984). NBS/NRC Steam Tables: Thermodynamic and
 ///   Transport Properties and Computer Program for Vapor and Liquid States of Water in SI Units.
 ///   New York: Hemisphere Publishing Corporation.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @return The thermodynamic state of water
+/// @return The thermodynamic properties of water
 /// @see WaterThermoProps
 auto waterThermoPropsHGK(real const& T, real const& P) -> WaterThermoProps;
 
-/// Calculate the thermodynamic state of water using the Haar-Gallagher-Kell (1984) equation of state.
+/// Calculate the thermodynamic properties of water using the Haar-Gallagher-Kell (1984) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
 auto waterThermoPropsHGKMemoized(real const& T, real const& P) -> WaterThermoProps;
 
-/// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
+/// Calculate the thermodynamic properties of water using the Wagner and Pruss (1995) equation of state.
 /// **References:**
 /// - Wagner, W., Pruss, A. (1999). The IAPWS Formulation 1995 for the Thermodynamic Properties of
 ///   Ordinary Water Substance for General and Scientific Use. Journal of Physical and Chemical
 ///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @return The thermodynamic state of water
+/// @return The thermodynamic properties of water
 /// @see WaterThermoProps
 auto waterThermoPropsWagnerPruss(real const& T, real const& P) -> WaterThermoProps;
 
-/// Calculate the thermodynamic state of water using the Wagner and Pruss (1995) equation of state.
+/// Calculate the thermodynamic properties of water using the Wagner and Pruss (1995) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
 auto waterThermoPropsWagnerPrussMemoized(real const& T, real const& P) -> WaterThermoProps;
 
-/// Calculate the thermodynamic state of water.
+/// Calculate the thermodynamic properties of water using interpolation of pre-computed properties using the Wagner and Pruss (1995) equation of state.
+/// @note This function will skip the computation if given arguments are the same as
+/// in its last invocation. The cached result will be returned, thus improving performance.
+auto waterThermoPropsWagnerPrussInterpMemoized(real const& T, real const& P) -> WaterThermoProps;
+
+/// Calculate the thermodynamic properties of water.
 /// This is a general method that uses the Helmholtz free energy state
 /// of water, as an instance of WaterHelmholtzProps, to completely
 /// resolve its thermodynamic state.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
 /// @param whp The Helmholtz free energy state of water
-/// @return The thermodynamic state of water
+/// @return The thermodynamic properties of water
 /// @see WaterHelmholtzProps, WaterThermoProps
 auto waterThermoProps(real const& T, real const& P, WaterHelmholtzProps const& whp) -> WaterThermoProps;
 
