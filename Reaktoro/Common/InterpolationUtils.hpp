@@ -40,16 +40,17 @@ auto interpolate(
 
 /// Calculate a linear interpolation of *y* at *x* with given pairs *(x0, y0)* and *(x1, y1)*.
 template<typename T, typename X, typename Y>
-auto interpolateLinear(T const& x, X const& x0, X const& x1, Y const& y0, Y const& y1) -> T
+auto interpolateLinear(T const& x, X const& x0, X const& x1, Y const& y0, Y const& y1)
 {
+    using R = std::decay_t<decltype(y0 + (y1 - y0)/(x1 - x0) * (x - x0))>;
     assert(x0 <= x1);
-    if(x0 == x1) return y0;
+    if(x0 == x1) return static_cast<R>(y0);
     return y0 + (y1 - y0)/(x1 - x0) * (x - x0);
 }
 
 /// Calculate a quadratic interpolation of *y* at *x* with given pairs *(x0, y0)* *(x1, y1)* and *(x2, y2)*.
 template<typename T, typename X, typename Y>
-auto interpolateQuadratic(T const& x, X const& x0, X const& x1, X const& x2, Y const& y0, Y const& y1, Y const& y2) -> T
+auto interpolateQuadratic(T const& x, X const& x0, X const& x1, X const& x2, Y const& y0, Y const& y1, Y const& y2)
 {
     assert(x0 <= x1 && x1 <= x2);
     if(x0 == x1 || x1 == x2) return interpolateLinear(x, x0, x2, y0, y2);
