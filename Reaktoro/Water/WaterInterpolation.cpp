@@ -196,7 +196,7 @@ auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real
     return interpolateQuadratic(PMPa, P0, P1, P2, D0, D1, D2);
 }
 
-auto createWaterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>>
+auto parseWaterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>>
 {
     const auto text = Embedded::get("interpolation/WaterThermoPropsWagnerPruss.txt");
     std::istringstream file(text);
@@ -245,9 +245,9 @@ auto createWaterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>>
     return data;
 }
 
-auto getWaterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>> const&
+auto waterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>> const&
 {
-    thread_local Vec<Vec<WaterThermoProps>> data = createWaterThermoPropsWagnerPrussInterpData();
+    thread_local Vec<Vec<WaterThermoProps>> data = parseWaterThermoPropsWagnerPrussInterpData();
     return data;
 }
 
@@ -265,7 +265,7 @@ auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThe
     const Index iP1 = iPmax > 1 ? iP0 + 1 : 0;
     const Index iP2 = iPmax > 0 ? iP1 + 1 : 0;
 
-    auto const& data = getWaterThermoPropsWagnerPrussInterpData();
+    auto const& data = waterThermoPropsWagnerPrussInterpData();
 
     auto interpolateAtT = [&](Index indexP)
     {

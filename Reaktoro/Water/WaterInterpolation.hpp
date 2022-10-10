@@ -25,8 +25,8 @@ namespace Reaktoro {
 // Forward declarations
 struct WaterThermoProps;
 
-/// Compute the density of water at given a temperature and pressure using quadratic interpolation.
-/// The interpolation is performed using collected water properties at temperatures and pressures
+/// Compute the density of water (in kg/m3) at given a temperature and pressure using quadratic interpolation.
+/// The interpolation is performed using pre-computed water properties at temperatures and pressures
 /// shown in Table 13.2 of *Wagner, W., Pruss, A. (2002). The IAPWS Formulation 1995 for the
 /// Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use. Journal of
 /// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
@@ -34,13 +34,21 @@ struct WaterThermoProps;
 /// @param P The pressure value (in Pa)
 auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real;
 
-/// Compute the density of water at given a temperature and pressure using quadratic interpolation.
-/// The interpolation is performed using collected water properties at temperatures and pressures
+/// Compute the thermodynamic properties of water at given a temperature and pressure using quadratic interpolation.
+/// The interpolation is performed using pre-computed water properties at temperatures and pressures
 /// shown in Table 13.2 of *Wagner, W., Pruss, A. (2002). The IAPWS Formulation 1995 for the
 /// Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use. Journal of
 /// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
 /// @param T The temperature value (in K)
 /// @param P The pressure value (in Pa)
 auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThermoProps;
+
+/// Return the pre-computed thermodynamic properties of water using Wagner and Pruss (2002) equation of state used for interpolation.
+/// The interpolation data consists of pre-computed water properties at temperatures and pressures
+/// shown in Table 13.2 of *Wagner, W., Pruss, A. (2002). The IAPWS Formulation 1995 for the
+/// Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use. Journal of
+/// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
+/// @note The first call to this function will trigger a parsing operation of embedded text data.
+auto waterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>> const&;
 
 } // namespace Reaktoro
