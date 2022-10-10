@@ -22,6 +22,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+struct WaterThermoProps;
+
 /// Compute the density of water at given a temperature and pressure using quadratic interpolation.
 /// The interpolation is performed using collected water properties at temperatures and pressures
 /// shown in Table 13.2 of *Wagner, W., Pruss, A. (2002). The IAPWS Formulation 1995 for the
@@ -30,5 +33,14 @@ namespace Reaktoro {
 /// @param T The temperature value (in K)
 /// @param P The pressure value (in Pa)
 auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real;
+
+/// Compute the density of water at given a temperature and pressure using quadratic interpolation.
+/// The interpolation is performed using collected water properties at temperatures and pressures
+/// shown in Table 13.2 of *Wagner, W., Pruss, A. (2002). The IAPWS Formulation 1995 for the
+/// Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use. Journal of
+/// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
+/// @param T The temperature value (in K)
+/// @param P The pressure value (in Pa)
+auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThermoProps;
 
 } // namespace Reaktoro
