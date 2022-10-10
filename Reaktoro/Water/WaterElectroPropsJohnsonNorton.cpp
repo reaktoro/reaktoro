@@ -84,17 +84,17 @@ auto waterElectroPropsJohnsonNorton(real T, real P, const WaterThermoProps& wt) 
 {
     WaterElectroProps we;
 
-    const auto alpha  = -wt.densityT/wt.density;
-    const auto beta   =  wt.densityP/wt.density;
-    const auto alphaT = -wt.densityTT/wt.density + alpha*alpha;
-    const auto betaT  =  wt.densityTP/wt.density + alpha*beta;
-    const auto betaP  =  wt.densityPP/wt.density - beta*beta;
+    const auto alpha  = -wt.DT/wt.D;
+    const auto beta   =  wt.DP/wt.D;
+    const auto alphaT = -wt.DTT/wt.D + alpha*alpha;
+    const auto betaT  =  wt.DTP/wt.D + alpha*beta;
+    const auto betaP  =  wt.DPP/wt.D - beta*beta;
 
     const auto Tr = kReferenceTemperature;
     const auto Dr = kReferenceDensity;
 
     const auto t = T/Tr;
-    const auto r = wt.density/Dr;
+    const auto r = wt.D/Dr;
 
     for(int i = 0; i <= 4; ++i)
     {

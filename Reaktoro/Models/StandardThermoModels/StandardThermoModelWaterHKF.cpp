@@ -52,17 +52,17 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
         const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P);
 
         // Convert from specific properties to molar properties
-        const auto Sw = waterMolarMass * wtp.entropy;         // from J/(kg*K) to J/(mol*K)
-        const auto Hw = waterMolarMass * wtp.enthalpy;        // from J/kg to J/mol
-        const auto Uw = waterMolarMass * wtp.internal_energy; // from J/kg to J/mol
+        const auto Sw = waterMolarMass * wtp.S; // from J/(kg*K) to J/(mol*K)
+        const auto Hw = waterMolarMass * wtp.H; // from J/kg to J/mol
+        const auto Uw = waterMolarMass * wtp.U; // from J/kg to J/mol
 
         // See Helgeson and Kirkham (1974), page 1098.
         H0  = Hw + Htr;
         G0  = Hw - T*(Sw + Str) + Ttr*Str + Gtr;
-        V0  = waterMolarMass/wtp.density;
-        Cp0 = wtp.cp * waterMolarMass;
-        VT0 = -V0*V0*wtp.densityT/waterMolarMass; // from VT0 = -waterMolarMass/(rho*rho)*densityT = -V0*V0*densityT/waterMolarMass
-        VP0 = -V0*V0*wtp.densityP/waterMolarMass; // from VP0 = -waterMolarMass/(rho*rho)*densityP = -V0*V0*densityP/waterMolarMass
+        V0  = waterMolarMass/wtp.D;
+        Cp0 = wtp.Cp * waterMolarMass;
+        VT0 = -V0*V0*wtp.DT/waterMolarMass; // from VT0 = -waterMolarMass/(rho*rho)*densityT = -V0*V0*densityT/waterMolarMass
+        VP0 = -V0*V0*wtp.DP/waterMolarMass; // from VP0 = -waterMolarMass/(rho*rho)*densityP = -V0*V0*densityP/waterMolarMass
         // S0  = Sw + Str;
         // U0  = Uw + Utr;
         // A0  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
