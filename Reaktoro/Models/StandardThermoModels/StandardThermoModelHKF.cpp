@@ -29,6 +29,7 @@ using std::log;
 #include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 #include <Reaktoro/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Water/WaterElectroPropsJohnsonNorton.hpp>
+#include <Reaktoro/Water/WaterInterpolation.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
 
@@ -58,7 +59,7 @@ auto createMemoizedWaterElectroPropsFnJohnsonNorton()
 {
     Fn<WaterElectroProps(const real&, const real&)> fn = [](const real& T, const real& P)
     {
-        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P);
+        const auto wtp = waterThermoPropsWagnerPrussInterpMemoized(T, P);
         return Reaktoro::waterElectroPropsJohnsonNorton(T, P, wtp);
     };
     return memoizeLast(fn);
@@ -93,12 +94,14 @@ auto createModelSerializer(const StandardThermoModelParamsHKF& params) -> ModelS
 
 auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> StandardThermoModel
 {
+    waterThermoPropsWagnerPrussInterpData(); // this call exists to force an initialization operation so that when waterThermoPropsWagnerPrussInterp is called for the first time, this initialization has been performed already.
+
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
         const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wr, charge, Tmax] = params;
 
-        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P);
+        const auto wtp = waterThermoPropsWagnerPrussInterpMemoized(T, P);
         const auto wep = memoizedWaterElectroPropsJohnsonNorton(T, P);
         const auto gstate = gHKF::compute(T, P, wtp);
         const auto aep = speciesElectroPropsHKF(gstate, params);
