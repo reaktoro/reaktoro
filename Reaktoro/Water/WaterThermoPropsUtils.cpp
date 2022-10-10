@@ -27,6 +27,7 @@ using std::sqrt;
 #include <Reaktoro/Water/WaterHelmholtzProps.hpp>
 #include <Reaktoro/Water/WaterHelmholtzPropsHGK.hpp>
 #include <Reaktoro/Water/WaterHelmholtzPropsWagnerPruss.hpp>
+#include <Reaktoro/Water/WaterInterpolation.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Water/WaterUtils.hpp>
 
@@ -49,6 +50,16 @@ auto createMemoizedWaterThermoPropsFnWagnerPruss()
     Fn<WaterThermoProps(real const&, real const&)> fn = [](real const& T, real const& P)
     {
         return waterThermoPropsWagnerPruss(T, P);
+    };
+    return memoizeLast(fn);
+}
+
+/// Return a memoized function that computes thermodynamic properties of water using interpolation on Wagner & Pruss (1999) pre-computed properties.
+auto createMemoizedWaterThermoPropsFnWagnerPrussInterp()
+{
+    Fn<WaterThermoProps(real const&, real const&)> fn = [](real const& T, real const& P)
+    {
+        return waterThermoPropsWagnerPrussInterp(T, P);
     };
     return memoizeLast(fn);
 }
@@ -78,6 +89,12 @@ auto waterThermoPropsWagnerPruss(real const& T, real const& P) -> WaterThermoPro
 auto waterThermoPropsWagnerPrussMemoized(real const& T, real const& P) -> WaterThermoProps
 {
     static thread_local auto fn = createMemoizedWaterThermoPropsFnWagnerPruss();
+    return fn(T, P);
+}
+
+auto waterThermoPropsWagnerPrussInterpMemoized(real const& T, real const& P) -> WaterThermoProps
+{
+    static thread_local auto fn = createMemoizedWaterThermoPropsFnWagnerPrussInterp();
     return fn(T, P);
 }
 

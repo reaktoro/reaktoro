@@ -26,9 +26,10 @@ using namespace Reaktoro;
 
 void exportWaterThermoPropsUtils(py::module& m)
 {
-    m.def("waterThermoPropsHGK", waterThermoPropsHGK);
-    m.def("waterThermoPropsWagnerPruss", waterThermoPropsWagnerPruss);
-    m.def("waterThermoPropsHGKMemoized", waterThermoPropsHGKMemoized);
-    m.def("waterThermoPropsWagnerPrussMemoized", waterThermoPropsWagnerPrussMemoized);
-    m.def("waterThermoProps", waterThermoProps);
+    m.def("waterThermoPropsHGK", waterThermoPropsHGK, "Calculate the thermodynamic properties of water using the Haar-Gallagher-Kell (1984) equation of state.");
+    m.def("waterThermoPropsWagnerPruss", waterThermoPropsWagnerPruss, "Calculate the thermodynamic properties of water using the Haar-Gallagher-Kell (1984) equation of state.");
+    m.def("waterThermoPropsHGKMemoized", waterThermoPropsHGKMemoized, "Calculate the thermodynamic properties of water using the Wagner and Pruss (1995) equation of state.");
+    m.def("waterThermoPropsWagnerPrussMemoized", waterThermoPropsWagnerPrussMemoized, "Calculate the thermodynamic properties of water using the Wagner and Pruss (1995) equation of state.");
+    m.def("waterThermoPropsWagnerPrussInterpMemoized", waterThermoPropsWagnerPrussInterpMemoized, "Calculate the thermodynamic properties of water using interpolation of pre-computed properties using the Wagner and Pruss (1995) equation of state.");
+    m.def("waterThermoProps", waterThermoProps, "Calculate the thermodynamic properties of water.");
 }
