@@ -139,6 +139,7 @@ want to read about.
 - @ref Reaktoro::WaterHelmholtzProps
 - @ref Reaktoro::waterDensityHGK
 - @ref Reaktoro::waterDensityWagnerPruss
+- @ref Reaktoro::waterDensityWagnerPrussInterp
 - @ref Reaktoro::waterLiquidDensityHGK
 - @ref Reaktoro::waterLiquidDensityWagnerPruss
 - @ref Reaktoro::waterVaporDensityHGK
@@ -151,6 +152,7 @@ want to read about.
 - @ref Reaktoro::waterElectroPropsJohnsonNorton
 - @ref Reaktoro::waterThermoPropsHGK
 - @ref Reaktoro::waterThermoPropsWagnerPruss
+- @ref Reaktoro::waterThermoPropsWagnerPrussInterp
 - @ref Reaktoro::waterHelmholtzPropsHGK
 - @ref Reaktoro::waterHelmholtzPropsWagnerPruss
 
