@@ -18,10 +18,11 @@
 #include "StandardThermoModelWaterHKF.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 #include <Reaktoro/Water/WaterConstants.hpp>
+#include <Reaktoro/Water/WaterInterpolation.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
 #include <Reaktoro/Water/WaterThermoPropsUtils.hpp>
-#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
 
@@ -44,12 +45,14 @@ auto createModelSerializer(const StandardThermoModelParamsWaterHKF& params) -> M
 
 auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params) -> StandardThermoModel
 {
+    waterThermoPropsWagnerPrussInterpData(); // this call exists to force an initialization operation so that when waterThermoPropsWagnerPrussInterp is called for the first time, this initialization has been performed already.
+
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
         const auto& [Ttr, Str, Gtr, Htr] = params;
 
-        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P);
+        const auto wtp = waterThermoPropsWagnerPrussInterpMemoized(T, P);
 
         // Convert from specific properties to molar properties
         const auto Sw = waterMolarMass * wtp.S; // from J/(kg*K) to J/(mol*K)
