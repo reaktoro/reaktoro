@@ -108,33 +108,35 @@ struct WaterThermoProps
 };
 
 auto operator+(WaterThermoProps const& r) -> WaterThermoProps;
-auto operator+(WaterThermoProps&& r) -> WaterThermoProps;
+auto operator+(WaterThermoProps&& r) -> WaterThermoProps&&;
 
 auto operator-(WaterThermoProps const& r) -> WaterThermoProps;
-auto operator-(WaterThermoProps&& r) -> WaterThermoProps;
+auto operator-(WaterThermoProps&& r) -> WaterThermoProps&&;
 
 auto operator+(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThermoProps;
-auto operator+(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps;
-auto operator+(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps;
+auto operator+(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps&&;
+auto operator+(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps&&;
+auto operator+(WaterThermoProps&& l, WaterThermoProps&& r) -> WaterThermoProps&&;
 
 auto operator-(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThermoProps;
-auto operator-(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps;
-auto operator-(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps;
+auto operator-(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps&&;
+auto operator-(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps&&;
+auto operator-(WaterThermoProps&& l, WaterThermoProps&& r) -> WaterThermoProps&&;
 
 auto operator*(double const& l, WaterThermoProps const& r) -> WaterThermoProps;
-auto operator*(double const& l, WaterThermoProps&& r) -> WaterThermoProps;
+auto operator*(double const& l, WaterThermoProps&& r) -> WaterThermoProps&&;
 auto operator*(WaterThermoProps const& l, double const& r) -> WaterThermoProps;
-auto operator*(WaterThermoProps&& l, double const& r) -> WaterThermoProps;
+auto operator*(WaterThermoProps&& l, double const& r) -> WaterThermoProps&&;
 
 auto operator*(real const& l, WaterThermoProps const& r) -> WaterThermoProps;
-auto operator*(real const& l, WaterThermoProps&& r) -> WaterThermoProps;
+auto operator*(real const& l, WaterThermoProps&& r) -> WaterThermoProps&&;
 auto operator*(WaterThermoProps const& l, real const& r) -> WaterThermoProps;
-auto operator*(WaterThermoProps&& l, real const& r) -> WaterThermoProps;
+auto operator*(WaterThermoProps&& l, real const& r) -> WaterThermoProps&&;
 
 auto operator/(WaterThermoProps const& l, double const& r) -> WaterThermoProps;
-auto operator/(WaterThermoProps&& l, double const& r) -> WaterThermoProps;
+auto operator/(WaterThermoProps&& l, double const& r) -> WaterThermoProps&&;
 
 auto operator/(WaterThermoProps const& l, real const& r) -> WaterThermoProps;
-auto operator/(WaterThermoProps&& l, real const& r) -> WaterThermoProps;
+auto operator/(WaterThermoProps&& l, real const& r) -> WaterThermoProps&&;
 
 } // namespace Reaktoro

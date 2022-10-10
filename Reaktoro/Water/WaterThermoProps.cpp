@@ -102,9 +102,9 @@ auto operator+(WaterThermoProps const& r) -> WaterThermoProps
     return r;
 }
 
-auto operator+(WaterThermoProps&& r) -> WaterThermoProps
+auto operator+(WaterThermoProps&& r) -> WaterThermoProps&&
 {
-    return r;
+    return std::move(r);
 }
 
 auto operator-(WaterThermoProps const& r) -> WaterThermoProps
@@ -113,10 +113,10 @@ auto operator-(WaterThermoProps const& r) -> WaterThermoProps
     return result *= -1.0;
 }
 
-auto operator-(WaterThermoProps&& r) -> WaterThermoProps
+auto operator-(WaterThermoProps&& r) -> WaterThermoProps&&
 {
     r *= -1.0;
-    return r;
+    return std::move(r);
 }
 
 auto operator+(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThermoProps
@@ -125,16 +125,22 @@ auto operator+(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThe
     return result += r;
 }
 
-auto operator+(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps
+auto operator+(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps&&
 {
     l += r;
-    return l;
+    return std::move(l);
 }
 
-auto operator+(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps
+auto operator+(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps&&
 {
     r += l;
-    return r;
+    return std::move(r);
+}
+
+auto operator+(WaterThermoProps&& l, WaterThermoProps&& r) -> WaterThermoProps&&
+{
+    l += r;
+    return std::move(l);
 }
 
 auto operator-(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThermoProps
@@ -143,17 +149,23 @@ auto operator-(WaterThermoProps const& l, WaterThermoProps const& r) -> WaterThe
     return result -= r;
 }
 
-auto operator-(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps
+auto operator-(WaterThermoProps&& l, WaterThermoProps const& r) -> WaterThermoProps&&
 {
     l -= r;
-    return l;
+    return std::move(l);
 }
 
-auto operator-(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps
+auto operator-(WaterThermoProps const& l, WaterThermoProps&& r) -> WaterThermoProps&&
 {
     r *= -1.0;
     r += l;
-    return r;
+    return std::move(r);
+}
+
+auto operator-(WaterThermoProps&& l, WaterThermoProps&& r) -> WaterThermoProps&&
+{
+    l -= r;
+    return std::move(l);
 }
 
 auto operator*(double const& l, WaterThermoProps const& r) -> WaterThermoProps
@@ -162,9 +174,10 @@ auto operator*(double const& l, WaterThermoProps const& r) -> WaterThermoProps
     return result *= l;
 }
 
-auto operator*(double const& l, WaterThermoProps&& r) -> WaterThermoProps
+auto operator*(double const& l, WaterThermoProps&& r) -> WaterThermoProps&&
 {
-    return r *= l;
+    r *= l;
+    return std::move(r);
 }
 
 auto operator*(WaterThermoProps const& l, double const& r) -> WaterThermoProps
@@ -172,9 +185,10 @@ auto operator*(WaterThermoProps const& l, double const& r) -> WaterThermoProps
     return r * l;
 }
 
-auto operator*(WaterThermoProps&& l, double const& r) -> WaterThermoProps
+auto operator*(WaterThermoProps&& l, double const& r) -> WaterThermoProps&&
 {
-    return r * l;
+    l *= r;
+    return std::move(l);
 }
 
 auto operator*(real const& l, WaterThermoProps const& r) -> WaterThermoProps
@@ -183,9 +197,10 @@ auto operator*(real const& l, WaterThermoProps const& r) -> WaterThermoProps
     return result *= l;
 }
 
-auto operator*(real const& l, WaterThermoProps&& r) -> WaterThermoProps
+auto operator*(real const& l, WaterThermoProps&& r) -> WaterThermoProps&&
 {
-    return r *= l;
+    r *= l;
+    return std::move(r);
 }
 
 auto operator*(WaterThermoProps const& l, real const& r) -> WaterThermoProps
@@ -193,9 +208,10 @@ auto operator*(WaterThermoProps const& l, real const& r) -> WaterThermoProps
     return r * l;
 }
 
-auto operator*(WaterThermoProps&& l, real const& r) -> WaterThermoProps
+auto operator*(WaterThermoProps&& l, real const& r) -> WaterThermoProps&&
 {
-    return r * l;
+    l *= r;
+    return std::move(l);
 }
 
 auto operator/(WaterThermoProps const& l, double const& r) -> WaterThermoProps
@@ -204,9 +220,10 @@ auto operator/(WaterThermoProps const& l, double const& r) -> WaterThermoProps
     return result /= r;
 }
 
-auto operator/(WaterThermoProps&& l, double const& r) -> WaterThermoProps
+auto operator/(WaterThermoProps&& l, double const& r) -> WaterThermoProps&&
 {
-    return l /= r;
+    l /= r;
+    return std::move(l);
 }
 
 auto operator/(WaterThermoProps const& l, real const& r) -> WaterThermoProps
@@ -215,9 +232,10 @@ auto operator/(WaterThermoProps const& l, real const& r) -> WaterThermoProps
     return result /= r;
 }
 
-auto operator/(WaterThermoProps&& l, real const& r) -> WaterThermoProps
+auto operator/(WaterThermoProps&& l, real const& r) -> WaterThermoProps&&
 {
-    return l /= r;
+    l /= r;
+    return std::move(l);
 }
 
 } // namespace Reaktoro
