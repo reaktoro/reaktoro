@@ -101,6 +101,10 @@ struct EquationConstraint
     ConstraintFn fn;
 };
 
+/// Used to define equation constraints in a chemical equilibrium problem.
+struct [[deprecated("ConstraintEquation has been renamed to EquationConstraint. Please make this change in your code.")]] ConstraintEquation : EquationConstraint
+{};
+
 /// Used to define a system of equation constraints in a chemical equilibrium problem.
 struct EquationConstraints
 {
