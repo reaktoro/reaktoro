@@ -91,7 +91,7 @@ struct EquilibriumSolver::Impl
     ArrayStream<double> stream;
 
     /// Construct a Impl instance with given EquilibriumConditions object.
-    Impl(const EquilibriumSpecs& specs)
+    Impl(EquilibriumSpecs const& specs)
     : system(specs.system()), specs(specs), dims(specs), xconditions(specs), xrestrictions(system), setup(specs)
     {
         // Initialize the equilibrium solver with the default options
