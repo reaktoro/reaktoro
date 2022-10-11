@@ -42,6 +42,19 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &ControlVariableP::fn)
         ;
 
+    py::class_<EquationConstraintFn>(m, "EquationConstraintFn")
+        .def(py::init<>())
+        .def(py::init<EquationConstraintFn::Func1 const&>())
+        .def(py::init<EquationConstraintFn::Func2 const&>())
+        .def(py::init<EquationConstraintFn::Func3 const&>())
+        .def("__call__", &EquationConstraintFn::operator())
+        .def("initialized", &EquationConstraintFn::initialized)
+        ;
+
+    py::implicitly_convertible<EquationConstraintFn::Func1, EquationConstraintFn>();
+    py::implicitly_convertible<EquationConstraintFn::Func2, EquationConstraintFn>();
+    py::implicitly_convertible<EquationConstraintFn::Func3, EquationConstraintFn>();
+
     py::class_<EquationConstraint>(m, "EquationConstraint")
         .def(py::init<>())
         .def_readwrite("id", &EquationConstraint::id)
