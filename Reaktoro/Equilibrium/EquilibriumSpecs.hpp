@@ -43,7 +43,7 @@ struct ControlVariableQ
     /// @param state The current chemical state and properties of the system in the equilibrium calculation.
     /// @param p The control variables *p* in the chemical equilibrium calculation.
     /// @param w The input variables *w* in the chemical equilibrium calculation.
-    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)>;
+    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, VectorXrConstRef const& p, VectorXrConstRef const& w)>;
 
     /// The unique name for this *q* control variable (required).
     String name;
@@ -92,7 +92,7 @@ struct EquationConstraint
     /// @param state The current chemical state and properties of the system in the equilibrium calculation.
     /// @param p The control variables *p* in the chemical equilibrium calculation.
     /// @param w The input variables *w* in the chemical equilibrium calculation.
-    using ConstraintFn = Fn<real(ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)>;
+    using ConstraintFn = Fn<real(ChemicalState const& state, VectorXrConstRef const& p, VectorXrConstRef const& w)>;
 
     /// The unique identifier for this equation constraint.
     String id;
