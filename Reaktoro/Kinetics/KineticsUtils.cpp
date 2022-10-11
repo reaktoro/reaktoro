@@ -69,11 +69,11 @@ auto createEquilibriumSpecsForKinetics(EquilibriumSpecs specs) -> EquilibriumSpe
     // Add equation constraints to `specs` to model the kinetic rates of the reactions in the equilibrium problem
     EquationConstraints econstraints;
     econstraints.ids = rconstraints.ids;
-    econstraints.fn = [=](ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w) -> VectorXr
+    econstraints.fn = [=](ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) -> VectorXr
     {
         auto const& dt = w[idt]; // Δt can be found at the input vector w
         auto const& dxi = p.tail(Nr); // Δξ = the last Nr added entries in p
-        const VectorXr r = state.props().reactionRates();
+        const VectorXr r = props.reactionRates();
         return dxi - dt * M * r; // Δξ - ΔtMr = 0
     };
 

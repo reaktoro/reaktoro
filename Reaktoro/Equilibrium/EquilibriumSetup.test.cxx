@@ -399,8 +399,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
             auto qvars = specs.controlVariablesQ();
 
-            fq[0] = qvars[0].fn(state, p, w)/RT; // the pH constraint
-            fq[1] = qvars[1].fn(state, p, w)/RT; // the pE constraint
+            fq[0] = qvars[0].fn(props, p, w)/RT; // the pH constraint
+            fq[1] = qvars[1].fn(props, p, w)/RT; // the pE constraint
 
             CHECK( fx.isApprox(setup.getGibbsGradX()) );
 
@@ -472,8 +472,8 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 auto qvars = specs.controlVariablesQ();
 
-                gq[0] = qvars[0].fn(auxstate, p, w)/RT; // the pH constraint
-                gq[1] = qvars[1].fn(auxstate, p, w)/RT; // the pE constraint
+                gq[0] = qvars[0].fn(auxprops, p, w)/RT; // the pH constraint
+                gq[1] = qvars[1].fn(auxprops, p, w)/RT; // the pE constraint
 
                 return g;
             };
@@ -507,7 +507,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
             //-------------------------------------------------------------------------------------------------
             // Check the value of the constraint functions of equation type at current conditions of [n, p, q]
             //-------------------------------------------------------------------------------------------------
-            const VectorXd v = specs.assembleEquationConstraints().fn(state, p, w);
+            const VectorXd v = specs.assembleEquationConstraints().fn(props, p, w);
 
             // v[0] = the residual of the volume constraint equation
             // v[1] = the residual of the internal energy constraint equation
@@ -527,7 +527,7 @@ TEST_CASE("Testing EquilibriumSetup", "[EquilibriumSetup]")
 
                 updateStateSpecial(auxstate, T, P, n, options);
 
-                VectorXr v = specs.assembleEquationConstraints().fn(auxstate, p, w);
+                VectorXr v = specs.assembleEquationConstraints().fn(auxstate.props(), p, w);
 
                 // v[0] = the residual of the volume constraint equation
                 // v[1] = the residual of the internal energy constraint equation

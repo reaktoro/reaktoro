@@ -40,10 +40,10 @@ class ChemicalState;
 struct ControlVariableQ
 {
     /// The signature of functions that evaluate the prescribed chemical potential of a substance.
-    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
     /// @param p The control variables *p* in the chemical equilibrium calculation.
     /// @param w The input variables *w* in the chemical equilibrium calculation.
-    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, VectorXrConstRef const& p, VectorXrConstRef const& w)>;
+    using ChemicalPotentialFn = Fn<real(ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w)>;
 
     /// The unique name for this *q* control variable (required).
     String name;
@@ -68,9 +68,9 @@ struct ControlVariableQ
 struct ControlVariableP
 {
     /// The signature of functions that evaluate the chemical potential of a species in terms of a *p* control variable.
-    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
     /// @param pk The current value of the corresponding *p* control variable during the equilibrium calculation.
-    using ChemicalPotentialFn = Fn<real(ChemicalState const& state, real const& pk)>;
+    using ChemicalPotentialFn = Fn<real(ChemicalProps const& props, real const& pk)>;
 
     /// The unique name for this *p* control variable (required).
     String name;
@@ -140,11 +140,14 @@ struct EquationConstraintFn
     Func1 _fn;
 };
 
+/// Used to define equation constraints in a chemical equilibrium problem.
+struct EquationConstraint
+{
     /// The unique identifier for this equation constraint.
     String id;
 
     /// The function defining the equation to be satisfied at chemical equilibrium.
-    ConstraintFn fn;
+    EquationConstraintFn fn;
 };
 
 /// Used to define equation constraints in a chemical equilibrium problem.
@@ -155,16 +158,16 @@ struct [[deprecated("ConstraintEquation has been renamed to EquationConstraint. 
 struct EquationConstraints
 {
     /// The signature of functions that evaluate the residual of the system of equation constraints.
-    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
-    /// @param p The control variables *p* in the chemical equilibrium calculation.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
     /// @param w The input variables *w* in the chemical equilibrium calculation.
-    using ConstraintFn = Fn<VectorXr(ChemicalState const& state, VectorXrConstRef p, VectorXrConstRef w)>;
+    /// @param p The control variables *p* in the chemical equilibrium calculation.
+    using Func = Fn<VectorXr(ChemicalProps const& props, VectorXrConstRef const& w, VectorXrConstRef const& p)>;
 
     /// The unique identifier for each equation constraint.
     Strings ids;
 
     /// The function defining the system of equations to be satisfied at chemical equilibrium.
-    ConstraintFn fn;
+    Func fn;
 };
 
 /// Used to define reactivity restrictions among species in the chemical
