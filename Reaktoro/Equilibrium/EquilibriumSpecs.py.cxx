@@ -48,6 +48,12 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &EquationConstraint::fn)
         ;
 
+    // TODO: Remove this after ConstraintEquation is finally removed from C++.
+    struct ConstraintEquationDeprecated {};
+    py::class_<ConstraintEquationDeprecated>(m, "ConstraintEquation")
+        .def(py::init([]() -> ConstraintEquationDeprecated { errorif(true, "ConstraintEquation has been renamed to EquationConstraint. Please make this change in your code."); return {}; }))
+        ;
+
     py::class_<EquationConstraints>(m, "EquationConstraints")
         .def(py::init<>())
         .def_readwrite("ids", &EquationConstraints::ids)
