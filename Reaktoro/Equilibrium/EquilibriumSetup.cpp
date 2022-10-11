@@ -285,15 +285,16 @@ struct EquilibriumSetup::Impl
         auto const& pvars = specs.controlVariablesP();
 
         auto const& state = props.chemicalState();
+        auto const& props = state.props();
 
-        auto const& T = state.temperature();
-        auto const& n = state.speciesAmounts();
+        auto const& T = props.temperature();
+        auto const& n = props.speciesAmounts();
 
         // Update the vector of species chemical potentials in case there are p variables associated to them
-        mu = state.props().speciesChemicalPotentials();
+        mu = props.speciesChemicalPotentials();
         for(auto i = 0; i < Np; ++i)
             if(pvars[i].ispecies != Index(-1))
-                mu[pvars[i].ispecies] = pvars[i].fn(state, p[i]);
+                mu[pvars[i].ispecies] = pvars[i].fn(props, p[i]);
 
         const auto RT  = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;
@@ -306,9 +307,9 @@ struct EquilibriumSetup::Impl
         gn(ipps).array() -= tau/n(ipps); // add log barrier contribution to pure phase species
 
         for(auto i = 0; i < Nq; ++i)
-            gq[i] = qvars[i].fn(state, p, w)/RT;
+            gq[i] = qvars[i].fn(props, p, w)/RT;
 
-        vp = econstraints.fn(state, p, w);
+        vp = econstraints.fn(props, p, w);
     }
 
     auto updateFn(Index i) -> void

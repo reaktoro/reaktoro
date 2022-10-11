@@ -392,7 +392,7 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         const VectorXr p = {};
         const VectorXr w = random(specs.numInputs());
 
-        const VectorXr v = specs.assembleEquationConstraints().fn(state, p, w);
+        const VectorXr v = specs.assembleEquationConstraints().fn(props, p, w);
 
         CHECK( v[0] == props.volume() - w[Ns + 0] );
         CHECK( v[1] == props.internalEnergy() - w[Ns + 1] );
@@ -433,14 +433,14 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
 
         auto const& qvars = specs.controlVariablesQ();
 
-        CHECK( qvars[0].fn(state, p, w) == Approx(w[Ns + 0]) );
-        CHECK( qvars[1].fn(state, p, w) == Approx(u0CH4 + RT*w[Ns + 1]) );
-        CHECK( qvars[2].fn(state, p, w) == Approx(u0CO2 + RT*w[Ns + 2]) );
-        CHECK( qvars[3].fn(state, p, w) == Approx(u0Capp + RT*w[Ns + 3]) );
-        CHECK( qvars[4].fn(state, p, w) == Approx(u0O2 + RT*log(w[Ns + 4])) );
-        CHECK( qvars[5].fn(state, p, w) == Approx(u0Hp + RT*w[Ns + 5] * (-ln10)) );
-        CHECK( qvars[6].fn(state, p, w) == Approx(u0Mgpp + RT*w[Ns + 6] * (-ln10)) );
-        CHECK( qvars[7].fn(state, p, w) == Approx(constraintEh ? -F * w[Ns + 7] : RT*w[Ns + 7] * (-ln10)) );
+        CHECK( qvars[0].fn(props, p, w) == Approx(w[Ns + 0]) );
+        CHECK( qvars[1].fn(props, p, w) == Approx(u0CH4 + RT*w[Ns + 1]) );
+        CHECK( qvars[2].fn(props, p, w) == Approx(u0CO2 + RT*w[Ns + 2]) );
+        CHECK( qvars[3].fn(props, p, w) == Approx(u0Capp + RT*w[Ns + 3]) );
+        CHECK( qvars[4].fn(props, p, w) == Approx(u0O2 + RT*log(w[Ns + 4])) );
+        CHECK( qvars[5].fn(props, p, w) == Approx(u0Hp + RT*w[Ns + 5] * (-ln10)) );
+        CHECK( qvars[6].fn(props, p, w) == Approx(u0Mgpp + RT*w[Ns + 6] * (-ln10)) );
+        CHECK( qvars[7].fn(props, p, w) == Approx(constraintEh ? -F * w[Ns + 7] : RT*w[Ns + 7] * (-ln10)) );
     }
 
     SECTION("Checking when chemical potential unknowns are introduced")
@@ -489,10 +489,10 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
             const auto ln_c1 = props.speciesConcentrationLn(pvars[1].ispecies);
             const auto ln_a3 = props.speciesActivityLn(pvars[3].ispecies);
 
-            CHECK( pvars[0].fn(state, pk) == Approx(G0_0 + RT*log(pk)) );
-            CHECK( pvars[1].fn(state, pk) == Approx(G0_1 + RT*(log(pk) + ln_c1)) );
-            CHECK( pvars[2].fn(state, pk) == Approx(pk) );
-            CHECK( pvars[3].fn(state, pk) == Approx(pk + RT*ln_a3) );
+            CHECK( pvars[0].fn(props, pk) == Approx(G0_0 + RT*log(pk)) );
+            CHECK( pvars[1].fn(props, pk) == Approx(G0_1 + RT*(log(pk) + ln_c1)) );
+            CHECK( pvars[2].fn(props, pk) == Approx(pk) );
+            CHECK( pvars[3].fn(props, pk) == Approx(pk + RT*ln_a3) );
         }
     }
 }
