@@ -85,14 +85,60 @@ struct ControlVariableP
     ChemicalPotentialFn fn;
 };
 
-/// Used to define equation constraints in a chemical equilibrium problem.
-struct EquationConstraint
+/// Used to define the function that evaluates the residual of an equation constraint in a chemical equilibrium problem.
+struct EquationConstraintFn
 {
-    /// The signature of functions that evaluate the residual of the equation constraint.
-    /// @param state The current chemical state and properties of the system in the equilibrium calculation.
+    /// The main signature of functions that evaluate the residual of an equation constraint.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
     /// @param p The control variables *p* in the chemical equilibrium calculation.
     /// @param w The input variables *w* in the chemical equilibrium calculation.
-    using ConstraintFn = Fn<real(ChemicalState const& state, VectorXrConstRef const& p, VectorXrConstRef const& w)>;
+    using Func1 = Fn<real(ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w)>;
+
+    /// An alternative signature of functions that evaluate the residual of an equation constraint.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
+    /// @param w The input variables *w* in the chemical equilibrium calculation.
+    using Func2 = Fn<real(ChemicalProps const& props, VectorXrConstRef const& w)>;
+
+    /// An alternative signature of functions that evaluate the residual of an equation constraint.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
+    using Func3 = Fn<real(ChemicalProps const& props)>;
+
+    /// Construct a default EquationConstraintFn object.
+    EquationConstraintFn() = default;
+
+    /// Construct an EquationConstraintFn object with given equilibrium constraint function with signature @ref Func1.
+    EquationConstraintFn(Func1 const& f) : _fn(f) {}
+
+    /// Construct an EquationConstraintFn object with given equilibrium constraint function with signature @ref Func2.
+    EquationConstraintFn(Func2 const& f) : _fn([=](ChemicalProps const& props, VectorXrConstRef const& w, VectorXrConstRef const& p) -> real { return f(props, w); }) {}
+
+    /// Construct an EquationConstraintFn object with given equilibrium constraint function with signature @ref Func3.
+    EquationConstraintFn(Func3 const& f) : _fn([=](ChemicalProps const& props, VectorXrConstRef const& w, VectorXrConstRef const& p) -> real { return f(props); }) {}
+
+    /// Evaluate the residual of the equation constraint.
+    /// @param props The current chemical properties of the system in the equilibrium calculation.
+    /// @param p The control variables *p* in the chemical equilibrium calculation.
+    /// @param w The input variables *w* in the chemical equilibrium calculation.
+    auto operator()(ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) const -> real { return _fn(props, p, w); }
+
+    /// Assign an equilibrium constraint function with signature @ref EquationConstraintFn::Func1 to this EquationConstraintFn object.
+    auto operator=(Func1 const& f) { return *this = EquationConstraintFn(f); }
+
+    /// Assign an equilibrium constraint function with signature @ref EquationConstraintFn::Func2 to this EquationConstraintFn object.
+    auto operator=(Func2 const& f) { return *this = EquationConstraintFn(f); }
+
+    /// Assign an equilibrium constraint function with signature @ref EquationConstraintFn::Func3 to this EquationConstraintFn object.
+    auto operator=(Func3 const& f) { return *this = EquationConstraintFn(f); }
+
+    /// Return `true` if this EquationConstraintFn object has been initialized with an equilibrium constraint function.
+    auto initialized() const { return static_cast<bool>(_fn); }
+
+    /// Convert this EquationConstraintFn object to a boolean value.
+    operator bool() const { return initialized(); }
+
+    /// The function that evaluates the residual of the equation constraint.
+    Func1 _fn;
+};
 
     /// The unique identifier for this equation constraint.
     String id;
