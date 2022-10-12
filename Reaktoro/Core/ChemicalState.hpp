@@ -392,6 +392,11 @@ public:
     /// Assign a ChemicalState::Equilibrium instance to this instance
     auto operator=(Equilibrium other) -> Equilibrium&;
 
+    /// Reset this object by clearing all information related to a previous computed equilibrium state.
+    /// This method can be used right after a failed calculation, so that the next tentative, with
+    /// possibly a different initial guess, does not use Lagrange multipliers from the failed computation.
+    auto reset() -> void;
+
     /// Set the names of the input variables used in the equilibrium calculation.
     auto setInputNames(Strings const& names) -> void;
 

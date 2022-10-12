@@ -103,6 +103,7 @@ void exportChemicalState(py::module& m)
         ;
 
     py::class_<ChemicalState::Equilibrium>(m, "_ChemicalStateEquilibrium")
+        .def("reset", &ChemicalState::Equilibrium::reset)
         .def("setInputNames", &ChemicalState::Equilibrium::setInputNames)
         .def("setInputValues", &ChemicalState::Equilibrium::setInputValues)
         .def("setInitialComponentAmounts", &ChemicalState::Equilibrium::setInitialComponentAmounts)
