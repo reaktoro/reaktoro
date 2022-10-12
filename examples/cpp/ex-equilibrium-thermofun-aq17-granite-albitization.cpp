@@ -1,3 +1,17 @@
+// NOTE
+//
+// This example is broken. It seems the recipe, in terms of element amounts, does not produce a
+// feasible chemical equilibrium state. Maybe more species need to be added, to increase degree of
+// freedom. Maybe the element amounts need to be reviewed. However, the best way to solve this
+// problem is using Material class. The use of equilibrium calculation with given element amounts
+// should be done only in special cases, in which feasibility is more probable given how the element
+// amounts are provided. For example, in reactive transport simulations, where these element amounts
+// start from a feasible condition and subsequent time steps change them also in a feasible fashion.
+//
+// Allan Leal, 12 October 2022
+
+/*
+
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
 // Copyright © 2014-2021 Allan Leal
@@ -105,7 +119,8 @@ int main()
     // Equilibrate the initial state with given conditions and component amounts
     conditions.setInitialComponentAmounts(bgranitefluid);
     res = solver.solve(stategranitefluid, conditions);
-    std::cout << "res (granite and fluid) = " << res.optima.succeeded << std::endl;
+
+    errorif(res.failed(), "The calculation involving granite and fluid did not succeed!");
 
     // Output the chemical state to a console
     stategranitefluid.output("state-aq17-bgranitefluid.txt");
@@ -133,10 +148,15 @@ int main()
     // Equilibrate the initial state with given conditions and component amounts
     conditions.setInitialComponentAmounts(bfluid);
     res = solver.solve(statefluid, conditions);
-    std::cout << "res (fluid) = " << res.optima.succeeded << std::endl;
+
+    errorif(res.failed(), "The calculation involving only fluid did not succeed!");
 
     // Output the chemical state to a console
     statefluid.output("state-aq17-fluid.txt");
 
     return 0;
 }
+
+*/
+
+int main() {}
