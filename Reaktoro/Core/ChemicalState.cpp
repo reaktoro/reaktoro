@@ -830,8 +830,8 @@ auto ChemicalState::Equilibrium::setOptimaState(Optima::State const& state) -> v
 {
     pimpl->optstate = state;
     const auto Nq = state.x.size() - pimpl->Nn;
-    pimpl->q = -state.x.tail(Nq); // negative because of the preferred positive coefficients in the conservation matrix
-    pimpl->p = -state.p; // negative because of the preferred positive coefficients in the conservation matrix
+    pimpl->q = state.x.tail(Nq); // positive values for q mean the implicit titrant left the system; negative amounts, entered - this awkward convention results from the preferred positive coefficients in the conservation matrix
+    pimpl->p = state.p; // positive values for p associated to explicit titrants mean they left the system; negative amounts, entered - this awkward convention results from the preferred positive coefficients in the conservation matrix
 }
 
 auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
