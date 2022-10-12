@@ -765,12 +765,6 @@ struct ChemicalState::Equilibrium::Impl
     /// The initial component amounts in the equilibrium calculation.
     ArrayXd c;
 
-    /// The computed control variables *q* in the equilibrium calculation.
-    ArrayXd q;
-
-    /// The computed control variables *p* in the equilibrium calculation.
-    ArrayXd p;
-
     /// The Optima::State object used for warm start Optima optimization calculations.
     Optima::State optstate;
 
@@ -797,6 +791,14 @@ auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> 
     return *this;
 }
 
+auto ChemicalState::Equilibrium::reset() -> void
+{
+    pimpl->inputs = {};
+    pimpl->w = {};
+    pimpl->c = {};
+    pimpl->optstate = {};
+}
+
 auto ChemicalState::Equilibrium::setInputNames(Strings const& names) -> void
 {
     pimpl->inputs = names;
@@ -814,24 +816,19 @@ auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef cons
 
 auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef const& p) -> void
 {
-    pimpl->p = p;
-    pimpl->optstate.p = -p;
+    pimpl->optstate.p = p;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef const& q) -> void
 {
     const auto Nq = pimpl->optstate.x.size() - pimpl->Nn;
-    pimpl->q = q;
     if(Nq > 0)
-        pimpl->optstate.x.tail(Nq) = -q;
+        pimpl->optstate.x.tail(Nq) = q;
 }
 
 auto ChemicalState::Equilibrium::setOptimaState(Optima::State const& state) -> void
 {
     pimpl->optstate = state;
-    const auto Nq = state.x.size() - pimpl->Nn;
-    pimpl->q = state.x.tail(Nq); // positive values for q mean the implicit titrant left the system; negative amounts, entered - this awkward convention results from the preferred positive coefficients in the conservation matrix
-    pimpl->p = state.p; // positive values for p associated to explicit titrants mean they left the system; negative amounts, entered - this awkward convention results from the preferred positive coefficients in the conservation matrix
 }
 
 auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
@@ -895,32 +892,33 @@ auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConst
 
 auto ChemicalState::Equilibrium::controlVariablesP() const -> ArrayXdConstRef
 {
-    return pimpl->p;
+    return pimpl->optstate.p;
 }
 
 auto ChemicalState::Equilibrium::controlVariablesQ() const -> ArrayXdConstRef
 {
-    return pimpl->q;
+    const auto Nq = pimpl->optstate.x.size() - pimpl->Nn;
+    return pimpl->optstate.x.tail(Nq);
 }
 
 auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
 {
-    return pimpl->p;
+    return controlVariablesP();
 }
 
 auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
 {
-    return pimpl->q;
+    return controlVariablesQ();
 }
 
 auto ChemicalState::Equilibrium::w() const -> ArrayXdConstRef
 {
-    return pimpl->w;
+    return inputValues();
 }
 
 auto ChemicalState::Equilibrium::c() const -> ArrayXdConstRef
 {
-    return pimpl->c;
+    return initialComponentAmounts();
 }
 
 auto ChemicalState::Equilibrium::optimaState() const -> Optima::State const&
