@@ -229,17 +229,20 @@ struct EquilibriumSolver::Impl
     /// Update the initial state variables before the new equilibrium calculation.
     auto updateOptState(ChemicalState const& state0)
     {
-        // Allocate memory if needed
-        if((optstate.dims.x != dims.Nx) || (!result.optima.succeeded))
+        // Initialize optstate with that stored in state0 (note state0 may have empty Optima::State object!)
+        optstate = state0.equilibrium().optimaState();
+
+        // In case optstate is empty, initialize it with necessary memory
+        if(optstate.dims.x != dims.Nx)
             optstate = Optima::State(optdims);
 
-        // Set species amounts in x = (n, q) to that from the chemical state
+        // Overwrite n in x = (n, q) with species amounts from the chemical state
         optstate.x.head(dims.Nn) = state0.speciesAmounts();
 
-        // Set delta variables in q to zero (i.e., the amount of an implicit titrant to add/remove)
+        // Overwrite delta variables in q with zeros (i.e., the amount of an implicit titrant to add/remove)
         optstate.x.tail(dims.Nq).fill(0.0);
 
-        // Set delta variables in p to zero (i.e., the amount of an explicit titrant to add/remove, temperature and/or pressure increase/decrease)
+        // Overwrite delta variables in p with zeros (i.e., the amount of an explicit titrant to add/remove, temperature and/or pressure increase/decrease)
         optstate.p.fill(0.0);
 
         // TODO: Instead of using T and P as unknown, use dT and dP, so this is block of code is not needed!
