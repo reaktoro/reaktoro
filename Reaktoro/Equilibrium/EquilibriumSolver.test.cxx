@@ -121,14 +121,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 17 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 17 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
 
@@ -139,14 +139,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 14 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 14 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             WHEN("Sensitivity derivatives are considered")
@@ -155,8 +155,8 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 result = solver.solve(state, sensitivity); // check a recalculation converges in 0 iterations (even if sensitivity derivatives need to be computed!)
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 0 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 0 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 const auto dndT = sensitivity.dndw("T");
@@ -211,14 +211,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 25 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 25 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
 
@@ -229,14 +229,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 14 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 14 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
     }
@@ -267,14 +267,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 41 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 41 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
 
@@ -285,14 +285,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 27 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 27 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
     }
@@ -324,14 +324,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 41 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 41 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
 
@@ -342,14 +342,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 27 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 27 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
         }
     }
@@ -385,14 +385,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 result = solver.solve(state);
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations <= 62 ); // for some reason, 57 iterations are needed in Linux and 62 in Windows and macOS! This started to appear after ChemicalState was changed (initial species amounts became 1e-16 instead of zero)
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() <= 62 ); // for some reason, 57 iterations are needed in Linux and 62 in Windows and macOS! This started to appear after ChemicalState was changed (initial species amounts became 1e-16 instead of zero)
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 0 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 0 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
             }
 
@@ -403,14 +403,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 result = solver.solve(state);
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 29 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 29 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state); // check a recalculation converges in 0 iterations
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 0 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 0 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
             }
         }
@@ -429,14 +429,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 result = solver.solve(state, restrictions);
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 41 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 41 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 0 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 0 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 CHECK( state.speciesAmount("Quartz") == Approx(0.007) );
@@ -451,14 +451,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 result = solver.solve(state, restrictions);
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 27 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 27 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 0 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 0 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 CHECK( state.speciesAmount("Quartz") == Approx(0.007) );
@@ -498,14 +498,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state, conditions);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 17 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 17 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             CHECK( state.temperature() == Approx(50.0 + 273.15) );
@@ -520,14 +520,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state, conditions);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 17 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 17 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             CHECK( state.temperature() == Approx(50.0 + 273.15) );
@@ -540,8 +540,8 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 result = solver.solve(state, sensitivity, conditions); // check a recalculation converges in 0 iterations (even if sensitivity derivatives need to be computed!)
 
-                CHECK( result.optima.succeeded );
-                CHECK( result.optima.iterations == 0 );
+                CHECK( result.succeeded() );
+                CHECK( result.iterations() == 0 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 const auto dndT  = sensitivity.dndw("T");
@@ -620,14 +620,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state, conditions);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 42 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 42 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             CHECK( state.temperature() == Approx(50.0 + 273.15) );
@@ -642,14 +642,14 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
             result = solver.solve(state, conditions);
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 28 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 28 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
 
-            CHECK( result.optima.succeeded );
-            CHECK( result.optima.iterations == 0 );
+            CHECK( result.succeeded() );
+            CHECK( result.iterations() == 0 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             CHECK( state.temperature() == Approx(50.0 + 273.15) );

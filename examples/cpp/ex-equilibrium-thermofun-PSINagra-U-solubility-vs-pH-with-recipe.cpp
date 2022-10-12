@@ -139,7 +139,7 @@ int main()
         std::cout.precision(8);
         std::cout << std::scientific << " "
                   << pHs[i] << "    "
-                  << res.optima.succeeded << "        "
+                  << res.succeeded() << "        "
                   << nUO2[i] / bU * 100 << " "
                   << nUO2OH[i] / bU * 100 << "  "
                   << nUO2OH2[i] / bU * 100 << " "

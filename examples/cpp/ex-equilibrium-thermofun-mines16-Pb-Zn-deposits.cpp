@@ -87,7 +87,7 @@ int main()
 
     // Equilibrate the initial state with given conditions and component amounts
     res = solver.solve(rockstate, rockcond);
-    std::cout << "res (rockstate) = " << res.optima.succeeded << std::endl;
+    std::cout << "res (rockstate) = " << res.succeeded() << std::endl;
 
     // Output the chemical state to a console
     rockstate.output("state-mines16-rock.txt");
@@ -116,7 +116,7 @@ int main()
 
     // Equilibrate the initial state with given conditions and component amounts
     res = solver.solve(fluidstate, fluidcond);
-    std::cout << "res (fluidstate) = " << res.optima.succeeded << std::endl;
+    std::cout << "res (fluidstate) = " << res.succeeded() << std::endl;
 
     // Output the chemical state to a console
     fluidstate.output("state-mines16-fluid.txt");

@@ -74,9 +74,8 @@ solver = EquilibriumSolver(specs)
 
 result = solver.solve(state, conditions)
 
-if result.optima.succeeded:
-    print(state)
-    print(f"COMPUTED ADIABATIC FLAME TEMPERATURE: {state.temperature()} K")
-    print(f"ITERATIONS: {result.optima.iterations}")
+assert result.succeeded(), "The calculation did not succeed!"
 
-else: print("ERROR!")
+print(state)
+print(f"COMPUTED ADIABATIC FLAME TEMPERATURE: {state.temperature()} K")
+print(f"ITERATIONS: {result.iterations()}")

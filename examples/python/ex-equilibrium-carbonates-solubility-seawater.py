@@ -51,8 +51,7 @@ def carbonates_in_seawater(system, solver, T, P):
     res = solver.solve(state_sw)
 
     # Throw exception if the equilibrium couldn't be found
-    if not res.optima.succeeded:
-        raise RuntimeError("Equilibrium calculation did not succeed!")
+    assert res.succeeded(), "The equilibrium calculation did not succeed!"
 
     # Add carbonates
     state_sw.set("Dolomite", n0Dolomite, "mol")

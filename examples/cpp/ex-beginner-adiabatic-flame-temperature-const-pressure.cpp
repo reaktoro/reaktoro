@@ -79,13 +79,11 @@ int main()
 
     auto result = solver.solve(state, conditions);
 
-    if(result.optima.succeeded)
-    {
-        cout << state << endl;
-        cout << "COMPUTED ADIABATIC FLAME TEMPERATURE: " << state.temperature() << " K" << endl;
-        cout << "ITERATIONS: " << result.optima.iterations << endl;
-    }
-    else cout << "ERROR!" << endl;
+    errorif(result.failed(), "The equilibrium calculation did not converge.");
+
+    cout << state << endl;
+    cout << "COMPUTED ADIABATIC FLAME TEMPERATURE: " << state.temperature() << " K" << endl;
+    cout << "ITERATIONS: " << result.iterations() << endl;
 
     return 0;
 }

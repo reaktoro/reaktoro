@@ -83,7 +83,7 @@ int main()
 
     // Equilibrate the initial state with given conditions
     auto res = solver.solve(state, conditions);
-    std::cout << "res (granite) = " << res.optima.succeeded << std::endl;
+    std::cout << "res (granite) = " << res.succeeded() << std::endl;
 
     // Output the chemical state to a console
     state.output("state-granite.txt");

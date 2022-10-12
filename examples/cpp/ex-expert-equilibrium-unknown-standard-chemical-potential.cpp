@@ -28,7 +28,7 @@ using namespace Reaktoro;
 const auto T = 60.0 + 273.15; // temperature in K
 const auto P = 10.0 * 1e5;    // pressure in Pa
 
-auto computeSolubilityCaCO3(const ChemicalSystem& system) -> real
+auto computeSolubilityCaCO3(ChemicalSystem const& system) -> real
 {
     ChemicalState state(system);
     state.temperature(T);

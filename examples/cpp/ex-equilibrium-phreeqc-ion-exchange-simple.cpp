@@ -74,7 +74,7 @@ int main()
     std::cout << "*******************************************" << std::endl;
     std::cout << "b = " << solutionstate.elementAmounts().transpose() << std::endl;
     std::cout << "Z = " << solutionstate.charge() << std::endl;
-    std::cout << "succeed = " << res.optima.succeeded << std::endl;
+    std::cout << "succeed = " << res.succeeded() << std::endl;
     std::cout << solutionstate << std::endl;
 
     AqueousProps aprops(solutionstate);

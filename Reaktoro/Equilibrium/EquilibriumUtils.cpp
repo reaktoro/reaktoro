@@ -96,7 +96,7 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
     auto result = solver.solve(state, conditions, restrictions);
 
     // Skip the second computation if the first one using ideal activity models has already failed.
-    if(result.optima.succeeded == false)
+    if(result.failed())
         return result;
 
     opts.use_ideal_activity_models = options.use_ideal_activity_models; // for the second computation, use what user wants (maybe ideal model again, in which case the calculation below will converge immediately).

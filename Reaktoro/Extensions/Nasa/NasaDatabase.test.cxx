@@ -102,8 +102,8 @@ TEST_CASE("Testing NasaDatabase with EquilibriumSolver", "[NasaDatabase][Equilib
 
         auto result = solver.solve(state, conditions);
 
-        CHECK( result.optima.succeeded );
-        CHECK( result.optima.iterations == xiters );
+        CHECK( result.succeeded() );
+        CHECK( result.iterations() == xiters );
     };
 
     checkEquilibriumSolver("Mg(cd)", 43);

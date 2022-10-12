@@ -86,7 +86,7 @@ def minerals_in_purewater(T, P):
     aprops.update(state)
 
     # Throw exception if the equilibrium couldn't be found
-    if not res.optima.succeeded:
+    if res.failed():
         nGypsum = math.nan
         nAnhydrite = math.nan
         mCa = math.nan
