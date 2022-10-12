@@ -20,6 +20,9 @@
 // -----------------------------------------------------------------------------
 // This example was originally authored by:
 //   • Svetlana Kyas (27 Spetember 2021)
+//
+// and since revised by:
+//   • Allan Leal (12 October 2022)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -64,6 +67,13 @@ int main()
     // Create an equilibrium solver
     EquilibriumSolver solver(specs);
 
+    // Set options for the equilibrium calculation
+    EquilibriumOptions options;
+    options.optima.newtonstep.linearsolver.method = Optima::LinearSolverMethod::Rangespace;
+    options.hessian = GibbsHessian::ApproxDiagonal;
+    options.epsilon = 1e-40; // this is needed for species to exist with tinier amounts so that desired pE value below can be attained
+    solver.setOptions(options);
+
     // Define conditions to be satisfied at chemical equilibrium
     EquilibriumConditions conditions(specs);
     conditions.temperature(25.0, "celsius");
@@ -73,21 +83,22 @@ int main()
 
     // Create chemical state
     ChemicalState state(system);
+
     // Specify chemical composition to start from
-    state.setSpeciesMass("H2O(aq)" , 58.0     , "kg");
-    state.setSpeciesMass("Cl-"     , 1122.3e-3, "kg");
-    state.setSpeciesMass("Na+"     , 624.08e-3, "kg");
-    state.setSpeciesMass("SO4-2"   , 157.18e-3, "kg");
-    state.setSpeciesMass("Mg+2"    , 74.820e-3, "kg");
-    state.setSpeciesMass("Ca+2"    , 23.838e-3, "kg");
-    state.setSpeciesMass("K+"      , 23.142e-3, "kg");
-    state.setSpeciesMass("HCO3-"   , 8.236e-3 , "kg");
-    state.setSpeciesMass("O2(aq)"  , 58e-12   , "kg");
-    state.setSpeciesAmount("Siderite", 0.0      , "mol");
-    state.setSpeciesAmount("Pyrite"  , 0.0      , "mol");
-    state.setSpeciesAmount("Hematite", 0.0      , "mol");
-    state.setSpeciesAmount("HS-"     , 0.0196504, "mol");
-    state.setSpeciesAmount("H2S(aq)" , 0.167794 , "mol");
+    state.set("H2O(aq)" , 58.0     , "kg");
+    state.set("Cl-"     , 1122.3e-3, "kg");
+    state.set("Na+"     , 624.08e-3, "kg");
+    state.set("SO4-2"   , 157.18e-3, "kg");
+    state.set("Mg+2"    , 74.820e-3, "kg");
+    state.set("Ca+2"    , 23.838e-3, "kg");
+    state.set("K+"      , 23.142e-3, "kg");
+    state.set("HCO3-"   , 8.236e-3 , "kg");
+    state.set("O2(aq)"  , 58e-12   , "kg");
+    state.set("Siderite", 0.0      , "mol");
+    state.set("Pyrite"  , 0.0      , "mol");
+    state.set("Hematite", 0.0      , "mol");
+    state.set("HS-"     , 0.0196504, "mol");
+    state.set("H2S(aq)" , 0.167794 , "mol");
 
     // Equilibrate the initial state with equilibrium condition
     EquilibriumResult result = solver.solve(state, conditions);
