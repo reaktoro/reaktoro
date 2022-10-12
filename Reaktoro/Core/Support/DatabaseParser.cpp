@@ -52,13 +52,36 @@ struct DatabaseParser::Impl
             "Are you forgetting to add the list of chemical species inside a Species YAML or JSON map?\n",
             "Please check other Reaktoro's YAML or JSON databases to identify what is not conforming.");
 
+        // if(doc.exists("Elements"))
+        //     for(auto const& child : doc["Elements"].asDict())
+        //         addElement(child.first, child.second);
+
+        // if(doc.exists("Species"))
+        //     for(auto const& child : doc["Species"].asDict())
+        //         addSpecies(child.first, child.second);
+
         if(doc.exists("Elements"))
-            for(auto const& child : doc["Elements"].asDict())
-                addElement(child.first, child.second);
+        {
+            if(doc["Elements"].isDict())
+                for(auto const& child : doc["Elements"].asDict())
+                    addElement(child.first, child.second);
+            else if(doc["Elements"].isList())
+                for(auto const& child : doc["Elements"].asList())
+                    addElement(child["Symbol"].asString(), child);
+            else errorif(true, "Expecting the `Elements` section in your YAML or JSON database to be either a list or dictionary. Please check other Reaktoro databases in either YAML or JSON format and replicate the structure.");
+        }
 
         if(doc.exists("Species"))
-            for(auto const& child : doc["Species"].asDict())
-                addSpecies(child.first, child.second);
+        {
+            if(doc["Species"].isDict())
+                for(auto const& child : doc["Species"].asDict())
+                    addSpecies(child.first, child.second);
+            else if(doc["Species"].isList())
+                for(auto const& child : doc["Species"].asList())
+                    addSpecies(child["Name"].asString(), child);
+            else errorif(true, "Expecting the `Species` section in your YAML or JSON database to be either a list or dictionary. Please check other Reaktoro databases in either YAML or JSON format and replicate the structure.");
+
+        }
     }
 
     /// Return the Data object with the details of an element with given unique @p symbol.
