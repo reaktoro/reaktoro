@@ -110,10 +110,10 @@ struct EquationConstraintFn
     EquationConstraintFn(Func1 const& f) : _fn(f) {}
 
     /// Construct an EquationConstraintFn object with given equilibrium constraint function with signature @ref Func2.
-    EquationConstraintFn(Func2 const& f) : _fn([=](ChemicalProps const& props, VectorXrConstRef const& w, VectorXrConstRef const& p) -> real { return f(props, w); }) {}
+    EquationConstraintFn(Func2 const& f) : _fn([=](ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) -> real { return f(props, w); }) {}
 
     /// Construct an EquationConstraintFn object with given equilibrium constraint function with signature @ref Func3.
-    EquationConstraintFn(Func3 const& f) : _fn([=](ChemicalProps const& props, VectorXrConstRef const& w, VectorXrConstRef const& p) -> real { return f(props); }) {}
+    EquationConstraintFn(Func3 const& f) : _fn([=](ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) -> real { return f(props); }) {}
 
     /// Evaluate the residual of the equation constraint.
     /// @param props The current chemical properties of the system in the equilibrium calculation.
