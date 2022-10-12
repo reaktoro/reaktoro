@@ -92,7 +92,7 @@ int main()
 
         auto res = solver.solve(solutionstate);
 
-        errorif(!res.optima.succeeded, "Calculation did not suceeded!");
+        errorif(res.failed(), "Calculation did not succeed!");
 
         aprops.update(solutionstate);
         chemprops.update(solutionstate);

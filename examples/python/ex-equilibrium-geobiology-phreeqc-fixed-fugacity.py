@@ -89,7 +89,7 @@ for T in temperatures:
         # Equilibrate the solution with the given initial chemical state and desired conditions at the equilibrium
         res = solver.solve(state, conditions)
         # Stop if the equilibration did not converge or failed
-        if not res.optima.succeeded: continue
+        if res.failed(): continue
 
         props.update(state)
         aprops.update(state)

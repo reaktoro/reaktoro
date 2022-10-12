@@ -23,6 +23,7 @@
 //
 // and since revised by:
 //   • Allan Leal (16 July 2021)
+//   • Allan Leal (12 October 2022)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -88,8 +89,8 @@ int main()
     std::cout << "Ionic strength after equilibration: " << aprops.ionicStrength() << std::endl;
 
     std::cout << "Equilibrium calculation result: " << std::endl;
-    std::cout << " - iterations = " << result.optima.iterations << std::endl;
-    std::cout << " - succeeded  = " << result.optima.succeeded << std::endl;
+    std::cout << " - iterations = " << result.iterations() << std::endl;
+    std::cout << " - succeeded  = " << result.succeeded() << std::endl;
 
     return 0;
 }

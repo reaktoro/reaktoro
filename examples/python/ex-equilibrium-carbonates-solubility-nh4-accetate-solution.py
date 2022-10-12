@@ -47,8 +47,7 @@ def carbonates_in_seawater(T):
     print("pH (before adding Calcite) = ", aqprops.pH())
 
     # Throw exception if the equilibrium couldn't be found
-    if not res.optima.succeeded:
-        raise RuntimeError("Equilibrium calculation did not succeed!")
+    assert res.succeeded(), "The equilibrium calculation did not succeed!"
 
     # Add carbonates
     state_sw.set("Calcite", n0Calcite, "mol")

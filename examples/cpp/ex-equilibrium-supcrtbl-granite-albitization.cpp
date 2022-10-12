@@ -20,6 +20,9 @@
 // -----------------------------------------------------------------------------
 // This example was originally authored by:
 //   • Svetlana Kyas (27 October 2021)
+//
+// and since revised by:
+//   • Allan Leal (12 October 2022)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -50,82 +53,66 @@ int main()
     // Define minerals
     // Minerals that are not found: Cristobalite, Topaz-OH, Tridymite
     MineralPhases minerals("Albite Andalusite Coesite Corundum Diaspore "
-                           "Halite Kaolinite Kyanite Microcline Muscovite "
-                           "Paragonite Pyrophyllite Quartz Sillimanite Stishovite "
-                           "Sylvite");
+        "Halite Kaolinite Kyanite Microcline Muscovite "
+        "Paragonite Pyrophyllite Quartz Sillimanite Stishovite "
+        "Sylvite");
 
     // Define chemical system by providing database, aqueous phase, and minerals
     ChemicalSystem system(db, solution, minerals);
 
     // Set options for the equilibrium solver
-    EquilibriumOptions opts;
-    opts.optima.output.active = false;
+    EquilibriumOptions options;
+    // options.optima.output.active = true;
 
     // Create an equilibrium solver
     EquilibriumSolver solver(system);
-    solver.setOptions(opts);
+    solver.setOptions(options);
 
-    // Define temperature and pressure conditions
-    double T = 25.0; // in Celsius
-    double P = 1.0; // in bar
-
-    // Define initial equilibrium state for the granite calculations
-    ChemicalState stategranite(system);
-    stategranite.temperature(T, "celsius");
-    stategranite.pressure(P, "bar");
-
-    // The object used to set the initial conditions and initial amounts of components (elements and charge)
-    EquilibriumConditions conditions(system);
-
-    // Initialize the amount of elements in the system
+    // The number of elements in the system
     Index E = system.elements().size();
 
-    // Define granite element amounts
-    // GEMS input:
-    //    Al    e   	4.2074828
-    //    Cl    e   	1.00E-09
-    //    H     h   	1.00E-09
-    //    K     e   	1.178394
-    //    Na    e   	2.0200391
-    //    O     o   	30.125894
-    //    Si    e   	11.107727
+    // The element amounts in the granite from GEMS
+    //   H  1.00E-16 mol
+    //   O  30.125894 mol
+    //   Na 2.0200391 mol
+    //   Al 4.2074828 mol
+    //   Si 11.107727 mol
+    //   Cl 1.00E-16 mol
+    //   K  1.178394 mol
     ArrayXd bgranite(E + 1);
-    bgranite << 1.00e-09, 30.125894, 2.0200391, 4.2074828, 11.107727, 1.00e-09, 1.178394, 0.0; // H, O, Na, Al, Si, Cl, K
+    bgranite << 1.00e-16, 30.125894, 2.0200391, 4.2074828, 11.107727, 1.00e-16, 1.178394, 0.0; // H, O, Na, Al, Si, Cl, K, Z
 
-    // Equilibrate the initial state with given conditions and component amounts
-    conditions.setInitialComponentAmounts(bgranite);
-    auto res = solver.solve(stategranite, conditions);
-
-    std::cout << "res = " << res.optima.succeeded << std::endl;
-
-    // Output the chemical state to a console
-    stategranite.output("state-granite.txt");
-
-    // Define initial equilibrium state for the fluid calculations
-    ChemicalState statefluid(system);
-    statefluid.temperature(T, "celsius");
-    statefluid.pressure(P, "bar");
-
-    // Define granite element amounts
-    // GEMS input:
-    //    Al    e   	1.00E-09
-    //    Cl    e   	0.98929196
-    //    H     h   	104.59826
-    //    K     e   	1.00E-09
-    //    Na    e   	0.98929196
-    //    O     o   	52.299035
-    //    Si    e   	1.00E-09
+    // The element amounts in the fluid from GEMS
+    //   H  104.59826 mol
+    //   O  52.299035 mol
+    //   Na 0.98929196 mol
+    //   Al 1.00E-16 mol
+    //   Si 1.00E-16 mol
+    //   Cl 0.98929196 mol
+    //   K  1.00E-16 mol
     ArrayXd bfluid(E + 1);
-    bfluid << 104.59826, 52.299035, 0.98929196, 1.00e-09, 1.00e-09, 0.98929196, 1.00e-09, 0.0; // H, O, Na, Al, Si, Cl, K
+    bfluid << 104.59826, 52.299035, 0.98929196, 1.00e-16, 1.00e-16, 0.98929196, 1.00e-16, 0.0; // H, O, Na, Al, Si, Cl, K, Z
 
-    // Equilibrate the initial state with given conditions and component amounts
-    conditions.setInitialComponentAmounts(bfluid);
-    res = solver.solve(statefluid, conditions);
+    // The element amounts in the entire system fluid and granite
+    ArrayXd b = bgranite + bfluid;
 
-    std::cout << "res = " << res.optima.succeeded << std::endl;
+    // The required conditions at equilbrium, including the amounts of components (elements and charge)
+    EquilibriumConditions conditions(system);
+    conditions.temperature(25.0, "celsius");
+    conditions.pressure(1.0, "bar");
+    conditions.setInitialComponentAmounts(b);
 
-    // Output the chemical state to a file
-    statefluid.output("state-fluid.txt");
+    // The chemical state used to store the calculated equilibrium state below
+    ChemicalState state(system);
+
+    // Perform the equilibrium calculation with given element and charge amounts in `conditions`
+    auto result = solver.solve(state, conditions);
+
+    // Check the did not fail
+    errorif(result.failed(), "The calculation did not succeed!");
+
+    // Output the computed chemical equilibrium state to a file
+    state.output("state-granite-fluid.txt");
 
     return 0;
 }

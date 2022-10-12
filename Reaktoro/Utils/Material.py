@@ -53,8 +53,8 @@ def testMaterial():
 
     state = mix.equilibrate()
 
-    assert mix.result().optima.succeeded
-    assert mix.result().optima.iterations == 48
+    assert mix.result().succeeded()
+    assert mix.result().iterations() == 48
 
     assert state.temperature() == pytest.approx(25.0 + 273.15)
     assert state.pressure() == pytest.approx(1.0 * 1e5)
@@ -62,8 +62,8 @@ def testMaterial():
 
     state = mix.equilibrate(60.0, "celsius", 10.0, "bar")
 
-    assert mix.result().optima.succeeded
-    assert mix.result().optima.iterations == 47
+    assert mix.result().succeeded()
+    assert mix.result().iterations() == 47
 
     assert state.temperature() == pytest.approx(60.0 + 273.15)
     assert state.pressure() == pytest.approx(10.0 * 1e5)

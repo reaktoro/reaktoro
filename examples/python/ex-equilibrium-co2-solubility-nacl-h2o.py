@@ -45,8 +45,7 @@ def solubility_co2(system, solver, T, P, mNaCl):
     res = solver.solve(state)
 
     # Throw exception if the equilibrium couldn't be found
-    if not res.optima.succeeded:
-        raise RuntimeError("Equilibrium calculation did not succeed!")
+    assert res.succeeded(), "The equilibrium calculation did not succeed!"
 
     # Fetch resulting aqueous properties of the chemical state
     aqprops = AqueousProps(state)

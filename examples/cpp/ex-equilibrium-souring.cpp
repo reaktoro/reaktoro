@@ -101,15 +101,15 @@ int main()
     state.set("H2S(aq)" , 0.167794 , "mol");
 
     // Equilibrate the initial state with equilibrium condition
-    EquilibriumResult result = solver.solve(state, conditions);
+    auto result = solver.solve(state, conditions);
 
     // Output the chemical state to a text file
     state.output("state.txt");
 
     // Output the result of the equilibrium calculation
     std::cout << "Equilibrium calculation result: " << std::endl;
-    std::cout << " * iterations = " << result.optima.iterations << std::endl;
-    std::cout << " * succeeded  = " << result.optima.succeeded << std::endl;
+    std::cout << " * iterations = " << result.iterations() << std::endl;
+    std::cout << " * succeeded  = " << result.succeeded() << std::endl;
 
     // Compute aqueous properties at the calculated equilibrium state
     AqueousProps aprops(state);

@@ -152,7 +152,7 @@ for i in range(1, steps_num):
     state = cement_mix.equilibrate(25.0, "celsius", 1.0, "bar", opts)
     res = cement_mix.result()
 
-    if not res.optima.succeeded:
+    if res.failed():
         # Define equilibrium solver
         solver = EquilibriumSolver(specs)
 
@@ -160,7 +160,7 @@ for i in range(1, steps_num):
         solver.setOptions(opts)
         res = solver.solve(state, conditions)
 
-        if not res.optima.succeeded: continue
+        if res.failed(): continue
 
     # Update chemical and aqueous properties to a file
     props.update(state)

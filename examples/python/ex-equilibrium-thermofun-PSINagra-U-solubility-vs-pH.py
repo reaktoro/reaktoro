@@ -91,7 +91,7 @@ for pH in pHs:
     res = solver.solve(state, conditions)
 
     # If the equilibrium calculations didn't succeed, continue to the next condition
-    if not res.optima.succeeded: continue
+    if res.failed(): continue
 
     # Otherwise, calculate U(VI) Speciation, %
     for j in range(0, species_list.size()):#species in species_list:

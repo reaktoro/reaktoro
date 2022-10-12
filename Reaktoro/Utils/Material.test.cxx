@@ -366,8 +366,8 @@ TEST_CASE("Testing equilibrium capabilities in Material class", "[Material]")
 
     state = mix.equilibrate();
 
-    CHECK( mix.result().optima.succeeded );
-    CHECK( mix.result().optima.iterations == 48 );
+    CHECK( mix.result().succeeded() );
+    CHECK( mix.result().iterations() == 48 );
 
     CHECK( state.temperature() == Approx(25.0 + 273.15) );
     CHECK( state.pressure() == Approx(1.0 * 1e5) );
@@ -375,8 +375,8 @@ TEST_CASE("Testing equilibrium capabilities in Material class", "[Material]")
 
     state = mix.equilibrate(60.0, "celsius", 10.0, "bar");
 
-    CHECK( mix.result().optima.succeeded );
-    CHECK( mix.result().optima.iterations == 47 );
+    CHECK( mix.result().succeeded() );
+    CHECK( mix.result().iterations() == 47 );
 
     CHECK( state.temperature() == Approx(60.0 + 273.15) );
     CHECK( state.pressure() == Approx(10.0 * 1e5) );

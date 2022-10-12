@@ -85,7 +85,7 @@ for mol_NaX in mols_NaX:
         # Calculate chemical state corresponding to the seawater
         res = solver.solve(state)
         # Stop if the equilibration hasn't converged
-        if not res.optima.succeeded: continue
+        if res.failed(): continue
 
         # Update aqueous properties and evaluate pH
         aqprops.update(state)
@@ -96,7 +96,7 @@ for mol_NaX in mols_NaX:
 
         # Equilibrate the seawater with carbonates
         res = solver.solve(state)
-        if not res.optima.succeeded: continue
+        if res.failed(): continue
 
         # Update aqueous properties to evaluate ionic strength
         aqprops.update(state)

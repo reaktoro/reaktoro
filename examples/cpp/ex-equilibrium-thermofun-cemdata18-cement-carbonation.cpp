@@ -121,15 +121,15 @@ int main()
     // And we equilibrate our cement mix
     state = cement_mix.equilibrate(25.0, "celsius", 1.0, "bar", opts);
     res = cement_mix.result();
-    std::cout << "res (cemdata18, run with material) = " << res.optima.succeeded << std::endl;
+    std::cout << "res (cemdata18, run with material) = " << res.succeeded() << std::endl;
     state.output("cpp-state-cemdata18_1.txt");
 
-    if(res.optima.succeeded)
+    if(res.succeeded())
     {
         // Equilibrate the initial state with given conditions and component amounts
         solver.setOptions(opts);
         res = solver.solve(state, conditions);
-        std::cout << "res (cemdata18, run with solver) = " << res.optima.succeeded << std::endl;
+        std::cout << "res (cemdata18, run with solver) = " << res.succeeded() << std::endl;
         state.output("cpp-state-cemdata18_2.txt");
     }
 
