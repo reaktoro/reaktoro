@@ -42,18 +42,27 @@ void exportEquilibriumSpecs(py::module& m)
         .def_readwrite("fn", &ControlVariableP::fn)
         ;
 
+    auto createEquationConstraintFn = [](py::function fn) -> EquationConstraintFn
+    {
+        const auto nargs = fn.attr("__code__").attr("co_argcount").cast<int>();
+        switch(nargs)
+        {
+        case 1: return EquationConstraintFn([=](ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) { return fn(props).cast<real>(); });
+        case 2: return EquationConstraintFn([=](ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) { return fn(props, w).cast<real>(); });
+        case 3: return EquationConstraintFn([=](ChemicalProps const& props, VectorXrConstRef const& p, VectorXrConstRef const& w) { return fn(props, p, w).cast<real>(); });
+        }
+        errorif(true, "Expecting an equilibrium constraint function with either 1, 2, or 3 arguments, but got one with ", nargs, " arguments instead.");
+        return {};
+    };
+
     py::class_<EquationConstraintFn>(m, "EquationConstraintFn")
         .def(py::init<>())
-        .def(py::init<EquationConstraintFn::Func1 const&>())
-        .def(py::init<EquationConstraintFn::Func2 const&>())
-        .def(py::init<EquationConstraintFn::Func3 const&>())
+        .def(py::init(createEquationConstraintFn))
         .def("__call__", &EquationConstraintFn::operator())
         .def("initialized", &EquationConstraintFn::initialized)
         ;
 
-    py::implicitly_convertible<EquationConstraintFn::Func1, EquationConstraintFn>();
-    py::implicitly_convertible<EquationConstraintFn::Func2, EquationConstraintFn>();
-    py::implicitly_convertible<EquationConstraintFn::Func3, EquationConstraintFn>();
+    py::implicitly_convertible<py::function, EquationConstraintFn>();
 
     py::class_<EquationConstraint>(m, "EquationConstraint")
         .def(py::init<>())
