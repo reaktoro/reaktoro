@@ -27,13 +27,13 @@ namespace Reaktoro {
 struct EquilibriumResult
 {
     /// Return true if the calculation succeeded.
-    auto succeeded() { return optima.succeeded; };
+    auto succeeded() const { return optima.succeeded; };
 
     /// Return true if the calculation failed.
-    auto failed() { return !optima.succeeded; };
+    auto failed() const { return !optima.succeeded; };
 
     /// Return the number of iterations in the calculation.
-    auto iterations() { return optima.iterations; };
+    auto iterations() const { return optima.iterations; };
 
     /// The result of the optimisation calculation using Optima.
     Optima::Result optima;
