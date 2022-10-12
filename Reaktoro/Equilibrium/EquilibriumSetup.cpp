@@ -251,8 +251,9 @@ struct EquilibriumSetup::Impl
             }
         }
 
-        Hxx.rightCols(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
-        Vpx.rightCols(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
+        Hxx.rightCols(Nq).fill(0.0);  // these are derivatives w.r.t. amounts of implicit titrants q
+        Hxx.bottomRows(Nq).fill(0.0); // these are derivatives w.r.t. amounts of implicit titrants q
+        Vpx.rightCols(Nq).fill(0.0);  // these are derivatives w.r.t. amounts of implicit titrants q
     }
 
     auto updateGradP() -> void
@@ -358,7 +359,7 @@ struct EquilibriumSetup::Impl
     {
         assert(i < Nx);
         if(i < Nn) updateFn(i);
-        else updateFq(i);
+        else updateFq(i - Nn);
     }
 
     auto updateGibbsEnergy() -> void
