@@ -397,20 +397,26 @@ public:
     /// possibly a different initial guess, does not use Lagrange multipliers from the failed computation.
     auto reset() -> void;
 
-    /// Set the names of the input variables used in the equilibrium calculation.
-    auto setInputNames(Strings const& names) -> void;
+    /// Set the names of the input variables *w* used in the equilibrium calculation.
+    auto setNamesInputVariables(Strings const& wnames) -> void;
 
-    /// Set the values of the input variables used in the equilibrium calculation.
-    auto setInputValues(ArrayXdConstRef const& w) -> void;
+    /// Set the names of the computed control variables *p* in the equilibrium calculation.
+    auto setNamesControlVariablesP(Strings const& pnames) -> void;
+
+    /// Set the names of the computed control variables *q* in the equilibrium calculation.
+    auto setNamesControlVariablesQ(Strings const& qnames) -> void;
+
+    /// Set the values of the input variables *w* used in the equilibrium calculation.
+    auto setInputVariables(ArrayXdConstRef const& w) -> void;
+
+    /// Set the values of the computed control variables *p* in the equilibrium calculation.
+    auto setControlVariablesP(ArrayXdConstRef const& p) -> void;
+
+    /// Set the values of the computed control variables *q* in the equilibrium calculation.
+    auto setControlVariablesQ(ArrayXdConstRef const& q) -> void;
 
     /// Set initial component amounts used in the equilibrium calculation.
     auto setInitialComponentAmounts(ArrayXdConstRef const& c0) -> void;
-
-    /// Set the computed control variables *p* in the equilibrium calculation.
-    auto setControlVariablesP(ArrayXdConstRef const& p) -> void;
-
-    /// Set the computed control variables *q* in the equilibrium calculation.
-    auto setControlVariablesQ(ArrayXdConstRef const& q) -> void;
 
     /// Set the Optima::State object computed as part of the equilibrium calculation.
     auto setOptimaState(Optima::State const& state) -> void;
@@ -427,7 +433,7 @@ public:
     /// Return the indices of the secondary species.
     auto indicesSecondarySpecies() const -> ArrayXlConstRef;
 
-    /// Return the chemical potentials of the elements in the equilibrium state (in unit of J/mol).
+    /// Return the chemical potentials of the elements in the equilibrium state (in J/mol).
     auto elementChemicalPotentials() const -> ArrayXdConstRef;
 
     /// Return the stabilities of the chemical species in the equilibrium state (normalized by *RT*).
@@ -437,20 +443,29 @@ public:
     /// with values closer to zero meaning more stable and away from the bounds.
     auto speciesStabilities() const -> ArrayXdConstRef;
 
-    /// Return the amounts of the explicit titrants in the equilibrium state (in mol).
-    auto explicitTitrantAmounts() const -> ArrayXdConstRef;
+    /// Return the amount of an explicit titrant in the equilibrium state (in mol).
+    /// @param name The name of the explicit titrant.
+    auto explicitTitrantAmount(String const& name) const -> real;
 
-    /// Return the amounts of the implicit titrants in the equilibrium state (in mol).
-    auto implicitTitrantAmounts() const -> ArrayXdConstRef;
+    /// Return the amount of an implicit titrant in the equilibrium state (in mol).
+    /// @param name The name of the implicit titrant.
+    auto implicitTitrantAmount(String const& name) const -> real;
 
-    /// Return the names of the input variables used in the equilibrium calculation.
-    auto inputNames() const -> Strings const&;
+    /// Return the amount of either an explicit or implicit titrant in the equilibrium state (in mol).
+    /// @param name The name of the explicit or implicit titrant.
+    auto titrantAmount(String const& name) const -> real;
 
-    /// Return the values of the input variables used in the equilibrium calculation.
-    auto inputValues() const -> ArrayXdConstRef;
+    /// Return the names of the input variables *w* used in the equilibrium calculation.
+    auto namesInputVariables() const -> Strings const&;
 
-    /// Return the initial component amounts used in the equilibrium calculation.
-    auto initialComponentAmounts() const -> ArrayXdConstRef;
+    /// Return the names of the computed control variables *p* in the equilibrium calculation.
+    auto namesControlVariablesP() const -> Strings const&;
+
+    /// Return the names of the computed control variables *q* in the equilibrium calculation.
+    auto namesControlVariablesQ() const -> Strings const&;
+
+    /// Return the values of the input variables *w* used in the equilibrium calculation.
+    auto inputVariables() const -> ArrayXdConstRef;
 
     /// Return the computed control variables *p* in the equilibrium calculation.
     auto controlVariablesP() const -> ArrayXdConstRef;
@@ -458,14 +473,17 @@ public:
     /// Return the computed control variables *q* in the equilibrium calculation.
     auto controlVariablesQ() const -> ArrayXdConstRef;
 
+    /// Return the initial component amounts used in the equilibrium calculation.
+    auto initialComponentAmounts() const -> ArrayXdConstRef;
+
+    /// Return the values of the input variables used in the equilibrium calculation.
+    auto w() const -> ArrayXdConstRef;
+
     /// Return the control variables *p* computed in the equilibrium calculation.
     auto p() const -> ArrayXdConstRef;
 
     /// Return the control variables *q* computed in the equilibrium calculation.
     auto q() const -> ArrayXdConstRef;
-
-    /// Return the values of the input variables used in the equilibrium calculation.
-    auto w() const -> ArrayXdConstRef;
 
     /// Return the initial component amounts used in the equilibrium calculation.
     auto c() const -> ArrayXdConstRef;

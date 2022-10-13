@@ -79,10 +79,10 @@ struct EquilibriumPredictor::Impl
       u0(state0.props()),
       Nn(n0.size()),
       Nu(u0.size()),
-      getT(getTemperatureFn(state0.equilibrium().inputNames())),
-      getP(getPressureFn(state0.equilibrium().inputNames()))
+      getT(getTemperatureFn(state0.equilibrium().namesInputVariables())),
+      getP(getPressureFn(state0.equilibrium().namesInputVariables()))
     {
-        errorif(state0.equilibrium().inputNames().empty(),
+        errorif(state0.equilibrium().w().size() == 0,
             "EquilibriumPredictor expects a ChemicalState object that "
             "has been used in a call to EquilibriumSolver::solve.");
     }
@@ -125,7 +125,7 @@ struct EquilibriumPredictor::Impl
         state.equilibrium() = state0.equilibrium();
         state.equilibrium().setControlVariablesP(p);
         state.equilibrium().setControlVariablesQ(q);
-        state.equilibrium().setInputValues(w);
+        state.equilibrium().setInputVariables(w);
         state.equilibrium().setInitialComponentAmounts(c);
 
         auto const& pp = state.equilibrium().p();

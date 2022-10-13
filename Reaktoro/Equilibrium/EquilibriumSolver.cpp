@@ -281,8 +281,10 @@ struct EquilibriumSolver::Impl
         state.setTemperature(props.temperature());
         state.setPressure(props.pressure());
         state.setSpeciesAmounts(optstate.x.head(dims.Nn));
-        state.equilibrium().setInputNames(conditions.inputNames());
-        state.equilibrium().setInputValues(conditions.inputValues());
+        state.equilibrium().setNamesInputVariables(specs.namesInputs());
+        state.equilibrium().setNamesControlVariablesP(specs.namesControlVariablesP());
+        state.equilibrium().setNamesControlVariablesQ(specs.namesControlVariablesQ());
+        state.equilibrium().setInputVariables(conditions.inputValues());
         state.equilibrium().setInitialComponentAmounts(optproblem.be);
         state.equilibrium().setOptimaState(optstate);
     }
