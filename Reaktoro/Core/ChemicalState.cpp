@@ -756,8 +756,17 @@ struct ChemicalState::Equilibrium::Impl
     /// The number of components in the equilibrium state.
     const Index Nb;
 
-    /// The names of the the input variables *w* used in the equilibrium calculation.
-    Strings inputs;
+    /// The number of *q* control variables considered in the equilibrium calculation.
+    Index Nq;
+
+    /// The names of the *w* control variables considered in the equilibrium calculation.
+    Strings wnames;
+
+    /// The names of the *p* control variables considered in the equilibrium calculation.
+    Strings pnames;
+
+    /// The names of the *q* control variables considered in the equilibrium calculation.
+    Strings qnames;
 
     /// The values of the input variables *w* used in the equilibrium calculation.
     ArrayXd w;
@@ -793,37 +802,53 @@ auto ChemicalState::Equilibrium::operator=(ChemicalState::Equilibrium other) -> 
 
 auto ChemicalState::Equilibrium::reset() -> void
 {
-    pimpl->inputs = {};
+    pimpl->Nq = 0;
+    pimpl->wnames = {};
+    pimpl->pnames = {};
+    pimpl->qnames = {};
     pimpl->w = {};
     pimpl->c = {};
     pimpl->optstate = {};
 }
 
-auto ChemicalState::Equilibrium::setInputNames(Strings const& names) -> void
+auto ChemicalState::Equilibrium::setNamesInputVariables(Strings const& wnames) -> void
 {
-    pimpl->inputs = names;
+    pimpl->wnames = wnames;
 }
 
-auto ChemicalState::Equilibrium::setInputValues(ArrayXdConstRef const& w) -> void
+auto ChemicalState::Equilibrium::setNamesControlVariablesP(Strings const& pnames) -> void
 {
+    pimpl->pnames = pnames;
+}
+
+auto ChemicalState::Equilibrium::setNamesControlVariablesQ(Strings const& qnames) -> void
+{
+    pimpl->qnames = qnames;
+    pimpl->Nq = qnames.size();
+}
+
+auto ChemicalState::Equilibrium::setInputVariables(ArrayXdConstRef const& w) -> void
+{
+    assert(w.size() == pimpl->wnames.size());
     pimpl->w = w;
-}
-
-auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef const& c) -> void
-{
-    pimpl->c = c;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef const& p) -> void
 {
+    assert(p.size() == pimpl->pnames.size());
     pimpl->optstate.p = p;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef const& q) -> void
 {
-    const auto Nq = pimpl->optstate.x.size() - pimpl->Nn;
-    if(Nq > 0)
-        pimpl->optstate.x.tail(Nq) = q;
+    assert(q.size() == pimpl->qnames.size());
+    if(pimpl->Nq > 0)
+        pimpl->optstate.x.tail(pimpl->Nq) = q;
+}
+
+auto ChemicalState::Equilibrium::setInitialComponentAmounts(ArrayXdConstRef const& c) -> void
+{
+    pimpl->c = c;
 }
 
 auto ChemicalState::Equilibrium::setOptimaState(Optima::State const& state) -> void
@@ -865,29 +890,51 @@ auto ChemicalState::Equilibrium::speciesStabilities() const -> ArrayXdConstRef
     else return pimpl->optstate.s;
 }
 
-auto ChemicalState::Equilibrium::explicitTitrantAmounts() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::explicitTitrantAmount(String const& name) const -> real
 {
-    return p();
+    const auto idx = index(pimpl->pnames, "[" + name + "]");
+    errorif(idx >= pimpl->pnames.size(), "There is no explicit titrant with name `", name, "` in this ChemicalState object.");
+    return -pimpl->optstate.p[idx]; // note negative sign due to convention for p when used for titrant amounts so that the conservation matrix has positive element coefficients for the explicit titrants, which showed to work better algorithmically
 }
 
-auto ChemicalState::Equilibrium::implicitTitrantAmounts() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::implicitTitrantAmount(String const& name) const -> real
 {
-    return q();
+    const auto idx = index(pimpl->qnames, "[" + name + "]");
+    errorif(idx >= pimpl->qnames.size(), "There is no implicit titrant with name `", name, "` in this ChemicalState object.");
+    return -pimpl->optstate.x[pimpl->Nn + idx]; // note negative sign due to convention for q so that the conservation matrix has positive element coefficients for the implicit titrants, which showed to work better algorithmically
 }
 
-auto ChemicalState::Equilibrium::inputNames() const -> Strings const&
+auto ChemicalState::Equilibrium::titrantAmount(String const& name) const -> real
 {
-    return pimpl->inputs;
+    const auto pidx = index(pimpl->pnames, "[" + name + "]");
+    if(pidx < pimpl->pnames.size())
+        return -pimpl->optstate.p[pidx]; // note negative sign due to convention for p when used for titrant amounts so that the conservation matrix has positive element coefficients for the explicit titrants, which showed to work better algorithmically
+
+    const auto qidx = index(pimpl->qnames, "[" + name + "]");
+    if(qidx < pimpl->qnames.size())
+        return -pimpl->optstate.x[pimpl->Nn + qidx]; // note negative sign due to convention for q so that the conservation matrix has positive element coefficients for the implicit titrants, which showed to work better algorithmically
+
+    errorif(true, "There is no explicit nor implicit titrant with name `", name, "` in this ChemicalState object.");
 }
 
-auto ChemicalState::Equilibrium::inputValues() const -> ArrayXdConstRef
+auto ChemicalState::Equilibrium::namesInputVariables() const -> Strings const&
+{
+    return pimpl->wnames;
+}
+
+auto ChemicalState::Equilibrium::namesControlVariablesP() const -> Strings const&
+{
+    return pimpl->pnames;
+}
+
+auto ChemicalState::Equilibrium::namesControlVariablesQ() const -> Strings const&
+{
+    return pimpl->qnames;
+}
+
+auto ChemicalState::Equilibrium::inputVariables() const -> ArrayXdConstRef
 {
     return pimpl->w;
-}
-
-auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConstRef
-{
-    return pimpl->c;
 }
 
 auto ChemicalState::Equilibrium::controlVariablesP() const -> ArrayXdConstRef
@@ -897,8 +944,17 @@ auto ChemicalState::Equilibrium::controlVariablesP() const -> ArrayXdConstRef
 
 auto ChemicalState::Equilibrium::controlVariablesQ() const -> ArrayXdConstRef
 {
-    const auto Nq = pimpl->optstate.x.size() - pimpl->Nn;
-    return pimpl->optstate.x.tail(Nq);
+    return pimpl->optstate.x.tail(pimpl->Nq);
+}
+
+auto ChemicalState::Equilibrium::initialComponentAmounts() const -> ArrayXdConstRef
+{
+    return pimpl->c;
+}
+
+auto ChemicalState::Equilibrium::w() const -> ArrayXdConstRef
+{
+    return inputVariables();
 }
 
 auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
@@ -909,11 +965,6 @@ auto ChemicalState::Equilibrium::p() const -> ArrayXdConstRef
 auto ChemicalState::Equilibrium::q() const -> ArrayXdConstRef
 {
     return controlVariablesQ();
-}
-
-auto ChemicalState::Equilibrium::w() const -> ArrayXdConstRef
-{
-    return inputValues();
 }
 
 auto ChemicalState::Equilibrium::c() const -> ArrayXdConstRef
