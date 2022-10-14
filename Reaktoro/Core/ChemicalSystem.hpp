@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
+#include <Reaktoro/Common/Meta.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Database.hpp>
@@ -38,43 +39,63 @@
 
 namespace Reaktoro {
 
+template<typename T, typename... Ts>
+constexpr auto _arePhaseOrReactionConvertible()
+{
+    constexpr auto isReactionConvertible = isConvertible<T, ReactionGenerator> || isConvertible<T, Reaction>;
+    constexpr auto isPhaseConvertible = isBaseOf<GenericPhase, T> || isBaseOf<GenericPhasesGenerator, T>;
+    constexpr auto aux = isPhaseConvertible || isReactionConvertible;
+
+    if constexpr (sizeof...(Ts))
+        return aux && _arePhaseOrReactionConvertible<Ts...>();
+    else return aux;
+}
+
+/// Used to determine if `T` and all types in `Ts` are either GenericPhase or GenericPhaseGenerator.
+template<typename T, typename... Ts>
+constexpr auto arePhaseOrReactionConvertible = _arePhaseOrReactionConvertible<T, Ts...>();
+
+/// Create a ChemicalSystem object with given database and a list of phase and reaction convertible objects.
+template<typename... Args>
+auto createChemicalSystem(Database const& db, Args const&... args) -> ChemicalSystem;
+
 /// The class used to represent a chemical system and its attributes and properties.
 /// @see Species, Phase
 /// @ingroup Core
 class ChemicalSystem
 {
 public:
-    /// Construct a default uninitialized ChemicalSystem instance.
+    /// Construct a default uninitialized ChemicalSystem object.
     ChemicalSystem();
 
-    /// Construct a ChemicalSystem instance with given database and phases.
+    /// Construct a ChemicalSystem object with given database and phases.
     explicit ChemicalSystem(Database const& database, PhaseList const& phases);
 
-    /// Construct a ChemicalSystem instance with given database, phases, and surfaces.
+    /// Construct a ChemicalSystem object with given database, phases, and surfaces.
     explicit ChemicalSystem(Database const& database, PhaseList const& phases, SurfaceList const& surfaces);
 
-    /// Construct a ChemicalSystem instance with given database, phases, and reactions.
+    /// Construct a ChemicalSystem object with given database, phases, and reactions.
     explicit ChemicalSystem(Database const& database, PhaseList const& phases, ReactionList const& reactions);
 
-    /// Construct a ChemicalSystem instance with given database, phases, reactions, and surfaces.
+    /// Construct a ChemicalSystem object with given database, phases, reactions, and surfaces.
     explicit ChemicalSystem(Database const& database, PhaseList const& phases, ReactionList const& reactions, SurfaceList const& surfaces);
 
-    /// Construct a ChemicalSystem instance with given phases.
+    /// Construct a ChemicalSystem object with given phases.
     explicit ChemicalSystem(Phases const& phases);
 
-    /// Construct a ChemicalSystem instance with given phases and surfaces.
+    /// Construct a ChemicalSystem object with given phases and surfaces.
     explicit ChemicalSystem(Phases const& phases, Surfaces const& surfaces);
 
-    /// Construct a ChemicalSystem instance with given phases and reactions.
+    /// Construct a ChemicalSystem object with given phases and reactions.
     explicit ChemicalSystem(Phases const& phases, Reactions const& reactions);
 
-    /// Construct a ChemicalSystem instance with given phases, reactions, and surfaces.
+    /// Construct a ChemicalSystem object with given phases, reactions, and surfaces.
     explicit ChemicalSystem(Phases const& phases, Reactions const& reactions, Surfaces const& surfaces);
 
-    /// Construct a ChemicalSystem instance with given database and one or more generic phases.
-    template<typename... GenericPhases, EnableIf<areGenericPhases<GenericPhases...>>...>
-    ChemicalSystem(Database const& database, GenericPhases const&... genericPhases)
-    : ChemicalSystem(Phases(database, genericPhases...)) {}
+    /// Construct a ChemicalSystem object with given database and a list of phase and reaction convertible objects.
+    template<typename... Args, EnableIf<arePhaseOrReactionConvertible<Args...>>...>
+    explicit ChemicalSystem(Database const& db, Args const&... args)
+    : ChemicalSystem(createChemicalSystem(db, args...)) {}
 
     /// Return the unique identification number of this ChemicalSystem object.
     /// ChemicalSystem objects are guaranteed to be the same if they have the same id.
@@ -136,7 +157,28 @@ private:
     SharedPtr<Impl> pimpl;
 };
 
-/// Output a ChemicalSystem instance
+/// Output a ChemicalSystem object
 auto operator<<(std::ostream& out, ChemicalSystem const& system) -> std::ostream&;
+
+template<typename... Args>
+auto createChemicalSystem(Database const& db, Args const&... args) -> ChemicalSystem
+{
+    Phases phases(db);
+    Reactions reactions;
+
+    ForEach([&](auto arg) constexpr {
+        using T = Decay<decltype(arg)>;
+        constexpr auto isReactionConvertible = isConvertible<T, ReactionGenerator> || isConvertible<T, Reaction>;
+        constexpr auto isPhaseConvertible = isBaseOf<GenericPhase, T> || isBaseOf<GenericPhasesGenerator, T>;
+
+        static_assert(isReactionConvertible || isPhaseConvertible, "One of the arguments in your list of arguments for the construction of a ChemicalSystem object has a non-convertible type to either reaction or phase.");
+
+        if constexpr(isPhaseConvertible)
+            phases.add(arg);
+        else reactions.add(arg);
+    }, args...);
+
+    return ChemicalSystem(phases, reactions);
+}
 
 } // namespace Reaktoro
