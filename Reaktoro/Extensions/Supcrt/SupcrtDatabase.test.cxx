@@ -24,8 +24,12 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing SupcrtDatabase object creation using embedded files", "[SupcrtDatabase]")
 {
+    CHECK_NOTHROW( SupcrtDatabase("supcrt98") );
+    CHECK_NOTHROW( SupcrtDatabase("supcrt98-organics") );
     CHECK_NOTHROW( SupcrtDatabase("supcrt07") );
+    CHECK_NOTHROW( SupcrtDatabase("supcrt07-organics") );
     CHECK_NOTHROW( SupcrtDatabase("supcrt16") );
+    CHECK_NOTHROW( SupcrtDatabase("supcrt16-organics") );
     CHECK_NOTHROW( SupcrtDatabase("supcrtbl") );
     CHECK_NOTHROW( SupcrtDatabase("supcrtbl-organics") );
 }
