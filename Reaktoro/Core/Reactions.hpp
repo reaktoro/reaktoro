@@ -17,10 +17,8 @@
 
 #pragma once
 
-// C++ includes
-#include <type_traits>
-
 // Reaktoro includes
+#include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
@@ -51,9 +49,9 @@ public:
     template<typename T>
     auto add(T const& item) -> void
     {
-        static_assert(std::is_convertible_v<T, ReactionGenerator> || std::is_convertible_v<T, Reaction>);
+        static_assert(isConvertible<T, ReactionGenerator> || isConvertible<T, Reaction>);
 
-        if constexpr(std::is_convertible_v<T, ReactionGenerator>)
+        if constexpr(isConvertible<T, ReactionGenerator>)
         {
             rgenerators.push_back([=](PhaseList const& phases) -> Vec<Reaction> {
                 return item(phases); // item is a ReactionGenerator object
