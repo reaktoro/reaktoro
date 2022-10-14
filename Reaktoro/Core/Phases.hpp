@@ -296,6 +296,9 @@ public:
         addAux(gphases...);
     }
 
+    // TODO: Implement `auto add(const Phase& phase) -> void` as well, in case the user provides a
+    // Phase object. This will need a new data member `phases` of type `Vec<Phase>`.
+
     /// Add a GenericPhase object into the Phases container.
     auto add(const GenericPhase& phase) -> void;
 
