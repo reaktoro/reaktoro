@@ -26,6 +26,19 @@ using namespace Reaktoro;
 
 void exportReactions(py::module& m)
 {
+    py::class_<GeneralReaction>(m, "GeneralReaction")
+        .def(py::init<>())
+        .def(py::init<String const&>())
+        .def("setName", &GeneralReaction::setName, "Set the unique name of the reaction.")
+        .def("setEquation", &GeneralReaction::setEquation, "Set the equation of the reaction as a formatted string.")
+        .def("setRateModel", &GeneralReaction::setRateModel, "Set the reaction rate model of the reaction.")
+        .def("set", &GeneralReaction::set, "Set the reaction rate model of the reaction.")
+        .def("name", &GeneralReaction::name, "Return the name of the reaction.")
+        .def("equation", &GeneralReaction::equation, "Return the reaction equation of the reaction.")
+        .def("rateModel", &GeneralReaction::rateModel, "Return the reaction rate model of the reaction.")
+        .def("__call__", &GeneralReaction::operator(), "Convert this GeneralReaction object into a vector of a single Reaction object.")
+        ;
+
     auto createReactions = [](py::args reaction_generators)
     {
         Reactions reactions;
