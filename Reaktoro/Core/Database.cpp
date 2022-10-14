@@ -50,7 +50,7 @@ struct Database::Impl
     Map<AggregateState, SpeciesList> species_with_aggregate_state;
 
     /// Add an element in the database.
-    auto addElement(const Element& element) -> void
+    auto addElement(Element const& element) -> void
     {
         if(element_symbols.find(element.symbol()) == element_symbols.end())
         {
@@ -103,13 +103,9 @@ struct Database::Impl
     }
 
     /// Construct a reaction with given equation.
-    auto reaction(const String& equation) const -> Reaction
+    auto reaction(String const& equation) const -> Reaction
     {
-        const auto pairs = parseReactionEquation(equation);
-        Pairs<Species, double> reactants;
-        for(const auto [name, coeff] : pairs)
-            reactants.emplace_back(species.get(name), coeff);
-        return Reaction().withEquation(reactants);
+        return Reaction().withEquation(ReactionEquation(equation, species));
     }
 };
 
@@ -117,23 +113,23 @@ Database::Database()
 : pimpl(new Impl())
 {}
 
-Database::Database(const Database& other)
+Database::Database(Database const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-Database::Database(const Vec<Element>& elements, const Vec<Species>& species)
+Database::Database(Vec<Element> const& elements, Vec<Species> const& species)
 : Database()
 {
-    for(const auto& x : elements)
+    for(auto const& x : elements)
         addElement(x);
-    for(const auto& x : species)
+    for(auto const& x : species)
         addSpecies(x);
 }
 
-Database::Database(const Vec<Species>& species)
+Database::Database(Vec<Species> const& species)
 : Database()
 {
-    for(const auto& x : species)
+    for(auto const& x : species)
         addSpecies(x);
 }
 
@@ -151,45 +147,45 @@ auto Database::clear() -> void
     *pimpl = Database::Impl();
 }
 
-auto Database::addElement(const Element& element) -> void
+auto Database::addElement(Element const& element) -> void
 {
     pimpl->addElement(element);
 }
 
-auto Database::addSpecies(const Species& species) -> void
+auto Database::addSpecies(Species const& species) -> void
 {
     pimpl->addSpecies(species);
 }
 
-auto Database::addSpecies(const Vec<Species>& species) -> void
+auto Database::addSpecies(Vec<Species> const& species) -> void
 {
-    for(const auto& x : species)
+    for(auto const& x : species)
         addSpecies(x);
 }
 
-auto Database::attachData(const Any& data) -> void
+auto Database::attachData(Any const& data) -> void
 {
     pimpl->attached_data = data;
 }
 
-auto Database::extend(const Database& other) -> void
+auto Database::extend(Database const& other) -> void
 {
-    for(const auto& element : other.elements())
+    for(auto const& element : other.elements())
         addElement(element);
 
-    for(const auto& species : other.species())
+    for(auto const& species : other.species())
         addSpecies(species);
 
     // TODO: Replace Any by Map<String, Any> so that it becomes easier/more intuitive to unify different attached data to Database objects.
     // pimpl->attached_data = ???;
 }
 
-auto Database::elements() const -> const ElementList&
+auto Database::elements() const -> ElementList const&
 {
     return pimpl->elements;
 }
 
-auto Database::species() const -> const SpeciesList&
+auto Database::species() const -> SpeciesList const&
 {
     return pimpl->species;
 }
@@ -202,27 +198,27 @@ auto Database::speciesWithAggregateState(AggregateState option) const -> Species
     return it->second;
 }
 
-auto Database::element(const String& symbol) const -> const Element&
+auto Database::element(String const& symbol) const -> Element const&
 {
     return elements().getWithSymbol(symbol);
 }
 
-auto Database::species(const String& name) const -> const Species&
+auto Database::species(String const& name) const -> Species const&
 {
     return species().getWithName(name);
 }
 
-auto Database::reaction(const String& equation) const -> Reaction
+auto Database::reaction(String const& equation) const -> Reaction
 {
     return pimpl->reaction(equation);
 }
 
-auto Database::attachedData() const -> const Any&
+auto Database::attachedData() const -> Any const&
 {
     return pimpl->attached_data;
 }
 
-auto Database::fromFile(const String& path) -> Database
+auto Database::fromFile(String const& path) -> Database
 {
     std::ifstream file(path);
     errorif(!file.is_open(),
@@ -235,7 +231,7 @@ auto Database::fromFile(const String& path) -> Database
     return fromStream(file);
 }
 
-auto Database::fromContents(const String& contents) -> Database
+auto Database::fromContents(String const& contents) -> Database
 {
     auto doc = Data::parse(contents);
     DatabaseParser dbparser(doc);

@@ -62,7 +62,7 @@ TEST_CASE("Testing ReactionEquation class", "[ReactionEquation]")
     REQUIRE( equation.coefficient("Fe++")       ==  0.0 );
 
     //-------------------------------------------------------------------------
-    // TESTING CONSTRUCTOR: ReactionEquation(String)
+    // TESTING CONSTRUCTOR: ReactionEquation(String const&)
     //-------------------------------------------------------------------------
     equation = ReactionEquation("H2O = H+ + OH-");
 
@@ -81,6 +81,46 @@ TEST_CASE("Testing ReactionEquation class", "[ReactionEquation]")
     REQUIRE( equation.coefficient("Fe++")  ==  0.0 );
 
     equation = ReactionEquation("Ca++ + Mg++ + 2*HCO3- = CaMg(CO3)2 + 2*H+");
+
+    REQUIRE( equation.size() == 5 );
+    REQUIRE( equation.coefficient("Ca++")       == -1.0 );
+    REQUIRE( equation.coefficient("Mg++")       == -1.0 );
+    REQUIRE( equation.coefficient("HCO3-")      == -2.0 );
+    REQUIRE( equation.coefficient("CaMg(CO3)2") ==  1.0 );
+    REQUIRE( equation.coefficient("Fe++")       ==  0.0 );
+
+    //-------------------------------------------------------------------------
+    // TESTING CONSTRUCTOR: ReactionEquation(String const&, SpeciesList const&)
+    //-------------------------------------------------------------------------
+    SpeciesList specieslist = {
+        Species("H2O"),
+        Species("H+"),
+        Species("OH-"),
+        Species("CaCl2"),
+        Species("Ca++"),
+        Species("Cl-"),
+        Species("Mg++"),
+        Species("HCO3-"),
+        Species("CaMg(CO3)2")
+    };
+
+    equation = ReactionEquation("H2O = H+ + OH-", specieslist);
+
+    REQUIRE( equation.size() == 3 );
+    REQUIRE( equation.coefficient("H2O")  == -1.0 );
+    REQUIRE( equation.coefficient("H+")   ==  1.0 );
+    REQUIRE( equation.coefficient("OH-")  ==  1.0 );
+    REQUIRE( equation.coefficient("Fe++") ==  0.0 );
+
+    equation = ReactionEquation("CaCl2 = Ca++ + 2*Cl-", specieslist);
+
+    REQUIRE( equation.size() == 3 );
+    REQUIRE( equation.coefficient("CaCl2") == -1.0 );
+    REQUIRE( equation.coefficient("Ca++")  ==  1.0 );
+    REQUIRE( equation.coefficient("Cl-")   ==  2.0 );
+    REQUIRE( equation.coefficient("Fe++")  ==  0.0 );
+
+    equation = ReactionEquation("Ca++ + Mg++ + 2*HCO3- = CaMg(CO3)2 + 2*H+", specieslist);
 
     REQUIRE( equation.size() == 5 );
     REQUIRE( equation.coefficient("Ca++")       == -1.0 );
