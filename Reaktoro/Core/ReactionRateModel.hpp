@@ -25,8 +25,6 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
-class ChemicalSystem;
-class Reaction;
 
 /// The type of functions for calculation of reaction rates (in mol/s).
 /// @param props The chemical properties of the chemical system
@@ -34,11 +32,5 @@ class Reaction;
 /// @see Reaction
 /// @ingroup Core
 using ReactionRateModel = Model<ReactionRate(ChemicalProps const& props)>;
-
-/// The type of functions that construct a ReactionRateModel for a reaction.
-/// @param reaction The reaction for which the reaction rate model is constructed.
-/// @param system The chemical system in which the reactions happen.
-/// @ingroup Core
-using ReactionRateModelGenerator = Fn<ReactionRateModel(Reaction const& reaction, ChemicalSystem const& system)>;
 
 } // namespace Reaktoro
