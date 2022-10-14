@@ -44,15 +44,21 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
 {
     errorif(!oneof(name,
         "supcrt98",
+        "supcrt98-organics",
         "supcrt07",
+        "supcrt07-organics",
         "supcrt16",
+        "supcrt16-organics",
         "supcrtbl",
         "supcrtbl-organics"),
         "Could not load embedded database file with name `", name, "`. ",
         "The currently supported names are: \n"
         "    - supcrt98 \n",
+        "    - supcrt98-organics \n",
         "    - supcrt07 \n",
+        "    - supcrt07-organics \n",
         "    - supcrt16 \n",
+        "    - supcrt16-organics \n",
         "    - supcrtbl \n",
         "    - supcrtbl-organics \n",
         "");
