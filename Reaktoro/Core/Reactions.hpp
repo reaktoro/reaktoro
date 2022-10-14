@@ -38,7 +38,7 @@ public:
     /// Construct a Reactions object.
     Reactions();
 
-    /// Construct a Reactions object with given generic reactions.
+    /// Construct a Reactions object with given reaction generators.
     /// @param reaction_generators The ReactionGenerator objects that will be converted into Reaction objects.
     template<typename... ReactionGenerators>
     Reactions(const ReactionGenerators&... reaction_generators)

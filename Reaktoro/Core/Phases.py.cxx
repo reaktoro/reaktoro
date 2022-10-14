@@ -31,10 +31,10 @@ auto createPhases(Database const& db, py::args gphases) -> Phases
     Phases phases(db);
     for(auto phase : gphases)
     {
-        try { phases.add(phase.cast<GenericPhase const&>()); }
+        try { phases.add(phase.cast<GeneralPhase const&>()); }
         catch(...)
         {
-            try { phases.add(phase.cast<GenericPhasesGenerator const&>()); }
+            try { phases.add(phase.cast<GeneralPhasesGenerator const&>()); }
             catch(...)
             {
                 errorif(true, "Could not create Phases with phase object:\n", py::str(phase));
@@ -65,66 +65,66 @@ void exportPhases(py::module& m)
     py::class_<Phases>(m, "Phases")
         .def(py::init<const Database&>())
         .def(py::init(&rkt4py::createPhases))
-        .def("add", py::overload_cast<const GenericPhase&>(&Phases::add))
-        .def("add", py::overload_cast<const GenericPhasesGenerator&>(&Phases::add))
+        .def("add", py::overload_cast<const GeneralPhase&>(&Phases::add))
+        .def("add", py::overload_cast<const GeneralPhasesGenerator&>(&Phases::add))
         .def("database", &Phases::database, return_internal_ref)
-        .def("genericPhases", &Phases::genericPhases, return_internal_ref)
-        .def("genericPhasesGenerators", &Phases::genericPhasesGenerators, return_internal_ref)
+        .def("generalPhases", &Phases::generalPhases, return_internal_ref)
+        .def("generalPhasesGenerators", &Phases::generalPhasesGenerators, return_internal_ref)
         .def("convert", &Phases::convert)
         ;
 
     py::implicitly_convertible<Phases, PhaseList>();
 
-    py::class_<GenericPhase>(m, "GenericPhase")
+    py::class_<GeneralPhase>(m, "GeneralPhase")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
         .def(py::init<const Speciate&, const Exclude&>())
         .def(py::init<const Exclude&>())
-        .def("setName", &GenericPhase::setName, return_internal_ref)
-        .def("setStateOfMatter", &GenericPhase::setStateOfMatter, return_internal_ref)
-        .def("setAggregateState", &GenericPhase::setAggregateState, return_internal_ref)
-        .def("setActivityModel", &GenericPhase::setActivityModel, return_internal_ref)
-        .def("setIdealActivityModel", &GenericPhase::setIdealActivityModel, return_internal_ref)
-        .def("named", &GenericPhase::named, return_internal_ref)
-        .def("set", py::overload_cast<StateOfMatter>(&GenericPhase::set), return_internal_ref)
-        .def("set", py::overload_cast<AggregateState>(&GenericPhase::set), return_internal_ref)
-        .def("set", py::overload_cast<const ActivityModelGenerator&>(&GenericPhase::set), return_internal_ref)
-        .def("name", &GenericPhase::name)
-        .def("stateOfMatter", &GenericPhase::stateOfMatter)
-        .def("aggregateState", &GenericPhase::aggregateState)
-        .def("additionalAggregateStates", &GenericPhase::additionalAggregateStates, return_internal_ref)
-        .def("species", &GenericPhase::species, return_internal_ref)
-        .def("elements", &GenericPhase::elements, return_internal_ref)
-        .def("activityModel", &GenericPhase::activityModel, return_internal_ref)
-        .def("idealActivityModel", &GenericPhase::idealActivityModel, return_internal_ref)
-        .def("convert", &GenericPhase::convert)
+        .def("setName", &GeneralPhase::setName, return_internal_ref)
+        .def("setStateOfMatter", &GeneralPhase::setStateOfMatter, return_internal_ref)
+        .def("setAggregateState", &GeneralPhase::setAggregateState, return_internal_ref)
+        .def("setActivityModel", &GeneralPhase::setActivityModel, return_internal_ref)
+        .def("setIdealActivityModel", &GeneralPhase::setIdealActivityModel, return_internal_ref)
+        .def("named", &GeneralPhase::named, return_internal_ref)
+        .def("set", py::overload_cast<StateOfMatter>(&GeneralPhase::set), return_internal_ref)
+        .def("set", py::overload_cast<AggregateState>(&GeneralPhase::set), return_internal_ref)
+        .def("set", py::overload_cast<const ActivityModelGenerator&>(&GeneralPhase::set), return_internal_ref)
+        .def("name", &GeneralPhase::name)
+        .def("stateOfMatter", &GeneralPhase::stateOfMatter)
+        .def("aggregateState", &GeneralPhase::aggregateState)
+        .def("additionalAggregateStates", &GeneralPhase::additionalAggregateStates, return_internal_ref)
+        .def("species", &GeneralPhase::species, return_internal_ref)
+        .def("elements", &GeneralPhase::elements, return_internal_ref)
+        .def("activityModel", &GeneralPhase::activityModel, return_internal_ref)
+        .def("idealActivityModel", &GeneralPhase::idealActivityModel, return_internal_ref)
+        .def("convert", &GeneralPhase::convert)
         ;
 
-    py::class_<GenericPhasesGenerator>(m, "GenericPhasesGenerator")
+    py::class_<GeneralPhasesGenerator>(m, "GeneralPhasesGenerator")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
         .def(py::init<const Speciate&, const Exclude&>())
         .def(py::init<const Exclude&>())
-        .def("setStateOfMatter", &GenericPhasesGenerator::setStateOfMatter, return_internal_ref)
-        .def("setAggregateState", &GenericPhasesGenerator::setAggregateState, return_internal_ref)
-        .def("setActivityModel", &GenericPhasesGenerator::setActivityModel, return_internal_ref)
-        .def("setIdealActivityModel", &GenericPhasesGenerator::setIdealActivityModel, return_internal_ref)
-        .def("set", py::overload_cast<StateOfMatter>(&GenericPhasesGenerator::set), return_internal_ref)
-        .def("set", py::overload_cast<AggregateState>(&GenericPhasesGenerator::set), return_internal_ref)
-        .def("set", py::overload_cast<const ActivityModelGenerator&>(&GenericPhasesGenerator::set), return_internal_ref)
-        .def("stateOfMatter", &GenericPhasesGenerator::stateOfMatter)
-        .def("aggregateState", &GenericPhasesGenerator::aggregateState)
-        .def("additionalAggregateStates", &GenericPhasesGenerator::additionalAggregateStates, return_internal_ref)
-        .def("species", &GenericPhasesGenerator::species, return_internal_ref)
-        .def("elements", &GenericPhasesGenerator::elements, return_internal_ref)
-        .def("activityModel", &GenericPhasesGenerator::activityModel, return_internal_ref)
-        .def("idealActivityModel", &GenericPhasesGenerator::idealActivityModel, return_internal_ref)
-        .def("convert", &GenericPhasesGenerator::convert)
+        .def("setStateOfMatter", &GeneralPhasesGenerator::setStateOfMatter, return_internal_ref)
+        .def("setAggregateState", &GeneralPhasesGenerator::setAggregateState, return_internal_ref)
+        .def("setActivityModel", &GeneralPhasesGenerator::setActivityModel, return_internal_ref)
+        .def("setIdealActivityModel", &GeneralPhasesGenerator::setIdealActivityModel, return_internal_ref)
+        .def("set", py::overload_cast<StateOfMatter>(&GeneralPhasesGenerator::set), return_internal_ref)
+        .def("set", py::overload_cast<AggregateState>(&GeneralPhasesGenerator::set), return_internal_ref)
+        .def("set", py::overload_cast<const ActivityModelGenerator&>(&GeneralPhasesGenerator::set), return_internal_ref)
+        .def("stateOfMatter", &GeneralPhasesGenerator::stateOfMatter)
+        .def("aggregateState", &GeneralPhasesGenerator::aggregateState)
+        .def("additionalAggregateStates", &GeneralPhasesGenerator::additionalAggregateStates, return_internal_ref)
+        .def("species", &GeneralPhasesGenerator::species, return_internal_ref)
+        .def("elements", &GeneralPhasesGenerator::elements, return_internal_ref)
+        .def("activityModel", &GeneralPhasesGenerator::activityModel, return_internal_ref)
+        .def("idealActivityModel", &GeneralPhasesGenerator::idealActivityModel, return_internal_ref)
+        .def("convert", &GeneralPhasesGenerator::convert)
         ;
 
-    py::class_<AqueousPhase, GenericPhase>(m, "AqueousPhase")
+    py::class_<AqueousPhase, GeneralPhase>(m, "AqueousPhase")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<Speciate>())
@@ -132,7 +132,7 @@ void exportPhases(py::module& m)
         .def(py::init<const Exclude&>())
         ;
 
-    py::class_<GaseousPhase, GenericPhase>(m, "GaseousPhase")
+    py::class_<GaseousPhase, GeneralPhase>(m, "GaseousPhase")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
@@ -140,7 +140,7 @@ void exportPhases(py::module& m)
         .def(py::init<const Exclude&>())
         ;
 
-    py::class_<LiquidPhase, GenericPhase>(m, "LiquidPhase")
+    py::class_<LiquidPhase, GeneralPhase>(m, "LiquidPhase")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
@@ -148,15 +148,15 @@ void exportPhases(py::module& m)
         .def(py::init<const Exclude&>())
         ;
 
-    py::class_<SolidPhase, GenericPhase>(m, "SolidPhase")
+    py::class_<SolidPhase, GeneralPhase>(m, "SolidPhase")
         .def(py::init<const StringList&>())
         ;
 
-    py::class_<MineralPhase, GenericPhase>(m, "MineralPhase")
+    py::class_<MineralPhase, GeneralPhase>(m, "MineralPhase")
         .def(py::init<String>())
         ;
 
-    py::class_<MineralPhases, GenericPhasesGenerator>(m, "MineralPhases")
+    py::class_<MineralPhases, GeneralPhasesGenerator>(m, "MineralPhases")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
@@ -164,11 +164,11 @@ void exportPhases(py::module& m)
         .def(py::init<const Exclude&>())
         ;
 
-    py::class_<CondensedPhase, GenericPhase>(m, "CondensedPhase")
+    py::class_<CondensedPhase, GeneralPhase>(m, "CondensedPhase")
         .def(py::init<String>())
         ;
 
-    py::class_<CondensedPhases, GenericPhasesGenerator>(m, "CondensedPhases")
+    py::class_<CondensedPhases, GeneralPhasesGenerator>(m, "CondensedPhases")
         .def(py::init<>())
         .def(py::init<const StringList&>())
         .def(py::init<const Speciate&>())
@@ -176,7 +176,7 @@ void exportPhases(py::module& m)
         .def(py::init<const Exclude&>())
         ;
 
-    py::class_<IonExchangePhase, GenericPhase>(m, "IonExchangePhase")
+    py::class_<IonExchangePhase, GeneralPhase>(m, "IonExchangePhase")
         .def(py::init<String>())
         ;
 }
