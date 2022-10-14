@@ -42,6 +42,12 @@ ReactionEquation::ReactionEquation(const char* equation)
 : ReactionEquation(String(equation))
 {}
 
+ReactionEquation::ReactionEquation(String const& equation, SpeciesList const& species)
+{
+    for(const auto [name, coeff] : parseReactionEquation(equation))
+        m_species.emplace_back(species.get(name), coeff);
+}
+
 auto ReactionEquation::empty() const -> bool
 {
     return m_species.empty();

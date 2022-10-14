@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Species.hpp>
+#include <Reaktoro/Core/SpeciesList.hpp>
 
 namespace Reaktoro {
 
@@ -41,7 +42,7 @@ public:
     /// Construct an ReactionEquation object with given species and respective stoichiometric coefficients.
     ReactionEquation(Pairs<Species, double> const& species);
 
-    /// Construct a ReactionEquation object by parsing a string.
+    /// Construct a ReactionEquation object by parsing a formatted string.
     /// Below are examples of how to create a ReactionEquation object via a
     /// formatted string.
     /// ~~~
@@ -51,10 +52,15 @@ public:
     /// ~~~
     /// Note that unity stoichiometric coefficients can be ommited from the
     /// equation. The operator `*` must be used when this is not the case.
-    ReactionEquation(const String& equation);
+    ///@{
+    ReactionEquation(String const& equation);
+    ReactionEquation(Chars equation);
+    ///@}
 
-    /// Construct a ReactionEquation object by parsing a string.
-    ReactionEquation(const char* equation);
+    /// Construct a ReactionEquation object by parsing a formatted string.
+    /// This method is similar to ReactionEquation(String const&), but the Species objects in the
+    /// constructed ReactionEquation object are fetched from a given list of species.
+    ReactionEquation(String const& equation, SpeciesList const& species);
 
     /// Return true if the rection equation is empty.
     auto empty() const -> bool;
