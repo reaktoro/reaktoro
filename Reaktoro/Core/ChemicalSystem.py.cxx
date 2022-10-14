@@ -23,26 +23,21 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 using namespace Reaktoro;
 
+namespace rkt4py {
+
+/// Creates a Phases object with given database and list of arguments expected to be Phase-like objects.
+extern auto createPhases(Database const& db, py::args gphases) -> Phases;
+
+/// Creates a ChemicalSystem object with given database and list of arguments expected to be Phase-like objects.
+auto createChemicalSystem(Database const& db, py::args gphases) -> ChemicalSystem
+{
+    return ChemicalSystem(createPhases(db, gphases));
+};
+
+} // namespace rkt4py
+
 void exportChemicalSystem(py::module& m)
 {
-    auto createChemicalSystem = [](Database const& db, py::args gphases)
-    {
-        Phases phases(db);
-        for(auto phase : gphases)
-        {
-            try { phases.add(phase.cast<GenericPhase const&>()); }
-            catch(...)
-            {
-                try { phases.add(phase.cast<GenericPhasesGenerator const&>()); }
-                catch(...)
-                {
-                    errorif(true, "Could not create ChemicalSystem with phase object:\n", py::str(phase));
-                }
-            }
-        }
-
-        return ChemicalSystem(phases);
-    };
 
     py::class_<ChemicalSystem>(m, "ChemicalSystem")
         .def(py::init<>())
@@ -54,7 +49,7 @@ void exportChemicalSystem(py::module& m)
         .def(py::init<Phases const&, Surfaces const&>())
         .def(py::init<Phases const&, Reactions const&>())
         .def(py::init<Phases const&, Reactions const&, Surfaces const&>())
-        .def(py::init(createChemicalSystem))
+        .def(py::init(&rkt4py::createChemicalSystem))
         .def("id", &ChemicalSystem::id)
         .def("database", &ChemicalSystem::database, return_internal_ref)
         .def("element", &ChemicalSystem::element, return_internal_ref)

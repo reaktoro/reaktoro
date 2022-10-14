@@ -23,6 +23,29 @@
 #include <Reaktoro/Core/Phases.hpp>
 using namespace Reaktoro;
 
+namespace rkt4py {
+
+/// Creates a Phases object with given database and list of arguments expected to be Phase-like objects
+auto createPhases(Database const& db, py::args gphases) -> Phases
+{
+    Phases phases(db);
+    for(auto phase : gphases)
+    {
+        try { phases.add(phase.cast<GenericPhase const&>()); }
+        catch(...)
+        {
+            try { phases.add(phase.cast<GenericPhasesGenerator const&>()); }
+            catch(...)
+            {
+                errorif(true, "Could not create Phases with phase object:\n", py::str(phase));
+            }
+        }
+    }
+    return phases;
+};
+
+} // namespace rkt4py
+
 void exportPhases(py::module& m)
 {
     py::class_<Speciate>(m, "Speciate")
@@ -41,6 +64,7 @@ void exportPhases(py::module& m)
 
     py::class_<Phases>(m, "Phases")
         .def(py::init<const Database&>())
+        .def(py::init(&rkt4py::createPhases))
         .def("add", py::overload_cast<const GenericPhase&>(&Phases::add))
         .def("add", py::overload_cast<const GenericPhasesGenerator&>(&Phases::add))
         .def("database", &Phases::database, return_internal_ref)
