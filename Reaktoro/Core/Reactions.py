@@ -39,7 +39,7 @@ def testReactions():
     phases.add( MineralPhase("Dolomite") )
     phases.add( MineralPhase("Quartz") )
 
-    phases: PhaseList = phases.convert()
+    phases = PhaseList(phases.convert())
 
     reactions = Reactions()
 
@@ -48,7 +48,7 @@ def testReactions():
     reactions.add(ReactionGeneratorUsingClass())
     reactions.add(ReactionGeneratorUsingFunction)
 
-    converted = reactions.convert(phases)
+    converted = reactions.convert(phases.species())
 
     assert len(converted) == 4
     assert str(converted[0].equation()) == "Halite = Na+ + Cl-"

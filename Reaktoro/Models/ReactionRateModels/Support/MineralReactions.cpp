@@ -99,10 +99,8 @@ auto MineralReactions::setRateModel(String const& mineral, MineralReactionRateMo
     m_mineral_rate_model_generators[idx] = generator;
 }
 
-auto MineralReactions::operator()(PhaseList const& phases) const -> Vec<Reaction>
+auto MineralReactions::operator()(SpeciesList const& species) const -> Vec<Reaction>
 {
-    auto const& species = phases.species();
-
     for(auto&& [i, generator] : enumerate(m_mineral_rate_model_generators))
     {
         const auto imineral = species.findWithName(m_minerals[i]);
@@ -114,7 +112,7 @@ auto MineralReactions::operator()(PhaseList const& phases) const -> Vec<Reaction
 
     Vec<MineralReactionRateModel> mineral_reaction_rate_models(num_minerals);
     for(auto&& [i, generator] : enumerate(m_mineral_rate_model_generators))
-        mineral_reaction_rate_models[i] = generator(m_minerals[i], phases);
+        mineral_reaction_rate_models[i] = generator(m_minerals[i], species);
 
     const auto reaction_rate_models = detail::convert(m_minerals, mineral_reaction_rate_models);
 
