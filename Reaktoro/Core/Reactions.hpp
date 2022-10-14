@@ -25,8 +25,9 @@
 
 namespace Reaktoro {
 
-/// The function type for the generation of reactions with given phases and their species in the chemical system.
-using ReactionGenerator = Fn<Vec<Reaction>(PhaseList const&)>;
+/// The function type for the generation of reactions with given species in the chemical system.
+/// @param species The species composing the chemical system where the reactions will take place.
+using ReactionGenerator = Fn<Vec<Reaction>(SpeciesList const& species)>;
 
 /// The class used to represent a collection of reactions controlled kinetically.
 /// @ingroup Core
@@ -53,21 +54,21 @@ public:
 
         if constexpr(isConvertible<T, ReactionGenerator>)
         {
-            rgenerators.push_back([=](PhaseList const& phases) -> Vec<Reaction> {
-                return item(phases); // item is a ReactionGenerator object
+            rgenerators.push_back([=](SpeciesList const& species) -> Vec<Reaction> {
+                return item(species); // item is a ReactionGenerator object
             });
         }
         else
         {
-            rgenerators.push_back([=](PhaseList const& phases) -> Vec<Reaction> {
+            rgenerators.push_back([=](SpeciesList const& species) -> Vec<Reaction> {
                 return { Reaction(item) }; // item is convertible to Reaction object
             });
         }
     }
 
     /// Convert this Reactions object into a vector of Reaction objects.
-    /// @param phases The phases and their species composing the chemical system where the reactions will take place.
-    auto convert(PhaseList const& phases) const -> Vec<Reaction>;
+    /// @param species The species composing the chemical system where the reactions will take place.
+    auto convert(SpeciesList const& species) const -> Vec<Reaction>;
 
 private:
     /// The ReactionGenerator objects collected so far with each call to Reactions::add method.

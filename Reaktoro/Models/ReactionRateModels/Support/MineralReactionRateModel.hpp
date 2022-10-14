@@ -59,8 +59,8 @@ using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateModelArgs
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
 /// @param mineral The name of the mineral in the system.
-/// @param phases The phases and their species composing the chemical system where the reactions will take place.
+/// @param species The species composing the chemical system where the reactions will take place.
 /// @see MineralReactions
-using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, PhaseList const& phases)>;
+using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, SpeciesList const& species)>;
 
 } // namespace Reaktoro

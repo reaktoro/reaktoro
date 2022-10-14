@@ -39,8 +39,8 @@ public:
     auto setRateModel(String const& mineral, MineralReactionRateModelGenerator const& generator) -> void;
 
     /// Convert this MineralReactions object into a vector of Reaction objects.
-    /// @param phases The phases and their species composing the chemical system where the reactions will take place.
-    auto operator()(PhaseList const& phases) const -> Vec<Reaction>;
+    /// @param species The species composing the chemical system where the reactions will take place.
+    auto operator()(SpeciesList const& species) const -> Vec<Reaction>;
 
 private:
     /// The names of the minerals
