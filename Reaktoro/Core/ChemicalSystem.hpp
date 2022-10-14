@@ -39,6 +39,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class ChemicalSystem;
+
 template<typename T, typename... Ts>
 constexpr auto _arePhaseOrReactionConvertible()
 {
