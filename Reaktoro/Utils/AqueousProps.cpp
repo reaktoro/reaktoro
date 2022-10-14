@@ -265,7 +265,7 @@ struct AqueousProps::Impl
         auto const& P = aqprops.pressure();
         auto const& x = aqprops.speciesMoleFractions();
 
-        // Update the internal properties of the aqueous phase
+        // Update the internal properties of the chemical system
         props = cprops;
 
         // Update the internal aqueous state object
@@ -304,6 +304,16 @@ struct AqueousProps::Impl
     auto waterMass() const -> real
     {
         return props.speciesMass(iH2O);
+    }
+
+    auto charge() const -> real
+    {
+        return props.chargeInPhase(iphase);
+    }
+
+    auto chargeMolality() const -> real
+    {
+        return charge() / waterMass();
     }
 
     auto elementMolality(const StringOrIndex& symbol) const -> real
@@ -460,6 +470,16 @@ auto AqueousProps::waterMass() const -> real
     return pimpl->waterMass();
 }
 
+auto AqueousProps::charge() const -> real
+{
+    return pimpl->charge();
+}
+
+auto AqueousProps::chargeMolality() const -> real
+{
+    return pimpl->chargeMolality();
+}
+
 auto AqueousProps::elementMolality(const StringOrIndex& symbol) const -> real
 {
     return pimpl->elementMolality(symbol);
@@ -608,6 +628,7 @@ auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
     table.add_row({ "pH", strfix(props.pH()), "" });
     table.add_row({ "pE", strfix(props.pE()), "" });
     table.add_row({ "Eh", strfix(props.Eh()), "V" });
+    table.add_row({ "Charge Molality", strsci(props.chargeMolality()), "molal" });
     table.add_row({ "Element Molality:" });
     for(auto i = 0; i < elements.size(); ++i)
         if(elements[i].symbol() != "H" && elements[i].symbol() != "O")

@@ -77,10 +77,16 @@ public:
     /// Return the mass of solvent water in the aqueous phase (in kg).
     auto waterMass() const -> real;
 
+    /// Return the electric charge in the aqueous phase (in mol).
+    auto charge() const -> real;
+
+    /// Return the molality concentration in the aqueous phase (in molal).
+    auto chargeMolality() const -> real;
+
     /// Return the molality of an element (in molal).
     auto elementMolality(const StringOrIndex& symbol) const -> real;
 
-    /// Return the molality concentrations of the elements in  (in molal).
+    /// Return the molality concentrations of the elements (in molal).
     auto elementMolalities() const -> ArrayXr;
 
     /// Return the molality of an aqueous solute species (in molal).
