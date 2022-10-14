@@ -27,6 +27,7 @@ TEST_CASE("Testing SupcrtDatabase object creation using embedded files", "[Supcr
     CHECK_NOTHROW( SupcrtDatabase("supcrt07") );
     CHECK_NOTHROW( SupcrtDatabase("supcrt16") );
     CHECK_NOTHROW( SupcrtDatabase("supcrtbl") );
+    CHECK_NOTHROW( SupcrtDatabase("supcrtbl-organics") );
 }
 
 TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
