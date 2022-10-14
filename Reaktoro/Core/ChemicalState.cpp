@@ -1000,7 +1000,7 @@ auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&
     {
         table.add_row({ "Surface Area:", "", "" });
             for(auto [k, surface] : enumerate(surfaces))
-                table.add_row({ ":: " + surface.name(), strfix(s[k]), "m2" });
+                table.add_row({ ":: " + surface.name(), strsci(s[k]), "m2" });
     }
 
     auto i = 0;
