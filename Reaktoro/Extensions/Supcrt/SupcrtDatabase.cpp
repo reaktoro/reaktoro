@@ -46,13 +46,15 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
         "supcrt98",
         "supcrt07",
         "supcrt16",
-        "supcrtbl"),
+        "supcrtbl",
+        "supcrtbl-organics"),
         "Could not load embedded database file with name `", name, "`. ",
         "The currently supported names are: \n"
         "    - supcrt98 \n",
         "    - supcrt07 \n",
         "    - supcrt16 \n",
         "    - supcrtbl \n",
+        "    - supcrtbl-organics \n",
         "");
     const auto text = Embedded::get("databases/reaktoro/" + name + ".yaml");
     const auto doc = Data::parse(text);
