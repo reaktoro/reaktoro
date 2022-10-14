@@ -98,19 +98,19 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
-    // TESTING CLASS: GenericPhase
+    // TESTING CLASS: GeneralPhase
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
-    SECTION("Testing GenericPhase::GenericPhase(const StringList&)")
+    SECTION("Testing GeneralPhase::GeneralPhase(const StringList&)")
     {
-        GenericPhase genericphase("H2O(aq) H+ OH-");
-        genericphase.setName("AqueousPhase");
-        genericphase.setStateOfMatter(StateOfMatter::Liquid);
-        genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activitymodel);
-        genericphase.setIdealActivityModel(activitymodel);
+        GeneralPhase generalphase("H2O(aq) H+ OH-");
+        generalphase.setName("AqueousPhase");
+        generalphase.setStateOfMatter(StateOfMatter::Liquid);
+        generalphase.setAggregateState(AggregateState::Aqueous);
+        generalphase.setActivityModel(activitymodel);
+        generalphase.setIdealActivityModel(activitymodel);
 
-        Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Phase phase = generalphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         CHECK( phase.name() == "AqueousPhase" );
         CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -122,16 +122,16 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhase::GenericPhase(const Speciate&)")
+    SECTION("Testing GeneralPhase::GeneralPhase(const Speciate&)")
     {
-        GenericPhase genericphase(speciate("H O"));
-        genericphase.setName("AqueousPhase");
-        genericphase.setStateOfMatter(StateOfMatter::Liquid);
-        genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activitymodel);
-        genericphase.setIdealActivityModel(activitymodel);
+        GeneralPhase generalphase(speciate("H O"));
+        generalphase.setName("AqueousPhase");
+        generalphase.setStateOfMatter(StateOfMatter::Liquid);
+        generalphase.setAggregateState(AggregateState::Aqueous);
+        generalphase.setActivityModel(activitymodel);
+        generalphase.setIdealActivityModel(activitymodel);
 
-        Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Phase phase = generalphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         CHECK( phase.name() == "AqueousPhase" );
         CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -145,16 +145,16 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhase::GenericPhase() with all elements during phase conversion process")
+    SECTION("Testing GeneralPhase::GeneralPhase() with all elements during phase conversion process")
     {
-        GenericPhase genericphase;
-        genericphase.setName("AqueousPhase");
-        genericphase.setStateOfMatter(StateOfMatter::Liquid);
-        genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activitymodel);
-        genericphase.setIdealActivityModel(activitymodel);
+        GeneralPhase generalphase;
+        generalphase.setName("AqueousPhase");
+        generalphase.setStateOfMatter(StateOfMatter::Liquid);
+        generalphase.setAggregateState(AggregateState::Aqueous);
+        generalphase.setActivityModel(activitymodel);
+        generalphase.setIdealActivityModel(activitymodel);
 
-        Phase phase = genericphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Phase phase = generalphase.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         CHECK( phase.name() == "AqueousPhase" );
         CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -183,16 +183,16 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhase::GenericPhase() with H, O, and Cl elements during phase conversion process")
+    SECTION("Testing GeneralPhase::GeneralPhase() with H, O, and Cl elements during phase conversion process")
     {
-        GenericPhase genericphase;
-        genericphase.setName("AqueousPhase");
-        genericphase.setStateOfMatter(StateOfMatter::Liquid);
-        genericphase.setAggregateState(AggregateState::Aqueous);
-        genericphase.setActivityModel(activitymodel);
-        genericphase.setIdealActivityModel(activitymodel);
+        GeneralPhase generalphase;
+        generalphase.setName("AqueousPhase");
+        generalphase.setStateOfMatter(StateOfMatter::Liquid);
+        generalphase.setAggregateState(AggregateState::Aqueous);
+        generalphase.setActivityModel(activitymodel);
+        generalphase.setIdealActivityModel(activitymodel);
 
-        Phase phase = genericphase.convert(db, {"H", "O", "Cl"});
+        Phase phase = generalphase.convert(db, {"H", "O", "Cl"});
 
         CHECK( phase.name() == "AqueousPhase" );
         CHECK( phase.stateOfMatter() == StateOfMatter::Liquid );
@@ -217,18 +217,18 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
-    // TESTING CLASS: GenericPhasesGenerator
+    // TESTING CLASS: GeneralPhasesGenerator
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
-    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator(const StringList&)")
+    SECTION("Testing GeneralPhasesGenerator::GeneralPhasesGenerator(const StringList&)")
     {
-        GenericPhasesGenerator generator("Calcite Magnesite");
+        GeneralPhasesGenerator generator("Calcite Magnesite");
         generator.setStateOfMatter(StateOfMatter::Solid);
         generator.setAggregateState(AggregateState::Solid);
         generator.setActivityModel(activitymodel);
         generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GeneralPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         CHECK( phases.size() == 2 );
 
@@ -245,15 +245,15 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phases[1].idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator(const Speciate&)")
+    SECTION("Testing GeneralPhasesGenerator::GeneralPhasesGenerator(const Speciate&)")
     {
-        GenericPhasesGenerator generator(speciate("Ca Mg C O"));
+        GeneralPhasesGenerator generator(speciate("Ca Mg C O"));
         generator.setStateOfMatter(StateOfMatter::Solid);
         generator.setAggregateState(AggregateState::Solid);
         generator.setActivityModel(activitymodel);
         generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GeneralPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         CHECK( phases.size() == 5 );
 
@@ -288,15 +288,15 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phases[4].idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator() with all elements during phase conversion process")
+    SECTION("Testing GeneralPhasesGenerator::GeneralPhasesGenerator() with all elements during phase conversion process")
     {
-        GenericPhasesGenerator generator;
+        GeneralPhasesGenerator generator;
         generator.setStateOfMatter(StateOfMatter::Solid);
         generator.setAggregateState(AggregateState::Solid);
         generator.setActivityModel(activitymodel);
         generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
+        Vec<GeneralPhase> phases = generator.convert(db, {"H", "O", "C", "Na", "Cl", "Ca", "Mg", "Si"});
 
         CHECK( phases.size() == 7 );
 
@@ -343,15 +343,15 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phases[6].idealActivityModel() );
     }
 
-    SECTION("Testing GenericPhasesGenerator::GenericPhasesGenerator() with Na and Cl elements during phase conversion process")
+    SECTION("Testing GeneralPhasesGenerator::GeneralPhasesGenerator() with Na and Cl elements during phase conversion process")
     {
-        GenericPhasesGenerator generator;
+        GeneralPhasesGenerator generator;
         generator.setStateOfMatter(StateOfMatter::Solid);
         generator.setAggregateState(AggregateState::Solid);
         generator.setActivityModel(activitymodel);
         generator.setIdealActivityModel(activitymodel);
 
-        Vec<GenericPhase> phases = generator.convert(db, {"Na", "Cl"});
+        Vec<GeneralPhase> phases = generator.convert(db, {"Na", "Cl"});
 
         CHECK( phases.size() == 1 );
 

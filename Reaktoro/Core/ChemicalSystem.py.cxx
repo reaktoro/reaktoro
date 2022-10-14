@@ -33,9 +33,9 @@ auto createChemicalSystem(Database const& db, py::args args) -> ChemicalSystem
 
     for(auto const& arg : args)
     {
-        try { phases.add(arg.cast<GenericPhase const&>()); }
+        try { phases.add(arg.cast<GeneralPhase const&>()); }
         catch(...) {
-            try { phases.add(arg.cast<GenericPhasesGenerator const&>()); }
+            try { phases.add(arg.cast<GeneralPhasesGenerator const&>()); }
             catch(...) {
                 try { reactions.add(arg.cast<ReactionGenerator>()); }
                 catch(...) {
