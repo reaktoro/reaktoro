@@ -127,6 +127,10 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.ionicStrengthEffective()      == Approx(499.576)      );
         CHECK( aqprops.ionicStrengthStoichiometric() == Approx(999.152)      );
 
+        // Check electric charge properties
+        CHECK( aqprops.charge() == Approx(state.charge()) );
+        CHECK( aqprops.chargeMolality() == Approx(state.charge() / state.speciesMass(iH2O)) );
+
         // Check molalities of all species
         for(auto i = 0; i < aqspecies.size(); i++)
             CHECK( aqprops.speciesMolalities()[i] == Approx(55.5085) );
@@ -198,11 +202,11 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         ChemicalState state(system);
         state.setTemperature(T, "celsius");
         state.setPressure(P, "bar");
-        state.setSpeciesMass("H2O(aq)" , 1.00, "kg");
-        state.setSpeciesMass("Na+(aq)" , 2.05, "mg");
-        state.setSpeciesMass("Ca++(aq)", 1.42, "mg");
-        state.setSpeciesMass("Mg++(aq)", 0.39, "mg");
-        state.setSpeciesMass("Cl-(aq)" , 3.47, "mg");
+        state.set("H2O(aq)" , 1.00, "kg");
+        state.set("Na+(aq)" , 2.05, "mg");
+        state.set("Ca++(aq)", 1.42, "mg");
+        state.set("Mg++(aq)", 0.39, "mg");
+        state.set("Cl-(aq)" , 3.47, "mg");
 
         EquilibriumResult result = solver.solve(state);
 
@@ -220,6 +224,10 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         // Check water properties
         CHECK( aqprops.waterAmount() == Approx(state.speciesAmount(iH2O))  );
         CHECK( aqprops.waterMass()   == Approx(state.speciesMass(iH2O))    );
+
+        // Check electric charge properties
+        CHECK( aqprops.charge() == Approx(state.charge()) );
+        CHECK( aqprops.chargeMolality() == Approx(state.charge() / state.speciesMass(iH2O)) );
 
         // Check molalities of all species
         CHECK( aqprops.speciesMolality("H2O(aq)"  ) == Approx(55.5085)     );
