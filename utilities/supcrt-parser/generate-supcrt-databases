@@ -478,6 +478,35 @@ def clean(dump):
          .replace('""', '')
 
 
+def outputYAML(db, filename):
+    # Perform a yaml dump
+    ydump = yaml.dump(db, width=float("inf"))
+
+    # Clean yaml dump from, for example, @ surrounding lists (e.g., @[...]@)
+    ydump = clean(ydump)
+
+    # Output the database in yaml format
+    with open(filename, "w") as f:
+        print(f"Creating ouptut file {filename} ...")
+        f.write(ydump)
+
+
+def outputJSON(db, filename):
+    # Perform a json dump
+    jdump = json.dumps(db, sort_keys=False, indent=2, separators=(",", ": "))
+
+    # Clean json dump from, for example, @ surrounding lists (e.g., @[...]@)
+    jdump = clean(jdump)
+
+    # Replace NaN and .nan in json dump by null
+    jdump = jdump.replace("NaN", "null").replace(".nan", "null")
+
+    # Output the database in json format
+    with open(filename, "w") as f:
+        print(f"Creating ouptut file {filename} ...")
+        f.write(jdump)
+
+
 def convert(filename, outdir):
     """
     Convert a SUPCRT database in a pre-linearized format into YAML, JSON, or final linearized format.
@@ -532,30 +561,17 @@ def convert(filename, outdir):
     db = {}
     db["Species"] = species
 
-    # Perform a json dump
-    jdump = json.dumps(db, sort_keys=False, indent=2, separators=(",", ": "))
+    # Create database without organics
+    newspecies = { key: value for key, value in db["Species"].items() if "organic" not in value.get("Tags", "") }
+    db_without_organics = { "Species": newspecies }
 
-    # Perform a yaml dump
-    ydump = yaml.dump(db, width=float("inf"))
+    outputYAML(db, yname.replace('.yaml', '-organics.yaml'))
+    outputJSON(db, jname.replace('.json', '-organics.json'))
 
-    # Clean both json and yaml dumps from, for example, @ surrounding lists (e.g., @[...]@)
-    jdump = clean(jdump)
-    ydump = clean(ydump)
+    outputYAML(db_without_organics, yname)
+    outputJSON(db_without_organics, jname)
 
-    # Replace NaN and .nan in json dump by null
-    jdump = jdump.replace("NaN", "null").replace(".nan", "null")
-
-    # Output the database in json format
-    with open(jname, "w") as f:
-        print(f"Creating ouptut file {jname} ...")
-        f.write(jdump)
-
-    # Output the database in yaml format
-    with open(yname, "w") as f:
-        print(f"Creating ouptut file {yname} ...")
-        f.write(ydump)
-
-    print(f"Files {yname} and {jname} have been successfully written!")
+    print(f"All SUPCRT database files have been successfully written!")
 
 
 if __name__ == "__main__":
