@@ -57,4 +57,18 @@ constexpr auto For(Function&& f)
     For<0, iend>(std::forward<Function>(f));
 }
 
+/// Generate evaluation statements `f(arg0); f(arg1); ...; f(argn);` at compile time.
+template<typename Function>
+constexpr auto ForEach(Function const& f) -> void
+{
+}
+
+/// Generate evaluation statements `f(arg0); f(arg1); ...; f(argn);` at compile time.
+template<typename Function, typename Arg, typename... Args>
+constexpr auto ForEach(Function const& f, Arg const& arg, Args const&... args) -> void
+{
+    f(arg);
+    ForEach(f, args...);
+}
+
 } // namespace Reaktoro
