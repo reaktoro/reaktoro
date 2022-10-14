@@ -25,14 +25,31 @@ using namespace Reaktoro;
 
 namespace rkt4py {
 
-/// Creates a Phases object with given database and list of arguments expected to be Phase-like objects.
-extern auto createPhases(Database const& db, py::args gphases) -> Phases;
-
-/// Creates a ChemicalSystem object with given database and list of arguments expected to be Phase-like objects.
-auto createChemicalSystem(Database const& db, py::args gphases) -> ChemicalSystem
+/// Create a ChemicalSystem object with given database and a list of phase and reaction convertible objects.
+auto createChemicalSystem(Database const& db, py::args args) -> ChemicalSystem
 {
-    return ChemicalSystem(createPhases(db, gphases));
-};
+    Phases phases(db);
+    Reactions reactions;
+
+    for(auto const& arg : args)
+    {
+        try { phases.add(arg.cast<GenericPhase const&>()); }
+        catch(...) {
+            try { phases.add(arg.cast<GenericPhasesGenerator const&>()); }
+            catch(...) {
+                try { reactions.add(arg.cast<ReactionGenerator>()); }
+                catch(...) {
+                    try { reactions.add(arg.cast<const Reaction&>()); }
+                    catch(...) {
+                        errorif(true, "Could not create a ChemicalSystem object because the given argument below is not supported:\n", py::str(arg));
+                    }
+                }
+            }
+        }
+    }
+
+    return ChemicalSystem(phases, reactions);
+}
 
 } // namespace rkt4py
 
