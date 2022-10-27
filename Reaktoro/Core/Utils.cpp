@@ -195,5 +195,15 @@ auto extractNames(const PhaseList& list) -> Strings
     return vectorize(list, RKT_LAMBDA(x, x.name()));
 }
 
+auto isChargeBalanced(const Reaction& reaction) -> bool
+{
+    return true; // replace by code
+}
+
+auto isElementBalanced(const Reaction& reaction) -> bool
+{
+    return true; // replace by code
+}
+
 } // namespace detail
 } // namespace Reaktoro

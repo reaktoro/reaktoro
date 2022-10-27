@@ -20,6 +20,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
+#include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Core/Utils.hpp>
 using namespace Reaktoro;
 
@@ -147,4 +148,19 @@ TEST_CASE("Testing CoreUtils", "[CoreUtils]")
             CHECK(A_min.row(i) == A_min_expected.row(i));
     }
 
+    SECTION("Testing isChargeBalanced and isElementBalanced for reactions")
+    {
+        auto reaction1 = Reaction().withEquation("H2O = H+ + OH-");
+        auto reaction2 = Reaction().withEquation("Fe+2 = Fe+3 + e-");
+        auto reaction3 = Reaction().withEquation("Fe+2 = Fe+3 + SiO2");
+
+        CHECK( detail::isChargeBalanced(reaction1) );
+        CHECK( detail::isChargeBalanced(reaction2) );
+
+        CHECK( detail::isElementBalanced(reaction1) );
+        CHECK( detail::isElementBalanced(reaction2) );
+
+        CHECK_FALSE( detail::isChargeBalanced(reaction3) );
+        CHECK_FALSE( detail::isElementBalanced(reaction3) );
+    }
 }

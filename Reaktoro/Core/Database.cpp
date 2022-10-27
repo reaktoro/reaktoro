@@ -30,6 +30,7 @@ CMRC_DECLARE(ReaktoroDatabases);
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Core/Support/DatabaseParserYAML.hpp>
+#include <Reaktoro/Core/Utils.hpp>
 
 namespace Reaktoro {
 
@@ -113,7 +114,13 @@ struct Database::Impl
         Pairs<Species, double> reactants;
         for(const auto [name, coeff] : pairs)
             reactants.emplace_back(species.get(name), coeff);
-        return Reaction().withEquation(reactants);
+
+        auto reaction = Reaction().withEquation(reactants);
+
+        warningif(!detail::isChargeBalanced(reaction), "Given reaction equation `", equation, "` is not stoichiometrically balanced in terms of electric charge.");
+        warningif(!detail::isElementBalanced(reaction), "Given reaction equation `", equation, "` is not stoichiometrically balanced in terms of elements.");
+
+        return reaction;
     }
 };
 
