@@ -398,20 +398,20 @@ public:
     /// Return the indices of species that contain one or more strictly unstable elements.
     auto indicesStrictlyUnstableSpecies() const -> ArrayXlConstRef;
 
-    /// Return the chemical potentials of the elements in the equilibrium state (in unit of J/mol).
+    /// Return the chemical potentials of the elements in the equilibrium state (normalized by *RT*).
     auto elementChemicalPotentials() const -> ArrayXdConstRef;
 
-    /// Return the stabilities of the chemical species in the equilibrium state (in unit of J/mol).
+    /// Return the stabilities of the chemical species in the equilibrium state (normalized by *RT*).
     /// These are the slack variables with respect to bound constraints on the
     /// amounts of the species in a chemical equilibrium calculation. They can
     /// be interpreted as measures of stability of a species at equilibrium,
     /// with values closer to zero meaning more stable and away from the bounds.
     auto speciesStabilities() const -> ArrayXdConstRef;
 
-    /// Return the amounts of the explicit titrants in the equilibrium state (in unit of mol).
+    /// Return the amounts of the explicit titrants in the equilibrium state (in mol).
     auto explicitTitrantAmounts() const -> ArrayXdConstRef;
 
-    /// Return the amounts of the implicit titrants in the equilibrium state (in unit of mol).
+    /// Return the amounts of the implicit titrants in the equilibrium state (in mol).
     auto implicitTitrantAmounts() const -> ArrayXdConstRef;
 
     /// Return the names of the input variables used in the equilibrium calculation.
