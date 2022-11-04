@@ -28,7 +28,7 @@ function(ReaktoroFindPackage package)
     set(${ARGV0}_DIR ${${ARGV0}_DIR} PARENT_SCOPE)  # export to parent (e.g., Eigen3_DIR)
 endfunction()
 
-ReaktoroFindPackage(autodiff 0.6.0)
+ReaktoroFindPackage(autodiff 0.6.12)
 ReaktoroFindPackage(Eigen3 3.3.90)
 ReaktoroFindPackage(nlohmann_json 3.6.1)
 ReaktoroFindPackage(Optima 0.2.3)
