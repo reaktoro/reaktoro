@@ -30,12 +30,12 @@ target_include_directories(Reaktoro
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE Reaktoro::Databases
+    PRIVATE tabulate::tabulate
     PUBLIC Eigen3::Eigen
     PUBLIC autodiff::autodiff
     PUBLIC Optima::Optima
     PUBLIC nlohmann_json::nlohmann_json
     PUBLIC phreeqc4rkt::phreeqc4rkt
-    PUBLIC tabulate::tabulate
     PUBLIC ThermoFun::ThermoFun
     PUBLIC yaml-cpp
 )
