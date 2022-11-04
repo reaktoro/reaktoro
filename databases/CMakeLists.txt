@@ -7,3 +7,7 @@ cmrc_add_resource_library(ReaktoroDatabases
     PREFIX databases
     ${FILES}
 )
+
+# Set some target properties
+set_target_properties(ReaktoroDatabases PROPERTIES
+    POSITION_INDEPENDENT_CODE ON)
