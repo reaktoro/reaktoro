@@ -6,14 +6,14 @@ channels:
   - conda-forge
 
 dependencies:
-  - autodiff>=0.6.8
+  - autodiff >=0.6.12
   - catch2=2
   - ccache  # [unix]
   - clangxx_osx-64  # [osx]
   - clcache  # [win]
   - cmake
   - cpp-tabulate
-  - doxygen=1.9.1  # [linux]
+  - doxygen =1.9.1  # [linux]
   - eigen4rkt
   - fire
   - git
@@ -25,7 +25,7 @@ dependencies:
   - nlohmann_json
   - numpy
   - openlibm
-  - optima>=0.2.6
+  - optima >=0.2.11
   - pandas
   - phreeqc4rkt
   - pip
@@ -35,8 +35,8 @@ dependencies:
   - pytest
   - pytest-regressions
   - pytest-xdist
-  - python={{ python_version }}
-  - thermofun==0.3.8
+  - python ={{ python_version }}
+  - thermofun =0.3.8
   - vs2019_win-64  # [win]
   - yaml-cpp4rkt
   - pip:
