@@ -34,7 +34,7 @@ ReaktoroFindPackage(nlohmann_json 3.6.1)
 ReaktoroFindPackage(Optima 0.2.11)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1)
 ReaktoroFindPackage(tabulate 1.4.0)
-ReaktoroFindPackage(ThermoFun 0.3.7)
+ReaktoroFindPackage(ThermoFun 0.3.8)
 ReaktoroFindPackage(yaml-cpp 0.6.3)
 
 if(REAKTORO_BUILD_TESTS)
