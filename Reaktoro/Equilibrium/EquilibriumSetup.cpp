@@ -18,6 +18,7 @@
 #include "EquilibriumSetup.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Core/Utils.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -139,10 +140,13 @@ struct EquilibriumSetup::Impl
     /// Assemble the coefficient matrix `Aex` in optimization problem.
     auto assembleMatrixAex() const -> MatrixXd
     {
+
         MatrixXd Aex = zeros(Nb, Nx);
+        //MatrixXd Aex = zeros(Nb + 1, Nx); // extending Aex matrix by the line corresponding to zero charge of the aqueous phase
 
         auto Wn = Aex.topLeftCorner(Nb, Nn);  // the formula matrix of the species
         auto Wq = Aex.topRightCorner(Nb, Nq); // the formula matrix of the implicit titrants
+        //auto Wz = Aex.bottomLeftCorner(1, dims.Nn);  // the formula matrix of the zero-charge aqueous phase
 
         Wn = system.formulaMatrix();
 
