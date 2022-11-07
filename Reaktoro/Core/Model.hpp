@@ -106,7 +106,7 @@ public:
     /// `Model(ModelCalculator<real(real,real)>([](real T, real P) { return A + B*T + C*T*P; }))`
     /// can be replaced with `Model([](real T, real P) { return A + B*T + C*T*P; })`.
     /// @param f A model evaluator or a model calculator function.
-    template<typename Fun, EnableIf<!isFunction<Fun>>...>
+    template<typename Fun, Requires<!isFunction<Fun>> = true>
     Model(const Fun& f)
     : Model(std::function(f))
     // : Model(asFunction(f))

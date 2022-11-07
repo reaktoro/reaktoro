@@ -125,15 +125,15 @@ inline auto operator-(const Param& p, const Param& q) { return p.value() - q.val
 inline auto operator*(const Param& p, const Param& q) { return p.value() * q.value(); }
 inline auto operator/(const Param& p, const Param& q) { return p.value() / q.value(); }
 
-template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const Param& p, const T& x) { return p.value() + x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const Param& p, const T& x) { return p.value() - x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const Param& p, const T& x) { return p.value() * x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const Param& p, const T& x) { return p.value() / x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator+(const Param& p, const T& x) { return p.value() + x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator-(const Param& p, const T& x) { return p.value() - x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator*(const Param& p, const T& x) { return p.value() * x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator/(const Param& p, const T& x) { return p.value() / x; }
 
-template<typename T, EnableIf<isNumeric<T>>...> auto operator+(const T& x, const Param& p) { return x + p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator-(const T& x, const Param& p) { return x - p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator*(const T& x, const Param& p) { return x * p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator/(const T& x, const Param& p) { return x / p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator+(const T& x, const Param& p) { return x + p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator-(const T& x, const Param& p) { return x - p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator*(const T& x, const Param& p) { return x * p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator/(const T& x, const Param& p) { return x / p.value(); }
 
 } // namespace Reaktoro
 
@@ -150,19 +150,19 @@ inline auto operator> (const Param& p, const Param& q) { return p.value()  > q.v
 inline auto operator<=(const Param& p, const Param& q) { return p.value() <= q.value(); }
 inline auto operator>=(const Param& p, const Param& q) { return p.value() >= q.value(); }
 
-template<typename T, EnableIf<isNumeric<T>>...> auto operator==(const Param& p, const T& x) { return p.value() == x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator!=(const Param& p, const T& x) { return p.value() != x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator< (const Param& p, const T& x) { return p.value()  < x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const Param& p, const T& x) { return p.value()  > x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const Param& p, const T& x) { return p.value() <= x; }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const Param& p, const T& x) { return p.value() >= x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator==(const Param& p, const T& x) { return p.value() == x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator!=(const Param& p, const T& x) { return p.value() != x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator< (const Param& p, const T& x) { return p.value()  < x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator> (const Param& p, const T& x) { return p.value()  > x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator<=(const Param& p, const T& x) { return p.value() <= x; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator>=(const Param& p, const T& x) { return p.value() >= x; }
 
-template<typename T, EnableIf<isNumeric<T>>...> auto operator==(const T& x, const Param& p) { return x == p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator!=(const T& x, const Param& p) { return x != p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator< (const T& x, const Param& p) { return x  < p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator> (const T& x, const Param& p) { return x  > p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator<=(const T& x, const Param& p) { return x <= p.value(); }
-template<typename T, EnableIf<isNumeric<T>>...> auto operator>=(const T& x, const Param& p) { return x >= p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator==(const T& x, const Param& p) { return x == p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator!=(const T& x, const Param& p) { return x != p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator< (const T& x, const Param& p) { return x  < p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator> (const T& x, const Param& p) { return x  > p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator<=(const T& x, const Param& p) { return x <= p.value(); }
+template<typename T, Requires<isNumeric<T>> = true> auto operator>=(const T& x, const Param& p) { return x >= p.value(); }
 
 } // namespace Reaktoro
 

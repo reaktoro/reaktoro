@@ -165,7 +165,7 @@ auto memoize(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
 }
 
 /// Return a memoized version of given function `f`.
-template<typename Fun, EnableIf<!isFunction<Fun>>...>
+template<typename Fun, Requires<!isFunction<Fun>> = true>
 auto memoize(Fun f)
 {
     return memoize(asFunction(f));
@@ -191,7 +191,7 @@ auto memoizeLast(Fn<Ret(Args...)> f) -> Fn<Ret(Args...)>
 }
 
 /// Return a memoized version of given function `f` that caches only the arguments used in the last call.
-template<typename Fun, EnableIf<!isFunction<Fun>>...>
+template<typename Fun, Requires<!isFunction<Fun>> = true>
 auto memoizeLast(Fun f)
 {
     return memoizeLast(asFunction(f));
@@ -223,7 +223,7 @@ auto memoizeLastUsingRef(Fn<void(RetRef, Args...)> f) -> Fn<void(RetRef, Args...
 /// Return a memoized version of given function `f` that caches only the arguments used in the last call./// Return a memoized version of given function `f` that caches only the arguments used in the last call.
 /// This overload is used when `f` is a lambda function or free function.
 /// Use `memoizeLastUsingRef<Ret>(f)` to explicitly specify the `Ret` type.
-template<typename Ret, typename Fun, EnableIf<!isFunction<Fun>>...>
+template<typename Ret, typename Fun, Requires<!isFunction<Fun>> = true>
 auto memoizeLastUsingRef(Fun f)
 {
     return memoizeLastUsingRef<Ret>(asFunction(f));
@@ -240,7 +240,7 @@ auto memoizeLastUsingRef(Fn<void(Ret&, Args...)> f) -> Fn<void(Ret&, Args...)>
 /// Return a memoized version of given function `f` that caches only the arguments used in the last call.
 /// This overload is used when `f` is a lambda function or free function.
 /// Use `memoizeLastUsingRef(f)` to implicitly specify that `RetRef` is `Ret&`.
-template<typename Fun, EnableIf<!isFunction<Fun>>...>
+template<typename Fun, Requires<!isFunction<Fun>> = true>
 auto memoizeLastUsingRef(Fun f)
 {
     return memoizeLastUsingRef(asFunction(f));
