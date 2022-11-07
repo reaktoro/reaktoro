@@ -231,7 +231,7 @@ auto sum(std::size_t iend, const Function& f)
 }
 
 /// Return the sum `f(inds[0]) + ... + f(inds[inds.size() - 1])` for a given function `f`.
-template<typename Indices, typename Function, EnableIf<!isArithmetic<Indices>>...>
+template<typename Indices, typename Function, Requires<!isArithmetic<Indices>> = true>
 auto sum(const Indices& inds, const Function& f)
 {
     using T = std::invoke_result_t<Function, std::size_t>;

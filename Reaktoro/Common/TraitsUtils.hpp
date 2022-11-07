@@ -26,6 +26,9 @@ namespace Reaktoro {
 template<bool value>
 using EnableIf = std::enable_if_t<value>;
 
+template<bool value>
+using Requires = std::enable_if_t<value, bool>;
+
 template<typename T>
 using Decay = std::decay_t<T>;
 
