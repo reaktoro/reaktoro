@@ -74,7 +74,7 @@ public:
     auto rateModel() const -> ReactionRateModel const&;
 
     /// Convert this GeneralReaction object into a vector of a single Reaction object (for compatibility with ReactionGenerator).
-    auto operator()(SpeciesList const& species) const -> Vec<Reaction>;
+    auto operator()(SpeciesList const& species) const -> Reaction;
 
 private:
     /// The name of the reaction.
@@ -95,32 +95,35 @@ public:
     /// Construct a Reactions object.
     Reactions();
 
-    /// Construct a Reactions object with given reaction generators.
-    /// @param reaction_generators The ReactionGenerator objects that will be converted into Reaction objects.
-    template<typename... ReactionGenerators>
-    Reactions(const ReactionGenerators&... reaction_generators)
+    /// Construct a Reactions object with given Reaction, GeneralReaction, or ReactionGenerator objects.
+    /// @param reactions The objects of type Reaction, GeneralReaction, or ReactionGenerator.
+    template<typename... ReactionConvertible>
+    Reactions(const ReactionConvertible&... reactions)
     {
-        static_assert(sizeof...(reaction_generators) > 0);
-        addAux(reaction_generators...);
+        static_assert(sizeof...(reactions) > 0);
+        addAux(reactions...);
     }
 
     /// Add a reaction generator into the Reactions container.
     template<typename T>
     auto add(T const& item) -> void
     {
-        static_assert(isConvertible<T, ReactionGenerator> || isConvertible<T, Reaction>);
+        static_assert(
+            isConvertible<T, Reaction> ||
+            isConvertible<T, GeneralReaction> ||
+            isConvertible<T, ReactionGenerator>);
 
-        if constexpr(isConvertible<T, ReactionGenerator>)
+        if constexpr(isConvertible<T, Reaction>)
         {
-            reaction_generators.push_back([=](SpeciesList const& species) -> Vec<Reaction> {
-                return item(species); // item is a ReactionGenerator object
-            });
+            reaction_generators.push_back([=](SpeciesList const& species) -> Vec<Reaction> { return { item }; }); // item is a Reaction object
+        }
+        else if constexpr(isConvertible<T, GeneralReaction>)
+        {
+            reaction_generators.push_back([=](SpeciesList const& species) -> Vec<Reaction> { return { item(species) }; }); // item is a GeneralReaction object; use operator()(SpeciesList) to convert to Reaction
         }
         else
         {
-            reaction_generators.push_back([=](SpeciesList const& species) -> Vec<Reaction> {
-                return { Reaction(item) }; // item is convertible to Reaction object
-            });
+            reaction_generators.push_back(item); // item is already a ReactionGenerator
         }
     }
 
