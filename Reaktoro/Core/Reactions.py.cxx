@@ -39,36 +39,44 @@ void exportReactions(py::module& m)
         .def("__call__", &GeneralReaction::operator(), "Convert this GeneralReaction object into a vector of a single Reaction object.")
         ;
 
+    auto add = [](Reactions& self, py::object generator)
+    {
+        try { self.add(generator.cast<Reaction const&>()); }
+        catch(...)
+        {
+            try { self.add(generator.cast<GeneralReaction const&>()); }
+            catch(...)
+            {
+                try { self.add(generator.cast<ReactionGenerator>()); }
+                catch(...)
+                {
+                    errorif(true, "Could not add reaction generator object to Reactions object:\n", py::str(generator));
+                }
+            }
+        }
+    };
+
     auto createReactions = [](py::args reaction_generators)
     {
         Reactions reactions;
         for(auto generator : reaction_generators)
         {
-            try { reactions.add(generator.cast<ReactionGenerator>()); }
+            try { reactions.add(generator.cast<Reaction const&>()); }
             catch(...)
             {
-                try { reactions.add(generator.cast<const Reaction&>()); }
+                try { reactions.add(generator.cast<GeneralReaction const&>()); }
                 catch(...)
                 {
-                    errorif(true, "Could not create Reactions with reaction generator object:\n", py::str(generator));
+                    try { reactions.add(generator.cast<ReactionGenerator>()); }
+                    catch(...)
+                    {
+                        errorif(true, "Could not create Reactions with reaction generator object:\n", py::str(generator));
+                    }
                 }
             }
         }
 
         return reactions;
-    };
-
-    auto add = [](Reactions& self, py::object generator)
-    {
-        try { self.add(generator.cast<ReactionGenerator>()); }
-        catch(...)
-        {
-            try { self.add(generator.cast<const Reaction&>()); }
-            catch(...)
-            {
-                errorif(true, "Could not add reaction generator object to Reactions object:\n", py::str(generator));
-            }
-        }
     };
 
     py::class_<Reactions>(m, "Reactions")
