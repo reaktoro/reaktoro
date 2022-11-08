@@ -69,16 +69,16 @@ auto GeneralReaction::rateModel() const -> ReactionRateModel const&
     return rate_model;
 }
 
-auto GeneralReaction::operator()(SpeciesList const& species) const -> Vec<Reaction>
+auto GeneralReaction::operator()(SpeciesList const& species) const -> Reaction
 {
     errorif(reaction_name.empty(), "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction name. Use method GeneralReaction::setName to resolve this.");
     errorif(reaction_equation.empty(), "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction equation. Use method GeneralReaction::setEquation to resolve this.");
     errorif(!rate_model.initialized(), "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction rate model. Use method GeneralReaction::setRateModel to resolve this.");
 
-    return { Reaction()
+    return Reaction()
         .withName(reaction_name)
         .withEquation(ReactionEquation(reaction_equation, species))
-        .withRateModel(rate_model) };
+        .withRateModel(rate_model);
 }
 
 Reactions::Reactions()
