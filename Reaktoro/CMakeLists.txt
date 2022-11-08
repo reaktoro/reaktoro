@@ -30,16 +30,15 @@ target_include_directories(Reaktoro
 # Link Reaktoro library against external dependencies
 target_link_libraries(Reaktoro
     PRIVATE Reaktoro::Embedded
+    PRIVATE nlohmann_json::nlohmann_json
     PRIVATE tabulate::tabulate
-    PUBLIC Eigen3::Eigen
+    PRIVATE yaml-cpp
     PUBLIC autodiff::autodiff
     PUBLIC Eigen3::Eigen
-    PUBLIC nlohmann_json::nlohmann_json
     PUBLIC Optima::Optima
     PUBLIC phreeqc4rkt::phreeqc4rkt
     PUBLIC ThermoFun::ThermoFun
     PUBLIC tsl::ordered_map
-    PUBLIC yaml-cpp
 )
 
 # Enable implicit conversion of autodiff::real to double
