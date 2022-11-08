@@ -30,14 +30,14 @@ dependencies:
   - pandas
   - phreeqc4rkt
   - pip
-  - pybind11
+  - pybind11 >=2.10.0
   - pybind11-abi
   - pybind11-stubgen
   - pytest
   - pytest-regressions
   - pytest-xdist
   - python ={{ python_version }}
-  - reaktplot >=0.2.0
+  - reaktplot >=0.3.1
   - thermofun =0.3.8
   - tsl_ordered_map
   - vs2019_win-64  # [win]
