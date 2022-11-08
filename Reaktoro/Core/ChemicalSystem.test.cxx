@@ -292,13 +292,35 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)
     //-------------------------------------------------------------------------
     auto db = test::createDatabase();
-    system = ChemicalSystem(db,
-        AqueousPhase("H2O(aq) H+(aq) OH-(aq) Na+(aq) Cl-(aq)"),
-        GaseousPhase("H2O(g)"),
-        MineralPhase("NaCl(s)"),
-        MineralPhases("CaCO3(s) MgCO3(s) SiO2(s)"));
+
+    AqueousPhase solution("H2O(aq) H+(aq) OH-(aq) Na+(aq) Cl-(aq) CO2(aq) HCO3-(aq) CO3--(aq)");
+    GaseousPhase gases("CO2(g) H2O(g)");
+    MineralPhase mineral("NaCl(s)");
+    MineralPhases minerals("CaCO3(s) MgCO3(s) SiO2(s)");
+
+    system = ChemicalSystem(db, solution, gases, mineral, minerals);
 
     CHECK( system.elements().size() == 8 );
-    CHECK( system.species().size() == 10 );
+    CHECK( system.species().size() == 14 );
     CHECK( system.phases().size() == 6 );
+    CHECK( system.reactions().size() == 0 );
+
+    //-------------------------------------------------------------------------
+    // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases, reactions)
+    //-------------------------------------------------------------------------
+
+    auto zeroratefn = [](ChemicalProps const& props) { return 0.0; };
+
+    auto reaction1 = db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)").withRateModel(zeroratefn);
+    auto reaction2 = db.reaction("CaCO3(s)").withRateModel(zeroratefn);
+
+    auto generalreaction1 = GeneralReaction("CO2(g) = CO2(aq)").setRateModel(zeroratefn);
+    auto generalreaction2 = GeneralReaction("HCO3-(aq) + H+(aq) = CO2(aq) + H2O(aq)").setRateModel(zeroratefn);
+
+    system = ChemicalSystem(db, solution, reaction1, gases, reaction2, mineral, generalreaction1, minerals, generalreaction2);
+
+    CHECK( system.elements().size() == 8 );
+    CHECK( system.species().size() == 14 );
+    CHECK( system.phases().size() == 6 );
+    CHECK( system.reactions().size() == 4 );
 }
