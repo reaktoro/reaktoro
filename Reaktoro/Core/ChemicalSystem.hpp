@@ -171,7 +171,7 @@ auto createChemicalSystem(Database const& db, Args const&... args) -> ChemicalSy
 
     ForEach([&](auto arg) constexpr {
         using T = Decay<decltype(arg)>;
-        constexpr auto isReactionConvertible = isConvertible<T, ReactionGenerator> || isConvertible<T, Reaction>;
+        constexpr auto isReactionConvertible = isConvertible<T, Reaction> || isConvertible<T, GeneralReaction> || isConvertible<T, ReactionGenerator>;
         constexpr auto isPhaseConvertible = isBaseOf<GeneralPhase, T> || isBaseOf<GeneralPhasesGenerator, T>;
 
         static_assert(isReactionConvertible || isPhaseConvertible, "One of the arguments in your list of arguments for the construction of a ChemicalSystem object has a non-convertible type to either reaction or phase.");
