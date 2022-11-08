@@ -45,7 +45,7 @@ class ChemicalSystem;
 template<typename T, typename... Ts>
 constexpr auto _arePhaseOrReactionConvertible()
 {
-    constexpr auto isReactionConvertible = isConvertible<T, ReactionGenerator> || isConvertible<T, Reaction>;
+    constexpr auto isReactionConvertible = isConvertible<T, Reaction> || isConvertible<T, GeneralReaction> || isConvertible<T, ReactionGenerator>;
     constexpr auto isPhaseConvertible = isBaseOf<GeneralPhase, T> || isBaseOf<GeneralPhasesGenerator, T>;
     constexpr auto aux = isPhaseConvertible || isReactionConvertible;
 
