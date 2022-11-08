@@ -45,7 +45,6 @@
 #include <Reaktoro/Common/TypeOp.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Common/Units.hpp>
-#include <Reaktoro/Common/YAML.hpp>
 
 /// @defgroup Common Common
 /// The module in Reaktoro in which methods and classes commonly used in other modules are implemented.
