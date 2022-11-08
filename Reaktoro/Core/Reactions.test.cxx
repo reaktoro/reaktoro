@@ -59,9 +59,9 @@ auto ReactionGeneratorUsingFunction(SpeciesList const& species) -> Vec<Reaction>
 TEST_CASE("Testing Reactions class", "[Reactions]")
 {
     ChemicalSystem system = test::createChemicalSystem();
-    Database db = system.database();
+    ChemicalProps props(system);
 
-    Reactions reactions;
+    Database db = system.database();
 
     Reaction reaction1 = db.reaction("NaCl(s) = Na+(aq) + Cl-(aq)");
     Reaction reaction2 = db.reaction("CaCO3(s)");
@@ -74,29 +74,43 @@ TEST_CASE("Testing Reactions class", "[Reactions]")
     generalreaction1.setRateModel(test::generateRateModel(3.0));
     generalreaction2.setRateModel(test::generateRateModel(4.0));
 
-    reactions.add(reaction1);
-    reactions.add(reaction2);
-    reactions.add(generalreaction1);
-    reactions.add(generalreaction2);
-    reactions.add(test::ReactionGeneratorUsingClass());
-    reactions.add(test::ReactionGeneratorUsingFunction);
+    Reactions reactionsA;
+    reactionsA.add(reaction1);
+    reactionsA.add(reaction2);
+    reactionsA.add(generalreaction1);
+    reactionsA.add(generalreaction2);
+    reactionsA.add(test::ReactionGeneratorUsingClass());
+    reactionsA.add(test::ReactionGeneratorUsingFunction);
 
-    auto converted = reactions.convert(system.species());
+    Reactions reactionsB(
+        reaction1,
+        reaction2,
+        generalreaction1,
+        generalreaction2,
+        test::ReactionGeneratorUsingClass(),
+        test::ReactionGeneratorUsingFunction);
 
-    CHECK( converted.size() == 6 );
+    auto checkReactionsConversion = [&](Reactions const& reactions)
+    {
+        auto converted = reactions.convert(system.species());
 
-    CHECK( String(converted[0].equation()) == "NaCl(s) = Na+(aq) + Cl-(aq)" );
-    CHECK( String(converted[1].equation()) == "CaCO3(s)" );
-    CHECK( String(converted[2].equation()) == "CO2(g) = CO2(aq)" );
-    CHECK( String(converted[3].equation()) == "HCO3-(aq) + H+(aq) = CO2(aq) + H2O(aq)" );
-    CHECK( String(converted[4].equation()) == "H2O(aq) = H+(aq) + OH-(aq)" );
-    CHECK( String(converted[5].equation()) == "H2O(aq) = H2(aq) + 0.5*O2(aq)" );
+        CHECK( converted.size() == 6 );
 
-    ChemicalProps props(system);
-    CHECK( converted[0].rate(props).val() == 1.0 );
-    CHECK( converted[1].rate(props).val() == 2.0 );
-    CHECK( converted[2].rate(props).val() == 3.0 );
-    CHECK( converted[3].rate(props).val() == 4.0 );
-    CHECK( converted[4].rate(props).val() == 5.0 );
-    CHECK( converted[5].rate(props).val() == 6.0 );
+        CHECK( String(converted[0].equation()) == "NaCl(s) = Na+(aq) + Cl-(aq)" );
+        CHECK( String(converted[1].equation()) == "CaCO3(s)" );
+        CHECK( String(converted[2].equation()) == "CO2(g) = CO2(aq)" );
+        CHECK( String(converted[3].equation()) == "HCO3-(aq) + H+(aq) = CO2(aq) + H2O(aq)" );
+        CHECK( String(converted[4].equation()) == "H2O(aq) = H+(aq) + OH-(aq)" );
+        CHECK( String(converted[5].equation()) == "H2O(aq) = H2(aq) + 0.5*O2(aq)" );
+
+        CHECK( converted[0].rate(props).val() == 1.0 );
+        CHECK( converted[1].rate(props).val() == 2.0 );
+        CHECK( converted[2].rate(props).val() == 3.0 );
+        CHECK( converted[3].rate(props).val() == 4.0 );
+        CHECK( converted[4].rate(props).val() == 5.0 );
+        CHECK( converted[5].rate(props).val() == 6.0 );
+    };
+
+    checkReactionsConversion(reactionsA);
+    checkReactionsConversion(reactionsB);
 }
