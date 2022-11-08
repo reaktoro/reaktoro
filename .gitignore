@@ -6,6 +6,7 @@ compile_commands.json
 
 # Files and directories with suffix -ignore
 *-ignore
+*IGNORE*
 
 # Eclipse IDE files
 .settings
