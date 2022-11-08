@@ -37,11 +37,14 @@ auto createChemicalSystem(Database const& db, py::args args) -> ChemicalSystem
         catch(...) {
             try { phases.add(arg.cast<GeneralPhasesGenerator const&>()); }
             catch(...) {
-                try { reactions.add(arg.cast<ReactionGenerator>()); }
+                try { reactions.add(arg.cast<Reaction const&>()); }
                 catch(...) {
-                    try { reactions.add(arg.cast<const Reaction&>()); }
+                    try { reactions.add(arg.cast<GeneralReaction const&>()); }
                     catch(...) {
-                        errorif(true, "Could not create a ChemicalSystem object because the given argument below is not supported:\n", py::str(arg));
+                        try { reactions.add(arg.cast<ReactionGenerator>()); }
+                        catch(...) {
+                            errorif(true, "Could not create a ChemicalSystem object because the given argument below is not supported:\n", py::str(arg));
+                        }
                     }
                 }
             }
