@@ -65,9 +65,6 @@ set_target_properties(Reaktoro PROPERTIES
 
 if(REAKTORO_BUILD_TESTS)
 
-    # Find catch2, which is used as the testing framework for Reaktoro
-    find_package(Catch2 REQUIRED)
-
     # The global path to the databases directory (used below as a compile definition for the C++ tests)
     set(REAKTORO_EMBEDDED_DIR  ${PROJECT_SOURCE_DIR}/embedded)
     set(REAKTORO_DATABASES_DIR ${PROJECT_SOURCE_DIR}/embedded/databases)
@@ -93,9 +90,6 @@ endif()
 #==============================================================================
 
 if(REAKTORO_BUILD_PYTHON)
-
-    # Find pybind11, needed to compile the python bindings
-    find_package(pybind11 REQUIRED)
 
     # Compile Reaktoro *.py.cxx files into a Python module
     pybind11_add_module(reaktoro4py ${CXX_FILES_PY})
