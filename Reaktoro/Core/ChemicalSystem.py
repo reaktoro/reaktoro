@@ -65,16 +65,39 @@ def testChemicalSystem():
          [ 0,  1, -1,  1, -1,  2,  2, -1, -2,  0,  0,  0,  0,  0,  0,  0,  0,  0]]).all()
 
 
-    system = ChemicalSystem(db,
-        AqueousPhase("H2O(aq) H+ OH- Na+ Cl- Ca+2 Mg+2 HCO3- CO3-2 CO2(aq) SiO2(aq)"),
-        GaseousPhase("H2O(g) CO2(g)"),
-        MineralPhase("Halite"),
-        MineralPhase("Calcite"),
-        MineralPhase("Magnesite"),
-        MineralPhase("Dolomite"),
-        MineralPhase("Quartz")
-    )
+    #-------------------------------------------------------------------------
+    # TESTING CONSTRUCTOR: ChemicalSystem(db, phases...)
+    #-------------------------------------------------------------------------
+    solution = AqueousPhase("H2O(aq) H+ OH- Na+ Cl- Ca+2 Mg+2 HCO3- CO3-2 CO2(aq) SiO2(aq)")
+    gases = GaseousPhase("H2O(g) CO2(g)")
+    mineral = MineralPhase("Halite")
+    minerals = MineralPhases("Calcite Magnesite Dolomite Quartz")
+
+    system = ChemicalSystem(db, solution, gases, mineral, minerals)
 
     assert system.elements().size() == 8
     assert system.species().size() == 18
     assert system.phases().size() == 7
+    assert system.reactions().size() == 0
+
+    #-------------------------------------------------------------------------
+    # TESTING CONSTRUCTOR: ChemicalSystem(db, phases, reactions)
+    #-------------------------------------------------------------------------
+
+    def zeroratefn(props: ChemicalProps):
+        return ReactionRate(0.0)
+
+    zeromodel = ReactionRateModel(zeroratefn)
+
+    reaction1 = db.reaction("Halite = Na+ + Cl-").withRateModel(zeromodel)
+    reaction2 = db.reaction("Calcite").withRateModel(zeromodel)
+
+    generalreaction1 = GeneralReaction("CO2(g) = CO2(aq)").setRateModel(zeromodel)
+    generalreaction2 = GeneralReaction("HCO3- + H+ = CO2(aq) + H2O(aq)").setRateModel(zeromodel)
+
+    system = ChemicalSystem(db, solution, reaction1, gases, reaction2, mineral, generalreaction1, minerals, generalreaction2)
+
+    assert system.elements().size() == 8
+    assert system.species().size() == 18
+    assert system.phases().size() == 7
+    assert system.reactions().size() == 4
