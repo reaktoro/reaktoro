@@ -208,9 +208,9 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phase.idealActivityModel() );
     }
 
-    SECTION("Testing bad use of GenericPhase")
+    SECTION("Testing bad use of GeneralPhase")
     {
-        GenericPhase genericphase;
+        GeneralPhase genericphase;
 
         CHECK_THROWS( genericphase.convert(db, {}) ); // no species nor elements provided!
     }
@@ -362,9 +362,9 @@ TEST_CASE("Testing Phases", "[Phases]")
         CHECK( phases[0].idealActivityModel() );
     }
 
-    SECTION("Testing bad use of GenericPhasesGenerator")
+    SECTION("Testing bad use of GeneralPhasesGenerator")
     {
-        GenericPhasesGenerator generator;
+        GeneralPhasesGenerator generator;
 
         CHECK_THROWS( generator.convert(db, {}) ); // no species nor elements provided!
     }
