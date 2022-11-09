@@ -35,6 +35,7 @@ void exportElementalComposition(py::module& m)
         .def("coefficient", &ElementalComposition::coefficient)
         .def("molarMass", &ElementalComposition::molarMass)
         .def("repr", &ElementalComposition::repr)
+        .def("__iter__", [](ElementalComposition const& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         ;
 
     py::implicitly_convertible<Pairs<Element, double>, ElementalComposition>();
