@@ -28,7 +28,7 @@ TEST_CASE("Testing ElementalComposition", "[ElementalComposition]")
     ElementalComposition elements;
 
     //-----------------------------------------------------------------
-    // Testing constructor ElementalComposition(Map<Element, double>)
+    // Testing constructor ElementalComposition(Pairs<Element, double>)
     //-----------------------------------------------------------------
     elements = ElementalComposition({
         { Element("H"), 1.0 },
@@ -60,7 +60,7 @@ TEST_CASE("Testing ElementalComposition", "[ElementalComposition]")
     REQUIRE( elements.repr() == "1:H 2:C 3:O" );
 
     //-----------------------------------------------------------------
-    // Testing constructor ElementalComposition(Map<String, double>)
+    // Testing constructor ElementalComposition(Pairs<String, double>)
     //-----------------------------------------------------------------
     elements = ElementalComposition({
         { Element("Ca"), 4.0 },
