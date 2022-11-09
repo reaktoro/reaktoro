@@ -26,5 +26,30 @@ using namespace Reaktoro;
 
 void exportReactionRateModel(py::module& m)
 {
-    exportModel<ReactionRate, ChemicalProps const&>(m, "ReactionRateModel");
+    // Define a function that will serve as a constructor for a ReactionRateModel object. This
+    // function is special in the sesne that it allow users to define reaction rate models from
+    // Python that return float instead of a ReactionRate object. This custom constructor gets this
+    // float value, encapsulate it into a ReactionRate object, which is returned.
+    auto createReactionRateModel = [](py::function fn)
+    {
+        return [=](ChemicalProps const& props) -> ReactionRate {
+            auto res = fn(props);
+            try { return ReactionRate(res.cast<double>()); }
+            catch(...) {
+                try { return res.cast<ReactionRate>(); }
+                catch(...) {
+                    errorif(true, "Your reaction rate definition does not return a value convertible to float or ReactionRate.");
+                    return {};
+                }
+            }
+        };
+    };
+
+    auto cls = exportModelMethodsOnly<ReactionRate, ChemicalProps const&>(m, "ReactionRateModel")
+        .def(py::init<>())
+        .def(py::init(createReactionRateModel))
+        ;
+
+    py::implicitly_convertible<Fn<double(ChemicalProps const&)>, ReactionRateModel>();
+    py::implicitly_convertible<Fn<ReactionRate(ChemicalProps const&)>, ReactionRateModel>();
 }
