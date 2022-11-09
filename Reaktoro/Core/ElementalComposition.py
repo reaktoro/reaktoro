@@ -17,9 +17,79 @@
 
 
 from reaktoro import *
-import pytest
 
 
-# TODO Implement tests for the python bindings of component ElementalComposition in ElementalComposition[test].py
 def testElementalComposition():
-    pass
+
+    #-----------------------------------------------------------------
+    # Testing constructor ElementalComposition(list[tuple[Element, float]])
+    #-----------------------------------------------------------------
+    elements = ElementalComposition([
+        ( Element("H"), 1.0 ),
+        ( Element("C"), 2.0 ),
+        ( Element("O"), 3.0 ),
+    ])
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.symbols()
+    #-----------------------------------------------------------------
+    assert elements.symbols() == ["H", "C", "O"]
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.coefficients()
+    #-----------------------------------------------------------------
+    assert elements.coefficients() == [1.0, 2.0, 3.0]
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.coefficient()
+    #-----------------------------------------------------------------
+    assert elements.coefficient("H") == 1.0
+    assert elements.coefficient("C") == 2.0
+    assert elements.coefficient("O") == 3.0
+    assert elements.coefficient("X") == 0.0
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.repr()
+    #-----------------------------------------------------------------
+    assert elements.repr() == "1:H 2:C 3:O"
+
+    #-----------------------------------------------------------------
+    # Testing constructor ElementalComposition(list[tuple[Element, float]])
+    #-----------------------------------------------------------------
+    elements = ElementalComposition([
+        ( Element("Ca"), 4.0 ),
+        ( Element("Mg"), 5.0 ),
+        ( Element("F"),  6.0 ),
+    ])
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.symbols()
+    #-----------------------------------------------------------------
+    assert elements.symbols() == ["Ca", "Mg", "F"]
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.coefficients()
+    #-----------------------------------------------------------------
+    assert elements.coefficients() == [4.0, 5.0, 6.0]
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.coefficient()
+    #-----------------------------------------------------------------
+    assert elements.coefficient("Ca") == 4.0
+    assert elements.coefficient("Mg") == 5.0
+    assert elements.coefficient("F")  == 6.0
+    assert elements.coefficient("X")  == 0.0
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.coefficient()
+    #-----------------------------------------------------------------
+    assert elements.coefficient("Ca") == 4.0
+    assert elements.coefficient("Mg") == 5.0
+    assert elements.coefficient("F")  == 6.0
+    assert elements.coefficient("X")  == 0.0
+
+    #-----------------------------------------------------------------
+    # Testing method ElementalComposition.__iter__
+    #-----------------------------------------------------------------
+    for element, coefficient in elements:
+        assert elements.coefficient(element.symbol()) == coefficient
