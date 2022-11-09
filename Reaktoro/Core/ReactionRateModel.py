@@ -17,9 +17,28 @@
 
 
 from reaktoro import *
-import pytest
 
 
-# TODO Implement tests for the python bindings of component ReactionRateModel in ReactionRateModel[test].py
 def testReactionRateModel():
-    pass
+
+    db = SupcrtDatabase("supcrtbl")
+
+    phases = Phases(db)
+    phases.add( AqueousPhase("H2O(aq)") )
+
+    system = ChemicalSystem(phases)
+    props = ChemicalProps(system)
+
+    # Define a rate function that returns a ReactionRate object
+    def ratefn1(props: ChemicalProps) -> ReactionRate:
+        return ReactionRate(1.23)
+
+    # Define a rate function that returns a float value
+    def ratefn2(props: ChemicalProps) -> float:
+        return 2.34
+
+    model1 = ReactionRateModel(ratefn1)
+    model2 = ReactionRateModel(ratefn2)
+
+    assert model1(props).value() == 1.23
+    assert model2(props).value() == 2.34
