@@ -22,19 +22,38 @@
 #include <Reaktoro/Core/Model.hpp>
 using namespace Reaktoro;
 
+/// Export a Model to Python. This method only exports the methods in class Model. This is useful in
+/// case you want to attach custom constructors that work differently from Python.
+template<typename Result, typename... Args>
+auto exportModelMethodsOnly(py::module& m, const char* modelname)
+{
+    using ResultRef = Ref<Result>;
+    using ModelType = Model<Result(Args...)>;
+
+    return py::class_<ModelType>(m, modelname)
+        .def("params", &ModelType::params, return_internal_ref)
+        .def("apply", &ModelType::apply)
+        .def("__call__", py::overload_cast<const Args&...>(&ModelType::operator(), py::const_))
+        .def("__call__", py::overload_cast<ResultRef, const Args&...>(&ModelType::operator(), py::const_))
+        ;
+}
+
+/// Export a Model to Python, including methods and constructors.
 template<typename Result, typename... Args>
 auto exportModel(py::module& m, const char* modelname)
 {
     using ResultRef = Ref<Result>;
     using ModelType = Model<Result(Args...)>;
 
-    return py::class_<ModelType>(m, modelname)
+    auto cls = exportModelMethodsOnly<Result, Args...>(m, modelname)
         .def(py::init<>())
-        // .def(py::init<const Fn<void(ResultRef, Args...)>&>())  // At the moment, only one possibility of function call is possible.
         .def(py::init<const Fn<Result(Args...)>&>())
-        .def("params", &ModelType::params, return_internal_ref)
-        .def("apply", &ModelType::apply)
-        .def("__call__", py::overload_cast<const Args&...>(&ModelType::operator(), py::const_))
-        .def("__call__", py::overload_cast<ResultRef, const Args&...>(&ModelType::operator(), py::const_))
         ;
+
+    // At the moment, the other constructor overload is not possible:
+    // .def(py::init<const Fn<void(ResultRef, Args...)>&>())
+
+    py::implicitly_convertible<Fn<Result(Args...)>, ModelType>();
+
+    return cls;
 }
