@@ -140,8 +140,8 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( aqprops.elementMolality("Cl") == Approx(388.559) );
         CHECK( aqprops.elementMolality("Ca") == Approx(111.017) );
 
-        // Check saturation indices of the non-aqueous species
-        auto lnOmega = aqprops.saturationIndicesLn();
+        // Check saturation ratios of the non-aqueous species
+        auto lnOmega = aqprops.saturationRatiosLn();
 
         CHECK( lnOmega[0]  == Approx(-1.474090) );
         CHECK( lnOmega[1]  == Approx(-1.447940) );
@@ -171,7 +171,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         aqprops.setActivityModel("CaMg(CO3)2(s)", ActivityModelIdealSolution(StateOfMatter::Solid));
         aqprops.setActivityModel("SiO2(s)"      , ActivityModelIdealSolution(StateOfMatter::Solid));
 
-        lnOmega = aqprops.saturationIndicesLn();
+        lnOmega = aqprops.saturationRatiosLn();
 
         CHECK( lnOmega[0]  == Approx(0.031383400) );
         CHECK( lnOmega[1]  == Approx(0.052984200) );
@@ -185,13 +185,11 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         CHECK( lnOmega[9]  == Approx(0.102009000) );
         CHECK( lnOmega[10] == Approx(0.049714300) );
 
-        CHECK( aqprops.saturationIndexLn(5) == Approx(0.000339846) );
-        CHECK( aqprops.saturationIndexLg(5) == Approx(0.000339846/ln10) );
-        CHECK( aqprops.saturationIndex(5)   == Approx(exp(0.000339846)) );
+        CHECK( aqprops.saturationRatio(5)       == Approx(exp(0.000339846)) );
+        CHECK( aqprops.saturationRatio("CO(g)") == Approx(exp(0.000339846)) );
 
-        CHECK( aqprops.saturationIndexLn("CO(g)") == Approx(0.000339846) );
-        CHECK( aqprops.saturationIndexLg("CO(g)") == Approx(0.000339846/ln10) );
-        CHECK( aqprops.saturationIndex("CO(g)")   == Approx(exp(0.000339846)) );
+        CHECK( aqprops.saturationIndex(5)       == Approx(0.000339846/ln10) );
+        CHECK( aqprops.saturationIndex("CO(g)") == Approx(0.000339846/ln10) );
     }
 
     SECTION("Testing when state is a brine")

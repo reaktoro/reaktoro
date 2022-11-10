@@ -32,6 +32,7 @@ using namespace tabulate;
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Warnings.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalPropsPhase.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
@@ -372,7 +373,7 @@ struct AqueousProps::Impl
         return {};
     }
 
-    auto saturationIndexLn(const StringOrIndex& species) const -> real
+    auto saturationRatioLn(const StringOrIndex& species) const -> real
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
         errorif(i >= nonaqueous.size(), "It was not possible to calculate the "
@@ -386,7 +387,7 @@ struct AqueousProps::Impl
         return lnOmegai;
     }
 
-    auto saturationIndicesLn() const -> ArrayXr
+    auto saturationRatiosLn() const -> ArrayXr
     {
         const auto RT = universalGasConstant * props.temperature();
         const auto num_nonaqueous = nonaqueous.size();
@@ -521,32 +522,32 @@ auto AqueousProps::saturationSpecies() const -> SpeciesList
 
 auto AqueousProps::saturationIndex(const StringOrIndex& species) const -> real
 {
-    return exp(pimpl->saturationIndexLn(species));
-}
-
-auto AqueousProps::saturationIndexLn(const StringOrIndex& species) const -> real
-{
-    return pimpl->saturationIndexLn(species);
-}
-
-auto AqueousProps::saturationIndexLg(const StringOrIndex& species) const -> real
-{
-    return pimpl->saturationIndexLn(species) / ln10;
+    warningif(Warnings::isEnabled(525),
+        "Hey, if you were using method saturationIndex in AqueousProps class before to "
+        "compute IAP/K, please use the newly added saturationRatio method instead, "
+        "because saturationIndex now computes log10(IAP/K) and not IAP/K.\n"
+        "Disable this temporary warning by executing `Warnings.disable(525)` in Python or `Warnings::disable(525);` in C++. ");
+    return pimpl->saturationRatioLn(species) / ln10;
 }
 
 auto AqueousProps::saturationIndices() const -> ArrayXr
 {
-    return saturationIndicesLn().exp();
+    return pimpl->saturationRatiosLn() / ln10; // in log10 scale
 }
 
-auto AqueousProps::saturationIndicesLn() const -> ArrayXr
+auto AqueousProps::saturationRatio(const StringOrIndex& species) const -> real
 {
-    return pimpl->saturationIndicesLn();
+    return exp(pimpl->saturationRatioLn(species));
 }
 
-auto AqueousProps::saturationIndicesLg() const -> ArrayXr
+auto AqueousProps::saturationRatios() const -> ArrayXr
 {
-    return saturationIndicesLn() / ln10;
+    return pimpl->saturationRatiosLn().exp();
+}
+
+auto AqueousProps::saturationRatiosLn() const -> ArrayXr
+{
+    return pimpl->saturationRatiosLn();
 }
 
 auto AqueousProps::phase() const -> const Phase&
@@ -565,13 +566,37 @@ auto AqueousProps::output(const String& filename) const -> void
     out << *this;
 }
 
+auto AqueousProps::saturationIndexLn(const StringOrIndex& species) const -> real
+{
+    errorif(true, "Method AqueousProps::saturationIndexLn has been deprecated. Rely on the use of saturationIndex(species) instead.");
+    return {};
+}
+
+auto AqueousProps::saturationIndexLg(const StringOrIndex& species) const -> real
+{
+    errorif(true, "Method AqueousProps::saturationIndexLg has been deprecated. Rely on the use of saturationIndex(species) instead.");
+    return {};
+}
+
+auto AqueousProps::saturationIndicesLn() const -> ArrayXr
+{
+    errorif(true, "Method AqueousProps::saturationIndicesLn has been deprecated. Rely on the use of saturationIndices() instead.");
+    return {};
+}
+
+auto AqueousProps::saturationIndicesLg() const -> ArrayXr
+{
+    errorif(true, "Method AqueousProps::saturationIndicesLg has been deprecated. Rely on the use of saturationIndices() instead.");
+    return {};
+}
+
 auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
 {
     const auto elements = props.phase().elements();
     const auto species = props.phase().species();
     const auto ms = props.speciesMolalities();
     const auto me = props.elementMolalities();
-    const auto lgOmega = props.saturationIndicesLg();
+    const auto lgOmega = props.saturationIndices();
     assert(species.size() == ms.size());
     assert(elements.size() == me.size());
     Table table;

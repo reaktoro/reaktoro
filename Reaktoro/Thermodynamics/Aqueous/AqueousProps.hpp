@@ -124,29 +124,25 @@ public:
     /// could form when the aqueous solution is saturated with respect to them.
     auto saturationSpecies() const -> SpeciesList;
 
-    /// Return the saturation index of a given species.
+    /// Return the saturation index (@eq{\mathrm{SI} \equiv \log \Omega = \log \mathrm{IAP}/K}) of a non-aqueous species.
     /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
     auto saturationIndex(const StringOrIndex& species) const -> real;
-
-    /// Return the saturation index of a given species (in natural log).
-    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
-    auto saturationIndexLn(const StringOrIndex& species) const -> real;
-
-    /// Return the saturation index of a given species (in log base 10).
-    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
-    auto saturationIndexLg(const StringOrIndex& species) const -> real;
 
     /// Return the saturation indices of all non-aqueous species.
     /// These non-aqueous species can be obtained with @ref saturationSpecies.
     auto saturationIndices() const -> ArrayXr;
 
-    /// Return the saturation indices of all non-aqueous species (in natural log).
-    /// These non-aqueous species can be obtained with @ref saturationSpecies.
-    auto saturationIndicesLn() const -> ArrayXr;
+    /// Return the saturation ratio (@eq{\mathrm{SR} \equiv \Omega = \mathrm{IAP}/K}) of a non-aqueous species.
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
+    auto saturationRatio(const StringOrIndex& species) const -> real;
 
-    /// Return the saturation indices of all non-aqueous species (in log base 10).
+    /// Return the saturation ratios of all non-aqueous species.
     /// These non-aqueous species can be obtained with @ref saturationSpecies.
-    auto saturationIndicesLg() const -> ArrayXr;
+    auto saturationRatios() const -> ArrayXr;
+
+    /// Return the saturation ratios of all non-aqueous species (in natural log).
+    /// These non-aqueous species can be obtained with @ref saturationSpecies.
+    auto saturationRatiosLn() const -> ArrayXr;
 
     /// Return the underlying Phase object for the aqueous phase.
     auto phase() const -> const Phase&;
@@ -156,6 +152,29 @@ public:
 
     /// Output the properties of the aqueous phase to a file.
     auto output(const String& filename) const -> void;
+
+    // DEPRECATED METHODS : TO BE REMOVED IN THE NEAR FUTURE
+
+    /// Return the saturation index of a given species (in natural log).
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
+    [[deprecated("Rely on the use of saturationIndex(species) instead.")]]
+    auto saturationIndexLn(const StringOrIndex& species) const -> real;
+
+    /// Return the saturation index of a given species (in log base 10).
+    /// @param species The name or index of the non-aqueous species in the list of species returned by @ref saturationSpecies.
+    [[deprecated("Rely on the use of saturationIndex(species) instead.")]]
+    auto saturationIndexLg(const StringOrIndex& species) const -> real;
+
+    /// Return the saturation indices of all non-aqueous species (in natural log).
+    /// These non-aqueous species can be obtained with @ref saturationSpecies.
+    [[deprecated("Rely on the use of saturationIndices() instead.")]]
+    auto saturationIndicesLn() const -> ArrayXr;
+
+    /// Return the saturation indices of all non-aqueous species (in log base 10).
+    /// These non-aqueous species can be obtained with @ref saturationSpecies.
+    [[deprecated("Rely on the use of saturationIndices() instead.")]]
+    auto saturationIndicesLg() const -> ArrayXr;
+
 
 private:
     struct Impl;

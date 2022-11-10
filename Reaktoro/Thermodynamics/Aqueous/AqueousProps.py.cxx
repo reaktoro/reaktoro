@@ -29,6 +29,11 @@ using namespace Reaktoro;
 
 void exportAqueousProps(py::module& m)
 {
+    auto saturationIndexLn   = [](AqueousProps const& self, StringOrIndex const& species) -> real { errorif(true, "Method AqueousProps::saturationIndexLn has been deprecated. Rely on the use of saturationIndex(species) instead."); return {}; };
+    auto saturationIndexLg   = [](AqueousProps const& self, StringOrIndex const& species) -> real { errorif(true, "Method AqueousProps::saturationIndexLg has been deprecated. Rely on the use of saturationIndex(species) instead."); return {}; };
+    auto saturationIndicesLn = [](AqueousProps const& self) -> real { errorif(true, "Method AqueousProps::saturationIndicesLn has been deprecated. Rely on the use of saturationIndices() instead."); return {}; };
+    auto saturationIndicesLg = [](AqueousProps const& self) -> real { errorif(true, "Method AqueousProps::saturationIndicesLg has been deprecated. Rely on the use of saturationIndices() instead."); return {}; };
+
     py::class_<AqueousProps>(m, "AqueousProps")
         .def(py::init<const ChemicalSystem&>())
         .def(py::init<const ChemicalState&>())
@@ -52,15 +57,21 @@ void exportAqueousProps(py::module& m)
         .def("Eh", &AqueousProps::Eh, "Return the reduction potential of the aqueous phase (in V).")
         .def("alkalinity", &AqueousProps::alkalinity, "Return the total alkalinity of the aqueous phase (in eq/L).")
         .def("saturationSpecies", &AqueousProps::saturationSpecies, "Return the non-aqueous species that could be formed from the aqueous solution.")
-        .def("saturationIndex", &AqueousProps::saturationIndex, "Return the saturation index of a given species.")
-        .def("saturationIndexLn", &AqueousProps::saturationIndexLn, "Return the saturation index of a given species (in natural log).")
-        .def("saturationIndexLg", &AqueousProps::saturationIndexLg, "Return the saturation index of a given species (in log base 10).")
+        .def("saturationIndex", &AqueousProps::saturationIndex, "Return the saturation index SI ≡ log(Ω) = log(IAP/K) of a non-aqueous species.")
         .def("saturationIndices", &AqueousProps::saturationIndices, "Return the saturation indices of all non-aqueous species.")
-        .def("saturationIndicesLn", &AqueousProps::saturationIndicesLn, "Return the saturation indices of all non-aqueous species (in natural log).")
-        .def("saturationIndicesLg", &AqueousProps::saturationIndicesLg, "Return the saturation indices of all non-aqueous species (in log base 10).")
+        .def("saturationRatio", &AqueousProps::saturationRatio, "Return the saturation ratio SR ≡ Ω = IAP/K of a non-aqueous species.")
+        .def("saturationRatios", &AqueousProps::saturationRatios, "Return the saturation ratios of all non-aqueous species.")
+        .def("saturationRatiosLn", &AqueousProps::saturationRatiosLn, "Return the saturation ratios of all non-aqueous species (in natural log).")
         .def("phase", &AqueousProps::phase, return_internal_ref, "Return the underlying Phase object for the aqueous phase.")
         .def("output", py::overload_cast<std::ostream&>(&AqueousProps::output, py::const_), "Output the properties of the aqueous phase to a stream.")
         .def("output", py::overload_cast<const String&>(&AqueousProps::output, py::const_), "Output the properties of the aqueous phase to a file.")
         .def("__repr__", [](const AqueousProps& self) { std::stringstream ss; ss << self; return ss.str(); })
+
+        // DEPRECATED METHODS : TO BE REMOVED IN THE NEAR FUTURE
+
+        .def("saturationIndexLn", saturationIndexLn, "Return the saturation index of a given species (in natural log).")
+        .def("saturationIndexLg", saturationIndexLg, "Return the saturation index of a given species (in log base 10).")
+        .def("saturationIndicesLn", saturationIndicesLn, "Return the saturation indices of all non-aqueous species (in natural log).")
+        .def("saturationIndicesLg", saturationIndicesLg, "Return the saturation indices of all non-aqueous species (in log base 10).")
         ;
 }
