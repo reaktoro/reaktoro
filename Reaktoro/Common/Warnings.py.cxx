@@ -18,27 +18,16 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-void exportConstants(py::module& m);
-void exportInterpolationUtils(py::module& m);
-void exportMemoization(py::module& m);
-void exportParseUtils(py::module& m);
-void exportStringList(py::module& m);
-void exportStringUtils(py::module& m);
-void exportTypes(py::module& m);
-void exportUnits(py::module& m);
-void exportWarnings(py::module& m);
-void exportYAML(py::module& m);
+// Reaktoro includes
+#include <Reaktoro/Common/Warnings.hpp>
+using namespace Reaktoro;
 
-void exportCommon(py::module& m)
+void exportWarnings(py::module& m)
 {
-    exportConstants(m);
-    exportInterpolationUtils(m);
-    exportMemoization(m);
-    exportParseUtils(m);
-    exportStringList(m);
-    exportStringUtils(m);
-    exportUnits(m);
-    exportTypes(m);
-    exportWarnings(m);
-    exportYAML(m);
+    py::class_<Warnings>(m, "Warnings")
+        .def_static("enable", &Warnings::enable, "Enable warning with given id.")
+        .def_static("disable", &Warnings::disable, "Disable warning with given id.")
+        .def_static("isEnabled", &Warnings::isEnabled, "Check if warning with given id is enabled.")
+        .def_static("isDisabled", &Warnings::isDisabled, "Check if warning with given id is disabled.")
+        ;
 }
