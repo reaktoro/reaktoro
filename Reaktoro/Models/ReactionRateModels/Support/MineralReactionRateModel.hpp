@@ -47,7 +47,7 @@ struct MineralReactionRateModelArgs
     /// The pH of the aqueous solution.
     real const& pH;
 
-    /// The saturation index @eq{\Omega = \mathrm{IAP}/K} of the mineral reaction.
+    /// The saturation ratio @eq{\Omega = \mathrm{IAP}/K} of the mineral reaction.
     real const& Omega;
 
     /// The surface area between the mineral and the aqueous solution.
