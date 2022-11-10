@@ -108,7 +108,7 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
     const auto k_neutral = k0_neutral * exp(-E_neutral/R * (1/T - 1/T0));
     const auto k_carbonate = k0_carbonate * exp(-E_carbonate/R * (1/T - 1/T0));
 
-    const auto Omega = aprops.saturationIndex(params.mineral);
+    const auto Omega = aprops.saturationRatio(params.mineral);
 
     const auto pOmega_acid = pow(Omega, params.mechanisms[0].p);
     const auto pOmega_neutral = pow(Omega, params.mechanisms[1].p);
