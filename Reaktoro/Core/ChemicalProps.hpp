@@ -33,6 +33,9 @@ class ChemicalState;
 class ChemicalProps
 {
 public:
+    /// Construct a default uninitialized ChemicalProps object.
+    ChemicalProps();
+
     /// Construct an uninitialized ChemicalProps object with given chemical system.
     explicit ChemicalProps(ChemicalSystem const& system);
 
@@ -477,10 +480,10 @@ private:
     ChemicalSystem msystem;
 
     /// The temperature of the system (in K).
-    real T = 0.0;
+    real T;
 
     /// The pressure of the system (in Pa).
-    real P = 0.0;
+    real P;
 
     /// The amounts of each species in the system (in mol).
     ArrayXr n;
