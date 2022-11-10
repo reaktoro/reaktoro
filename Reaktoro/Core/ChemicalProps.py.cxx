@@ -27,6 +27,7 @@ using namespace Reaktoro;
 void exportChemicalProps(py::module& m)
 {
     py::class_<ChemicalProps>(m, "ChemicalProps")
+        .def(py::init<>())
         .def(py::init<ChemicalSystem const&>())
         .def(py::init<ChemicalState const&>())
         .def("update", py::overload_cast<ChemicalState const&>(&ChemicalProps::update), "Update the chemical properties of the system.")

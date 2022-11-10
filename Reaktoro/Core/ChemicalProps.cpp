@@ -33,6 +33,9 @@ using namespace tabulate;
 
 namespace Reaktoro {
 
+ChemicalProps::ChemicalProps()
+{}
+
 ChemicalProps::ChemicalProps(ChemicalSystem const& system)
 : msystem(system)
 {
