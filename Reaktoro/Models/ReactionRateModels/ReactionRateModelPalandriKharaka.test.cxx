@@ -21,8 +21,8 @@
 // Reaktoro includes
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
+#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
 using namespace Reaktoro;
 
 struct TestingConditions
@@ -41,16 +41,11 @@ TestingConditions conditions3 = { 75.0, 20.0, 1e-1, 9.0, 1.0, 3.2 };
 
 TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelPalandriKharaka]")
 {
-    SupcrtDatabase db("supcrtbl");
-
-    AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
-    GaseousPhase gases("CO2(g) N2(g)");
-    MineralPhase calcite("Calcite");
-
-    Phases phases(db);
-    phases.add(solution);
-    phases.add(gases);
-    phases.add(calcite);
+    TestingConditions conditions = GENERATE(as<TestingConditions>{},
+        conditions1,
+        conditions2,
+        conditions3
+    );
 
     ReactionRateModelParamsPalandriKharaka params;
     params.mineral = "Calcite";
@@ -60,15 +55,14 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
         { "Carbonate", -3.48, 35.4, 1.0, 1.0, {{"CO2", "P", 1.0}} }
     }};
 
-    MineralReactions reactions("Calcite");
-    reactions.setRateModel(ReactionRateModelPalandriKharaka(params));
+    SupcrtDatabase db("supcrtbl");
 
-    ChemicalSystem system(phases, reactions);
-
-    TestingConditions conditions = GENERATE(as<TestingConditions>{},
-        conditions1,
-        conditions2,
-        conditions3
+    ChemicalSystem system(db,
+        AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)"),
+        GaseousPhase("CO2(g) N2(g)"),
+        MineralPhase("Calcite"),
+        MineralReactions("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+        Surface("Calcite").withAreaModel([=](ChemicalProps const&) { return conditions.surface_area; })
     );
 
     ChemicalState state(system);
@@ -82,7 +76,6 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
     state.set("CO2(g)", conditions.pCO2/conditions.pressure, "mol");
     state.set("N2(g)", 1 - conditions.pCO2/conditions.pressure, "mol");
     state.set("Calcite", 1.0, "mol");
-    state.surfaceArea("Calcite", "Calcite", conditions.surface_area, "m2");
 
     ChemicalProps props(state);
 
@@ -92,7 +85,7 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
     const auto P = state.pressure();
     const auto R = universalGasConstant;
 
-    const auto SA = state.surfaceArea("Calcite", "Calcite");
+    const auto SA = conditions.surface_area;
 
     const auto T0 = 298.15;
 
