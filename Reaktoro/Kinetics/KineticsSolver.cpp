@@ -83,7 +83,6 @@ struct KineticsSolver::Impl
     {
         kconditions.temperature(state.temperature());
         kconditions.pressure(state.pressure());
-        kconditions.surfaceAreas(state.surfaceAreas());
         kconditions.setInputVariable(idt, dt);
     }
 

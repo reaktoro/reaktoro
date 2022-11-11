@@ -46,54 +46,14 @@ public:
     /// Initialize this KineticsSensitivity object with given equilibrium problem specifications.
     auto initialize(EquilibriumSpecs const& specs) -> void;
 
-    //============================================================================================
-    // SENSITIVITY DERIVATIVES OF SPECIES AMOUNTS WITH RESPECT TO SURFACE AREAS AND TIME STEP
-    //============================================================================================
-
-    /// Return the derivatives of the species amounts *n* with respect to a surface area in vector *S*.
-    /// @param sid The identifier of the reacting interphase surface (e.g., "AqueousPhase:GaseousPhase", "Calcite").
-    auto dnds(String const& name) const -> VectorXdConstRef;
-
-    /// Return the derivatives of the species amounts *n* with respect to the surface areas in vector *S*.
-    auto dnds() const -> MatrixXdConstRef;
-
     /// Return the derivatives of the species amounts *n* with respect to time step *Δt*.
     auto dnddt() const -> VectorXdConstRef;
-
-    //============================================================================================
-    // SENSITIVITY DERIVATIVES OF p-CONTROL VARIABLES WITH RESPECT TO SURFACE AREAS AND TIME STEP
-    //============================================================================================
-
-    /// Return the derivatives of the *p* control variables with respect to a surface area in vector *S*.
-    /// @param sid The identifier of the reacting interphase surface (e.g., "AqueousPhase:GaseousPhase", "Calcite").
-    auto dpds(String const& name) const -> VectorXdConstRef;
-
-    /// Return the derivatives of the *p* control variables with respect to the surface areas in vector *S*.
-    auto dpds() const -> MatrixXdConstRef;
 
     /// Return the derivatives of the *p* control variables with respect to time step *Δt*.
     auto dpddt() const -> VectorXdConstRef;
 
-    //============================================================================================
-    // SENSITIVITY DERIVATIVES OF q-CONTROL VARIABLES WITH RESPECT TO SURFACE AREAS AND TIME STEP
-    //============================================================================================
-
-    /// Return the derivatives of the *q* control variables with respect to a surface area in vector *S*.
-    /// @param sid The identifier of the reacting interphase surface (e.g., "AqueousPhase:GaseousPhase", "Calcite").
-    auto dqds(String const& name) const -> VectorXdConstRef;
-
-    /// Return the derivatives of the *q* control variables with respect to the input variables *w*.
-    auto dqds() const -> MatrixXdConstRef;
-
     /// Return the derivatives of the *q* control variables with respect to time step *Δt*.
     auto dqddt() const -> VectorXdConstRef;
-
-    //============================================================================================
-    // SENSITIVITY DERIVATIVES OF CHEMICAL PROPERTIES WITH RESPECT TO SURFACE AREAS AND TIME STEP
-    //============================================================================================
-
-    /// Return the sensitivity derivatives of the chemical properties *u* with respect to the surface areas in vector *S*.
-    auto duds() const -> MatrixXdConstRef;
 
     /// Return the sensitivity derivatives of the chemical properties *u* with respect to time step *Δt*.
     auto duddt() const -> VectorXdConstRef;

@@ -41,12 +41,10 @@ ChemicalProps::ChemicalProps(ChemicalSystem const& system)
 {
     const auto N = system.species().size();
     const auto K = system.phases().size();
-    const auto S = system.surfaces().size();
 
     Ts   = ArrayXr::Zero(K);
     Ps   = ArrayXr::Zero(K);
     n    = ArrayXr::Zero(N);
-    s    = ArrayXr::Zero(S);
     nsum = ArrayXr::Zero(K);
     msum = ArrayXr::Zero(K);
     x    = ArrayXr::Zero(N);
@@ -79,25 +77,17 @@ auto ChemicalProps::update(ChemicalState const& state) -> void
     auto const& T = state.temperature();
     auto const& P = state.pressure();
     auto const& n = state.speciesAmounts();
-    auto const& s = state.surfaceAreas();
-    update(T, P, n, s);
+    update(T, P, n);
 }
 
 auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
-    update(T0, P0, n0, s);
-}
-
-auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
-{
     assert(T0 >= 0.0);
     assert(P0 >= 0.0);
     assert(n0.size() == n.size() && (n0 >= 0.0).all());
-    assert(s0.size() == s.size() && (s0 >= 0.0).all());
 
     T = T0;
     P = P0;
-    s = s0;
 
     auto offset = 0;
     for(auto const& [i, phase] : enumerate(msystem.phases()))
@@ -111,12 +101,12 @@ auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0, A
 
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::update(ArrayXdConstRef data) -> void
 {
-    ArraySerialization::deserialize(data, T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    ArraySerialization::deserialize(data, T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::updateIdeal(ChemicalState const& state) -> void
@@ -124,25 +114,17 @@ auto ChemicalProps::updateIdeal(ChemicalState const& state) -> void
     auto const& T = state.temperature();
     auto const& P = state.pressure();
     auto const& n = state.speciesAmounts();
-    auto const& s = state.surfaceAreas();
-    updateIdeal(T, P, n, s);
+    updateIdeal(T, P, n);
 }
 
 auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
-    updateIdeal(T0, P0, n0, s);
-}
-
-auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0, ArrayXrConstRef s0) -> void
-{
     assert(T0 >= 0.0);
     assert(P0 >= 0.0);
     assert(n0.size() == n.size() && (n0 >= 0.0).all());
-    assert(s0.size() == s.size() && (s0 >= 0.0).all());
 
     T = T0;
     P = P0;
-    s = s0;
 
     auto offset = 0;
     for(auto const& [i, phase] : enumerate(msystem.phases()))
@@ -156,22 +138,22 @@ auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef 
 
 auto ChemicalProps::serialize(ArrayStream<real>& stream) const -> void
 {
-    stream.from(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.from(T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::serialize(ArrayStream<double>& stream) const -> void
 {
-    stream.from(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.from(T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
 {
-    stream.to(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.to(T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<double>& stream) -> void
 {
-    stream.to(T, P, n, s, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+    stream.to(T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::system() const -> ChemicalSystem const&
@@ -586,24 +568,21 @@ auto ChemicalProps::speciesStandardHeatCapacitiesConstV() const -> ArrayXr
     return (VP0 == 0.0).select(Cp0, Cp0 + T*VT0*VT0/VP0); // from Cv0 = Cp0 + T*VT0*VT0/VP0
 }
 
-auto ChemicalProps::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
+auto ChemicalProps::surfaceArea(StringOrIndex const& surface) const -> real
 {
+    const auto isurface = detail::resolveSurfaceIndex(msystem, surface);
     const auto numsurfaces = msystem.surfaces().size();
-    const auto isurface = msystem.surfaces().indexWithPhases(phase1, phase2);
-    errorif(isurface >= numsurfaces, "The given surface index, ", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
-    return s[isurface];
+    errorif(isurface >= numsurfaces, "There is no surface in the chemical system with name or index `", stringfy(surface), "`.");
+    return msystem.surface(isurface).area(*this);
 }
 
-auto ChemicalProps::surfaceArea(Index isurface) const -> real
+auto ChemicalProps::surfaceAreas() const -> ArrayXr
 {
-    const auto numsurfaces = msystem.surfaces().size();
-    errorif(isurface >= numsurfaces, "The given surface index, ", isurface, ", is out of bounds. There are only ", numsurfaces, " reacting phase interfaces in the chemical system, automatically determined from provided heterogeneous reactions.");
-    return s[isurface];
-}
-
-auto ChemicalProps::surfaceAreas() const -> ArrayXrConstRef
-{
-    return s;
+    auto const& surfaces = msystem.surfaces();
+    ArrayXr areas(surfaces.size());
+    for(auto const& [i, surface] : enumerate(surfaces))
+        areas[i] = surface.area(*this);
+    return areas;
 }
 
 auto ChemicalProps::molarVolume() const -> real

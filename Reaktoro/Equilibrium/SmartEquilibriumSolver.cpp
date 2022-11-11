@@ -80,7 +80,6 @@ struct SmartEquilibriumSolver::Impl
     {
         conditions.temperature(state.temperature());
         conditions.pressure(state.pressure());
-        conditions.surfaceAreas(state.surfaceAreas());
         return solve(state, conditions);
     }
 

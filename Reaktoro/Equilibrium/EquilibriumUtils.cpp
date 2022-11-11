@@ -85,7 +85,6 @@ auto equilibrate(ChemicalState& state, const EquilibriumRestrictions& restrictio
     EquilibriumConditions conditions(specs);
     conditions.temperature(state.temperature());
     conditions.pressure(state.pressure());
-    conditions.surfaceAreas(state.surfaceAreas());
     conditions.setInitialComponentAmounts(b0);
 
     EquilibriumSolver solver(specs);

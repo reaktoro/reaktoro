@@ -33,7 +33,6 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
     const auto Nn = system.species().size();  // the number of species
     const auto Ne = system.elements().size(); // the number of elements
-    const auto Ns = system.surfaces().size(); // the number of surfaces
     const auto Nb = Ne + 1;                   // the number of elements and charge
 
     EquilibriumSpecs specs(system);
@@ -50,26 +49,13 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         for(auto value : conditions.inputValues() )
             CHECK( std::isnan(value.val()) );
 
-
         conditions.temperature(25.0, "celsius");
         conditions.pressure(1.0, "bar");
         conditions.pH(5.0);
-        conditions.surfaceArea("AqueousPhase:GaseousPhase", 1.0, "m2");
-        conditions.surfaceArea("AqueousPhase:Halite", 2.0e6, "mm2");
-        conditions.surfaceArea("Calcite", 3.0e4, "cm2");
 
-        CHECK( conditions.inputValue("T")                                      == Approx(298.15) );
-        CHECK( conditions.inputValue("P")                                      == Approx(1.0e5) );
-        CHECK( conditions.inputValue("pH")                                     == Approx(5.0) );
-        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:GaseousPhase]") == Approx(1.0) );
-        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:Halite]")       == Approx(2.0) );
-        CHECK( conditions.inputValue("surfaceArea[Calcite]")                   == Approx(3.0) );
-
-        conditions.surfaceAreas(ArrayXr{{4.0, 5.0, 6.0}});
-
-        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:GaseousPhase]") == Approx(4.0) );
-        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:Halite]")       == Approx(5.0) );
-        CHECK( conditions.inputValue("surfaceArea[Calcite]")                   == Approx(6.0) );
+        CHECK( conditions.inputValue("T")  == Approx(298.15) );
+        CHECK( conditions.inputValue("P")  == Approx(1.0e5) );
+        CHECK( conditions.inputValue("pH") == Approx(5.0) );
     }
 
     WHEN("the EquilibriumConditions object holds a default state and inputValuesGetOrCompute is used")
@@ -83,9 +69,6 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         ChemicalState state0(system);
         conditions.temperature(40.0, "celsius");
         conditions.pressure(13.0, "bar");
-        conditions.surfaceArea("AqueousPhase:GaseousPhase", 5.0, "m2");
-        conditions.surfaceArea("AqueousPhase:Halite", 6.0e6, "mm2");
-        conditions.surfaceArea("Calcite", 7.0e4, "cm2");
 
         CHECK_THROWS( conditions.inputValuesGetOrCompute(state0) ); // pH has not yet been specified, and it cannot be fetched from state0
 
@@ -95,12 +78,9 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         conditions.setInputVariables(w);
 
-        CHECK( conditions.inputValue("T")                                      == Approx(273.15 + 40.0) );
-        CHECK( conditions.inputValue("P")                                      == Approx(13.0e5) );
-        CHECK( conditions.inputValue("pH")                                     == Approx(9.0) );
-        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:GaseousPhase]") == Approx(5.0) );
-        CHECK( conditions.inputValue("surfaceArea[AqueousPhase:Halite]")       == Approx(6.0) );
-        CHECK( conditions.inputValue("surfaceArea[Calcite]")                   == Approx(7.0) );
+        CHECK( conditions.inputValue("T")  == Approx(273.15 + 40.0) );
+        CHECK( conditions.inputValue("P")  == Approx(13.0e5) );
+        CHECK( conditions.inputValue("pH") == Approx(9.0) );
     }
 
     WHEN("temperature and pressure are input variables - the Gibbs energy minimization formulation")
@@ -115,7 +95,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 2 );
+        CHECK( conditions.inputValues().size() == 2 );
 
         CHECK( conditions.inputValue("T") ==  50.0 + 273.15 ); // T in K
         CHECK( conditions.inputValue("P") == 100.0 * 1.0e+5 ); // P in Pa
@@ -138,7 +118,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 2 );
+        CHECK( conditions.inputValues().size() == 2 );
 
         CHECK( conditions.inputValue("T") == 40.0 + 273.15 ); // T in K
         CHECK( conditions.inputValue("V") == 2.0 ); // V in m3
@@ -173,7 +153,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 2 );
+        CHECK( conditions.inputValues().size() == 2 );
 
         CHECK( conditions.inputValue("V") == Approx(1.0e-6) ); // V in m3
         CHECK( conditions.inputValue("U") == Approx(1.0e+3) ); // U in J
@@ -219,7 +199,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 3 );
+        CHECK( conditions.inputValues().size() == 3 );
 
         CHECK( conditions.inputValue("T")  == Approx(35.0 + 273.15) ); // T in K
         CHECK( conditions.inputValue("P")  == Approx(23.0 * 1.0e+5) ); // P in Pa
@@ -242,7 +222,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 3 );
+        CHECK( conditions.inputValues().size() == 3 );
 
         CHECK( conditions.inputValue("V")             == Approx(2.3 * 1.0e-3) ); // V in m3
         CHECK( conditions.inputValue("S")             == Approx(1.0e+3) );       // S in J/K
@@ -273,7 +253,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         auto w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 6 );
+        CHECK( conditions.inputValues().size() == 6 );
 
         CHECK( conditions.inputValue("T")  == Approx(60.0 + 273.15) );  // T in K
         CHECK( conditions.inputValue("P")  == Approx(200.0 * 1.0e+6) ); // P in Pa
@@ -306,7 +286,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         VectorXr w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 4 );
+        CHECK( conditions.inputValues().size() == 4 );
 
         CHECK( conditions.inputValue("T")  == 300.0 );      // T in K
         CHECK( conditions.inputValue("P")  == 1e6 );        // P in Pa
@@ -332,7 +312,7 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
 
         w = conditions.inputValues();
 
-        CHECK( conditions.inputValues().size() == Ns + 4 );
+        CHECK( conditions.inputValues().size() == 4 );
 
         CHECK( conditions.inputValue("T")  == 300.0 ); // corresponding to T
         CHECK( conditions.inputValue("P")  == 1e6 );   // corresponding to P

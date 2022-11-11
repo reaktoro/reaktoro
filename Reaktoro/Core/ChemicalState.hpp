@@ -252,58 +252,6 @@ public:
     auto scaleSolidMass(real mass, Chars unit) -> void;
 
     // --------------------------------------------------------------------------------------------
-    // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
-    // --------------------------------------------------------------------------------------------
-
-    /// Set the surface area between two phases.
-    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto setSurfaceAreas(ArrayXrConstRef const& s) -> void;
-
-    /// Set the surface area between two phases.
-    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto setSurfaceAreas(ArrayXdConstRef const& s) -> void;
-
-    /// Set the surface area between two phases.
-    /// @param phase1 The name or index of a phase.
-    /// @param phase2 The name or index of the other phase.
-    /// @param value The surface area between these two phases.
-    /// @param unit The unit of the surface area (must be convertible to m2).
-    auto setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void;
-
-    /// Set the surface area between two phases with given surface name or index.
-    /// @param surface The name or index of the surface.
-    /// @param value The surface area between these two phases.
-    /// @param unit The unit of the surface area (must be convertible to m2).
-    auto setSurfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void;
-
-    /// Set the surface area between two phases.
-    /// @param phase1 The name or index of a phase.
-    /// @param phase2 The name or index of the phase interfacing with the previous one.
-    /// @param value The surface area value.
-    /// @param unit The unit of the surface area (must be convertible to m2).
-    /// @note This method is equivalent to ChemicalState::setSurfaceArea
-    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void;
-
-    /// Set the surface area between two phases with given surface name or index.
-    /// @param surface The name or index of the surface.
-    /// @param value The surface area between these two phases.
-    /// @param unit The unit of the surface area (must be convertible to m2).
-    auto surfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void;
-
-    /// Return the surface area of the interface between two reacting phases (in m2).
-    /// @param phase1 The name or index of a phase.
-    /// @param phase2 The name or index of the phase interfacing with the previous one.
-    /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
-    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real;
-
-    /// Return the surface area of the interface between two reacting phases with given surface name or index (in m2).
-    /// @param surface The name or index of the surface between two phases.
-    auto surfaceArea(StringOrIndex const& surface) const -> real;
-
-    /// Return the areas of all reacting phase interfaces in the system (in m2).
-    auto surfaceAreas() const -> ArrayXrConstRef;
-
-    // --------------------------------------------------------------------------------------------
     // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
     // --------------------------------------------------------------------------------------------
 
@@ -313,25 +261,11 @@ public:
     /// @param n The amounts of the species in the system (in mol)
     auto update(real const& T, real const& P, ArrayXrConstRef const& n) -> void;
 
-    /// Update the chemical state and properties of the system.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto update(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void;
-
     /// Update the chemical state and properties of the system using ideal activity models.
     /// @param T The temperature condition (in K)
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     auto updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n) -> void;
-
-    /// Update the chemical state and properties of the system using ideal activity models.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void;
 
     // --------------------------------------------------------------------------------------------
     // MISCELLANEOUS METHODS
@@ -518,25 +452,20 @@ struct MemoizationTraits<ChemicalState>
     using Type = ChemicalState;
 
     /// The type used instead to cache a ChemicalState object.
-    using CacheType = Tuple<real, real, ArrayXr, ArrayXr>;
+    using CacheType = Tuple<real, real, ArrayXr>;
 
-    auto equal(const Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
+    auto equal(const Tuple<real, real, ArrayXr>& a, ChemicalState const& b)
     {
-        auto const& [T, P, n, S] = a;
-        return
-            T == b.temperature() &&
-            P == b.pressure() &&
-            (n == b.speciesAmounts()).all() &&
-            (S == b.surfaceAreas()).all();
+        auto const& [T, P, n] = a;
+        return T == b.temperature() && P == b.pressure() && (n == b.speciesAmounts()).all();
     }
 
-    auto assign(Tuple<real, real, ArrayXr, ArrayXr>& a, ChemicalState const& b)
+    auto assign(Tuple<real, real, ArrayXr>& a, ChemicalState const& b)
     {
-        auto& [T, P, n, S] = a;
+        auto& [T, P, n] = a;
         T = b.temperature();
         P = b.pressure();
         n = b.speciesAmounts();
-        S = b.surfaceAreas();
     }
 };
 

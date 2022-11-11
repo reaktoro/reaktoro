@@ -134,23 +134,6 @@ public:
 
     //=================================================================================================
     //
-    // METHODS TO SPECIFY SURFACE AREA CONDITIONS
-    //
-    //=================================================================================================
-
-    /// Specify the **surface areas of all reacting phase interfaces** at chemical equilibrium.
-    /// The surface areas that are unknown in the calculation are ignored in this method.
-    /// @param values The area of all surfaces in the system (in m2)
-    auto surfaceAreas(ArrayXrConstRef const& values) -> void;
-
-    /// Specify the **surface area of a reacting phase interface** at chemical equilibrium.
-    /// @param surface The name or index of the surface in the system
-    /// @param value The area of a surface in the system
-    /// @param unit The unit of the surface area value (must be convertible to m2)
-    auto surfaceArea(StringOrIndex const& surface, real const& value, String const& unit="m2") -> void;
-
-    //=================================================================================================
-    //
     // METHODS TO SPECIFY CHEMICAL POTENTIAL CONDITIONS
     //
     //=================================================================================================
@@ -354,10 +337,6 @@ private:
     const Index itemperature_p;           ///< The index of the temperature variable among the *p* control variables.
     const Index ipressure_w;              ///< The index of the pressure variable among the *w* input variables.
     const Index ipressure_p;              ///< The index of the pressure variable among the *p* control variables.
-    const Indices isurface_areas_w;       ///< The indices of the surface area variables among the *w* input variables.
-    const Indices isurface_areas_p;       ///< The indices of the surface area variables among the *p* control variables.
-    const Indices isurface_areas_known;   ///< The indices of the surfaces areas that are known.
-    const Indices isurface_areas_unknown; ///< The indices of the surfaces areas that are unknown.
     ArrayXr w;                            ///< The values of the *w* input variables.
     ArrayXd c0;                           ///< The initial amounts of the conservative components.
     ArrayXd plower;                       ///< The lower bounds for the *p* control variables.

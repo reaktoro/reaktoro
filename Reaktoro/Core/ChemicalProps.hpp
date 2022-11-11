@@ -52,13 +52,6 @@ public:
     /// @param n The amounts of the species in the system (in mol)
     auto update(real const& T, real const& P, ArrayXrConstRef n) -> void;
 
-    /// Update the chemical properties of the system.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto update(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
-
     /// Update the chemical properties of the system with serialized data.
     /// @param u The chemical properties of the system serialized in an array of real numbers.
     auto update(ArrayXrConstRef u) -> void;
@@ -76,13 +69,6 @@ public:
     /// @param P The pressure condition (in Pa)
     /// @param n The amounts of the species in the system (in mol)
     auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n) -> void;
-
-    /// Update the chemical properties of the system using ideal activity models.
-    /// @param T The temperature condition (in K)
-    /// @param P The pressure condition (in Pa)
-    /// @param n The amounts of the species in the system (in mol)
-    /// @param s The surface areas of reacting phase interfaces in the system (in m2)
-    auto updateIdeal(real const& T, real const& P, ArrayXrConstRef n, ArrayXrConstRef s) -> void;
 
     /// Serialize the chemical properties into the array stream @p stream.
     /// @param stream The array stream used to serialize the chemical properties.
@@ -324,18 +310,13 @@ public:
     /// Return the standard partial molar isochoric heat capacities of the species in the system (in J/(mol·K)).
     auto speciesStandardHeatCapacitiesConstV() const -> ArrayXr;
 
-    /// Return the surface area of the interface between two reacting phases (in m2).
-    /// @param phase1 The name or index of a phase.
-    /// @param phase2 The name or index of the phase interfacing with the previous one.
-    /// @warning An error is thrown if no surface area has been set for the phase pair `phase1` and `phase2`.
-    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real;
+    /// Return the area of a surface in the system (in m2).
+    /// @param surface The name or index of the surface in the system.
+    /// @warning An error is thrown if no surface with given name or index exists in the system.
+    auto surfaceArea(StringOrIndex const& surface) const -> real;
 
-    /// Return the surface area of the interface between two reacting phases with given surface index (in m2).
-    /// @param isurface The index of the reacting interface between two phases.
-    auto surfaceArea(Index isurface) const -> real;
-
-    /// Return the areas of all reacting phase interfaces in the system (in m2).
-    auto surfaceAreas() const -> ArrayXrConstRef;
+    /// Return the areas of all surfaces in the system (in m2).
+    auto surfaceAreas() const -> ArrayXr;
 
     /// Return the molar volume of the system (in m³/mol).
     auto molarVolume() const -> real;
