@@ -36,20 +36,17 @@ void exportReactions(py::module& m)
         .def("name", &GeneralReaction::name, "Return the name of the reaction.")
         .def("equation", &GeneralReaction::equation, "Return the reaction equation of the reaction.")
         .def("rateModel", &GeneralReaction::rateModel, "Return the reaction rate model of the reaction.")
-        .def("__call__", &GeneralReaction::operator(), "Convert this GeneralReaction object into a Reaction object.")
+        .def("convert", &GeneralReaction::operator(), "Convert this GeneralReaction object into a Reaction object.") // NOTE: Do not use __call__ here because pybind11 will gladly cast a Python GeneralReaction object to a std::function of any type without any runtime errors! When checking if an argument in a ChemicalSystem constructor is of type ReactionGenerator or SurfaceGenerator (both objects of class std::function), the Python GeneralReaction object will be sucessfully converted, which is not expected.
         ;
 
     auto add = [](Reactions& self, py::object generator)
     {
         try { self.add(generator.cast<Reaction const&>()); }
-        catch(...)
-        {
+        catch(...) {
             try { self.add(generator.cast<GeneralReaction const&>()); }
-            catch(...)
-            {
+            catch(...) {
                 try { self.add(generator.cast<ReactionGenerator>()); }
-                catch(...)
-                {
+                catch(...) {
                     errorif(true, "Could not add reaction generator object to Reactions object:\n", py::str(generator));
                 }
             }
@@ -62,14 +59,11 @@ void exportReactions(py::module& m)
         for(auto generator : reaction_generators)
         {
             try { reactions.add(generator.cast<Reaction const&>()); }
-            catch(...)
-            {
+            catch(...) {
                 try { reactions.add(generator.cast<GeneralReaction const&>()); }
-                catch(...)
-                {
+                catch(...) {
                     try { reactions.add(generator.cast<ReactionGenerator>()); }
-                    catch(...)
-                    {
+                    catch(...) {
                         errorif(true, "Could not create Reactions with reaction generator object:\n", py::str(generator));
                     }
                 }
