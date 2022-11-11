@@ -43,20 +43,21 @@ namespace Reaktoro {
 class ChemicalSystem;
 
 template<typename T, typename... Ts>
-constexpr auto _arePhaseOrReactionConvertible()
+constexpr auto _arePhaseReactionOrSurfaceConvertible()
 {
-    constexpr auto isReactionConvertible = isConvertible<T, Reaction> || isConvertible<T, GeneralReaction> || isConvertible<T, ReactionGenerator>;
     constexpr auto isPhaseConvertible = isBaseOf<GeneralPhase, T> || isBaseOf<GeneralPhasesGenerator, T>;
-    constexpr auto aux = isPhaseConvertible || isReactionConvertible;
+    constexpr auto isReactionConvertible = isConvertible<T, Reaction> || isConvertible<T, GeneralReaction> || isConvertible<T, ReactionGenerator>;
+    constexpr auto isSurfaceConvertible = isConvertible<T, Surface> || isConvertible<T, GeneralSurface> || isConvertible<T, SurfaceGenerator>;
+    constexpr auto aux = isPhaseConvertible || isReactionConvertible || isSurfaceConvertible;
 
     if constexpr (sizeof...(Ts))
-        return aux && _arePhaseOrReactionConvertible<Ts...>();
+        return aux && _arePhaseReactionOrSurfaceConvertible<Ts...>();
     else return aux;
 }
 
 /// Used to determine if `T` and all types in `Ts` are either GeneralPhase or GeneralPhaseGenerator.
 template<typename T, typename... Ts>
-constexpr auto arePhaseOrReactionConvertible = _arePhaseOrReactionConvertible<T, Ts...>();
+constexpr auto arePhaseReactionOrSurfaceConvertible = _arePhaseReactionOrSurfaceConvertible<T, Ts...>();
 
 /// Create a ChemicalSystem object with given database and a list of phase and reaction convertible objects.
 template<typename... Args>
@@ -96,7 +97,7 @@ public:
     explicit ChemicalSystem(Phases const& phases, Reactions const& reactions, Surfaces const& surfaces);
 
     /// Construct a ChemicalSystem object with given database and a list of phase and reaction convertible objects.
-    template<typename... Args, EnableIf<arePhaseOrReactionConvertible<Args...>>...>
+    template<typename... Args, EnableIf<arePhaseReactionOrSurfaceConvertible<Args...>>...>
     explicit ChemicalSystem(Database const& db, Args const&... args)
     : ChemicalSystem(createChemicalSystem(db, args...)) {}
 
