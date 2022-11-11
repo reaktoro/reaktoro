@@ -19,39 +19,73 @@
 from reaktoro import *
 
 
+def generateAreaModel(value: float):
+    def ratefn(props: ChemicalProps):
+        return value
+    return SurfaceAreaModel(ratefn)
+
+class SurfaceGeneratorUsingClass:
+    def __call__(self, phases):
+        return [ Surface()
+            .withName("PhaseA:PhaseB")
+            .withAreaModel(generateAreaModel(5.0)) ]
+
+def SurfaceGeneratorUsingFunction(phases):
+    return [ Surface()
+        .withName("PhaseA:PhaseC")
+        .withAreaModel(generateAreaModel(6.0)) ]
+
+
 def testSurfaces():
-    surfaces = Surfaces()
-    surfaces.add("Calcite", "AqueousPhase")
-    surfaces.add("GaseousPhase", "AqueousPhase")
-    surfaces.add("Quartz")
+    system = ChemicalSystem()
+    props = ChemicalProps()
 
-    assert len(surfaces.data()) == 3
+    surface1 = Surface("Surface1")
+    surface2 = Surface("Surface2")
 
-    assert surfaces.data()[0] == ("Calcite", "AqueousPhase")
-    assert surfaces.data()[1] == ("GaseousPhase", "AqueousPhase")
-    assert surfaces.data()[2] == ("Quartz", "Quartz")
+    generalsurface1 = GeneralSurface("GeneralSurface1")
+    generalsurface2 = GeneralSurface("GeneralSurface2")
 
-    phases = PhaseList([
-        Phase().withName("AqueousPhase"), # # 0
-        Phase().withName("GaseousPhase"), # # 1
-        Phase().withName("LiquidPhase"),  # # 2
-        Phase().withName("Calcite"),      # # 3
-        Phase().withName("Quartz"),       # # 4
-        Phase().withName("Dolomite")      # # 5
-    ])
+    surface1 = surface1.withAreaModel(generateAreaModel(1.0))
+    surface2 = surface2.withAreaModel(generateAreaModel(2.0))
+    generalsurface1.setAreaModel(generateAreaModel(3.0))
+    generalsurface2.setAreaModel(generateAreaModel(4.0))
 
-    converted = surfaces.convert(phases)
+    surfacesA = Surfaces()
+    surfacesA.add(surface1)
+    surfacesA.add(surface2)
+    surfacesA.add(generalsurface1)
+    surfacesA.add(generalsurface2)
+    surfacesA.add(SurfaceGeneratorUsingClass())
+    surfacesA.add(SurfaceGeneratorUsingFunction)
 
-    assert len(converted) == 3
+    surfacesB = Surfaces(
+        surface1,
+        surface2,
+        generalsurface1,
+        generalsurface2,
+        SurfaceGeneratorUsingClass(),
+        SurfaceGeneratorUsingFunction
+    )
 
-    assert converted[0].name() == "Calcite:AqueousPhase"
-    assert converted[1].name() == "GaseousPhase:AqueousPhase"
-    assert converted[2].name() == "Quartz"
+    def checkSurfacesConversion(surfaces: Surfaces):
+        converted = surfaces.convert(system.phases())
 
-    assert converted[0].phaseNames() == ("Calcite", "AqueousPhase")
-    assert converted[1].phaseNames() == ("GaseousPhase", "AqueousPhase")
-    assert converted[2].phaseNames() == ("Quartz", "Quartz")
+        assert len(converted) == 6
 
-    assert converted[0].phaseIndices() == (3, 0)
-    assert converted[1].phaseIndices() == (1, 0)
-    assert converted[2].phaseIndices() == (4, 4)
+        assert converted[0].name() == "Surface1"
+        assert converted[1].name() == "Surface2"
+        assert converted[2].name() == "GeneralSurface1"
+        assert converted[3].name() == "GeneralSurface2"
+        assert converted[4].name() == "PhaseA:PhaseB"
+        assert converted[5].name() == "PhaseA:PhaseC"
+
+        assert converted[0].area(props).val() == 1.0
+        assert converted[1].area(props).val() == 2.0
+        assert converted[2].area(props).val() == 3.0
+        assert converted[3].area(props).val() == 4.0
+        assert converted[4].area(props).val() == 5.0
+        assert converted[5].area(props).val() == 6.0
+
+    checkSurfacesConversion(surfacesA)
+    checkSurfacesConversion(surfacesB)

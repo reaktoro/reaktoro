@@ -19,47 +19,96 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
-#include <Reaktoro/Core/PhaseList.hpp>
-#include <Reaktoro/Core/Surface.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Surfaces.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing Surfaces", "[Surfaces]")
+namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
+
+namespace test {
+
+auto generateAreaModel(double value)
 {
-    Surfaces surfaces;
-    surfaces.add("Calcite", "AqueousPhase");
-    surfaces.add("GaseousPhase", "AqueousPhase");
-    surfaces.add("Quartz");
+    return [=](ChemicalProps const& props) { return value; };
+}
 
-    CHECK( surfaces.data().size() == 3 );
+class SurfaceGeneratorUsingClass
+{
+public:
+    auto operator()(PhaseList const& phases) const -> Vec<Surface>
+    {
+        return { Surface()
+            .withName("PhaseA:PhaseB")
+            .withAreaModel(generateAreaModel(5.0))
+        };
+    }
+};
 
-    CHECK( surfaces.data()[0] == Pair<String, String>{"Calcite", "AqueousPhase"} );
-    CHECK( surfaces.data()[1] == Pair<String, String>{"GaseousPhase", "AqueousPhase"} );
-    CHECK( surfaces.data()[2] == Pair<String, String>{"Quartz", "Quartz"} );
+auto SurfaceGeneratorUsingFunction(PhaseList const& phases) -> Vec<Surface>
+{
+    return { Surface()
+        .withName("PhaseA:PhaseC")
+        .withAreaModel(generateAreaModel(6.0))
+    };
+}
 
-    auto const phases = PhaseList({
-        Phase().withName("AqueousPhase"), // # 0
-        Phase().withName("GaseousPhase"), // # 1
-        Phase().withName("LiquidPhase"),  // # 2
-        Phase().withName("Calcite"),      // # 3
-        Phase().withName("Quartz"),       // # 4
-        Phase().withName("Dolomite")      // # 5
-    });
+} // namespace test
 
-    auto const converted = surfaces.convert(phases);
+TEST_CASE("Testing Surfaces class", "[Surfaces]")
+{
+    ChemicalSystem system;
+    ChemicalProps props;
 
-    CHECK( converted.size() == 3 );
+    Surface surface1("Surface1");
+    Surface surface2("Surface2");
 
-    CHECK( converted[0].name() == "Calcite:AqueousPhase" );
-    CHECK( converted[1].name() == "GaseousPhase:AqueousPhase" );
-    CHECK( converted[2].name() == "Quartz" );
+    GeneralSurface generalsurface1("GeneralSurface1");
+    GeneralSurface generalsurface2("GeneralSurface2");
 
-    CHECK( converted[0].phaseNames() == Pair<String, String>{"Calcite", "AqueousPhase"} );
-    CHECK( converted[1].phaseNames() == Pair<String, String>{"GaseousPhase", "AqueousPhase"} );
-    CHECK( converted[2].phaseNames() == Pair<String, String>{"Quartz", "Quartz"} );
+    surface1 = surface1.withAreaModel(test::generateAreaModel(1.0));
+    surface2 = surface2.withAreaModel(test::generateAreaModel(2.0));
+    generalsurface1.setAreaModel(test::generateAreaModel(3.0));
+    generalsurface2.setAreaModel(test::generateAreaModel(4.0));
 
-    CHECK( converted[0].phaseIndices() == Pair<Index, Index>{3, 0} );
-    CHECK( converted[1].phaseIndices() == Pair<Index, Index>{1, 0} );
-    CHECK( converted[2].phaseIndices() == Pair<Index, Index>{4, 4} );
+    Surfaces surfacesA;
+    surfacesA.add(surface1);
+    surfacesA.add(surface2);
+    surfacesA.add(generalsurface1);
+    surfacesA.add(generalsurface2);
+    surfacesA.add(test::SurfaceGeneratorUsingClass());
+    surfacesA.add(test::SurfaceGeneratorUsingFunction);
+
+    Surfaces surfacesB(
+        surface1,
+        surface2,
+        generalsurface1,
+        generalsurface2,
+        test::SurfaceGeneratorUsingClass(),
+        test::SurfaceGeneratorUsingFunction
+    );
+
+    auto checkSurfacesConversion = [&](Surfaces const& surfaces)
+    {
+        auto converted = surfaces.convert(system.phases());
+
+        CHECK( converted.size() == 6 );
+
+        CHECK( converted[0].name() == "Surface1" );
+        CHECK( converted[1].name() == "Surface2" );
+        CHECK( converted[2].name() == "GeneralSurface1" );
+        CHECK( converted[3].name() == "GeneralSurface2" );
+        CHECK( converted[4].name() == "PhaseA:PhaseB" );
+        CHECK( converted[5].name() == "PhaseA:PhaseC" );
+
+        CHECK( converted[0].area(props).val() == 1.0 );
+        CHECK( converted[1].area(props).val() == 2.0 );
+        CHECK( converted[2].area(props).val() == 3.0 );
+        CHECK( converted[3].area(props).val() == 4.0 );
+        CHECK( converted[4].area(props).val() == 5.0 );
+        CHECK( converted[5].area(props).val() == 6.0 );
+    };
+
+    checkSurfacesConversion(surfacesA);
+    checkSurfacesConversion(surfacesB);
 }

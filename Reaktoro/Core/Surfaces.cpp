@@ -18,49 +18,71 @@
 #include "Surfaces.hpp"
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>
 #include <Reaktoro/Core/Surface.hpp>
 
 namespace Reaktoro {
 
+GeneralSurface::GeneralSurface()
+{}
+
+GeneralSurface::GeneralSurface(String const& name)
+{
+    setName(name);
+}
+
+auto GeneralSurface::setName(String const& name) -> GeneralSurface&
+{
+    surface_name = name;
+    return *this;
+}
+
+auto GeneralSurface::setAreaModel(SurfaceAreaModel const& model) -> GeneralSurface&
+{
+    area_model = model;
+    return *this;
+}
+
+auto GeneralSurface::set(SurfaceAreaModel const& model) -> GeneralSurface&
+{
+    return setAreaModel(model);
+}
+
+auto GeneralSurface::name() const -> String const&
+{
+    return surface_name;
+}
+
+auto GeneralSurface::areaModel() const -> SurfaceAreaModel const&
+{
+    return area_model;
+}
+
+auto GeneralSurface::operator()(PhaseList const& phases) const -> Surface
+{
+    errorif(surface_name.empty(), "Converting a GeneralSurface object to a Surface object requires a non-empty surface name. Use method GeneralSurface::setName to resolve this.");
+    errorif(!area_model.initialized(), "Converting a GeneralSurface object to a Surface object requires a non-empty surface area model. Use method GeneralSurface::setAreaModel to resolve this.");
+
+    return Surface()
+        .withName(surface_name)
+        .withAreaModel(area_model);
+}
+
 Surfaces::Surfaces()
-{
-}
-
-auto Surfaces::add(String const& phase1, String const& phase2) -> void
-{
-    errorif(phase1.empty() || phase2.empty(), "Expecting a non-empty phase name when registering a surface.");
-    surfaces.push_back({ phase1, phase2});
-}
-
-auto Surfaces::add(String const& phase) -> void
-{
-    errorif(phase.empty(), "Expecting a non-empty phase name when registering a surface.");
-    surfaces.push_back({ phase, phase});
-}
-
-auto Surfaces::data() const -> Pairs<String, String> const&
-{
-    return surfaces;
-}
+{}
 
 auto Surfaces::convert(PhaseList const& phases) const -> Vec<Surface>
 {
-    auto createSurface = [&](auto phasepair)
-    {
-        auto const nphase1 = phasepair.first;
-        auto const nphase2 = phasepair.second;
-        auto const iphase1 = phases.findWithName(nphase1);
-        auto const iphase2 = phases.findWithName(nphase2);
-        errorif(iphase1 >= phases.size(), "Expecting a name of a phase that exist in the list of assembled phase, but got instead `", nphase1, "`.");
-        errorif(iphase2 >= phases.size(), "Expecting a name of a phase that exist in the list of assembled phase, but got instead `", nphase2, "`.");
-        auto const id = nphase1 != nphase2 ? nphase1 + ":" + nphase2 : nphase1;
-        return Surface(id, nphase1, iphase1, nphase2, iphase2);
-    };
+    Vec<Surface> surfaces;
 
-    return vectorize(surfaces, RKT_LAMBDA(x, createSurface(x)));
+    for(auto const& fn : surface_generators)
+    {
+        auto rxns = fn(phases);
+        surfaces.insert(surfaces.end(), rxns.begin(), rxns.end());
+    }
+
+    return surfaces;
 }
 
 } // namespace Reaktoro

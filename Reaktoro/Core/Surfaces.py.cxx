@@ -19,18 +19,62 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Core/PhaseList.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Surface.hpp>
 #include <Reaktoro/Core/Surfaces.hpp>
 using namespace Reaktoro;
 
 void exportSurfaces(py::module& m)
 {
+    py::class_<GeneralSurface>(m, "GeneralSurface")
+        .def(py::init<>())
+        .def(py::init<String const&>())
+        .def("setName", &GeneralSurface::setName, "Set the unique name of the surface.")
+        .def("setAreaModel", &GeneralSurface::setAreaModel, "Set the area model of the surface.")
+        .def("set", &GeneralSurface::set, "Set the area model of the surface (equivalent to GeneralSurface::setAreaModel).")
+        .def("name", &GeneralSurface::name, "Return the name of the surface.")
+        .def("areaModel", &GeneralSurface::areaModel, "Return the area model of the surface.")
+        .def("convert", &GeneralSurface::operator(), "Convert this GeneralSurface object into a Surface object.") // NOTE: Do not use __call__ here because pybind11 will gladly cast a Python GeneralSurface object to a std::function of any type without any runtime errors! When checking if an argument in a ChemicalSystem constructor is of type ReactionGenerator or SurfaceGenerator (both objects of class std::function), the Python GeneralSurface object will be sucessfully converted, which is not expected.
+        ;
+
+    auto add = [](Surfaces& self, py::object generator)
+    {
+        try { self.add(generator.cast<Surface const&>()); }
+        catch(...) {
+            try { self.add(generator.cast<GeneralSurface const&>()); }
+            catch(...) {
+                try { self.add(generator.cast<SurfaceGenerator>()); }
+                catch(...) {
+                    errorif(true, "Could not add reaction generator object to Surfaces object:\n", py::str(generator));
+                }
+            }
+        }
+    };
+
+    auto createSurfaces = [](py::args reaction_generators)
+    {
+        Surfaces reactions;
+        for(auto generator : reaction_generators)
+        {
+            try { reactions.add(generator.cast<Surface const&>()); }
+            catch(...) {
+                try { reactions.add(generator.cast<GeneralSurface const&>()); }
+                catch(...) {
+                    try { reactions.add(generator.cast<SurfaceGenerator>()); }
+                    catch(...) {
+                        errorif(true, "Could not create Surfaces with reaction generator object:\n", py::str(generator));
+                    }
+                }
+            }
+        }
+
+        return reactions;
+    };
+
     py::class_<Surfaces>(m, "Surfaces")
         .def(py::init<>())
-        .def("add", py::overload_cast<String const&, String const&>(&Surfaces::add))
-        .def("add", py::overload_cast<String const&>(&Surfaces::add))
-        .def("data", &Surfaces::data, return_internal_ref)
+        .def(py::init(createSurfaces))
+        .def("add", add)
         .def("convert", &Surfaces::convert)
         ;
 }
