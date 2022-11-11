@@ -17,7 +17,6 @@
 
 
 from reaktoro import *
-import pytest
 
 
 def testChemicalSystem():
@@ -81,13 +80,16 @@ def testChemicalSystem():
     assert system.reactions().size() == 0
 
     #-------------------------------------------------------------------------
-    # TESTING CONSTRUCTOR: ChemicalSystem(db, phases, reactions)
+    # TESTING CONSTRUCTOR: ChemicalSystem(db, phases, reactions, surfaces)
     #-------------------------------------------------------------------------
 
-    def zeroratefn(props: ChemicalProps):
+    def zeroRateModel(props: ChemicalProps):
         return ReactionRate(0.0)
 
-    zeromodel = ReactionRateModel(zeroratefn)
+    def zeroAreaModel(props: ChemicalProps):
+        return 0.0
+
+    zeromodel = ReactionRateModel(zeroRateModel)
 
     reaction1 = db.reaction("Halite = Na+ + Cl-").withRateModel(zeromodel)
     reaction2 = db.reaction("Calcite").withRateModel(zeromodel)
@@ -95,9 +97,13 @@ def testChemicalSystem():
     generalreaction1 = GeneralReaction("CO2(g) = CO2(aq)").setRateModel(zeromodel)
     generalreaction2 = GeneralReaction("HCO3- + H+ = CO2(aq) + H2O(aq)").setRateModel(zeromodel)
 
-    system = ChemicalSystem(db, solution, reaction1, gases, reaction2, mineral, generalreaction1, minerals, generalreaction2)
+    surface = Surface("Surface1").withAreaModel(zeroAreaModel)
+    generalsurface = GeneralSurface("Surface2").setAreaModel(zeroAreaModel)
+
+    system = ChemicalSystem(db, solution, reaction1, gases, reaction2, mineral, generalreaction1, surface, minerals, generalreaction2, generalsurface)
 
     assert system.elements().size() == 8
     assert system.species().size() == 18
     assert system.phases().size() == 7
     assert system.reactions().size() == 4
+    assert system.surfaces().size() == 2

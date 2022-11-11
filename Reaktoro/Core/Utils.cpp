@@ -269,7 +269,7 @@ auto createSurfacesForReactingPhaseInterfacesInReactions(const Vec<Reaction>& re
         auto const nphase1 = phases[iphase1].name();
         auto const nphase2 = phases[iphase2].name();
         auto const surfacename = iphase1 == iphase2 ? nphase1 : nphase1 + ":" + nphase2; // e.g., AqueousPhase:GaseousPhase, AqueousPhase:Calcite, Calcite:Calcite is reduced to just Calcite
-        return Surface(surfacename, nphase1, iphase1, nphase2, iphase2);
+        return Surface(surfacename).withAreaModel([](ChemicalProps const&) { return 0.0; });
     };
 
     return vectorize(pairs, RKT_LAMBDA(x, createSurface(x.first, x.second)));
