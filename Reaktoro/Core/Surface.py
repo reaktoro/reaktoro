@@ -21,21 +21,15 @@ from reaktoro import *
 
 def testSurface():
 
+    props = ChemicalProps()
+
     surface = Surface()
 
     surface = surface.withName("AqueousPhase:GaseousPhase")
     assert surface.name() == "AqueousPhase:GaseousPhase"
 
-    surface = surface.withPhaseNames("AqueousPhase", "GaseousPhase")
-    assert surface.phaseNames() == ("AqueousPhase","GaseousPhase")
+    def areafn(props: ChemicalProps):
+        return 1.23
 
-    surface = surface.withPhaseIndices(0, 1)
-    assert surface.phaseIndices() == (0, 1)
-
-    other = Surface("SomeName")
-    other = other.withPhaseNames("GaseousPhase", "AqueousPhase")
-    other = other.withPhaseIndices(1, 0)
-    assert surface.equivalent(other)
-
-    another = Surface("SomeName", "GaseousPhase", 1, "AqueousPhase", 0)
-    assert surface.equivalent(another)
+    surface = surface.withAreaModel(areafn)
+    assert surface.area(props) == 1.23

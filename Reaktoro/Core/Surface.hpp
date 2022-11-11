@@ -19,10 +19,14 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/SurfaceAreaModel.hpp>
 
 namespace Reaktoro {
 
-/// Used to represent the interface surface between two phases in a chemical system.
+// Forward declarations
+class ChemicalProps;
+
+/// Used to represent a surface across which chemical reactions take place.
 class Surface
 {
 public:
@@ -32,44 +36,23 @@ public:
     /// Construct an Surface object with a unique name.
     explicit Surface(String const& name);
 
-    /// Construct an Surface object with a unique name and names of the phases between which the surface exists.
-    explicit Surface(String const& name, String const& phase1, String const& phase2);
-
-    /// Construct an Surface object with a unique name and names and indices of the phases between which the surface exists.
-    explicit Surface(String const& name, String const& phase1, Index iphase1, String const& phase2, Index iphase2);
-
     /// Return a deep copy of this Surface object.
     auto clone() const -> Surface;
 
-    /// Return a duplicate of this Surface object with replaced name.
+    /// Return a duplicate of this Surface object with new name.
     auto withName(String const& name) const -> Surface;
 
-    /// Return a duplicate of this Surface object with replaced names of the phases between which this surface exists.
-    auto withPhaseNames(String const& phase1, String const& phase2) const -> Surface;
-
-    /// Return a duplicate of this Surface object with replaced indices of the phases between which this surface exists.
-    auto withPhaseIndices(Index iphase1, Index iphase2) const -> Surface;
+    /// Return a duplicate of this Surface object with new surface area model.
+    auto withAreaModel(SurfaceAreaModel const& model) const -> Surface;
 
     /// Return the unique name of this surface.
-    auto name() const -> String;
+    auto name() const -> String const&;
 
-    /// Return the names of the phases between which this surface exists.
-    auto phaseNames() const -> Pair<String, String> const&;
+    /// Return the area model of this surface.
+    auto areaModel() const -> SurfaceAreaModel const&;
 
-    /// Return the indices of the phases between which this surface exists.
-    auto phaseIndices() const -> Pair<Index, Index> const&;
-
-    /// Return true if this surface is equivalent to another with the same interface phases.
-    auto equivalent(Surface const& another) const -> bool;
-
-    /// Return true if this surface is equivalent to another with the same interface phases using phase names.
-    auto equivalent(String const& phase1, String const& phase2) const -> bool;
-
-    /// Return true if this surface is equivalent to another with the same interface phases using phase indices.
-    auto equivalent(Index iphase1, Index iphase2) const -> bool;
-
-    /// Return true if this surface is equivalent to another with the same interface phases using phase names/indices.
-    auto equivalent(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> bool;
+    /// Calculate the area of the surface for given chemical properties of the system (in m2).
+    auto area(ChemicalProps const& props) const -> real;
 
 private:
     struct Impl;

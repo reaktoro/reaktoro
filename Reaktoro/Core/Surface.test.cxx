@@ -19,28 +19,21 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/Surface.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing Surface", "[Surface]")
 {
+    ChemicalProps props;
+
     Surface surface;
 
     surface = surface.withName("AqueousPhase:GaseousPhase");
-    CHECK(surface.name() == "AqueousPhase:GaseousPhase");
+    CHECK( surface.name() == "AqueousPhase:GaseousPhase" );
 
-    surface = surface.withPhaseNames("AqueousPhase", "GaseousPhase");
-    CHECK(surface.phaseNames() == Pair<String, String>{"AqueousPhase","GaseousPhase"});
+    auto areafn = [](ChemicalProps const& props) { return 1.23; };
 
-    surface = surface.withPhaseIndices(0, 1);
-    CHECK(surface.phaseIndices() == Pair<Index, Index>{0, 1});
-
-    Surface other("SomeName");
-    other = other.withPhaseNames("GaseousPhase", "AqueousPhase");
-    other = other.withPhaseIndices(1, 0);
-    CHECK( surface.equivalent(other) );
-
-    Surface another("SomeName", "GaseousPhase", 1, "AqueousPhase", 0);
-    CHECK( surface.equivalent(another) );
+    surface = surface.withAreaModel(areafn);
+    CHECK( surface.areaModel()(props) == 1.23 );
 }
