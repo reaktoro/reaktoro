@@ -18,6 +18,7 @@
 #include "ActivityModelDrummond.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Thermodynamics/Aqueous/AqueousMixture.hpp>
 
 namespace Reaktoro {
@@ -38,8 +39,14 @@ auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> Ac
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
-            // The aqueous mixture and its state exported by a base aqueous activity model.
-            const auto& state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+            // Check AqueousMixtureState is available in props.extra
+            auto stateit = props.extra.find("AqueousMixtureState");
+
+            errorif(stateit == props.extra.end(),
+                "ActivityModelDuanSun expects that another aqueous activity model has been chained first (e.g., Davies, Debye-Huckel, HKF, PitzerHMW, etc.) ");
+
+            // The aqueous mixture state exported by a base aqueous activity model.
+            const auto& state = std::any_cast<AqueousMixtureState>(stateit->second);
 
             const auto& [a1, a2, a3, a4, a5] = params;
             const auto& T = state.T;

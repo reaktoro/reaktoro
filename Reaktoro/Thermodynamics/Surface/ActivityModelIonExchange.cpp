@@ -59,7 +59,7 @@ auto activityModelIonExchangeGainesThomas(const SpeciesList& species) -> Activit
         ln_g = ArrayXr::Zero(num_species);
 
         // Calculate Davies and Debye--Huckel parameters only if the AqueousPhase has been already evaluated
-        if (props.extra["AqueousMixtureState"].has_value())
+        if(props.extra["AqueousMixtureState"].has_value())
         {
             // Export aqueous mixture state via `extra` data member
             const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
@@ -136,7 +136,7 @@ auto activityModelIonExchangeVanselow(const SpeciesList& species) -> ActivityMod
             ln_g = ArrayXr::Zero(num_species);
 
             // Calculate Davies and Debye--Huckel parameters only if the AqueousPhase has been already evaluated
-            if (props.extra["AqueousMixtureState"].has_value())
+            if(props.extra["AqueousMixtureState"].has_value())
             {
                 // Export aqueous mixture state via `extra` data member
                 const auto& aqstate = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);

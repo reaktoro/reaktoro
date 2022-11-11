@@ -33,9 +33,16 @@ auto ActivityModelRumpf(String gas) -> ActivityModelGenerator
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityArgs args)
         {
+            // Check AqueousMixture and AqueousMixtureState are available in props.extra
+            auto mixtureit = props.extra.find("AqueousMixture");
+            auto stateit = props.extra.find("AqueousMixtureState");
+
+            errorif(stateit == props.extra.end(),
+                "ActivityModelRumpf expects that another aqueous activity model has been chained first (e.g., Davies, Debye-Huckel, HKF, PitzerHMW, etc.) ");
+
             // The aqueous mixture and its state exported by a base aqueous activity model.
-            const auto& mixture = std::any_cast<AqueousMixture>(props.extra["AqueousMixture"]);
-            const auto& state = std::any_cast<AqueousMixtureState>(props.extra["AqueousMixtureState"]);
+            const auto& mixture = std::any_cast<AqueousMixture>(mixtureit->second);
+            const auto& state = std::any_cast<AqueousMixtureState>(stateit->second);
 
             // The local indices of some charged species among all charged species
             static const auto iNa  = mixture.charged().findWithFormula("Na+");
