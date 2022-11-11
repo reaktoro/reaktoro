@@ -38,11 +38,11 @@ struct Speciate
     Strings symbols;
 
     /// Add other element symbols into the speciation list.
-    auto operator+=(const Strings& othersymbols) -> Speciate& { symbols = merge(symbols, othersymbols); return *this; }
+    auto operator+=(Strings const& othersymbols) -> Speciate& { symbols = merge(symbols, othersymbols); return *this; }
 };
 
 /// The auxiliary function used to specify phase species to be determined from element symbols.
-auto speciate(const StringList& symbols) -> Speciate;
+auto speciate(StringList const& symbols) -> Speciate;
 
 /// The auxiliary type used to specify species that should be filtered out when contructing a phase.
 struct Exclude
@@ -51,11 +51,11 @@ struct Exclude
     Strings tags;
 
     /// Add other tags symbols into the exclude list.
-    auto operator+=(const Strings& othertags) -> Exclude& { tags = merge(tags, othertags); return *this; }
+    auto operator+=(Strings const& othertags) -> Exclude& { tags = merge(tags, othertags); return *this; }
 };
 
 /// The auxiliary function used to specify species that should be filtered out when contructing a phase.
-auto exclude(const StringList& tags) -> Exclude;
+auto exclude(StringList const& tags) -> Exclude;
 
 /// The base type for all other classes defining more specific phases.
 /// @ingroup Core
@@ -66,16 +66,16 @@ public:
     GeneralPhase();
 
     /// Construct a GeneralPhase object with given species names.
-    explicit GeneralPhase(const StringList& species);
+    explicit GeneralPhase(StringList const& species);
 
     /// Construct a GeneralPhase object with given element symbols.
-    explicit GeneralPhase(const Speciate& elements);
+    explicit GeneralPhase(Speciate const& elements);
 
     /// Construct a GeneralPhase object with given element symbols excluding the species with provided tags.
-    explicit GeneralPhase(const Speciate& elements, const Exclude& withtags);
+    explicit GeneralPhase(Speciate const& elements, Exclude const& withtags);
 
     /// Construct a GeneralPhase object excluding the species with provided tags.
-    explicit GeneralPhase(const Exclude& withtags);
+    explicit GeneralPhase(Exclude const& withtags);
 
     /// Destroy this GeneralPhase object.
     virtual ~GeneralPhase();
@@ -90,13 +90,13 @@ public:
     auto setAggregateState(AggregateState option) -> GeneralPhase&;
 
     /// Set additional aggregate states to be considered when searching for species in a database.
-    auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GeneralPhase&;
+    auto setAdditionalAggregateStates(Vec<AggregateState> const& options) -> GeneralPhase&;
 
     /// Set the activity model of the phase.
-    auto setActivityModel(const ActivityModelGenerator& model) -> GeneralPhase&;
+    auto setActivityModel(ActivityModelGenerator const& model) -> GeneralPhase&;
 
     /// Set the ideal activity model of the phase.
-    auto setIdealActivityModel(const ActivityModelGenerator& model) -> GeneralPhase&;
+    auto setIdealActivityModel(ActivityModelGenerator const& model) -> GeneralPhase&;
 
     /// Set a unique name of the phase (equivalent to GeneralPhase::setName).
     auto named(String name) -> GeneralPhase&;
@@ -108,7 +108,7 @@ public:
     auto set(AggregateState option) -> GeneralPhase&;
 
     /// Set the activity model of the phase (equivalent to GeneralPhase::setActivityModel).
-    auto set(const ActivityModelGenerator& model) -> GeneralPhase&;
+    auto set(ActivityModelGenerator const& model) -> GeneralPhase&;
 
     /// Return the name of the phase.
     auto name() const -> String;
@@ -120,22 +120,22 @@ public:
     auto aggregateState() const -> AggregateState;
 
     /// Return the additional aggregate states to be considered when searching for species in a database.
-    auto additionalAggregateStates() const -> const Vec<AggregateState>&;
+    auto additionalAggregateStates() const -> Vec<AggregateState> const&;
 
     /// Return the names of the selected species to compose the phase (empty if not given).
-    auto species() const -> const Strings&;
+    auto species() const -> Strings const&;
 
     /// Return the element symbols for automatic species selection (empty if not given).
-    auto elements() const -> const Strings&;
+    auto elements() const -> Strings const&;
 
     /// Return the specified activity model of the phase.
-    auto activityModel() const -> const ActivityModelGenerator&;
+    auto activityModel() const -> ActivityModelGenerator const&;
 
     /// Return the specified ideal activity model of the phase.
-    auto idealActivityModel() const -> const ActivityModelGenerator&;
+    auto idealActivityModel() const -> ActivityModelGenerator const&;
 
     /// Convert this GeneralPhase object into a Phase object.
-    auto convert(const Database& db, const Strings& elements) const -> Phase;
+    auto convert(Database const& db, Strings const& elements) const -> Phase;
 
 private:
     /// The name of the phase.
@@ -175,16 +175,16 @@ public:
     GeneralPhasesGenerator();
 
     /// Construct a GeneralPhasesGenerator object with given species names.
-    explicit GeneralPhasesGenerator(const StringList& species);
+    explicit GeneralPhasesGenerator(StringList const& species);
 
     /// Construct a GeneralPhasesGenerator object with given element symbols.
-    explicit GeneralPhasesGenerator(const Speciate& elements);
+    explicit GeneralPhasesGenerator(Speciate const& elements);
 
     /// Construct a GeneralPhasesGenerator object with given element symbols excluding the species with provided tags.
-    explicit GeneralPhasesGenerator(const Speciate& elements, const Exclude& withtags);
+    explicit GeneralPhasesGenerator(Speciate const& elements, Exclude const& withtags);
 
     /// Construct a GeneralPhasesGenerator object excluding the species with provided tags.
-    explicit GeneralPhasesGenerator(const Exclude& withtags);
+    explicit GeneralPhasesGenerator(Exclude const& withtags);
 
     /// Destroy this GeneralPhasesGenerator object.
     virtual ~GeneralPhasesGenerator();
@@ -196,13 +196,13 @@ public:
     auto setAggregateState(AggregateState option) -> GeneralPhasesGenerator&;
 
     /// Set additional aggregate states to be considered when searching for species in a database.
-    auto setAdditionalAggregateStates(const Vec<AggregateState>& options) -> GeneralPhasesGenerator&;
+    auto setAdditionalAggregateStates(Vec<AggregateState> const& options) -> GeneralPhasesGenerator&;
 
     /// Set the common activity model of the generated phases.
-    auto setActivityModel(const ActivityModelGenerator& model) -> GeneralPhasesGenerator&;
+    auto setActivityModel(ActivityModelGenerator const& model) -> GeneralPhasesGenerator&;
 
     /// Set the common ideal activity model of the generated phases.
-    auto setIdealActivityModel(const ActivityModelGenerator& model) -> GeneralPhasesGenerator&;
+    auto setIdealActivityModel(ActivityModelGenerator const& model) -> GeneralPhasesGenerator&;
 
     /// Set the common state of matter of the generated phases (equivalent to GeneralPhasesGenerator::setStateOfMatter).
     auto set(StateOfMatter option) -> GeneralPhasesGenerator&;
@@ -211,7 +211,7 @@ public:
     auto set(AggregateState option) -> GeneralPhasesGenerator&;
 
     /// Set the common activity model of the generated phases (equivalent to GeneralPhasesGenerator::setActivityModel).
-    auto set(const ActivityModelGenerator& model) -> GeneralPhasesGenerator&;
+    auto set(ActivityModelGenerator const& model) -> GeneralPhasesGenerator&;
 
     /// Return the common state of matter of the generated phases.
     auto stateOfMatter() const -> StateOfMatter;
@@ -220,22 +220,22 @@ public:
     auto aggregateState() const -> AggregateState;
 
     /// Return the additional aggregate states to be considered when searching for species in a database.
-    auto additionalAggregateStates() const -> const Vec<AggregateState>&;
+    auto additionalAggregateStates() const -> Vec<AggregateState> const&;
 
     /// Return the names of the selected species to compose the generated phase (empty if not given).
-    auto species() const -> const Strings&;
+    auto species() const -> Strings const&;
 
     /// Return the element symbols for automatic species selection that will compose the generated phases (empty if not given).
-    auto elements() const -> const Strings&;
+    auto elements() const -> Strings const&;
 
     /// Return the specified common activity model of the generated phases.
-    auto activityModel() const -> const ActivityModelGenerator&;
+    auto activityModel() const -> ActivityModelGenerator const&;
 
     /// Return the specified common ideal activity model of the generated phases.
-    auto idealActivityModel() const -> const ActivityModelGenerator&;
+    auto idealActivityModel() const -> ActivityModelGenerator const&;
 
     /// Convert this GeneralPhasesGenerator object into a vector of GeneralPhase objects.
-    auto convert(const Database& db, const Strings& elements) const -> Vec<GeneralPhase>;
+    auto convert(Database const& db, Strings const& elements) const -> Vec<GeneralPhase>;
 
 private:
     /// The common state of matter of the generated phases.
@@ -283,30 +283,30 @@ class Phases
 public:
     /// Construct a Phases object.
     /// @param db The database used to construct the species and elements in the phases.
-    Phases(const Database& db);
+    Phases(Database const& db);
 
     /// Construct a Phases object with given database and general phases.
     /// @param db The database used to construct the species and elements in the phases.
     /// @param gphases The general phases that will be converted into Phase objects.
     template<typename... GeneralPhases, EnableIf<areGeneralPhases<GeneralPhases...>>...>
-    Phases(const Database& db, const GeneralPhases&... gphases)
+    explicit Phases(Database const& db, GeneralPhases const&... gphases)
     : Phases(db)
     {
         static_assert(sizeof...(gphases) > 0);
         addAux(gphases...);
     }
 
-    // TODO: Implement `auto add(const Phase& phase) -> void` as well, in case the user provides a
+    // TODO: Implement `auto add(Phase const& phase) -> void` as well, in case the user provides a
     // Phase object. This will need a new data member `phases` of type `Vec<Phase>`.
 
     /// Add a GeneralPhase object into the Phases container.
-    auto add(const GeneralPhase& phase) -> void;
+    auto add(GeneralPhase const& phase) -> void;
 
     /// Add a GeneralPhasesGenerator object into the Phases container.
-    auto add(const GeneralPhasesGenerator& generator) -> void;
+    auto add(GeneralPhasesGenerator const& generator) -> void;
 
     /// Return the database object used to construct the species and elements in the phases.
-    auto database() const -> const Database&;
+    auto database() const -> Database const&;
 
     /// Return the GeneralPhase objects collected so far with each call to Phases::add method.
     auto generalPhases() const -> Vec<GeneralPhase> const&;
@@ -332,7 +332,7 @@ private:
 
     /// Add one or more GeneralPhase or GeneralPhasesGenerator objects into the Phases container.
     template<typename Arg, typename... Args>
-    auto addAux(const Arg& arg, const Args&... args) -> void
+    auto addAux(Arg const& arg, Args const&... args) -> void
     {
         add(arg);
         if constexpr (sizeof...(Args) > 0)
@@ -348,16 +348,16 @@ public:
     AqueousPhase() : GeneralPhase() { initialize(); }
 
     /// Construct an AqueousPhase object with given species names.
-    explicit AqueousPhase(const StringList& species) : GeneralPhase(species) { initialize(); }
+    explicit AqueousPhase(StringList const& species) : GeneralPhase(species) { initialize(); }
 
     /// Construct an AqueousPhase object with given element symbols.
     explicit AqueousPhase(Speciate elements) : GeneralPhase(elements += {"H", "O"}) { initialize(); }
 
     /// Construct an AqueousPhase object with given element symbols and tags indicating which species must be excluded from the final list.
-    explicit AqueousPhase(Speciate elements, const Exclude& withtags) : GeneralPhase(elements += {"H", "O"}, withtags) { initialize(); }
+    explicit AqueousPhase(Speciate elements, Exclude const& withtags) : GeneralPhase(elements += {"H", "O"}, withtags) { initialize(); }
 
     /// Construct an AqueousPhase object with tags indicating which species must be excluded from the final list.
-    explicit AqueousPhase(const Exclude& withtags) : GeneralPhase(speciate("H O"), withtags) { initialize(); }
+    explicit AqueousPhase(Exclude const& withtags) : GeneralPhase(speciate("H O"), withtags) { initialize(); }
 
     /// Initialize the default attributes of this AqueousPhase object.
     auto initialize() -> void
@@ -378,16 +378,16 @@ public:
     GaseousPhase() : GeneralPhase() { initialize(); }
 
     /// Construct a GaseousPhase object with given species names.
-    explicit GaseousPhase(const StringList& species) : GeneralPhase(species) { initialize(); }
+    explicit GaseousPhase(StringList const& species) : GeneralPhase(species) { initialize(); }
 
     /// Construct a GaseousPhase object with given element symbols.
-    explicit GaseousPhase(const Speciate& elements) : GeneralPhase(elements) { initialize(); }
+    explicit GaseousPhase(Speciate const& elements) : GeneralPhase(elements) { initialize(); }
 
     /// Construct a GaseousPhase object with given element symbols and tags indicating which species must be excluded from the final list.
-    explicit GaseousPhase(const Speciate& elements, const Exclude& withtags) : GeneralPhase(elements, withtags) { initialize(); }
+    explicit GaseousPhase(Speciate const& elements, Exclude const& withtags) : GeneralPhase(elements, withtags) { initialize(); }
 
     /// Construct a GaseousPhase object with tags indicating which species must be excluded from the final list.
-    explicit GaseousPhase(const Exclude& withtags) : GeneralPhase(withtags) { initialize(); }
+    explicit GaseousPhase(Exclude const& withtags) : GeneralPhase(withtags) { initialize(); }
 
     /// Initialize the default attributes of this GaseousPhase object.
     auto initialize() -> void
@@ -408,16 +408,16 @@ public:
     LiquidPhase() : GeneralPhase() { initialize(); }
 
     /// Construct a LiquidPhase object with given species names.
-    explicit LiquidPhase(const StringList& species) : GeneralPhase(species) { initialize(); }
+    explicit LiquidPhase(StringList const& species) : GeneralPhase(species) { initialize(); }
 
     /// Construct a LiquidPhase object with given element symbols.
-    explicit LiquidPhase(const Speciate& elements) : GeneralPhase(elements) { initialize(); }
+    explicit LiquidPhase(Speciate const& elements) : GeneralPhase(elements) { initialize(); }
 
     /// Construct a LiquidPhase object with given element symbols excluding the species with provided tags.
-    explicit LiquidPhase(const Speciate& elements, const Exclude& withtags) : GeneralPhase(elements, withtags) { initialize(); };
+    explicit LiquidPhase(Speciate const& elements, Exclude const& withtags) : GeneralPhase(elements, withtags) { initialize(); };
 
     /// Construct a LiquidPhase object excluding the species with provided tags.
-    explicit LiquidPhase(const Exclude& withtags) : GeneralPhase(withtags) { initialize(); };
+    explicit LiquidPhase(Exclude const& withtags) : GeneralPhase(withtags) { initialize(); };
 
     /// Initialize the default attributes of this LiquidPhase object.
     auto initialize() -> void
@@ -435,7 +435,7 @@ class SolidPhase : public GeneralPhase
 {
 public:
     /// Construct a SolidPhase object with given species names.
-    explicit SolidPhase(const StringList& species) : GeneralPhase(species) { initialize(); }
+    explicit SolidPhase(StringList const& species) : GeneralPhase(species) { initialize(); }
 
     /// Initialize the default attributes of this SolidPhase object.
     auto initialize() -> void
@@ -484,16 +484,16 @@ public:
     MineralPhases() : GeneralPhasesGenerator() { initialize(); }
 
     /// Construct a MineralPhases object with given species names.
-    explicit MineralPhases(const StringList& species) : GeneralPhasesGenerator(species) { initialize(); }
+    explicit MineralPhases(StringList const& species) : GeneralPhasesGenerator(species) { initialize(); }
 
     /// Construct a MineralPhases object with given element symbols.
-    explicit MineralPhases(const Speciate& elements) : GeneralPhasesGenerator(elements) { initialize(); }
+    explicit MineralPhases(Speciate const& elements) : GeneralPhasesGenerator(elements) { initialize(); }
 
     /// Construct a MineralPhases object with given element symbols excluding the species with provided tags
-    explicit MineralPhases(const Speciate& elements, const Exclude& withtags) : GeneralPhasesGenerator(elements, withtags) { initialize(); };
+    explicit MineralPhases(Speciate const& elements, Exclude const& withtags) : GeneralPhasesGenerator(elements, withtags) { initialize(); };
 
     /// Construct a MineralPhases object excluding the species with provided tags
-    explicit MineralPhases(const Exclude& withtags) : GeneralPhasesGenerator(withtags) { initialize(); };
+    explicit MineralPhases(Exclude const& withtags) : GeneralPhasesGenerator(withtags) { initialize(); };
 
     /// Initialize the default attributes of this MineralPhases object.
     auto initialize() -> void
@@ -542,16 +542,16 @@ public:
     CondensedPhases() : GeneralPhasesGenerator() { initialize(); }
 
     /// Construct a CondensedPhases object with given species names.
-    explicit CondensedPhases(const StringList& species) : GeneralPhasesGenerator(species) { initialize(); }
+    explicit CondensedPhases(StringList const& species) : GeneralPhasesGenerator(species) { initialize(); }
 
     /// Construct a CondensedPhases object with given element symbols.
-    explicit CondensedPhases(const Speciate& elements) : GeneralPhasesGenerator(elements) { initialize(); }
+    explicit CondensedPhases(Speciate const& elements) : GeneralPhasesGenerator(elements) { initialize(); }
 
     /// Construct a CondensedPhases object with given element symbols excluding the species with provided tags
-    explicit CondensedPhases(const Speciate& elements, const Exclude& withtags) : GeneralPhasesGenerator(elements, withtags) { initialize(); };
+    explicit CondensedPhases(Speciate const& elements, Exclude const& withtags) : GeneralPhasesGenerator(elements, withtags) { initialize(); };
 
     /// Construct a CondensedPhases object excluding the species with provided tags
-    explicit CondensedPhases(const Exclude& withtags) : GeneralPhasesGenerator(withtags) { initialize(); };
+    explicit CondensedPhases(Exclude const& withtags) : GeneralPhasesGenerator(withtags) { initialize(); };
 
     /// Initialize the default attributes of this CondensedPhases object.
     auto initialize() -> void
@@ -576,7 +576,7 @@ class IonExchangePhase : public GeneralPhase
 public:
 
     /// Construct an IonExchangePhase object with given species names.
-    explicit IonExchangePhase(const StringList& species) : GeneralPhase(species) { initialize(); }
+    explicit IonExchangePhase(StringList const& species) : GeneralPhase(species) { initialize(); }
 
     /// Initialize the default attributes of this IonExchangePhase object.
     auto initialize() -> void
