@@ -30,7 +30,6 @@ EquilibriumDims::EquilibriumDims(EquilibriumSpecs const& specs)
 
     Ne = system.elements().size();
     Nn = system.species().size();
-    Ns = system.surfaces().size();
     Np = specs.numControlVariablesP();
     Nq = specs.numControlVariablesQ();
     Nv = specs.numEquationConstraints();

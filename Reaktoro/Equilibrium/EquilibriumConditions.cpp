@@ -55,11 +55,7 @@ EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
   itemperature_w(specs.indexTemperatureAmongInputVariables()),
   itemperature_p(specs.indexTemperatureAmongControlVariablesP()),
   ipressure_w(specs.indexPressureAmongInputVariables()),
-  ipressure_p(specs.indexPressureAmongControlVariablesP()),
-  isurface_areas_w(specs.indicesSurfaceAreasAmongInputVariables()),
-  isurface_areas_p(specs.indicesSurfaceAreasAmongControlVariablesP()),
-  isurface_areas_known(specs.indicesSurfaceAreasKnown()),
-  isurface_areas_unknown(specs.indicesSurfaceAreasUnknown())
+  ipressure_p(specs.indexPressureAmongControlVariablesP())
 {
     // Initialize the values of the *w* input variables to NaN, so that we can easily verify later which ones have not been specified yet by the user.
     w = constants(specs.numInputs(), NaN);
@@ -221,31 +217,6 @@ auto EquilibriumConditions::phaseVolume(StringOrIndex const& phase, real const& 
     throwErrorIfNotRegisteredInput(wvars, id, errormsg);
     const auto idx = index(wvars, id);
     w[idx] = units::convert(value, unit, "m3");
-}
-
-//=================================================================================================
-//
-// METHODS TO SPECIFY SURFACE AREA CONDITIONS
-//
-//=================================================================================================
-
-auto EquilibriumConditions::surfaceAreas(ArrayXrConstRef const& values) -> void
-{
-    assert((values >= 0.0).all());
-    assert(values.size() == msystem.surfaces().size());
-    w(isurface_areas_w) = values(isurface_areas_known);
-}
-
-auto EquilibriumConditions::surfaceArea(StringOrIndex const& surface, real const& value, String const& unit) -> void
-{
-    auto const& surfaces = msystem.surfaces();
-    auto const isurface = detail::resolveSurfaceIndex(surfaces, surface);
-    errorifnot(isurface < surfaces.size(), "There is no surface area with name or index `", stringfy(surface), "` in the chemical system.");
-    auto const surface_name = surfaces[isurface].name();
-    const auto id = "surfaceArea[" + surface_name + "]";
-    throwErrorIfNotRegisteredInput(wvars, id, "the area of surface " + surface_name);
-    const auto idx = index(wvars, id);
-    w[idx] = units::convert(value, unit, "m2");
 }
 
 //=================================================================================================
@@ -445,12 +416,7 @@ auto EquilibriumConditions::inputValuesGetOrCompute(ChemicalState const& state0)
     if(ipressure_w < w.size() && std::isnan(w[ipressure_w].val()))
         wvals[ipressure_w] = state0.pressure();
 
-    // If surface area is input, but current value is nan, fetch it from state0
-    for(auto [i, isurface_w] : enumerate(isurface_areas_w))
-        if(std::isnan(wvals[isurface_w].val()))
-            wvals[isurface_w] = state0.surfaceArea(isurface_areas_known[i]);
-
-    // Ensure no other input values are left unspecified! Only temperature, pressure, and surface areas can be inferred at the moment at least.
+    // Ensure no other input values are left unspecified! Only temperature and pressure can be inferred at the moment.
     for(auto const& [i, wval] : enumerate(wvals))
         errorif(std::isnan(wval.val()), "You have not specified a value for input `", wvars[i], "` in the EquilibriumConditions object.");
 

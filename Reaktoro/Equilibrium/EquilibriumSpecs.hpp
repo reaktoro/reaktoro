@@ -416,32 +416,6 @@ public:
 
     //=================================================================================================
     //
-    // METHODS TO SPECIFY SURFACE AREA CONSTRAINTS
-    //
-    //=================================================================================================
-
-    /// Specify that the **surface areas of all reacting phase interfaces** are given at chemical equilibrium.
-    /// This method introduces input variables with names `surfaceArea[Name]` where `Name` is the
-    /// name of each surface in the associated ChemicalSystem object (@see
-    /// ChemicalSystem::surfaces). By calling this method, you are specifying that these surface
-    /// areas are known in the equilibrium calculation (by default they are considered unknowns).
-    /// Thus, they will not be considered as control variables whose values need to be computed as
-    /// part of the equilibrium calculation.
-    /// @see unknownSurfaceAreas
-    auto surfaceAreas() -> void;
-
-    /// Specify that the **surface area of a reacting phase interface** is given at chemical equilibrium.
-    /// This method introduces one input variable with name `surfaceArea[Name]` where `Name` is the
-    /// name of the surface. By calling this method, you are specifying that the surface area of
-    /// this specific reacting phase interface is known in the equilibrium calculation (by default
-    /// it is considered an unknown). Thus, it will not be considered as a control variable whose
-    /// value needs to be computed as part of the equilibrium calculation.
-    /// @param surface The name or index of the surface in the system.
-    /// @see unknownSurfaceArea
-    auto surfaceArea(StringOrIndex const& surface) -> void;
-
-    //=================================================================================================
-    //
     // METHODS TO SPECIFY UNKNOWN INPUT CONDITIONS
     //
     //=================================================================================================
@@ -457,22 +431,6 @@ public:
     /// are specifying that pressure is unknown and to be computed as part of the chemical
     /// equilibrium calculation.
     auto unknownPressure() -> void;
-
-    /// Specify that the **surface areas of all reacting phase interfaces** are unknown in the chemical equilibrium calculation.
-    /// This method introduces *p* control variables with names `surfaceArea[Name]` where `Name` is
-    /// the name of each surface in the associated ChemicalSystem object (@see ChemicalSystem::surfaces).
-    /// By calling this method, you are specifying that these surface areas are unknown and to be
-    /// computed as part of the chemical equilibrium calculation.
-    auto unknownSurfaceAreas() -> void;
-
-    /// Specify that the **surface area of a reacting phase interface** is unknown in the chemical equilibrium calculation.
-    /// This method introduces a *p* control variable with name `surfaceArea[Name]` where `Name` is
-    /// the name of the specified surface in the associated ChemicalSystem object (@see ChemicalSystem::surfaces).
-    /// By calling this method, you are specifying that this surface area is unknown and to be
-    /// computed as part of the chemical equilibrium calculation.
-    /// @param surface The name or index of the surface in the system.
-    /// @see unknownSurfaceArea
-    auto unknownSurfaceArea(StringOrIndex const& surface) -> void;
 
     //=================================================================================================
     //
@@ -795,10 +753,6 @@ public:
     /// Return true if pressure is unknown in the chemical equilibrium specifications.
     auto isPressureUnknown() const -> bool;
 
-    /// Return true if the surface area of a reacting phase interface is unknown in the chemical equilibrium specifications.
-    /// @param surface The name or index of the surface in the system.
-    auto isSurfaceAreaUnknown(StringOrIndex const& surface) const -> bool;
-
     /// Return the index of temperature in the vector of *w* input variables if it is an input, otherwise `Index(-1)` if unknown.
     auto indexTemperatureAmongInputVariables() const -> Index;
 
@@ -810,18 +764,6 @@ public:
 
     /// Return the index of pressure in the vector of *p* control variables if it is unknown, otherwise `Index(-1)` if known.
     auto indexPressureAmongControlVariablesP() const -> Index;
-
-    /// Return the indices of surface areas in the vector of *w* input variables.
-    auto indicesSurfaceAreasAmongInputVariables() const -> Indices;
-
-    /// Return the indices of surface areas in the vector of *p* control variables.
-    auto indicesSurfaceAreasAmongControlVariablesP() const -> Indices;
-
-    /// Return the indices of surface areas in the vector of surface areas that are known.
-    auto indicesSurfaceAreasKnown() const -> Indices;
-
-    /// Return the indices of surface areas in the vector of surface areas that are unknown.
-    auto indicesSurfaceAreasUnknown() const -> Indices;
 
     /// Return the index of a *w* input variable with given name if found, otherwise the number of *w* input variables.
     auto indexInputVariable(String const& name) const -> Index;

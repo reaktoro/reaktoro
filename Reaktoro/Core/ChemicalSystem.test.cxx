@@ -130,7 +130,13 @@ auto createChemicalSystem() -> ChemicalSystem
         db.reaction("CaCO3(s)"),
     };
 
-    return ChemicalSystem(db, phases, reactions);
+    const SurfaceList surfaces = {
+        Surface("AqueousPhase:GaseousPhase"),
+        Surface("AqueousPhase:Halite"),
+        Surface("Calcite"),
+    };
+
+    return ChemicalSystem(db, phases, reactions, surfaces);
 }
 
 } // namespace test
@@ -263,30 +269,11 @@ TEST_CASE("Testing ChemicalSystem class", "[ChemicalSystem]")
 
     auto surfaces = system.surfaces();
 
-    CHECK( surfaces.size() == 3 ); // aqueous-gaseous, aqueous-halite, calcite-implicit phase
+    CHECK( surfaces.size() == 3 );
 
-    CHECK( surfaces[0].name()         == "AqueousPhase:GaseousPhase" );
-    CHECK( surfaces[0].phaseNames()   == Pair<String, String>{ "AqueousPhase", "GaseousPhase" } );
-    CHECK( surfaces[0].phaseIndices() == Pair<Index, Index>{ 0, 1 } );
-
-    CHECK( surfaces[1].name()         == "AqueousPhase:Halite" );
-    CHECK( surfaces[1].phaseNames()   == Pair<String, String>{ "AqueousPhase", "Halite" } );
-    CHECK( surfaces[1].phaseIndices() == Pair<Index, Index>{ 0, 2 } );
-
-    CHECK( surfaces[2].name()         == "Calcite" );
-    CHECK( surfaces[2].phaseNames()   == Pair<String, String>{ "Calcite", "Calcite" } );
-    CHECK( surfaces[2].phaseIndices() == Pair<Index, Index>{ 3, 3 } );
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalSystem::surfaces().indexWithPhases()
-    //-------------------------------------------------------------------------
-
-    CHECK( system.surfaces().findWithPhases("AqueousPhase", "GaseousPhase") == 0 );
-    CHECK( system.surfaces().findWithPhases("AqueousPhase", "Halite") == 1 );
-    CHECK( system.surfaces().findWithPhases("Calcite", "Calcite") == 2 );
-
-    CHECK( system.surfaces().findWithPhases("Calcite", "Halite") >= system.surfaces().size() );
-    CHECK( system.surfaces().findWithPhases("Calcite", "Quartz") >= system.surfaces().size() );
+    CHECK( surfaces[0].name() == "AqueousPhase:GaseousPhase" );
+    CHECK( surfaces[1].name() == "AqueousPhase:Halite" );
+    CHECK( surfaces[2].name() == "Calcite" );
 
     //-------------------------------------------------------------------------
     // TESTING CONSTRUCTOR: ChemicalSystem::ChemicalSystem(db, phases...)

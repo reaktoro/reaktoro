@@ -45,23 +45,16 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
 {
     WHEN("temperature and pressure are given - calcite and water")
     {
-        SupcrtDatabase db("supcrtbl");
-
-        AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
-        solution.set(ActivityModelDavies());
-
-        MineralPhase calcite("Calcite");
-
-        Phases phases(db);
-        phases.add(solution);
-        phases.add(calcite);
-
         Params params = Params::embedded("PalandriKharaka.yaml");
 
-        MineralReactions reactions("Calcite");
-        reactions.setRateModel(ReactionRateModelPalandriKharaka(params));
+        SupcrtDatabase db("supcrtbl");
 
-        ChemicalSystem system(phases, reactions);
+        ChemicalSystem system(db,
+            AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)").setActivityModel(ActivityModelDavies()),
+            MineralPhase("Calcite"),
+            MineralReactions("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+            Surface("Calcite").withAreaModel([](ChemicalProps const&) { return 1.0; })
+        );
 
         ChemicalState state(system);
         ChemicalState exactstate(system);
@@ -84,7 +77,6 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         state.pressure(1.0, "bar");
         state.set("H2O(aq)", 1.0, "kg");
         state.set("Calcite", 1.0, "mol");
-        state.surfaceArea("Calcite", 1.0, "m2");
 
         result = solver.solve(state, dt);
 
@@ -103,7 +95,6 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         state.pressure(2.0, "bar");
         state.set("H2O(aq)", 1.1, "kg");
         state.set("Calcite", 1.1, "mol");
-        state.surfaceArea("Calcite", 1.1, "m2");
 
         exactstate = state;
         exactsolver.solve(exactstate, dt); // compute the reacted state exactly with conventional algorithm
@@ -114,8 +105,8 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         CHECK( result.predicted() );
         CHECK( result.iterations() == 0 );
 
-        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577676443) ); // ~5.8% max relative difference
-        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0051315941) ); // ~0.5% max relative difference
+        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577532115) ); // ~5.77% max relative difference
+        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0037043337) ); // ~0.37% max relative difference
 
         //-------------------------------------------------------------------------------------------------------------
         // CHANGE THE INITIAL CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
@@ -128,7 +119,6 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         state.pressure(10.0, "bar");
         state.set("H2O(aq)", 2.0, "kg");
         state.set("Calcite", 2.0, "mol");
-        state.surfaceArea("Calcite", 1.0, "m2");
 
         exactstate = state;
         exactsolver.solve(exactstate, dt);

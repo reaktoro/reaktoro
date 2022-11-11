@@ -93,7 +93,7 @@ struct ChemicalSystem::Impl
 
     /// Construct a ChemicalSystem::Impl object with given database, phases, and reactions (determine surfaces from reactions and phases).
     Impl(Database const& database, PhaseList const& phases, ReactionList const& reactions)
-    : Impl(database, phases, reactions, detail::createSurfacesForReactingPhaseInterfacesInReactions(reactions, phases))
+    : Impl(database, phases, reactions, SurfaceList{})
     {
     }
 

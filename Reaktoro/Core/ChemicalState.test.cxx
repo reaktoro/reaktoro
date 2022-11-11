@@ -231,65 +231,6 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scalePhaseMass("AqueousPhase", -1.2, "kg") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHODS: ChemicalState::setSurfaceArea,surfaceArea
-    //-------------------------------------------------------------------------
-
-    // Set the surface area between aqueous and gaseous phases
-    state.setSurfaceArea("AqueousPhase", "GaseousPhase", 12, "cm2");
-
-    CHECK( state.surfaceArea("AqueousPhase", "GaseousPhase") == Approx(0.0012) );
-    CHECK( state.surfaceArea("GaseousPhase", "AqueousPhase") == Approx(0.0012) );
-    CHECK( state.surfaceArea("AqueousPhase", 1)              == Approx(0.0012) );
-    CHECK( state.surfaceArea(1, "AqueousPhase")              == Approx(0.0012) );
-    CHECK( state.surfaceArea("GaseousPhase", 0)              == Approx(0.0012) );
-    CHECK( state.surfaceArea(0, "GaseousPhase")              == Approx(0.0012) );
-    CHECK( state.surfaceArea(0, 1)                           == Approx(0.0012) );
-    CHECK( state.surfaceArea(1, 0)                           == Approx(0.0012) );
-    CHECK( state.surfaceArea(0)                              == Approx(0.0012) );
-
-    // Update the surface area between aqueous and gaseous phase, but change the order of phases
-    state.setSurfaceArea("GaseousPhase", "AqueousPhase", 19, "cm2");
-
-    CHECK( state.surfaceArea("AqueousPhase", "GaseousPhase") == Approx(0.0019) );
-    CHECK( state.surfaceArea("GaseousPhase", "AqueousPhase") == Approx(0.0019) );
-    CHECK( state.surfaceArea("AqueousPhase", 1)              == Approx(0.0019) );
-    CHECK( state.surfaceArea(1, "AqueousPhase")              == Approx(0.0019) );
-    CHECK( state.surfaceArea("GaseousPhase", 0)              == Approx(0.0019) );
-    CHECK( state.surfaceArea(0, "GaseousPhase")              == Approx(0.0019) );
-    CHECK( state.surfaceArea(0, 1)                           == Approx(0.0019) );
-    CHECK( state.surfaceArea(1, 0)                           == Approx(0.0019) );
-    CHECK( state.surfaceArea(0)                              == Approx(0.0019) );
-
-    // Set the surface area between aqueous and halite phase
-    state.surfaceArea("Halite", "AqueousPhase", 0.27, "m2");
-
-    CHECK( state.surfaceArea("AqueousPhase", "Halite") == Approx(0.27) );
-    CHECK( state.surfaceArea("Halite", "AqueousPhase") == Approx(0.27) );
-    CHECK( state.surfaceArea("AqueousPhase", 2)        == Approx(0.27) );
-    CHECK( state.surfaceArea(2, "AqueousPhase")        == Approx(0.27) );
-    CHECK( state.surfaceArea("Halite", 0)              == Approx(0.27) );
-    CHECK( state.surfaceArea(0, "Halite")              == Approx(0.27) );
-    CHECK( state.surfaceArea(0, 2)                     == Approx(0.27) );
-    CHECK( state.surfaceArea(2, 0)                     == Approx(0.27) );
-    CHECK( state.surfaceArea(1)                        == Approx(0.27) );
-
-    // Set the surface area of the calcite phase
-    state.surfaceArea("Calcite", "Calcite", 0.32, "m2");
-
-    CHECK( state.surfaceArea("Calcite", "Calcite") == Approx(0.32) );
-    CHECK( state.surfaceArea("Calcite", 3)         == Approx(0.32) );
-    CHECK( state.surfaceArea(3, "Calcite")         == Approx(0.32) );
-    CHECK( state.surfaceArea("Calcite", 3)         == Approx(0.32) );
-    CHECK( state.surfaceArea(3, 3)                 == Approx(0.32) );
-    CHECK( state.surfaceArea(2)                    == Approx(0.32) );
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::surfaceAreas
-    //-------------------------------------------------------------------------
-
-    CHECK( state.surfaceAreas().isApprox(ArrayXr{{0.0019, 0.27, 0.32}}) );
-
-    //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::update
     //-------------------------------------------------------------------------
 

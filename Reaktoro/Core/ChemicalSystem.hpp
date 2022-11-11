@@ -168,20 +168,22 @@ auto createChemicalSystem(Database const& db, Args const&... args) -> ChemicalSy
 {
     Phases phases(db);
     Reactions reactions;
+    Surfaces surfaces;
 
     ForEach([&](auto arg) constexpr {
         using T = Decay<decltype(arg)>;
-        constexpr auto isReactionConvertible = isConvertible<T, Reaction> || isConvertible<T, GeneralReaction> || isConvertible<T, ReactionGenerator>;
         constexpr auto isPhaseConvertible = isBaseOf<GeneralPhase, T> || isBaseOf<GeneralPhasesGenerator, T>;
+        constexpr auto isReactionConvertible = isConvertible<T, Reaction> || isConvertible<T, GeneralReaction> || isConvertible<T, ReactionGenerator>;
+        constexpr auto isSurfaceConvertible = isConvertible<T, Surface> || isConvertible<T, GeneralSurface> || isConvertible<T, SurfaceGenerator>;
 
-        static_assert(isReactionConvertible || isPhaseConvertible, "One of the arguments in your list of arguments for the construction of a ChemicalSystem object has a non-convertible type to either reaction or phase.");
+        static_assert(isPhaseConvertible || isReactionConvertible || isSurfaceConvertible, "One of the arguments in your list of arguments for the construction of a ChemicalSystem object has a non-convertible type to either phase, reaction, or surface.");
 
-        if constexpr(isPhaseConvertible)
-            phases.add(arg);
-        else reactions.add(arg);
+        if constexpr(isPhaseConvertible) phases.add(arg);
+        else if constexpr(isReactionConvertible) reactions.add(arg);
+        else surfaces.add(arg);
     }, args...);
 
-    return ChemicalSystem(phases, reactions);
+    return ChemicalSystem(phases, reactions, surfaces);
 }
 
 } // namespace Reaktoro

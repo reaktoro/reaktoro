@@ -39,29 +39,9 @@ auto KineticsSensitivity::initialize(EquilibriumSpecs const& specs) -> void
     EquilibriumSensitivity::initialize(specs);
 }
 
-auto KineticsSensitivity::dnds(String const& Sid) const -> VectorXdConstRef
-{
-    return VectorXd{};
-}
-
-auto KineticsSensitivity::dnds() const -> MatrixXdConstRef
-{
-    return MatrixXd{};
-}
-
 auto KineticsSensitivity::dnddt() const -> VectorXdConstRef
 {
     return VectorXd{};
-}
-
-auto KineticsSensitivity::dpds(String const& Sid) const -> VectorXdConstRef
-{
-    return VectorXd{};
-}
-
-auto KineticsSensitivity::dpds() const -> MatrixXdConstRef
-{
-    return MatrixXd{};
 }
 
 auto KineticsSensitivity::dpddt() const -> VectorXdConstRef
@@ -69,24 +49,9 @@ auto KineticsSensitivity::dpddt() const -> VectorXdConstRef
     return VectorXd{};
 }
 
-auto KineticsSensitivity::dqds(String const& Sid) const -> VectorXdConstRef
-{
-    return VectorXd{};
-}
-
-auto KineticsSensitivity::dqds() const -> MatrixXdConstRef
-{
-    return MatrixXd{};
-}
-
 auto KineticsSensitivity::dqddt() const -> VectorXdConstRef
 {
     return VectorXd{};
-}
-
-auto KineticsSensitivity::duds() const -> MatrixXdConstRef
-{
-    return MatrixXd{};
 }
 
 auto KineticsSensitivity::duddt() const -> VectorXdConstRef

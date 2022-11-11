@@ -47,7 +47,6 @@ struct EquilibriumDims
 {
     Index Ne = 0; ///< The number of elements in the chemical system.
     Index Nn = 0; ///< The number of species in the chemical system.
-    Index Ns = 0; ///< The number of surfaces in the chemical system.
     Index Np = 0; ///< The number of *p* control variables (temperature, pressure, amounts of explicit titrants, and custom variables).
     Index Nq = 0; ///< The number of *q* control variables (amounts of implicit titrants).
     Index Nv = 0; ///< The number of equations constraints in the chemical equilibrium problem.

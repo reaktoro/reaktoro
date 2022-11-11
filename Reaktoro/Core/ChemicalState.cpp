@@ -62,15 +62,11 @@ struct ChemicalState::Impl
     /// The amounts of the chemical species (in mol)
     ArrayXr n;
 
-    /// The surface areas for the existing interphase surfaces (in m2).
-    ArrayXr s;
-
     /// Construct a ChemicalState::Impl instance with given chemical system.
     Impl(ChemicalSystem const& system)
     : system(system), equilibrium(system), props(system)
     {
         n.setConstant(system.species().size(), 1e-16); // set small positive value for initial species amounts
-        s.setZero(system.surfaces().size());
     }
 
     auto temperature(real const& val) -> void
@@ -336,58 +332,6 @@ struct ChemicalState::Impl
         auto const& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
         n(isolidspecies) *= factor;
     }
-
-    // --------------------------------------------------------------------------------------------
-    // METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
-    // --------------------------------------------------------------------------------------------
-
-    auto setSurfaceAreas(ArrayXdConstRef const& values) -> void
-    {
-        errorif(s.size() != values.size(), "Expecting given vector of surface areas to be of size ", s.size(), " but its size is ", values.size(), ".");
-        s = values;
-    }
-
-    auto setSurfaceAreas(ArrayXrConstRef const& values) -> void
-    {
-        errorif(s.size() != values.size(), "Expecting given vector of surface areas to be of size ", s.size(), " but its size is ", values.size(), ".");
-        s = values;
-    }
-
-    auto setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
-    {
-        errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
-        value = units::convert(value, unit, "m2");
-        const auto isurface = system.surfaces().indexWithPhases(phase1, phase2);
-        const auto numsurfaces = system.surfaces().size();
-        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", stringfy(phase1), "` and `", stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
-        s[isurface] = value;
-    }
-
-    auto setSurfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void
-    {
-        const auto numsurfaces = system.surfaces().size();
-        errorif(value < 0.0, "Expecting a non-negative surface area value, but got ", value, " ", unit);
-        const auto isurface = detail::resolveSurfaceIndex(system, surface);
-        errorif(isurface >= numsurfaces, "Could not find a surface in the system with index or name `", stringfy(surface), "`.");
-        value = units::convert(value, unit, "m2");
-        s[isurface] = value;
-    }
-
-    auto surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
-    {
-        const auto numsurfaces = system.surfaces().size();
-        const auto isurface = system.surfaces().indexWithPhases(phase1, phase2);
-        errorif(isurface >= numsurfaces, "Cannot set surface area for the interface between phases `", stringfy(phase1), "` and `", stringfy(phase2), "` because these two phases are not reacting kinetically (i.e., there are no heteroneous reactions in the chemical system in which these two phases are present).");
-        return s[isurface];
-    }
-
-    auto surfaceArea(StringOrIndex const& surface) const -> real
-    {
-        const auto numsurfaces = system.surfaces().size();
-        const auto isurface = detail::resolveSurfaceIndex(system, surface);
-        errorif(isurface >= numsurfaces, "Could not find a surface in the system with index or name `", stringfy(surface), "`.");
-        return s[isurface];
-    }
 };
 
 ChemicalState::ChemicalState(ChemicalSystem const& system)
@@ -616,55 +560,6 @@ auto ChemicalState::scaleSolidMass(real value, Chars unit) -> void
 }
 
 // --------------------------------------------------------------------------------------------
-// METHODS FOR SETTING/GETTING SURFACE AREAS BETWEEN PHASES
-// --------------------------------------------------------------------------------------------
-
-auto ChemicalState::setSurfaceAreas(ArrayXrConstRef const& s) -> void
-{
-    pimpl->setSurfaceAreas(s);
-}
-
-auto ChemicalState::setSurfaceAreas(ArrayXdConstRef const& s) -> void
-{
-    pimpl->setSurfaceAreas(s);
-}
-
-auto ChemicalState::setSurfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
-{
-    pimpl->setSurfaceArea(phase1, phase2, value, unit);
-}
-
-auto ChemicalState::setSurfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void
-{
-    pimpl->setSurfaceArea(surface, value, unit);
-}
-
-auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2, real value, Chars unit) -> void
-{
-    pimpl->setSurfaceArea(phase1, phase2, value, unit);
-}
-
-auto ChemicalState::surfaceArea(StringOrIndex const& surface, real value, Chars unit) -> void
-{
-    pimpl->setSurfaceArea(surface, value, unit);
-}
-
-auto ChemicalState::surfaceArea(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> real
-{
-    return pimpl->surfaceArea(phase1, phase2);
-}
-
-auto ChemicalState::surfaceArea(StringOrIndex const& surface) const -> real
-{
-    return pimpl->surfaceArea(surface);
-}
-
-auto ChemicalState::surfaceAreas() const -> ArrayXrConstRef
-{
-    return pimpl->s;
-}
-
-// --------------------------------------------------------------------------------------------
 // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
 // --------------------------------------------------------------------------------------------
 
@@ -676,30 +571,12 @@ auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef const& 
     props().update(T, P, n);
 }
 
-auto ChemicalState::update(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void
-{
-    setTemperature(T);
-    setPressure(P);
-    setSpeciesAmounts(n);
-    setSurfaceAreas(s);
-    props().update(T, P, n, s);
-}
-
 auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n) -> void
 {
     setTemperature(T);
     setPressure(P);
     setSpeciesAmounts(n);
     props().updateIdeal(T, P, n);
-}
-
-auto ChemicalState::updateIdeal(real const& T, real const& P, ArrayXrConstRef const& n, ArrayXrConstRef const& s) -> void
-{
-    setTemperature(T);
-    setPressure(P);
-    setSpeciesAmounts(n);
-    setSurfaceAreas(s);
-    props().updateIdeal(T, P, n, s);
 }
 
 // --------------------------------------------------------------------------------------------
@@ -984,8 +861,6 @@ auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&
     auto const& phases = state.system().phases();
     auto const& species = state.system().species();
     auto const& elements = state.system().elements();
-    auto const& surfaces = state.system().surfaces();
-    auto const& s = state.surfaceAreas();
 
     Table table;
     table.add_row({ "Property", "Value", "Unit" });
@@ -995,13 +870,6 @@ auto operator<<(std::ostream& out, ChemicalState const& state) -> std::ostream&
 
     table.add_row({ "Element Amount:", "", "" }); for(auto i = 0; i < b.size(); ++i) table.add_row({ ":: " + elements[i].symbol(), strsci(b[i]), "mol" });
     table.add_row({ "Species Amount:", "", "" }); for(auto i = 0; i < n.size(); ++i) table.add_row({ ":: " + species[i].repr(), strsci(n[i]), "mol" });
-
-    if(surfaces.size())
-    {
-        table.add_row({ "Surface Area:", "", "" });
-            for(auto [k, surface] : enumerate(surfaces))
-                table.add_row({ ":: " + surface.name(), strsci(s[k]), "m2" });
-    }
 
     auto i = 0;
     for(auto& row : table)
