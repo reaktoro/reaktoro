@@ -32,9 +32,9 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     // TESTING CONSTRUCTOR: SurfaceList(formulas)
     //-------------------------------------------------------------------------
     surfaces = SurfaceList({
-        Surface("AqueousPhase:GaseousPhase").withPhaseNames("AqueousPhase", "GaseousPhase"),
-        Surface("Calcite").withPhaseNames("Calcite", "Calcite"),
-        Surface("Quartz:AqueousPhase").withPhaseNames("Quartz", "AqueousPhase"),
+        Surface("AqueousPhase:GaseousPhase"),
+        Surface("Calcite"),
+        Surface("Quartz:AqueousPhase"),
     });
 
     REQUIRE( surfaces.size() == 3 );
@@ -62,15 +62,6 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     REQUIRE( surfaces.findWithName("Xyrium") >= surfaces.size() );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: SurfaceList::findWithPhases
-    //-------------------------------------------------------------------------
-    REQUIRE( surfaces.findWithPhases("AqueousPhase", "GaseousPhase") == 0 );
-    REQUIRE( surfaces.findWithPhases("Calcite", "Calcite")           == 1 );
-    REQUIRE( surfaces.findWithPhases("Quartz", "AqueousPhase")       == 2 );
-
-    REQUIRE( surfaces.findWithPhases("Xy", "Zw") >= surfaces.size() );
-
-    //-------------------------------------------------------------------------
     // TESTING METHOD: SurfaceList::index
     //-------------------------------------------------------------------------
     REQUIRE( surfaces.index("AqueousPhase:GaseousPhase") == 0 );
@@ -87,15 +78,6 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     REQUIRE( surfaces.indexWithName("Quartz:AqueousPhase")       == 2 );
 
     REQUIRE_THROWS( surfaces.indexWithName("Xyrium") );
-
-    //-------------------------------------------------------------------------
-    // TESTING METHOD: SurfaceList::indexWithPhases
-    //-------------------------------------------------------------------------
-    REQUIRE( surfaces.indexWithPhases("AqueousPhase", "GaseousPhase") == 0 );
-    REQUIRE( surfaces.indexWithPhases("Calcite", "Calcite")           == 1 );
-    REQUIRE( surfaces.indexWithPhases("Quartz", "AqueousPhase")       == 2 );
-
-    REQUIRE_THROWS( surfaces.indexWithPhases("Xy", "Zw") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: SurfaceList::get
@@ -116,15 +98,6 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     REQUIRE_THROWS( surfaces.getWithName("Xy") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: SurfaceList::getWithPhases
-    //-------------------------------------------------------------------------
-    REQUIRE( surfaces.getWithPhases("AqueousPhase", "GaseousPhase").name() == "AqueousPhase:GaseousPhase" );
-    REQUIRE( surfaces.getWithPhases("Calcite", "Calcite").name()           == "Calcite" );
-    REQUIRE( surfaces.getWithPhases("Quartz", "AqueousPhase").name()       == "Quartz:AqueousPhase" );
-
-    REQUIRE_THROWS( surfaces.getWithPhases("Xy", "Zw") );
-
-    //-------------------------------------------------------------------------
     // TESTING METHOD: SurfaceList::withNames
     //-------------------------------------------------------------------------
     filtered = surfaces.withNames("Calcite AqueousPhase:GaseousPhase");
@@ -138,11 +111,9 @@ TEST_CASE("Testing SurfaceList", "[SurfaceList]")
     //-------------------------------------------------------------------------
     // TESTING METHOD: SurfaceList::append
     //-------------------------------------------------------------------------
-    surfaces.append(Surface("LiquidPhase:Gel").withPhaseNames("LiquidPhase", "Gel"));
+    surfaces.append(Surface("LiquidPhase:Gel"));
 
     REQUIRE( surfaces.indexWithName("LiquidPhase:Gel") < surfaces.size() );
-    REQUIRE( surfaces.indexWithPhases("LiquidPhase", "Gel") < surfaces.size() );
-    REQUIRE( surfaces.indexWithPhases("Gel", "LiquidPhase") < surfaces.size() );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: SurfaceList::begin|end

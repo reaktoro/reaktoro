@@ -24,9 +24,9 @@ def testSurfaceList():
     # TESTING CONSTRUCTOR: SurfaceList(formulas)
     #-------------------------------------------------------------------------
     surfaces = SurfaceList([
-        Surface("AqueousPhase:GaseousPhase", "AqueousPhase", "GaseousPhase"),
-        Surface("Calcite", "Calcite", "Calcite"),
-        Surface("Quartz:AqueousPhase", "Quartz", "AqueousPhase"),
+        Surface("AqueousPhase:GaseousPhase"),
+        Surface("Calcite"),
+        Surface("Quartz:AqueousPhase"),
     ])
 
     assert surfaces.size() == 3
@@ -54,15 +54,6 @@ def testSurfaceList():
     assert surfaces.findWithName("Xyrium") >= surfaces.size()
 
     #-------------------------------------------------------------------------
-    # TESTING METHOD: SurfaceList::findWithPhases
-    #-------------------------------------------------------------------------
-    assert surfaces.findWithPhases("AqueousPhase", "GaseousPhase") == 0
-    assert surfaces.findWithPhases("Calcite", "Calcite")           == 1
-    assert surfaces.findWithPhases("Quartz", "AqueousPhase")       == 2
-
-    assert surfaces.findWithPhases("Xy", "Zw") >= surfaces.size()
-
-    #-------------------------------------------------------------------------
     # TESTING METHOD: SurfaceList::index
     #-------------------------------------------------------------------------
     assert surfaces.index("AqueousPhase:GaseousPhase") == 0
@@ -81,16 +72,6 @@ def testSurfaceList():
 
     with pytest.raises(Exception):
         surfaces.indexWithName("Xyrium")
-
-    #-------------------------------------------------------------------------
-    # TESTING METHOD: SurfaceList::indexWithPhases
-    #-------------------------------------------------------------------------
-    assert surfaces.indexWithPhases("AqueousPhase", "GaseousPhase") == 0
-    assert surfaces.indexWithPhases("Calcite", "Calcite")           == 1
-    assert surfaces.indexWithPhases("Quartz", "AqueousPhase")       == 2
-
-    with pytest.raises(Exception):
-        surfaces.indexWithPhases("Xy", "Zw")
 
     #-------------------------------------------------------------------------
     # TESTING METHOD: SurfaceList::get
@@ -113,16 +94,6 @@ def testSurfaceList():
         surfaces.getWithName("Xy")
 
     #-------------------------------------------------------------------------
-    # TESTING METHOD: SurfaceList::getWithPhases
-    #-------------------------------------------------------------------------
-    assert surfaces.getWithPhases("AqueousPhase", "GaseousPhase").name() == "AqueousPhase:GaseousPhase"
-    assert surfaces.getWithPhases("Calcite", "Calcite").name()           == "Calcite"
-    assert surfaces.getWithPhases("Quartz", "AqueousPhase").name()       == "Quartz:AqueousPhase"
-
-    with pytest.raises(Exception):
-        surfaces.getWithPhases("Xy", "Zw")
-
-    #-------------------------------------------------------------------------
     # TESTING METHOD: SurfaceList::withNames
     #-------------------------------------------------------------------------
     filtered = surfaces.withNames("Calcite AqueousPhase:GaseousPhase")
@@ -137,11 +108,9 @@ def testSurfaceList():
     #-------------------------------------------------------------------------
     # TESTING METHOD: SurfaceList::append
     #-------------------------------------------------------------------------
-    surfaces.append(Surface("LiquidPhase:Gel", "LiquidPhase", "Gel"))
+    surfaces.append(Surface("LiquidPhase:Gel"))
 
     assert surfaces.indexWithName("LiquidPhase:Gel") < surfaces.size()
-    assert surfaces.indexWithPhases("LiquidPhase", "Gel") < surfaces.size()
-    assert surfaces.indexWithPhases("Gel", "LiquidPhase") < surfaces.size()
 
     #-------------------------------------------------------------------------
     # TESTING METHOD: SurfaceList::__iter__

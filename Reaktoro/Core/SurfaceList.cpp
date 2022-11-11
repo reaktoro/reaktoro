@@ -75,11 +75,6 @@ auto SurfaceList::findWithName(String const& name) const -> Index
     return indexfn(m_surfaces, RKT_LAMBDA(e, e.name() == name));
 }
 
-auto SurfaceList::findWithPhases(StringOrIndex const& iphase1, StringOrIndex const& iphase2) const -> Index
-{
-    return indexfn(m_surfaces, RKT_LAMBDA(e, e.equivalent(iphase1, iphase2)));
-}
-
 auto SurfaceList::index(String const& symbol) const -> Index
 {
     return indexWithName(symbol);
@@ -92,13 +87,6 @@ auto SurfaceList::indexWithName(String const& name) const -> Index
     return idx;
 }
 
-auto SurfaceList::indexWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Index
-{
-    const auto idx = findWithPhases(phase1, phase2);
-    errorif(idx >= size(), "Could not find any Surface object with phases ", stringfy(phase1), " and ", stringfy(phase2), ".");
-    return idx;
-}
-
 auto SurfaceList::get(String const& symbol) const -> Surface const&
 {
     return getWithName(symbol);
@@ -107,11 +95,6 @@ auto SurfaceList::get(String const& symbol) const -> Surface const&
 auto SurfaceList::getWithName(String const& name) const -> Surface const&
 {
     return m_surfaces[indexWithName(name)];
-}
-
-auto SurfaceList::getWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Surface const&
-{
-    return m_surfaces[indexWithPhases(phase1, phase2)];
 }
 
 auto SurfaceList::withNames(StringList const& names) const -> SurfaceList

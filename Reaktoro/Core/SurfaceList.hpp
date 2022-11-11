@@ -61,26 +61,17 @@ public:
     /// Return the index of the first surface with given unique name or the number of surfaces if not found.
     auto findWithName(String const& name) const -> Index;
 
-    /// Return the index of the first surface with given phase names/indices or the number of surfaces if not found.
-    auto findWithPhases(StringOrIndex const& iphase1, StringOrIndex const& iphase2) const -> Index;
-
     /// Return the index of the first surface with given name or throw a runtime error if not found.
     auto index(String const& name) const -> Index;
 
     /// Return the index of the first surface with given unique name or throw a runtime error if not found.
     auto indexWithName(String const& name) const -> Index;
 
-    /// Return the index of the first surface with given phase names/indices or throw a runtime error if not found.
-    auto indexWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Index;
-
     /// Return the surface with given name.
     auto get(String const& name) const -> Surface const&;
 
     /// Return the surface with given name or throw a runtime error if not found.
     auto getWithName(String const& name) const -> Surface const&;
-
-    /// Return the first surface with given phase names/indices or throw a runtime error if not found.
-    auto getWithPhases(StringOrIndex const& phase1, StringOrIndex const& phase2) const -> Surface const&;
 
     /// Return all surfaces with given names.
     auto withNames(StringList const& names) const -> SurfaceList;
