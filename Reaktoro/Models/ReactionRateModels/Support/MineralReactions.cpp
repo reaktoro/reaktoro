@@ -54,7 +54,7 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
 
             thread_local auto const imineral = aprops.saturationSpecies().indexWithName(minerals[i]);
             thread_local auto const imineralphase = system.phases().indexWithName(minerals[i]);
-            thread_local auto const imineralsurface = system.surfaces().indexWithPhases(imineralphase, imineralphase);
+            thread_local auto const imineralsurface = system.surfaces().indexWithName(minerals[i]);
 
             auto const& T = props.temperature();
             auto const& P = props.pressure();
@@ -85,18 +85,20 @@ MineralReactions::MineralReactions(StringList const& minerals)
 {
 }
 
-auto MineralReactions::setRateModel(MineralReactionRateModelGenerator const& generator) -> void
+auto MineralReactions::setRateModel(MineralReactionRateModelGenerator const& generator) -> MineralReactions&
 {
     const auto size = m_mineral_rate_model_generators.size();
     m_mineral_rate_model_generators.assign(size, generator);
+    return *this;
 }
 
-auto MineralReactions::setRateModel(String const& mineral, MineralReactionRateModelGenerator const& generator) -> void
+auto MineralReactions::setRateModel(String const& mineral, MineralReactionRateModelGenerator const& generator) -> MineralReactions&
 {
     errorif(!generator, "You are trying to specify a non-initialized mineral reaction rate generator.");
     const auto idx = index(m_minerals, mineral);
     errorif(idx >= m_minerals.size(), "You did not specify mineral `", mineral, "` in the list of minerals when creating the MineralReactions object, e.g., `MineralReactions(\"Calcite Dolomite Quartz\")`.");
     m_mineral_rate_model_generators[idx] = generator;
+    return *this;
 }
 
 auto MineralReactions::operator()(SpeciesList const& species) const -> Vec<Reaction>
