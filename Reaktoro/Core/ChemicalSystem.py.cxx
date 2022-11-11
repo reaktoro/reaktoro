@@ -30,6 +30,7 @@ auto createChemicalSystem(Database const& db, py::args args) -> ChemicalSystem
 {
     Phases phases(db);
     Reactions reactions;
+    Surfaces surfaces;
 
     for(auto const& arg : args)
     {
@@ -43,7 +44,16 @@ auto createChemicalSystem(Database const& db, py::args args) -> ChemicalSystem
                     catch(...) {
                         try { reactions.add(arg.cast<ReactionGenerator>()); }
                         catch(...) {
-                            errorif(true, "Could not create a ChemicalSystem object because the given argument below is not supported:\n", py::str(arg));
+                            try { surfaces.add(arg.cast<Surface const&>()); }
+                            catch(...) {
+                                try { surfaces.add(arg.cast<GeneralSurface const&>()); }
+                                catch(...) {
+                                    try { surfaces.add(arg.cast<SurfaceGenerator>()); }
+                                    catch(...) {
+                                        errorif(true, "Could not create a ChemicalSystem object because the given argument below is not supported:\n", py::str(arg));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -51,7 +61,7 @@ auto createChemicalSystem(Database const& db, py::args args) -> ChemicalSystem
         }
     }
 
-    return ChemicalSystem(phases, reactions);
+    return ChemicalSystem(phases, reactions, surfaces);
 }
 
 } // namespace rkt4py
