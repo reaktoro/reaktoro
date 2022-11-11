@@ -36,7 +36,7 @@ void exportReactions(py::module& m)
         .def("name", &GeneralReaction::name, "Return the name of the reaction.")
         .def("equation", &GeneralReaction::equation, "Return the reaction equation of the reaction.")
         .def("rateModel", &GeneralReaction::rateModel, "Return the reaction rate model of the reaction.")
-        .def("__call__", &GeneralReaction::operator(), "Convert this GeneralReaction object into a vector of a single Reaction object.")
+        .def("__call__", &GeneralReaction::operator(), "Convert this GeneralReaction object into a Reaction object.")
         ;
 
     auto add = [](Reactions& self, py::object generator)

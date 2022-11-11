@@ -88,7 +88,8 @@ TEST_CASE("Testing Reactions class", "[Reactions]")
         generalreaction1,
         generalreaction2,
         test::ReactionGeneratorUsingClass(),
-        test::ReactionGeneratorUsingFunction);
+        test::ReactionGeneratorUsingFunction
+    );
 
     auto checkReactionsConversion = [&](Reactions const& reactions)
     {

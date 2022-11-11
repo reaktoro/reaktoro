@@ -25,6 +25,9 @@
 
 namespace Reaktoro {
 
+// Forward declarations
+class ChemicalProps;
+
 // TODO: Introduce method Reactions::withSpeciesIndices to avoid recomputation
 // of indices of the species in the reaction when computing properties such as
 // equilibrium index, delta chemical potentials, etc.
@@ -74,7 +77,7 @@ public:
     /// @param unitP The pressure unit for the calculation
     auto props(real T, Chars unitT, real P, Chars unitP) const -> ReactionThermoProps;
 
-    /// Calculate the rate of the reaction for given chemical properties of the system.
+    /// Calculate the rate of the reaction for given chemical properties of the system (in mol/s).
     auto rate(ChemicalProps const& props) const -> real;
 
 private:

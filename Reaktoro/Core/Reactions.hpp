@@ -73,7 +73,7 @@ public:
     /// Return the reaction rate model of the reaction.
     auto rateModel() const -> ReactionRateModel const&;
 
-    /// Convert this GeneralReaction object into a vector of a single Reaction object (for compatibility with ReactionGenerator).
+    /// Convert this GeneralReaction object into a Reaction object.
     auto operator()(SpeciesList const& species) const -> Reaction;
 
 private:
@@ -87,7 +87,7 @@ private:
     ReactionRateModel rate_model;
 };
 
-/// The class used to represent a collection of reactions controlled kinetically.
+/// Used to represent a collection of reactions controlled kinetically.
 /// @ingroup Core
 class Reactions
 {
@@ -98,7 +98,7 @@ public:
     /// Construct a Reactions object with given Reaction, GeneralReaction, or ReactionGenerator objects.
     /// @param reactions The objects of type Reaction, GeneralReaction, or ReactionGenerator.
     template<typename... ReactionConvertible>
-    Reactions(const ReactionConvertible&... reactions)
+    explicit Reactions(ReactionConvertible const&... reactions)
     {
         static_assert(sizeof...(reactions) > 0);
         addAux(reactions...);
