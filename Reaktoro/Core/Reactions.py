@@ -17,7 +17,7 @@
 
 
 from reaktoro import *
-import pytest
+
 
 def generateRateModel(value: float):
     def ratefn(props: ChemicalProps):
@@ -78,7 +78,8 @@ def testReactions():
         generalreaction1,
         generalreaction2,
         ReactionGeneratorUsingClass(),
-        ReactionGeneratorUsingFunction)
+        ReactionGeneratorUsingFunction
+    )
 
     def checkReactionsConversion(reactions: Reactions):
         converted: list[Reaction] = reactions.convert(phases.species())
