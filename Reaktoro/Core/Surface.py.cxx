@@ -19,6 +19,7 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Surface.hpp>
 using namespace Reaktoro;
@@ -28,18 +29,11 @@ void exportSurface(py::module& m)
     py::class_<Surface>(m, "Surface")
         .def(py::init<>())
         .def(py::init<String const&>())
-        .def(py::init<String const&, String const&, String const&>())
-        .def(py::init<String const&, String const&, Index, String const&, Index>())
         .def("clone", &Surface::clone, "Return a deep copy of this Surface object.")
-        .def("withName", &Surface::withName, "Return a duplicate of this Surface object with replaced name.")
-        .def("withPhaseNames", &Surface::withPhaseNames, "Return a duplicate of this Surface object with replaced names of the phases between which this surface exists.")
-        .def("withPhaseIndices", &Surface::withPhaseIndices, "Return a duplicate of this Surface object with replaced indices of the phases between which this surface exists.")
-        .def("name", &Surface::name, "Return the unique name of this surface.")
-        .def("phaseNames", &Surface::phaseNames, return_internal_ref, "Return the names of the phases between which this surface exists.")
-        .def("phaseIndices", &Surface::phaseIndices, return_internal_ref, "Return the indices of the phases between which this surface exists.")
-        .def("equivalent", py::overload_cast<Surface const&>(&Surface::equivalent, py::const_), "Return true if this surface is equivalent to another with the same interface phases.")
-        .def("equivalent", py::overload_cast<String const&, String const&>(&Surface::equivalent, py::const_), "Return true if this surface is equivalent to another with the same interface phases using phase names.")
-        .def("equivalent", py::overload_cast<Index, Index>(&Surface::equivalent, py::const_), "Return true if this surface is equivalent to another with the same interface phases using phase indices.")
-        .def("equivalent", py::overload_cast<StringOrIndex const&, StringOrIndex const&>(&Surface::equivalent, py::const_), "Return true if this surface is equivalent to another with the same interface phases using phase names/indices.")
+        .def("withName", &Surface::withName, "Return a duplicate of this Surface object with new name.")
+        .def("withAreaModel", &Surface::withAreaModel, "Return a duplicate of this Surface object with new surface area model.")
+        .def("name", &Surface::name, return_internal_ref, "Return the unique name of this surface.")
+        .def("areaModel", &Surface::areaModel, return_internal_ref, "Return the area model of this surface.")
+        .def("area", &Surface::area, "Calculate the area of the surface for given chemical properties of the system (in m2).")
         ;
 }
