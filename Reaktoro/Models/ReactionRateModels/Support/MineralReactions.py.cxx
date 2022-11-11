@@ -27,8 +27,8 @@ void exportMineralReactions(py::module& m)
 {
     py::class_<MineralReactions>(m, "MineralReactions")
         .def(py::init<StringList const&>(), "Construct a MineralReactions object with given mineral names.")
-        .def("setRateModel", py::overload_cast<MineralReactionRateModelGenerator const&>(&MineralReactions::setRateModel), "Set a common mineral reaction rate model generator for all minerals.")
-        .def("setRateModel", py::overload_cast<String const&, MineralReactionRateModelGenerator const&>(&MineralReactions::setRateModel), "Set a mineral reaction rate model generator for a specific mineral.")
+        .def("setRateModel", py::overload_cast<MineralReactionRateModelGenerator const&>(&MineralReactions::setRateModel), return_internal_ref, "Set a common mineral reaction rate model generator for all minerals.")
+        .def("setRateModel", py::overload_cast<String const&, MineralReactionRateModelGenerator const&>(&MineralReactions::setRateModel), return_internal_ref, "Set a mineral reaction rate model generator for a specific mineral.")
         .def("__call__", &MineralReactions::operator(), "Convert this MineralReactions object into a vector of Reaction objects.")
         ;
 
