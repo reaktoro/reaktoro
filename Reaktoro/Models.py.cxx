@@ -21,10 +21,12 @@
 void exportActivityModels(py::module& m);
 void exportReactionRateModels(py::module& m);
 void exportStandardThermoModels(py::module& m);
+void exportSurfaceAreaModels(py::module& m);
 
 void exportModels(py::module& m)
 {
     exportActivityModels(m);
     exportReactionRateModels(m);
     exportStandardThermoModels(m);
+    exportSurfaceAreaModels(m);
 }
