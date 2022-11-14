@@ -202,29 +202,29 @@ public:
     auto scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real const& scalar) -> void;
 
     // --------------------------------------------------------------------------------------------
-    // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+    // METHODS TO SCALE THE AMOUNT OF THE SYSTEM OR PART OF IT
     // --------------------------------------------------------------------------------------------
 
-    /// Scale the volume of the system to a new value.
-    /// @param volume The new volume of the system
-    /// @param unit The volume unit (must be convertible to m3)
-    auto scaleVolume(real volume, Chars unit) -> void;
+    /// Scale the amount of the system to a new value.
+    /// @param amount The new amount of the system
+    /// @param unit The amount unit (must be convertible to mol)
+    auto scaleAmount(real amount, Chars unit) -> void;
 
-    /// Scale the volume of a phase to a new value.
+    /// Scale the amount of a phase to a new value.
     /// @param phase The name or index of the phase in the system.
-    /// @param volume The new volume of the phase
-    /// @param unit The volume unit (must be convertible to m3)
-    auto scalePhaseVolume(StringOrIndex const& phase, real volume, Chars unit) -> void;
+    /// @param amount The new amount of the phase
+    /// @param unit The amount unit (must be convertible to mol)
+    auto scalePhaseAmount(StringOrIndex const& phase, real amount, Chars unit) -> void;
 
-    /// Scale the total volume of fluids in the system to a new value.
-    /// @param volume The new total volume of fluids in the system
-    /// @param unit The volume unit (must be convertible to m3)
-    auto scaleFluidVolume(real volume, Chars unit) -> void;
+    /// Scale the total amount of fluids in the system to a new value.
+    /// @param amount The new total amount of fluids in the system
+    /// @param unit The amount unit (must be convertible to mol)
+    auto scaleFluidAmount(real amount, Chars unit) -> void;
 
-    /// Scale the total volume of solids in the system to a new value.
-    /// @param volume The new total volume of solids in the system
-    /// @param unit The volume unit (must be convertible to m3)
-    auto scaleSolidVolume(real volume, Chars unit) -> void;
+    /// Scale the total amount of solids in the system to a new value.
+    /// @param amount The new total amount of solids in the system
+    /// @param unit The amount unit (must be convertible to mol)
+    auto scaleSolidAmount(real amount, Chars unit) -> void;
 
     // --------------------------------------------------------------------------------------------
     // METHODS TO SCALE THE MASS OF THE SYSTEM OR PART OF IT
@@ -250,6 +250,31 @@ public:
     /// @param mass The new total mass of solids in the system
     /// @param unit The mass unit (must be convertible to kg)
     auto scaleSolidMass(real mass, Chars unit) -> void;
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
+
+    /// Scale the volume of the system to a new value.
+    /// @param volume The new volume of the system
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scaleVolume(real volume, Chars unit) -> void;
+
+    /// Scale the volume of a phase to a new value.
+    /// @param phase The name or index of the phase in the system.
+    /// @param volume The new volume of the phase
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scalePhaseVolume(StringOrIndex const& phase, real volume, Chars unit) -> void;
+
+    /// Scale the total volume of fluids in the system to a new value.
+    /// @param volume The new total volume of fluids in the system
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scaleFluidVolume(real volume, Chars unit) -> void;
+
+    /// Scale the total volume of solids in the system to a new value.
+    /// @param volume The new total volume of solids in the system
+    /// @param unit The volume unit (must be convertible to m3)
+    auto scaleSolidVolume(real volume, Chars unit) -> void;
 
     // --------------------------------------------------------------------------------------------
     // METHODS FOR UPDATING CHEMICAL STATE AND ITS PROPERTIES
