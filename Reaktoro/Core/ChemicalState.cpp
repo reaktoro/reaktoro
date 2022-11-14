@@ -230,53 +230,53 @@ struct ChemicalState::Impl
     }
 
     // --------------------------------------------------------------------------------------------
-    // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+    // METHODS TO SCALE THE AMOUNT OF THE SYSTEM OR PART OF IT
     // --------------------------------------------------------------------------------------------
 
-    auto scaleVolume(real volume, Chars unit) -> void
+    auto scaleAmount(real amount, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
-        volume = units::convert(volume, unit, "m3");
+        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
+        amount = units::convert(amount, unit, "mol");
         props.update(T, P, n);
-        const auto current_volume = props.volume();
-        const auto scalar = (current_volume != 0.0) ? volume/current_volume : real(0.0);
+        const auto current_amount = props.amount();
+        const auto scalar = (current_amount != 0.0) ? amount/current_amount : real(0.0);
         scaleSpeciesAmounts(scalar);
     }
 
-    auto scalePhaseVolume(StringOrIndex const& phase, real volume, Chars unit) -> void
+    auto scalePhaseAmount(StringOrIndex const& phase, real amount, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
-        volume = units::convert(volume, unit, "m3");
+        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
+        amount = units::convert(amount, unit, "mol");
         const auto iphase = detail::resolvePhaseIndex(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         props.update(T, P, n);
-        const auto current_volume = props.phaseProps(iphase).volume();
-        const auto scalar = (current_volume != 0.0) ? volume/current_volume : real(0.0);
+        const auto current_amount = props.phaseProps(iphase).amount();
+        const auto scalar = (current_amount != 0.0) ? amount/current_amount : real(0.0);
         scaleSpeciesAmountsInPhase(iphase, scalar);
     }
 
-    auto scaleFluidVolume(real volume, Chars unit) -> void
+    auto scaleFluidAmount(real amount, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
-        volume = units::convert(volume, unit, "m3");
+        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
+        amount = units::convert(amount, unit, "mol");
         props.update(T, P, n);
         const auto ifluidphases = props.indicesPhasesWithFluidState();
-        const auto current_fluid_volume =
-            Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).volume(); });
-        auto const& factor = current_fluid_volume > 0.0 ? volume / current_fluid_volume : real(0.0);
+        const auto current_fluid_amount =
+            Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).amount(); });
+        auto const& factor = current_fluid_amount > 0.0 ? amount / current_fluid_amount : real(0.0);
         auto const& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
         n(ifluidspecies) *= factor;
     }
 
-    auto scaleSolidVolume(real volume, Chars unit) -> void
+    auto scaleSolidAmount(real amount, Chars unit) -> void
     {
-        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
-        volume = units::convert(volume, unit, "m3");
+        errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
+        amount = units::convert(amount, unit, "mol");
         props.update(T, P, n);
         const auto isolidphases = props.indicesPhasesWithSolidState();
-        const auto current_solid_volume =
-            Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).volume(); });
-        auto const& factor = current_solid_volume > 0.0 ? volume / current_solid_volume : real(0.0);
+        const auto current_solid_amount =
+            Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).amount(); });
+        auto const& factor = current_solid_amount > 0.0 ? amount / current_solid_amount : real(0.0);
         auto const& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
         n(isolidspecies) *= factor;
     }
@@ -329,6 +329,58 @@ struct ChemicalState::Impl
         const auto current_solid_mass =
             Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).mass(); });
         auto const& factor = current_solid_mass > 0.0 ? mass / current_solid_mass : real(0.0);
+        auto const& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
+        n(isolidspecies) *= factor;
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+    // --------------------------------------------------------------------------------------------
+
+    auto scaleVolume(real volume, Chars unit) -> void
+    {
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
+        volume = units::convert(volume, unit, "m3");
+        props.update(T, P, n);
+        const auto current_volume = props.volume();
+        const auto scalar = (current_volume != 0.0) ? volume/current_volume : real(0.0);
+        scaleSpeciesAmounts(scalar);
+    }
+
+    auto scalePhaseVolume(StringOrIndex const& phase, real volume, Chars unit) -> void
+    {
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
+        volume = units::convert(volume, unit, "m3");
+        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
+        props.update(T, P, n);
+        const auto current_volume = props.phaseProps(iphase).volume();
+        const auto scalar = (current_volume != 0.0) ? volume/current_volume : real(0.0);
+        scaleSpeciesAmountsInPhase(iphase, scalar);
+    }
+
+    auto scaleFluidVolume(real volume, Chars unit) -> void
+    {
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
+        volume = units::convert(volume, unit, "m3");
+        props.update(T, P, n);
+        const auto ifluidphases = props.indicesPhasesWithFluidState();
+        const auto current_fluid_volume =
+            Reaktoro::sum(ifluidphases, [&](auto i) { return props.phaseProps(i).volume(); });
+        auto const& factor = current_fluid_volume > 0.0 ? volume / current_fluid_volume : real(0.0);
+        auto const& ifluidspecies = system.phases().indicesSpeciesInPhases(ifluidphases);
+        n(ifluidspecies) *= factor;
+    }
+
+    auto scaleSolidVolume(real volume, Chars unit) -> void
+    {
+        errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
+        volume = units::convert(volume, unit, "m3");
+        props.update(T, P, n);
+        const auto isolidphases = props.indicesPhasesWithSolidState();
+        const auto current_solid_volume =
+            Reaktoro::sum(isolidphases, [&](auto i) { return props.phaseProps(i).volume(); });
+        auto const& factor = current_solid_volume > 0.0 ? volume / current_solid_volume : real(0.0);
         auto const& isolidspecies = system.phases().indicesSpeciesInPhases(isolidphases);
         n(isolidspecies) *= factor;
     }
@@ -512,27 +564,27 @@ auto ChemicalState::scaleSpeciesAmountsInPhase(StringOrIndex const& phase, real 
 }
 
 // --------------------------------------------------------------------------------------------
-// METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+// METHODS TO SCALE THE AMOUNT OF THE SYSTEM OR PART OF IT
 // --------------------------------------------------------------------------------------------
 
-auto ChemicalState::scaleVolume(real value, Chars unit) -> void
+auto ChemicalState::scaleAmount(real value, Chars unit) -> void
 {
-    pimpl->scaleVolume(value, unit);
+    pimpl->scaleAmount(value, unit);
 }
 
-auto ChemicalState::scalePhaseVolume(StringOrIndex const& phase, real value, Chars unit) -> void
+auto ChemicalState::scalePhaseAmount(StringOrIndex const& phase, real value, Chars unit) -> void
 {
-    pimpl->scalePhaseVolume(phase, value, unit);
+    pimpl->scalePhaseAmount(phase, value, unit);
 }
 
-auto ChemicalState::scaleFluidVolume(real value, Chars unit) -> void
+auto ChemicalState::scaleFluidAmount(real value, Chars unit) -> void
 {
-    pimpl->scaleFluidVolume(value, unit);
+    pimpl->scaleFluidAmount(value, unit);
 }
 
-auto ChemicalState::scaleSolidVolume(real value, Chars unit) -> void
+auto ChemicalState::scaleSolidAmount(real value, Chars unit) -> void
 {
-    pimpl->scaleSolidVolume(value, unit);
+    pimpl->scaleSolidAmount(value, unit);
 }
 
 // --------------------------------------------------------------------------------------------
@@ -557,6 +609,30 @@ auto ChemicalState::scaleFluidMass(real value, Chars unit) -> void
 auto ChemicalState::scaleSolidMass(real value, Chars unit) -> void
 {
     pimpl->scaleSolidMass(value, unit);
+}
+
+// --------------------------------------------------------------------------------------------
+// METHODS TO SCALE THE VOLUME OF THE SYSTEM OR PART OF IT
+// --------------------------------------------------------------------------------------------
+
+auto ChemicalState::scaleVolume(real value, Chars unit) -> void
+{
+    pimpl->scaleVolume(value, unit);
+}
+
+auto ChemicalState::scalePhaseVolume(StringOrIndex const& phase, real value, Chars unit) -> void
+{
+    pimpl->scalePhaseVolume(phase, value, unit);
+}
+
+auto ChemicalState::scaleFluidVolume(real value, Chars unit) -> void
+{
+    pimpl->scaleFluidVolume(value, unit);
+}
+
+auto ChemicalState::scaleSolidVolume(real value, Chars unit) -> void
+{
+    pimpl->scaleSolidVolume(value, unit);
 }
 
 // --------------------------------------------------------------------------------------------
