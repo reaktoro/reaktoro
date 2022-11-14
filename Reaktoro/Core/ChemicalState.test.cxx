@@ -195,22 +195,22 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     CHECK_THROWS( scaled.scaleSpeciesAmountsInPhase("XYZ", -1.0) );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scaleVolume
+    // TESTING METHOD: ChemicalState::scaleAmount
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
-    scaled.scaleVolume(1.2, "m3");
+    scaled.scaleAmount(1.2, "mol");
     scaled.props().update(scaled);
-    CHECK( scaled.props().volume() == Approx(1.2) );
-    CHECK_THROWS( scaled.scaleVolume(-1.2, "m3") );
+    CHECK( scaled.props().amount() == Approx(1.2) );
+    CHECK_THROWS( scaled.scaleAmount(-1.2, "mol") );
 
     //-------------------------------------------------------------------------
-    // TESTING METHOD: ChemicalState::scalePhaseVolume
+    // TESTING METHOD: ChemicalState::scalePhaseAmount
     //-------------------------------------------------------------------------
     scaled = ChemicalState(state);
-    scaled.scalePhaseVolume("AqueousPhase", 1.2, "m3");
+    scaled.scalePhaseAmount("AqueousPhase", 1.2, "mol");
     scaled.props().update(scaled);
-    CHECK( scaled.props().phaseProps("AqueousPhase").volume() == Approx(1.2) );
-    CHECK_THROWS( scaled.scalePhaseVolume("AqueousPhase", -1.2, "m3") );
+    CHECK( scaled.props().phaseProps("AqueousPhase").amount() == Approx(1.2) );
+    CHECK_THROWS( scaled.scalePhaseAmount("AqueousPhase", -1.2, "mol") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::scaleMass
@@ -229,6 +229,24 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     scaled.props().update(scaled);
     CHECK( scaled.props().phaseProps("AqueousPhase").mass() == Approx(1.2) );
     CHECK_THROWS( scaled.scalePhaseMass("AqueousPhase", -1.2, "kg") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scaleVolume
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scaleVolume(1.2, "m3");
+    scaled.props().update(scaled);
+    CHECK( scaled.props().volume() == Approx(1.2) );
+    CHECK_THROWS( scaled.scaleVolume(-1.2, "m3") );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: ChemicalState::scalePhaseVolume
+    //-------------------------------------------------------------------------
+    scaled = ChemicalState(state);
+    scaled.scalePhaseVolume("AqueousPhase", 1.2, "m3");
+    scaled.props().update(scaled);
+    CHECK( scaled.props().phaseProps("AqueousPhase").volume() == Approx(1.2) );
+    CHECK_THROWS( scaled.scalePhaseVolume("AqueousPhase", -1.2, "m3") );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::update
