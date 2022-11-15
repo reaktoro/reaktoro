@@ -6,7 +6,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 set(REAKTORO_EXAMPLES_DIR ${PROJECT_SOURCE_DIR}/examples)
 
 foreach(CPPFILE ${CPPFILES})
-    string(FIND "${CPPFILE}" "reaktplot.cpp" result)
+    string(FIND "${CPPFILE}" "rkp.cpp" result)
     if(${result} GREATER 0 AND NOT reaktplot_FOUND)
         message(STATUS "Example ${CPPFILE} will not be compiled because it depends on reaktplot, which was not found.")
         continue()
