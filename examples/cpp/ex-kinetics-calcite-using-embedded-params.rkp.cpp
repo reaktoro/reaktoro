@@ -23,28 +23,20 @@ using namespace reaktplot;
 
 int main()
 {
-    SupcrtDatabase db("supcrtbl");
-
-    AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
-    solution.set(ActivityModelDavies());
-
-    MineralPhase calcite("Calcite");
-
-    Phases phases(db);
-    phases.add(solution);
-    phases.add(calcite);
-
     Params params = Params::embedded("PalandriKharaka.yaml");
 
-    MineralReactions reactions("Calcite");
-    reactions.setRateModel(ReactionRateModelPalandriKharaka(params));
+    SupcrtDatabase db("supcrtbl");
 
-    ChemicalSystem system(phases, reactions);
+    ChemicalSystem system(db,
+        AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)").set(ActivityModelDavies()),
+        MineralPhase("Calcite"),
+        MineralReactions("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+        MineralSurface("Calcite", 5.0, "cm2", 70, "mg", 0.667)  // surface area = (initial surface area)*((current mass)/(initial mass))**power = (5 cm2)*((current mass in mg)/(70 mg))**0.667
+    );
 
     ChemicalState state(system);
     state.set("H2O(aq)", 1.0, "kg");
-    state.set("Calcite", 2.71, "g"); // equivalent to a cube of calcite of 1 cm3
-    state.surfaceArea("Calcite", 6.0, "cm2");  // equivalent to the surface area of a 1cm3 cube
+    state.set("Calcite", 70, "mg");
 
     AqueousProps aprops(system);
 
@@ -64,7 +56,7 @@ int main()
 
         table.column("Timestep") << i;
         table.column("Time")     << i*dt / 60.0; // from seconds to minute
-        table.column("Calcite")  << state.props().speciesMass("Calcite") * 1000.0; // from kg to g
+        table.column("Calcite")  << state.props().speciesMass("Calcite") * 1e6; // from kg to mg
         table.column("Ca+2")     << aprops.speciesMolality("Ca+2");
         table.column("HCO3-")    << aprops.speciesMolality("HCO3-");
         table.column("CO3-2")    << aprops.speciesMolality("CO3-2");
@@ -78,10 +70,10 @@ int main()
     fig1.title("AQUEOUS SPECIES CONCENTRATIONS OVER TIME");
     fig1.xaxisTitle("Time [minute]");
     fig1.yaxisTitle("Concentration [molal]");
-    fig1.drawLine(table["Time"], table["Ca+2"], "Ca+2");
-    fig1.drawLine(table["Time"], table["HCO3-"], "HCO3-");
-    fig1.drawLine(table["Time"], table["CO3-2"], "CO3-2");
-    fig1.drawLine(table["Time"], table["CO2(aq)"], "CO2(aq)");
+    fig1.drawLine(table["Time"], table["Ca+2"], "Ca<sup>+2</sup>");
+    fig1.drawLine(table["Time"], table["HCO3-"], "HCO<sub>3</sub><sup>-</sup>");
+    fig1.drawLine(table["Time"], table["CO3-2"], "CO<sub>3</sub><sup>-2</sup>");
+    fig1.drawLine(table["Time"], table["CO2(aq)"], "CO<sub>2</sub>(aq)");
     fig1.yaxisScaleLog();
     fig1.show();
     fig1.save("ex-kinetics-calcite-using-embedded-params-fig1.pdf");
@@ -89,7 +81,7 @@ int main()
     Figure fig2;
     fig2.title("CALCITE MASS OVER TIME");
     fig2.xaxisTitle("Time [minute]");
-    fig2.yaxisTitle("Mass [g]");
+    fig2.yaxisTitle("Mass [mg]");
     fig2.drawLine(table["Time"], table["Calcite"], "Calcite");
     fig2.show();
     fig2.save("ex-kinetics-calcite-using-embedded-params-fig2.pdf");
