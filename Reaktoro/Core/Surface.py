@@ -23,13 +23,25 @@ def testSurface():
 
     props = ChemicalProps()
 
+    def areafn(props: ChemicalProps):
+        return 1.23
+
+    # When using constructor Surface()
     surface = Surface()
 
     surface = surface.withName("AqueousPhase:GaseousPhase")
     assert surface.name() == "AqueousPhase:GaseousPhase"
 
-    def areafn(props: ChemicalProps):
-        return 1.23
-
     surface = surface.withAreaModel(areafn)
+    assert surface.area(props) == 1.23
+
+    # When using constructor Surface(name)
+    surface = Surface("Quartz")
+
+    assert surface.name() == "Quartz"
+
+    # When using constructor Surface(name, model)
+    surface = Surface("Calcite", areafn)
+
+    assert surface.name() == "Calcite"
     assert surface.area(props) == 1.23

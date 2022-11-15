@@ -36,6 +36,9 @@ public:
     /// Construct an Surface object with a unique name.
     explicit Surface(String const& name);
 
+    /// Construct an Surface object with a unique name and area model.
+    Surface(String const& name, SurfaceAreaModel const& model);
+
     /// Return a deep copy of this Surface object.
     auto clone() const -> Surface;
 
