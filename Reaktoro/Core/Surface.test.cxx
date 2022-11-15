@@ -27,13 +27,31 @@ TEST_CASE("Testing Surface", "[Surface]")
 {
     ChemicalProps props;
 
-    Surface surface;
-
-    surface = surface.withName("AqueousPhase:GaseousPhase");
-    CHECK( surface.name() == "AqueousPhase:GaseousPhase" );
-
     auto areafn = [](ChemicalProps const& props) { return 1.23; };
 
-    surface = surface.withAreaModel(areafn);
-    CHECK( surface.areaModel()(props) == 1.23 );
+    WHEN("using constructor Surface()")
+    {
+        Surface surface;
+
+        surface = surface.withName("AqueousPhase:GaseousPhase");
+        CHECK( surface.name() == "AqueousPhase:GaseousPhase" );
+
+        surface = surface.withAreaModel(areafn);
+        CHECK( surface.areaModel()(props) == 1.23 );
+    }
+
+    WHEN("using constructor Surface(name)")
+    {
+        Surface surface("Quartz");
+
+        CHECK( surface.name() == "Quartz" );
+    }
+
+    WHEN("using constructor Surface(name, model)")
+    {
+        Surface surface("Calcite", areafn);
+
+        CHECK( surface.name() == "Calcite" );
+        CHECK( surface.area(props) == 1.23 );
+    }
 }

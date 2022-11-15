@@ -22,7 +22,7 @@ namespace Reaktoro {
 struct Surface::Impl
 {
     /// The unique name of the surface.
-    String name = "";
+    String name;
 
     /// The area model of this surface (in m2).
     SurfaceAreaModel area_model;
@@ -40,6 +40,13 @@ Surface::Surface(String const& name)
 : Surface()
 {
     pimpl->name = name;
+}
+
+Surface::Surface(String const& name, SurfaceAreaModel const& model)
+: Surface()
+{
+    pimpl->name = name;
+    pimpl->area_model = model;
 }
 
 auto Surface::clone() const -> Surface
