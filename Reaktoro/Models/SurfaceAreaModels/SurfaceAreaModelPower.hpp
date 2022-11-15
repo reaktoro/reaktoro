@@ -82,10 +82,10 @@ auto SurfaceAreaModelPowerVolumetric(String const& phase, Param const& A0, Param
 ///   * SurfaceAreaModelPowerSpecific (when `unitq0` is convertible to kg)
 ///   * SurfaceAreaModelPowerVolumetric (when `unitq0` is convertible to m3)
 /// @param phase The name of the phase (as present in the chemical system) that forms the surface.
-/// @param A0 The initial surface area of the phase (in m2).
+/// @param A0 The initial surface area of the phase.
 /// @param unitA0 The unit of the initial surface area (must be convertible to m2).
 /// @param q0 The initial quantity of the phase.
-/// @param unitq0 The unit of the initial quantity (must be convertible to mol, kg, or m3).
+/// @param unitq0 The unit of the initial quantity (must be convertible to `mol`, `kg`, or `m3`).
 /// @param p The power parameter in the model.
 /// @ingroup Models
 auto SurfaceAreaModelPower(String const& mineral, real A0, Chars unitA0, real m0, Chars unitm0, Param const& q) -> SurfaceAreaModel;
