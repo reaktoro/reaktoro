@@ -40,7 +40,10 @@ public:
     GeneralSurface();
 
     /// Construct a GeneralSurface object with given unique surface name.
-    explicit GeneralSurface(String const& name);
+    GeneralSurface(String const& name);
+
+    /// Construct a GeneralSurface object with given unique surface name and area model.
+    GeneralSurface(String const& name, SurfaceAreaModel const& area_model);
 
     /// Set the unique name of the surface.
     auto setName(String const& name) -> GeneralSurface&;

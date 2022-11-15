@@ -32,6 +32,12 @@ GeneralSurface::GeneralSurface(String const& name)
     setName(name);
 }
 
+GeneralSurface::GeneralSurface(String const& name, SurfaceAreaModel const& area_model)
+{
+    setName(name);
+    setAreaModel(area_model);
+}
+
 auto GeneralSurface::setName(String const& name) -> GeneralSurface&
 {
     surface_name = name;
