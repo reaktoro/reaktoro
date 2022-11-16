@@ -56,6 +56,8 @@ auto computeSpeciesAmount(ChemicalSystem const& system, Index ispecies, real val
     else if(units::convertible(unit, "mol"))
         return units::convert(value, unit, "mol"); // from some amount unit to mol
     else errorif("Provided unit `", unit, "` should be convertible to mol or kg.");
+
+    return {};
 }
 
 auto resolveElementIndexAux(ElementList const& elementlist, Index index) -> Index
