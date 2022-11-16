@@ -97,7 +97,7 @@ public:
     explicit ChemicalSystem(Phases const& phases, Reactions const& reactions, Surfaces const& surfaces);
 
     /// Construct a ChemicalSystem object with given database and a list of phase and reaction convertible objects.
-    template<typename... Args, EnableIf<arePhaseReactionOrSurfaceConvertible<Args...>>...>
+    template<typename... Args, Requires<arePhaseReactionOrSurfaceConvertible<Args...>> = true>
     explicit ChemicalSystem(Database const& db, Args const&... args)
     : ChemicalSystem(createChemicalSystem(db, args...)) {}
 
