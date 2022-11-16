@@ -96,9 +96,6 @@ struct SmartEquilibriumSolver::Impl
         // Reset the result of the last smart equilibrium calculation
         result = {};
 
-        // Check input variables have all been set
-        errorifnot(conditions.inputValues().allFinite(), "Ensure all input variables have been set in the EquilibriumConditions object.");
-
         // Perform a smart prediction of the chemical state
         timeit( predict(state, conditions), result.timing.prediction= )
 
@@ -175,8 +172,8 @@ struct SmartEquilibriumSolver::Impl
         EquilibriumPredictor predictor(state, sensitivity);
 
         // Round temperature and pressure according to their respective step lengths for discretization
-        const auto iT = detail::sround(state.temperature(), options.temperature_step);
-        const auto iP = detail::sround(state.pressure(), options.pressure_step);
+        const auto iT = detail::sround(state.temperature().val(), options.temperature_step);
+        const auto iP = detail::sround(state.pressure().val(), options.pressure_step);
 
         // Get a mutable reference to an existing temperature-pressure cell or create a new one
         auto& cell = grid.cells[{iT, iP}];
@@ -224,8 +221,8 @@ struct SmartEquilibriumSolver::Impl
             return;
 
         // Round temperature and pressure according to their respective step lengths for discretization
-        const auto iT = detail::sround(state.temperature(), options.temperature_step);
-        const auto iP = detail::sround(state.pressure(), options.pressure_step);
+        const auto iT = detail::sround(state.temperature().val(), options.temperature_step);
+        const auto iP = detail::sround(state.pressure().val(), options.pressure_step);
 
         // Find an existing temperature-pressure grid cell within which the state temperature/pressure are located
         auto it = grid.cells.find({iT, iP});
@@ -237,7 +234,7 @@ struct SmartEquilibriumSolver::Impl
         // Get a mutable reference to the found temperature-pressure cell
         auto& cell = it->second;
 
-        const auto wvals = conditions.inputValues();
+        const auto wvals = conditions.inputValuesGetOrCompute(state);
         const auto cvals = conditions.initialComponentAmountsGetOrCompute(state);
 
         const auto w = wvals.cast<double>();
