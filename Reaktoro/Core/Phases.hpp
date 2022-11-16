@@ -288,7 +288,7 @@ public:
     /// Construct a Phases object with given database and general phases.
     /// @param db The database used to construct the species and elements in the phases.
     /// @param gphases The general phases that will be converted into Phase objects.
-    template<typename... GeneralPhases, EnableIf<areGeneralPhases<GeneralPhases...>>...>
+    template<typename... GeneralPhases, Requires<areGeneralPhases<GeneralPhases...>> = true>
     explicit Phases(Database const& db, GeneralPhases const&... gphases)
     : Phases(db)
     {
