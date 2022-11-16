@@ -50,7 +50,7 @@ constexpr auto _arePhaseReactionOrSurfaceConvertible()
     constexpr auto isSurfaceConvertible = isConvertible<T, Surface> || isConvertible<T, GeneralSurface> || isConvertible<T, SurfaceGenerator>;
     constexpr auto aux = isPhaseConvertible || isReactionConvertible || isSurfaceConvertible;
 
-    if constexpr (sizeof...(Ts))
+    if constexpr (sizeof...(Ts) > 0)
         return aux && _arePhaseReactionOrSurfaceConvertible<Ts...>();
     else return aux;
 }

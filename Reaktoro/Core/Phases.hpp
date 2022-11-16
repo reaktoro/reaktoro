@@ -267,7 +267,7 @@ template <typename T, typename... Ts>
 constexpr auto _areGeneralPhasesImpl()
 {
     constexpr auto aux = isBaseOf<GeneralPhase, T> || isBaseOf<GeneralPhasesGenerator, T>;
-    if constexpr (sizeof...(Ts))
+    if constexpr (sizeof...(Ts) > 0)
         return aux && _areGeneralPhasesImpl<Ts...>();
     else return aux;
 }

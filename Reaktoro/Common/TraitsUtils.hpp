@@ -74,7 +74,7 @@ struct asFunction<Ret(Class::*)(Args...) const> { using type = std::function<Ret
 template<typename T, typename U, typename... Us>
 constexpr auto isOneOf()
 {
-    if constexpr (sizeof...(Us))
+    if constexpr (sizeof...(Us) > 0)
         return isSame<T, U> || isOneOf<T, Us...>();
     else return isSame<T, U>;
 }
