@@ -45,7 +45,7 @@ auto ActivityModelDrummond(String gas, ActivityModelDrummondParams params) -> Ac
                 "ActivityModelDuanSun expects that another aqueous activity model has been chained first (e.g., Davies, Debye-Huckel, HKF, PitzerHMW, etc.) ");
 
             // The aqueous mixture state exported by a base aqueous activity model.
-            const auto& state = std::any_cast<AqueousMixtureState>(stateit->second);
+            const auto& state = *std::any_cast<SharedPtr<AqueousMixtureState> const&>(stateit->second);
 
             const auto& [a1, a2, a3, a4, a5] = params;
             const auto& T = state.T;

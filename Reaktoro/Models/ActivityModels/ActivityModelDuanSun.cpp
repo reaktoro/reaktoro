@@ -98,8 +98,8 @@ auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator
                 "ActivityModelDuanSun expects that another aqueous activity model has been chained first (e.g., Davies, Debye-Huckel, HKF, PitzerHMW, etc.) ");
 
             // The aqueous mixture and its state exported by a base aqueous activity model.
-            const auto& mixture = std::any_cast<AqueousMixture>(mixtureit->second);
-            const auto& state = std::any_cast<AqueousMixtureState>(stateit->second);
+            const auto& mixture = *std::any_cast<SharedPtr<AqueousMixture> const&>(mixtureit->second);
+            const auto& state = *std::any_cast<SharedPtr<AqueousMixtureState> const&>(stateit->second);
 
             // The local indices of some charged species among all charged species
             static const auto iNa  = mixture.charged().findWithFormula("Na+");
