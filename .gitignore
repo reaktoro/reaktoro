@@ -1,7 +1,7 @@
 # Build files and directories
-build/
-_build/
-.build/
+build*/
+_build*/
+.build*/
 compile_commands.json
 
 # Files and directories with suffix -ignore
