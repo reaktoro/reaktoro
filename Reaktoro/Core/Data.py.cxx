@@ -26,18 +26,21 @@ void exportData(py::module& m)
 {
     // Currently, Python bindings for Data is not working correctly 
     // with Param, Vec<Data>, Dict<String,Data> on clang v14.0.6 in macOS.
-    // So, no Data class in the reaktoro Python package for now.  
-#ifndef __APPLE__
+    // So, constructors and conversion to Data related to these types are disable
+    // in the reaktoro Python package for now (in macOS only!).  
+
     py::class_<Data>(m, "Data")
         .def(py::init<>(), "Construct a default Data instance with null value.")
         .def(py::init<bool const&>(), "Construct a Data object as a boolean value.")
         .def(py::init<String const&>(), "Construct a Data object as a string value.")
         .def(py::init<int const&>(), "Construct a Data object as a integer value.")
         .def(py::init<double const&>(), "Construct a Data object as a number value.")
-        .def(py::init<Param const&>(), "Construct a Data object as a Param object.")
         .def(py::init<real const&>(), "Construct a Data object as a Param object.")
+#ifndef __APPLE__
+        .def(py::init<Param const&>(), "Construct a Data object as a Param object.")
         .def(py::init<Map<String, Data> const&>(), "Construct a Data object as a dictionary object.")
         .def(py::init<Vec<Data> const&>(), "Construct a Data object as a list object.")
+#endif
         .def_static("parse", py::overload_cast<Chars>(&Data::parse), "Return a Data object by parsing an YAML formatted string.")
         .def_static("parse", py::overload_cast<String const&>(&Data::parse), "Return a Data object by parsing an YAML formatted string.")
         .def_static("parse", py::overload_cast<std::istream&>(&Data::parse), "Return a Data object by parsing an YAML formatted string.")
@@ -96,6 +99,7 @@ void exportData(py::module& m)
     py::implicitly_convertible<double, Data>();
     py::implicitly_convertible<int, Data>();
     py::implicitly_convertible<bool, Data>();
+#ifndef __APPLE__
     py::implicitly_convertible<Param, Data>();
     py::implicitly_convertible<Map<String, Data>, Data>();
     py::implicitly_convertible<Vec<Data>, Data>();
