@@ -24,6 +24,10 @@ using namespace Reaktoro;
 
 void exportData(py::module& m)
 {
+    // Currently, Python bindings for Data is not working correctly 
+    // with Param, Vec<Data>, Dict<String,Data> on clang v14.0.6 in macOS.
+    // So, no Data class in the reaktoro Python package for now.  
+#ifndef __APPLE__
     py::class_<Data>(m, "Data")
         .def(py::init<>(), "Construct a default Data instance with null value.")
         .def(py::init<bool const&>(), "Construct a Data object as a boolean value.")
@@ -95,4 +99,5 @@ void exportData(py::module& m)
     py::implicitly_convertible<Param, Data>();
     py::implicitly_convertible<Map<String, Data>, Data>();
     py::implicitly_convertible<Vec<Data>, Data>();
+#endif
 }
