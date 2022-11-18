@@ -100,7 +100,13 @@ struct EquilibriumProps::Impl
       dims(specs),
       getT(createTemperatureGetterFn(specs)),
       getP(createPressureGetterFn(specs))
-    {}
+    {
+        // Initialize Jacobian matrix dudnpw with zeros (to avoid uninitialized values)
+        state.props().serialize(stream);
+        const auto Nu = stream.data().rows();
+        const auto Nnpw = dims.Nn + dims.Np + dims.Nw;
+        dudnpw = zeros(Nu, Nnpw);
+    }
 
     /// Update the chemical properties of the chemical system.
     auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel) -> void
@@ -149,8 +155,6 @@ struct EquilibriumProps::Impl
             const auto Nnpw = dims.Nn + dims.Np + dims.Nw;
             assert(inpw < Nnpw);
             state.props().serialize(stream);
-            const auto Nu = stream.data().rows();
-            dudnpw.resize(Nu, Nnpw);
             auto col = dudnpw.col(inpw);
             const auto size = col.size();
             for(auto i = 0; i < size; ++i)
@@ -207,6 +211,7 @@ auto EquilibriumProps::update(VectorXrConstRef n, VectorXrConstRef p, VectorXrCo
 auto EquilibriumProps::assembleFullJacobianBegin() -> void
 {
     pimpl->assemblying_jacobian = true;
+    pimpl->dudnpw.fill(0.0); // initialize with zeros to remove previous derivative values
 }
 
 auto EquilibriumProps::assembleFullJacobianEnd() -> void
