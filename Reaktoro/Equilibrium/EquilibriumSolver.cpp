@@ -115,14 +115,24 @@ struct EquilibriumSolver::Impl
         {
             // Define some auxiliary references to the variables names
             auto& xnames = options.optima.output.xnames;
+            auto& ynames = options.optima.output.ynames;
+            auto& pnames = options.optima.output.pnames;
 
-            // Initialize the names of the variables corresponding to the species
+            // Initialize the names of the x variables corresponding to species amounts
             for(auto species : system.species())
-                xnames.push_back("n[" + species.name() + "]");
+                xnames.push_back(species.name());
 
-            // Initialize the names of the variables corresponding to the implicit titrants
-            for(auto titrant : specs.namesTitrantsImplicit())
-                xnames.push_back(titrant);
+            // Initialize the names of the x variables corresponding to implicit titrant amounts
+            for(auto qname : specs.namesControlVariablesQ())
+                xnames.push_back(qname);
+
+            // Initialize the names of the y Lagrange multipliers corresponding to the amounts of conservative components
+            for(auto component : specs.namesConservativeComponents())
+                ynames.push_back(component);
+
+            // Initialize the names of the p variables corresponding to the explicit titrants, temperature and/or pressure, other added unknowns
+            for(auto pname : specs.namesControlVariablesP())
+                pnames.push_back(pname);
         }
 
         // Pass along the options used for the calculation to Optima::Solver object
