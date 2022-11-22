@@ -42,7 +42,7 @@ def testSurfaceAreaModelLinear():
 
     model1 = SurfaceAreaModelLinearMolar("Calcite", 0.1)
     model2 = SurfaceAreaModelLinearSpecific("Magnesite", 0.1)
-    model3 = SurfaceAreaModelLinearSpecific("Quartz", 0.1)
+    model3 = SurfaceAreaModelLinearVolumetric("Quartz", 0.1)
 
     assert model1(props).val() == approx(1.0)
     assert model2(props).val() == approx(1.0)
