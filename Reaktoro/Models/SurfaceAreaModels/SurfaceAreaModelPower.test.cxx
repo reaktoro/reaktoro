@@ -48,7 +48,7 @@ TEST_CASE("Testing SurfaceAreaModelPower", "[SurfaceAreaModelPower]")
 
     auto model1 = SurfaceAreaModelPowerMolar("Calcite", 1000.0, 20.0, 3.0);
     auto model2 = SurfaceAreaModelPowerSpecific("Magnesite", 1000.0, 20.0, 3.0);
-    auto model3 = SurfaceAreaModelPowerSpecific("Quartz", 1000.0, 20.0, 3.0);
+    auto model3 = SurfaceAreaModelPowerVolumetric("Quartz", 1000.0, 20.0, 3.0);
 
     CHECK( model1(props) == Approx(1.0) ); // 1000 * (2 / 20)**3
     CHECK( model2(props) == Approx(1.0) ); // 1000 * (2 / 20)**3

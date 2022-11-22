@@ -41,7 +41,7 @@ def testSurfaceAreaModelPower():
 
     model1 = SurfaceAreaModelPowerMolar("Calcite", 1000.0, 20.0, 3.0)
     model2 = SurfaceAreaModelPowerSpecific("Magnesite", 1000.0, 20.0, 3.0)
-    model3 = SurfaceAreaModelPowerSpecific("Quartz", 1000.0, 20.0, 3.0)
+    model3 = SurfaceAreaModelPowerVolumetric("Quartz", 1000.0, 20.0, 3.0)
 
     assert model1(props).val() == approx(1.0)  # 1000 * (2 / 20)**3
     assert model2(props).val() == approx(1.0)  # 1000 * (2 / 20)**3
