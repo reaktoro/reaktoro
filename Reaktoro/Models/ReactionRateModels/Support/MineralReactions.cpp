@@ -18,6 +18,7 @@
 #include "MineralReactions.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/ChemicalProps.hpp>
@@ -52,15 +53,15 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
             auto const& system = props.system();
             auto const& aprops = getAqueousProps(system); // get the AqueousProps object corresponding to the ChemicalSystem object in `props`, which will be reused by all mineral reactions!
 
-            thread_local auto const imineral = aprops.saturationSpecies().indexWithName(minerals[i]);
-            thread_local auto const imineralphase = system.phases().indexWithName(minerals[i]);
-            thread_local auto const imineralsurface = system.surfaces().indexWithName(minerals[i]);
+            thread_local auto const iminerals = vectorize(minerals, RKT_LAMBDA(x, aprops.saturationSpecies().indexWithName(x)));
+            thread_local auto const imineralphases = vectorize(minerals, RKT_LAMBDA(x, system.phases().indexWithName(x)));
+            thread_local auto const imineralsurfaces = vectorize(minerals, RKT_LAMBDA(x, system.surfaces().indexWithName(x)));
 
             auto const& T = props.temperature();
             auto const& P = props.pressure();
             auto const& pH = aprops.pH();
-            auto const& Omega = aprops.saturationRatio(imineral);
-            auto const& area = props.surfaceArea(imineralsurface);
+            auto const& Omega = aprops.saturationRatio(iminerals[i]);
+            auto const& area = props.surfaceArea(imineralsurfaces[i]);
 
             const auto args = MineralReactionRateModelArgs{ props, aprops, T, P, pH, Omega, area };
 
