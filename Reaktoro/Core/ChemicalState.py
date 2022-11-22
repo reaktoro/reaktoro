@@ -253,7 +253,7 @@ def testChemicalState():
     assert state.charge() == -3.0
 
     #-------------------------------------------------------------------------
-    # TESTING METHOD: ChemicalState::update
+    # TESTING METHOD: ChemicalState.update
     #-------------------------------------------------------------------------
 
     otherstate = ChemicalState(system)
@@ -272,7 +272,7 @@ def testChemicalState():
     assert otherstate.props().speciesActivitiesLn() == state.props().speciesActivitiesLn()
 
     #-------------------------------------------------------------------------
-    # TESTING METHOD: ChemicalState::update
+    # TESTING METHOD: ChemicalState.update
     #-------------------------------------------------------------------------
 
     otherstate.updateIdeal(state.temperature(), state.pressure(), state.speciesAmounts())
@@ -287,3 +287,33 @@ def testChemicalState():
     assert otherstate.props().pressure() == state.pressure()
     assert otherstate.props().speciesAmounts() == state.speciesAmounts()
     assert otherstate.props().speciesActivitiesLn() == state.props().speciesActivitiesLn()
+
+    #-------------------------------------------------------------------------
+    # TESTING METHOD: ChemicalState.assign
+    #-------------------------------------------------------------------------
+    state = ChemicalState(system)
+    otherstate = ChemicalState(system)
+
+    state.setTemperature(321, "K")
+    state.setPressure(432, "MPa")
+    state.setSpeciesAmounts(1.23)
+
+    otherstate.assign(state)
+
+    assert otherstate.temperature() == state.temperature()
+    assert otherstate.pressure() == state.pressure()
+    assert otherstate.speciesAmounts() == state.speciesAmounts()
+
+    #-------------------------------------------------------------------------
+    # TESTING METHOD: ChemicalState.clone
+    #-------------------------------------------------------------------------
+    state = ChemicalState(system)
+    state.setTemperature(321, "K")
+
+    otherstate = state.clone()
+
+    assert otherstate.temperature() == state.temperature()
+
+    otherstate.setTemperature(1234, "K")
+
+    assert state.temperature() == 321  # ensure state was not changed with changing otherstate above!

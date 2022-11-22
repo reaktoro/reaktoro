@@ -32,6 +32,9 @@ void exportChemicalState(py::module& m)
         .def(py::init<ChemicalSystem const&>())
         .def(py::init<ChemicalState const&>())
 
+        .def("assign", [](ChemicalState& self, ChemicalState const& other) { self = other; })
+        .def("clone", [](ChemicalState const& self) { return ChemicalState(self); })
+
         .def("setTemperature", py::overload_cast<real const&>(&ChemicalState::setTemperature))
         .def("setTemperature", py::overload_cast<real, Chars>(&ChemicalState::setTemperature))
         .def("temperature", py::overload_cast<real const&>(&ChemicalState::temperature))
