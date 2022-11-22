@@ -417,6 +417,10 @@ public:
     /// Return the isochoric heat capacity of the system (in J/K).
     auto heatCapacityConstV() const -> real;
 
+    /// Return the rate of a kinetic reaction in the system (in mol/s).
+    /// @param reaction The name or index of the reaction in the system.
+    auto reactionRate(StringOrIndex reaction) const -> real;
+
     /// Return the reaction rates of the kinetic reactions in the system (in mol/s).
     auto reactionRates() const -> ArrayXr;
 
