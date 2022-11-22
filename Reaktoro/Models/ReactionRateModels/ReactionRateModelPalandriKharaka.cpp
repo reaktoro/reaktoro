@@ -42,7 +42,7 @@ auto mineralCatalystFnActivity(Catalyst const& catalyst, SpeciesList const& spec
 
     if(aqspecies.size() == 0 || iaqueousspecies >= aqspecies.size())
     {
-        warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on activity) in mineral reaction rate because no aqueous species with formula `", formula, "` exists in the aqueous phase of the system.");
+        // warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on activity) in mineral reaction rate because no aqueous species with formula `", formula, "` exists in the aqueous phase of the system.");
         return [](ChemicalProps const& props) { return 1.0; };
     }
 
@@ -69,7 +69,7 @@ auto mineralCatalystFnPartialPressure(Catalyst const& catalyst, SpeciesList cons
 
     if(gases.size() == 0 || igas >= gases.size())
     {
-        warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on partial pressure) in mineral reaction rate because no gaseous species with formula `", formula, "` exists in the gaseous phase of the system.");
+        // warningif(true, "Ignoring Palandri-Kharaka catalytic effect (based on partial pressure) in mineral reaction rate because no gaseous species with formula `", formula, "` exists in the gaseous phase of the system.");
         return [](ChemicalProps const& props) { return 1.0; };
     }
 
