@@ -145,6 +145,31 @@ auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex phase) -> Ind
     return resolvePhaseIndex(system.phases(), phase);
 }
 
+auto resolveReactionIndexAux(ReactionList const& reactionlist, Index index) -> Index
+{
+    return index;
+}
+
+auto resolveReactionIndexAux(ReactionList const& reactionlist, int index) -> Index
+{
+    return index;
+}
+
+auto resolveReactionIndexAux(ReactionList const& reactionlist, String const& name) -> Index
+{
+    return reactionlist.index(name);
+}
+
+auto resolveReactionIndex(ReactionList const& reactionlist, StringOrIndex reaction) -> Index
+{
+    return std::visit([&](auto&& arg) { return resolveReactionIndexAux(reactionlist, arg); }, reaction);
+}
+
+auto resolveReactionIndex(ChemicalSystem const& system, StringOrIndex reaction) -> Index
+{
+    return resolveReactionIndex(system.reactions(), reaction);
+}
+
 auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, Index index) -> Index
 {
     return index;
