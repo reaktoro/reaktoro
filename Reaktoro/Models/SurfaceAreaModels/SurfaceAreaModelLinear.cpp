@@ -27,7 +27,7 @@ auto SurfaceAreaModelLinearMolar(String const& phase, Param const& Abar) -> Surf
 {
     return [=](ChemicalProps const& props) -> real
     {
-        static thread_local auto iphase = props.system().phases().index(phase);
+        const auto iphase = props.system().phases().index(phase);
         const auto q = props.phaseProps(iphase).amount();
         return q * Abar;
     };
@@ -37,7 +37,7 @@ auto SurfaceAreaModelLinearSpecific(String const& phase, Param const& Abar) -> S
 {
     return [=](ChemicalProps const& props) -> real
     {
-        static thread_local auto iphase = props.system().phases().index(phase);
+        const auto iphase = props.system().phases().index(phase);
         const auto q = props.phaseProps(iphase).mass();
         return q * Abar;
     };
@@ -47,7 +47,7 @@ auto SurfaceAreaModelLinearVolumetric(String const& phase, Param const& Abar) ->
 {
     return [=](ChemicalProps const& props) -> real
     {
-        static thread_local auto iphase = props.system().phases().index(phase);
+        const auto iphase = props.system().phases().index(phase);
         const auto q = props.phaseProps(iphase).volume();
         return q * Abar;
     };
