@@ -48,7 +48,7 @@ TEST_CASE("Testing SurfaceAreaModelLinear", "[SurfaceAreaModelLinear]")
 
     auto model1 = SurfaceAreaModelLinearMolar("Calcite", 0.1);
     auto model2 = SurfaceAreaModelLinearSpecific("Magnesite", 0.1);
-    auto model3 = SurfaceAreaModelLinearSpecific("Quartz", 0.1);
+    auto model3 = SurfaceAreaModelLinearVolumetric("Quartz", 0.1);
 
     CHECK( model1(props) == Approx(1.0) );
     CHECK( model2(props) == Approx(1.0) );
