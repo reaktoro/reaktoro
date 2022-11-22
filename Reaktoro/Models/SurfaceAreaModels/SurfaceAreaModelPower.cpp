@@ -27,7 +27,7 @@ auto SurfaceAreaModelPowerMolar(String const& phase, Param const& A0, Param cons
 {
     return [=](ChemicalProps const& props) -> real
     {
-        static thread_local auto iphase = props.system().phases().index(phase);
+        const auto iphase = props.system().phases().index(phase);
         const auto q = props.phaseProps(iphase).amount();
         return A0 * pow(q / q0, p);
     };
@@ -37,7 +37,7 @@ auto SurfaceAreaModelPowerSpecific(String const& phase, Param const& A0, Param c
 {
     return [=](ChemicalProps const& props) -> real
     {
-        static thread_local auto iphase = props.system().phases().index(phase);
+        const auto iphase = props.system().phases().index(phase);
         const auto q = props.phaseProps(iphase).mass();
         return A0 * pow(q / q0, p);
     };
@@ -47,7 +47,7 @@ auto SurfaceAreaModelPowerVolumetric(String const& phase, Param const& A0, Param
 {
     return [=](ChemicalProps const& props) -> real
     {
-        static thread_local auto iphase = props.system().phases().index(phase);
+        const auto iphase = props.system().phases().index(phase);
         const auto q = props.phaseProps(iphase).volume();
         return A0 * pow(q / q0, p);
     };
