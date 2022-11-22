@@ -765,6 +765,12 @@ auto ChemicalProps::heatCapacityConstV() const -> real
     return Cp + T*VT*VT/VP;
 }
 
+auto ChemicalProps::reactionRate(StringOrIndex reaction) const -> real
+{
+    const auto ireaction = detail::resolveReactionIndex(msystem, reaction);
+    return msystem.reaction(ireaction).rate(*this);
+}
+
 auto ChemicalProps::reactionRates() const -> ArrayXr
 {
     auto const& reactions = msystem.reactions();
