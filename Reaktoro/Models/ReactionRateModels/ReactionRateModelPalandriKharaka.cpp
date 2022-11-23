@@ -163,7 +163,7 @@ auto ReactionRateModelPalandriKharaka(ReactionRateModelParamsPalandriKharaka con
             real sum = 0.0;
             for(auto&& mechanismfn : mechanism_fns)
                 sum += mechanismfn(args);
-            return area * sum;
+            return -area * sum; // negative for dissolution, positive for precipitation
         };
 
         return fn;
