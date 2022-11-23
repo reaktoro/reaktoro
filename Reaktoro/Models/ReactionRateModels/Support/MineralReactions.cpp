@@ -65,7 +65,12 @@ auto convert(Strings const& minerals, Vec<MineralReactionRateModel> const& model
 
             const auto args = MineralReactionRateModelArgs{ props, aprops, T, P, pH, Omega, area };
 
-            return models[i](args);
+            // Evaluate the mineral reaction rate model and switch sign because
+            // Reaktoro's convention for reaction rate is positive when the
+            // reaction proceeds from left to right (and this is how the mineral
+            // reaction is represented, with the mineral on the left side, its
+            // dissolution rate, from left to right, should be positive).
+            return -models[i](args);
         };
     }
 

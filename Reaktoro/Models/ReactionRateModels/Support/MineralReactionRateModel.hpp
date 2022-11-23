@@ -55,6 +55,7 @@ struct MineralReactionRateModelArgs
 };
 
 /// The type of functions that calculate rates for mineral dissolution/precipitation reactions.
+/// The sign convention for a mineral reaction rate is negative if dissolving, positive if precipitating.
 using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateModelArgs)>;
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
