@@ -22,7 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/TraitsUtils.hpp>
+#include <Reaktoro/Common/NumberTraits.hpp>
 #include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
@@ -113,9 +113,6 @@ private:
 //======================================================================
 
 namespace Reaktoro {
-
-template<typename T>
-constexpr auto isNumeric = (isArithmetic<T> || isSame<T, real>) && !isSame<T, bool>;
 
 inline auto operator+(const Param& p) { return  p.value(); }
 inline auto operator-(const Param& p) { return -p.value(); }
