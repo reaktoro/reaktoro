@@ -17,9 +17,87 @@
 
 
 from reaktoro import *
-import pytest
+from autodiff import real
+from pytest import approx
 
 
-# TODO Implement tests for the python bindings of component ReactionRate in ReactionRate[test].py
 def testReactionRate():
-    pass
+
+    rate = ReactionRate(1.23)
+    assert rate.value() == 1.23
+    assert rate.onEquationMode() == False
+
+    rate = ReactionRate(real(2.34))
+    assert rate.value() == 2.34
+    assert rate.onEquationMode() == False
+
+    rate = ReactionRate.enforce(123.4)
+    assert rate.value() == 123.4
+    assert rate.onEquationMode() == True
+
+    # Testing assign method with double and real scalars
+    rate.assign(1.0)
+    assert rate.value() == 1.0
+    assert rate.onEquationMode() == True
+
+    rate.assign(real(2.0))
+    assert rate.value() == 2.0
+    assert rate.onEquationMode() == True
+
+    # Testing arithmetic assign-operators with double and real scalars
+    for seed in [1.0, real(1.0)]:
+        rate = ReactionRate(2.0 * seed)
+
+        rate += (1.0 * seed)
+        assert rate.value() == approx(3.0)
+
+        rate -= (1.0 * seed)
+        assert rate.value() == approx(2.0)
+
+        rate *= (3.0 * seed)
+        assert rate.value() == approx(6.0)
+
+        rate /= (3.0 * seed)
+        assert rate.value() == approx(2.0)
+
+    # Testing positive and negative arithmetic operators
+    rate = ReactionRate(2.0)
+
+    rate = +rate
+    assert rate.value() == approx(2.0)
+
+    rate = -rate
+    assert rate.value() == approx(-2.0)
+
+    # Testing arithmetic operators with double and real scalars on the right
+    for seed in [1.0, real(1.0)]:
+        rate = ReactionRate(2.0 * seed)
+
+        rate = rate + (1.0 * seed)
+        assert rate.value() == approx(3.0)
+
+        rate = rate - (1.0 * seed)
+        assert rate.value() == approx(2.0)
+
+        rate = rate * (3.0 * seed)
+        assert rate.value() == approx(6.0)
+
+        rate = rate / (3.0 * seed)
+        assert rate.value() == approx(2.0)
+
+    # Testing arithmetic operators with double and real scalars on the left
+    for seed in [1.0, real(1.0)]:
+        rate = ReactionRate(2.0 * seed)
+
+        rate = (1.0 * seed) + rate
+        assert rate.value() == approx(3.0)
+
+        rate = (1.0 * seed) - rate
+        assert rate.value() == approx(2.0)
+
+        rate = (3.0 * seed) * rate
+        assert rate.value() == approx(6.0)
+
+        rate = (3.0 * seed) / rate
+        assert rate.value() == approx(2.0)
+
