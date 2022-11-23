@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Common/NumberTraits.hpp>
 
 namespace Reaktoro {
 
@@ -31,11 +32,8 @@ public:
     {}
 
     /// Construct a ReactionRate object with given rate value.
-    ReactionRate(double value)
-    : m_value(value) {}
-
-    /// Construct a ReactionRate object with given rate value.
-    ReactionRate(real const& value)
+    template<typename T, Requires<isNumeric<T>> = true>
+    ReactionRate(T const& value)
     : m_value(value) {}
 
     /// Return a ReactionRate object that represents the residual of an enforced equation `f(props) = 0` instead of a reaction rate.
@@ -46,10 +44,16 @@ public:
         return res;
     }
 
-    /// Get the underlying real object in the ReactionRate object.
+    /// Return the underlying real object in the ReactionRate object.
     auto value() const -> real const&
     {
         return m_value;
+    }
+
+    /// Return true if this ReactionRate object is in equation mode enabled by @ref enforce.
+    auto onEquationMode() const -> bool
+    {
+        return m_equation_mode;
     }
 
     /// Convert this ReactionRate object into a real object.
@@ -58,12 +62,18 @@ public:
         return m_value;
     }
 
-    /// Assign a real value to this ReactionRate object.
-    auto operator=(real const& value) -> ReactionRate&
+    /// Assign a value to this ReactionRate object.
+    template<typename T, Requires<isNumeric<T>> = true>
+    auto operator=(T const& value) -> ReactionRate&
     {
         m_value = value;
         return *this;
     }
+
+    template<typename T, Requires<isNumeric<T>> = true> auto operator+=(T const& scalar) -> ReactionRate& { m_value += scalar; return *this; }
+    template<typename T, Requires<isNumeric<T>> = true> auto operator-=(T const& scalar) -> ReactionRate& { m_value -= scalar; return *this; }
+    template<typename T, Requires<isNumeric<T>> = true> auto operator*=(T const& scalar) -> ReactionRate& { m_value *= scalar; return *this; }
+    template<typename T, Requires<isNumeric<T>> = true> auto operator/=(T const& scalar) -> ReactionRate& { m_value /= scalar; return *this; }
 
 private:
     /// The computed value of the reaction rate or the residual of an equation that the rate model is enforcing.
@@ -72,5 +82,18 @@ private:
     /// The boolean flag that indices whether `value` is to be interpreted as the residual of an enforced equation `f(props) = 0` instead of a reaction rate.
     bool m_equation_mode = false;
 };
+
+inline auto operator+(ReactionRate const& rate) { return rate; }
+inline auto operator-(ReactionRate rate) { return rate *= -1.0; }
+
+template<typename T, Requires<isNumeric<T>> = true> auto operator+(ReactionRate rate, T const& scalar) { return rate += scalar; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator-(ReactionRate rate, T const& scalar) { return rate -= scalar; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator*(ReactionRate rate, T const& scalar) { return rate *= scalar; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator/(ReactionRate rate, T const& scalar) { return rate /= scalar; }
+
+template<typename T, Requires<isNumeric<T>> = true> auto operator+(T const& scalar, ReactionRate rate) { return rate += scalar; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator-(T const& scalar, ReactionRate rate) { return rate -= scalar; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator*(T const& scalar, ReactionRate rate) { return rate *= scalar; }
+template<typename T, Requires<isNumeric<T>> = true> auto operator/(T const& scalar, ReactionRate rate) { return rate /= scalar; }
 
 } // namespace Reaktoro
