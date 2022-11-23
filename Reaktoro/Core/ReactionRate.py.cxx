@@ -29,7 +29,41 @@ void exportReactionRate(py::module& m)
         .def(py::init<double>(), "Construct a ReactionRate object with given rate value.")
         .def(py::init<real const&>(), "Construct a ReactionRate object with given rate value.")
         .def_static("enforce", &ReactionRate::enforce, "Return a ReactionRate object that represents the residual of an enforced equation `f(props) = 0` instead of a reaction rate.")
-        .def("value", &ReactionRate::value, return_internal_ref, "Get the underlying real object in the ReactionRate object.")
+        .def("value", &ReactionRate::value, return_internal_ref, "Return the underlying real object in the ReactionRate object.")
+        .def("onEquationMode", &ReactionRate::onEquationMode, return_internal_ref, "Return true if this ReactionRate object is in equation mode.")
         .def("assign", [](ReactionRate& self, real const& value) { return self = value; }, return_internal_ref, "Assign a real value to this ReactionRate object.")
+
+        .def(py::self += double())
+        .def(py::self -= double())
+        .def(py::self *= double())
+        .def(py::self /= double())
+
+        .def(py::self + double())
+        .def(py::self - double())
+        .def(py::self * double())
+        .def(py::self / double())
+
+        .def(double() + py::self)
+        .def(double() - py::self)
+        .def(double() * py::self)
+        .def(double() / py::self)
+
+        .def(py::self += real())
+        .def(py::self -= real())
+        .def(py::self *= real())
+        .def(py::self /= real())
+
+        .def(py::self + real())
+        .def(py::self - real())
+        .def(py::self * real())
+        .def(py::self / real())
+
+        .def(real() + py::self)
+        .def(real() - py::self)
+        .def(real() * py::self)
+        .def(real() / py::self)
+
+        .def(+py::self)
+        .def(-py::self)
         ;
 }
