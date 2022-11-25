@@ -55,6 +55,7 @@ jobs:
           use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
       - shell: bash -el {0}
         run: |
+          conda clean --all --force-pkgs-dirs
           conda info
           conda list
           conda config --show-sources
