@@ -86,6 +86,18 @@ public:
     /// @param stream The array stream containing the serialized chemical properties.
     auto deserialize(const ArrayStream<double>& stream) -> void;
 
+    /// Return the state identification number of this ChemicalProps object.
+    /// Each time this ChemicalProps object is updated, its state identification
+    /// number (`stateid`) is incremented. This is useful for memorizing
+    /// expensive functions that require a ChemicalProps object as an argument
+    /// for their evaluation. Checking whether two ChemicalProps objects are
+    /// identical therefore requires only a comparison of two integer values,
+    /// rather than all the properties stored in them. Note that it is not
+    /// enough to compare just temperature, pressure and species amounts, as the
+    /// chemical properties of the system can be recalculated using ideal activity
+    /// models and will therefore differ between the two ChemicalProps objects.
+    auto stateid() const -> Index;
+
     /// Return the chemical system associated with these chemical properties.
     auto system() const -> ChemicalSystem const&;
 
@@ -461,7 +473,10 @@ public:
     operator VectorXd() const;
 
 private:
-    /// The chemical system associated with these chemical properties.
+    /// The state identification number of this ChemicalProps object.
+    Index mstateid = 0;
+
+    /// The ChemicalSystem object associated with this ChemicalProps object.
     ChemicalSystem msystem;
 
     /// The temperature of the system (in K).

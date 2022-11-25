@@ -82,6 +82,8 @@ auto ChemicalProps::update(ChemicalState const& state) -> void
 
 auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
+    mstateid += 1;
+
     assert(T0 >= 0.0);
     assert(P0 >= 0.0);
     assert(n0.size() == n.size() && (n0 >= 0.0).all());
@@ -101,11 +103,13 @@ auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -
 
 auto ChemicalProps::update(ArrayXrConstRef data) -> void
 {
+    mstateid += 1;
     ArraySerialization::deserialize(data, T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::update(ArrayXdConstRef data) -> void
 {
+    mstateid += 1;
     ArraySerialization::deserialize(data, T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
@@ -119,6 +123,8 @@ auto ChemicalProps::updateIdeal(ChemicalState const& state) -> void
 
 auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef n0) -> void
 {
+    mstateid += 1;
+
     assert(T0 >= 0.0);
     assert(P0 >= 0.0);
     assert(n0.size() == n.size() && (n0 >= 0.0).all());
@@ -148,12 +154,19 @@ auto ChemicalProps::serialize(ArrayStream<double>& stream) const -> void
 
 auto ChemicalProps::deserialize(const ArrayStream<real>& stream) -> void
 {
+    mstateid += 1;
     stream.to(T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
 }
 
 auto ChemicalProps::deserialize(const ArrayStream<double>& stream) -> void
 {
+    mstateid += 1;
     stream.to(T, P, n, Ts, Ps, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, u);
+}
+
+auto ChemicalProps::stateid() const -> Index
+{
+    return mstateid;
 }
 
 auto ChemicalProps::system() const -> ChemicalSystem const&
@@ -863,6 +876,9 @@ ChemicalProps::operator VectorXd() const
 
 auto operator<<(std::ostream& out, ChemicalProps const& props) -> std::ostream&
 {
+    if(props.system().species().empty())
+        return out;
+
     const auto species = props.system().species();
     const auto elements = props.system().elements();
     const auto b   = props.elementAmounts();
