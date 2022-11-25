@@ -51,7 +51,6 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
     auto num_species = species.size();
     auto num_elements = elements.size();
 
-
     SECTION("Testing correct initialization of the `AqueousProps` instance")
     {
         CHECK( aqprops.phase().species().size()   == 19           );
@@ -276,5 +275,35 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
             CHECK( aqprops.elementMolality(symbol) == Approx(aqprops.elementMolalities()[idx]) );
             CHECK( aqprops.elementMolality(idx)    == Approx(aqprops.elementMolalities()[idx]) );
         }
+    }
+
+    SECTION("Testing static method AqueousProps::compute")
+    {
+        ChemicalState state(system);
+        state.temperature(300);
+        state.setPressure(3e5);
+        state.setSpeciesAmounts(1.0);
+
+        ChemicalProps props(system);
+        props.update(state); // props.stateid() becomes 1
+        props.update(state); // props.stateid() becomes 2
+
+        aqprops = AqueousProps::compute(props);
+        CHECK( aqprops.props().stateid() == 2 );
+        CHECK( aqprops.props().speciesAmount(0) == 1.0 );
+
+        // Force internal change of amount for species at index 0, which will
+        // not cause props.stateid() to change!
+        const_cast<real*>(props.speciesAmounts().data())[0] = 123.0;
+
+        aqprops = AqueousProps::compute(props);
+        CHECK( aqprops.props().stateid() == 2 );
+        CHECK( aqprops.props().speciesAmount(0) == 1.0 ); // this shows that memoization is working; the AqueousProps object has not been updated with the given ChemicalProps object
+
+        ChemicalProps clone_props(props);
+
+        aqprops = AqueousProps::compute(clone_props);
+        CHECK( aqprops.props().stateid() == 2 ); // same stateid, because of clone
+        CHECK( aqprops.props().speciesAmount(0) == 123.0 ); // this shows that memoization did not work with the cloned props because it is a different ChemicalProps object with different pointer
     }
 }

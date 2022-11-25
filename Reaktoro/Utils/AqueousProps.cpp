@@ -47,7 +47,7 @@ namespace Reaktoro {
 namespace {
 
 /// Return the index of the first aqueous phase in the system.
-auto indexAqueousPhase(const ChemicalSystem& system) -> Index
+auto indexAqueousPhase(ChemicalSystem const& system) -> Index
 {
     const auto aqueous_phases = system.phases().withAggregateState(AggregateState::Aqueous);
     warning(aqueous_phases.size() > 1,
@@ -177,7 +177,7 @@ struct AqueousProps::Impl
     // The chemical potential models for the non-aqueous species (as if they were pure phases) for the computation of their saturation indices.
     Vec<Fn<real(ChemicalProps const&)>> chemical_potential_models;
 
-    Impl(const ChemicalSystem& system)
+    Impl(ChemicalSystem const& system)
     : system(system),
       iphase(indexAqueousPhase(system)),
       phase(system.phase(iphase)),
@@ -241,7 +241,7 @@ struct AqueousProps::Impl
         update(props);
     }
 
-    auto setActivityModel(const StringOrIndex& species, const ActivityModelGenerator& generator) -> void
+    auto setActivityModel(StringOrIndex const& species, ActivityModelGenerator const& generator) -> void
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
         errorif(i >= nonaqueous.size(), "It was not possible to set the activity model "
@@ -251,13 +251,13 @@ struct AqueousProps::Impl
         chemical_potential_models[i] = chemicalPotentialModel(nonaqueous[i], generator);
     }
 
-    auto update(const ChemicalState& state) -> void
+    auto update(ChemicalState const& state) -> void
     {
         props.update(state);
         update(props);
     }
 
-    auto update(const ChemicalProps& cprops) -> void
+    auto update(ChemicalProps const& cprops) -> void
     {
         // Auxiliary variables
         auto const& aqprops = cprops.phaseProps(iphase);
@@ -316,21 +316,21 @@ struct AqueousProps::Impl
         return charge() / waterMass();
     }
 
-    auto elementMolality(const StringOrIndex& symbol) const -> real
+    auto elementMolality(StringOrIndex const& symbol) const -> real
     {
         const auto idx = detail::resolveElementIndex(phase, symbol);
-        const auto& m = aqstate.m.matrix();
+        auto const& m = aqstate.m.matrix();
         return Aaqs.row(idx) * m;
     }
 
     auto elementMolalities() const -> ArrayXr
     {
         const auto E = phase.elements().size();
-        const auto& m = aqstate.m.matrix();
+        auto const& m = aqstate.m.matrix();
         return Aaqs.topRows(E) * m;
     }
 
-    auto speciesMolality(const StringOrIndex& name) const -> real
+    auto speciesMolality(StringOrIndex const& name) const -> real
     {
         const auto idx = detail::resolveSpeciesIndex(phase, name);
         return aqstate.m[idx];
@@ -383,7 +383,7 @@ struct AqueousProps::Impl
         return {};
     }
 
-    auto saturationRatioLn(const StringOrIndex& species) const -> real
+    auto saturationRatioLn(StringOrIndex const& species) const -> real
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
         errorif(i >= nonaqueous.size(), "It was not possible to calculate the "
@@ -410,11 +410,11 @@ struct AqueousProps::Impl
     }
 };
 
-AqueousProps::AqueousProps(const ChemicalSystem& system)
+AqueousProps::AqueousProps(ChemicalSystem const& system)
 : pimpl(new Impl(system))
 {}
 
-AqueousProps::AqueousProps(const ChemicalState& state)
+AqueousProps::AqueousProps(ChemicalState const& state)
 : pimpl(new Impl(state))
 {}
 
@@ -422,7 +422,7 @@ AqueousProps::AqueousProps(ChemicalProps const& props)
 : pimpl(new Impl(props))
 {}
 
-AqueousProps::AqueousProps(const AqueousProps& other)
+AqueousProps::AqueousProps(AqueousProps const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
@@ -435,12 +435,37 @@ auto AqueousProps::operator=(AqueousProps other) -> AqueousProps&
     return *this;
 }
 
-auto AqueousProps::setActivityModel(const StringOrIndex& species, const ActivityModelGenerator& generator) -> void
+auto AqueousProps::compute(ChemicalProps const& props) -> AqueousProps const&
+{
+    using SystemID = Index;
+    using CacheEntry = Pair<AqueousProps, const ChemicalProps*>;
+    thread_local Map<SystemID, CacheEntry> cache;
+
+    const auto systemid = props.system().id();
+    if(auto it = cache.find(systemid); it != cache.end())
+    {
+        auto& [aprops, pprops] = it->second;
+
+        auto same_props_stateid = props.stateid() == pprops->stateid();
+        auto same_props_object = &props == pprops;
+
+        if(same_props_stateid && same_props_object) // not enough to check only stateid; two different ChemicalProps with same stateid but different state would result in the cached aprops to be returned.
+            return aprops;
+
+        aprops.update(props);
+        pprops = &props;
+    }
+
+    const auto [it, _] = cache.emplace(systemid, CacheEntry{ AqueousProps(props), &props });
+    return it->second.first;
+}
+
+auto AqueousProps::setActivityModel(StringOrIndex const& species, ActivityModelGenerator const& generator) -> void
 {
     pimpl->setActivityModel(species, generator);
 }
 
-auto AqueousProps::update(const ChemicalState& state) -> void
+auto AqueousProps::update(ChemicalState const& state) -> void
 {
     pimpl->update(state);
 }
@@ -480,7 +505,7 @@ auto AqueousProps::chargeMolality() const -> real
     return pimpl->chargeMolality();
 }
 
-auto AqueousProps::elementMolality(const StringOrIndex& symbol) const -> real
+auto AqueousProps::elementMolality(StringOrIndex const& symbol) const -> real
 {
     return pimpl->elementMolality(symbol);
 }
@@ -490,7 +515,7 @@ auto AqueousProps::elementMolalities() const -> ArrayXr
     return pimpl->elementMolalities();
 }
 
-auto AqueousProps::speciesMolality(const StringOrIndex& name) const -> real
+auto AqueousProps::speciesMolality(StringOrIndex const& name) const -> real
 {
     return pimpl->speciesMolality(name);
 }
@@ -540,7 +565,7 @@ auto AqueousProps::saturationSpecies() const -> SpeciesList
     return pimpl->nonaqueous;
 }
 
-auto AqueousProps::saturationIndex(const StringOrIndex& species) const -> real
+auto AqueousProps::saturationIndex(StringOrIndex const& species) const -> real
 {
     warningif(Warnings::isEnabled(525),
         "Hey, if you were using method saturationIndex in AqueousProps class before to "
@@ -555,7 +580,7 @@ auto AqueousProps::saturationIndices() const -> ArrayXr
     return pimpl->saturationRatiosLn() / ln10; // in log10 scale
 }
 
-auto AqueousProps::saturationRatio(const StringOrIndex& species) const -> real
+auto AqueousProps::saturationRatio(StringOrIndex const& species) const -> real
 {
     return exp(pimpl->saturationRatioLn(species));
 }
@@ -570,7 +595,17 @@ auto AqueousProps::saturationRatiosLn() const -> ArrayXr
     return pimpl->saturationRatiosLn();
 }
 
-auto AqueousProps::phase() const -> const Phase&
+auto AqueousProps::props() const -> ChemicalProps const&
+{
+    return pimpl->props;
+}
+
+auto AqueousProps::system() const -> ChemicalSystem const &
+{
+    return pimpl->system;
+}
+
+auto AqueousProps::phase() const -> Phase const&
 {
     return pimpl->phase;
 }
@@ -580,19 +615,19 @@ auto AqueousProps::output(std::ostream& out) const -> void
     out << *this;
 }
 
-auto AqueousProps::output(const String& filename) const -> void
+auto AqueousProps::output(String const& filename) const -> void
 {
     auto out = std::ofstream(filename);
     out << *this;
 }
 
-auto AqueousProps::saturationIndexLn(const StringOrIndex& species) const -> real
+auto AqueousProps::saturationIndexLn(StringOrIndex const& species) const -> real
 {
     errorif(true, "Method AqueousProps::saturationIndexLn has been deprecated. Rely on the use of saturationIndex(species) instead.");
     return {};
 }
 
-auto AqueousProps::saturationIndexLg(const StringOrIndex& species) const -> real
+auto AqueousProps::saturationIndexLg(StringOrIndex const& species) const -> real
 {
     errorif(true, "Method AqueousProps::saturationIndexLg has been deprecated. Rely on the use of saturationIndex(species) instead.");
     return {};
@@ -610,7 +645,7 @@ auto AqueousProps::saturationIndicesLg() const -> ArrayXr
     return {};
 }
 
-auto operator<<(std::ostream& out, const AqueousProps& props) -> std::ostream&
+auto operator<<(std::ostream& out, AqueousProps const& props) -> std::ostream&
 {
     const auto elements = props.phase().elements();
     const auto species = props.phase().species();
