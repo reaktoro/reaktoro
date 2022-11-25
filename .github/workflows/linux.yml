@@ -26,47 +26,51 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
-        id: timestamp
-        shell: cmake -P {0}
-        run: |
-          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-          message("::set-output name=now::${current_date}")
+      # - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
+      #   id: timestamp
+      #   shell: cmake -P {0}
+      #   run: |
+      #     string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+      #     message("::set-output name=now::${current_date}")
 
-      - name: Configuring Cache
-        id: cache
-        uses: actions/cache@v2
-        env:
-          CACHE_NUMBER: 1  # Increase this value to reset cache if etc/example-environment.yml has not changed
-        with:
-          path: |
-            /home/runner/.cache
-            /home/runner/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-${ { steps.timestamp.outputs.now } }
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-
+      # - name: Configuring Cache
+      #   id: cache
+      #   uses: actions/cache@v2
+      #   env:
+      #     CACHE_NUMBER: 1  # Increase this value to reset cache if etc/example-environment.yml has not changed
+      #   with:
+      #     path: |
+      #       /home/runner/.cache
+      #     key:
+      #       ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-${ { steps.timestamp.outputs.now } }
+      #     restore-keys: |
+      #       ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: true
           python-version: ${{ matrix.python-version }}
+          mamba-version: "*"
           channels: conda-forge
           channel-priority: true
           use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
+      - shell: bash -el {0}
+        run: |
+          conda info
+          conda list
+          conda config --show-sources
+          conda config --show
+          printenv | sort
 
       - name: Configuring Conda Environment
-        shell: bash -l {0}
+        shell: bash -el {0}
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
-          conda config --set always_yes yes --set changeps1 no
-          conda config --add channels conda-forge
-          conda install conda-devenv=2
-          conda devenv
+          mamba install conda-devenv -y
+          conda devenv -e mamba
 
       - name: Building, Testing & Installing Reaktoro
-        shell: bash -l {0}
+        shell: bash -el {0}
         run: |
           source activate reaktoro
           ccache -s
