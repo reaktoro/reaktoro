@@ -24,27 +24,26 @@ jobs:
         config: ["Release"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      # - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
-      #   id: timestamp
-      #   shell: cmake -P {0}
-      #   run: |
-      #     string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-      #     message("::set-output name=now::${current_date}")
+      - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
+        id: timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=now::${current_date}")
 
-      # - name: Configuring Cache
-      #   id: cache
-      #   uses: actions/cache@v2
-      #   env:
-      #     CACHE_NUMBER: 1  # Increase this value to reset cache if etc/example-environment.yml has not changed
-      #   with:
-      #     path: |
-      #       /home/runner/.cache
-      #     key:
-      #       ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-${ { steps.timestamp.outputs.now } }
-      #     restore-keys: |
-      #       ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-
+      - name: Configuring Cache
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            /home/runner/.cache
+            /home/runner/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-${ { steps.timestamp.outputs.now } }
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
@@ -52,7 +51,7 @@ jobs:
           miniforge-variant: Mambaforge
           miniforge-version: latest
           use-mamba: true
-          use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
+          # use-only-tar-bz2: true  # NOTE: New packages now have conda extension! # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
       - shell: bash -el {0}
         run: |
           conda clean --all --force-pkgs-dirs
@@ -67,10 +66,8 @@ jobs:
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
-          conda activate base
-          mamba install conda-devenv -y
-          mamba search optima
-          conda devenv -e mamba
+          mamba install conda-devenv
+          mamba devenv -e mamba
 
       - name: Building, Testing & Installing Reaktoro
         shell: bash -el {0}
