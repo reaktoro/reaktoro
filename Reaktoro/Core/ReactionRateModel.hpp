@@ -25,6 +25,11 @@ namespace Reaktoro {
 
 // Forward declarations
 class ChemicalProps;
+class Database;
+class PhaseList;
+class ReactionEquation;
+class SpeciesList;
+class SurfaceList;
 
 /// The type of functions for calculation of reaction rates (in mol/s).
 /// @param props The chemical properties of the chemical system
@@ -32,5 +37,32 @@ class ChemicalProps;
 /// @see Reaction
 /// @ingroup Core
 using ReactionRateModel = Model<ReactionRate(ChemicalProps const& props)>;
+
+/// The data provided to a ReactionRateModelGenerator to construct the ReactionRateModel of a reaction.
+/// @see ReactionRateModelGenerator, ReactionRateModel
+/// @ingroup Core
+struct ReactionRateModelGeneratorArgs
+{
+    /// The name of the reaction for which the rate model is generated.
+    String const& name;
+
+    /// The equation of the reaction for which the rate model is generated.
+    ReactionEquation const& equation;
+
+    /// The thermodynamic database used to construct the chemical system where the reaction belongs to.
+    Database const& database;
+
+    /// The species in the chemical system where the reaction belongs to.
+    SpeciesList const& species;
+
+    /// The phases in the chemical system where the reaction belongs to.
+    PhaseList const& phases;
+
+    /// The surfaces in the chemical system where the reaction belongs to.
+    SurfaceList const& surfaces;
+};
+
+/// The function signature for functions that generates a ReactionRateModel for a reaction.
+using ReactionRateModelGenerator = Fn<ReactionRateModel(ReactionRateModelGeneratorArgs)>;
 
 } // namespace Reaktoro
