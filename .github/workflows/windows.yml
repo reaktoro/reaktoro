@@ -37,6 +37,8 @@ jobs:
       - name: Configuring Cache
         id: cache
         uses: actions/cache@v2
+        env:
+          CACHE_NUMBER: 1  # Increase this value to reset cache if etc/example-environment.yml has not changed
         with:
           path: |
             C:\Users\runneradmin\clcache
