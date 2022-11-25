@@ -17,23 +17,80 @@
 
 
 from reaktoro import *
+import pytest
 
 
-def generateRateModel(value: float):
+def createReactionRateModelAsFunction(value: float):
     def ratefn(props: ChemicalProps):
+        print("ratefn1")
         return ReactionRate(value)
-    return ReactionRateModel(ratefn)
+    return ratefn
+
+
+def createReactionRateModel(value: float) -> ReactionRateModel:
+    return ReactionRateModel(createReactionRateModelAsFunction(value))
+
+
+def createReactionRateModelGeneratorAsFunction(value: float):
+    def genfn(args: ReactionRateModelGeneratorArgs):
+        def ratefn(props: ChemicalProps):
+            print("ratefn3")
+            return value
+        return ratefn
+    return genfn
+
 
 class ReactionGeneratorUsingClass:
     def __call__(self, phases):
         return [ Reaction()
             .withEquation("H2O(aq) = H+ + OH-")
-            .withRateModel(generateRateModel(5.0)) ]
+            .withRateModel(createReactionRateModel(6.0)) ]
+
 
 def ReactionGeneratorUsingFunction(phases):
     return [ Reaction()
         .withEquation("H2O(aq) = H2(aq) + 0.5*O2(aq)")
-        .withRateModel(generateRateModel(6.0)) ]
+        .withRateModel(createReactionRateModel(7.0)) ]
+
+
+def testGeneralReaction():
+
+    species = SpeciesList("CO2(aq) CO2(g)")
+
+    db = Database(species)
+
+    props = ChemicalProps()
+
+    args = ReactionGeneratorArgs(db, species, PhaseList(), SurfaceList())
+
+    reaction = GeneralReaction("CO2(g) = CO2(aq)")
+
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Check when a Python callable object with single argument of type ChemicalProps is provided to setRateModel (which will be converted to a ReactionRateModel object)
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    try: reaction.setRateModel(createReactionRateModelAsFunction(1.0))
+    except: pytest.fail("Expecting GeneralReaction.setRateModel to work with a callable with single argument of type ChemicalProps")
+
+    rxn = reaction.convert(args)
+    assert rxn.rate(props).val() == 1.0
+
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Check when a ReactionRateModel object is provided to setRateModel
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    try: reaction.setRateModel(createReactionRateModel(2.0))
+    except: pytest.fail("Expecting GeneralReaction.setRateModel to work with a ReactionRateModel object")
+
+    rxn = reaction.convert(args)
+    assert rxn.rate(props).val() == 2.0
+
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Check when a Python callable object with single argument of type ReactionRateModelGeneratorArgs is provided to setRateModel (which will be converted to a ReactionRateModelGenerator object)
+    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    try: reaction.setRateModel(createReactionRateModelGeneratorAsFunction(3.0))
+    except: pytest.fail("Expecting GeneralReaction.setRateModel to work with a callable with single argument of type ReactionRateModelGeneratorArgs")
+
+    rxn = reaction.convert(args)
+    assert rxn.rate(props).val() == 3.0
 
 
 def testReactions():
@@ -56,19 +113,19 @@ def testReactions():
     reaction1 = db.reaction("Halite = Na+ + Cl-")
     reaction2 = db.reaction("Calcite")
 
-    generalreaction1 = GeneralReaction("CO2(g) = CO2(aq)")
-    generalreaction2 = GeneralReaction("HCO3- + H+ = CO2(aq) + H2O(aq)")
+    reaction1 = reaction1.withRateModel(createReactionRateModel(1.0))
+    reaction2 = reaction2.withRateModel(createReactionRateModel(2.0))
 
-    reaction1 = reaction1.withRateModel(generateRateModel(1.0))
-    reaction2 = reaction2.withRateModel(generateRateModel(2.0))
-    generalreaction1.setRateModel(generateRateModel(3.0))
-    generalreaction2.setRateModel(generateRateModel(4.0))
+    generalreaction1 = GeneralReaction("CO2(g) = CO2(aq)").setRateModel(createReactionRateModel(3.0))
+    generalreaction2 = GeneralReaction("HCO3- + H+ = CO2(aq) + H2O(aq)").setRateModel(createReactionRateModelAsFunction(4.0))
+    generalreaction3 = GeneralReaction("SiO2(aq) = Quartz").setRateModel(createReactionRateModelGeneratorAsFunction(5.0))
 
     reactionsA = Reactions()
     reactionsA.add(reaction1)
     reactionsA.add(reaction2)
     reactionsA.add(generalreaction1)
     reactionsA.add(generalreaction2)
+    reactionsA.add(generalreaction3)
     reactionsA.add(ReactionGeneratorUsingClass())
     reactionsA.add(ReactionGeneratorUsingFunction)
 
@@ -77,21 +134,30 @@ def testReactions():
         reaction2,
         generalreaction1,
         generalreaction2,
+        generalreaction3,
         ReactionGeneratorUsingClass(),
         ReactionGeneratorUsingFunction
     )
 
     def checkReactionsConversion(reactions: Reactions):
-        converted: list[Reaction] = reactions.convert(phases.species())
+        args = ReactionGeneratorArgs(
+            system.database(),
+            system.species(),
+            system.phases(),
+            system.surfaces()
+        )
 
-        assert len(converted) == 6
+        converted: list[Reaction] = reactions.convert(args)
+
+        assert len(converted) == 7
 
         assert str(converted[0].equation()) == "Halite = Na+ + Cl-"
         assert str(converted[1].equation()) == "Calcite"
         assert str(converted[2].equation()) == "CO2(g) = CO2(aq)"
         assert str(converted[3].equation()) == "HCO3- + H+ = CO2(aq) + H2O(aq)"
-        assert str(converted[4].equation()) == "H2O(aq) = H+ + OH-"
-        assert str(converted[5].equation()) == "H2O(aq) = H2(aq) + 0.5*O2(aq)"
+        assert str(converted[4].equation()) == "SiO2(aq) = Quartz"
+        assert str(converted[5].equation()) == "H2O(aq) = H+ + OH-"
+        assert str(converted[6].equation()) == "H2O(aq) = H2(aq) + 0.5*O2(aq)"
 
         assert converted[0].rate(props).val() == 1.0
         assert converted[1].rate(props).val() == 2.0
@@ -99,6 +165,7 @@ def testReactions():
         assert converted[3].rate(props).val() == 4.0
         assert converted[4].rate(props).val() == 5.0
         assert converted[5].rate(props).val() == 6.0
+        assert converted[6].rate(props).val() == 7.0
 
     checkReactionsConversion(reactionsA)
     checkReactionsConversion(reactionsB)

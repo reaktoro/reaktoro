@@ -21,13 +21,36 @@
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
-#include <Reaktoro/Core/SpeciesList.hpp>
+#include <Reaktoro/Core/ReactionRateModel.hpp>
 
 namespace Reaktoro {
 
+class Database;
+class PhaseList;
+class SpeciesList;
+class SurfaceList;
+
+/// The data provided to a ReactionGenerator to construct a Reaction object.
+/// @see ReactionGenerator, Reaction
+/// @ingroup Core
+struct ReactionGeneratorArgs
+{
+    /// The thermodynamic database used to construct the chemical system where the reaction belongs to.
+    Database const& database;
+
+    /// The species in the chemical system where the reaction belongs to.
+    SpeciesList const& species;
+
+    /// The phases in the chemical system where the reaction belongs to.
+    PhaseList const& phases;
+
+    /// The surfaces in the chemical system where the reaction belongs to.
+    SurfaceList const& surfaces;
+};
+
 /// The function type for the generation of reactions with given species in the chemical system.
-/// @param species The species composing the chemical system where the reactions will take place.
-using ReactionGenerator = Fn<Vec<Reaction>(SpeciesList const& species)>;
+/// @param args The data provided to a ReactionGenerator to construct a Reaction object.
+using ReactionGenerator = Fn<Vec<Reaction>(ReactionGeneratorArgs args)>;
 
 /// Used to define a general reaction.
 /// @ingroup Core
@@ -61,8 +84,11 @@ public:
     /// Set the reaction rate model of the reaction.
     auto setRateModel(ReactionRateModel const& model) -> GeneralReaction&;
 
-    /// Set the reaction rate model of the reaction (equivalent to GeneralReaction::setRateModel).
-    auto set(ReactionRateModel const& model) -> GeneralReaction&;
+    /// Set the reaction rate model generator of the reaction.
+    /// Use this method to set a ReactionRateModelGenerator in case you need the
+    /// ReactionRateModel of the reaction to be constructed later, when the
+    /// chemical system is assembled.
+    auto setRateModel(ReactionRateModelGenerator const& model_generator) -> GeneralReaction&;
 
     /// Return the name of the reaction.
     auto name() const -> String const&;
@@ -73,8 +99,11 @@ public:
     /// Return the reaction rate model of the reaction.
     auto rateModel() const -> ReactionRateModel const&;
 
+    /// Return the reaction rate model generator of the reaction.
+    auto rateModelGenerator() const -> ReactionRateModelGenerator const&;
+
     /// Convert this GeneralReaction object into a Reaction object.
-    auto operator()(SpeciesList const& species) const -> Reaction;
+    auto operator()(ReactionGeneratorArgs args) const -> Reaction;
 
 private:
     /// The name of the reaction.
@@ -85,6 +114,9 @@ private:
 
     /// The rate model of the reaction.
     ReactionRateModel rate_model;
+
+    /// The rate model generator of the reaction.
+    ReactionRateModelGenerator rate_model_generator;
 };
 
 /// Used to represent a collection of reactions controlled kinetically.
@@ -115,21 +147,22 @@ public:
 
         if constexpr(isConvertible<T, Reaction>)
         {
-            reaction_generators.push_back([=](SpeciesList const& species) -> Vec<Reaction> { return { item }; }); // item is a Reaction object
+            reaction_generators.push_back([=](ReactionGeneratorArgs args) -> Vec<Reaction> { return { item }; }); // item is a Reaction object
         }
         else if constexpr(isConvertible<T, GeneralReaction>)
         {
-            reaction_generators.push_back([=](SpeciesList const& species) -> Vec<Reaction> { return { item(species) }; }); // item is a GeneralReaction object; use operator()(SpeciesList) to convert to Reaction
+            reaction_generators.push_back([=](ReactionGeneratorArgs args) -> Vec<Reaction> { return { item(args) }; }); // item is a GeneralReaction object; use operator()(ReactionGeneratorArgs) to convert to Reaction
         }
         else
         {
             reaction_generators.push_back(item); // item is already a ReactionGenerator
+            errorif(!reaction_generators.back(), "Expecting an object in Reactions::add call that produces an initialized ReactionGenerator function object.");
         }
     }
 
     /// Convert this Reactions object into a vector of Reaction objects.
-    /// @param species The species composing the chemical system where the reactions will take place.
-    auto convert(SpeciesList const& species) const -> Vec<Reaction>;
+    /// @param args The data provided to each ReactionGenerator to construct the Reaction objects.
+    auto convert(ReactionGeneratorArgs args) const -> Vec<Reaction>;
 
 private:
     /// The ReactionGenerator objects collected so far with each call to Reactions::add method.
