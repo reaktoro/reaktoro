@@ -446,14 +446,16 @@ auto AqueousProps::compute(ChemicalProps const& props) -> AqueousProps const&
     {
         auto& [aprops, pprops] = it->second;
 
-        auto same_props_stateid = props.stateid() == pprops->stateid();
-        auto same_props_object = &props == pprops;
+        auto new_props_stateid = props.stateid() != aprops.props().stateid();
+        auto new_props_object = &props != pprops;
 
-        if(same_props_stateid && same_props_object) // not enough to check only stateid; two different ChemicalProps with same stateid but different state would result in the cached aprops to be returned.
-            return aprops;
+        if(new_props_stateid || new_props_object) // not enough to check only stateid; two different ChemicalProps with same stateid but different state would result in the cached aprops to be returned.
+        {
+            aprops.update(props);
+            pprops = &props;
+        }
 
-        aprops.update(props);
-        pprops = &props;
+        return aprops;
     }
 
     const auto [it, _] = cache.emplace(systemid, CacheEntry{ AqueousProps(props), &props });
