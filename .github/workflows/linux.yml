@@ -24,7 +24,7 @@ jobs:
         config: ["Release"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
       #   id: timestamp
@@ -49,9 +49,9 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python-version }}
-          mamba-version: "*"
-          channels: conda-forge
-          channel-priority: true
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
+          use-mamba: true
           use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
       - shell: bash -el {0}
         run: |
