@@ -92,6 +92,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         Phase()
             .withName("SomeGas")
             .withActivityModel(activity_model_gas)
+            .withIdealActivityModel(activity_model_gas)
             .withStateOfMatter(StateOfMatter::Gas)
             .withSpecies({
                 db.species().get("H2O(g)"),
@@ -100,6 +101,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         Phase()
             .withName("SomeSolid")
             .withActivityModel(activity_model_solid)
+            .withIdealActivityModel(activity_model_solid)
             .withStateOfMatter(StateOfMatter::Solid)
             .withSpecies({
                 db.species().get("CaCO3(s)") })
@@ -115,7 +117,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         system.species(2).molarMass(),
     }};
 
-    SECTION("testing when species have non-zero amounts")
+    SECTION("Testing when species have non-zero amounts")
     {
         real T = 3.0;
         real P = 5.0;
@@ -480,7 +482,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         }
     }
 
-    SECTION("testing when species have zero mole fractions")
+    SECTION("Testing when species have zero mole fractions")
     {
         const real T = 11.0;
         const real P = 13.0;
@@ -496,7 +498,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK_NOTHROW( props.update(T, P, n2) );
     }
 
-    SECTION("testing convenience methods")
+    SECTION("Testing convenience methods")
     {
         const real T = 11.0;
         const real P = 13.0;
@@ -628,7 +630,7 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         }
     }
 
-    SECTION("testing indices methods")
+    SECTION("Testing indices methods")
     {
         real T = 3.0;
         real P = 5.0;
@@ -641,5 +643,65 @@ TEST_CASE("Testing ChemicalProps class", "[ChemicalProps]")
         CHECK( props.indicesPhasesWithStates({StateOfMatter::Solid, StateOfMatter::Gas}) == Indices{0, 1} );
         CHECK( props.indicesPhasesWithFluidState() == Indices{0} );
         CHECK( props.indicesPhasesWithSolidState() == Indices{1} );
+    }
+
+    SECTION("Testing correct increment of state id as a ChemicalProps object is updated")
+    {
+        ChemicalState state(system);
+        state.temperature(345.6, "K");
+        state.pressure(1.234, "bar");
+        state.setSpeciesAmounts(0.1234);
+
+        auto T = state.temperature();
+        auto P = state.pressure();
+        auto n = state.speciesAmounts();
+
+        // Checking stateid with default constructor
+        ChemicalProps props;
+        CHECK(props.stateid() == 0);
+
+        // Checking stateid with ChemicalProps(system) constructor
+        props = ChemicalProps(system);
+        CHECK(props.stateid() == 0);
+
+        // Checking stateid with ChemicalProps(state) constructor
+        props = ChemicalProps(state);
+        CHECK(props.stateid() == 1);
+
+        // Checking stateid with ChemicalProps::update(state) method
+        props.update(state);
+        CHECK(props.stateid() == 2);
+
+        // Checking stateid with ChemicalProps::update(T, P, n) method
+        props.update(T, P, n);
+        CHECK(props.stateid() == 3);
+
+        // Checking stateid with ChemicalProps::update(VectorXr) method
+        props.update(VectorXr(props));
+        CHECK(props.stateid() == 4);
+
+        // Checking stateid with ChemicalProps::update(VectorXd) method
+        props.update(VectorXd(props));
+        CHECK(props.stateid() == 5);
+
+        // Checking stateid with ChemicalProps::updateIdeal(state) method
+        props.updateIdeal(state);
+        CHECK(props.stateid() == 6);
+
+        // Checking stateid with ChemicalProps::updateIdeal(T, P, n) method
+        props.updateIdeal(T, P, n);
+        CHECK(props.stateid() == 7);
+
+        // Checking stateid with ChemicalProps::deserialize(ArrayStream<real> const&) method
+        ArrayStream<real> rstream;
+        props.serialize(rstream);
+        props.deserialize(rstream);
+        CHECK(props.stateid() == 8);
+
+        // Checking stateid with ChemicalProps::deserialize(ArrayStream<double> const&) method
+        ArrayStream<double> dstream;
+        props.serialize(dstream);
+        props.deserialize(dstream);
+        CHECK(props.stateid() == 9);
     }
 }
