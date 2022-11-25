@@ -63,6 +63,7 @@ struct ReactionRateModelGeneratorArgs
 };
 
 /// The function signature for functions that generates a ReactionRateModel for a reaction.
-using ReactionRateModelGenerator = Fn<ReactionRateModel(ReactionRateModelGeneratorArgs)>;
+/// @param args The data provided to construct a ReactionRateModel object.
+using ReactionRateModelGenerator = Fn<ReactionRateModel(ReactionRateModelGeneratorArgs args)>;
 
 } // namespace Reaktoro

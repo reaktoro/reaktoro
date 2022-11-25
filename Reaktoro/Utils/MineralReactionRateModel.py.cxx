@@ -21,7 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Core/Model.py.hxx>
 #include <Reaktoro/Core/ReactionStandardThermoProps.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactionRateModel.hpp>
+#include <Reaktoro/Utils/MineralReactionRateModel.hpp>
 using namespace Reaktoro;
 
 void exportMineralReactionRateModel(py::module& m)

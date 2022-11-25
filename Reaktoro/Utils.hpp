@@ -20,6 +20,8 @@
 #include <Reaktoro/Utils/AqueousProps.hpp>
 #include <Reaktoro/Utils/IonExchangeProps.hpp>
 #include <Reaktoro/Utils/Material.hpp>
+#include <Reaktoro/Utils/MineralReaction.hpp>
+#include <Reaktoro/Utils/MineralReactionRateModel.hpp>
 #include <Reaktoro/Utils/MineralSurface.hpp>
 
 /// @defgroup Utils Utils

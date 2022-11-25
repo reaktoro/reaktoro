@@ -24,11 +24,12 @@
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Model.hpp>
 #include <Reaktoro/Core/ReactionRate.hpp>
+#include <Reaktoro/Core/ReactionRateModel.hpp>
 #include <Reaktoro/Utils/AqueousProps.hpp>
 
 namespace Reaktoro {
 
-/// The data available for the evaluation of a mineral reaction rate.
+/// The data provided to a MineralReactionRateModel to evaluate the rate of a mineral reaction.
 /// @see MineralReactionRateModel
 struct MineralReactionRateModelArgs
 {
@@ -56,12 +57,12 @@ struct MineralReactionRateModelArgs
 
 /// The type of functions that calculate rates for mineral dissolution/precipitation reactions.
 /// The sign convention for a mineral reaction rate is negative if dissolving, positive if precipitating.
-using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateModelArgs)>;
+/// @param args The data provided to evaluate the mineral reaction rate.
+using MineralReactionRateModel = Model<ReactionRate(MineralReactionRateModelArgs args)>;
 
 /// The type of functions that construct a MineralReactionRateModel for a mineral reaction.
-/// @param mineral The name of the mineral in the system.
-/// @param species The species composing the chemical system where the reactions will take place.
-/// @see MineralReactions
-using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(String const& mineral, SpeciesList const& species)>;
+/// @param args The data provided to construct a MineralReactionRateModel object.
+/// @see MineralReaction
+using MineralReactionRateModelGenerator = Fn<MineralReactionRateModel(ReactionRateModelGeneratorArgs args)>;
 
 } // namespace Reaktoro

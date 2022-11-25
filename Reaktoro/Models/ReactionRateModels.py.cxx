@@ -18,15 +18,9 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
-// MINERAL REACTION RATE MODELS
-void exportMineralReactions(py::module& m);
-void exportMineralReactionRateModel(py::module& m);
 void exportReactionRateModelPalandriKharaka(py::module& m);
 
 void exportReactionRateModels(py::module& m)
 {
-    // MINERAL REACTION RATE MODELS
-    exportMineralReactions(m);
-    exportMineralReactionRateModel(m);
     exportReactionRateModelPalandriKharaka(m);
 }
