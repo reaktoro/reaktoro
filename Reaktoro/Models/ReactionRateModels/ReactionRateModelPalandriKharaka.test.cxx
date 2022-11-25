@@ -19,10 +19,13 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
+#include <Reaktoro/Core/ChemicalProps.hpp>
+#include <Reaktoro/Core/ChemicalState.hpp>
+#include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Reaction.hpp>
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
+#include <Reaktoro/Utils/AqueousProps.hpp>
 using namespace Reaktoro;
 
 struct TestingConditions

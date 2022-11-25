@@ -18,8 +18,6 @@
 #pragma once
 
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactionRateModel.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
 
 /// @defgroup ReactionRateModels Reaction ReactionRate Models
 /// @ingroup Models

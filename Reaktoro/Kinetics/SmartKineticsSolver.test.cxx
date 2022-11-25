@@ -38,7 +38,6 @@
 #include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")

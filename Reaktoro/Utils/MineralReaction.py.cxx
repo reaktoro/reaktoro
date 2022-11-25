@@ -20,17 +20,12 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/Reactions.hpp>
-#include <Reaktoro/Models/ReactionRateModels/Support/MineralReactions.hpp>
+#include <Reaktoro/Utils/MineralReaction.hpp>
 using namespace Reaktoro;
 
-void exportMineralReactions(py::module& m)
+void exportMineralReaction(py::module& m)
 {
-    py::class_<MineralReactions>(m, "MineralReactions")
-        .def(py::init<StringList const&>(), "Construct a MineralReactions object with given mineral names.")
-        .def("setRateModel", py::overload_cast<MineralReactionRateModelGenerator const&>(&MineralReactions::setRateModel), return_internal_ref, "Set a common mineral reaction rate model generator for all minerals.")
-        .def("setRateModel", py::overload_cast<String const&, MineralReactionRateModelGenerator const&>(&MineralReactions::setRateModel), return_internal_ref, "Set a mineral reaction rate model generator for a specific mineral.")
-        .def("__call__", &MineralReactions::operator(), "Convert this MineralReactions object into a vector of Reaction objects.")
+    py::class_<MineralReaction, GeneralReaction>(m, "MineralReaction")
+        .def(py::init<String const&>(), "Construct a MineralReaction object with given mineral name.")
         ;
-
-    py::implicitly_convertible<MineralReactions, Reactions>();
 }

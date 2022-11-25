@@ -21,6 +21,8 @@
 void exportAqueousProps(py::module& m);
 void exportIonExchangeProps(py::module& m);
 void exportMaterial(py::module& m);
+void exportMineralReaction(py::module& m);
+void exportMineralReactionRateModel(py::module& m);
 void exportMineralSurface(py::module& m);
 
 void exportUtils(py::module& m)
@@ -28,5 +30,7 @@ void exportUtils(py::module& m)
     exportAqueousProps(m);
     exportIonExchangeProps(m);
     exportMaterial(m);
+    exportMineralReaction(m);
+    exportMineralReactionRateModel(m);
     exportMineralSurface(m);
 }
