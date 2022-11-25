@@ -285,12 +285,17 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         state.setSpeciesAmounts(1.0);
 
         ChemicalProps props(system);
-        props.update(state); // props.stateid() becomes 1
-        props.update(state); // props.stateid() becomes 2
+        props.update(state); // stateid is 1
 
         aqprops = AqueousProps::compute(props);
-        CHECK( aqprops.props().stateid() == 2 );
+        CHECK( aqprops.props().stateid() == 1 );
         CHECK( aqprops.props().speciesAmount(0) == 1.0 );
+
+        state.setSpeciesAmount(0, 99.0);
+        props.update(state); // stateid is now 2
+        aqprops = AqueousProps::compute(props);
+        CHECK( aqprops.props().stateid() == 2 );
+        CHECK( aqprops.props().speciesAmount(0) == 99.0 );
 
         // Force internal change of amount for species at index 0, which will
         // not cause props.stateid() to change!
@@ -298,7 +303,7 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
 
         aqprops = AqueousProps::compute(props);
         CHECK( aqprops.props().stateid() == 2 );
-        CHECK( aqprops.props().speciesAmount(0) == 1.0 ); // this shows that memoization is working; the AqueousProps object has not been updated with the given ChemicalProps object
+        CHECK( aqprops.props().speciesAmount(0) == 99.0 ); // this shows that memoization is working; the AqueousProps object has not been updated with the given ChemicalProps object
 
         ChemicalProps clone_props(props);
 
