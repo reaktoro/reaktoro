@@ -117,7 +117,7 @@ struct ChemicalSystem::Impl
 
     /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
     Impl(Database const& database, PhaseList const& phases, Reactions const& reactions)
-    : Impl(database, phases, ReactionList(reactions.convert(phases.species())))
+    : Impl(database, phases, ReactionList(reactions.convert({database, phases.species(), phases, SurfaceList{}})))
     {
     }
 
@@ -129,7 +129,13 @@ struct ChemicalSystem::Impl
 
     /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
     Impl(Database const& database, PhaseList const& phases, Reactions const& reactions, Surfaces const& surfaces)
-    : Impl(database, phases, reactions.convert(phases.species()), surfaces.convert(phases))
+    : Impl(database, phases, reactions, surfaces.convert(phases))
+    {
+    }
+
+    /// Construct a ChemicalSystem::Impl object with given database, phases, reactions, and surfaces.
+    Impl(Database const& database, PhaseList const& phases, Reactions const& reactions, SurfaceList const& surfaces)
+    : Impl(database, phases, reactions.convert({database, phases.species(), phases, surfaces}), surfaces)
     {
     }
 };

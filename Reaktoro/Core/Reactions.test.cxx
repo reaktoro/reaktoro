@@ -29,28 +29,35 @@ namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
 namespace test {
 
-auto generateRateModel(double value)
+auto createReactionRateModel(real value) -> ReactionRateModel
 {
     return [=](ChemicalProps const& props) { return value; };
+}
+
+auto createReactionRateModelGenerator(real value) -> ReactionRateModelGenerator
+{
+    return [=](ReactionRateModelGeneratorArgs args) {
+        return [=](ChemicalProps const& props) { return value; };
+    };
 }
 
 class ReactionGeneratorUsingClass
 {
 public:
-    auto operator()(SpeciesList const& species) const -> Vec<Reaction>
+    auto operator()(ReactionGeneratorArgs args) const -> Vec<Reaction>
     {
         return { Reaction()
             .withEquation("H2O(aq) = H+(aq) + OH-(aq)")
-            .withRateModel(generateRateModel(5.0))
+            .withRateModel(createReactionRateModel(5.0))
         };
     }
 };
 
-auto ReactionGeneratorUsingFunction(SpeciesList const& species) -> Vec<Reaction>
+auto ReactionGeneratorUsingFunction(ReactionGeneratorArgs args) -> Vec<Reaction>
 {
     return { Reaction()
         .withEquation("H2O(aq) = H2(aq) + 0.5*O2(aq)")
-        .withRateModel(generateRateModel(6.0))
+        .withRateModel(createReactionRateModel(6.0))
     };
 }
 
@@ -69,10 +76,10 @@ TEST_CASE("Testing Reactions class", "[Reactions]")
     GeneralReaction generalreaction1("CO2(g) = CO2(aq)");
     GeneralReaction generalreaction2("HCO3-(aq) + H+(aq) = CO2(aq) + H2O(aq)");
 
-    reaction1 = reaction1.withRateModel(test::generateRateModel(1.0));
-    reaction2 = reaction2.withRateModel(test::generateRateModel(2.0));
-    generalreaction1.setRateModel(test::generateRateModel(3.0));
-    generalreaction2.setRateModel(test::generateRateModel(4.0));
+    reaction1 = reaction1.withRateModel(test::createReactionRateModel(1.0));
+    reaction2 = reaction2.withRateModel(test::createReactionRateModel(2.0));
+    generalreaction1.setRateModel(test::createReactionRateModel(3.0));
+    generalreaction2.setRateModel(test::createReactionRateModelGenerator(4.0));
 
     Reactions reactionsA;
     reactionsA.add(reaction1);
@@ -93,7 +100,9 @@ TEST_CASE("Testing Reactions class", "[Reactions]")
 
     auto checkReactionsConversion = [&](Reactions const& reactions)
     {
-        auto converted = reactions.convert(system.species());
+        ReactionGeneratorArgs args{ system.database(), system.species(), system.phases(), system.surfaces() };
+
+        auto converted = reactions.convert(args);
 
         CHECK( converted.size() == 6 );
 

@@ -46,12 +46,15 @@ auto GeneralReaction::setEquation(String const& equation) -> GeneralReaction&
 auto GeneralReaction::setRateModel(ReactionRateModel const& model) -> GeneralReaction&
 {
     rate_model = model;
+    rate_model_generator = {}; // clear any ReactionRateModelGenerator already set
     return *this;
 }
 
-auto GeneralReaction::set(ReactionRateModel const& model) -> GeneralReaction&
+auto GeneralReaction::setRateModel(ReactionRateModelGenerator const& model_generator) -> GeneralReaction&
 {
-    return setRateModel(model);
+    rate_model = {}; // clear any ReactionRateModel already set
+    rate_model_generator = model_generator;
+    return *this;
 }
 
 auto GeneralReaction::name() const -> String const&
@@ -69,28 +72,52 @@ auto GeneralReaction::rateModel() const -> ReactionRateModel const&
     return rate_model;
 }
 
-auto GeneralReaction::operator()(SpeciesList const& species) const -> Reaction
+auto GeneralReaction::rateModelGenerator() const -> ReactionRateModelGenerator  const&
 {
+    return rate_model_generator;
+}
+
+auto GeneralReaction::operator()(ReactionGeneratorArgs args) const -> Reaction
+{
+    // Ensure reaction name, equation, and rate model are given at the time of conversion
     errorif(reaction_name.empty(), "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction name. Use method GeneralReaction::setName to resolve this.");
     errorif(reaction_equation.empty(), "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction equation. Use method GeneralReaction::setEquation to resolve this.");
-    errorif(!rate_model.initialized(), "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction rate model. Use method GeneralReaction::setRateModel to resolve this.");
+    errorif(!rate_model && !rate_model_generator, "Converting a GeneralReaction object to a Reaction object requires a non-empty reaction rate model or a reaction rate model generator. Use method GeneralReaction::setRateModel to resolve this.");
+    errorif(rate_model && rate_model_generator, "Converting a GeneralReaction object to a Reaction object requires either a non-empty reaction rate model or a reaction rate model generator. Do not use method GeneralReaction::setRateModel for both cases simultaneously.");
 
+    // Construct the ReactionEquation object from string representation in `reaction_equation`
+    ReactionEquation reaction_equation_obj(reaction_equation, args.species);
+
+    // Collect the necessary data for reaction rate model generator.
+    ReactionRateModelGeneratorArgs rargs{
+        reaction_name,
+        reaction_equation_obj,
+        args.database,
+        args.species,
+        args.phases,
+        args.surfaces,
+    };
+
+    // Resolve the reaction rate model of the reaction, either given or to be generated from a reaction rate model generator
+    auto reaction_rate_model = rate_model ? rate_model : rate_model_generator(rargs);
+
+    // Return the fully specified Reaction object
     return Reaction()
         .withName(reaction_name)
-        .withEquation(ReactionEquation(reaction_equation, species))
-        .withRateModel(rate_model);
+        .withEquation(reaction_equation_obj)
+        .withRateModel(reaction_rate_model);
 }
 
 Reactions::Reactions()
 {}
 
-auto Reactions::convert(SpeciesList const& species) const -> Vec<Reaction>
+auto Reactions::convert(ReactionGeneratorArgs args) const -> Vec<Reaction>
 {
     Vec<Reaction> reactions;
 
     for(auto const& fn : reaction_generators)
     {
-        auto rxns = fn(species);
+        auto rxns = fn(args);
         reactions.insert(reactions.end(), rxns.begin(), rxns.end());
     }
 
