@@ -67,6 +67,7 @@ jobs:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
           mamba install conda-devenv -y
+          mamba search optima
           conda devenv -e mamba
 
       - name: Building, Testing & Installing Reaktoro
