@@ -103,10 +103,6 @@ public:
 
     /// Return the chemical properties of a phase with given index.
     /// @param phase The name or index of the phase in the system.
-    auto phaseProps(StringOrIndex phase) -> ChemicalPropsPhaseRef;
-
-    /// Return the chemical properties of a phase with given index.
-    /// @param phase The name or index of the phase in the system.
     auto phaseProps(StringOrIndex phase) const -> ChemicalPropsPhaseConstRef;
 
     /// Return the extra data produced during the evaluation of activity models.
@@ -558,6 +554,10 @@ private:
     /// extra data allows the activity model of a phase to reuse calculated
     /// data from the activity model of a previous phase if needed.
     Map<String, Any> m_extra;
+
+    /// Return a mutable view to the chemical properties of a phase with given index.
+    /// @param phase The name or index of the phase in the system.
+    auto phasePropsRef(StringOrIndex phase) -> ChemicalPropsPhaseRef;
 };
 
 /// Output a ChemicalProps object to an output stream.

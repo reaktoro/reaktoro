@@ -96,7 +96,7 @@ auto ChemicalProps::update(real const& T0, real const& P0, ArrayXrConstRef n0) -
     {
         const auto size = phase.species().size();
         const auto np = n0.segment(offset, size);
-        phaseProps(i).update(T, P, np, m_extra);
+        phasePropsRef(i).update(T, P, np, m_extra);
         offset += size;
     }
 }
@@ -137,7 +137,7 @@ auto ChemicalProps::updateIdeal(real const& T0, real const& P0, ArrayXrConstRef 
     {
         const auto size = phase.species().size();
         const auto np = n0.segment(offset, size);
-        phaseProps(i).updateIdeal(T, P, np, m_extra);
+        phasePropsRef(i).updateIdeal(T, P, np, m_extra);
         offset += size;
     }
 }
@@ -176,10 +176,10 @@ auto ChemicalProps::system() const -> ChemicalSystem const&
 
 auto ChemicalProps::phaseProps(StringOrIndex phaseid) const -> ChemicalPropsPhaseConstRef
 {
-    return const_cast<ChemicalProps&>(*this).phaseProps(phaseid);
+    return const_cast<ChemicalProps&>(*this).phasePropsRef(phaseid);
 }
 
-auto ChemicalProps::phaseProps(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
+auto ChemicalProps::phasePropsRef(StringOrIndex phaseid) -> ChemicalPropsPhaseRef
 {
     const auto iphase = detail::resolvePhaseIndex(msystem, phaseid);
     const auto phase = msystem.phase(iphase);
