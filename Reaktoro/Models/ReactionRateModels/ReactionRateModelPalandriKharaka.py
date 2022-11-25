@@ -17,9 +17,21 @@
 
 
 from reaktoro import *
-import pytest
 
 
-# TODO Implement tests for the python bindings of component ReactionRateModelPalandriKharaka in ReactionRateModelPalandriKharaka[test].py
 def testReactionRateModelPalandriKharaka():
-    pass
+    params = Params.embedded("PalandriKharaka.yaml")
+
+    # GeneralReaction("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params))
+
+    db = SupcrtDatabase("supcrtbl")
+
+    def areafn(props: ChemicalProps):
+        return 1.0
+
+    system = ChemicalSystem(db,
+        AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)").setActivityModel(ActivityModelDavies()),
+        MineralPhase("Calcite"),
+        GeneralReaction("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+        Surface("Calcite").withAreaModel(areafn)
+    )

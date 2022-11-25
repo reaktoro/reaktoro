@@ -52,7 +52,7 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         ChemicalSystem system(db,
             AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)").setActivityModel(ActivityModelDavies()),
             MineralPhase("Calcite"),
-            MineralReactions("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+            GeneralReaction("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
             Surface("Calcite").withAreaModel([](ChemicalProps const&) { return 1.0; })
         );
 
