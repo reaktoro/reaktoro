@@ -61,7 +61,7 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
         AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)"),
         GaseousPhase("CO2(g) N2(g)"),
         MineralPhase("Calcite"),
-        MineralReactions("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+        GeneralReaction("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
         Surface("Calcite").withAreaModel([=](ChemicalProps const&) { return conditions.surface_area; })
     );
 
