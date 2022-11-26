@@ -27,7 +27,7 @@ db = SupcrtDatabase("supcrtbl")
 system = ChemicalSystem(db,
     AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)").set(ActivityModelDavies()),
     MineralPhase("Calcite"),
-    MineralReactions("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+    MineralReaction("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
     MineralSurface("Calcite", 5.0, "cm2", 70, "mg", 0.667)  # surface area = (initial surface area)*((current mass)/(initial mass))**power = (5 cm2)*((current mass in mg)/(70 mg))**0.667
 )
 
