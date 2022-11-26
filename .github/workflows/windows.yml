@@ -25,7 +25,7 @@ jobs:
         config: ["Release"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
         id: timestamp
@@ -36,9 +36,7 @@ jobs:
 
       - name: Configuring Cache
         id: cache
-        uses: actions/cache@v2
-        env:
-          CACHE_NUMBER: 1  # Increase this value to reset cache if etc/example-environment.yml has not changed
+        uses: actions/cache@v3
         with:
           path: |
             C:\Users\runneradmin\clcache
@@ -50,21 +48,19 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
+          python-version: ${{ matrix.python-version }}
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
           auto-activate-base: false
           allow-softlinks: true
           activate-environment: ''
-          channels: conda-forge
-          channel-priority: true
-          use-only-tar-bz2: true  # IMPORTANT: This needs to be set true for caching of miniconda packages to work properly!
 
       - name: Configuring Conda Environment
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
-          conda config --set always_yes yes --set changeps1 no
-          conda config --add channels conda-forge
-          conda install conda-devenv=2
-          conda devenv
+          mamba install conda-devenv
+          mamba devenv -e mamba
 
       - name: Building, Testing & Installing Reaktoro
         shell: cmd
