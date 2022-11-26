@@ -34,6 +34,9 @@ public:
     /// Set the mineral reaction rate model of the reaction.
     auto setRateModel(MineralReactionRateModel const& model) -> MineralReaction&;
 
+    // Consider GeneralReaction::setRateModel methods as well.
+    using GeneralReaction::setRateModel;
+
     /// Set the mineral reaction rate model generator of the reaction.
     /// Use this method to set a MineralReactionRateModelGenerator in case you
     /// need the MineralReactionRateModel of the reaction to be constructed
