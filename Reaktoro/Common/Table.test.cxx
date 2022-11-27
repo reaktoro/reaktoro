@@ -145,7 +145,7 @@ TEST_CASE("Testing class Table", "[Table]")
         //----------------------------------------------------------------------------------------------------
         // Checking method Table::dump
         //----------------------------------------------------------------------------------------------------
-#if _MSC_VER  // the tests below are failing with Visual Studio 2019 v16.11.21! So, skip these asserts in Windows for the moment. Check this build https://github.com/reaktoro/reaktoro/actions/runs/3558266200/jobs/5976820439
+#ifndef _MSC_VER  // the tests below are failing with Visual Studio 2019 v16.11.21! So, skip these asserts in Windows for the moment. Check this build https://github.com/reaktoro/reaktoro/actions/runs/3558266200/jobs/5976820439
         CHECK( table.dump() ==
             " Floats | Integers | Strings | Booleans\n"
             "0.00000 |        2 |   Hello |        1\n"
@@ -221,7 +221,7 @@ TEST_CASE("Testing class Table", "[Table]")
         // Checking method TableColumn::dump
         //----------------------------------------------------------------------------------------------------
 
-#if _MSC_VER  // the tests below are failing with Visual Studio 2019 v16.11.21! So, skip these asserts in Windows for the moment. Check this build https://github.com/reaktoro/reaktoro/actions/runs/3558266200/jobs/5976820439
+#ifndef _MSC_VER  // the tests below are failing with Visual Studio 2019 v16.11.21! So, skip these asserts in Windows for the moment. Check this build https://github.com/reaktoro/reaktoro/actions/runs/3558266200/jobs/5976820439
         CHECK( table.dump() ==
             " Floats | Integers | Strings | Booleans\n"
             "10.0000 |        1 |   Hello |        1\n"
