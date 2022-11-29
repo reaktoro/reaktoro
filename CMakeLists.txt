@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # Set the cmake module path of the project
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Use ccache to speed up repeated compilations
 include(CCache)
@@ -11,7 +11,7 @@ include(CCache)
 include(CMakeRC)
 
 # Set the name of the project, its version and other information
-project(Reaktoro VERSION 2.0.0 LANGUAGES CXX)
+project(Reaktoro VERSION 2.1.0 LANGUAGES CXX)
 
 # Generate compile_commands.json file in the binary directory
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
