@@ -809,6 +809,11 @@ auto ChemicalState::Equilibrium::setOptimaState(Optima::State const& state) -> v
     pimpl->optstate = state;
 }
 
+auto ChemicalState::Equilibrium::empty() const -> bool
+{
+    return pimpl->optstate.x.size() == 0; // this means optstate has not been set yet
+}
+
 auto ChemicalState::Equilibrium::numPrimarySpecies() const -> Index
 {
     return pimpl->optstate.jb.size();

@@ -380,6 +380,9 @@ public:
     /// Set the Optima::State object computed as part of the equilibrium calculation.
     auto setOptimaState(Optima::State const& state) -> void;
 
+    /// Return true if no equilibrium information available.
+    auto empty() const -> bool;
+
     /// Return the number of primary species.
     auto numPrimarySpecies() const -> Index;
 
