@@ -27,5 +27,7 @@ void exportKineticsOptions(py::module& m)
 {
     py::class_<KineticsOptions, EquilibriumOptions>(m, "KineticsOptions")
         .def(py::init<>())
+        .def(py::init<EquilibriumOptions const&>())
+        .def_readwrite("dt0", &KineticsOptions::dt0, "The time step used for preconditioning the chemical state when performing the very first chemical kinetics step.")
         ;
 }

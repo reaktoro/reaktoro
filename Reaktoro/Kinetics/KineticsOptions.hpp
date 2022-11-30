@@ -53,6 +53,9 @@ struct KineticsOptions : EquilibriumOptions
         // Check reasons above.
         EquilibriumOptions::optima.convergence.requires_at_least_one_iteration = true;
     }
+
+    /// The time step used for preconditioning the chemical state when performing the very first chemical kinetics step.
+    double dt0 = 1e-6;
 };
 
 } // namespace Reaktoro
