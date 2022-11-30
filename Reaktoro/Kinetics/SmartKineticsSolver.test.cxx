@@ -105,7 +105,7 @@ TEST_CASE("Testing SmartKineticsSolver", "[SmartKineticsSolver]")
         CHECK( result.iterations() == 0 );
 
         CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577532115) ); // ~5.77% max relative difference
-        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0037043337) ); // ~0.37% max relative difference
+        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.003704987) ); // ~0.37% max relative difference
 
         //-------------------------------------------------------------------------------------------------------------
         // CHANGE THE INITIAL CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED
