@@ -156,6 +156,7 @@ want to read about.
 ## Worth checking classes and methods
 
 - @ref Reaktoro::Material
+- @ref Reaktoro::Param
 - @ref Reaktoro::Params
 - @ref Reaktoro::Table
 - @ref Reaktoro::Data
