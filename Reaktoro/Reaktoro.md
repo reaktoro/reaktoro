@@ -19,9 +19,15 @@ want to read about.
 - @ref Reaktoro::Element
 - @ref Reaktoro::Species
 - @ref Reaktoro::Phase
+- @ref Reaktoro::Reaction
+- @ref Reaktoro::Surface
 
 ## Chemical system definition
 
+- @ref Reaktoro::ChemicalSystem
+- @ref Reaktoro::Phases
+- @ref Reaktoro::Reactions
+- @ref Reaktoro::Surfaces
 - @ref Reaktoro::AqueousPhase
 - @ref Reaktoro::CondensedPhase
 - @ref Reaktoro::CondensedPhases
@@ -31,8 +37,10 @@ want to read about.
 - @ref Reaktoro::MineralPhase
 - @ref Reaktoro::MineralPhases
 - @ref Reaktoro::SolidPhase
-- @ref Reaktoro::Phases
-- @ref Reaktoro::ChemicalSystem
+- @ref Reaktoro::GeneralReaction
+- @ref Reaktoro::MineralReaction
+- @ref Reaktoro::GeneralSurface
+- @ref Reaktoro::MineralSurface
 
 ## Chemical state and thermochemical properties of a chemical system
 
@@ -60,6 +68,18 @@ want to read about.
 - @ref Reaktoro::KineticsOptions
 - @ref Reaktoro::KineticsResult
 - @ref Reaktoro::KineticsSensitivity
+
+## Machine learning accelerated chemical equilibrium calculations
+
+- @ref Reaktoro::SmartEquilibriumSolver
+- @ref Reaktoro::SmartEquilibriumOptions
+- @ref Reaktoro::SmartEquilibriumResult
+
+## Machine learning accelerated chemical kinetics calculations
+
+- @ref Reaktoro::SmartKineticsSolver
+- @ref Reaktoro::SmartKineticsOptions
+- @ref Reaktoro::SmartKineticsResult
 
 ## Activity models for aqueous phases
 
@@ -136,6 +156,9 @@ want to read about.
 ## Worth checking classes and methods
 
 - @ref Reaktoro::Material
+- @ref Reaktoro::Params
+- @ref Reaktoro::Table
+- @ref Reaktoro::Data
 - @ref Reaktoro::ElementList
 - @ref Reaktoro::PhaseList
 - @ref Reaktoro::SpeciesList
@@ -147,7 +170,6 @@ want to read about.
 - @ref Reaktoro::ReactionEquation
 - @ref Reaktoro::AggregateState
 - @ref Reaktoro::ElementalComposition
-- @ref Reaktoro::Reaction
 - @ref Reaktoro::StateOfMatter
 
 ## For all other needs
