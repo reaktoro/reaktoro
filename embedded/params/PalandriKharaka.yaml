@@ -1,5 +1,9 @@
 ReactionRateModelParams:
     PalandriKharaka:
+      Quartz:
+        Mineral: Quartz
+        Mechanisms:
+          Neutral: { lgk: -13.99, E: 87.7 }
       Albite:
         Mineral: Albite
         Mechanisms:
