@@ -143,7 +143,7 @@ struct IonExchangeProps::Impl
     /// Return the amount of an element (in moles).
     auto elementAmount(const StringOrIndex& symbol) const -> real
     {
-        const auto idx = detail::resolveElementIndex(phase, symbol);
+        const auto idx = detail::resolveElementIndexOrRaiseError(phase, symbol);
         return Aex.row(idx) * VectorXr(nex);
     }
 
@@ -163,7 +163,7 @@ struct IonExchangeProps::Impl
     /// Return the amounts of an ion exchange species (in moles).
     auto speciesAmount(const StringOrIndex& name) const -> real
     {
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        const auto idx = detail::resolveSpeciesIndexOrRaiseError(phase, name);
         return nex[idx];
     }
 
@@ -180,7 +180,7 @@ struct IonExchangeProps::Impl
     {
         // Note: this definition eq = n * ze is consistent with the PHREEQC output,
         // but meq is usually defined via molalities as meq = 1e-3 * m, where m is the molality
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        const auto idx = detail::resolveSpeciesIndexOrRaiseError(phase, name);
         return nex[idx] * exsurface.ze()[idx];
     }
 
@@ -193,7 +193,7 @@ struct IonExchangeProps::Impl
     /// Return the equivalent fraction of an ion exchange species.
     auto speciesEquivalentFraction(const StringOrIndex& name) const -> real
     {
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        const auto idx = detail::resolveSpeciesIndexOrRaiseError(phase, name);
         return exstate.beta[idx];
     }
 
@@ -207,7 +207,7 @@ struct IonExchangeProps::Impl
     /// Return the base-10 logarithm of the activity coefficients of an ion exchange species.
     auto speciesActivityCoefficientLg(const StringOrIndex& name) const -> real
     {
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        const auto idx = detail::resolveSpeciesIndexOrRaiseError(phase, name);
         auto lng = props.speciesActivityCoefficientsLn()[idx];
         return lng / std::log(10);
     }

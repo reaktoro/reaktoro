@@ -44,7 +44,7 @@ auto Material::addSpeciesAmount(StringOrIndex const& species, double amount) -> 
 {
     const auto ispecies = detail::resolveSpeciesIndex(m_system, species);
     errorif(ispecies >= m_system.species().size(),
-        "Cannot add species with name or index `", stringfy(species), "` "
+        "Could not add species with name or index `", stringfy(species), "` "
         "to your custom material because it does not exist "
         "in the underlying chemical system of the material.");
     const auto idx = indexfn(m_species, RKT_LAMBDA(x, x.first == ispecies)); // check if m_species already contains ispecies
@@ -63,7 +63,7 @@ auto Material::addSpeciesMass(StringOrIndex const& species, double mass, Chars u
 {
     const auto ispecies = detail::resolveSpeciesIndex(m_system, species);
     errorif(ispecies >= m_system.species().size(),
-        "Cannot add species with name or index `", stringfy(species), "` "
+        "Could not add species with name or index `", stringfy(species), "` "
         "to your custom material because it does not exist "
         "in the underlying chemical system of the material.");
     mass = units::convert(mass, unit, "kg");

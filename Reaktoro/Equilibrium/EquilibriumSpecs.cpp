@@ -271,7 +271,7 @@ auto EquilibriumSpecs::charge() -> void
 
 auto EquilibriumSpecs::elementAmount(StringOrIndex const& element) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(m_system, element);
     const auto elementsymbol = m_system.element(ielement).symbol();
     EquationConstraint constraint;
     constraint.id = "elementAmount[" + elementsymbol + "]";
@@ -285,8 +285,8 @@ auto EquilibriumSpecs::elementAmount(StringOrIndex const& element) -> void
 
 auto EquilibriumSpecs::elementAmountInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(m_system, element);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(m_system, phase);
     const auto elementsymbol = m_system.element(ielement).symbol();
     const auto phasename = m_system.phase(iphase).name();
     EquationConstraint constraint;
@@ -301,7 +301,7 @@ auto EquilibriumSpecs::elementAmountInPhase(StringOrIndex const& element, String
 
 auto EquilibriumSpecs::elementMass(StringOrIndex const& element) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(m_system, element);
     const auto elementsymbol = m_system.element(ielement).symbol();
     EquationConstraint constraint;
     constraint.id = "elementMass[" + elementsymbol + "]";
@@ -315,8 +315,8 @@ auto EquilibriumSpecs::elementMass(StringOrIndex const& element) -> void
 
 auto EquilibriumSpecs::elementMassInPhase(StringOrIndex const& element, StringOrIndex const& phase) -> void
 {
-    const auto ielement = detail::resolveElementIndex(m_system, element);
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(m_system, element);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(m_system, phase);
     const auto elementsymbol = m_system.element(ielement).symbol();
     const auto phasename = m_system.phase(iphase).name();
     EquationConstraint constraint;
@@ -331,7 +331,7 @@ auto EquilibriumSpecs::elementMassInPhase(StringOrIndex const& element, StringOr
 
 auto EquilibriumSpecs::phaseAmount(StringOrIndex const& phase) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
     EquationConstraint constraint;
     constraint.id = "phaseAmount[" + phasename + "]";
@@ -345,7 +345,7 @@ auto EquilibriumSpecs::phaseAmount(StringOrIndex const& phase) -> void
 
 auto EquilibriumSpecs::phaseMass(StringOrIndex const& phase) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
     EquationConstraint constraint;
     constraint.id = "phaseMass[" + phasename + "]";
@@ -359,7 +359,7 @@ auto EquilibriumSpecs::phaseMass(StringOrIndex const& phase) -> void
 
 auto EquilibriumSpecs::phaseVolume(StringOrIndex const& phase) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(m_system, phase);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(m_system, phase);
     const auto phasename = m_system.phase(iphase).name();
     EquationConstraint constraint;
     constraint.id = "phaseVolume[" + phasename + "]";

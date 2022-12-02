@@ -125,7 +125,7 @@ struct ChemicalState::Impl
     auto setSpeciesAmount(StringOrIndex const& species, real amount, Chars unit) -> void
     {
         errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto ispecies = detail::resolveSpeciesIndexOrRaiseError(system, species);
         errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         n[ispecies] = units::convert(amount, unit, "mol");
     }
@@ -133,7 +133,7 @@ struct ChemicalState::Impl
     auto setSpeciesMass(StringOrIndex const& species, real mass, Chars unit) -> void
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto ispecies = detail::resolveSpeciesIndexOrRaiseError(system, species);
         errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         n[ispecies] = units::convert(mass, unit, "kg") / system.species(ispecies).molarMass();
     }
@@ -141,7 +141,7 @@ struct ChemicalState::Impl
     auto set(StringOrIndex const& species, real value, Chars unit) -> void
     {
         errorif(value < 0.0, "Expecting a non-negative amount/mass value, but got ", value, " ", unit);
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto ispecies = detail::resolveSpeciesIndexOrRaiseError(system, species);
         const auto numspecies = system.species().size();
         errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", stringfy(species), "`.");
         const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
@@ -150,7 +150,7 @@ struct ChemicalState::Impl
 
     auto add(StringOrIndex const& species, real value, Chars unit) -> void
     {
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto ispecies = detail::resolveSpeciesIndexOrRaiseError(system, species);
         const auto numspecies = system.species().size();
         errorif(ispecies >= numspecies, "Could not find a species in the system with index or name `", stringfy(species), "`.");
         const auto amount = detail::computeSpeciesAmount(system, ispecies, value, unit);
@@ -164,7 +164,7 @@ struct ChemicalState::Impl
 
     auto speciesAmountsInPhase(StringOrIndex const& phase) const -> ArrayXrConstRef
     {
-        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        const auto iphase = detail::resolvePhaseIndexOrRaiseError(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         const auto start = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = system.phase(iphase).species().size();
@@ -173,14 +173,14 @@ struct ChemicalState::Impl
 
     auto speciesAmount(StringOrIndex const& species) const -> real
     {
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto ispecies = detail::resolveSpeciesIndexOrRaiseError(system, species);
         errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         return n[ispecies];
     }
 
     auto speciesMass(StringOrIndex const& species) const -> real
     {
-        const auto ispecies = detail::resolveSpeciesIndex(system, species);
+        const auto ispecies = detail::resolveSpeciesIndexOrRaiseError(system, species);
         errorif(ispecies >= system.species().size(), "Could not find a species in the system with index or name `", stringfy(species), "`.");
         return n[ispecies] * system.species(ispecies).molarMass();
     }
@@ -222,7 +222,7 @@ struct ChemicalState::Impl
     auto scaleSpeciesAmountsInPhase(StringOrIndex const& phase, double scalar) -> void
     {
         errorif(scalar < 0.0, "Expecting a non-negative scaling factor, but got ", scalar);
-        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        const auto iphase = detail::resolvePhaseIndexOrRaiseError(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         const auto start = system.phases().numSpeciesUntilPhase(iphase);
         const auto size = system.phase(iphase).species().size();
@@ -247,7 +247,7 @@ struct ChemicalState::Impl
     {
         errorif(amount < 0.0, "Expecting a non-negative amount value, but got ", amount, " ", unit);
         amount = units::convert(amount, unit, "mol");
-        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        const auto iphase = detail::resolvePhaseIndexOrRaiseError(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         props.update(T, P, n);
         const auto current_amount = props.phaseProps(iphase).amount();
@@ -299,7 +299,7 @@ struct ChemicalState::Impl
     {
         errorif(mass < 0.0, "Expecting a non-negative mass value, but got ", mass, " ", unit);
         mass = units::convert(mass, unit, "kg");
-        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        const auto iphase = detail::resolvePhaseIndexOrRaiseError(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         props.update(T, P, n);
         const auto current_mass = props.phaseProps(iphase).mass();
@@ -351,7 +351,7 @@ struct ChemicalState::Impl
     {
         errorif(volume < 0.0, "Expecting a non-negative volume value, but got ", volume, " ", unit);
         volume = units::convert(volume, unit, "m3");
-        const auto iphase = detail::resolvePhaseIndex(system, phase);
+        const auto iphase = detail::resolvePhaseIndexOrRaiseError(system, phase);
         errorif(iphase >= system.phases().size(), "Could not find a phase in the system with index or name `", stringfy(phase));
         props.update(T, P, n);
         const auto current_volume = props.phaseProps(iphase).volume();

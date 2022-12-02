@@ -122,7 +122,6 @@ auto mineralMechanismFn(Mechanism const& mechanism, ReactionRateModelGeneratorAr
     auto fn = [=](ChemicalProps const& props)
     {
         const auto& aprops = AqueousProps::compute(props);
-        // AqueousProps aprops(props);
 
         const auto& lgk = mechanism.lgk.value();
         const auto& E = mechanism.E.value() * 1e3; // from kJ to J

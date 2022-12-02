@@ -140,7 +140,7 @@ auto EquilibriumConditions::charge(real const& value, String const& unit) -> voi
 
 auto EquilibriumConditions::elementAmount(StringOrIndex const& element, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(msystem, element);
     const auto elementsymbol = msystem.element(ielement).symbol();
     const auto id = "elementAmount[" + elementsymbol + "]";
     const auto errormsg = "element amount of " + elementsymbol;
@@ -151,8 +151,8 @@ auto EquilibriumConditions::elementAmount(StringOrIndex const& element, real con
 
 auto EquilibriumConditions::elementAmountInPhase(StringOrIndex const& element, StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(msystem, element);
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(msystem, element);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(msystem, phase);
     const auto elementsymbol = msystem.element(ielement).symbol();
     const auto phasename = msystem.phase(iphase).name();
     const auto id = "elementAmountInPhase[" + elementsymbol + "][" + phasename + "]";
@@ -164,7 +164,7 @@ auto EquilibriumConditions::elementAmountInPhase(StringOrIndex const& element, S
 
 auto EquilibriumConditions::elementMass(StringOrIndex const& element, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(msystem, element);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(msystem, element);
     const auto elementsymbol = msystem.element(ielement).symbol();
     const auto id = "elementMass[" + elementsymbol + "]";
     const auto errormsg = "element mass of " + elementsymbol;
@@ -175,8 +175,8 @@ auto EquilibriumConditions::elementMass(StringOrIndex const& element, real const
 
 auto EquilibriumConditions::elementMassInPhase(StringOrIndex const& element, StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto ielement = detail::resolveElementIndex(msystem, element);
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto ielement = detail::resolveElementIndexOrRaiseError(msystem, element);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(msystem, phase);
     const auto elementsymbol = msystem.element(ielement).symbol();
     const auto phasename = msystem.phase(iphase).name();
     const auto id = "elementMassInPhase[" + elementsymbol + "][" + phasename + "]";
@@ -188,7 +188,7 @@ auto EquilibriumConditions::elementMassInPhase(StringOrIndex const& element, Str
 
 auto EquilibriumConditions::phaseAmount(StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(msystem, phase);
     const auto phasename = msystem.phase(iphase).name();
     const auto id = "phaseAmount[" + phasename + "]";
     const auto errormsg = "phase amount of " + phasename;
@@ -199,7 +199,7 @@ auto EquilibriumConditions::phaseAmount(StringOrIndex const& phase, real const& 
 
 auto EquilibriumConditions::phaseMass(StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(msystem, phase);
     const auto phasename = msystem.phase(iphase).name();
     const auto id = "phaseMass[" + phasename + "]";
     const auto errormsg = "phase mass of " + phasename;
@@ -210,7 +210,7 @@ auto EquilibriumConditions::phaseMass(StringOrIndex const& phase, real const& va
 
 auto EquilibriumConditions::phaseVolume(StringOrIndex const& phase, real const& value, String const& unit) -> void
 {
-    const auto iphase = detail::resolvePhaseIndex(msystem, phase);
+    const auto iphase = detail::resolvePhaseIndexOrRaiseError(msystem, phase);
     const auto phasename = msystem.phase(iphase).name();
     const auto id = "phaseVolume[" + phasename + "]";
     const auto errormsg = "phase volume of " + phasename;

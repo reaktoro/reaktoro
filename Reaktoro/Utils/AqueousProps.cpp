@@ -244,10 +244,10 @@ struct AqueousProps::Impl
     auto setActivityModel(StringOrIndex const& species, ActivityModelGenerator const& generator) -> void
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
-        errorif(i >= nonaqueous.size(), "It was not possible to set the activity model "
-            "of species with name or index `", stringfy(species), "` because "
-            "there is no such species in the list of species returned by method "
-            "AqueousProps::saturationSpecies.");
+        errorif(i >= nonaqueous.size(), "Could not set the activity model of species with name or index `", stringfy(species), "`. "
+            "This species must be non-aqueous and exist in the thermodynamic database. It must also be composed of chemical elements "
+            "present in the aqueous phase. This error will occur, for example, if you are calculating the saturation ratio of Quartz (SiO2) "
+            "but the aqueous phase has no species with element Si.");
         chemical_potential_models[i] = chemicalPotentialModel(nonaqueous[i], generator);
     }
 
@@ -318,7 +318,7 @@ struct AqueousProps::Impl
 
     auto elementMolality(StringOrIndex const& symbol) const -> real
     {
-        const auto idx = detail::resolveElementIndex(phase, symbol);
+        const auto idx = detail::resolveElementIndexOrRaiseError(phase, symbol);
         auto const& m = aqstate.m.matrix();
         return Aaqs.row(idx) * m;
     }
@@ -332,7 +332,7 @@ struct AqueousProps::Impl
 
     auto speciesMolality(StringOrIndex const& name) const -> real
     {
-        const auto idx = detail::resolveSpeciesIndex(phase, name);
+        const auto idx = detail::resolveSpeciesIndexOrRaiseError(phase, name);
         return aqstate.m[idx];
     }
 
@@ -386,10 +386,11 @@ struct AqueousProps::Impl
     auto saturationRatioLn(StringOrIndex const& species) const -> real
     {
         const auto i = detail::resolveSpeciesIndex(nonaqueous, species);
-        errorif(i >= nonaqueous.size(), "It was not possible to calculate the "
-            "saturation index of species with name or index `", stringfy(species), "` "
-            "because there is no such species in the list of species returned by method "
-            "AqueousProps::saturationSpecies.");
+        errorif(i >= nonaqueous.size(), "It was not possible to calculate the saturation ratio of "
+            "species with name or index `", stringfy(species), "`. This species must be non-aqueous "
+            "and exist in the thermodynamic database. It must also be composed of chemical elements "
+            "present in the aqueous phase. This error will occur, for example, if you are calculating "
+            "the saturation ratio of Quartz (SiO2) but the aqueous phase has no species with element Si.");
         const auto RT = universalGasConstant * props.temperature();
         const auto ui = chemical_potential_models[i](props);
         const auto li = Anon.col(i).dot(lambda);
