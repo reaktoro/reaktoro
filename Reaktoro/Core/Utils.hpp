@@ -96,40 +96,64 @@ auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex const& surf
 //=================================================================================================
 
 /// Resolve the index of an element in a list of elements with given element symbol or its index.
-auto resolveElementIndexOrRaiseError(ElementList const& elementlist, StringOrIndex const& element, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find element with symbol or index `{element}` in the element list with symbols {symbols(elementlist)}."`
+auto resolveElementIndexOrRaiseError(ElementList const& elementlist, StringOrIndex const& element, String const& errormsg = "") -> Index;
 
 /// Resolve the index of an element in a chemical system with given element symbol or its index.
-auto resolveElementIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& element, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find element with symbol or index `{element}` in the chemical system."`
+auto resolveElementIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& element, String const& errormsg = "") -> Index;
 
 /// Resolve the index of an element in a phase with given element symbol or its index.
-auto resolveElementIndexOrRaiseError(Phase const& phase, StringOrIndex const& element, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find element with symbol or index `{element}` in phase {phase.name()}."`
+auto resolveElementIndexOrRaiseError(Phase const& phase, StringOrIndex const& element, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a species in a list of species with given species name or its index.
-auto resolveSpeciesIndexOrRaiseError(SpeciesList const& specieslist, StringOrIndex const& species, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find species with name or index `{species}` in the species list with names {names(specieslist)}."`
+auto resolveSpeciesIndexOrRaiseError(SpeciesList const& specieslist, StringOrIndex const& species, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a species in a chemical system with given species name or its index.
-auto resolveSpeciesIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& species, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find species with name or index `{species}` in the chemical system."`
+auto resolveSpeciesIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& species, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a species in a phase with given species name or its index.
-auto resolveSpeciesIndexOrRaiseError(Phase const& phase, StringOrIndex const& species, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find species with name or index `{species}` in phase {phase.name()}."`
+auto resolveSpeciesIndexOrRaiseError(Phase const& phase, StringOrIndex const& species, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a phase in a list of phases with given phase name or its index.
-auto resolvePhaseIndexOrRaiseError(PhaseList const& phaselist, StringOrIndex const& phase, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find phase with name or index `{phase}` in the phase list with names {names(phaselist)}."`
+auto resolvePhaseIndexOrRaiseError(PhaseList const& phaselist, StringOrIndex const& phase, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a phase in a chemical system with given phase name or its index.
-auto resolvePhaseIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& phase, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find phase with name or index `{phase}` in the chemical system."`
+auto resolvePhaseIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& phase, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a reaction in a list of reactions with given reaction name or its index.
-auto resolveReactionIndexOrRaiseError(ReactionList const& reactionlist, StringOrIndex const& reaction, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find reaction with name or index `{reaction}` in the reaction list with names {names(reactionlist)}."`
+auto resolveReactionIndexOrRaiseError(ReactionList const& reactionlist, StringOrIndex const& reaction, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a reaction in a chemical system with given reaction name or its index.
-auto resolveReactionIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& reaction, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find reaction with name or index `{reaction}` in the chemical system."`
+auto resolveReactionIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& reaction, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a surface in a list of surfaces with given surface name or its index.
-auto resolveSurfaceIndexOrRaiseError(SurfaceList const& surfacelist, StringOrIndex const& surface, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find surface with name or index `{surface}` in the surface list with names {names(surfacelist)}."`
+auto resolveSurfaceIndexOrRaiseError(SurfaceList const& surfacelist, StringOrIndex const& surface, String const& errormsg = "") -> Index;
 
 /// Resolve the index of a surface in a chemical system with given surface name or its index.
-auto resolveSurfaceIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& surface, String const& errormsg) -> Index;
+/// If index not found, raise an error if a given error message. If error message is empty, one is automatically produced.
+/// For this method, default error message is `"Could not find surface with name or index `{surface}` in the chemical system."`
+auto resolveSurfaceIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& surface, String const& errormsg = "") -> Index;
 
 //=================================================================================================
 // AUXILIARY FORMULA MATRIX/VECTOR METHODS

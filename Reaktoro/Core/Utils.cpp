@@ -65,13 +65,116 @@ auto computeSpeciesAmount(ChemicalSystem const& system, Index ispecies, real val
 }
 
 //=================================================================================================
-// AUXILIARY INDEX RESOLUTION METHODS FOR ELEMENTS
+// AUXILIARY METHODS TO PRODUCE ERROR MESSAGES FOR INDEX RESOLUTION METHODS
+//=================================================================================================
+
+auto resolveElementIndexErrorMsg(ElementList const& elementlist, StringOrIndex const& element, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    const auto symbols = vectorize(elementlist, RKT_LAMBDA(x, x.symbol()));
+    return str("Could not find an element with symbol or index `", stringfy(element), "` in the element list with symbols `", symbols, "`.");
+}
+
+auto resolveElementIndexErrorMsg(ChemicalSystem const& system, StringOrIndex const& element, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find an element with symbol or index `", stringfy(element), "` in the chemical system.");
+}
+
+auto resolveElementIndexErrorMsg(Phase const& phase, StringOrIndex const& element, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find an element with symbol or index `", stringfy(element), "` in phase `", phase.name(), "`.");
+}
+
+auto resolveSpeciesIndexErrorMsg(SpeciesList const& specieslist, StringOrIndex const& species, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    const auto names = vectorize(specieslist, RKT_LAMBDA(x, x.name()));
+    return str("Could not find a species with name or index `", stringfy(species), "` in the species list with names `", names, "`.");
+}
+
+auto resolveSpeciesIndexErrorMsg(ChemicalSystem const& system, StringOrIndex const& species, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find a species with name or index `", stringfy(species), "` in the chemical system.");
+}
+
+auto resolveSpeciesIndexErrorMsg(Phase const& phase, StringOrIndex const& species, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find a species with name or index `", stringfy(species), "` in phase `", phase.name(), "`.");
+}
+
+auto resolvePhaseIndexErrorMsg(PhaseList const& phaselist, StringOrIndex const& phase, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    const auto names = vectorize(phaselist, RKT_LAMBDA(x, x.name()));
+    return str("Could not find a phase with name or index `", stringfy(phase), "` in the phase list with names `", names, "`.");
+}
+
+auto resolvePhaseIndexErrorMsg(ChemicalSystem const& system, StringOrIndex const& phase, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find a phase with name or index `", stringfy(phase), "` in the chemical system.");
+}
+
+auto resolveReactionIndexErrorMsg(ReactionList const& reactionlist, StringOrIndex const& reaction, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    const auto names = vectorize(reactionlist, RKT_LAMBDA(x, x.name()));
+    return str("Could not find a reaction with name or index `", stringfy(reaction), "` in the reaction list with names `", names, "`.");
+}
+
+auto resolveReactionIndexErrorMsg(ChemicalSystem const& system, StringOrIndex const& reaction, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find a reaction with name or index `", stringfy(reaction), "` in the chemical system.");
+}
+
+auto resolveSurfaceIndexErrorMsg(SurfaceList const& surfacelist, StringOrIndex const& surface, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    const auto names = vectorize(surfacelist, RKT_LAMBDA(x, x.name()));
+    return str("Could not find a surface with name or index `", stringfy(surface), "` in the surface list with names `", names, "`.");
+}
+
+auto resolveSurfaceIndexErrorMsg(ChemicalSystem const& system, StringOrIndex const& surface, String const& errormsg) -> String
+{
+    if(!errormsg.empty()) return errormsg;
+    return str("Could not find a surface with name or index `", stringfy(surface), "` in the chemical system.");
+}
+
+//=================================================================================================
+// AUXILIARY INDEX RESOLUTION METHODS NEEDED IN VISIT METHOD
 //=================================================================================================
 
 auto resolveElementIndexAux(ElementList const& elementlist, Index index) -> Index { return index; }
 auto resolveElementIndexAux(ElementList const& elementlist, int index) -> Index { return index; }
 auto resolveElementIndexAux(ElementList const& elementlist, String const& symbol) -> Index { return elementlist.find(symbol); }
 
+auto resolveSpeciesIndexAux(SpeciesList const& specieslist, Index index) -> Index { return index; }
+auto resolveSpeciesIndexAux(SpeciesList const& specieslist, int index) -> Index { return index; }
+auto resolveSpeciesIndexAux(SpeciesList const& specieslist, String const& name) -> Index { return specieslist.find(name); }
+
+auto resolvePhaseIndexAux(PhaseList const& phaselist, Index index) -> Index { return index; }
+auto resolvePhaseIndexAux(PhaseList const& phaselist, int index) -> Index { return index; }
+auto resolvePhaseIndexAux(PhaseList const& phaselist, String const& name) -> Index { return phaselist.find(name); }
+
+auto resolveReactionIndexAux(ReactionList const& reactionlist, Index index) -> Index { return index; }
+auto resolveReactionIndexAux(ReactionList const& reactionlist, int index) -> Index { return index; }
+auto resolveReactionIndexAux(ReactionList const& reactionlist, String const& name) -> Index { return reactionlist.find(name); }
+
+auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, Index index) -> Index { return index; }
+auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, int index) -> Index { return index; }
+auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, String const& name) -> Index { return surfacelist.find(name); }
+
+//=================================================================================================
+// INDEX RESOLUTION METHODS FOR ELEMENTS
+//=================================================================================================
+
+auto resolveElementIndex(ChemicalSystem const& system, StringOrIndex const& element) -> Index { return resolveElementIndex(system.elements(), element); }
+auto resolveElementIndex(Phase const& phase, StringOrIndex const& element) -> Index { return resolveElementIndex(phase.elements(), element); }
 auto resolveElementIndex(ElementList const& elementlist, StringOrIndex const& element) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveElementIndexAux(elementlist, arg); }, element);
@@ -80,23 +183,33 @@ auto resolveElementIndex(ElementList const& elementlist, StringOrIndex const& el
 auto resolveElementIndexOrRaiseError(ElementList const& elementlist, StringOrIndex const& element, String const& errormsg) -> Index
 {
     const auto idx = resolveElementIndex(elementlist, element);
-    errorifnot(idx < elementlist.size(), errormsg);
+    if(idx >= elementlist.size())
+        errorif(true, resolveElementIndexErrorMsg(elementlist, element, errormsg));
     return idx;
 }
 
-auto resolveElementIndex(ChemicalSystem const& system, StringOrIndex const& element) -> Index { return resolveElementIndex(system.elements(), element); }
-auto resolveElementIndex(Phase const& phase, StringOrIndex const& element) -> Index { return resolveElementIndex(phase.elements(), element); }
-auto resolveElementIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& element, String const& errormsg) -> Index { return resolveElementIndex(system.elements(), element); }
-auto resolveElementIndexOrRaiseError(Phase const& phase, StringOrIndex const& element, String const& errormsg) -> Index { return resolveElementIndex(phase.elements(), element); }
+auto resolveElementIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& element, String const& errormsg) -> Index
+{
+    const auto idx = resolveElementIndex(system, element);
+    if(idx >= system.elements().size())
+        errorif(true, resolveElementIndexErrorMsg(system, element, errormsg));
+    return idx;
+}
+
+auto resolveElementIndexOrRaiseError(Phase const& phase, StringOrIndex const& element, String const& errormsg) -> Index
+{
+    const auto idx = resolveElementIndex(phase, element);
+    if(idx >= phase.elements().size())
+        errorif(true, resolveElementIndexErrorMsg(phase, element, errormsg));
+    return idx;
+}
 
 //=================================================================================================
 // AUXILIARY INDEX RESOLUTION METHODS FOR SPECIES
 //=================================================================================================
 
-auto resolveSpeciesIndexAux(SpeciesList const& specieslist, Index index) -> Index { return index; }
-auto resolveSpeciesIndexAux(SpeciesList const& specieslist, int index) -> Index { return index; }
-auto resolveSpeciesIndexAux(SpeciesList const& specieslist, String const& name) -> Index { return specieslist.find(name); }
-
+auto resolveSpeciesIndex(ChemicalSystem const& system, StringOrIndex const& species) -> Index { return resolveSpeciesIndex(system.species(), species); }
+auto resolveSpeciesIndex(Phase const& phase, StringOrIndex const& species) -> Index { return resolveSpeciesIndex(phase.species(), species); }
 auto resolveSpeciesIndex(SpeciesList const& specieslist, StringOrIndex const& species) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveSpeciesIndexAux(specieslist, arg); }, species);
@@ -105,23 +218,32 @@ auto resolveSpeciesIndex(SpeciesList const& specieslist, StringOrIndex const& sp
 auto resolveSpeciesIndexOrRaiseError(SpeciesList const& specieslist, StringOrIndex const& species, String const& errormsg) -> Index
 {
     const auto idx = resolveSpeciesIndex(specieslist, species);
-    errorifnot(idx < specieslist.size(), errormsg);
+    if(idx >= specieslist.size())
+        errorif(true, resolveSpeciesIndexErrorMsg(specieslist, species, errormsg));
     return idx;
 }
 
-auto resolveSpeciesIndex(ChemicalSystem const& system, StringOrIndex const& species) -> Index { return resolveSpeciesIndex(system.species(), species); }
-auto resolveSpeciesIndex(Phase const& phase, StringOrIndex const& species) -> Index { return resolveSpeciesIndex(phase.species(), species); }
-auto resolveSpeciesIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& species, String const& errormsg) -> Index { return resolveSpeciesIndex(system.species(), species); }
-auto resolveSpeciesIndexOrRaiseError(Phase const& phase, StringOrIndex const& species, String const& errormsg) -> Index { return resolveSpeciesIndex(phase.species(), species); }
+auto resolveSpeciesIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& species, String const& errormsg) -> Index
+{
+    const auto idx = resolveSpeciesIndex(system, species);
+    if(idx >= system.species().size())
+        errorif(true, resolveSpeciesIndexErrorMsg(system, species, errormsg));
+    return idx;
+}
+
+auto resolveSpeciesIndexOrRaiseError(Phase const& phase, StringOrIndex const& species, String const& errormsg) -> Index
+{
+    const auto idx = resolveSpeciesIndex(phase, species);
+    if(idx >= phase.species().size())
+        errorif(true, resolveSpeciesIndexErrorMsg(phase, species, errormsg));
+    return idx;
+}
 
 //=================================================================================================
 // AUXILIARY INDEX RESOLUTION METHODS FOR PHASES
 //=================================================================================================
 
-auto resolvePhaseIndexAux(PhaseList const& phaselist, Index index) -> Index { return index; }
-auto resolvePhaseIndexAux(PhaseList const& phaselist, int index) -> Index { return index; }
-auto resolvePhaseIndexAux(PhaseList const& phaselist, String const& name) -> Index { return phaselist.find(name); }
-
+auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex const& phase) -> Index { return resolvePhaseIndex(system.phases(), phase); }
 auto resolvePhaseIndex(PhaseList const& phaselist, StringOrIndex const& phase) -> Index
 {
     return std::visit([&](auto&& arg) { return resolvePhaseIndexAux(phaselist, arg); }, phase);
@@ -130,21 +252,24 @@ auto resolvePhaseIndex(PhaseList const& phaselist, StringOrIndex const& phase) -
 auto resolvePhaseIndexOrRaiseError(PhaseList const& phaselist, StringOrIndex const& phase, String const& errormsg) -> Index
 {
     const auto idx = resolvePhaseIndex(phaselist, phase);
-    errorifnot(idx < phaselist.size(), errormsg);
+    if(idx >= phaselist.size())
+        errorif(true, resolvePhaseIndexErrorMsg(phaselist, phase, errormsg));
     return idx;
 }
 
-auto resolvePhaseIndex(ChemicalSystem const& system, StringOrIndex const& phase) -> Index { return resolvePhaseIndex(system.phases(), phase); }
-auto resolvePhaseIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& phase, String const& errormsg) -> Index { return resolvePhaseIndex(system.phases(), phase); }
+auto resolvePhaseIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& phase, String const& errormsg) -> Index
+{
+    const auto idx = resolvePhaseIndex(system, phase);
+    if(idx >= system.phases().size())
+        errorif(true, resolvePhaseIndexErrorMsg(system, phase, errormsg));
+    return idx;
+}
 
 //=================================================================================================
 // AUXILIARY INDEX RESOLUTION METHODS FOR REACTIONS
 //=================================================================================================
 
-auto resolveReactionIndexAux(ReactionList const& reactionlist, Index index) -> Index { return index; }
-auto resolveReactionIndexAux(ReactionList const& reactionlist, int index) -> Index { return index; }
-auto resolveReactionIndexAux(ReactionList const& reactionlist, String const& name) -> Index { return reactionlist.find(name); }
-
+auto resolveReactionIndex(ChemicalSystem const& system, StringOrIndex const& reaction) -> Index { return resolveReactionIndex(system.reactions(), reaction); }
 auto resolveReactionIndex(ReactionList const& reactionlist, StringOrIndex const& reaction) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveReactionIndexAux(reactionlist, arg); }, reaction);
@@ -153,21 +278,24 @@ auto resolveReactionIndex(ReactionList const& reactionlist, StringOrIndex const&
 auto resolveReactionIndexOrRaiseError(ReactionList const& reactionlist, StringOrIndex const& reaction, String const& errormsg) -> Index
 {
     const auto idx = resolveReactionIndex(reactionlist, reaction);
-    errorifnot(idx < reactionlist.size(), errormsg);
+    if(idx >= reactionlist.size())
+        errorif(true, resolveReactionIndexErrorMsg(reactionlist, reaction, errormsg));
     return idx;
 }
 
-auto resolveReactionIndex(ChemicalSystem const& system, StringOrIndex const& reaction) -> Index { return resolveReactionIndex(system.reactions(), reaction); }
-auto resolveReactionIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& reaction, String const& errormsg) -> Index { return resolveReactionIndex(system.reactions(), reaction); }
+auto resolveReactionIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& reaction, String const& errormsg) -> Index
+{
+    const auto idx = resolveReactionIndex(system, reaction);
+    if(idx >= system.reactions().size())
+        errorif(true, resolveReactionIndexErrorMsg(system, reaction, errormsg));
+    return idx;
+}
 
 //=================================================================================================
 // AUXILIARY INDEX RESOLUTION METHODS FOR SURFACES
 //=================================================================================================
 
-auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, Index index) -> Index { return index; }
-auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, int index) -> Index { return index; }
-auto resolveSurfaceIndexAux(SurfaceList const& surfacelist, String const& name) -> Index { return surfacelist.find(name); }
-
+auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex const& surface) -> Index { return resolveSurfaceIndex(system.surfaces(), surface); }
 auto resolveSurfaceIndex(SurfaceList const& surfacelist, StringOrIndex const& surface) -> Index
 {
     return std::visit([&](auto&& arg) { return resolveSurfaceIndexAux(surfacelist, arg); }, surface);
@@ -176,12 +304,18 @@ auto resolveSurfaceIndex(SurfaceList const& surfacelist, StringOrIndex const& su
 auto resolveSurfaceIndexOrRaiseError(SurfaceList const& surfacelist, StringOrIndex const& surface, String const& errormsg) -> Index
 {
     const auto idx = resolveSurfaceIndex(surfacelist, surface);
-    errorifnot(idx < surfacelist.size(), errormsg);
+    if(idx >= surfacelist.size())
+        errorif(true, resolveSurfaceIndexErrorMsg(surfacelist, surface, errormsg));
     return idx;
 }
 
-auto resolveSurfaceIndex(ChemicalSystem const& system, StringOrIndex const& surface) -> Index { return resolveSurfaceIndex(system.surfaces(), surface); }
-auto resolveSurfaceIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& surface, String const& errormsg) -> Index { return resolveSurfaceIndex(system.surfaces(), surface); }
+auto resolveSurfaceIndexOrRaiseError(ChemicalSystem const& system, StringOrIndex const& surface, String const& errormsg) -> Index
+{
+    const auto idx = resolveSurfaceIndex(system, surface);
+    if(idx >= system.surfaces().size())
+        errorif(true, resolveSurfaceIndexErrorMsg(system, surface, errormsg));
+    return idx;
+}
 
 //=================================================================================================
 // AUXILIARY FORMULA MATRIX/VECTOR METHODS
