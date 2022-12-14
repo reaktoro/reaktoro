@@ -25,7 +25,6 @@
 #   • G.D. Miron (1 April 2022)
 # -----------------------------------------------------------------------------
 
-import sys
 from reaktoro import *
 import numpy as np
 import math
