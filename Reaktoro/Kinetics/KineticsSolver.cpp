@@ -113,6 +113,17 @@ struct KineticsSolver::Impl
         kconditions.setUpperBoundsControlVariablesP(pupper);
     }
 
+    /// Perform a kinetics step with a short time step if `state` has not reacted previously.
+    auto preconditionOnFirstStep(ChemicalState& state, real const& dt, EquilibriumConditions const& econditions) -> KineticsResult
+    {
+        if(state.equilibrium().empty())
+        {
+            updateEquilibriumConditionsForKinetics(state, koptions.dt0, econditions);
+            return ksolver.solve(state, kconditions);
+        }
+        return {};
+    }
+
     //=================================================================================================================
     //
     // CHEMICAL KINETICS METHODS
@@ -135,14 +146,14 @@ struct KineticsSolver::Impl
 
     auto solve(ChemicalState& state, real const& dt, EquilibriumConditions const& conditions) -> KineticsResult
     {
-        auto result = preconditionOnFirstStep(state, dt);
+        auto result = preconditionOnFirstStep(state, dt, conditions);
         updateEquilibriumConditionsForKinetics(state, dt, conditions);
         return result += ksolver.solve(state, kconditions);
     }
 
     auto solve(ChemicalState& state, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> KineticsResult
     {
-        auto result = preconditionOnFirstStep(state, dt);
+        auto result = preconditionOnFirstStep(state, dt, conditions);
         updateEquilibriumConditionsForKinetics(state, dt, conditions);
         return result += ksolver.solve(state, kconditions, restrictions);
     }
@@ -169,14 +180,14 @@ struct KineticsSolver::Impl
 
     auto solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions) -> KineticsResult
     {
-        auto result = preconditionOnFirstStep(state, dt);
+        auto result = preconditionOnFirstStep(state, dt, conditions);
         updateEquilibriumConditionsForKinetics(state, dt, conditions);
         return result += ksolver.solve(state, sensitivity, kconditions);
     }
 
     auto solve(ChemicalState& state, KineticsSensitivity& sensitivity, real const& dt, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> KineticsResult
     {
-        auto result = preconditionOnFirstStep(state, dt);
+        auto result = preconditionOnFirstStep(state, dt, conditions);
         updateEquilibriumConditionsForKinetics(state, dt, conditions);
         return result += ksolver.solve(state, sensitivity, kconditions, restrictions);
     }
