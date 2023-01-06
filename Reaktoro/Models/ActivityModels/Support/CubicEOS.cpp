@@ -621,15 +621,19 @@ auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& par
     const auto iH2S = index(substances, "H2S");
     const auto iCH4 = index(substances, "CH4");
     const auto iN2  = index(substances, "N2");
+    const auto size = substances.size();
 
     auto evalfn = [=](Bip& bip, BipModelArgs const& args) -> void
     {
         auto& [k, kT, kTT] = bip;
 
-        k(iH2O, iCO2) = k(iH2O, iCO2) = params.kH2O_CO2.value();
-        k(iH2O, iH2S) = k(iH2O, iH2S) = params.kH2O_H2S.value();
-        k(iH2O, iCH4) = k(iH2O, iCH4) = params.kH2O_CH4.value();
-        k(iH2O,  iN2) = k(iH2O,  iN2) = params.kH2O_N2.value();
+        if(iH2O < size)
+        {
+            if(iCO2 < size) k(iH2O, iCO2) = k(iH2O, iCO2) = params.kH2O_CO2.value();
+            if(iH2S < size) k(iH2O, iH2S) = k(iH2O, iH2S) = params.kH2O_H2S.value();
+            if(iCH4 < size) k(iH2O, iCH4) = k(iH2O, iCH4) = params.kH2O_CH4.value();
+            if( iN2 < size) k(iH2O,  iN2) = k(iH2O,  iN2) = params.kH2O_N2.value();
+        }
     };
 
     Vec<Param> paramsvec = {
