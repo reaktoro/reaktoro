@@ -19,7 +19,7 @@
 #include <catch2/catch.hpp>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ActivityModels/Support/CubicEOS2.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing CubicEOS::Equation class", "[CubicEOS]")
