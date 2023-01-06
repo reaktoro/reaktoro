@@ -19,9 +19,11 @@ dependencies:
   - git
   - graphviz  # [linux]
   - gxx_linux-64  # [linux]
+  - ipykernel                              # needed if using Jupyter Notebooks in Visual Studio Code
   - lld  # [unix]
   - make  # [unix]
   - matplotlib-base
+  - nbformat                               # needed if using plotly in Jupyter Notebooks in Visual Studio Code
   - ninja
   - nlohmann_json
   - numpy
