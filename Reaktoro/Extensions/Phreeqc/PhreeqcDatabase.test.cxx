@@ -75,7 +75,7 @@ auto lgK_vantHoff(real T, real log_k0, real delta_h0) -> real;
 /// @param T The temperature for the calculation (in K)
 /// @param log_k0 The equilibrium constant at 298.15K (log base 10)
 /// @param delta_h0 The enthalpy of reaction at 298.15K (in J/mol)
-auto lgK_analytic(real T, const Vec<real>& A) -> real;
+auto lgK_analytic(real T, Vec<real> A) -> real;
 
 /// Return -1 for gases and minerals, 1 for other species.
 /// This method is needed because Reaktoro considers all reactions in a
@@ -386,12 +386,63 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
     //---------------------------------------------------------------------------------------------
 
     // The analytic coefficients for temperature correction of logK of some selected species
+    // IMPORTANT: If any of the tests below start failing, this could be due to
+    // an update on phreeqc.dat, which changed the analytical coefficients. In
+    // this case, some coefficients below will need to be updated too.
     const Map<String, Vec<real>> coefficients_data =
     {   // Name         A1, A2, A3, A4, A5, A6
-        { "CO2"    , {{ 464.1965, 0.09344813, -26986.16, -165.75951, 2248628.9, 0 }} },
-        { "CaCO3"  , {{ -1228.732, -0.299440, 35512.75, 485.818, 0, 0 }} },
-        { "SrCO3"  , {{ -1.019, 0.012826, 0, 0, 0, 0 }} },
-        { "Calcite", {{ -171.9065, -0.077993, 2839.319, 71.595, 0, 0 }} },
+        { "OH-" ,         {{ 293.29227, 0.1360833, -10576.913, -123.73158, 0, -6.996455e-5 }} },
+        { "HCO3-" ,       {{ 107.8871, 0.03252849, -5151.79, -38.92561, 563713.9 }} },
+        { "CO2" ,         {{ 464.1965, 0.09344813, -26986.16, -165.75951, 2248628.9 }} },
+        { "(CO2)2" ,      {{ 8.68, -0.0103, -2190 }} },
+        { "HSO4-" ,       {{ -56.889, 0.006473, 2307.9, 19.8858 }} },
+        { "H2S" ,         {{ -11.17, 0.02386, 3279.0 }} },
+        { "HSg-" ,        {{ 11.17, -0.02386, -3279.0 }} },
+        { "NH3" ,         {{ 0.6322, -0.001225, -2835.76 }} },
+        { "HF" ,          {{ -2.033, 0.012645, 429.01 }} },
+        { "CaCO3" ,       {{ -1228.732, -0.299440, 35512.75, 485.818 }} },
+        { "CaHCO3+" ,     {{ 1317.0071, 0.34546894, -39916.84, -517.70761, 563713.9 }} },
+        { "MgCO3" ,       {{ 0.9910, 0.00667 }} },
+        { "MgHCO3+" ,     {{ 48.6721, 0.03252849, -2614.335, -18.00263, 563713.9 }} },
+        { "KSO4-" ,       {{ 3.106, 0.0, -673.6 }} },
+        { "AlOH+2" ,      {{ -38.253, 0.0, -656.27, 14.327 }} },
+        { "Al(OH)2+" ,    {{ 88.50, 0.0, -9391.6, -27.121 }} },
+        { "Al(OH)3" ,     {{ 226.374, 0.0, -18247.8, -73.597 }} },
+        { "Al(OH)4-" ,    {{ 51.578, 0.0, -11168.9, -14.865 }} },
+        { "H3SiO4-" ,     {{ -302.3724, -0.050698, 15669.69, 108.18466, -1119669.0 }} },
+        { "H2SiO4-2" ,    {{ -294.0184, -0.072650, 11204.49, 108.18466, -1119669.0 }} },
+        { "BaCO3" ,       {{ 0.113, 0.008721 }} },
+        { "BaHCO3+" ,     {{ -3.0938, 0.013669 }} },
+        { "SrHCO3+" ,     {{ 104.6391, 0.04739549, -5151.79, -38.92561, 563713.9 }} },
+        { "SrCO3" ,       {{ -1.019, 0.012826 }} },
+        { "Cu2(OH)2+2" ,  {{ 2.497, 0.0, -3833.0 }} },
+        { "Calcite",      {{ -171.9065, -0.077993, 2839.319, 71.595 }} },
+        { "Aragonite",    {{ -171.9773, -0.077993, 2903.293, 71.595 }} },
+        { "Strontianite", {{ 155.0305, 0.0, -7239.594, -56.58638 }} },
+        { "Witherite",    {{ 607.642, 0.121098, -20011.25, -236.4948 }} },
+        { "Gypsum",       {{ 93.7, 5.99E-03, -4e3, -35.019 }} },
+        { "Anhydrite",    {{ 84.90, 0, -3135.12, -31.79 }} },
+        { "Celestite",    {{ -7.14, 6.11e-3, 75, 0, 0, -1.79e-5 }} },
+        { "Barite",       {{ -282.43, -8.972e-2, 5822, 113.08 }} },
+        { "Fluorite",     {{ 66.348, 0.0, -4298.2, -25.271 }} },
+        { "SiO2(a)",      {{ -0.26, 0.0, -731.0 }} },
+        { "Chalcedony",   {{ -0.09, 0.0, -1032.0 }} },
+        { "Quartz",       {{ 0.41, 0.0, -1309.0 }} },
+        { "Chrysotile",   {{ 13.248, 0.0, 10217.1, -6.1894 }} },
+        { "CO2(g)",       {{ 10.5624, -2.3547e-2, -3972.8, 0, 5.8746e5, 1.9194e-5 }} },
+        { "H2O(g)",       {{ -16.5066, -2.0013E-3, 2710.7, 3.7646, 0, 2.24E-6 }} },
+        { "O2(g)",        {{ -7.5001, 7.8981e-3, 0.0, 0.0, 2.0027e5 }} },
+        { "H2(g)",        {{ -9.3114, 4.6473e-3, -49.335, 1.4341, 1.2815e5 }} },
+        { "N2(g)",        {{ -58.453, 1.818e-3, 3199, 17.909, -27460 }} },
+        { "H2S(g)",       {{ -97.354, -3.1576e-2, 1.8285e3, 37.44, 28.56 }} },
+        { "CH4(g)",       {{ 10.44, -7.65e-3, -6669, 0, 1.014e6 }} },
+        { "NH3(g)",       {{ -18.758, 3.3670e-4, 2.5113e3, 4.8619, 39.192 }} },
+        { "Oxg(g)",       {{ -7.5001, 7.8981e-3, 0.0, 0.0, 2.0027e5 }} },
+        { "Hdg(g)",       {{ -9.3114, 4.6473e-3, -49.335, 1.4341, 1.2815e5 }} },
+        { "Ntg(g)",       {{ -58.453, 1.81800e-3, 3199, 17.909, -27460 }} },
+        { "Mtg(g)",       {{ 10.44, -7.65e-3, -6669, 0, 1.014e6 }} },
+        { "H2Sg(g)",      {{ -97.354, -3.1576e-2, 1.8285e3, 37.44, 28.56 }} },
+        { "Melanterite",  {{ 1.447, -0.004153, 0.0, 0.0, -214949.0 }} },
     };
 
     for(auto [species, A] : coefficients_data)
@@ -399,26 +450,75 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
         INFO("species: " << species)
         INFO("T: " << T << " K")
         INFO("P: " << P << " Pa")
+        auto aux1 = lgK(db, T, P, species);
+        auto aux2 = lgK_analytic(T, A) * lgK_sign(db, species);
         CHECK( lgK(db, T, P, species) == Approx(lgK_analytic(T, A) * lgK_sign(db, species)) );
     }
 
     // The analytic coefficients for temperature correction of logK of some selected species
-    const Map<String, Pairs<String, double>> reactions =
+    const Map<String, String> reactions =
     {   // Species   Reaction
-        { "OH-"    , parseReactionEquation("H2O = OH- + H+")           },
-        { "CO2"    , parseReactionEquation("CO3-2 + 2*H+ = CO2 + H2O") },
-        { "CaCO3"  , parseReactionEquation("Ca+2 + CO3-2 = CaCO3")     },
-        { "SrCO3"  , parseReactionEquation("Sr+2 + CO3-2 = SrCO3")     },
-        { "CO2(g)" , parseReactionEquation("CO2 = CO2(g)")             },
-        { "Calcite", parseReactionEquation("CO3-2 + Ca+2 = Calcite")   },
+        { "OH-"         , "H2O = OH- + H+"                              },
+        { "HCO3-"       , "CO3-2 + H+ = HCO3-"                          },
+        { "CO2"         , "CO3-2 + 2*H+ = CO2 + H2O"                    },
+        { "(CO2)2"      , "2*CO2 = (CO2)2"                              },
+        { "HSO4-"       , "SO4-2 + H+ = HSO4-"                          },
+        { "H2S"         , "HS- + H+ = H2S"                              },
+        { "HSg-"        , "H2Sg = HSg- + H+"                            },
+        { "NH3"         , "NH4+ = NH3 + H+"                             },
+        { "HF"          , "H+ + F- = HF"                                },
+        { "CaCO3"       , "Ca+2 + CO3-2 = CaCO3"                        },
+        { "CaHCO3+"     , "Ca+2 + CO3-2 + H+ = CaHCO3+"                 },
+        { "MgCO3"       , "Mg+2 + CO3-2 = MgCO3"                        },
+        { "MgHCO3+"     , "Mg+2 + H+ + CO3-2 = MgHCO3+"                 },
+        { "KSO4-"       , "K+ + SO4-2 = KSO4-"                          },
+        { "AlOH+2"      , "Al+3 + H2O = AlOH+2 + H+"                    },
+        { "Al(OH)2+"    , "Al+3 + 2*H2O = Al(OH)2+ + 2*H+"              },
+        { "Al(OH)3"     , "Al+3 + 3*H2O = Al(OH)3 + 3*H+"               },
+        { "Al(OH)4-"    , "Al+3 + 4*H2O = Al(OH)4- + 4*H+"              },
+        { "H3SiO4-"     , "H4SiO4 = H3SiO4- + H+"                       },
+        { "H2SiO4-2"    , "H4SiO4 = H2SiO4-2 + 2*H+"                    },
+        { "BaCO3"       , "Ba+2 + CO3-2 = BaCO3"                        },
+        { "BaHCO3+"     , "Ba+2 + HCO3- = BaHCO3+"                      },
+        { "SrHCO3+"     , "Sr+2 + CO3-2 + H+ = SrHCO3+"                 },
+        { "SrCO3"       , "Sr+2 + CO3-2 = SrCO3"                        },
+        { "Cu2(OH)2+2"  , "2*Cu+2 + 2*H2O = Cu2(OH)2+2 + 2*H+"          },
+        { "Calcite"     , "Calcite = CO3-2 + Ca+2"                      },
+        { "Aragonite"   , "Aragonite = CO3-2 + Ca+2"                    },
+        { "Strontianite", "Strontianite = Sr+2 + CO3-2"                 },
+        { "Witherite"   , "Witherite = Ba+2 + CO3-2"                    },
+        { "Gypsum"      , "Gypsum = Ca+2 + SO4-2 + 2*H2O"               },
+        { "Anhydrite"   , "Anhydrite = Ca+2 + SO4-2"                    },
+        { "Celestite"   , "Celestite = Sr+2 + SO4-2"                    },
+        { "Barite"      , "Barite = Ba+2 + SO4-2"                       },
+        { "Fluorite"    , "Fluorite = Ca+2 + 2*F-"                      },
+        { "SiO2(a)"     , "SiO2(a) + 2*H2O = H4SiO4"                    },
+        { "Chalcedony"  , "Chalcedony + 2*H2O = H4SiO4"                 },
+        { "Quartz"      , "Quartz + 2*H2O = H4SiO4"                     },
+        { "Chrysotile"  , "Chrysotile + 6*H+ = H2O + 2*H4SiO4 + 3*Mg+2" },
+        { "CO2(g)"      , "CO2(g) = CO2"                                },
+        { "H2O(g)"      , "H2O(g) = H2O"                                },
+        { "O2(g)"       , "O2(g) = O2"                                  },
+        { "H2(g)"       , "H2(g) = H2"                                  },
+        { "N2(g)"       , "N2(g) = N2"                                  },
+        { "H2S(g)"      , "H2S(g) =  H+ + HS-"                          },
+        { "CH4(g)"      , "CH4(g) = CH4"                                },
+        { "NH3(g)"      , "NH3(g) = NH3"                                },
+        { "Oxg(g)"      , "Oxg(g) = Oxg"                                },
+        { "Hdg(g)"      , "Hdg(g) = Hdg"                                },
+        { "Ntg(g)"      , "Ntg(g) = Ntg"                                },
+        { "Mtg(g)"      , "Mtg(g) = Mtg"                                },
+        { "H2Sg(g)"     , "H2Sg(g) =  H+ + HSg-"                        },
+        { "Melanterite" , "Melanterite = 7*H2O + Fe+2 + SO4-2"          },
     };
 
-    for(auto [species, reaction] : reactions)
+    for(auto [species, reactionstr] : reactions)
     {
+        const auto reaction = parseReactionEquation(reactionstr);
         INFO("species: " << species)
         INFO("T: " << T << " K")
         INFO("P: " << P << " Pa")
-        CHECK( lgK(db, T, P, species) == Approx(lgK_fromG0(db, T, P, reaction)) );
+        CHECK( lgK(db, T, P, species) == Approx(lgK_fromG0(db, T, P, reaction) * lgK_sign(db, species)).scale(1.0) );
     }
 }
 
@@ -606,9 +706,11 @@ auto lgK_vantHoff(real T, real log_k0, real delta_h0) -> real
     return log_k0 - (delta_h0 * (1.0/T - 1.0/T0)/R) / ln10;
 }
 
-auto lgK_analytic(real T, const Vec<real>& A) -> real
+auto lgK_analytic(real T, Vec<real> A) -> real
 {
-    assert(A.size() == 6);
+    assert(A.size() <= 6);
+    for(auto i = A.size(); i < 6; ++i) // A must have 6 entries -- fill out missing ones with zero!
+        A.push_back(0.0);
     return A[0] + A[1]*T + A[2]/T + A[3]*log10(T) + A[4]/(T*T) + A[5]*T*T;
 }
 
