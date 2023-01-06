@@ -19,38 +19,105 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
+#include <Reaktoro/Core/Model.py.hxx>
 #include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
 using namespace Reaktoro;
 
 void exportCubicEOS(py::module& m)
 {
-    py::enum_<CubicEOSModel>(m, "CubicEOSModel")
-        .value("VanDerWaals", CubicEOSModel::VanDerWaals)
-        .value("RedlichKwong", CubicEOSModel::RedlichKwong)
-        .value("SoaveRedlichKwong", CubicEOSModel::SoaveRedlichKwong)
-        .value("PengRobinson", CubicEOSModel::PengRobinson)
+    auto ceos = m.def_submodule("CubicEOS");
+
+    py::class_<CubicEOS::Substance>(ceos, "Substance")
+        .def(py::init<String, Param, Param, Param>(),
+            py::arg("formula") = "",
+            py::arg("Tcr") = NaN,
+            py::arg("Pcr") = NaN,
+            py::arg("omega") = NaN)
+        .def_readwrite("formula", &CubicEOS::Substance::formula, "The chemical formula of the substance in the fluid phase.")
+        .def_readwrite("Tcr", &CubicEOS::Substance::Tcr, "The critical temperature of the substance in the fluid phase (in K).")
+        .def_readwrite("Pcr", &CubicEOS::Substance::Pcr, "The critical pressure of the substance in the fluid phase (in Pa).")
+        .def_readwrite("omega", &CubicEOS::Substance::omega, "The acentric factor of the substance in the fluid phase.")
         ;
 
-    // TODO: Implement CubicEOS.py.cxx (previous implementation in v1.0 no longer valid in v2.0)
-    // py::class_<CubicEOSInteractionParams>(m, "CubicEOSInteractionParams")
-    //     .def(
-    //         py::arg("model") = CubicEOS::PengRobinson,
-    //         py::arg("binary_interaction_values") = CubicEOS::InteractionParamsFunction{}
-    //     )
-    //     .def_readwrite("model", &CubicEOS::Params::model)
-    //     .def_readwrite("phase_identification_method", &CubicEOS::Params::phase_identification_method)
-    //     .def_readwrite("binary_interaction_values", &CubicEOS::Params::binary_interaction_values)
-    //     ;
+    py::class_<CubicEOS::Props>(ceos, "Props")
+        .def_readwrite("V", &CubicEOS::Props::V, "The molar volume of the phase (in m3/mol).")
+        .def_readwrite("VT", &CubicEOS::Props::VT, "The temperature derivative of the molar volume at constant pressure (in m3/(mol*K)).")
+        .def_readwrite("VP", &CubicEOS::Props::VP, "The pressure derivative of the molar volume constant temperature (in m3/(mol*Pa)).")
+        .def_readwrite("Gres", &CubicEOS::Props::Gres, "The residual molar Gibbs energy of the phase (in J/mol).")
+        .def_readwrite("Hres", &CubicEOS::Props::Hres, "The residual molar enthalpy of the phase (in J/mol).")
+        .def_readwrite("Cpres", &CubicEOS::Props::Cpres, "The residual molar heat capacity at constant pressure of the phase (in J/(mol*K)).")
+        .def_readwrite("Cvres", &CubicEOS::Props::Cvres, "The residual molar heat capacity at constant volume of the phase (in J/(mol*K)).")
+        .def_readwrite("ln_phi", &CubicEOS::Props::ln_phi, "The ln fugacity coefficients of the species in the phase.")
+        .def_readwrite("som", &CubicEOS::Props::som, "The state of matter of the fluid phase")
+        ;
 
-    // py::class_<CubicEOS::InteractionParamsResult>(m, "BinaryInteractionParams")
-    //     .def(
-    //         py::init<MatrixXd, MatrixXd, MatrixXd>(),
-    //         py::arg("k") = MatrixXd{},
-    //         py::arg("kT") = MatrixXd{},
-    //         py::arg("kTT") = MatrixXd{}
-    //     )
-    //     .def_readwrite("k", &CubicEOS::InteractionParamsResult::k)
-    //     .def_readwrite("kT", &CubicEOS::InteractionParamsResult::kT)
-    //     .def_readwrite("kTT", &CubicEOS::InteractionParamsResult::kTT)
-    //     ;
+    py::class_<CubicEOS::Bip>(ceos, "Bip")
+        .def(py::init<MatrixXr, MatrixXr, MatrixXr>())
+        .def_readwrite("k", &CubicEOS::Bip::k, "The computed binary interaction parameters kij for the species in the fluid phase.")
+        .def_readwrite("kT", &CubicEOS::Bip::kT, "The computed first-order temperature derivative of the binary interaction parameters kij.")
+        .def_readwrite("kTT", &CubicEOS::Bip::kTT, "The computed second-order temperature derivative of the binary interaction parameters kij.")
+        ;
+
+    py::class_<CubicEOS::BipModelArgs>(ceos, "BipModelArgs")
+        .def_property_readonly("substances", [](CubicEOS::BipModelArgs const& self) { return self.substances; }, "The chemical formulas of the substances in the fluid phase")
+        .def_property_readonly("T"         , [](CubicEOS::BipModelArgs const& self) { return self.T; }         , "The temperature of the fluid (in K)")
+        .def_property_readonly("Tcr"       , [](CubicEOS::BipModelArgs const& self) { return self.Tcr; }       , "The critical temperatures of the substances in the fluid phase (in K)")
+        .def_property_readonly("Pcr"       , [](CubicEOS::BipModelArgs const& self) { return self.Pcr; }       , "The critical pressures of the substances in the fluid phase (in Pa)")
+        .def_property_readonly("omega"     , [](CubicEOS::BipModelArgs const& self) { return self.omega; }     , "The acentric factors of the substances in the fluid phase")
+        .def_property_readonly("a"         , [](CubicEOS::BipModelArgs const& self) { return self.a; }         , "The variables aᵢ in the cubic equation of state for each substance in the fluid phase computed at current temperature")
+        .def_property_readonly("aT"        , [](CubicEOS::BipModelArgs const& self) { return self.aT; }        , "The first-order temperature derivative of aᵢ")
+        .def_property_readonly("aTT"       , [](CubicEOS::BipModelArgs const& self) { return self.aTT; }       , "The second-order temperature derivative of aᵢ")
+        .def_property_readonly("alpha"     , [](CubicEOS::BipModelArgs const& self) { return self.alpha; }     , "The variables αᵢ in the cubic equation of state for each substance in the fluid phase computed at current temperature")
+        .def_property_readonly("alphaT"    , [](CubicEOS::BipModelArgs const& self) { return self.alphaT; }    , "The first-order temperature derivative of αᵢ")
+        .def_property_readonly("alphaTT"   , [](CubicEOS::BipModelArgs const& self) { return self.alphaTT; }   , "The second-order temperature derivative of αᵢ")
+        .def_property_readonly("b"         , [](CubicEOS::BipModelArgs const& self) { return self.b; }         , "The variables bᵢ in the cubic equation of state for each substance in the fluid phase computed at current temperature")
+        ;
+
+    exportModel<CubicEOS::Bip, CubicEOS::BipModelArgs const&>(ceos, "BipModel");
+
+    py::class_<CubicEOS::Alpha>(ceos, "Alpha")
+        .def(py::init<real, real, real>(),
+            py::arg("alpha") = 0.0,
+            py::arg("alphaT") = 0.0,
+            py::arg("alphaTT") = 0.0)
+        .def_readwrite("alpha", &CubicEOS::Alpha::alpha, "The evaluated value of the α(T; ω) function in a cubic equation of state.")
+        .def_readwrite("alphaT", &CubicEOS::Alpha::alphaT, "The evaluated first-order temperature derivative of the α(T; ω) function.")
+        .def_readwrite("alphaTT", &CubicEOS::Alpha::alphaTT, "The evaluated second-order temperature derivative of the α(T; ω) function.")
+        ;
+
+    py::class_<CubicEOS::AlphaModelArgs>(ceos, "AlphaModelArgs")
+        .def_property_readonly("Tr", [](CubicEOS::AlphaModelArgs const& self) { return self.Tr; }, "The reduced temperature Tr = T/Tcr with respect to the substance for which α(T; ω) is computed.")
+        .def_property_readonly("TrT", [](CubicEOS::AlphaModelArgs const& self) { return self.TrT; }, "The first-order temperature derivative of Tr for convenience.")
+        .def_property_readonly("omega", [](CubicEOS::AlphaModelArgs const& self) { return self.omega; }, "The acentric factor of the substance for which α(T; ω) is computed.")
+        ;
+
+    exportModel<CubicEOS::Alpha, CubicEOS::AlphaModelArgs const&>(ceos, "AlphaModel");
+
+    ceos.def("EquationModelVanDerWaals", &CubicEOS::EquationModelVanDerWaals, "Return a cubic equation model representative of the van der Waals (1873) cubic equation of state.");
+    ceos.def("EquationModelRedlichKwong", &CubicEOS::EquationModelRedlichKwong, "Return a cubic equation model representative of the Redlich-Kwong (1949) cubic equation of state.");
+    ceos.def("EquationModelSoaveRedlichKwong", &CubicEOS::EquationModelSoaveRedlichKwong, "Return a cubic equation model representative of the Soave-Redlich-Kwong (1972) cubic equation of state.");
+    ceos.def("EquationModelPengRobinson76", &CubicEOS::EquationModelPengRobinson76, "Return a cubic equation model representative of the Peng-Robinson (1976) cubic equation of state.");
+    ceos.def("EquationModelPengRobinson78", &CubicEOS::EquationModelPengRobinson78, "Return a cubic equation model representative of the Peng-Robinson (1978) cubic equation of state.");
+    ceos.def("EquationModelPengRobinson", &CubicEOS::EquationModelPengRobinson, "Return a cubic equation model representative of the Peng-Robinson (1978) cubic equation of state.");
+
+    py::class_<CubicEOS::EquationSpecs>(ceos, "EquationSpecs")
+        .def_readwrite("substances", &CubicEOS::EquationSpecs::substances, "The substances in the fluid phase and their attributes.")
+        .def_readwrite("eqmodel", &CubicEOS::EquationSpecs::eqmodel, "The cubic equation of state model to be used.")
+        .def_readwrite("bipmodel", &CubicEOS::EquationSpecs::bipmodel, "The function that calculates binary interaction parameters kij.")
+        ;
+
+    py::class_<CubicEOS::Equation>(ceos, "Equation")
+        .def(py::init<CubicEOS::EquationSpecs>())
+        .def("equationSpecs", &CubicEOS::Equation::equationSpecs, "Return the underlying EquationSpecs object used to create this Equation object.")
+        .def("compute", &CubicEOS::Equation::compute, "Compute the thermodynamic properties of the phase.")
+        ;
+
+    py::class_<CubicEOS::BipModelParamsPHREEQC>(ceos, "BipModelParamsPHREEQC")
+        .def_readwrite("kH2O_CO2", &CubicEOS::BipModelParamsPHREEQC::kH2O_CO2, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-CO₂.")
+        .def_readwrite("kH2O_H2S", &CubicEOS::BipModelParamsPHREEQC::kH2O_H2S, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-H₂S.")
+        .def_readwrite("kH2O_CH4", &CubicEOS::BipModelParamsPHREEQC::kH2O_CH4, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-CH₄.")
+        .def_readwrite("kH2O_N2", &CubicEOS::BipModelParamsPHREEQC::kH2O_N2, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-N₂.")
+        ;
+
+    ceos.def("BipModelPHREEQC", &CubicEOS::BipModelPHREEQC, "Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.");
 }

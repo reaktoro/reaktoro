@@ -45,6 +45,7 @@
 //=================================================================================================
 
 namespace Reaktoro {
+namespace CubicEOS {
 
 using std::abs;
 using std::log;
@@ -52,129 +53,130 @@ using std::sqrt;
 
 const auto R = universalGasConstant;
 
-namespace detail {
+// For implementations below, see Table 3.1 of Smith et al. (2017).
 
-using AlphaResult = Tuple<real, real, real>;
-
-/// A high-order function that return an `alpha` function that calculates alpha, alphaT and alphaTT for a given EOS.
-auto alpha(CubicEOSModel type) -> Fn<AlphaResult(real, real, real)>
+auto EquationModelVanDerWaals() -> EquationModel
 {
-    // The alpha function for van der Waals EOS (see Table 3.1 of Smith et al. 2017)
-    auto alphaVDW = [](real Tr, real TrT, real omega) -> AlphaResult
+    EquationModel eqmodel;
+    eqmodel.sigma   = 0.0;
+    eqmodel.epsilon = 0.0;
+    eqmodel.Omega   = 1.0/8.0;
+    eqmodel.Psi     = 27.0/64.0;
+
+    eqmodel.alphafn = [](AlphaModelArgs const& args) -> Alpha
     {
-        const real alpha = 1.0;
-        const real alphaT = 0.0;
-        const real alphaTT = 0.0;
+        return { 1.0, 0.0, 0.0 };
+    };
+
+    return eqmodel;
+}
+
+auto EquationModelRedlichKwong() -> EquationModel
+{
+    EquationModel eqmodel;
+    eqmodel.sigma   = 1.0;
+    eqmodel.epsilon = 0.0;
+    eqmodel.Omega   = 0.08664;
+    eqmodel.Psi     = 0.42748;
+
+    eqmodel.alphafn = [](AlphaModelArgs const& args) -> Alpha
+    {
+        auto const& [Tr, TrT, omega] = args;
+        auto const alpha = 1.0/sqrt(Tr);
+        auto const alphaTr = -0.5/Tr * alpha;
+        auto const alphaTrTr = -0.5/Tr * (alphaTr - alpha/Tr);
+        auto const alphaT = alphaTr*TrT;
+        auto const alphaTT = alphaTrTr*TrT*TrT;
         return { alpha, alphaT, alphaTT };
     };
 
-    // The alpha function for Redlich-Kwong EOS
-    auto alphaRK = [](real Tr, real TrT, real omega) -> AlphaResult
+    return eqmodel;
+}
+
+auto EquationModelSoaveRedlichKwong() -> EquationModel
+{
+    EquationModel eqmodel;
+    eqmodel.sigma   = 1.0;
+    eqmodel.epsilon = 0.0;
+    eqmodel.Omega   = 0.08664;
+    eqmodel.Psi     = 0.42748;
+
+    eqmodel.alphafn = [](AlphaModelArgs const& args) -> Alpha
     {
-        const real alpha = 1.0/sqrt(Tr);
-        const real alphaTr = -0.5/Tr * alpha;
-        const real alphaTrTr = -0.5/Tr * (alphaTr - alpha/Tr);
-        const real alphaT = alphaTr*TrT;
-        const real alphaTT = alphaTrTr*TrT*TrT;
+        auto const& [Tr, TrT, omega] = args;
+        auto const m = 0.480 + 1.574*omega - 0.176*omega*omega;
+        auto const sqrtTr = sqrt(Tr);
+        auto const aux = 1.0 + m*(1.0 - sqrtTr);
+        auto const auxTr = -0.5*m/sqrtTr;
+        auto const auxTrTr = 0.25*m/(Tr*sqrtTr);
+        auto const alpha = aux*aux;
+        auto const alphaTr = 2.0*aux*auxTr;
+        auto const alphaTrTr = 2.0*(auxTr*auxTr + aux*auxTrTr);
+        auto const alphaT = alphaTr * TrT;
+        auto const alphaTT = alphaTrTr * TrT*TrT;
         return { alpha, alphaT, alphaTT };
     };
 
-    // The alpha function for Soave-Redlich-Kwong EOS
-    auto alphaSRK = [](real Tr, real TrT, real omega) -> AlphaResult
+    return eqmodel;
+}
+
+auto EquationModelPengRobinsonAux(Index year) -> EquationModel
+{
+    EquationModel eqmodel;
+    eqmodel.sigma   = 1.0 + 1.4142135623730951;
+    eqmodel.epsilon = 1.0 - 1.4142135623730951;
+    eqmodel.Omega   = 0.0777960739;
+    eqmodel.Psi     = 0.457235529;
+
+    auto mPR76 = [](real const& omega) -> real
     {
-        const real m = 0.480 + 1.574*omega - 0.176*omega*omega;
-        const real sqrtTr = sqrt(Tr);
-        const real aux = 1.0 + m*(1.0 - sqrtTr);
-        const real auxTr = -0.5*m/sqrtTr;
-        const real auxTrTr = 0.25*m/(Tr*sqrtTr);
-        const real alpha = aux*aux;
-        const real alphaTr = 2.0*aux*auxTr;
-        const real alphaTrTr = 2.0*(auxTr*auxTr + aux*auxTrTr);
-        const real alphaT = alphaTr * TrT;
-        const real alphaTT = alphaTrTr * TrT*TrT;
-        return { alpha, alphaT, alphaTT };
+        return 0.374640 + 1.54226*omega - 0.269920*omega*omega;
     };
 
-    // The alpha function for Peng-Robinson (1978) EOS
-    auto alphaPR = [](real Tr, real TrT, real omega) -> AlphaResult
+    auto mPR78 = [](real const& omega) -> real
     {
-        // Jaubert, J.-N., Vitu, S., Mutelet, F. and Corriou, J.-P., 2005.
-        // Extension of the PPR78 model (predictive 1978, Peng–Robinson EOS
-        // with temperature dependent kij calculated through a group
-        // contribution method) to systems containing aromatic compounds.
-        // Fluid Phase Equilibria, 237(1-2), pp.193–211.
-        const real m = omega <= 0.491 ?
+        return omega < 0.491 ?
             0.374640 + 1.54226*omega - 0.269920*omega*omega :
-            0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;
-        const real sqrtTr = sqrt(Tr);
-        const real aux = 1.0 + m*(1.0 - sqrtTr);
-        const real auxTr = -0.5*m/sqrtTr;
-        const real auxTrTr = 0.25*m/(Tr*sqrtTr);
-        const real alpha = aux*aux;
-        const real alphaTr = 2.0*aux*auxTr;
-        const real alphaTrTr = 2.0*(auxTr*auxTr + aux*auxTrTr);
-        const real alphaT = alphaTr * TrT;
-        const real alphaTT = alphaTrTr * TrT*TrT;
+            0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;  // Jaubert, J.-N., Vitu, S., Mutelet, F. and Corriou, J.-P., 2005. Extension of the PPR78 model (predictive 1978, Peng–Robinson EOS with temperature dependent kij calculated through a group contribution method) to systems containing aromatic compounds. Fluid Phase Equilibria, 237(1-2), pp.193–211.
+    };
+
+    auto mPR = year == 76 ? mPR76 : mPR78;
+
+    eqmodel.alphafn = [=](AlphaModelArgs const& args) -> Alpha
+    {
+        auto const& [Tr, TrT, omega] = args;
+        auto const m = mPR(omega);
+        auto const sqrtTr = sqrt(Tr);
+        auto const aux = 1.0 + m*(1.0 - sqrtTr);
+        auto const auxTr = -0.5*m/sqrtTr;
+        auto const auxTrTr = 0.25*m/(Tr*sqrtTr);
+        auto const alpha = aux*aux;
+        auto const alphaTr = 2.0*aux*auxTr;
+        auto const alphaTrTr = 2.0*(auxTr*auxTr + aux*auxTrTr);
+        auto const alphaT = alphaTr * TrT;
+        auto const alphaTT = alphaTrTr * TrT*TrT;
         return { alpha, alphaT, alphaTT };
     };
 
-    switch(type)
-    {
-        case CubicEOSModel::VanDerWaals: return alphaVDW;
-        case CubicEOSModel::RedlichKwong: return alphaRK;
-        case CubicEOSModel::SoaveRedlichKwong: return alphaSRK;
-        case CubicEOSModel::PengRobinson: return alphaPR;
-        default: return alphaPR;
-    }
+    return eqmodel;
 }
 
-auto sigma(CubicEOSModel type) -> real
+auto EquationModelPengRobinson76() -> EquationModel
 {
-    switch(type)
-    {
-        case CubicEOSModel::VanDerWaals: return 0.0;
-        case CubicEOSModel::RedlichKwong: return 1.0;
-        case CubicEOSModel::SoaveRedlichKwong: return 1.0;
-        case CubicEOSModel::PengRobinson: return 1.0 + 1.4142135623730951;
-        default: return 1.0 + 1.4142135623730951;
-    }
+    return EquationModelPengRobinsonAux(76);
 }
 
-auto epsilon(CubicEOSModel type) -> real
+auto EquationModelPengRobinson78() -> EquationModel
 {
-    switch(type)
-    {
-        case CubicEOSModel::VanDerWaals: return 0.0;
-        case CubicEOSModel::RedlichKwong: return 0.0;
-        case CubicEOSModel::SoaveRedlichKwong: return 0.0;
-        case CubicEOSModel::PengRobinson: return 1.0 - 1.4142135623730951;
-        default: return 1.0 - 1.4142135623730951;
-    }
+    return EquationModelPengRobinsonAux(78);
 }
 
-auto Omega(CubicEOSModel type) -> real
+auto EquationModelPengRobinson() -> EquationModel
 {
-    switch(type)
-    {
-        case CubicEOSModel::VanDerWaals: return 1.0/8.0;
-        case CubicEOSModel::RedlichKwong: return 0.08664;
-        case CubicEOSModel::SoaveRedlichKwong: return 0.08664;
-        case CubicEOSModel::PengRobinson: return 0.0777960739;
-        default: return 0.0777960739;
-    }
+    return EquationModelPengRobinson78();
 }
 
-auto Psi(CubicEOSModel type) -> real
-{
-    switch(type)
-    {
-        case CubicEOSModel::VanDerWaals: return 27.0/64.0;
-        case CubicEOSModel::RedlichKwong: return 0.42748;
-        case CubicEOSModel::SoaveRedlichKwong: return 0.42748;
-        case CubicEOSModel::PengRobinson: return 0.457235529;
-        default: return 0.457235529;
-    }
-}
+namespace detail {
 
 /// Compute the local minimum of pressure along an isotherm of a cubic equation of state.
 /// @param a The @eq{a_\mathrm{mix}} variable in the equation of state
@@ -281,90 +283,141 @@ auto determinePhysicalStateOneRealRoot(double a, double b, double e, double s, d
     return (Pmin != Pmin) ? StateOfMatter::Supercritical : (P < Pmin) ? StateOfMatter::Gas : StateOfMatter::Liquid;
 }
 
+/// Return the critical temperatures of the substances as an array, checking if their values are valid.
+auto getCriticalTemperatures(Vec<Substance> const& substances) -> ArrayXr
+{
+    ArrayXr res(substances.size());
+    auto i = 0; for(auto const& subs : substances) {
+        errorif(std::isnan(subs.Tcr), "The critical temperature of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(subs.Tcr <= 0.0, "The critical temperature of `", subs.formula, "` should be a positive number but it was set to ", subs.Tcr, " K.");
+        res[i++] = subs.Tcr;
+    }
+    return res;
+}
+
+/// Return the critical pressures of the substances as an array, checking if their values are valid.
+auto getCriticalPressures(Vec<Substance> const& substances) -> ArrayXr
+{
+    ArrayXr res(substances.size());
+    auto i = 0; for(auto const& subs : substances) {
+        errorif(std::isnan(subs.Tcr), "The critical pressure of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(subs.Tcr <= 0.0, "The critical pressure of `", subs.formula, "` should be a positive number but it was set to ", subs.Pcr, " Pa.");
+        res[i++] = subs.Pcr;
+    }
+    return res;
+}
+
+/// Return the acentric factors of the substances as an array, checking if their values are valid.
+auto getAccentricFactors(Vec<Substance> const& substances) -> ArrayXr
+{
+    ArrayXr res(substances.size());
+    auto i = 0; for(auto const& subs : substances) {
+        errorif(std::isnan(subs.Tcr), "The acentric factor of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        res[i++] = subs.omega;
+    }
+    return res;
+}
+
+/// Return the chemical formulas of the substances in the fluid phase.
+auto createSubstanceList(Vec<Substance> const& substances) -> Strings
+{
+    return vectorize(substances, RKT_LAMBDA(x, x.formula));
+}
+
 } // namespace detail
 
-struct CubicEOS::Impl
+struct Equation::Impl
 {
-    /// The number of species in the phase.
-    unsigned nspecies;
+    /// The specifications for the cubic equation of state.
+    EquationSpecs const eqspecs;
 
-    /// The type of the cubic equation of state.
-    CubicEOSModel model = CubicEOSModel::PengRobinson;
+    /// The number of species in the fluid phase.
+    Index const nspecies;
 
-    /// The critical temperatures of the substances (in K).
-    ArrayXr Tcr;
+    /// The critical temperatures of the species in the fluid phase (in K).
+    ArrayXr const Tcr;
 
-    /// The critical pressures of the substances (in Pa).
-    ArrayXr Pcr;
+    /// The critical pressures of the species in the fluid phase (in Pa).
+    ArrayXr const Pcr;
 
-    /// The acentric factor of the substances.
-    ArrayXr omega;
+    /// The acentric factors of the species in the fluid phase.
+    ArrayXr const omega;
 
-    /// The function that calculates the interaction parameters kij and its temperature derivatives.
-    CubicEOSInteractionParamsFn interaction_params_fn;
+    /// The chemical formulas of the substances in the fluid phase.
+    Strings const substances;
 
-    ArrayXr a;     ///< Auxiliary array
-    ArrayXr aT;    ///< Auxiliary array
-    ArrayXr aTT;   ///< Auxiliary array
-    ArrayXr b;     ///< Auxiliary array
-    ArrayXr abar;  ///< Auxiliary array
-    ArrayXr abarT; ///< Auxiliary array
-    ArrayXr bbar;  ///< Auxiliary array
+    // Auxiliary arrays
 
-    /// Construct a CubicEOS::Impl instance.
-    Impl(const Args& args)
-    : nspecies(args.nspecies),
-      Tcr(args.Tcr),
-      Pcr(args.Pcr),
-      omega(args.omega),
-      model(args.model),
-      interaction_params_fn(args.interaction_params_fn),
-      a(args.nspecies),
-      aT(args.nspecies),
-      aTT(args.nspecies),
-      b(args.nspecies),
-      abar(args.nspecies),
-      abarT(args.nspecies),
-      bbar(args.nspecies)
+    ArrayXr a;
+    ArrayXr aT;
+    ArrayXr aTT;
+    ArrayXr alpha;
+    ArrayXr alphaT;
+    ArrayXr alphaTT;
+    ArrayXr b;
+    ArrayXr abar;
+    ArrayXr abarT;
+    ArrayXr bbar;
+    Bip bip;
+
+    /// Construct an Equation::Impl object.
+    Impl(EquationSpecs const& eqspecs)
+    : eqspecs(eqspecs),
+      nspecies(eqspecs.substances.size()),
+      Tcr(detail::getCriticalTemperatures(eqspecs.substances)),
+      Pcr(detail::getCriticalPressures(eqspecs.substances)),
+      omega(detail::getAccentricFactors(eqspecs.substances)),
+      substances(detail::createSubstanceList(eqspecs.substances))
     {
+        errorifnot(eqspecs.eqmodel.alphafn.initialized(), "The alpha function in CubicEOS::EquationSpecs::alphafn has not been initialized.");
 
-        assert(Tcr.size() == nspecies);
-        assert(Pcr.size() == nspecies);
-        assert(omega.size() == nspecies);
-        assert(Tcr.minCoeff() > 0.0);
-        assert(Pcr.minCoeff() > 0.0);
+        a       = zeros(nspecies);
+        aT      = zeros(nspecies);
+        aTT     = zeros(nspecies);
+        alpha   = zeros(nspecies);
+        alphaT  = zeros(nspecies);
+        alphaTT = zeros(nspecies);
+        b       = zeros(nspecies);
+        abar    = zeros(nspecies);
+        abarT   = zeros(nspecies);
+        bbar    = zeros(nspecies);
+        bip.k   = zeros(nspecies, nspecies);
+        bip.kT  = zeros(nspecies, nspecies);
+        bip.kTT = zeros(nspecies, nspecies);
     }
 
-    auto compute(CubicEOSProps& props, real T, real P, ArrayXrConstRef x) -> void
+    auto compute(Props& props, real const& T, real const& P, ArrayXrConstRef const& x) -> void
     {
         // Check if the mole fractions are zero or non-initialized
         if(x.size() == 0 || x.maxCoeff() <= 0.0)
             return;
 
-        // Auxiliary variables
-        const auto Psi = detail::Psi(model);
-        const auto Omega = detail::Omega(model);
-        const auto epsilon = detail::epsilon(model);
-        const auto sigma = detail::sigma(model);
-        const auto alphafn = detail::alpha(model);
+        // Auxiliary references
+        auto const& sigma   = eqspecs.eqmodel.sigma.value();
+        auto const& epsilon = eqspecs.eqmodel.epsilon.value();
+        auto const& Omega   = eqspecs.eqmodel.Omega.value();
+        auto const& Psi     = eqspecs.eqmodel.Psi.value();
+        auto const& alphafn = eqspecs.eqmodel.alphafn;
 
         // Calculate the parameters `a` and `b` of the cubic equation of state for each species
         for(auto k = 0; k < nspecies; ++k)
         {
-            const real factor = Psi*R*R*(Tcr[k]*Tcr[k])/Pcr[k]; // factor in Eq. (3.45) multiplying alpha
+            const auto factor = Psi*R*R*(Tcr[k]*Tcr[k])/Pcr[k]; // factor in Eq. (3.45) multiplying alpha
             const auto TrT = 1.0/Tcr[k];
             const auto Tr = T * TrT;
-            const auto [alpha, alphaT, alphaTT] = alphafn(Tr, TrT, omega[k]);
-            a[k]   = factor*alpha; // see Eq. (3.45)
-            aT[k]  = factor*alphaT;
-            aTT[k] = factor*alphaTT;
-            b[k]   = Omega*R*Tcr[k]/Pcr[k]; // Eq. (3.44)
+            const auto [alphak, alphaTk, alphaTTk] = alphafn({ Tr, TrT, omega[k] });
+            alpha[k]   = alphak;
+            alphaT[k]  = alphaTk;
+            alphaTT[k] = alphaTTk;
+            a[k]       = factor*alphak; // see Eq. (3.45)
+            aT[k]      = factor*alphaTk;
+            aTT[k]     = factor*alphaTTk;
+            b[k]       = Omega*R*Tcr[k]/Pcr[k]; // Eq. (3.44)
         }
 
         // Calculate the binary interaction parameters and its temperature derivatives
-        CubicEOSInteractionParams ip;
-        if(interaction_params_fn)
-            ip = interaction_params_fn({T, a, aT, aTT, b});
+        if(eqspecs.bipmodel.initialized())
+            eqspecs.bipmodel(bip, { substances, T, Tcr, Pcr, omega, a, aT, aTT, alpha, alphaT, alphaTT, b });
 
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         real amix = {};
@@ -376,17 +429,17 @@ struct CubicEOS::Impl
         {
             for(auto j = 0; j < nspecies; ++j)
             {
-                const real r   = ip.k.size()   ? 1.0 - ip.k(i, j)   : real(1.0);
-                const real rT  = ip.kT.size()  ?     - ip.kT(i, j)  : real(0.0);
-                const real rTT = ip.kTT.size() ?     - ip.kTT(i, j) : real(0.0);
+                auto const r   = 1.0 - bip.k(i, j);
+                auto const rT  = -bip.kT(i, j);
+                auto const rTT = -bip.kTT(i, j);
 
-                const real s   = sqrt(a[i]*a[j]); // Eq. (13.93)
-                const real sT  = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);
-                const real sTT = 0.5*s/(a[i]*a[j]) * (aTT[i]*a[j] + 2*aT[i]*aT[j] + a[i]*aTT[j]) - sT*sT/s;
+                auto const s   = sqrt(a[i]*a[j]); // Eq. (13.93)
+                auto const sT  = 0.5*s/(a[i]*a[j]) * (aT[i]*a[j] + a[i]*aT[j]);
+                auto const sTT = 0.5*s/(a[i]*a[j]) * (aTT[i]*a[j] + 2*aT[i]*aT[j] + a[i]*aTT[j]) - sT*sT/s;
 
-                const real aij   = r*s;
-                const real aijT  = rT*s + r*sT;
-                const real aijTT = rTT*s + 2.0*rT*sT + r*sTT;
+                auto const aij   = r*s;
+                auto const aijT  = rT*s + r*sT;
+                auto const aijTT = rTT*s + 2.0*rT*sT + r*sTT;
 
                 amix   += x[i] * x[j] * aij; // Eq. (13.92) of Smith et al. (2017)
                 amixT  += x[i] * x[j] * aijT;
@@ -514,6 +567,7 @@ struct CubicEOS::Impl
         //=========================================================================================
         // Calculate the fugacity coefficients for each species
         //=========================================================================================
+        props.ln_phi.resize(nspecies);
         for(auto k = 0; k < nspecies; ++k)
         {
             const real betak = P*bbar[k]/(R*T);
@@ -532,37 +586,69 @@ struct CubicEOS::Impl
     }
 };
 
-CubicEOS::CubicEOS(const Args& args)
-: pimpl(new Impl(args))
+Equation::Equation(EquationSpecs const& eqspecs)
+: pimpl(new Impl(eqspecs))
 {
 }
 
-CubicEOS::CubicEOS(const CubicEOS& other)
+Equation::Equation(Equation const& other)
 : pimpl(new Impl(*other.pimpl))
 {}
 
-CubicEOS::~CubicEOS()
+Equation::~Equation()
 {}
 
-auto CubicEOS::operator=(CubicEOS other) -> CubicEOS&
+auto Equation::operator=(Equation other) -> Equation&
 {
     pimpl = std::move(other.pimpl);
     return *this;
 }
 
-auto CubicEOS::setModel(CubicEOSModel model) -> void
+auto Equation::equationSpecs() const -> EquationSpecs const&
 {
-    pimpl->model = model;
+    return pimpl->eqspecs;
 }
 
-auto CubicEOS::setInteractionParamsFunction(const CubicEOSInteractionParamsFn& func) -> void
-{
-    pimpl->interaction_params_fn = func;
-}
-
-auto CubicEOS::compute(CubicEOSProps& props, real T, real P, ArrayXrConstRef x) -> void
+auto Equation::compute(Props& props, real const& T, real const& P, ArrayXrConstRef const& x) -> void
 {
     return pimpl->compute(props, T, P, x);
 }
 
+auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& params) -> BipModel
+{
+    const auto iH2O = index(substances, "H2O");
+    const auto iCO2 = index(substances, "CO2");
+    const auto iH2S = index(substances, "H2S");
+    const auto iCH4 = index(substances, "CH4");
+    const auto iN2  = index(substances, "N2");
+
+    auto evalfn = [=](Bip& bip, BipModelArgs const& args) -> void
+    {
+        auto& [k, kT, kTT] = bip;
+
+        k(iH2O, iCO2) = k(iH2O, iCO2) = params.kH2O_CO2.value();
+        k(iH2O, iH2S) = k(iH2O, iH2S) = params.kH2O_H2S.value();
+        k(iH2O, iCH4) = k(iH2O, iCH4) = params.kH2O_CH4.value();
+        k(iH2O,  iN2) = k(iH2O,  iN2) = params.kH2O_N2.value();
+    };
+
+    Vec<Param> paramsvec = {
+        params.kH2O_CO2,
+        params.kH2O_H2S,
+        params.kH2O_CH4,
+        params.kH2O_N2,
+    };
+
+    auto serializer = [=]()
+    {
+        Data node;
+        // node["PHREEQC"] = params; // Implement serialization for BipModelParamsPHREEQC in Serialization/Models.
+        node["PHREEQC"] = "BipModelParamsPHREEQC not yet serialized";
+        return node;
+    };
+
+    return BipModel(evalfn, paramsvec, serializer);
+}
+
+} // namespace CubicEOS
 } // namespace Reaktoro
