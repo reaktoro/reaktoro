@@ -1,0 +1,37 @@
+CubicEOS:
+  CubicModel:
+    PengRobinson76:
+      sigma: 2.41421356237
+      epsilon: -0.41421356237
+      Omega: 0.0777960739
+      Psi: 0.457235529
+      m: [0.374640, 1.54226, -0.269920]
+    PengRobinson78:
+      sigma: 2.41421356237
+      epsilon: -0.41421356237
+      Omega: 0.0777960739
+      Psi: 0.457235529
+      m1: [0.374640, 1.54226, -0.269920]
+      m2: [0.379642, 1.48503, -0.164423, 0.016666]
+    SoaveRedlichKwong:
+      sigma: 1.0
+      epsilon: 0.0
+      Omega: 0.08664
+      Psi: 0.42748
+      m: [0.480, 1.574, -0.176]
+    RedlichKwong:
+      sigma: 1.0
+      epsilon: 0.0
+      Omega: 0.08664
+      Psi: 0.42748
+    vanDerWaals:
+      sigma: 0.0
+      epsilon: 0.0
+      Omega: 0.125
+      Psi: 0.421875
+  BipModel:
+    PHREEQC:
+      - [H2O, CO2, 0.19]
+      - [H2O, H2S, 0.19]
+      - [H2O, CH4, 0.49]
+      - [H2O, N2, 0.49]
