@@ -24,19 +24,33 @@ using namespace Reaktoro;
 
 void exportActivityModelCubicEOS(py::module& m)
 {
-    py::class_<ActivityModelCubicEOSParams>(m, "ActivityModelCubicEOSParams")
-        .def(py::init<>())
-        ;
-
     m.def("ActivityModelVanDerWaals", ActivityModelVanDerWaals,
-        py::arg("params") = ActivityModelCubicEOSParams());
+        "Return the activity model for fluid phases based on the Redlich-Kwong cubic equation of state.",
+            py::arg("cbipmodel") = CubicBipModelGenerator());
 
     m.def("ActivityModelRedlichKwong", ActivityModelRedlichKwong,
-        py::arg("params") = ActivityModelCubicEOSParams());
+        "Return the activity model for fluid phases based on the Soave-Redlich-Kwong cubic equation of state.",
+            py::arg("cbipmodel") = CubicBipModelGenerator());
 
     m.def("ActivityModelSoaveRedlichKwong", ActivityModelSoaveRedlichKwong,
-        py::arg("params") = ActivityModelCubicEOSParams());
+        "Return the activity model for fluid phases based on the Peng-Robinson (1976) cubic equation of state.",
+            py::arg("cbipmodel") = CubicBipModelGenerator());
 
     m.def("ActivityModelPengRobinson", ActivityModelPengRobinson,
-        py::arg("params") = ActivityModelCubicEOSParams());
+        "Return the binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.",
+            py::arg("cbipmodel") = CubicBipModelGenerator());
+
+    m.def("ActivityModelPengRobinson76", ActivityModelPengRobinson76,
+        "Return the activity model for fluid phases based on the Peng-Robinson (1978) cubic equation of state.",
+            py::arg("cbipmodel") = CubicBipModelGenerator());
+
+    m.def("ActivityModelPengRobinson78", ActivityModelPengRobinson78,
+        "Return the activity model for fluid phases based on the Peng-Robinson (1978) cubic equation of state.",
+            py::arg("cbipmodel") = CubicBipModelGenerator());
+
+    m.def("ActivityModelPengRobinsonPHREEQC", ActivityModelPengRobinsonPHREEQC,
+        "Return the activity model for fluid phases based on the Peng-Robinson (1976) cubic equation of state used in PHREEQC.");
+
+    m.def("CubicBipModelPHREEQC", CubicBipModelPHREEQC,
+        "Return the activity model for fluid phases based on the Van der Waals cubic equation of state.");
 }
