@@ -85,6 +85,12 @@ public:
     /// Return the index of the first species with given substance name or throw a runtime error if not found.
     auto indexWithSubstance(const String& substance) const -> Index;
 
+    /// Return the species at the front of the collection.
+    auto front() const -> Species const& { return m_species.front(); }
+
+    /// Return the species at the back of the collection.
+    auto back() const -> Species const& { return m_species.back(); }
+
     /// Return the species with a given name.
     auto get(const String& name) const -> const Species&;
 
