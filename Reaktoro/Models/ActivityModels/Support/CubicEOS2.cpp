@@ -120,7 +120,7 @@ auto EquationModelSoaveRedlichKwong() -> EquationModel
     return eqmodel;
 }
 
-auto EquationModelPengRobinson() -> EquationModel
+auto EquationModelPengRobinsonAux(Index year) -> EquationModel
 {
     EquationModel eqmodel;
     eqmodel.sigma   = 1.0 + 1.4142135623730951;
@@ -128,17 +128,24 @@ auto EquationModelPengRobinson() -> EquationModel
     eqmodel.Omega   = 0.0777960739;
     eqmodel.Psi     = 0.457235529;
 
-    eqmodel.alphafn = [](AlphaModelArgs const& args) -> Alpha
+    auto mPR76 = [](real const& omega) -> real
     {
-        // Jaubert, J.-N., Vitu, S., Mutelet, F. and Corriou, J.-P., 2005.
-        // Extension of the PPR78 model (predictive 1978, Peng–Robinson EOS
-        // with temperature dependent kij calculated through a group
-        // contribution method) to systems containing aromatic compounds.
-        // Fluid Phase Equilibria, 237(1-2), pp.193–211.
-        auto const& [Tr, TrT, omega] = args;
-        auto const m = omega <= 0.491 ?
+        return 0.374640 + 1.54226*omega - 0.269920*omega*omega;
+    };
+
+    auto mPR78 = [](real const& omega) -> real
+    {
+        return omega < 0.491 ?
             0.374640 + 1.54226*omega - 0.269920*omega*omega :
-            0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;
+            0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;  // Jaubert, J.-N., Vitu, S., Mutelet, F. and Corriou, J.-P., 2005. Extension of the PPR78 model (predictive 1978, Peng–Robinson EOS with temperature dependent kij calculated through a group contribution method) to systems containing aromatic compounds. Fluid Phase Equilibria, 237(1-2), pp.193–211.
+    };
+
+    auto mPR = year == 76 ? mPR76 : mPR78;
+
+    eqmodel.alphafn = [=](AlphaModelArgs const& args) -> Alpha
+    {
+        auto const& [Tr, TrT, omega] = args;
+        auto const m = mPR(omega);
         auto const sqrtTr = sqrt(Tr);
         auto const aux = 1.0 + m*(1.0 - sqrtTr);
         auto const auxTr = -0.5*m/sqrtTr;
@@ -152,6 +159,21 @@ auto EquationModelPengRobinson() -> EquationModel
     };
 
     return eqmodel;
+}
+
+auto EquationModelPengRobinson76() -> EquationModel
+{
+    return EquationModelPengRobinsonAux(76);
+}
+
+auto EquationModelPengRobinson78() -> EquationModel
+{
+    return EquationModelPengRobinsonAux(78);
+}
+
+auto EquationModelPengRobinson() -> EquationModel
+{
+    return EquationModelPengRobinson78();
 }
 
 namespace detail {
@@ -262,44 +284,44 @@ auto determinePhysicalStateOneRealRoot(double a, double b, double e, double s, d
 }
 
 /// Return the critical temperatures of the substances as an array, checking if their values are valid.
-auto getCriticalTemperatures(Dict<String, CrProps> const& substances) -> ArrayXr
+auto getCriticalTemperatures(Vec<Substance> const& substances) -> ArrayXr
 {
     ArrayXr res(substances.size());
-    auto i = 0; for(auto const& [name, crprops] : substances) {
-        errorif(std::isnan(crprops.Tcr), "The critical temperature of `", name, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
-        errorif(crprops.Tcr <= 0.0, "The critical temperature of `", name, "` should be a positive number but it was set to ", crprops.Tcr, " K.");
-        res[i++] = crprops.Tcr;
+    auto i = 0; for(auto const& subs : substances) {
+        errorif(std::isnan(subs.Tcr), "The critical temperature of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(subs.Tcr <= 0.0, "The critical temperature of `", subs.formula, "` should be a positive number but it was set to ", subs.Tcr, " K.");
+        res[i++] = subs.Tcr;
     }
     return res;
 }
 
 /// Return the critical pressures of the substances as an array, checking if their values are valid.
-auto getCriticalPressures(Dict<String, CrProps> const& substances) -> ArrayXr
+auto getCriticalPressures(Vec<Substance> const& substances) -> ArrayXr
 {
     ArrayXr res(substances.size());
-    auto i = 0; for(auto const& [name, crprops] : substances) {
-        errorif(std::isnan(crprops.Tcr), "The critical pressure of `", name, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
-        errorif(crprops.Tcr <= 0.0, "The critical pressure of `", name, "` should be a positive number but it was set to ", crprops.Pcr, " Pa.");
-        res[i++] = crprops.Pcr;
+    auto i = 0; for(auto const& subs : substances) {
+        errorif(std::isnan(subs.Tcr), "The critical pressure of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(subs.Tcr <= 0.0, "The critical pressure of `", subs.formula, "` should be a positive number but it was set to ", subs.Pcr, " Pa.");
+        res[i++] = subs.Pcr;
     }
     return res;
 }
 
 /// Return the acentric factors of the substances as an array, checking if their values are valid.
-auto getAccentricFactors(Dict<String, CrProps> const& substances) -> ArrayXr
+auto getAccentricFactors(Vec<Substance> const& substances) -> ArrayXr
 {
     ArrayXr res(substances.size());
-    auto i = 0; for(auto const& [name, crprops] : substances) {
-        errorif(std::isnan(crprops.Tcr), "The acentric factor of `", name, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
-        res[i++] = crprops.omega;
+    auto i = 0; for(auto const& subs : substances) {
+        errorif(std::isnan(subs.Tcr), "The acentric factor of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        res[i++] = subs.omega;
     }
     return res;
 }
 
 /// Return the chemical formulas of the substances in the fluid phase.
-auto createSubstanceList(Dict<String, CrProps> const& substances) -> Strings
+auto createSubstanceList(Vec<Substance> const& substances) -> Strings
 {
-    return vectorize(substances, RKT_LAMBDA(x, x.first));
+    return vectorize(substances, RKT_LAMBDA(x, x.formula));
 }
 
 } // namespace detail
@@ -347,6 +369,8 @@ struct Equation::Impl
       omega(detail::getAccentricFactors(eqspecs.substances)),
       substances(detail::createSubstanceList(eqspecs.substances))
     {
+        errorifnot(eqspecs.eqmodel.alphafn.initialized(), "The alpha function in CubicEOS::EquationSpecs::alphafn has not been initialized.");
+
         a       = zeros(nspecies);
         aT      = zeros(nspecies);
         aTT     = zeros(nspecies);
@@ -393,10 +417,7 @@ struct Equation::Impl
 
         // Calculate the binary interaction parameters and its temperature derivatives
         if(eqspecs.bipmodel.initialized())
-        {
-            BipArgs bipargs = { substances, T, Tcr, Pcr, omega, a, aT, aTT, alpha, alphaT, alphaTT, b };
-            eqspecs.bipmodel(bip, bipargs);
-        }
+            eqspecs.bipmodel(bip, { substances, T, Tcr, Pcr, omega, a, aT, aTT, alpha, alphaT, alphaTT, b });
 
         // Calculate the parameter `amix` of the phase and the partial molar parameters `abar` of each species
         real amix = {};
@@ -583,6 +604,11 @@ auto Equation::operator=(Equation other) -> Equation&
     return *this;
 }
 
+auto Equation::equationSpecs() const -> EquationSpecs const&
+{
+    return pimpl->eqspecs;
+}
+
 auto Equation::compute(Props& props, real const& T, real const& P, ArrayXrConstRef const& x) -> void
 {
     return pimpl->compute(props, T, P, x);
@@ -596,7 +622,7 @@ auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& par
     const auto iCH4 = index(substances, "CH4");
     const auto iN2  = index(substances, "N2");
 
-    auto evalfn = [=](Bip& bip, BipArgs const& args) -> void
+    auto evalfn = [=](Bip& bip, BipModelArgs const& args) -> void
     {
         auto& [k, kT, kTT] = bip;
 

@@ -30,19 +30,12 @@ TEST_CASE("Testing CubicEOS::Equation class", "[CubicEOS]")
     WHEN("The gases are CO2, H2O, CH4")
     {
         CubicEOS::EquationSpecs eqspecs;
-        eqspecs.substances["CO2"].Tcr   = 304.20;
-        eqspecs.substances["CO2"].Pcr   = 73.83e5;
-        eqspecs.substances["CO2"].omega = 0.2240;
-
-        eqspecs.substances["H2O"].Tcr   = 647.10;
-        eqspecs.substances["H2O"].Pcr   = 220.55e5;
-        eqspecs.substances["H2O"].omega = 0.3450;
-
-        eqspecs.substances["CH4"].Tcr   = 190.60;
-        eqspecs.substances["CH4"].Pcr   = 45.99e5;
-        eqspecs.substances["CH4"].omega = 0.0120;
-
         eqspecs.eqmodel = CubicEOS::EquationModelPengRobinson();
+        eqspecs.substances = {
+            CubicEOS::Substance{"CO2", 304.20,  73.83e5, 0.2240},
+            CubicEOS::Substance{"H2O", 647.10, 220.55e5, 0.3450},
+            CubicEOS::Substance{"CH4", 190.60,  45.99e5, 0.0120},
+        };
 
         CubicEOS::Equation equation(eqspecs);
         CubicEOS::Props props;
@@ -104,15 +97,11 @@ TEST_CASE("Testing CubicEOS::Equation class", "[CubicEOS]")
     WHEN("The gases are CO2 and H2O")
     {
         CubicEOS::EquationSpecs eqspecs;
-        eqspecs.substances["CO2"].Tcr   = 304.20;
-        eqspecs.substances["CO2"].Pcr   = 73.83e5;
-        eqspecs.substances["CO2"].omega = 0.2240;
-
-        eqspecs.substances["H2O"].Tcr   = 647.10;
-        eqspecs.substances["H2O"].Pcr   = 220.55e5;
-        eqspecs.substances["H2O"].omega = 0.3450;
-
         eqspecs.eqmodel = CubicEOS::EquationModelPengRobinson();
+        eqspecs.substances = {
+            CubicEOS::Substance{"CO2", 304.20,  73.83e5, 0.2240},
+            CubicEOS::Substance{"H2O", 647.10, 220.55e5, 0.3450},
+        };
 
         CubicEOS::Equation equation(eqspecs);
         CubicEOS::Props props;
@@ -171,11 +160,10 @@ TEST_CASE("Testing CubicEOS::Equation class", "[CubicEOS]")
     WHEN("There is only CO2")
     {
         CubicEOS::EquationSpecs eqspecs;
-        eqspecs.substances["CO2"].Tcr   = 304.20;
-        eqspecs.substances["CO2"].Pcr   = 73.83e5;
-        eqspecs.substances["CO2"].omega = 0.2240;
-
         eqspecs.eqmodel = CubicEOS::EquationModelPengRobinson();
+        eqspecs.substances = {
+            CubicEOS::Substance{"CO2", 304.20,  73.83e5, 0.2240}
+        };
 
         CubicEOS::Equation equation(eqspecs);
         CubicEOS::Props props;
