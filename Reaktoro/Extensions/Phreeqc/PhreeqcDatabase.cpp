@@ -102,17 +102,20 @@ struct PhreeqcDatabaseHelper
 
     /// Create a Species object with given Phreeqc species pointer.
     template<typename SpeciesType>
-    auto addSpecies(const SpeciesType* s) -> void
+    auto addSpecies(const SpeciesType* s) -> Species const&
     {
         // Skip if species with same name has already been appended!
-        if(containsSpecies(PhreeqcUtils::name(s)))
-            return;
+        const auto name = PhreeqcUtils::name(s);
+        const auto idx = indexfn(species_list, RKT_LAMBDA(x, x.name() == name));
+        if(idx < species_list.size())
+            return species_list[idx];
 
-        if(PhreeqcUtils::isMasterSpecies(s))
-            species_list.append(createMasterSpecies(s));
-        else species_list.append(createProductSpecies(s));
+        const auto newspecies = PhreeqcUtils::isMasterSpecies(s) ? createMasterSpecies(s) : createProductSpecies(s);
 
-        species_names.insert(PhreeqcUtils::name(s));
+        species_list.append(newspecies);
+        species_names.insert(name);
+
+        return species_list.back();
     }
 
     /// Create a Species object representing the given Phreeqc master species.
@@ -199,10 +202,8 @@ struct PhreeqcDatabaseHelper
         Pairs<Species, double> pairs;
         for(const auto& [reactant, coeff] : PhreeqcUtils::reactants(s))
         {
-            const auto idx = species_list.find(PhreeqcUtils::name(reactant));
-            if(idx == species_list.size())
-                addSpecies(reactant); // create and append a Species object for this PHREEQC reactant species first!
-            pairs.emplace_back(species_list[idx], coeff);
+            auto const& newspecies = addSpecies(reactant); // create and append a Species object for this PHREEQC reactant species first!
+            pairs.emplace_back(newspecies, coeff);
         }
         return pairs;
     }
