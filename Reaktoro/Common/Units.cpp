@@ -391,13 +391,16 @@ map<string, TemperatureUnit> temperatureUnitsMap =
     {"degC"       , {1, -273.15, "K"}},
     {"degF"       , {1.8, 32, "degC"}},
     {"degR"       , {1, 459.67, "degF"}},
+    {"°C"         , {1, 0, "degC"}},
+    {"°F"         , {1, 0, "degF"}},
+    {"°R"         , {1, 0, "degR"}},
+    {"C"          , {1, 0, "degC"}},
+    {"F"          , {1, 0, "degF"}},
+    {"R"          , {1, 0, "degR"}},
     {"kelvin"     , {1, 0, "K"}},
     {"celsius"    , {1, 0, "degC"}},
     {"fahrenheit" , {1, 0, "degF"}},
     {"rankine"    , {1, 0, "degR"}},
-    {"C"          , {1, 0, "degC"}},
-    {"F"          , {1, 0, "degF"}},
-    {"R"          , {1, 0, "degR"}}
 };
 
 double toKelvin(double value, const string& from)
