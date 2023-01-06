@@ -23,23 +23,32 @@
 
 namespace Reaktoro {
 
-/// The parameters for the activity model based on cubic equations of state.
-struct ActivityModelCubicEOSParams
-{
-    /// The function that calculates interaction parameters @eq{k_{ij}} in @eq{a_{ij}=(1-k_{ij})(a_{i}a_{j})^{1/2}}.
-    CubicEOSInteractionParamsFn interaction_params_fn = nullptr;
-};
+/// The type for functions that construct a CubicEOS::BipModel for a fluid phase once its species are known.
+/// @param specieslist The species in the fluid phase.
+using CubicBipModelGenerator = Fn<CubicEOS::BipModel(SpeciesList const& specieslist)>;
 
 /// Return the activity model for fluid phases based on the Van der Waals cubic equation of state.
-auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
+auto ActivityModelVanDerWaals(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Redlich-Kwong cubic equation of state.
-auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
+auto ActivityModelRedlichKwong(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Soave-Redlich-Kwong cubic equation of state.
-auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
+auto ActivityModelSoaveRedlichKwong(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
 
-/// Return the activity model for fluid phases based on the Peng-Robinson cubic equation of state.
-auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params = {}) -> ActivityModelGenerator;
+/// Return the activity model for fluid phases based on the Peng-Robinson (1978) cubic equation of state.
+auto ActivityModelPengRobinson(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
+
+/// Return the activity model for fluid phases based on the Peng-Robinson (1976) cubic equation of state.
+auto ActivityModelPengRobinson76(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
+
+/// Return the activity model for fluid phases based on the Peng-Robinson (1978) cubic equation of state.
+auto ActivityModelPengRobinson78(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
+
+/// Return the activity model for fluid phases based on the Peng-Robinson (1976) cubic equation of state used in PHREEQC.
+auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator;
+
+/// Return the binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.
+auto CubicBipModelPHREEQC() -> CubicBipModelGenerator;
 
 } // namespace Reaktoro

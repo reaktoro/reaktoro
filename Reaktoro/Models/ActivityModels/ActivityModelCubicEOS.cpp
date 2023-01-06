@@ -18,102 +18,135 @@
 #include "ActivityModelCubicEOS.hpp"
 
 // Reaktoro includes
+#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Core/Phase.hpp>
-#include <Reaktoro/Singletons/CriticalProps.hpp>
 #include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
+#include <Reaktoro/Singletons/CriticalProps.hpp>
 
 namespace Reaktoro {
 
 using std::log;
 
-auto activityModelCubicEOS(const SpeciesList& species, ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModel
+/// Convert the list of Species objects into a list of CubicEOS::Substance objects for CubicEOS::Equation.
+auto collectSubstancesInFluidPhase(SpeciesList const& specieslist) -> Vec<CubicEOS::Substance>
 {
-    // The number of gases
-    const auto nspecies = species.size();
+    Vec<CubicEOS::Substance> substances;
+    substances.reserve(specieslist.size());
 
-    // Get the critical temperatures, pressures and acentric factors of the gases
-    ArrayXr Tcr(nspecies), Pcr(nspecies), omega(nspecies);
-    for(auto i = 0; i < nspecies; ++i)
+    for(auto species : specieslist)
     {
         const auto crprops = CriticalProps::get({
-            species[i].substance(),
-            species[i].formula(),
-            species[i].name()
+            species.substance(),
+            species.formula(),
+            species.name()
         });
 
-        errorif(crprops.has_value() == false,
-            "Could not find critical properties for substance ", species[i].formula().str(), " "
+        errorifnot(crprops.has_value(),
+            "Could not find critical properties for substance ", species.formula().str(), " "
             "while creating a cubic equation of state model (e.g. Peng-Robinson, Soave-Redlich-Kwong, etc.). ",
             "The following are ways to fix this error:\n"
             "  - use CriticalProps::append(crprops) to register the critical properties of this substance in the CriticalProps database,\n"
             "  - use CriticalProps::setMissingAs(\"He\") to consider all missing substances in the CriticalProps database as if they were He.");
 
-        Tcr[i] = crprops->temperature();
-        Pcr[i] = crprops->pressure();
-        omega[i] = crprops->acentricFactor();
+
+        auto const& formula = species.formula();
+        auto const& Tcr = crprops->temperature();
+        auto const& Pcr = crprops->pressure();
+        auto const& omega = crprops->acentricFactor();
+
+        substances.push_back(CubicEOS::Substance{formula, Tcr, Pcr, omega});
     }
 
-    // Initialize the CubicEOS instance
-    CubicEOS eos({nspecies, Tcr, Pcr, omega});
+    return substances;
+}
 
-    eos.setModel(type);
-    eos.setInteractionParamsFunction(params.interaction_params_fn);
+auto activityModelCubicEOS(SpeciesList const& specieslist, CubicEOS::EquationModel const& eqmodel, CubicEOS::BipModel const& bipmodel) -> ActivityModel
+{
+    CubicEOS::EquationSpecs eqspecs;
+    eqspecs.substances = collectSubstancesInFluidPhase(specieslist);
+    eqspecs.eqmodel = eqmodel;
+    eqspecs.bipmodel = bipmodel;
 
-    /// The thermodynamic properties calculated with CubicEOS
-    CubicEOSProps res;
-    res.ln_phi.resize(nspecies);
+    CubicEOS::Equation equation(eqspecs);
 
-    // Define the activity model function of the gaseous phase
+    CubicEOS::Props cprops;
+
+    // Define the activity model function of the fluid phase
     ActivityModel model = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
-        const auto& [T, P, x] = args;
+        auto const& [T, P, x] = args;
 
         const auto Pbar = P * 1.0e-5; // convert from Pa to bar
 
-        eos.compute(res, T, P, x);
+        equation.compute(cprops, T, P, x);
 
-        props.Vx   = res.V;
-        props.VxT  = res.VT;
-        props.VxP  = res.VP;
-        props.Gx   = res.Gres;
-        props.Hx   = res.Hres;
-        props.Cpx  = res.Cpres;
-        props.ln_g = res.ln_phi;
-        props.ln_a = res.ln_phi + log(x) + log(Pbar);
-        props.som  = res.som;
+        props.Vx   = cprops.V;
+        props.VxT  = cprops.VT;
+        props.VxP  = cprops.VP;
+        props.Gx   = cprops.Gres;
+        props.Hx   = cprops.Hres;
+        props.Cpx  = cprops.Cpres;
+        props.ln_g = cprops.ln_phi;
+        props.ln_a = cprops.ln_phi + log(x) + log(Pbar);
+        props.som  = cprops.som;
     };
 
     return model;
 }
 
-auto ActivityModelCubicEOS(ActivityModelCubicEOSParams params, CubicEOSModel type) -> ActivityModelGenerator
+auto CubicBipModelPHREEQC() -> CubicBipModelGenerator
 {
-    return [=](const SpeciesList& species)
+    return [](SpeciesList const& specieslist) -> CubicEOS::BipModel
     {
-        return activityModelCubicEOS(species, params, type);
+        Strings substances = vectorize(specieslist, RKT_LAMBDA(x, x.formula().str()));
+        return CubicEOS::BipModelPHREEQC(substances, CubicEOS::BipModelParamsPHREEQC());
     };
 }
 
-auto ActivityModelVanDerWaals(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
+auto ActivityModelCubicEOS(CubicBipModelGenerator cbipmodel, CubicEOS::EquationModel const& eqmodel) -> ActivityModelGenerator
 {
-    return ActivityModelCubicEOS(params, CubicEOSModel::VanDerWaals);
+    return [=](SpeciesList const& specieslist) -> ActivityModel
+    {
+        CubicEOS::BipModel bipmodel = cbipmodel ? cbipmodel(specieslist) : CubicEOS::BipModel{};
+        return activityModelCubicEOS(specieslist, eqmodel, bipmodel);
+    };
 }
 
-auto ActivityModelRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
+auto ActivityModelVanDerWaals(CubicBipModelGenerator cbipmodel) -> ActivityModelGenerator
 {
-    return ActivityModelCubicEOS(params, CubicEOSModel::RedlichKwong);
+    return ActivityModelCubicEOS(cbipmodel, CubicEOS::EquationModelVanDerWaals());
 }
 
-auto ActivityModelSoaveRedlichKwong(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
+auto ActivityModelRedlichKwong(CubicBipModelGenerator cbipmodel) -> ActivityModelGenerator
 {
-    return ActivityModelCubicEOS(params, CubicEOSModel::SoaveRedlichKwong);
+    return ActivityModelCubicEOS(cbipmodel, CubicEOS::EquationModelRedlichKwong());
 }
 
-auto ActivityModelPengRobinson(ActivityModelCubicEOSParams params) -> ActivityModelGenerator
+auto ActivityModelSoaveRedlichKwong(CubicBipModelGenerator cbipmodel) -> ActivityModelGenerator
 {
-    return ActivityModelCubicEOS(params, CubicEOSModel::PengRobinson);
+    return ActivityModelCubicEOS(cbipmodel, CubicEOS::EquationModelSoaveRedlichKwong());
+}
+
+auto ActivityModelPengRobinson(CubicBipModelGenerator cbipmodel) -> ActivityModelGenerator
+{
+    return ActivityModelPengRobinson78(cbipmodel);
+}
+
+auto ActivityModelPengRobinson76(CubicBipModelGenerator cbipmodel) -> ActivityModelGenerator
+{
+    return ActivityModelCubicEOS(cbipmodel, CubicEOS::EquationModelPengRobinson76());
+}
+
+auto ActivityModelPengRobinson78(CubicBipModelGenerator cbipmodel) -> ActivityModelGenerator
+{
+    return ActivityModelCubicEOS(cbipmodel, CubicEOS::EquationModelPengRobinson78());
+}
+
+auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator
+{
+    return ActivityModelPengRobinson76(CubicBipModelPHREEQC());
 }
 
 } // namespace Reaktoro
