@@ -128,19 +128,19 @@ auto EquationModelPengRobinsonAux(Index year) -> EquationModel
     eqmodel.Omega   = 0.0777960739;
     eqmodel.Psi     = 0.457235529;
 
-    auto mPR76 = [](real const& omega) -> real
+    Fn<real(real const&)> mPR76 = [](real const& omega) -> real
     {
         return 0.374640 + 1.54226*omega - 0.269920*omega*omega;
     };
 
-    auto mPR78 = [](real const& omega) -> real
+    Fn<real(real const&)> mPR78 = [](real const& omega) -> real
     {
         return omega < 0.491 ?
             0.374640 + 1.54226*omega - 0.269920*omega*omega :
             0.379642 + 1.48503*omega - 0.164423*omega*omega + 0.016666*omega*omega*omega;  // Jaubert, J.-N., Vitu, S., Mutelet, F. and Corriou, J.-P., 2005. Extension of the PPR78 model (predictive 1978, Peng–Robinson EOS with temperature dependent kij calculated through a group contribution method) to systems containing aromatic compounds. Fluid Phase Equilibria, 237(1-2), pp.193–211.
     };
 
-    auto mPR = year == 76 ? mPR76 : mPR78;
+    auto mPR = year == 76 ? mPR76 : mPR78; // Note: MSVC 19.29.30147.0 fails to compile with mPR76 and mPR78 are not explicitly assigned with type Fn<real(real const&)>!
 
     eqmodel.alphafn = [=](AlphaModelArgs const& args) -> Alpha
     {
