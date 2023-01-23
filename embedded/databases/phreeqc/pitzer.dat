@@ -1,5 +1,5 @@
 # Pitzer.DAT for calculating pressure dependence of reactions
-#   and temperature dependence to 200 °C. With
+#   and temperature dependence to 200 Â°C. With
 #   molal volumina of aqueous species and of minerals, and
 #   critical temperatures and pressures of gases used in Peng-Robinson's EOS.
 # Details are given at the end of this file.
@@ -31,7 +31,7 @@ Sr		Sr+2	 0	Sr		87.62
 Hdg		Hdg	 0	Hdg		2.016 # H2 gas
 Oxg		Oxg	 0	Oxg		32 # Oxygen gas
 Mtg		Mtg	 0.0	Mtg		16.032 # CH4 gas
-Sg		H2Sg	 1.0	H2Sg		34.08
+Sg		H2Sg	 1.0	H2Sg		34.08 # H2S gas
 Ntg		Ntg	 0	Ntg		28.0134 # N2 gas
 
 SOLUTION_SPECIES
@@ -103,7 +103,7 @@ Ntg = Ntg # N2
 	-Vm 7 # Pray et al., 1952, IEC 44. 1146
 H2Sg = H2Sg # H2S
 	-dw	 2.1e-9
-	-Vm  7.81  2.96  -0.46 # supcrt
+        -Vm  1.39  28.3  0  -7.22  -0.59 # ref. 1 + Hnedkovsky et al., 1996, JCT 28, 125
 # aqueous species
 H2O = OH- + H+
 	-analytic  293.29227  0.1360833  -10576.913  -123.73158  0  -6.996455e-5
@@ -133,6 +133,9 @@ H2Sg = HSg- + H+
 	-analytical  11.17   -0.02386  -3279.0
 	-dw	 1.73e-9
 	-Vm 5.0119   4.9799   3.4765   -2.9849 1.4410 # supcrt
+2H2Sg = (H2Sg)2 # activity correction for H2S solubility at high P, T
+        -analytical   10.227  -0.01384  -2200
+	-Vm   36.41  -71.95  0  0  2.58
 B(OH)3 + H2O = B(OH)4- + H+
 	log_k	   -9.239
 	delta_h 0   kcal
@@ -237,7 +240,7 @@ Calcite
 	CaCO3 = CO3-2 + Ca+2
 	log_k	   -8.406
 	delta_h -2.297 kcal
-	-analytic   -237.04  -0.1077  0  102.25  6.79e5 # ref. 3 + data from Ellis, 1959, Plummer and Busenberg, 1982 
+	-analytic  8.481      -0.032644  -2133 # ref. 3 + data from Ellis, 1959, Plummer and Busenberg, 1982 
 	-Vm 36.9
 Carnallite
 	KMgCl3:6H2O  =  K+ + Mg+2 + 3Cl- + 6H2O
@@ -266,8 +269,9 @@ Diopside
 	Vm 67.2
 Dolomite
 	CaMg(CO3)2 = Ca+2 + Mg+2 + 2 CO3-2
-	log_k	   -17.083
+	log_k	   -17.09
 	delta_h -9.436 kcal
+	-analytic  -120.63  -0.1051  0  54.509 # 50â€“175Â°C, BÃ©nÃ©zeth et al., 2018, GCA 224, 262-275.
 	-Vm 64.5
 Enstatite
 	MgSiO3 + 2 H+  = - H2O + Mg+2 + H4SiO4 # llnl.dat
@@ -477,11 +481,11 @@ Ntg(g)
 	T_c  126.2 ; -P_c   33.50 ; -Omega 0.039
 Mtg(g)
 	Mtg = Mtg
-	-analytic   10.44  -7.65e-3  -6669  0  1.014e6 # CH4 solubilities 25 - 100°C
+	-analytic   10.44  -7.65e-3  -6669  0  1.014e6 # CH4 solubilities 25 - 100Â°C
 	T_c  190.6 ; -P_c   45.40 ; -Omega 0.008
 H2Sg(g)
 	H2Sg  =  H+ + HSg-
-	-analytic -9.7354e+001 -3.1576e-002 1.8285e+003 3.7440e+001 2.8560e+001
+	-analytic -45.07  -0.02418  0  17.9205 # H2S solubilities, 0 - 300Â°C, 1 - 987 atm, Jiang et al., 2020, CG 555, 119816
 	T_c  373.2 ; -P_c  88.20 ; -Omega 0.1
 PITZER
 -B0
@@ -670,12 +674,17 @@ PITZER
   Ca+2      CO2       0.183
   Ca+2      H4SiO4    0.238    # ref. 3
   Cl-       CO2      -0.005
-  CO2       CO2      -1.34e-2   348   0.803 # new VM("CO2"), CO2 solubilities at high P, 0 - 150°C
+  Cl-       H2Sg     -0.005
+  Cl-       (H2Sg)2  -0.005
+  CO2       CO2      -1.34e-2   348   0.803 # new VM("CO2"), CO2 solubilities at high P, 0 - 150Â°C
   CO2       HSO4-    -0.003
   CO2       K+        0.051
   CO2       Mg+2      0.183
   CO2       Na+       0.085
-  CO2       SO4-2     0.075    # Rumpf and Maurer, 1993.
+  CO2       SO4-2     0.075              # Rumpf and Maurer, 1993.
+  H2Sg      Na+       0.1047  0  -0.0413 # Xia et al., 2000, Ind. Eng. Chem. Res. 39, 1064
+  H2Sg      SO4-2     0  0  0.679
+  (H2Sg)2   Na+       0.0123  0  0.256
   H4SiO4    K+        0.0298   # ref. 3
   H4SiO4    Li+       0.143    # ref. 3
   H4SiO4    Mg+2      0.238  -1788   -9.023  0.0103    # ref. 3
@@ -687,6 +696,10 @@ PITZER
   Cl-       H4SiO4    K+        -0.0153  # ref. 3
   Cl-       H4SiO4    Li+       -0.0196  # ref. 3
   CO2       Na+       SO4-2     -0.015
+  H2Sg      Cl-       Na+       -0.0123  # Xia et al., 2000, Ind. Eng. Chem. Res. 39, 1064
+  H2Sg      Na+       SO4-2      0.157
+  (H2Sg)2   Cl-       Na+        0.0119
+  (H2Sg)2   Na+       SO4-2     -0.167
 -PSI
   B(OH)4-     Cl-     Na+       -0.0073
   B3O3(OH)4-  Cl-     Na+       -0.024
@@ -911,7 +924,6 @@ SURFACE_SPECIES
 	Hfo_wOH + H4SiO4 = Hfo_wH2SiO4- + H+ + H2O  ; log_K  -3.22 
 	Hfo_wOH + H4SiO4 = Hfo_wHSiO4-2 + 2H+ + H2O ; log_K -11.69
 
-
 END
 MEAN GAM
 CaCl2
@@ -968,15 +980,15 @@ END
 #   W * QBrn is the energy of solvation, QBrn is the pressure dependence of the Born equation,
 #     W is fitted on measured solution densities.
 #   z is charge of the solute species.
-#   Av is the Debye-Hückel limiting slope (DH_AV in PHREEQC basic).
-#   a0 is the ion-size parameter in the extended Debye-Hückel equation:
+#   Av is the Debye-HÃ¼ckel limiting slope (DH_AV in PHREEQC basic).
+#   a0 is the ion-size parameter in the extended Debye-HÃ¼ckel equation:
 #     f(I^0.5) = I^0.5 / (1 + a0 * DH_B * I^0.5),
 #     a0 = -gamma x for cations, = 0 for anions.
 # For details, consult ref. 1.
 #
-# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49–67.
-# ref. 2: Procedures from ref. 1 using data compiled by Laliberté, 2009, J. Chem. Eng. Data 54, 1725.
-# ref. 3: Appelo, 2015, Appl. Geochem. 55, 62–71.
+# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49â€“67.
+# ref. 2: Procedures from ref. 1 using data compiled by LalibertÃ©, 2009, J. Chem. Eng. Data 54, 1725.
+# ref. 3: Appelo, 2015, Appl. Geochem. 55, 62â€“71.
 #                 http://www.hydrochemistry.eu/pub/pitzer_db/appendix.zip contains example files
 #                 for the high P,T Pitzer model and improvements for Calcite.
 # ref. 4: Appelo, 2017, Cem. Concr. Res. 101, 102-113.

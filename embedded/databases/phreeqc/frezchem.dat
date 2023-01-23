@@ -548,12 +548,12 @@ END
 #in the Na-K-Ca-Mg-H-Cl-SO4-CO3-HCO3-OH-H2O system, valid from 25 deg C
 #to -60 deg C.  The model was developed by Spencer et al (1990), Marion and Farren (1999), and Marion (2001):
 #
-#	Spencer, R. J., N. Møller, and J. H. Weare (1990)
-#	The prediction of mineral solubilities in natural waters: A chemical equilibrium model for the Na-K-Ca-Mg-Cl-SO4-H2O system at temperatures below 25°C
+#	Spencer, R. J., N. MÃ¸ller, and J. H. Weare (1990)
+#	The prediction of mineral solubilities in natural waters: A chemical equilibrium model for the Na-K-Ca-Mg-Cl-SO4-H2O system at temperatures below 25Â°C
 #	Geochimica et Cosmochimica Acta, 54(3), 575-590.
 #
 #	Marion, G. M., and R. E. Farren (1999)
-#	Mineral solubilities in the Na-K-Mg-Ca-Cl-SO4-H2O system: A re-evaluation of the sulfate chemistry in the Spencer-Møller-Weare model
+#	Mineral solubilities in the Na-K-Mg-Ca-Cl-SO4-H2O system: A re-evaluation of the sulfate chemistry in the Spencer-MÃ¸ller-Weare model
 #	Geochimica et Cosmochimica Acta, 63(9), 1305-1318.
 #
 #	Marion, G. M. (2001)
@@ -564,7 +564,7 @@ END
 #
 #	Marion, G. M., J. S. Kargel, D. C. Catling, and S. D. Jakubowski (2005)
 #	Effects of pressure on aqueous chemical equilibria at subzero temperatures with applications to Europa
-#	Geochimica et Cosmochimica Acta, 69(2), 259–274.
+#	Geochimica et Cosmochimica Acta, 69(2), 259-274.
 #
 #The original implementation of this model was in the fortran based FREZCHEM 
 #model, as described by Marion and Grant (1994) and Marion and Kargel (2008):
@@ -581,7 +581,7 @@ END
 #
 #	Toner, J. D., and R. S. Sletten (2013)
 #	The formation of Ca-Cl enriched groundwaters in the Dry Valleys of Antarctica by cation exchange reactions: Field measurements and modeling of reactive transport
-#	Geochimica et Cosmochimica Acta, 110, 84–105.
+#	Geochimica et Cosmochimica Acta, 110, 84-105.
 #
 #See Fig. 2.2 in Toner and Sletten (2013) for a comparison between 
 #PHREEQC and FREZCHEM for freezing seawater.  Please cite appropriate 
@@ -619,14 +619,14 @@ END
 #   W * QBrn is the energy of solvation, calculated from W and the pressure dependence of the 
 #     Born equation.
 #   z is charge of the solute species.
-#   Av is the Debye-Hückel limiting slope.
-#   a0 is the ion-size parameter in the extended Debye-Hückel equation:
+#   Av is the Debye-HÃ¼ckel limiting slope.
+#   a0 is the ion-size parameter in the extended Debye-HÃ¼ckel equation:
 #     f(I^0.5) = I^0.5) / (1 + a0 * DH_B * I^0.5),
 #     a0 = -gamma x for cations, = 0 for anions.
 # For details, consult ref. 1.
 #
-# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49–67. 
-# ref. 2: Procedures from ref. 1 using data compiled by Laliberté, 2009, J. Chem. Eng. Data 54, 1725.
+# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49-67.
+# ref. 2: Procedures from ref. 1 using data compiled by LalibertÃ©, 2009, J. Chem. Eng. Data 54, 1725.
 #
 #
 # =============================================================================================
