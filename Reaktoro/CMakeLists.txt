@@ -52,6 +52,16 @@ endif()
 # Set compilation features to be propagated to dependent codes.
 target_compile_features(Reaktoro PUBLIC cxx_std_17)
 
+# ===============================================================================
+# NOTE: Leave this commented out for now. This was added here already commented
+# out so that in the future we can check important compilation warnings.
+# ===============================================================================
+# Enable warnings when compiling Reaktoro.
+# target_compile_options(Reaktoro PRIVATE
+#   $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+#   $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Wno-sign-compare -Wno-unused-parameter>
+# )
+
 # Set some target properties
 set_target_properties(Reaktoro PROPERTIES
     POSITION_INDEPENDENT_CODE ON
