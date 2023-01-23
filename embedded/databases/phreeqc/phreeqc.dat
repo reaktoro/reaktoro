@@ -181,7 +181,7 @@ Ntg = Ntg # N2
 	-Vm 7 # Pray et al., 1952, IEC 44. 1146
 H2Sg = H2Sg # H2S
 	-dw	 2.1e-9
-	-Vm  7.81  2.96  -0.46 # supcrt
+        -Vm  1.39  28.3  0  -7.22  -0.59 # ref. 1 + Hnedkovsky et al., 1996, JCT 28, 125
 # aqueous species
 H2O = OH- + H+
 	-analytic  293.29227  0.1360833  -10576.913  -123.73158  0  -6.996455e-5
@@ -242,13 +242,20 @@ HS- + H+ = H2S
 	-delta_h -5.30	kcal
 	-analytical  -11.17  0.02386  3279.0
 	-dw	 2.1e-9
-	-Vm  7.81  2.96  -0.46 # supcrt
+        -Vm  1.39  28.3  0  -7.22  -0.59 # ref. 1 + Hnedkovsky et al., 1996, JCT 28, 125
+2H2S = (H2S)2 # activity correction for H2S solubility at high P, T
+	-analytical_expression   10.227  -0.01384  -2200
+	-Vm   36.41  -71.95  0  0  2.58
 H2Sg = HSg- + H+
 	-log_k	-6.994
 	-delta_h 5.30	kcal
-	-analytical  11.17  -0.02386  -3279.0
+	-analytical_expression  11.17  -0.02386  -3279.0
+	-gamma 3.5	0
 	-dw	 1.73e-9
 	-Vm  5.0119  4.9799  3.4765  -2.9849  1.4410 # supcrt
+2H2Sg = (H2Sg)2 # activity correction for H2S solubility at high P, T
+	-analytical_expression   10.227  -0.01384  -2200
+	-Vm   36.41  -71.95  0  0  2.58
 NO3- + 2 H+ + 2 e- = NO2- + H2O
 	-log_k	28.570
 	-delta_h -43.760 kcal
@@ -588,6 +595,7 @@ Al+3 + 4 H2O = Al(OH)4- + 4 H+
 	-delta_h 42.30	kcal
 	-analytic	51.578	0.0	-11168.9	-14.865
 	-gamma	4.5	0
+	-dw 1.04e-9 # Mackin & Aller, 1983, GCA 47, 959
 Al+3 + SO4-2 = AlSO4+
 	-log_k	3.5
 	-delta_h 2.29 kcal
@@ -905,7 +913,7 @@ Calcite
 	CaCO3 = CO3-2 + Ca+2
 	-log_k	-8.48
 	-delta_h -2.297 kcal
-	-analytic	-171.9065	-0.077993	2839.319	71.595
+	-analytic 17.118  -0.046528  -3496 # 0 - 250°C, Ellis, 1959, Plummer and Busenberg, 1982
 	-Vm 36.9 cm3/mol # MW (100.09 g/mol) / rho (2.71 g/cm3)
 Aragonite
 	CaCO3 = CO3-2 + Ca+2
@@ -917,6 +925,7 @@ Dolomite
 	CaMg(CO3)2 = Ca+2 + Mg+2 + 2 CO3-2
 	-log_k	-17.09
 	-delta_h  -9.436 kcal
+	-analytic  31.283  -0.0898  -6438 #  25°C: Hemingway and Robie, 1994; 50–175°C: Bénézeth et al., 2018, GCA 224, 262-275.
 	-Vm 64.5
 Siderite
 	FeCO3 = Fe+2 + CO3-2
@@ -1118,6 +1127,7 @@ Sylvite
 	-delta_h  8.5
 	# -analytic     3.984     0.0	 -919.55
 	Vm 37.5
+# Gases...
 CO2(g)
 	CO2 = CO2
 	-log_k	-1.468
@@ -1133,8 +1143,6 @@ H2O(g)
 	-P_c  217.60
 	-Omega 0.344
 	-analytic   -16.5066 -2.0013E-3  2710.7  3.7646  0 2.24E-6
-
-# Gases from LLNL...
 O2(g)
 	O2 = O2
 	-log_k   -2.8983
@@ -1153,13 +1161,14 @@ N2(g)
 	-T_c  126.2; -P_c   33.50; -Omega 0.039
 H2S(g)
 	H2S  =  H+ + HS-
-	-log_k	   -7.9759
-	-analytic -97.354 -3.1576e-2 1.8285e3 37.44 28.56
+	log_k	   -7.93
+	-delta_h   9.1
+	-analytic -45.07  -0.02418  0  17.9205 # H2S solubilities, 0 - 300°C, 1 - 987 atm, Jiang et al., 2020, CG 555, 119816
 	-T_c  373.2; -P_c  88.20; -Omega 0.1
 CH4(g)
 	CH4 = CH4
 	-log_k -2.8
-	-analytic   10.44  -7.65e-3  -6669  0  1.014e6 # CH4 solubilities 25 - 100�C
+	-analytic   10.44  -7.65e-3  -6669  0  1.014e6 # CH4 solubilities 25 - 100°C
 	-T_c  190.6 ; -P_c   45.40 ; -Omega 0.008
 #Amm(g)
 #	Amm = Amm
@@ -1184,11 +1193,13 @@ Ntg(g)
 Mtg(g)
 	Mtg = Mtg
 	-log_k -2.8
-	-analytic   10.44  -7.65e-3  -6669  0  1.014e6 # CH4 solubilities 25 - 100�C
+	-analytic   10.44  -7.65e-3  -6669  0  1.014e6 # CH4 solubilities 25 - 100°C
 	-T_c  190.6 ; -P_c   45.40 ; -Omega 0.008
 H2Sg(g)
 	H2Sg  =  H+ + HSg-
-	-analytic -97.354 -3.1576e-2 1.8285e3 37.44 28.56
+	log_k	   -7.93
+	-delta_h   9.1
+	-analytic -45.07  -0.02418  0  17.9205 # H2S solubilities, 0 - 300°C, 1 - 987 atm, Jiang et al., 2020, CG 555, 119816
 	-T_c  373.2 ; -P_c  88.20 ; -Omega 0.1
 Melanterite
 	FeSO4:7H2O = 7 H2O + Fe+2 + SO4-2
@@ -1482,11 +1493,12 @@ SURFACE_SPECIES
 	Hfo_wOH + CO3-2 + 2H+= Hfo_wHCO3 + H2O
 	-log_k	20.62
 #
-# Silicate: Swedlund, P.J. and Webster, J.G., 1999. Water Research, 33, 3413-3422.
+# Silicate: Swedlund, P.J. and Webster, J.G., 1999. Water Research 33, 3413-3422.
 #
 	Hfo_wOH + H4SiO4 = Hfo_wH3SiO4 + H2O        ; log_K   4.28 
 	Hfo_wOH + H4SiO4 = Hfo_wH2SiO4- + H+ + H2O  ; log_K  -3.22 
 	Hfo_wOH + H4SiO4 = Hfo_wHSiO4-2 + 2H+ + H2O ; log_K -11.69
+
 RATES
 
 ###########
@@ -1790,7 +1802,12 @@ Pyrolusite
 200 SAVE moles * SOLN_VOL
   -end
 END
-
+# =============================================================================================
+#(a) means amorphous. (d) means disordered, or less crystalline. 
+#(14A) refers to 14 angstrom spacing of clay planes. FeS(ppt), 
+#precipitated, indicates an initial precipitate that is less crystalline. 
+#Zn(OH)2(e) indicates a specific crystal form, epsilon.
+# ============================================================================================= 
 # For the reaction aA + bB = cC + dD,
 #   with delta_v = c*Vm(C) + d*Vm(D) - a*Vm(A) - b*Vm(B),
 # PHREEQC adds the pressure term to log_k: -= delta_v * (P - 1) / (2.3RT).
@@ -1821,17 +1838,16 @@ END
 #   W * QBrn is the energy of solvation, calculated from W and the pressure dependence of the Born equation,
 #     W is fitted on measured solution densities.
 #   z is charge of the solute species.
-#   Av is the Debye-H�ckel limiting slope (DH_AV in PHREEQC basic).
-#   a0 is the ion-size parameter in the extended Debye-H�ckel equation:
+#   Av is the Debye-Hückel limiting slope (DH_AV in PHREEQC basic).
+#   a0 is the ion-size parameter in the extended Debye-Hückel equation:
 #     f(I^0.5) = I^0.5 / (1 + a0 * DH_B * I^0.5),
 #     a0 = -gamma x for cations, = 0 for anions.
 # For details, consult ref. 1.
 #
-# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49�67. 
-# ref. 2: Procedures from ref. 1 using data compiled by Lalibert�, 2009, J. Chem. Eng. Data 54, 1725.
+# ref. 1: Appelo, Parkhurst and Post, 2014. Geochim. Cosmochim. Acta 125, 49–67. 
+# ref. 2: Procedures from ref. 1 using data compiled by Laliberté, 2009, J. Chem. Eng. Data 54, 1725.
 # ref. 3: Appelo, 2017, Cem. Concr. Res. 101, 102-113.
 #
 # =============================================================================================
 # It remains the responsibility of the user to check the calculated results, for example with
 #   measured solubilities as a function of (P, T).
-

@@ -1304,7 +1304,7 @@ SOLUTION_SPECIES
      -analytic 8.65128E-1 0E+0 -4.71528E+3 0E+0 0E+0
 
 1.000Sn+2     - 1.000H2O     + 2.000H+     + 0.500O2     = Sn+4
-     log_k    30.010     #12GAM/GAJ; E¿=0.384V  for Sn2+/Sn4+ reaction ( I=0)
+     log_k    30.010     #12GAM/GAJ; EÂ°=0.384V  for Sn2+/Sn4+ reaction ( I=0)
      delta_h -301.645    #kJ/mol        
      # Enthalpy of formation:           -31.499        #kJ/mol        
      -analytic -2.28359E+1 0E+0 1.5756E+4 0E+0 0E+0
@@ -1503,13 +1503,13 @@ SOLUTION_SPECIES
      -analytic -4.44259E+0 0E+0 -5.83104E+3 0E+0 0E+0
 
 1.000Ag+     + 1.000S2O3-2     = Ag(S2O3)-
-     log_k     9.230     #74BEL/MAR in 82H¿G
-     delta_h  -58.994    #kJ/mol        #74BEL/MAR in 82H¿G
+     log_k     9.230     #74BEL/MAR in 82HÃ–G
+     delta_h  -58.994    #kJ/mol        #74BEL/MAR in 82HÃ–G
      # Enthalpy of formation:           -601.724        #kJ/mol        
      -analytic -1.10529E+0 0E+0 3.08147E+3 0E+0 0E+0
 
 1.000Ag+     + 2.000S2O3-2     = Ag(S2O3)2-3
-     log_k    13.640     #72POU/RIG in 82H¿G
+     log_k    13.640     #72POU/RIG in 82HÃ–G
      delta_h  -94.450    #kJ/mol        
      # Enthalpy of formation:           -1285.7        #kJ/mol        #82WAG/EVA
      -analytic -2.90691E+0 0E+0 4.93346E+3 0E+0 0E+0
@@ -2031,13 +2031,13 @@ SOLUTION_SPECIES
      -analytic 8.23625E+0 0E+0 -1.09309E+3 0E+0 0E+0
 
 1.000Am+3     + 1.000Cl-     = AmCl+2
-     log_k     0.240     #97K¿N/FAN
+     log_k     0.240     #97KÃ–N/FAN
      delta_h  25.106     #kJ/mol        
      # Enthalpy of formation:           -758.674        #kJ/mol        
      -analytic 4.63838E+0 0E+0 -1.31138E+3 0E+0 0E+0
 
 1.000Am+3     + 2.000Cl-     = AmCl2+
-     log_k    -0.740     #97K¿N/FAN
+     log_k    -0.740     #97KÃ–N/FAN
      delta_h  40.568     #kJ/mol        
      # Enthalpy of formation:           -910.292        #kJ/mol        
      -analytic 6.3672E+0 0E+0 -2.11901E+3 0E+0 0E+0
@@ -2571,7 +2571,7 @@ SOLUTION_SPECIES
      -analytic 2.77E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Ca+2     + 1.000F-     = CaF+
-     log_k     0.940     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; S¿lection de donn¿es thermodynamiques aff¿rentes aux corrections de Temp¿rature sur les principaux ¿quilibres chimiques en milieu naturel
+     log_k     0.940     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÃ©lection de donnÃ©es thermodynamiques affÃ©rentes aux corrections de TempÃ©rature sur les principaux Ã©quilibres chimiques en milieu naturel
      delta_h  17.238     #kJ/mol        
      # Enthalpy of formation:           -861.112        #kJ/mol        
      -analytic 3.95996E+0 0E+0 -9.00402E+2 0E+0 0E+0
@@ -2685,7 +2685,7 @@ SOLUTION_SPECIES
      -analytic -1.40951E+0 0E+0 2.59674E+3 0E+0 0E+0
 
 1.000Cd+2     + 1.000NO3-     = Cd(NO3)+
-     log_k     0.460     #74FED/ROB in 82H¿G
+     log_k     0.460     #74FED/ROB in 82HÃ–G
      delta_h  -21.757    #kJ/mol        #74NAU/RYZ in 91BAL/NOR
      # Enthalpy of formation:           -304.527        #kJ/mol        
      -analytic -3.35166E+0 0E+0 1.13645E+3 0E+0 0E+0
@@ -5115,7 +5115,7 @@ SOLUTION_SPECIES
      -analytic 4.70926E-2 0E+0 9.03118E+1 0E+0 0E+0
 
 1.000Mg+2     + 1.000F-     = MgF+
-     log_k     1.800     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; S¿lection de donn¿es thermodynamiques aff¿rentes aux corrections de Temp¿rature sur les principaux ¿quilibres chimiques en milieu naturel
+     log_k     1.800     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÃ©lection de donnÃ©es thermodynamiques affÃ©rentes aux corrections de TempÃ©rature sur les principaux Ã©quilibres chimiques en milieu naturel
      delta_h  13.389     #kJ/mol        
      # Enthalpy of formation:           -788.961        #kJ/mol        
      -analytic 4.14565E+0 0E+0 -6.99355E+2 0E+0 0E+0
@@ -5463,7 +5463,7 @@ SOLUTION_SPECIES
      -analytic 1.14786E-1 0E+0 -6.40383E+1 0E+0 0E+0
 
 1.000Na+     + 1.000F-     = NaF
-     log_k    -0.450     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; S¿lection de donn¿es thermodynamiques aff¿rentes aux corrections de Temp¿rature sur les principaux ¿quilibres chimiques en milieu naturel
+     log_k    -0.450     #ANDRA, CRP OHEM 95.002, X. BOURBON, janvier1996; SÃ©lection de donnÃ©es thermodynamiques affÃ©rentes aux corrections de TempÃ©rature sur les principaux Ã©quilibres chimiques en milieu naturel
      delta_h  -12.552    #kJ/mol        
      # Enthalpy of formation:           -588.242        #kJ/mol        
      -analytic -2.64901E+0 0E+0 6.55636E+2 0E+0 0E+0
@@ -6531,19 +6531,19 @@ SOLUTION_SPECIES
      -analytic -9.01559E+0 0E+0 -1.0037E+4 0E+0 0E+0
 
 1.000Pb+2     + 1.000Br-     = PbBr+
-     log_k     1.700     #82H¿G
+     log_k     1.700     #82HÃ–G
      delta_h   4.228     #kJ/mol        
      # Enthalpy of formation:           -116.262        #kJ/mol        
      -analytic 2.44071E+0 0E+0 -2.20843E+2 0E+0 0E+0
 
 1.000Pb+2     + 2.000Br-     = PbBr2
-     log_k     1.900     #82H¿G
+     log_k     1.900     #82HÃ–G
      delta_h  10.991     #kJ/mol        
      # Enthalpy of formation:           -230.909        #kJ/mol        
      -analytic 3.82554E+0 0E+0 -5.74099E+2 0E+0 0E+0
 
 1.000Pb+2     + 3.000Br-     = PbBr3-
-     log_k     2.900     #82H¿G
+     log_k     2.900     #82HÃ–G
      delta_h  10.653     #kJ/mol        
      # Enthalpy of formation:           -352.657        #kJ/mol        
      -analytic 4.76632E+0 0E+0 -5.56444E+2 0E+0 0E+0
@@ -6591,25 +6591,25 @@ SOLUTION_SPECIES
      -analytic -4.11E+0 0E+0 0E+0 0E+0 0E+0
 
 1.000Pb+2     + 1.000I-     = PbI+
-     log_k     1.980     #82H¿G
+     log_k     1.980     #82HÃ–G
      delta_h   3.874     #kJ/mol        
      # Enthalpy of formation:           -51.986        #kJ/mol        
      -analytic 2.65869E+0 0E+0 -2.02353E+2 0E+0 0E+0
 
 1.000Pb+2     + 2.000I-     = PbI2
-     log_k     3.150     #82H¿G
+     log_k     3.150     #82HÃ–G
      delta_h   7.106     #kJ/mol        
      # Enthalpy of formation:           -105.534        #kJ/mol        
      -analytic 4.39492E+0 0E+0 -3.71172E+2 0E+0 0E+0
 
 1.000Pb+2     + 3.000I-     = PbI3-
-     log_k     3.810     #82H¿G
+     log_k     3.810     #82HÃ–G
      delta_h   3.163     #kJ/mol        
      # Enthalpy of formation:           -166.257        #kJ/mol        
      -analytic 4.36413E+0 0E+0 -1.65215E+2 0E+0 0E+0
 
 1.000Pb+2     + 4.000I-     = PbI4-2
-     log_k     3.750     #82H¿G
+     log_k     3.750     #82HÃ–G
      delta_h  -15.561    #kJ/mol        
      # Enthalpy of formation:           -241.761        #kJ/mol        
      -analytic 1.02383E+0 0E+0 8.12806E+2 0E+0 0E+0
@@ -9374,7 +9374,7 @@ Ag2Se     = 2.000Ag+     - 1.000H+     + 1.000HSe-
 
 Ag3(PO4)(s)
 Ag3(PO4)     = 3.000Ag+     - 2.000H+     + 1.000H2(PO4)-
-     log_k     2.010     #03B¿T in 76SMI/MAR
+     log_k     2.010     #03BÃ–T in 76SMI/MAR
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 2.01E+0 0E+0 0E+0 0E+0 0E+0
@@ -10312,7 +10312,7 @@ CaO     = 1.000Ca+2     - 2.000H+     + 1.000H2O
 
 CaSn(OH)6(s)
 CaSn(OH)6     = 1.000Ca+2     + 1.000Sn+4     - 6.000H+     + 6.000H2O
-     log_k    -0.740     #Log K¿ estimated as the mean value of data in 00LOT/OCH2 (uncertainty to include both values) recalculated using  values of Sn(OH)6-2 selected in this work
+     log_k    -0.740     #Log KÂ¿ estimated as the mean value of data in 00LOT/OCH2 (uncertainty to include both values) recalculated using  values of Sn(OH)6-2 selected in this work
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic -7.4E-1 0E+0 0E+0 0E+0 0E+0
@@ -11411,7 +11411,7 @@ FeSe2     = 1.000Fe+2     + 2.000HSe-     - 1.000H2O     + 0.500O2
 
 Ferrosilite
 FeSiO3     = 1.000Fe+2     - 2.000H+     + 1.000H4(SiO4)     - 1.000H2O
-     log_k    32.710     #95TRO: CEA, N.T.SESD n¿ 95/49, L. TROTIGNON avril 1996; Critique et s¿lection de donn¿es thermodynamiques en vue de mod¿liser les ¿quilibres min¿ral - solution, rapport annuel 1995
+     log_k    32.710     #95TRO: CEA, N.T.SESD nÂ° 95/49, L. TROTIGNON avril 1996; Critique et sÃ©lection de donnÃ©es thermodynamiques en vue de modÃ©liser les Ã©quilibres minÃ©ral - solution, rapport annuel 1995
      # delta_h  0.000     #kJ/mol        
      # Enthalpy of formation:                   #kJ/mol        
      -analytic 3.271E+1 0E+0 0E+0 0E+0 0E+0
