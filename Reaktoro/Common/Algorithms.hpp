@@ -68,6 +68,24 @@ auto removefn(const Container& c, const Predicate& pred)
     return filter(c, [&](auto&& x) { return !pred(x); });
 }
 
+/// Return a sorted container.
+template<typename Container>
+auto sorted(const Container& c)
+{
+    Container res(c);
+    std::sort(res.begin(), res.end());
+    return res;
+}
+
+/// Return a sorted container with predicate controlling order.
+template<typename Container, typename Predicate>
+auto sortedfn(const Container& c, const Predicate& pred)
+{
+    Container res(c);
+    std::sort(res.begin(), res.end(), pred);
+    return res;
+}
+
 /// Return a container without duplicates.
 template<typename Container>
 auto unique(const Container& c)
