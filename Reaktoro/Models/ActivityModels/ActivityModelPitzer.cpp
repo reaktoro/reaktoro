@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ActivityModelPitzerPHREEQC.hpp"
+#include "ActivityModelPitzer.hpp"
 
 // C++ includes
+#include <cassert>
+#include <cmath>
 #include <set>
 #include <string>
 #include <vector>
@@ -28,6 +30,7 @@
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
+#include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
@@ -41,6 +44,535 @@ using std::log;
 using std::sqrt;
 using std::exp;
 using std::abs;
+using std::round;
+
+/// Auxiliary alias for ActivityModelParamsPitzer::CorrectionModel.
+using PitzerParamCorrectionModel = ActivityModelParamsPitzer::CorrectionModel;
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by PHREEQC v3.
+auto createParamCorrectionModelPhreeqc(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    auto const& c = coefficients;
+    auto const Tr = 298.15;
+
+    errorif(c.size() == 0, "Cannot create the Phreeqc temperature-dependent Pitzer parameter function with empty coefficients");
+
+    if(c.size() == 1) return [=](real const& T, real const& Pbar) { return c[0]; };
+    if(c.size() == 2) return [=](real const& T, real const& Pbar) { return c[0] + c[1]*(1.0/T - 1.0/Tr); };
+    if(c.size() == 3) return [=](real const& T, real const& Pbar) { return c[0] + c[1]*(1.0/T - 1.0/Tr) + c[2]*log(T/Tr); };
+    if(c.size() == 4) return [=](real const& T, real const& Pbar) { return c[0] + c[1]*(1.0/T - 1.0/Tr) + c[2]*log(T/Tr) + c[3]*(T - Tr); };
+    if(c.size() == 5) return [=](real const& T, real const& Pbar) { return c[0] + c[1]*(1.0/T - 1.0/Tr) + c[2]*log(T/Tr) + c[3]*(T - Tr) + c[4]*(T*T - Tr*Tr); };
+    if(c.size() == 6) return [=](real const& T, real const& Pbar) { return c[0] + c[1]*(1.0/T - 1.0/Tr) + c[2]*log(T/Tr) + c[3]*(T - Tr) + c[4]*(T*T - Tr*Tr) + c[5]*(1.0/(T*T) - 1.0/(Tr*Tr)); };
+
+    errorif(true, "Cannot create the Phreeqc temperature-dependent Pitzer parameter function with given coefficients: ", str(c));
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by He and Morse (1993) (doi: 10.1016/0016-7037(93)90137-L).
+auto createParamCorrectionModelHeMorse1993(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `HeMorse1993` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Dai et al. (2013) (doi: 10.2118/164045-ms).
+auto createParamCorrectionModelDai2013(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `Dai2013` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Dai et al. (2014) (doi: 10.2118/169786-ms).
+auto createParamCorrectionModelDai2014(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `Dai2014` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Christov and Møller (2004) (see Table 5 in 10.1016/j.chemgeo.2007.07.023).
+auto createParamCorrectionModelChristovMoller2004(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `ChristovMoller2004` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Holmes et al. (1987) (see Table 6 in 10.1016/j.chemgeo.2007.07.023).
+auto createParamCorrectionModelHolmes1987(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `Holmes1987` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Pitzer et al. (1984) (see Table 7 in 10.1016/j.chemgeo.2007.07.023).
+auto createParamCorrectionModelPitzer1984(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `Pitzer1984` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Palaban and Pitzer (1987) (see Table 8 in 10.1016/j.chemgeo.2007.07.023).
+auto createParamCorrectionModelPalabanPitzer1987(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `PalabanPitzer1987` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Polya et al. (2001) (see Table 10 in 10.1016/j.chemgeo.2007.07.023).
+auto createParamCorrectionModelPolya2001(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `Polya2001` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Lia and Duan (2007) (see Table 12 in 10.1016/j.chemgeo.2007.07.023).
+auto createParamCorrectionModelLiDuan2007(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    errorif(true, "Currently, the `LiDuan2007` temperature-pressure correction model for Pitzer parameters are not implemented");
+}
+
+/// Return the Pitzer temperature-pressure correction model with given coefficients and model option.
+auto createParamCorrectionModel(Vec<Param> const& coefficients, PitzerParamCorrectionModel const& option) -> Fn<real(real const&, real const&)>
+{
+    switch(option)
+    {
+        case PitzerParamCorrectionModel::Phreeqc:            return createParamCorrectionModelPhreeqc(coefficients);
+        case PitzerParamCorrectionModel::HeMorse1993:        return createParamCorrectionModelHeMorse1993(coefficients);
+        case PitzerParamCorrectionModel::Dai2013:            return createParamCorrectionModelDai2013(coefficients);
+        case PitzerParamCorrectionModel::Dai2014:            return createParamCorrectionModelDai2014(coefficients);
+        case PitzerParamCorrectionModel::ChristovMoller2004: return createParamCorrectionModelChristovMoller2004(coefficients);
+        case PitzerParamCorrectionModel::Holmes1987:         return createParamCorrectionModelHolmes1987(coefficients);
+        case PitzerParamCorrectionModel::Pitzer1984:         return createParamCorrectionModelPitzer1984(coefficients);
+        case PitzerParamCorrectionModel::PalabanPitzer1987:  return createParamCorrectionModelPalabanPitzer1987(coefficients);
+        case PitzerParamCorrectionModel::Polya2001:          return createParamCorrectionModelPolya2001(coefficients);
+        case PitzerParamCorrectionModel::LiDuan2007:         return createParamCorrectionModelLiDuan2007(coefficients);
+        default:                                             return createParamCorrectionModelPhreeqc(coefficients);
+    }
+}
+
+/// Used to represent an interaction parameter in the Pitzer activity model.
+struct PitzerParam
+{
+    /// The indices of the species associated with this interaction parameter.
+    const Indices ispecies;
+
+    /// The temperature-pressure correction model for the interaction parameter.
+    const Fn<real(real const&, real const&)> model;
+
+    /// The current value of the interaction parameter since last update.
+    real value;
+
+    /// Update the current value of the interaction parameter.
+    auto update(real const& T, real const& P)
+    {
+        value = model(T, P);
+    }
+};
+
+/// Auxiliary alias for ActivityModelParamsPitzer::InteractionParamAttribs.
+using PitzerInteractionParamAttribs = ActivityModelParamsPitzer::InteractionParamAttribs;
+
+/// Convert a PitzerInteractionParamAttribs object to a PitzerParam one for a binary interaction parameter.
+auto createPitzerParamBinary(SpeciesList const& specieslist, PitzerInteractionParamAttribs const& attribs) -> PitzerParam
+{
+    errorifnot(attribs.formulas.size() == 2, "Expecting two chemical formulas when processing a Pitzer binary interaction parameter but got formulas: ", str(attribs.formulas));
+
+    auto const ispecies1 = specieslist.findWithFormula(attribs.formulas[0]);
+    auto const ispecies2 = specieslist.findWithFormula(attribs.formulas[1]);
+
+    if(ispecies1 >= specieslist.size() || ispecies2 >= specieslist.size())
+        return {}; // specie1 and/or species2 are not in the list of species; return empty PitzerParam object.
+
+    return PitzerParam{ {ispecies1, ispecies2}, createParamCorrectionModel(attribs.coefficients, attribs.model) };
+}
+
+/// Convert a PitzerInteractionParamAttribs object to a PitzerParam one for a ternary interaction parameter.
+auto createPitzerParamTernary(SpeciesList const& specieslist, PitzerInteractionParamAttribs const& attribs) -> PitzerParam
+{
+    errorifnot(attribs.formulas.size() == 3, "Expecting two chemical formulas when processing a Pitzer ternary interaction parameter but got formulas: ", str(attribs.formulas));
+
+    auto const ispecies1 = specieslist.findWithFormula(attribs.formulas[0]);
+    auto const ispecies2 = specieslist.findWithFormula(attribs.formulas[1]);
+    auto const ispecies3 = specieslist.findWithFormula(attribs.formulas[2]);
+
+    if(ispecies1 >= specieslist.size() || ispecies2 >= specieslist.size() || ispecies3 >= specieslist.size())
+        return {}; // specie1 and/or species2 and/or species3 are not in the list of species; return empty PitzerParam object.
+
+    return PitzerParam{ {ispecies1, ispecies2, ispecies3}, createParamCorrectionModel(attribs.coefficients, attribs.model) };
+}
+
+/// Auxiliary alias for ActivityModelParamsPitzer::AlphaParamAttribs
+using PitzerAlphaParamAttribs = ActivityModelParamsPitzer::AlphaParamAttribs;
+
+/// Return the default value for \eq{alpha_1} parameter according to that used in PHREEQC v3 (see file pitzer.cpp under comment "Set alpha values").
+auto determineDefaultAlpha1(ChemicalFormula const& formula1, ChemicalFormula const& formula2) -> Param
+{
+    const auto z1 = round(abs(formula1.charge()));
+    const auto z2 = round(abs(formula2.charge()));
+    return (z1 == 2 && z2 == 2) ? 1.4 : 2.0; // alpha1 = 2.0 for all electrolytes except the 2-2 electrolytes, for which alpha1 = 1.4 (Pitzer and Silvester, 1978; Plummer et al., 1988, page 4)
+};
+
+/// Return the default value for \eq{alpha_2} parameter according to that used in PHREEQC v3 (see file pitzer.cpp under comment "Set alpha values").
+auto determineDefaultAlpha2(ChemicalFormula const& formula1, ChemicalFormula const& formula2) -> Param
+{
+    const auto z1 = round(abs(formula1.charge()));
+    const auto z2 = round(abs(formula2.charge()));
+    return (z1 == 1 && z2 == 1) || (z1 == 2 && z2 == 2) ? 12.0 : 50.0; // alpha2 = 12.0 for 1-1 and 2-2 electrolytes, alpha2 = 50.0 for 3-2 and 4-2 electrolytes (Pitzer and Silvester, 1978; Plummer et al., 1988, page 4)
+};
+
+/// Return the index of the entry in `alphas` containing a pair of formulas equivalent to the pair `formula1` and `formula2`.
+auto findAlphaEntry(ChemicalFormula const& formula1, ChemicalFormula const& formula2, Vec<PitzerAlphaParamAttribs> const& alphas) -> Index
+{
+    return indexfn(alphas, RKT_LAMBDA(x,
+        ( formula1.equivalent(x.formula1) && formula2.equivalent(x.formula2) ) ||
+        ( formula1.equivalent(x.formula2) && formula2.equivalent(x.formula1) )
+    ));
+}
+
+/// Return the value for \eq{alpha_1} parameter (either user-specified or determined from default value according to that used in PHREEQC v3).
+auto determineAlpha1(ChemicalFormula const& formula1, ChemicalFormula const& formula2, Vec<PitzerAlphaParamAttribs> const& alphas) -> Param
+{
+    if(const auto idx = findAlphaEntry(formula1, formula2, alphas); idx < alphas.size())
+        return alphas[idx].value;
+    return determineDefaultAlpha1(formula1, formula2);
+}
+
+/// Return the value for \eq{alpha_2} parameter (either user-specified or determined from default value according to that used in PHREEQC v3).
+auto determineAlpha2(ChemicalFormula const& formula1, ChemicalFormula const& formula2, Vec<PitzerAlphaParamAttribs> const& alphas) -> Param
+{
+    if(const auto idx = findAlphaEntry(formula1, formula2, alphas); idx < alphas.size())
+        return alphas[idx].value;
+    return determineDefaultAlpha2(formula1, formula2);
+}
+
+/// Determine the coefficients multiplying the terms where the lambda Pitzer parameter is involved.
+/// Check equations (34-37) of Clegg (1991) (Activity Coefficients in Natural Waters).
+auto determineLambdaCoeffs(double z1, double z2, Index i1, Index i2) -> Tuple<double, double, double>
+{
+    assert(z1 <= z2 && "Expecting species associated to binary lambda Pitzer parameter to be ordered in ascending order of charge.");
+
+    const bool NxNx = z1 == 0.0 && z2 == 0.0 && i1 == i2;
+    if(NxNx)
+        return {1.0, 1.0, 0.5}; // (37.i => 2/2), (37.i => 2/2), (34.iv => 1/2)
+
+    const bool NxNy = z1 == 0.0 && z2 == 0.0 && i1 != i2;
+    if(NxNy)
+        return {2.0, 2.0, 1.0}; // (37.i => 2), (37.i => 2), (34.v => 1)
+
+    const bool NxCx = z1 == 0.0 && z2  > 0.0;
+    if(NxCx)
+        return {2.0, 2.0, 1.0}; // (37.iv => 2), (35.iv => 2), (34.vii => 1)
+
+    const bool AxNx = z1  < 0.0 && z2 == 0.0;
+    if(AxNx)
+        return {2.0, 2.0, 1.0}; // (36.iv => 2), (37.iv => 2), (34.viii => 1)
+
+    errorif(true, "Could not determine mu factor in osmotic coefficient equation with given triad of species with charges (", z1, ", ", z2, ").");
+
+    return {};
+}
+
+/// Determine the coefficients multiplying the terms where the mu Pitzer parameter is involved.
+/// Check equations (34-37) of Clegg (1991) (Activity Coefficients in Natural Waters).
+auto determineMuCoeffs(double z1, double z2, double z3, Index i1, Index i2, Index i3) -> Tuple<double, double, double, double>
+{
+    assert(z1 <= z2 && z2 <= z3 && "Expecting species associated to ternary mu Pitzer parameter to be ordered in ascending order of charge.");
+
+    const bool NNN = z1 == 0.0 && z2 == 0.0 && z3 == 0.0;
+    const bool NNC = z1 == 0.0 && z2 == 0.0 && z3  > 0.0;
+    const bool ANN = z1  < 0.0 && z2 == 0.0 && z3 == 0.0;
+
+    const bool NxNxNx = NNN && i1 == i2 && i2 == i3;
+    if(NxNxNx)
+        return {1.0, 1.0, 1.0, 1.0}; // (37.i => 3/3), (37.i => 3/3), (37.i => 3/3), (34.iv => 1)
+
+    const bool NxNxNy = NNN && i1 == i2 && i2 != i3;
+    if(NxNxNy)
+        return {3.0, 3.0, 3.0, 3.0}; // (37.ii => 6/2), (37.ii => 6/2), (37.i => 3), (34.v => 3)
+
+    const bool NyNxNx = NNN && i1 != i2 && i2 == i3;
+    if(NyNxNx)
+        return {3.0, 3.0, 3.0, 3.0}; // (37.i => 3), (37.ii => 6/2), (37.ii => 6/2), (34.v => 3)
+
+    const bool NxNyNx = NNN && i1 != i2 && i1 == i3;
+    if(NxNyNx)
+        return {3.0, 3.0, 3.0, 3.0}; // (37.ii => 6/2), (37.i => 3), (37.ii => 6/2), (34.v => 3)
+
+    const bool NxNyNz = NNN && i1 != i2 && i1 != i3;
+    if(NxNyNz)
+        return {6.0, 6.0, 6.0, 6.0}; // (37.iii => 6), (37.iii => 6), (37.iii => 6), (34.vi => 6)
+
+    const bool NxNxCx = NNC && i1 == i2;
+    if(NxNxCx)
+        return {3.0, 3.0, 3.0, 3.0}; // (37.vii => 6/2), (37.vii => 6/2), (35.iv => 3), (34.vii => 3)
+
+    const bool AxNxNx = ANN && i2 == i3;
+    if(AxNxNx)
+        return {3.0, 3.0, 3.0, 3.0}; // (36.iv => 3), (37.vii => 6/2), (37.vii => 6/2), (34.viii => 3)
+
+    const bool NxNyCx = NNC && i1 != i2;
+    if(NxNyCx)
+        return {6.0, 6.0, 6.0, 6.0}; // (37.vii => 6), (37.vii => 6), (35.v => 6), (34.xii => 6)
+
+    const bool AxNxNy = ANN && i2 != i3;
+    if(AxNxNy)
+        return {6.0, 6.0, 6.0, 6.0}; // (36.v => 6), (37.vii => 6/2), (37.vii => 6/2), (34.xiii => 6)
+
+    errorif(true, "Could not determine mu factor in osmotic coefficient equation with given triad of species with charges (", z1, ", ", z2, ", ", z3, ").");
+
+    return {};
+}
+
+auto G(real const& x) -> real
+{
+    return x == 0.0 ? x : 2.0*(1.0 - (1.0 + x)*exp(-x))/(x*x);
+}
+
+auto GP(real const& x) -> real
+{
+    return x == 0.0 ? x : -2.0*(1.0 - (1.0 + x + 0.5*x*x)*exp(-x))/(x*x);
+}
+
+auto computeThetaValues(real const& I, real const& sqrtI, real const& Aphi, double zi, double zj) -> Pair<real, real>
+{
+    const auto aux = 6.0*Aphi*sqrtI;
+
+    const auto xij = zi*zj*aux;
+    const auto xii = zi*zi*aux;
+    const auto xjj = zj*zj*aux;
+
+    const auto J0ij = J0(xij);
+    const auto J0ii = J0(xii);
+    const auto J0jj = J0(xjj);
+
+    const auto J1ij = J1(xij);
+    const auto J1ii = J1(xii);
+    const auto J1jj = J1(xjj);
+
+    const auto thetaE = zi*zj/(4*I) * (J0ij - 0.5*J0ii - 0.5*J0jj);
+    const auto thetaEP = zi*zj/(8*I*I) * (J1ij - 0.5*J1ii - 0.5*J1jj) - thetaE/I;
+
+    return { thetaE, thetaEP };
+}
+
+/// The auxiliary type used to store computed values from the Pitzer activity model implemented by @ref Pitzer.
+struct PitzerState
+{
+    ArrayXr phiw; ///< The osmotic coefficient of water.
+    ArrayXr ln_g; ///< The activity coefficients of the aqueous species (natural log).
+};
+
+/// The auxiliary type used to implement the Pitzer activity model.
+struct PitzerModel
+{
+    AqueousMixture solution; ///< The aqueous solution for which this Pitzer activity model is defined.
+
+    Vec<PitzerParam> beta0;  ///< The parameters \eq{\beta^{(0)}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.
+    Vec<PitzerParam> beta1;  ///< The parameters \eq{\beta^{(1)}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.
+    Vec<PitzerParam> beta2;  ///< The parameters \eq{\beta^{(2)}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.
+    Vec<PitzerParam> Cphi;   ///< The parameters \eq{C^{\phi}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.
+    Vec<PitzerParam> theta;  ///< The parameters \eq{\theta_{ij}(T, P)} in the Pitzer model for cation-cation and anion-anion interactions.
+    Vec<PitzerParam> psi;    ///< The parameters \eq{\psi_{ijk}(T, P)} in the Pitzer model for cation-cation-anion and anion-anion-cation interactions.
+    Vec<PitzerParam> lambda; ///< The parameters \eq{\lambda_{ij}(T, P)} in the Pitzer model for neutral-cation and neutral-anion interactions.
+    Vec<PitzerParam> zeta;   ///< The parameters \eq{\zeta_{ijk}(T, P)} in the Pitzer model for neutral-cation-anion interactions.
+    Vec<PitzerParam> mu;     ///< The parameters \eq{\mu_{ijk}(T, P)} in the Pitzer model for neutral-neutral-neutral, neutral-neutral-cation, and neutral-neutral-anion interactions.
+    Vec<PitzerParam> eta;    ///< The parameters \eq{\eta_{ijk}(T, P)} in the Pitzer model for neutral-cation-cation and neutral-anion-anion interactions.
+
+    Vec<Param> alpha1; ///< The parameters \eq{alpha_1_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
+    Vec<Param> alpha2; ///< The parameters \eq{alpha_2_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
+
+    using Tuples3d = Tuples<double, double, double>; ///< Auxiliary type for a tuple of 3 double values.
+    using Tuples4d = Tuples<double, double, double, double>; ///< Auxiliary type for a tuple of 4 double values.
+
+    Tuples3d lambda_coeffs; ///< The coefficients multiplying the terms where the lambda Pitzer parameter is involved.
+    Tuples4d mu_coeffs;     ///< The coefficients multiplying the terms where the mu Pitzer parameter is involved.
+
+    ArrayXr thetaE;  ///< The current values of the parameters \eq{^{E}\theta_{ij}(I)} associated to the \eq{\theta_{ij}} parameters.
+    ArrayXr thetaEP; ///< The current values of the parameters \eq{^{E}\theta_{ij}^{\prime}(I)} associated to the \eq{\theta_{ij}} parameters.
+
+    BilinearInterpolator Aphi; ///< The parameter \eq{A^\phi(T, P)} in the Pitzer model.
+
+    /// Construct a default Pitzer object.
+    PitzerModel()
+    {}
+
+    /// Construct a Pitzer object with given list of species in the aqueous solution and the parameters for the Pitzer activity model.
+    // PitzerModel(SpeciesList const& specieslist, ActivityModelParamsPitzer const& params)
+    PitzerModel(AqueousMixture const& solution, ActivityModelParamsPitzer const& params)
+    : solution(solution)
+    {
+        for(auto const& entry : params.beta0)
+            if(PitzerParam param = createPitzerParamBinary(solution.species(), entry); !param.ispecies.empty())
+                beta0.push_back(param);
+
+        for(auto const& entry : params.beta1)
+            if(PitzerParam param = createPitzerParamBinary(solution.species(), entry); !param.ispecies.empty())
+                beta1.push_back(param);
+
+        for(auto const& entry : params.beta2)
+            if(PitzerParam param = createPitzerParamBinary(solution.species(), entry); !param.ispecies.empty())
+                beta2.push_back(param);
+
+        for(auto const& entry : params.Cphi)
+            if(PitzerParam param = createPitzerParamBinary(solution.species(), entry); !param.ispecies.empty())
+                Cphi.push_back(param);
+
+        for(auto const& entry : params.theta)
+            if(PitzerParam param = createPitzerParamBinary(solution.species(), entry); !param.ispecies.empty())
+                theta.push_back(param);
+
+        for(auto const& entry : params.psi)
+            if(PitzerParam param = createPitzerParamTernary(solution.species(), entry); !param.ispecies.empty())
+                psi.push_back(param);
+
+        for(auto const& entry : params.lambda)
+            if(PitzerParam param = createPitzerParamBinary(solution.species(), entry); !param.ispecies.empty())
+                lambda.push_back(param);
+
+        for(auto const& entry : params.zeta)
+            if(PitzerParam param = createPitzerParamTernary(solution.species(), entry); !param.ispecies.empty())
+                zeta.push_back(param);
+
+        for(auto const& entry : params.mu)
+            if(PitzerParam param = createPitzerParamTernary(solution.species(), entry); !param.ispecies.empty())
+                mu.push_back(param);
+
+        for(auto const& entry : params.eta)
+            if(PitzerParam param = createPitzerParamTernary(solution.species(), entry); !param.ispecies.empty())
+                eta.push_back(param);
+
+        for(auto const& entry : params.beta1)
+            alpha1.push_back(determineAlpha1(entry.formulas[0], entry.formulas[1], params.alpha1));
+
+        for(auto const& entry : params.beta2)
+            alpha2.push_back(determineAlpha2(entry.formulas[0], entry.formulas[1], params.alpha2));
+
+        auto const& z = solution.charges();
+
+        for(auto const& entry : lambda)
+        {
+            const auto i1 = entry.ispecies[0];
+            const auto i2 = entry.ispecies[1];
+            lambda_coeffs.push_back(determineLambdaCoeffs(z[i1], z[i2], i1, i2));
+        }
+
+        for(auto const& entry : mu)
+        {
+            const auto i1 = entry.ispecies[0];
+            const auto i2 = entry.ispecies[1];
+            const auto i3 = entry.ispecies[2];
+            mu_coeffs.push_back(determineMuCoeffs(z[i1], z[i2], z[i3], i1, i2, i3));
+        }
+
+        Aphi = BilinearInterpolator(Aphi_temperatures, Aphi_pressures, Aphi_data);
+    }
+
+    auto evaluate(AqueousMixtureState const& aqstate, PitzerState& pzstate)
+    {
+        auto const& T = aqstate.T;
+        auto const& P = aqstate.P;
+        auto const& M = aqstate.m;
+        auto const& I = aqstate.Ie;
+        auto const& z = solution.charges();
+
+        auto const& iH2O = solution.indexWater();
+
+        auto const DI = sqrt(I);
+
+        auto const numspecies = M.size();
+
+        auto& OSMOT  = pzstate.phiw = 0.0;
+        auto& LGAMMA = pzstate.ln_g = zeros(numspecies);
+
+        real CSUM = 0.0;
+
+        real BIGZ = (M * z.abs()).sum();
+        real OSUM = M.sum() - M[iH2O];
+
+        real Aphi0 = Aphi(T, P);
+
+	    const auto B = 1.2;
+
+	    real F = -Aphi0*(DI/(1 + B*DI) + 2.0*log(1.0 + B*DI)/B);
+
+        for(auto const& param : beta0)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+
+			LGAMMA[i0] += M[i1] * 2.0 * param.value;
+			LGAMMA[i1] += M[i0] * 2.0 * param.value;
+			OSMOT += M[i0] * M[i1] * param.value;
+        }
+
+        for(auto const& [i, param] : enumerate(beta1))
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+
+            F += M[i0] * M[i1] * param.value * GP(alpha1[i] * DI) / I;
+            LGAMMA[i0] += M[i1] * 2.0 * param.value * G(alpha1[i] * DI);
+            LGAMMA[i1] += M[i0] * 2.0 * param.value * G(alpha1[i] * DI);
+            OSMOT += M[i0] * M[i1] * param.value * exp(-alpha1[i] * DI);
+        }
+
+        for(auto const& [i, param] : enumerate(beta2))
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+
+            LGAMMA[i0] += M[i1] * 2.0 * param.value * G(alpha2[i] * DI);
+            LGAMMA[i1] += M[i0] * 2.0 * param.value * G(alpha2[i] * DI);
+            OSMOT += M[i0] * M[i1] * param.value * exp(-alpha2[i] * DI);
+        }
+
+        for(auto const& param : Cphi)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+            const auto z0 = z[i0];
+            const auto z1 = z[i1];
+            const auto aux = 2.0 * sqrt(abs(z0 * z1));
+
+            CSUM += M[i0] * M[i1] * param.value / aux;
+            LGAMMA[i0] += M[i1] * BIGZ * param.value / aux;
+            LGAMMA[i1] += M[i0] * BIGZ * param.value / aux;
+            OSMOT += M[i0] * M[i1] * BIGZ * param.value / aux;
+        }
+
+        for(auto const& param : theta)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+            const auto z0 = z[i0];
+            const auto z1 = z[i1];
+
+            LGAMMA[i0] += 2.0 * M[i1] * param.value;
+            LGAMMA[i1] += 2.0 * M[i0] * param.value;
+            OSMOT += M[i0] * M[i1] * param.value;
+
+            const auto [etheta, ethetap] = computeThetaValues(I, DI, Aphi0, z0, z1);
+
+            F += M[i0] * M[i1] * ethetap;
+            LGAMMA[i0] += 2.0 * M[i1] * etheta;
+            LGAMMA[i1] += 2.0 * M[i0] * etheta;
+            OSMOT += M[i0] * M[i1] * (etheta + I * ethetap);
+        }
+
+        for(auto const& param : psi)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+            const auto i2 = param.ispecies[2];
+
+            LGAMMA[i0] += M[i1] * M[i2] * param.value;
+            LGAMMA[i1] += M[i0] * M[i2] * param.value;
+            LGAMMA[i2] += M[i0] * M[i1] * param.value;
+            OSMOT += M[i0] * M[i1] * M[i2] * param.value;
+        }
+
+        for(auto const& param : lambda)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+
+            LGAMMA[i0] += M[i1] * param.value * pitz_params[i]->ln_coef[0];
+            LGAMMA[i1] += M[i0] * param.value * pitz_params[i]->ln_coef[1];
+            OSMOT += M[i0] * M[i1] * param.value * pitz_params[i]->os_coef;
+        }
+    }
+};
+
 
 template<typename T> using Table1D = Vec<T>;
 template<typename T> using Table2D = Vec<Vec<T>>;
@@ -695,7 +1227,7 @@ struct PitzerParams
 {
     PitzerParams() = default;
 
-    explicit PitzerParams(AqueousMixture const& mixture);
+    explicit PitzerParams(AqueousMixture const& solution);
 
     const Vec<ChemicalFormula> neutrals;     ///< The chemical formulas of the neutral species in the aqueous solution.
     const Vec<ChemicalFormula> charged;      ///< The chemical formulas of the charged species in the aqueous solution.
@@ -728,22 +1260,22 @@ struct PitzerParams
     PitzerParamsState state;
 };
 
-PitzerParams::PitzerParams(AqueousMixture const& mixture)
-: neutrals( vectorize(mixture.neutral(), RKT_LAMBDA(x, x.formula())) ),
-  charged( vectorize(mixture.charged(), RKT_LAMBDA(x, x.formula())) ),
-  cations( vectorize(mixture.cations(), RKT_LAMBDA(x, x.formula())) ),
-  anions( vectorize(mixture.anions(), RKT_LAMBDA(x, x.formula())) ),
+PitzerParams::PitzerParams(AqueousMixture const& solution)
+: neutrals( vectorize(solution.neutral(), RKT_LAMBDA(x, x.formula())) ),
+  charged( vectorize(solution.charged(), RKT_LAMBDA(x, x.formula())) ),
+  cations( vectorize(solution.cations(), RKT_LAMBDA(x, x.formula())) ),
+  anions( vectorize(solution.anions(), RKT_LAMBDA(x, x.formula())) ),
   Nn( neutrals.size() ),
   Nz( charged.size() ),
   Nc( cations.size() ),
   Na( anions.size() ),
-  idx_neutrals( mixture.indicesNeutral() ),
-  idx_charged( mixture.indicesCharged() ),
-  idx_cations( mixture.indicesCations() ),
-  idx_anions( mixture.indicesAnions() ),
-  z_charged( mixture.charges()(idx_charged) ),
-  z_cations( mixture.charges()(idx_cations) ),
-  z_anions( mixture.charges()(idx_anions) ),
+  idx_neutrals( solution.indicesNeutral() ),
+  idx_charged( solution.indicesCharged() ),
+  idx_cations( solution.indicesCations() ),
+  idx_anions( solution.indicesAnions() ),
+  z_charged( solution.charges()(idx_charged) ),
+  z_cations( solution.charges()(idx_cations) ),
+  z_anions( solution.charges()(idx_anions) ),
   beta0( createBeta0Table(cations, anions) ),
   beta1( createBeta1Table(cations, anions) ),
   beta2( createBeta2Table(cations, anions) ),
@@ -952,7 +1484,7 @@ auto computeF(AqueousMixtureState const& state, PitzerParams const& pitzer) -> r
     // The molalities of all aqueous species
     auto const& m = state.m;
 
-    // The ionic strength of the aqueous mixture and its square root
+    // The ionic strength of the aqueous solution and its square root
     const auto I = state.Ie;
     const auto sqrtI = sqrt(I);
 
@@ -988,9 +1520,9 @@ auto computeZ(AqueousMixtureState const& state, PitzerParams const& pitzer) -> r
 }
 
 /// Return the Pitzer activity coefficient of a cation (in natural log scale).
-/// @param state The state of the aqueous mixture
+/// @param state The state of the aqueous solution
 /// @param pitzer The Pitzer parameters
-/// @param M The local index of the cation among all cations in the mixture
+/// @param M The local index of the cation among all cations in the solution
 auto lnActivityCoefficientCation(AqueousMixtureState const& state, PitzerParams const& pitzer, Index M) -> real
 {
     // The indices of the neutral species, cations and anions
@@ -1006,7 +1538,7 @@ auto lnActivityCoefficientCation(AqueousMixtureState const& state, PitzerParams 
     // The vector of molalities of all aqueous species
     auto const& m = state.m;
 
-    // The number of species in the mixture
+    // The number of species in the solution
     const auto nspecies = m.size();
 
     // The electrical charge of the M-th cation
@@ -1080,9 +1612,9 @@ auto lnActivityCoefficientCation(AqueousMixtureState const& state, PitzerParams 
 }
 
 /// Return the Pitzer activity coefficient of an anion (in natural log scale).
-/// @param state The state of the aqueous mixture
+/// @param state The state of the aqueous solution
 /// @param pitzer The Pitzer parameters
-/// @param X The local index of the anion among all anions in the mixture
+/// @param X The local index of the anion among all anions in the solution
 auto lnActivityCoefficientAnion(AqueousMixtureState const& state, PitzerParams const& pitzer, Index X) -> real
 {
     // The indices of the neutral species, cations and anions
@@ -1098,7 +1630,7 @@ auto lnActivityCoefficientAnion(AqueousMixtureState const& state, PitzerParams c
     // The molalities of all aqueous species
     auto const& m = state.m;
 
-    // The number of species in the mixture
+    // The number of species in the solution
     const auto nspecies = m.size();
 
     // The electrical charge of the X-th anion
@@ -1172,7 +1704,7 @@ auto lnActivityCoefficientAnion(AqueousMixtureState const& state, PitzerParams c
 }
 
 /// Return the Pitzer activity of water (in natural log scale).
-/// @param state The state of the aqueous mixture
+/// @param state The state of the aqueous solution
 /// @param pitzer The Pitzer parameters
 /// @param iH2O The index of the water species
 auto lnActivityWater(AqueousMixtureState const& state, PitzerParams const& pitzer, Index iH2O) -> real
@@ -1197,13 +1729,13 @@ auto lnActivityWater(AqueousMixtureState const& state, PitzerParams const& pitze
     if(sum_mi == 0.0)
         return 0.0;
 
-    // The number of species in the mixture
+    // The number of species in the solution
     const auto nspecies = m.size();
 
-    // The ionic strength of the aqueous mixture
+    // The ionic strength of the aqueous solution
     const auto I = state.Ie;
 
-    // The square root of the ionic strength of the aqueous mixture
+    // The square root of the ionic strength of the aqueous solution
     const auto sqrtI = sqrt(I);
 
     // The molar mass of water
@@ -1218,7 +1750,7 @@ auto lnActivityWater(AqueousMixtureState const& state, PitzerParams const& pitze
     // The term Z of the Harvie-Moller-Weare Pitzer's model
     const auto Z = computeZ(state, pitzer);
 
-    // The osmotic coefficient of the aqueous mixture
+    // The osmotic coefficient of the aqueous solution
     real phi = -Aphi*I*sqrtI/(1 + b*sqrtI);
 
     // Iterate over all pairs of cations and anions
@@ -1300,9 +1832,9 @@ auto lnActivityWater(AqueousMixtureState const& state, PitzerParams const& pitze
 }
 
 /// Return the Pitzer activity coefficient of a neutral species (in natural log scale).
-/// @param state The state of the aqueous mixture
+/// @param state The state of the aqueous solution
 /// @param pitzer The Pitzer parameters
-/// @param N The local index of the neutral species among all neutral species in the mixture
+/// @param N The local index of the neutral species among all neutral species in the solution
 auto lnActivityCoefficientNeutral(AqueousMixtureState const& state, PitzerParams const& pitzer, Index N) -> real
 {
     // The indices of the neutral species, cations and anions
@@ -1316,7 +1848,7 @@ auto lnActivityCoefficientNeutral(AqueousMixtureState const& state, PitzerParams
     // The vector of molalities of all aqueous species
     auto const& m = state.m;
 
-    // The number of species in the mixture
+    // The number of species in the solution
     const auto nspecies = m.size();
 
     // The log of the activity coefficient of the N-th neutral species
@@ -1342,38 +1874,38 @@ auto lnActivityCoefficientNeutral(AqueousMixtureState const& state, PitzerParams
 
 auto activityModelPitzerPhreeqc(SpeciesList const& species) -> ActivityModel
 {
-    // Create the aqueous mixture
-    AqueousMixture mixture(species);
+    // Create the aqueous solution
+    AqueousMixture solution(species);
 
-    // The index of water in the mixture
-    const Index iwater = mixture.indexWater();
+    // The index of water in the solution
+    const Index iwater = solution.indexWater();
 
     // Initialize the Pitzer params
-    PitzerParams pitzer(mixture);
+    PitzerParams pitzer(solution);
 
     // Shared pointers used in `props.extra` to avoid heap memory allocation for big objects
     auto stateptr = std::make_shared<AqueousMixtureState>();
-    auto mixtureptr = std::make_shared<AqueousMixture>(mixture);
+    auto solutionptr = std::make_shared<AqueousMixture>(solution);
 
     ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
     {
         // The arguments for the activity model evaluation
         auto const& [T, P, x] = args;
 
-        // Evaluate the state of the aqueous mixture
-        auto const& state = *stateptr = mixture.state(T, P, x);
+        // Evaluate the state of the aqueous solution
+        auto const& state = *stateptr = solution.state(T, P, x);
 
         // Set the state of matter of the phase
         props.som = StateOfMatter::Liquid;
 
-        // Export the aqueous mixture and its state via the `extra` data member
+        // Export the aqueous solution and its state via the `extra` data member
         props.extra["AqueousMixtureState"] = stateptr;
-        props.extra["AqueousMixture"] = mixtureptr;
+        props.extra["AqueousMixture"] = solutionptr;
 
         // Calculate the activity coefficients of the cations
         for(auto M = 0; M < pitzer.idx_cations.size(); ++M)
         {
-            // Get the global index of the cation in the mixture
+            // Get the global index of the cation in the solution
             const Index i = pitzer.idx_cations[M];
 
             // Set the activity coefficient of the i-th species
@@ -1383,7 +1915,7 @@ auto activityModelPitzerPhreeqc(SpeciesList const& species) -> ActivityModel
         // Calculate the activity coefficients of the anions
         for(auto X = 0; X < pitzer.idx_anions.size(); ++X)
         {
-            // Get the global index of the anion in the mixture
+            // Get the global index of the anion in the solution
             const Index i = pitzer.idx_anions[X];
 
             // Set the activity coefficient of the i-th species
@@ -1393,7 +1925,7 @@ auto activityModelPitzerPhreeqc(SpeciesList const& species) -> ActivityModel
         // Calculate the activity coefficients of the neutral species
         for(auto N = 0; N < pitzer.idx_neutrals.size(); ++N)
         {
-            // Get the global index of the neutral species in the mixture
+            // Get the global index of the neutral species in the solution
             const Index i = pitzer.idx_neutrals[N];
 
             // Set the activity coefficient of the i-th species
@@ -1422,6 +1954,16 @@ auto activityModelPitzerPhreeqc(SpeciesList const& species) -> ActivityModel
 auto ActivityModelPitzerPhreeqc() -> ActivityModelGenerator
 {
     return [](SpeciesList const& species) { return activityModelPitzerPhreeqc(species); };
+}
+
+auto ActivityModelPitzer(ActivityModelParamsPitzer const& params) -> ActivityModelGenerator
+{
+    return [](SpeciesList const& species) { return activityModelPitzerPhreeqc(species); }; // TODO: Use params properly here!
+}
+
+auto ActivityModelPitzer(Params const& params) -> ActivityModelGenerator
+{
+    return [](SpeciesList const& species) { return activityModelPitzerPhreeqc(species); }; // TODO: Use params properly here!
 }
 
 } // namespace Reaktoro
@@ -1504,7 +2046,7 @@ auto ActivityModelPitzerPhreeqc() -> ActivityModelGenerator
 // // You should have received a copy of the GNU Lesser General Public License
 // // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-// #include "ActivityModelPitzerPHREEQC.hpp"
+// #include "ActivityModelPitzer.hpp"
 
 // // C++ includes
 // // #include <set>
@@ -1597,43 +2139,43 @@ auto ActivityModelPitzerPhreeqc() -> ActivityModelGenerator
 //     real AW, VP, DW0;
 // };
 
-// auto createActivityModelPitzerPHREEQC(SpeciesList const& species) -> ActivityModel
+// auto createActivityModelPitzer(SpeciesList const& species) -> ActivityModel
 // {
 //     // // Inject the Pitzer namespace here
 //     // using namespace Pitzer;
 
-//     // // Create the aqueous mixture
-//     // AqueousMixture mixture(species);
+//     // // Create the aqueous solution
+//     // AqueousMixture solution(species);
 
-//     // // The index of water in the mixture
-//     // const Index iwater = mixture.indexWater();
+//     // // The index of water in the solution
+//     // const Index iwater = solution.indexWater();
 
 //     // // Initialize the Pitzer params
-//     // PitzerParams pitzer(mixture);
+//     // PitzerParams pitzer(solution);
 
 //     // // Shared pointers used in `props.extra` to avoid heap memory allocation for big objects
 //     // auto stateptr = std::make_shared<AqueousMixtureState>();
-//     // auto mixtureptr = std::make_shared<AqueousMixture>(mixture);
+//     // auto solutionptr = std::make_shared<AqueousMixture>(solution);
 
 //     ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args) mutable
 //     {
 //         // The arguments for the activity model evaluation
 //         auto const& [T, P, x] = args;
 
-//         // // Evaluate the state of the aqueous mixture
-//         // auto const& state = *stateptr = mixture.state(T, P, x);
+//         // // Evaluate the state of the aqueous solution
+//         // auto const& state = *stateptr = solution.state(T, P, x);
 
 //         // // Set the state of matter of the phase
 //         // props.som = StateOfMatter::Liquid;
 
-//         // // Export the aqueous mixture and its state via the `extra` data member
+//         // // Export the aqueous solution and its state via the `extra` data member
 //         // props.extra["AqueousMixtureState"] = stateptr;
-//         // props.extra["AqueousMixture"] = mixtureptr;
+//         // props.extra["AqueousMixture"] = solutionptr;
 
 //         // // Calculate the activity coefficients of the cations
 //         // for(auto M = 0; M < pitzer.idx_cations.size(); ++M)
 //         // {
-//         //     // Get the global index of the cation in the mixture
+//         //     // Get the global index of the cation in the solution
 //         //     const Index i = pitzer.idx_cations[M];
 
 //         //     // Set the activity coefficient of the i-th species
@@ -1643,7 +2185,7 @@ auto ActivityModelPitzerPhreeqc() -> ActivityModelGenerator
 //         // // Calculate the activity coefficients of the anions
 //         // for(auto X = 0; X < pitzer.idx_anions.size(); ++X)
 //         // {
-//         //     // Get the global index of the anion in the mixture
+//         //     // Get the global index of the anion in the solution
 //         //     const Index i = pitzer.idx_anions[X];
 
 //         //     // Set the activity coefficient of the i-th species
@@ -1653,7 +2195,7 @@ auto ActivityModelPitzerPhreeqc() -> ActivityModelGenerator
 //         // // Calculate the activity coefficients of the neutral species
 //         // for(auto N = 0; N < pitzer.idx_neutrals.size(); ++N)
 //         // {
-//         //     // Get the global index of the neutral species in the mixture
+//         //     // Get the global index of the neutral species in the solution
 //         //     const Index i = pitzer.idx_neutrals[N];
 
 //         //     // Set the activity coefficient of the i-th species
@@ -1679,9 +2221,9 @@ auto ActivityModelPitzerPhreeqc() -> ActivityModelGenerator
 //     return fn;
 // }
 
-// auto ActivityModelPitzerPHREEQC() -> ActivityModelGenerator
+// auto ActivityModelPitzer() -> ActivityModelGenerator
 // {
-//     return [](SpeciesList const& species) { return createActivityModelPitzerPHREEQC(species); };
+//     return [](SpeciesList const& species) { return createActivityModelPitzer(species); };
 // }
 
 // } // namespace Reaktoro
