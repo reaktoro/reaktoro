@@ -93,6 +93,10 @@ using Pairs = Vec<Pair<T, U>>;
 template<typename... Args>
 using Tuple = std::tuple<Args...>;
 
+/// Convenient alias for `std::vector<std::tuple<Args...>>`.
+template<typename... Args>
+using Tuples = Vec<Tuple<Args...>>;
+
 /// Convenient alias for `std::unique_ptr<T>`.
 template<typename T>
 using Ptr = std::unique_ptr<T>;
