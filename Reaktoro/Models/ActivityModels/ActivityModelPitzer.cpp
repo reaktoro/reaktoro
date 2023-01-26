@@ -262,8 +262,11 @@ auto determineAlpha2(ChemicalFormula const& formula1, ChemicalFormula const& for
     return determineDefaultAlpha2(formula1, formula2);
 }
 
-/// Determine the coefficients multiplying the terms where the lambda Pitzer parameter is involved.
-/// Check equations (34-37) of Clegg (1991) (Activity Coefficients in Natural Waters).
+/// Determine the coefficients multiplying the terms where the lambda Pitzer
+/// parameter is involved. Check equations (34-37) of Clegg (1991) (Activity
+/// Coefficients in Natural Waters). Also check code in PHREEQC file pitzer.dat,
+/// under comments:
+///  * "Coef for Osmotic coefficient for TYPE_LAMDA"
 auto determineLambdaCoeffs(double z1, double z2, Index i1, Index i2) -> Tuple<double, double, double>
 {
     assert(z1 <= z2 && "Expecting species associated to binary lambda Pitzer parameter to be ordered in ascending order of charge.");
@@ -289,8 +292,12 @@ auto determineLambdaCoeffs(double z1, double z2, Index i1, Index i2) -> Tuple<do
     return {};
 }
 
-/// Determine the coefficients multiplying the terms where the mu Pitzer parameter is involved.
-/// Check equations (34-37) of Clegg (1991) (Activity Coefficients in Natural Waters).
+/// Determine the coefficients multiplying the terms where the mu Pitzer
+/// parameter is involved. Check equations (34-37) of Clegg (1991) (Activity
+/// Coefficients in Natural Waters). Also check code in PHREEQC file pitzer.dat,
+/// under comments:
+///  * "Coef for Osmotic coefficient for TYPE_MU" and
+///  * "Coef for gammas for TYPE_MU"
 auto determineMuCoeffs(double z1, double z2, double z3, Index i1, Index i2, Index i3) -> Tuple<double, double, double, double>
 {
     assert(z1 <= z2 && z2 <= z3 && "Expecting species associated to ternary mu Pitzer parameter to be ordered in ascending order of charge.");
