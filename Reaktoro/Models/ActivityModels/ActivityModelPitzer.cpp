@@ -162,6 +162,18 @@ struct PitzerParam
 /// Auxiliary alias for ActivityModelParamsPitzer::InteractionParamAttribs.
 using PitzerInteractionParamAttribs = ActivityModelParamsPitzer::InteractionParamAttribs;
 
+/// Return a given list of species indices sorted in ascending order of electric charge.
+auto sortedSpeciesIndicesByCharge(SpeciesList const& specieslist, Indices const& ispecies) -> Indices
+{
+    // Lambda function that returns the charge of the ith species in `specieslist`
+    auto chargefn = [&](auto i) { return specieslist[i].charge(); };
+
+    // Lambda function that returns true if two species indices are in ascending order of electric charge.
+    auto lesschargefn = [&](Index ispecies1, Index ispecies2) { return charge(ispecies1) < charge(ispecies2); };
+
+    return sortedfn(ispecies, lesschargefn);
+}
+
 /// Convert a PitzerInteractionParamAttribs object to a PitzerParam one for a binary interaction parameter.
 auto createPitzerParamBinary(SpeciesList const& specieslist, PitzerInteractionParamAttribs const& attribs) -> PitzerParam
 {
@@ -173,7 +185,9 @@ auto createPitzerParamBinary(SpeciesList const& specieslist, PitzerInteractionPa
     if(ispecies1 >= specieslist.size() || ispecies2 >= specieslist.size())
         return {}; // specie1 and/or species2 are not in the list of species; return empty PitzerParam object.
 
-    return PitzerParam{ {ispecies1, ispecies2}, createParamCorrectionModel(attribs.coefficients, attribs.model) };
+    Indices ispecies = sortedSpeciesIndicesByCharge(specieslist, {ispecies1, ispecies2});
+
+    return PitzerParam{ ispecies, createParamCorrectionModel(attribs.coefficients, attribs.model) };
 }
 
 /// Convert a PitzerInteractionParamAttribs object to a PitzerParam one for a ternary interaction parameter.
@@ -188,7 +202,9 @@ auto createPitzerParamTernary(SpeciesList const& specieslist, PitzerInteractionP
     if(ispecies1 >= specieslist.size() || ispecies2 >= specieslist.size() || ispecies3 >= specieslist.size())
         return {}; // specie1 and/or species2 and/or species3 are not in the list of species; return empty PitzerParam object.
 
-    return PitzerParam{ {ispecies1, ispecies2, ispecies3}, createParamCorrectionModel(attribs.coefficients, attribs.model) };
+    Indices ispecies = sortedSpeciesIndicesByCharge(specieslist, {ispecies1, ispecies2, ispecies3});
+
+    return PitzerParam{ ispecies, createParamCorrectionModel(attribs.coefficients, attribs.model) };
 }
 
 /// Auxiliary alias for ActivityModelParamsPitzer::AlphaParamAttribs
