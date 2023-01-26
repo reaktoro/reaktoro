@@ -179,11 +179,15 @@ auto createPitzerParamBinary(SpeciesList const& specieslist, PitzerInteractionPa
 {
     errorifnot(attribs.formulas.size() == 2, "Expecting two chemical formulas when processing a Pitzer binary interaction parameter but got formulas: ", str(attribs.formulas));
 
-    auto const ispecies1 = specieslist.findWithFormula(attribs.formulas[0]);
-    auto const ispecies2 = specieslist.findWithFormula(attribs.formulas[1]);
+    auto const numspecies = specieslist.size();
 
-    if(ispecies1 >= specieslist.size() || ispecies2 >= specieslist.size())
-        return {}; // specie1 and/or species2 are not in the list of species; return empty PitzerParam object.
+    auto const ispecies1 = specieslist.findWithFormula(attribs.formulas[0]);
+    if(ispecies1 >= numspecies)
+        return {}; // species1 is not present in the list of aqueous species; return empty PitzerParam object
+
+    auto const ispecies2 = specieslist.findWithFormula(attribs.formulas[1]);
+    if(ispecies2 >= numspecies)
+        return {}; // species2 is not present in the list of aqueous species; return empty PitzerParam object
 
     Indices ispecies = sortedSpeciesIndicesByCharge(specieslist, {ispecies1, ispecies2});
 
@@ -195,12 +199,19 @@ auto createPitzerParamTernary(SpeciesList const& specieslist, PitzerInteractionP
 {
     errorifnot(attribs.formulas.size() == 3, "Expecting two chemical formulas when processing a Pitzer ternary interaction parameter but got formulas: ", str(attribs.formulas));
 
-    auto const ispecies1 = specieslist.findWithFormula(attribs.formulas[0]);
-    auto const ispecies2 = specieslist.findWithFormula(attribs.formulas[1]);
-    auto const ispecies3 = specieslist.findWithFormula(attribs.formulas[2]);
+    auto const numspecies = specieslist.size();
 
-    if(ispecies1 >= specieslist.size() || ispecies2 >= specieslist.size() || ispecies3 >= specieslist.size())
-        return {}; // specie1 and/or species2 and/or species3 are not in the list of species; return empty PitzerParam object.
+    auto const ispecies1 = specieslist.findWithFormula(attribs.formulas[0]);
+    if(ispecies1 >= numspecies)
+        return {}; // species1 is not present in the list of aqueous species; return empty PitzerParam object
+
+    auto const ispecies2 = specieslist.findWithFormula(attribs.formulas[1]);
+    if(ispecies2 >= numspecies)
+        return {}; // species2 is not present in the list of aqueous species; return empty PitzerParam object
+
+    auto const ispecies3 = specieslist.findWithFormula(attribs.formulas[2]);
+    if(ispecies3 >= numspecies)
+        return {}; // species3 is not present in the list of aqueous species; return empty PitzerParam object
 
     Indices ispecies = sortedSpeciesIndicesByCharge(specieslist, {ispecies1, ispecies2, ispecies3});
 
