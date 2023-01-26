@@ -347,16 +347,19 @@ auto determineMuCoeffs(double z1, double z2, double z3, Index i1, Index i2, Inde
     return {};
 }
 
+/// The function \eq{g(x) = 2[1-(1+x)e^{-x}]/x^2} in the Pitzer model (see Eq. 11 of Plummer et al 1988).
 auto G(real const& x) -> real
 {
     return x == 0.0 ? x : 2.0*(1.0 - (1.0 + x)*exp(-x))/(x*x);
 }
 
+/// The function \eq{g^\prime(x) = -2\left[1-\left(1+x+\dfrac{1}{2}x^2\right)e^{-x}\right]/x^2} in the Pitzer model (see Eq. 12 of Plummer et al 1988).
 auto GP(real const& x) -> real
 {
     return x == 0.0 ? x : -2.0*(1.0 - (1.0 + x + 0.5*x*x)*exp(-x))/(x*x);
 }
 
+/// The function that computes electrostatic mixing effects of unsymmetrical cation-cation and anion-anion pairs \eq{^{E}\theta_{ij}(I)} and \eq{^{E}\theta_{ij}^{\prime}(I)}.
 auto computeThetaValues(real const& I, real const& sqrtI, real const& Aphi, double zi, double zj) -> Pair<real, real>
 {
     const auto aux = 6.0*Aphi*sqrtI;
