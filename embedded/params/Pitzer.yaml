@@ -1,6 +1,8 @@
+# Parameters collected from PHREEQC v3.3.7
+
 ActivityModelParams:
   Pitzer:
-    B0:
+    beta0:
       [ B(OH)4-, K+, 0.035 ]
       [ B(OH)4-, Na+, -0.0427 ]
       [ B3O3(OH)4-, K+, -0.13 ]
@@ -55,7 +57,7 @@ ActivityModelParams:
       [ Na+, OH-, 0.0864, 0, 0, 7.00E-4 ]
       [ Na+, SO4-2, 2.73e-2, 0, -5.8, 9.89e-3, 0, -1.563e5 ]
       [ SO4-2, Sr+2, 0.200, 0, 0, -2.9E-3 ]
-    B1:
+    beta1:
       [ B(OH)4-, K+, 0.14 ]
       [ B(OH)4-, Na+, 0.089 ]
       [ B3O3(OH)4-, Na+, -0.910 ]
@@ -104,7 +106,7 @@ ActivityModelParams:
       [ Na+, OH-, 0.253, 0, 0, 1.34E-4 ]
       [ Na+, SO4-2, 0.956, 2.663e3, 0, 1.158e-2, 0, -3.194e5 ]
       [ SO4-2, Sr+2, 3.1973, 0, 0, 27e-3 ]
-    B2:
+    beta2:
       [ Ca+2, Cl-, -1.13, 0, 0, -0.0476 ]
       [ Ca+2, OH-, -5.72 ]
       [ Ca+2, SO4-2, -59.3, 0, 0, -0.443, -3.96e-6 ]
@@ -113,7 +115,7 @@ ActivityModelParams:
       [ Mg+2, SO4-2, -32.45, 0, -3.236e3, 21.812, -1.8859e-2 ]
       [ Mn+2, SO4-2, -40.0 ]
       [ SO4-2, Sr+2, -54.24, 0, 0, -0.42 ]
-    C0:
+    Cphi:
       [ B(OH)4-, Na+, 0.0114 ]
       [ Ba+2, Br-, -0.0159576 ]
       [ Ba+2, Cl-, -0.143, -114.5 ]
@@ -146,7 +148,7 @@ ActivityModelParams:
       [ Mn+2, SO4-2, 0.01636 ]
       [ Na+, OH-, 0.0044, 0, 0, -18.94E-5 ]
       [ Na+, SO4-2, 3.418e-3, -384, 0, -8.451e-4, 0, 5.177e4 ]
-    THETA:
+    theta:
       [ B(OH)4-, Cl-, -0.065 ]
       [ B(OH)4-, SO4-2, -0.012 ]
       [ B3O3(OH)4-, Cl-, 0.12 ]
@@ -177,7 +179,7 @@ ActivityModelParams:
       [ Mg+2, Na+, 0.07 ]
       [ Na+, Sr+2, 0.051 ]
       [ OH-, SO4-2, -0.013 ]
-    LAMDA:
+    lambda:
       [ B(OH)3, Cl-, 0.091 ]
       [ B(OH)3, K+, -0.14 ]
       [ B(OH)3, Na+, -0.097 ]
@@ -202,7 +204,7 @@ ActivityModelParams:
       [ H4SiO4, Mg+2, 0.238, -1788, -9.023, 0.0103 ]
       [ H4SiO4, Na+, 0.0566, 75.3, 0.115 ]
       [ H4SiO4, SO4-2, -0.085, 0, 0.28, -8.25e-4 ]
-    ZETA:
+    zeta:
       [ B(OH)3, Cl-, H+, -0.0102 ]
       [ B(OH)3, Na+, SO4-2, 0.046 ]
       [ Cl-, H4SiO4, K+, -0.0153 ]
@@ -212,7 +214,7 @@ ActivityModelParams:
       [ H2Sg, Na+, SO4-2, 0.157 ]
       [ (H2Sg)2, Cl-, Na+, 0.0119 ]
       [ (H2Sg)2, Na+, SO4-2, -0.167 ]
-    PSI:
+    psi:
       [ B(OH)4-, Cl-, Na+, -0.0073 ]
       [ B3O3(OH)4-, Cl-, Na+, -0.024 ]
       [ B4O5(OH)4-2 Cl-, Na+, 0.026 ]
