@@ -681,20 +681,62 @@ struct PitzerModel
         Aphi = BilinearInterpolator(Aphi_temperatures, Aphi_pressures, Aphi_data);
     }
 
+    /// Update all Pitzer interaction parameters according to current temperature and pressure.
+    auto updateParams(real const& T, real const& P)
+    {
+        // Note: Do not try to avoid the calculations before in case T and P is
+        // the same as last time because T and P could be the same but the Param
+        // objects in these models could be changing!
+
+        auto const Pbar = P * 1e-5; // from Pa to bar
+
+        for(auto& param : beta0)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : beta1)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : beta2)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : Cphi)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : theta)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : psi)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : lambda)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : zeta)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : mu)
+            param.value = param.model(T, Pbar);
+
+        for(auto& param : eta)
+            param.value = param.model(T, Pbar);
+    }
+
+    /// Evaluate the Pitzer model and compute the properties of the aqueous solution.
     auto evaluate(AqueousMixtureState const& aqstate, PitzerState& pzstate)
     {
-        auto const& T = aqstate.T;
-        auto const& P = aqstate.P;
-        auto const& M = aqstate.m;
-        auto const& I = aqstate.Ie;
+        auto const& T = aqstate.T; // in K
+        auto const& P = aqstate.P; // in Pa
+        auto const& M = aqstate.m; // in molal
         auto const& z = solution.charges();
-
         auto const& iH2O = solution.indexWater();
         auto const& icharged = solution.indicesCharged();
+        auto const& Mw = waterMolarMass; // in kg/mol
 
-        // The molar mass of water
-        auto const Mw = waterMolarMass;
+        /// Update all Pitzer interaction parameters according to current temperature and pressure.
+        updateParams(T, P);
 
+        // The ionic strength of the solution and its square-root
+        auto const I = aqstate.Ie;
         auto const DI = sqrt(I);
 
         auto const numspecies = M.size();
@@ -704,7 +746,6 @@ struct PitzerModel
         auto& LGAMMA = pzstate.ln_gamma = zeros(numspecies);
 
         real CSUM = 0.0;
-
         real BIGZ = (M * z.abs()).sum();
         real OSUM = M.sum() - M[iH2O];
 
