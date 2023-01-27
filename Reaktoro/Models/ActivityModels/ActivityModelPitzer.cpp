@@ -598,14 +598,54 @@ struct PitzerModel
             OSMOT += M[i0] * M[i1] * M[i2] * param.value;
         }
 
-        for(auto const& param : lambda)
+        for(auto const& [i, param] : enumerate(lambda))
         {
             const auto i0 = param.ispecies[0];
             const auto i1 = param.ispecies[1];
 
-            LGAMMA[i0] += M[i1] * param.value * pitz_params[i]->ln_coef[0];
-            LGAMMA[i1] += M[i0] * param.value * pitz_params[i]->ln_coef[1];
-            OSMOT += M[i0] * M[i1] * param.value * pitz_params[i]->os_coef;
+            const auto [clng0, clng1, cosm] = lambda_coeffs[i];
+
+            LGAMMA[i0] += M[i1] * param * clng0;
+            LGAMMA[i1] += M[i0] * param * clng1;
+            OSMOT += M[i0] * M[i1] * param * cosm;
+        }
+
+        for(auto const& param : zeta)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+            const auto i2 = param.ispecies[2];
+
+            LGAMMA[i0] += M[i1] * M[i2] * param.value;
+            LGAMMA[i1] += M[i0] * M[i2] * param.value;
+            LGAMMA[i2] += M[i0] * M[i1] * param.value;
+            OSMOT += M[i0] * M[i1] * M[i2] * param.value;
+        }
+
+        for(auto const& [i, param] : enumerate(mu))
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+            const auto i2 = param.ispecies[2];
+
+            const auto [clng0, clng1, clng2, cosm] = mu_coeffs[i];
+
+            LGAMMA[i0] += M[i1] * M[i2] * param.value * clng0;
+            LGAMMA[i1] += M[i0] * M[i2] * param.value * clng1;
+            LGAMMA[i2] += M[i0] * M[i1] * param.value * clng2;
+            OSMOT += M[i0] * M[i1] * M[i2] * param.value * cosm;
+        }
+
+        for(auto const& param : eta)
+        {
+            const auto i0 = param.ispecies[0];
+            const auto i1 = param.ispecies[1];
+            const auto i2 = param.ispecies[2];
+
+            LGAMMA[i0] += M[i1] * M[i2] * param.value;
+            LGAMMA[i1] += M[i0] * M[i2] * param.value;
+            LGAMMA[i2] += M[i0] * M[i1] * param.value;
+            OSMOT += M[i0] * M[i1] * M[i2] * param.value;
         }
     }
 };
