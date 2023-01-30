@@ -9,39 +9,39 @@ ActivityModelParams:
       - { Formulas: [ B3O3(OH)4-, Na+ ],       CorrectionModel: Phreeqc, Parameters: [ -0.056 ] }
       - { Formulas: [ B4O5(OH)4-2, K+ ],       CorrectionModel: Phreeqc, Parameters: [ -0.022 ] }
       - { Formulas: [ B4O5(OH)4-2, Na+ ],      CorrectionModel: Phreeqc, Parameters: [ -0.11 ] }
-      - { Formulas: [ Ba+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 0.31455, 0.0, 0.0, -0.33825E-3 ] }
+      - { Formulas: [ Ba+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 0.31455, 0.0, 0.0, -0.33825e-3 ] }
       - { Formulas: [ Ba+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ 0.5268, 0.0, 0.0, 0.0, 0.0, 4.75e+4 ] }
       - { Formulas: [ Ba+2, OH- ],             CorrectionModel: Phreeqc, Parameters: [ 0.17175 ] }
-      - { Formulas: [ Br-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.1960, 0.0, 0.0, -2.049E-4 ] }
-      - { Formulas: [ Br-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.0569, 0.0, 0.0, 7.39E-4 ] }
-      - { Formulas: [ Br-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.1748, 0.0, 0.0, -1.819E-4 ] }
-      - { Formulas: [ Br-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.4327, 0.0, 0.0, -5.625E-5 ] }
-      - { Formulas: [ Br-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.0973, 0.0, 0.0, 7.692E-4 ] }
-      - { Formulas: [ Br-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.331125, 0.0, 0.0, -0.32775E-3 ] }
-      - { Formulas: [ Ca+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 0.3816, 0.0, 0.0, -5.2275E-4 ] }
+      - { Formulas: [ Br-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.1960, 0.0, 0.0, -2.049e-4 ] }
+      - { Formulas: [ Br-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.0569, 0.0, 0.0, 7.39e-4 ] }
+      - { Formulas: [ Br-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.1748, 0.0, 0.0, -1.819e-4 ] }
+      - { Formulas: [ Br-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.4327, 0.0, 0.0, -5.625e-5 ] }
+      - { Formulas: [ Br-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.0973, 0.0, 0.0, 7.692e-4 ] }
+      - { Formulas: [ Br-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.331125, 0.0, 0.0, -0.32775e-3 ] }
+      - { Formulas: [ Ca+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 0.3816, 0.0, 0.0, -5.2275e-4 ] }
       - { Formulas: [ Ca+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ 0.3159, 0.0, 0.0, -3.27e-4, 1.4e-7 ] }
       - { Formulas: [ Ca+2, HCO3- ],           CorrectionModel: Phreeqc, Parameters: [ 0.4 ] }
       - { Formulas: [ Ca+2, HSO4- ],           CorrectionModel: Phreeqc, Parameters: [ 0.2145 ] }
       - { Formulas: [ Ca+2, OH- ],             CorrectionModel: Phreeqc, Parameters: [ -0.1747 ] }
-      - { Formulas: [ Ca+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0 ] }
+      - { Formulas: [ Ca+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.0 ] }
       - { Formulas: [ CaB(OH)4+, Cl- ],        CorrectionModel: Phreeqc, Parameters: [ 0.12 ] }
       - { Formulas: [ Cl-, Fe+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.335925 ] }
-      - { Formulas: [ Cl-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.1775, 0.0, 0.0, -3.081E-4 ] }
+      - { Formulas: [ Cl-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.1775, 0.0, 0.0, -3.081e-4 ] }
       - { Formulas: [ Cl-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.04808, -758.48, -4.7062, 0.010072, -3.7599e-6 ] }
-      - { Formulas: [ Cl-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.1494, 0.0, 0.0, -1.685E-4 ] }
+      - { Formulas: [ Cl-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.1494, 0.0, 0.0, -1.685e-4 ] }
       - { Formulas: [ Cl-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.351, 0.0, 0.0, -9.32e-4, 5.94e-7 ] }
       - { Formulas: [ Cl-, MgB(OH)4+ ],        CorrectionModel: Phreeqc, Parameters: [ 0.16 ] }
       - { Formulas: [ Cl-, MgOH+ ],            CorrectionModel: Phreeqc, Parameters: [ -0.1 ] }
       - { Formulas: [ Cl-, Mn+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.327225 ] }
       - { Formulas: [ Cl-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 7.534e-2, 9598.4, 35.48, -5.8731e-2, 1.798e-5, -5.0e+5 ] }
-      - { Formulas: [ Cl-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.2858, 0.0, 0.0, 0.717E-3 ] }
-      - { Formulas: [ CO3-2, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.1488, 0.0, 0.0, 1.788E-3 ] }
-      - { Formulas: [ CO3-2, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 0.0399, 0.0, 0.0, 1.79E-3 ] }
+      - { Formulas: [ Cl-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.2858, 0.0, 0.0, 0.717e-3 ] }
+      - { Formulas: [ CO3-2, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.1488, 0.0, 0.0, 1.788e-3 ] }
+      - { Formulas: [ CO3-2, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 0.0399, 0.0, 0.0, 1.79e-3 ] }
       - { Formulas: [ Fe+2, HSO4- ],           CorrectionModel: Phreeqc, Parameters: [ 0.4273 ] }
       - { Formulas: [ Fe+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.2568 ] }
       - { Formulas: [ H+, HSO4- ],             CorrectionModel: Phreeqc, Parameters: [ 0.2065 ] }
       - { Formulas: [ H+, SO4-2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.0298 ] }
-      - { Formulas: [ HCO3-, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.0296, 0.0, 0.0, 0.996E-3 ] }
+      - { Formulas: [ HCO3-, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.0296, 0.0, 0.0, 0.996e-3 ] }
       - { Formulas: [ HCO3-, Mg+2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.329 ] }
       - { Formulas: [ HCO3-, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ -0.018 ] }
       - { Formulas: [ HCO3-, Sr+2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.12 ] }
@@ -51,60 +51,60 @@ ActivityModelParams:
       - { Formulas: [ K+, OH- ],               CorrectionModel: Phreeqc, Parameters: [ 0.1298 ] }
       - { Formulas: [ K+, SO4-2 ],             CorrectionModel: Phreeqc, Parameters: [ 3.17e-2, 0.0, 0.0, 9.28e-4 ] }
       - { Formulas: [ Li+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.015 ] }
-      - { Formulas: [ Li+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 0.136275, 0.0, 0.0, 0.5055E-3 ] }
+      - { Formulas: [ Li+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 0.136275, 0.0, 0.0, 0.5055e-3 ] }
       - { Formulas: [ Mg+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.2135, -951, 0.0, -2.34e-2, 2.28e-5 ] }
       - { Formulas: [ Mn+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.2065 ] }
-      - { Formulas: [ Na+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.0864, 0.0, 0.0, 7.00E-4 ] }
+      - { Formulas: [ Na+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.0864, 0.0, 0.0, 7.00e-4 ] }
       - { Formulas: [ Na+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 2.73e-2, 0.0, -5.8, 9.89e-3, 0.0, -1.563e+5 ] }
-      - { Formulas: [ SO4-2, Sr+2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.200, 0.0, 0.0, -2.9E-3 ] }
+      - { Formulas: [ SO4-2, Sr+2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.200, 0.0, 0.0, -2.9e-3 ] }
     Beta1:
       - { Formulas: [ B(OH)4-, K+ ],           CorrectionModel: Phreeqc, Parameters: [ 0.14 ] }
       - { Formulas: [ B(OH)4-, Na+ ],          CorrectionModel: Phreeqc, Parameters: [ 0.089 ] }
       - { Formulas: [ B3O3(OH)4-, Na+ ],       CorrectionModel: Phreeqc, Parameters: [ -0.910 ] }
       - { Formulas: [ B4O5(OH)4-2, Na+ ],      CorrectionModel: Phreeqc, Parameters: [ -0.40 ] }
-      - { Formulas: [ Ba+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 1.56975, 0.0, 0.0, 6.78E-3 ] }
+      - { Formulas: [ Ba+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 1.56975, 0.0, 0.0, 6.78e-3 ] }
       - { Formulas: [ Ba+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ 0.687, 0.0, 0.0, 1.417e-2 ] }
       - { Formulas: [ Ba+2, OH- ],             CorrectionModel: Phreeqc, Parameters: [ 1.2 ] }
-      - { Formulas: [ Br-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.3564, 0.0, 0.0, 4.467E-4 ] }
-      - { Formulas: [ Br-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.2212, 0.0, 0.0, 17.40E-4 ] }
-      - { Formulas: [ Br-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.2547, 0.0, 0.0, 6.636E-4 ] }
-      - { Formulas: [ Br-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.753, 0.0, 0.0, 3.8625E-3 ] }
-      - { Formulas: [ Br-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.2791, 0.0, 0.0, 10.79E-4 ] }
-      - { Formulas: [ Br-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.7115, 0.0, 0.0, 6.5325E-3 ] }
-      - { Formulas: [ Ca+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 1.613, 0.0, 0.0, 6.0375E-3 ] }
+      - { Formulas: [ Br-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.3564, 0.0, 0.0, 4.467e-4 ] }
+      - { Formulas: [ Br-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.2212, 0.0, 0.0, 17.40e-4 ] }
+      - { Formulas: [ Br-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.2547, 0.0, 0.0, 6.636e-4 ] }
+      - { Formulas: [ Br-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.753, 0.0, 0.0, 3.8625e-3 ] }
+      - { Formulas: [ Br-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.2791, 0.0, 0.0, 10.79e-4 ] }
+      - { Formulas: [ Br-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.7115, 0.0, 0.0, 6.5325e-3 ] }
+      - { Formulas: [ Ca+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ 1.613, 0.0, 0.0, 6.0375e-3 ] }
       - { Formulas: [ Ca+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ 1.614, 0.0, 0.0, 7.63e-3, -8.19e-7 ] }
       - { Formulas: [ Ca+2, HCO3- ],           CorrectionModel: Phreeqc, Parameters: [ 2.977 ] }
       - { Formulas: [ Ca+2, HSO4- ],           CorrectionModel: Phreeqc, Parameters: [ 2.53 ] }
       - { Formulas: [ Ca+2, OH- ],             CorrectionModel: Phreeqc, Parameters: [ -0.2303 ] }
       - { Formulas: [ Ca+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 3.546, 0.0, 0.0, 5.77e-3 ] }
       - { Formulas: [ Cl-, Fe+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.53225 ] }
-      - { Formulas: [ Cl-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.2945, 0.0, 0.0, 1.419E-4 ] }
+      - { Formulas: [ Cl-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.2945, 0.0, 0.0, 1.419e-4 ] }
       - { Formulas: [ Cl-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.2168, 0.0, -6.895, 2.262e-2, -9.293e-6, -1.0e+5 ] }
-      - { Formulas: [ Cl-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.3074, 0.0, 0.0, 5.366E-4 ] }
+      - { Formulas: [ Cl-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.3074, 0.0, 0.0, 5.366e-4 ] }
       - { Formulas: [ Cl-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.65, 0.0, 0.0, -1.09e-2, 2.60e-5 ] }
       - { Formulas: [ Cl-, MgOH+ ],            CorrectionModel: Phreeqc, Parameters: [ 1.658 ] }
       - { Formulas: [ Cl-, Mn+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.55025 ] }
-      - { Formulas: [ Cl-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.2769, 1.377e+4 , 46.8, -6.9512e-2, 2.0e-5, -7.4823e+5 ] }
-      - { Formulas: [ Cl-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.667, 0.0, 0.0, 2.8425E-3 ] }
-      - { Formulas: [ CO3-2, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 1.43, 0.0, 0.0, 2.051E-3 ] }
-      - { Formulas: [ CO3-2, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 1.389, 0.0, 0.0, 2.05E-3 ] }
+      - { Formulas: [ Cl-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.2769, 1.377e+4, 46.8, -6.9512e-2, 2.0e-5, -7.4823e+5 ] }
+      - { Formulas: [ Cl-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 1.667, 0.0, 0.0, 2.8425e-3 ] }
+      - { Formulas: [ CO3-2, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 1.43, 0.0, 0.0, 2.051e-3 ] }
+      - { Formulas: [ CO3-2, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 1.389, 0.0, 0.0, 2.05e-3 ] }
       - { Formulas: [ Fe+2, HSO4- ],           CorrectionModel: Phreeqc, Parameters: [ 3.48 ] }
       - { Formulas: [ Fe+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 3.063 ] }
       - { Formulas: [ H+, HSO4- ],             CorrectionModel: Phreeqc, Parameters: [ 0.5556 ] }
-      - { Formulas: [ HCO3-, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.25, 0.0, 0.0, 1.104E-3 ] }
+      - { Formulas: [ HCO3-, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.25, 0.0, 0.0, 1.104e-3 ] }
       - { Formulas: [ HCO3-, Mg+2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.6072 ] }
-      - { Formulas: [ HCO3-, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 0 ] }
+      - { Formulas: [ HCO3-, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 0.0 ] }
       - { Formulas: [ HSO4-, K+ ],             CorrectionModel: Phreeqc, Parameters: [ 0.1735 ] }
       - { Formulas: [ HSO4-, Mg+2 ],           CorrectionModel: Phreeqc, Parameters: [ 1.729 ] }
       - { Formulas: [ HSO4-, Na+ ],            CorrectionModel: Phreeqc, Parameters: [ 0.398 ] }
       - { Formulas: [ K+, OH- ],               CorrectionModel: Phreeqc, Parameters: [ 0.32 ] }
       - { Formulas: [ K+, SO4-2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.756, -1.514e+4, -80.3, 0.1091 ] }
       - { Formulas: [ Li+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.14 ] }
-      - { Formulas: [ Li+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 1.2705, 0.0, 0.0, 1.41E-3 ] }
-      - { Formulas: [ Mg+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 3.367, -5.78e+3 , 0.0, -1.48e-1, 1.576e-4 ] }
+      - { Formulas: [ Li+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 1.2705, 0.0, 0.0, 1.41e-3 ] }
+      - { Formulas: [ Mg+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 3.367, -5.78e+3, 0.0, -1.48e-1, 1.576e-4 ] }
       - { Formulas: [ Mn+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 2.9511 ] }
-      - { Formulas: [ Na+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.253, 0.0, 0.0, 1.34E-4 ] }
-      - { Formulas: [ Na+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 0.956, 2.663e+3 , 0.0, 1.158e-2, 0.0, -3.194e+5 ] }
+      - { Formulas: [ Na+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.253, 0.0, 0.0, 1.34e-4 ] }
+      - { Formulas: [ Na+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 0.956, 2.663e+3, 0.0, 1.158e-2, 0.0, -3.194e+5 ] }
       - { Formulas: [ SO4-2, Sr+2 ],           CorrectionModel: Phreeqc, Parameters: [ 3.1973, 0.0, 0.0, 27.0e-3 ] }
     Beta2:
       - { Formulas: [ Ca+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ -1.13, 0.0, 0.0, -0.0476 ] }
@@ -120,18 +120,18 @@ ActivityModelParams:
       - { Formulas: [ Ba+2, Br- ],             CorrectionModel: Phreeqc, Parameters: [ -0.0159576 ] }
       - { Formulas: [ Ba+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ -0.143, -114.5 ] }
       - { Formulas: [ Br-, Ca+2 ],             CorrectionModel: Phreeqc, Parameters: [ -0.00257 ] }
-      - { Formulas: [ Br-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.00827, 0.0, 0.0, -5.685E-5 ] }
-      - { Formulas: [ Br-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ -0.00180, 0.0, 0.0, -7.004E-5 ] }
-      - { Formulas: [ Br-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.0053, 0.0, 0.0, -2.813E-5 ] }
+      - { Formulas: [ Br-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.00827, 0.0, 0.0, -5.685e-5 ] }
+      - { Formulas: [ Br-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ -0.00180, 0.0, 0.0, -7.004e-5 ] }
+      - { Formulas: [ Br-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.0053, 0.0, 0.0, -2.813e-5 ] }
       - { Formulas: [ Br-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.00312 ] }
-      - { Formulas: [ Br-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.00116, 0.0, 0.0, -9.30E-5 ] }
+      - { Formulas: [ Br-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.00116, 0.0, 0.0, -9.30e-5 ] }
       - { Formulas: [ Br-, Sr+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.00122506 ] }
       - { Formulas: [ Ca+2, Cl- ],             CorrectionModel: Phreeqc, Parameters: [ 1.4e-4, -57, -0.098, -7.83e-4, 7.18e-7 ] }
       - { Formulas: [ Ca+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.114 ] }
       - { Formulas: [ Cl-, Fe+2 ],             CorrectionModel: Phreeqc, Parameters: [ -0.00860725 ] }
-      - { Formulas: [ Cl-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.0008, 0.0, 0.0, 6.213E-5 ] }
+      - { Formulas: [ Cl-, H+ ],               CorrectionModel: Phreeqc, Parameters: [ 0.0008, 0.0, 0.0, 6.213e-5 ] }
       - { Formulas: [ Cl-, K+ ],               CorrectionModel: Phreeqc, Parameters: [ -7.88e-4, 91.27, 0.58643, -1.298e-3, 4.9567e-7 ] }
-      - { Formulas: [ Cl-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.00359, 0.0, 0.0, -4.520E-5 ] }
+      - { Formulas: [ Cl-, Li+ ],              CorrectionModel: Phreeqc, Parameters: [ 0.00359, 0.0, 0.0, -4.520e-5 ] }
       - { Formulas: [ Cl-, Mg+2 ],             CorrectionModel: Phreeqc, Parameters: [ 0.00651, 0.0, 0.0, -2.50e-4, 2.418e-7 ] }
       - { Formulas: [ Cl-, Mn+2 ],             CorrectionModel: Phreeqc, Parameters: [ -0.0204972 ] }
       - { Formulas: [ Cl-, Na+ ],              CorrectionModel: Phreeqc, Parameters: [ 1.48e-3, -120.5, -0.2081, 0.0, 1.166e-7, 11121 ] }
@@ -146,7 +146,7 @@ ActivityModelParams:
       - { Formulas: [ Li+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ -0.00399338, 0.0, 0.0, -2.33345e-4 ] }
       - { Formulas: [ Mg+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 2.875e-2, 0.0, -2.084, 1.1428e-2, -8.228e-6 ] }
       - { Formulas: [ Mn+2, SO4-2 ],           CorrectionModel: Phreeqc, Parameters: [ 0.01636 ] }
-      - { Formulas: [ Na+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.0044, 0.0, 0.0, -18.94E-5 ] }
+      - { Formulas: [ Na+, OH- ],              CorrectionModel: Phreeqc, Parameters: [ 0.0044, 0.0, 0.0, -18.94e-5 ] }
       - { Formulas: [ Na+, SO4-2 ],            CorrectionModel: Phreeqc, Parameters: [ 3.418e-3, -384, 0.0, -8.451e-4, 0.0, 5.177e+4 ] }
     Theta:
       - { Formulas: [ B(OH)4-, Cl- ],          CorrectionModel: Phreeqc, Parameters: [ -0.065 ] }
@@ -225,20 +225,20 @@ ActivityModelParams:
       - { Formulas: [ Ca+2, Cl-, H+ ],         CorrectionModel: Phreeqc, Parameters: [ -0.015 ] }
       - { Formulas: [ Ca+2, Cl-, K+ ],         CorrectionModel: Phreeqc, Parameters: [ -0.025 ] }
       - { Formulas: [ Ca+2, Cl-, Mg+2 ],       CorrectionModel: Phreeqc, Parameters: [ -0.012 ] }
-      - { Formulas: [ Ca+2, Cl-, Na+ ],        CorrectionModel: Phreeqc, Parameters: [ -1.48e-2 , 0.0, 0.0, -5.2e-6 ] }
+      - { Formulas: [ Ca+2, Cl-, Na+ ],        CorrectionModel: Phreeqc, Parameters: [ -1.48e-2, 0.0, 0.0, -5.2e-6 ] }
       - { Formulas: [ Ca+2, Cl-, OH- ],        CorrectionModel: Phreeqc, Parameters: [ -0.025 ] }
       - { Formulas: [ Ca+2, Cl-, SO4-2 ],      CorrectionModel: Phreeqc, Parameters: [ -0.122, 0.0, 0.0, -1.21e-3 ] }
       - { Formulas: [ Ca+2, K+, SO4-2 ],       CorrectionModel: Phreeqc, Parameters: [ -0.0365 ] }
       - { Formulas: [ Ca+2, Mg+2, SO4-2 ],     CorrectionModel: Phreeqc, Parameters: [ 0.024 ] }
       - { Formulas: [ Ca+2, Na+, SO4-2 ],      CorrectionModel: Phreeqc, Parameters: [ -0.055, 17.2 ] }
-      - { Formulas: [ Cl-, Br-, K+ ],          CorrectionModel: Phreeqc, Parameters: [ 0 ] }
+      - { Formulas: [ Cl-, Br-, K+ ],          CorrectionModel: Phreeqc, Parameters: [ 0.0 ] }
       - { Formulas: [ Cl-, CO3-2, K+ ],        CorrectionModel: Phreeqc, Parameters: [ 0.004 ] }
       - { Formulas: [ Cl-, CO3-2, Na+ ],       CorrectionModel: Phreeqc, Parameters: [ 0.0085 ] }
       - { Formulas: [ Cl-, H+, K+ ],           CorrectionModel: Phreeqc, Parameters: [ -0.011 ] }
       - { Formulas: [ Cl-, H+, Mg+2 ],         CorrectionModel: Phreeqc, Parameters: [ -0.011 ] }
       - { Formulas: [ Cl-, H+, Na+ ],          CorrectionModel: Phreeqc, Parameters: [ -0.004 ] }
       - { Formulas: [ Cl-, HCO3-, Mg+2 ],      CorrectionModel: Phreeqc, Parameters: [ -0.096 ] }
-      - { Formulas: [ Cl-, HCO3-, Na+ ],       CorrectionModel: Phreeqc, Parameters: [ 0 ] }
+      - { Formulas: [ Cl-, HCO3-, Na+ ],       CorrectionModel: Phreeqc, Parameters: [ 0.0 ] }
       - { Formulas: [ Cl-, HSO4-, H+ ],        CorrectionModel: Phreeqc, Parameters: [ 0.013 ] }
       - { Formulas: [ Cl-, HSO4-, Na+ ],       CorrectionModel: Phreeqc, Parameters: [ -0.006 ] }
       - { Formulas: [ Cl-, K+, Mg+2 ],         CorrectionModel: Phreeqc, Parameters: [ -0.022, -14.27 ] }
@@ -249,7 +249,7 @@ ActivityModelParams:
       - { Formulas: [ Cl-, Mg+2, Na+ ],        CorrectionModel: Phreeqc, Parameters: [ -0.012, -9.51 ] }
       - { Formulas: [ Cl-, Mg+2, SO4-2 ],      CorrectionModel: Phreeqc, Parameters: [ -0.008, 32.63 ] }
       - { Formulas: [ Cl-, Na+, OH- ],         CorrectionModel: Phreeqc, Parameters: [ -0.006 ] }
-      - { Formulas: [ Cl-, Na+, SO4-2 ],       CorrectionModel: Phreeqc, Parameters: [ 0 ] }
+      - { Formulas: [ Cl-, Na+, SO4-2 ],       CorrectionModel: Phreeqc, Parameters: [ 0.0 ] }
       - { Formulas: [ Cl-, Na+, Sr+2 ],        CorrectionModel: Phreeqc, Parameters: [ -0.0021 ] }
       - { Formulas: [ CO3-2, HCO3-, K+ ],      CorrectionModel: Phreeqc, Parameters: [ 0.012 ] }
       - { Formulas: [ CO3-2, HCO3-, Na+ ],     CorrectionModel: Phreeqc, Parameters: [ 0.002 ] }
