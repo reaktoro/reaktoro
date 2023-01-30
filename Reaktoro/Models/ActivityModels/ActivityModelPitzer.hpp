@@ -44,11 +44,11 @@ struct ActivityModelParamsPitzer
     /// The attributes of an interaction parameter in the Pitzer activity model.
     struct InteractionParamAttribs
     {
-        /// The chemical formulas of the species associated to this interaction parameter sorted in descending order of charge.
-        Vec<ChemicalFormula> formulas;
-
         /// The model used for temperature-pressure correction of this interaction parameter (options).
         CorrectionModel model;
+
+        /// The chemical formulas of the species associated to this interaction parameter sorted in descending order of charge.
+        Vec<ChemicalFormula> formulas;
 
         /// The coefficients for the temperature-pressure correction model of this interaction parameter.
         Vec<Param> coefficients;
