@@ -29,6 +29,7 @@ void exportActivityModelIdealGas(py::module& m);
 void exportActivityModelIdealIonExchange(py::module& m);
 void exportActivityModelIdealSolution(py::module& m);
 void exportActivityModelIonExchange(py::module& m);
+void exportActivityModelPitzer(py::module& m);
 void exportActivityModelPitzerHMW(py::module& m);
 void exportActivityModelRedlichKister(py::module& m);
 void exportActivityModelRumpf(py::module& m);
@@ -54,6 +55,7 @@ void exportActivityModels(py::module& m)
     exportActivityModelIdealIonExchange(m);
     exportActivityModelIdealSolution(m);
     exportActivityModelIonExchange(m);
+    exportActivityModelPitzer(m);
     exportActivityModelPitzerHMW(m);
     exportActivityModelRedlichKister(m);
     exportActivityModelRumpf(m);
