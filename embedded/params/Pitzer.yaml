@@ -274,3 +274,7 @@ ActivityModelParams:
       - { Formulas: [ K+, OH-, SO4-2 ],        CorrectionModel: Phreeqc, Parameters: [ -0.050 ] }
       - { Formulas: [ Mg+2, Na+, SO4-2 ],      CorrectionModel: Phreeqc, Parameters: [ -0.015 ] }
       - { Formulas: [ Na+, OH-, SO4-2 ],       CorrectionModel: Phreeqc, Parameters: [ -0.009 ] }
+    Alpha1:
+      - { Formulas: [ Na+, Cl- ],              CorrectionModel: Constant, Parameters: [ 2.0 ] }
+    Alpha2:
+      - { Formulas: [ Na+, Cl- ],              CorrectionModel: Constant, Parameters: [ 12.0 ] }
