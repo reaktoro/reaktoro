@@ -20,6 +20,6 @@ from reaktoro import *
 import pytest
 
 
-# TODO Implement tests for the python bindings of component ActivityModelPitzerPhreeqc in ActivityModelPitzerPhreeqc[test].py
-def testActivityModelPitzerPhreeqc():
+# TODO Implement tests for the python bindings of component ActivityModelPitzer in ActivityModelPitzer[test].py
+def testActivityModelPitzer():
     pass
