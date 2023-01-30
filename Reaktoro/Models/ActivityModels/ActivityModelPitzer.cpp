@@ -235,6 +235,18 @@ auto J1(real x) -> real
 /// Auxiliary alias for ActivityModelParamsPitzer::CorrectionModel.
 using PitzerParamCorrectionModel = ActivityModelParamsPitzer::CorrectionModel;
 
+/// Return the Pitzer temperature-pressure correction model based on constant expression.
+auto createParamCorrectionModelConstant(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+{
+    auto const& c = coefficients;
+
+    errorif(c.size() == 0, "Cannot create the Constant temperature-dependent Pitzer parameter function with empty coefficients");
+
+    return [=](real const& T, real const& Pbar) { return c[0]; };
+
+    errorif(true, "Cannot create the Constant temperature-dependent Pitzer parameter function with given coefficients (which should be only one): ", str(c));
+}
+
 /// Return the Pitzer temperature-pressure correction model based on expression provided by PHREEQC v3.
 auto createParamCorrectionModelPhreeqc(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
 {
@@ -301,7 +313,7 @@ auto createParamCorrectionModelPolya2001(Vec<Param> const& coefficients) -> Fn<r
     errorif(true, "Currently, the `Polya2001` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
-/// Return the Pitzer temperature-pressure correction model based on expression provided by Lia and Duan (2007) (see Table 12 in 10.1016/j.chemgeo.2007.07.023).
+/// Return the Pitzer temperature-pressure correction model based on expression provided by Li and Duan (2007) (see Table 12 in 10.1016/j.chemgeo.2007.07.023).
 auto createParamCorrectionModelLiDuan2007(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `LiDuan2007` temperature-pressure correction model for Pitzer parameters are not implemented");
@@ -312,6 +324,7 @@ auto createParamCorrectionModel(Vec<Param> const& coefficients, PitzerParamCorre
 {
     switch(option)
     {
+        case PitzerParamCorrectionModel::Constant:           return createParamCorrectionModelConstant(coefficients);
         case PitzerParamCorrectionModel::Phreeqc:            return createParamCorrectionModelPhreeqc(coefficients);
         case PitzerParamCorrectionModel::HeMorse1993:        return createParamCorrectionModelHeMorse1993(coefficients);
         case PitzerParamCorrectionModel::Dai2013:            return createParamCorrectionModelDai2013(coefficients);
@@ -377,7 +390,7 @@ auto createPitzerParamBinary(SpeciesList const& specieslist, PitzerInteractionPa
 
     Indices ispecies = sortedSpeciesIndicesByCharge(specieslist, {ispecies1, ispecies2});
 
-    return PitzerParam{ ispecies, createParamCorrectionModel(attribs.coefficients, attribs.model) };
+    return PitzerParam{ ispecies, createParamCorrectionModel(attribs.parameters, attribs.model) };
 }
 
 /// Convert a PitzerInteractionParamAttribs object to a PitzerParam one for a ternary interaction parameter.
@@ -401,51 +414,48 @@ auto createPitzerParamTernary(SpeciesList const& specieslist, PitzerInteractionP
 
     Indices ispecies = sortedSpeciesIndicesByCharge(specieslist, {ispecies1, ispecies2, ispecies3});
 
-    return PitzerParam{ ispecies, createParamCorrectionModel(attribs.coefficients, attribs.model) };
+    return PitzerParam{ ispecies, createParamCorrectionModel(attribs.parameters, attribs.model) };
 }
 
-/// Auxiliary alias for ActivityModelParamsPitzer::AlphaParamAttribs
-using PitzerAlphaParamAttribs = ActivityModelParamsPitzer::AlphaParamAttribs;
-
 /// Return the default value for \eq{alpha_1} parameter according to that used in PHREEQC v3 (see file pitzer.cpp under comment "Set alpha values").
-auto determineDefaultAlpha1(ChemicalFormula const& formula1, ChemicalFormula const& formula2) -> Param
+auto determineDefaultAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& formula1) -> Param
 {
+    auto const z0 = round(abs(formula0.charge()));
     auto const z1 = round(abs(formula1.charge()));
-    auto const z2 = round(abs(formula2.charge()));
-    return (z1 == 2 && z2 == 2) ? 1.4 : 2.0; // alpha1 = 2.0 for all electrolytes except the 2-2 electrolytes, for which alpha1 = 1.4 (Pitzer and Silvester, 1978; Plummer et al., 1988, page 4)
+    return (z0 == 2 && z1 == 2) ? 1.4 : 2.0; // alpha1 = 2.0 for all electrolytes except the 2-2 electrolytes, for which alpha1 = 1.4 (Pitzer and Silvester, 1978; Plummer et al., 1988, page 4)
 };
 
 /// Return the default value for \eq{alpha_2} parameter according to that used in PHREEQC v3 (see file pitzer.cpp under comment "Set alpha values").
-auto determineDefaultAlpha2(ChemicalFormula const& formula1, ChemicalFormula const& formula2) -> Param
+auto determineDefaultAlpha2(ChemicalFormula const& formula0, ChemicalFormula const& formula1) -> Param
 {
+    auto const z0 = round(abs(formula0.charge()));
     auto const z1 = round(abs(formula1.charge()));
-    auto const z2 = round(abs(formula2.charge()));
-    return (z1 == 1 && z2 == 1) || (z1 == 2 && z2 == 2) ? 12.0 : 50.0; // alpha2 = 12.0 for 1-1 and 2-2 electrolytes, alpha2 = 50.0 for 3-2 and 4-2 electrolytes (Pitzer and Silvester, 1978; Plummer et al., 1988, page 4)
+    return (z0 == 1 && z1 == 1) || (z0 == 2 && z1 == 2) ? 12.0 : 50.0; // alpha2 = 12.0 for 1-1 and 2-2 electrolytes, alpha2 = 50.0 for 3-2 and 4-2 electrolytes (Pitzer and Silvester, 1978; Plummer et al., 1988, page 4)
 };
 
-/// Return the index of the entry in `alphas` containing a pair of formulas equivalent to the pair `formula1` and `formula2`.
-auto findAlphaEntry(ChemicalFormula const& formula1, ChemicalFormula const& formula2, Vec<PitzerAlphaParamAttribs> const& alphas) -> Index
+/// Return the index of the entry in `alphas` containing a pair of formulas equivalent to the pair `formula0` and `formula1`.
+auto findAlphaEntry(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> Index
 {
     return indexfn(alphas, RKT_LAMBDA(x,
-        ( formula1.equivalent(x.formula1) && formula2.equivalent(x.formula2) ) ||
-        ( formula1.equivalent(x.formula2) && formula2.equivalent(x.formula1) )
+        ( formula0.equivalent(x.formulas[0]) && formula1.equivalent(x.formulas[1]) ) ||
+        ( formula0.equivalent(x.formulas[1]) && formula1.equivalent(x.formulas[0]) )
     ));
 }
 
 /// Return the value for \eq{alpha_1} parameter (either user-specified or determined from default value according to that used in PHREEQC v3).
-auto determineAlpha1(ChemicalFormula const& formula1, ChemicalFormula const& formula2, Vec<PitzerAlphaParamAttribs> const& alphas) -> Param
+auto determineAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> Param
 {
-    if(auto const idx = findAlphaEntry(formula1, formula2, alphas); idx < alphas.size())
-        return alphas[idx].value;
-    return determineDefaultAlpha1(formula1, formula2);
+    if(auto const idx = findAlphaEntry(formula0, formula1, alphas); idx < alphas.size())
+        return alphas[idx].parameters[0];
+    return determineDefaultAlpha1(formula0, formula1);
 }
 
 /// Return the value for \eq{alpha_2} parameter (either user-specified or determined from default value according to that used in PHREEQC v3).
-auto determineAlpha2(ChemicalFormula const& formula1, ChemicalFormula const& formula2, Vec<PitzerAlphaParamAttribs> const& alphas) -> Param
+auto determineAlpha2(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> Param
 {
-    if(auto const idx = findAlphaEntry(formula1, formula2, alphas); idx < alphas.size())
-        return alphas[idx].value;
-    return determineDefaultAlpha2(formula1, formula2);
+    if(auto const idx = findAlphaEntry(formula0, formula1, alphas); idx < alphas.size())
+        return alphas[idx].parameters[0];
+    return determineDefaultAlpha2(formula0, formula1);
 }
 
 /// Determine the coefficients multiplying the terms where the lambda Pitzer
@@ -950,7 +960,7 @@ auto createActivityModelPitzer(SpeciesList const& species, ActivityModelParamsPi
     return fn;
 }
 
-auto createActivityModelPitzer() -> ActivityModelGenerator
+auto ActivityModelPitzer() -> ActivityModelGenerator
 {
     return [=](SpeciesList const& species) { return createActivityModelPitzer(species, {}); }; // TODO: Generate default parameters for use here!
 }
