@@ -28,6 +28,7 @@
 #include <Reaktoro/Models/ActivityModels/ActivityModelIdealIonExchange.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzer.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelRedlichKister.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelRumpf.hpp>
