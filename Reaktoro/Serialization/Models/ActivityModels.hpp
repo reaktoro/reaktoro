@@ -17,6 +17,17 @@
 
 #pragma once
 
-#include <Reaktoro/Serialization/Models/ActivityModels.hpp>
-#include <Reaktoro/Serialization/Models/ReactionRateModels.hpp>
-#include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
+// Reaktoro includes
+#include <Reaktoro/Core/Data.hpp>
+
+namespace Reaktoro {
+
+//======================================================================
+// ActivityModelParams Types
+//======================================================================
+struct ActivityModelParamsPitzer;
+
+REAKTORO_DATA_ENCODE_DECLARE(ActivityModelParamsPitzer);
+REAKTORO_DATA_DECODE_DECLARE(ActivityModelParamsPitzer);
+
+} // namespace Reaktoro

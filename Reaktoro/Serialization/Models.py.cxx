@@ -18,11 +18,13 @@
 // pybind11 includes
 #include <Reaktoro/pybind11.hxx>
 
+void exportSerializationModelsActivityModels(py::module& m);
 void exportSerializationModelsReactionRateModels(py::module& m);
 void exportSerializationModelsStandardThermoModels(py::module& m);
 
 void exportSerializationModels(py::module& m)
 {
+    exportSerializationModelsActivityModels(m);
     exportSerializationModelsReactionRateModels(m);
     exportSerializationModelsStandardThermoModels(m);
 }
