@@ -33,8 +33,10 @@
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
+#include <Reaktoro/Serialization/Models/ActivityModels.hpp>
 #include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -962,7 +964,7 @@ auto createActivityModelPitzer(SpeciesList const& species, ActivityModelParamsPi
 
 auto ActivityModelPitzer() -> ActivityModelGenerator
 {
-    return [=](SpeciesList const& species) { return createActivityModelPitzer(species, {}); }; // TODO: Generate default parameters for use here!
+    return ActivityModelPitzer(Params::embedded("Pitzer.yaml"));
 }
 
 auto ActivityModelPitzer(ActivityModelParamsPitzer const& params) -> ActivityModelGenerator
@@ -972,7 +974,15 @@ auto ActivityModelPitzer(ActivityModelParamsPitzer const& params) -> ActivityMod
 
 auto ActivityModelPitzer(Params const& params) -> ActivityModelGenerator
 {
-    return [=](SpeciesList const& species) { return createActivityModelPitzer(species, {}); }; // TODO: Convert Params to ActivityModelParamsPitzer here!
+    auto const& data = params.data();
+    errorif(!data.exists("ActivityModelParams"), "Expecting Pitzer activity model parameters in given Params object, but it lacks a `ActivityModelParams` section within which another section `Pitzer` should exist.");
+    errorif(!data.at("ActivityModelParams").exists("Pitzer"), "Expecting Pitzer activity model parameters in given Params object, under the section `Pitzer`.");
+    errorif(!data.at("ActivityModelParams").at("Pitzer").isDict(), "Expecting section `Pitzer` with Pitzer activity model parameters to be a dictionary.");
+
+    ActivityModelParamsPitzer pzparams =
+        data["ActivityModelParams"]["Pitzer"].as<ActivityModelParamsPitzer>();
+
+    return ActivityModelPitzer(pzparams);
 }
 
 } // namespace Reaktoro
