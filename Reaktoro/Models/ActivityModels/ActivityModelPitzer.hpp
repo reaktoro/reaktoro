@@ -27,7 +27,7 @@ namespace Reaktoro {
 struct ActivityModelParamsPitzer
 {
     /// The available temperature-pressure correction models for the Pitzer interaction parameters.
-    enum CorrectionModel
+    enum class CorrectionModel
     {
         Constant,           ///< Correction model based on formula \eq{\mathrm{Param}(T,P)=c_{0}}.
         Phreeqc,            ///< Correction model based on formula \eq{\mathrm{Param}(T,P)=c_{0}+c_{1}\left(\dfrac{1}{T}-\dfrac{1}{T_{r}}\right)+c_{2}\ln\left(\dfrac{T}{T_{r}}\right)+c_{3}(T-T_{r})+c_{4}(T^{2}-T_{r}^{2})+c_{5}\left(\dfrac{1}{T^{2}}-\dfrac{1}{T_{r}^{2}}\right)} from PHREEQC v3 where \eq{T_{r}=298.15\;\text{K}}.
@@ -49,7 +49,7 @@ struct ActivityModelParamsPitzer
         Vec<ChemicalFormula> formulas;
 
         /// The model used for temperature-pressure correction of this species interaction parameter (options).
-        CorrectionModel model;
+        CorrectionModel model = CorrectionModel::Constant;
 
         /// The parameters for the temperature-pressure correction model of this species interaction parameter.
         Vec<Param> parameters;
@@ -60,9 +60,9 @@ struct ActivityModelParamsPitzer
     Vec<InteractionParamAttribs> beta2;  ///< The parameters \eq{\beta^{(2)}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.
     Vec<InteractionParamAttribs> Cphi;   ///< The parameters \eq{C^{\phi}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.
     Vec<InteractionParamAttribs> theta;  ///< The parameters \eq{\theta_{ij}(T, P)} in the Pitzer model for cation-cation and anion-anion interactions.
-    Vec<InteractionParamAttribs> psi;    ///< The parameters \eq{\psi_{ijk}(T, P)} in the Pitzer model for cation-cation-anion and anion-anion-cation interactions.
     Vec<InteractionParamAttribs> lambda; ///< The parameters \eq{\lambda_{ij}(T, P)} in the Pitzer model for neutral-cation and neutral-anion interactions.
     Vec<InteractionParamAttribs> zeta;   ///< The parameters \eq{\zeta_{ijk}(T, P)} in the Pitzer model for neutral-cation-anion interactions.
+    Vec<InteractionParamAttribs> psi;    ///< The parameters \eq{\psi_{ijk}(T, P)} in the Pitzer model for cation-cation-anion and anion-anion-cation interactions.
     Vec<InteractionParamAttribs> mu;     ///< The parameters \eq{\mu_{ijk}(T, P)} in the Pitzer model for neutral-neutral-neutral, neutral-neutral-cation, and neutral-neutral-anion interactions.
     Vec<InteractionParamAttribs> eta;    ///< The parameters \eq{\eta_{ijk}(T, P)} in the Pitzer model for neutral-cation-cation and neutral-anion-anion interactions.
     Vec<InteractionParamAttribs> alpha1; ///< The parameters \eq{\alpha_1_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
