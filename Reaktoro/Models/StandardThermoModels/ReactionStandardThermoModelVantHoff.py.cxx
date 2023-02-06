@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportReactionStandardThermoModelVantHoff(py::module& m)
 {
     py::class_<ReactionStandardThermoModelParamsVantHoff>(m, "ReactionStandardThermoModelParamsVantHoff")
+        .def(py::init<>())
         .def_readwrite("lgKr", &ReactionStandardThermoModelParamsVantHoff::lgKr)
         .def_readwrite("dHr", &ReactionStandardThermoModelParamsVantHoff::dHr)
         .def_readwrite("Tr", &ReactionStandardThermoModelParamsVantHoff::Tr)
