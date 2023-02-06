@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportStandardThermoModelInterpolation(py::module& m)
 {
     py::class_<StandardThermoModelParamsInterpolation>(m, "StandardThermoModelParamsInterpolation")
+        .def(py::init<>())
         .def_readwrite("temperatures", &StandardThermoModelParamsInterpolation::temperatures)
         .def_readwrite("pressures",    &StandardThermoModelParamsInterpolation::pressures)
         .def_readwrite("G0",           &StandardThermoModelParamsInterpolation::G0)

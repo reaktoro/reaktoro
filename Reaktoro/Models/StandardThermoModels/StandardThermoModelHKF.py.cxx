@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportStandardThermoModelHKF(py::module& m)
 {
     py::class_<StandardThermoModelParamsHKF>(m, "StandardThermoModelParamsHKF")
+        .def(py::init<>())
         .def_readwrite("Gf",     &StandardThermoModelParamsHKF::Gf)
         .def_readwrite("Hf",     &StandardThermoModelParamsHKF::Hf)
         .def_readwrite("Sr",     &StandardThermoModelParamsHKF::Sr)

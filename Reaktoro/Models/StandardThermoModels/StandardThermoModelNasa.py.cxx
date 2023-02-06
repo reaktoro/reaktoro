@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportStandardThermoModelNasa(py::module& m)
 {
     py::class_<StandardThermoModelParamsNasa::Polynomial>(m, "StandardThermoModelParamsNasaPolynomial")
+        .def(py::init<>())
         .def_readwrite("Tmin",  &StandardThermoModelParamsNasa::Polynomial::Tmin)
         .def_readwrite("Tmax",  &StandardThermoModelParamsNasa::Polynomial::Tmax)
         .def_readwrite("label", &StandardThermoModelParamsNasa::Polynomial::label)
@@ -41,6 +42,7 @@ void exportStandardThermoModelNasa(py::module& m)
         ;
 
     py::class_<StandardThermoModelParamsNasa>(m, "StandardThermoModelParamsNasa")
+        .def(py::init<>())
         .def_readwrite("dHf",         &StandardThermoModelParamsNasa::dHf)
         .def_readwrite("dH0",         &StandardThermoModelParamsNasa::dH0)
         .def_readwrite("H0",          &StandardThermoModelParamsNasa::H0)

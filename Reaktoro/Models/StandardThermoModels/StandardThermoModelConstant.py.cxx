@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportStandardThermoModelConstant(py::module& m)
 {
     py::class_<StandardThermoModelParamsConstant>(m, "StandardThermoModelParamsConstant")
+        .def(py::init<>())
         .def_readwrite("G0",  &StandardThermoModelParamsConstant::G0)
         .def_readwrite("H0",  &StandardThermoModelParamsConstant::H0)
         .def_readwrite("V0",  &StandardThermoModelParamsConstant::V0)

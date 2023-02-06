@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportStandardThermoModelMineralHKF(py::module& m)
 {
     py::class_<StandardThermoModelParamsMineralHKF>(m, "StandardThermoModelParamsMineralHKF")
+        .def(py::init<>())
         .def_readwrite("Gf",     &StandardThermoModelParamsMineralHKF::Gf)
         .def_readwrite("Hf",     &StandardThermoModelParamsMineralHKF::Hf)
         .def_readwrite("Sr",     &StandardThermoModelParamsMineralHKF::Sr)
