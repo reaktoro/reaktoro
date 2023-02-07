@@ -183,7 +183,7 @@ public:
     /// @param species The name or index of the species in the system.
     auto speciesMass(StringOrIndex species) const -> real;
 
-    /// Return the mole fraction of a species in the system.
+    /// Return the mole fraction of a species relative to the phase where it exists.
     /// @param species The name or index of the species in the system.
     auto speciesMoleFraction(StringOrIndex species) const -> real;
 
@@ -273,7 +273,7 @@ public:
     /// Return the masses of the species in the system (in kg).
     auto speciesMasses() const -> ArrayXr;
 
-    /// Return the mole fractions of the species in the system.
+    /// Return the mole fractions of the species in the system relative to the phase where they exist.
     auto speciesMoleFractions() const -> ArrayXrConstRef;
 
     /// Return the ln concentrations (activity divided by activity coefficient) of the species in the system.
