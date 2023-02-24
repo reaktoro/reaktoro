@@ -11,7 +11,7 @@ include(CCache)
 include(CMakeRC)
 
 # Set the name of the project, its version and other information
-project(Reaktoro VERSION 2.2.1 LANGUAGES CXX)
+project(Reaktoro VERSION 2.2.2 LANGUAGES CXX)
 
 # Generate compile_commands.json file in the binary directory
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
