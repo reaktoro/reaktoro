@@ -416,7 +416,8 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
         { "SrHCO3+" ,     {{ 104.6391, 0.04739549, -5151.79, -38.92561, 563713.9 }} },
         { "SrCO3" ,       {{ -1.019, 0.012826 }} },
         { "Cu2(OH)2+2" ,  {{ 2.497, 0.0, -3833.0 }} },
-        { "Calcite",      {{ -171.9065, -0.077993, 2839.319, 71.595 }} },
+        // { "Calcite",      {{ -171.9065, -0.077993, 2839.319, 71.595 }} },
+        { "Calcite",      {{ 17.118, -0.046528, -3496 }} },
         { "Aragonite",    {{ -171.9773, -0.077993, 2903.293, 71.595 }} },
         { "Strontianite", {{ 155.0305, 0.0, -7239.594, -56.58638 }} },
         { "Witherite",    {{ 607.642, 0.121098, -20011.25, -236.4948 }} },
@@ -434,14 +435,15 @@ TEST_CASE("Testing standard thermodynamic properties calculations", "[PhreeqcDat
         { "O2(g)",        {{ -7.5001, 7.8981e-3, 0.0, 0.0, 2.0027e5 }} },
         { "H2(g)",        {{ -9.3114, 4.6473e-3, -49.335, 1.4341, 1.2815e5 }} },
         { "N2(g)",        {{ -58.453, 1.818e-3, 3199, 17.909, -27460 }} },
-        { "H2S(g)",       {{ -97.354, -3.1576e-2, 1.8285e3, 37.44, 28.56 }} },
+        // { "H2S(g)",       {{ -97.354, -3.1576e-2, 1.8285e3, 37.44, 28.56 }} },
+        { "H2S(g)",       {{ -45.07, -0.02418, 0.0, 17.9205 }} },
         { "CH4(g)",       {{ 10.44, -7.65e-3, -6669, 0, 1.014e6 }} },
         { "NH3(g)",       {{ -18.758, 3.3670e-4, 2.5113e3, 4.8619, 39.192 }} },
         { "Oxg(g)",       {{ -7.5001, 7.8981e-3, 0.0, 0.0, 2.0027e5 }} },
         { "Hdg(g)",       {{ -9.3114, 4.6473e-3, -49.335, 1.4341, 1.2815e5 }} },
         { "Ntg(g)",       {{ -58.453, 1.81800e-3, 3199, 17.909, -27460 }} },
         { "Mtg(g)",       {{ 10.44, -7.65e-3, -6669, 0, 1.014e6 }} },
-        { "H2Sg(g)",      {{ -97.354, -3.1576e-2, 1.8285e3, 37.44, 28.56 }} },
+        { "H2Sg(g)",      {{ -45.07, -0.02418, 0.0, 17.9205 }} },
         { "Melanterite",  {{ 1.447, -0.004153, 0.0, 0.0, -214949.0 }} },
     };
 
@@ -607,25 +609,25 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
 
         INFO("species: " << species.name())
 
-        CHECK(propsT0P0.G0  == Approx(-95213.7)    );
-        CHECK(propsT0P0.H0  == Approx(-24010.3)    );
+        CHECK(propsT0P0.G0  == Approx(-95213.7) );
+        CHECK(propsT0P0.H0  == Approx(-24010.3) );
         CHECK(propsT0P0.V0  == Approx(3.44329e-05) );
-        CHECK(propsT0P0.Cp0 == Approx(657.168)     );
+        CHECK(propsT0P0.Cp0 == Approx(657.168) );
 
-        CHECK(propsT1P0.G0  == Approx(-113039)     );
-        CHECK(propsT1P0.H0  == Approx(12124.6)     );
+        CHECK(propsT1P0.G0  == Approx(-113039) );
+        CHECK(propsT1P0.H0  == Approx(12124.6) );
         CHECK(propsT1P0.V0  == Approx(3.77425e-05) );
-        CHECK(propsT1P0.Cp0 == Approx(574.514)     );
+        CHECK(propsT1P0.Cp0 == Approx(574.514) );
 
-        CHECK(propsT0P1.G0  == Approx(-95161)    );
-        CHECK(propsT0P1.H0  == Approx(-23957.6)    );
+        CHECK(propsT0P1.G0  == Approx(-95161) );
+        CHECK(propsT0P1.H0  == Approx(-23957.6) );
         CHECK(propsT0P1.V0  == Approx(3.44286e-05) );
-        CHECK(propsT0P1.Cp0 == Approx(657.168)     );
+        CHECK(propsT0P1.Cp0 == Approx(657.168) );
 
-        CHECK(propsT1P1.G0  == Approx(-112978)     );
-        CHECK(propsT1P1.H0  == Approx(12185.4)     );
+        CHECK(propsT1P1.G0  == Approx(-112978) );
+        CHECK(propsT1P1.H0  == Approx(12185.4) );
         CHECK(propsT1P1.V0  == Approx(3.77222e-05) );
-        CHECK(propsT1P1.Cp0 == Approx(574.514)     );
+        CHECK(propsT1P1.Cp0 == Approx(574.514) );
     }
 
     {
@@ -638,25 +640,25 @@ TEST_CASE("Testing pressure correction in standard thermodynamic properties calc
 
         INFO("species: " << species.name())
 
-        CHECK(propsT0P0.G0  == Approx(-48402.9) );
-        CHECK(propsT0P0.H0  == Approx(9608.99)  );
+        CHECK(propsT0P0.G0  == Approx(-48403.7) );
+        CHECK(propsT0P0.H0  == Approx(12253.3) );
         CHECK(propsT0P0.V0  == Approx(3.69e-05) );
-        CHECK(propsT0P0.Cp0 == Approx(295.096)     );
+        CHECK(propsT0P0.Cp0 == Approx(531.164) );
 
-        CHECK(propsT1P0.G0  == Approx(-62078.3) );
-        CHECK(propsT1P0.H0  == Approx(32690.1)  );
+        CHECK(propsT1P0.G0  == Approx(-63817.2) );
+        CHECK(propsT1P0.H0  == Approx(47329.9) );
         CHECK(propsT1P0.V0  == Approx(3.69e-05) );
-        CHECK(propsT1P0.Cp0 == Approx(474.274)     );
+        CHECK(propsT1P0.Cp0 == Approx(638.057) );
 
-        CHECK(propsT0P1.G0  == Approx(-48347.9) );
-        CHECK(propsT0P1.H0  == Approx(9664.07)  );
+        CHECK(propsT0P1.G0  == Approx(-48348.6) );
+        CHECK(propsT0P1.H0  == Approx(12308.4) );
         CHECK(propsT0P1.V0  == Approx(3.69e-05) );
-        CHECK(propsT0P1.Cp0 == Approx(295.096)     );
+        CHECK(propsT0P1.Cp0 == Approx(531.164) );
 
-        CHECK(propsT1P1.G0  == Approx(-62017.7) );
-        CHECK(propsT1P1.H0  == Approx(32750.7)  );
+        CHECK(propsT1P1.G0  == Approx(-63756.5) );
+        CHECK(propsT1P1.H0  == Approx(47390.5) );
         CHECK(propsT1P1.V0  == Approx(3.69e-05) );
-        CHECK(propsT1P1.Cp0 == Approx(474.274)     );
+        CHECK(propsT1P1.Cp0 == Approx(638.057) );
     }
 }
 
