@@ -77,7 +77,6 @@ struct ChemicalState::Impl
 
     auto temperature(real val, Chars unit) -> void
     {
-        errorif(val <= 0.0, "Expecting a positive temperature value, but got ", val, " ", unit, ".");
         temperature(units::convert(val, unit, "K"));
     }
 
