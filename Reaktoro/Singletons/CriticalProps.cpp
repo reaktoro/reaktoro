@@ -80,6 +80,7 @@ const Deque<SubstanceCriticalProps> preset_critical_props_data =
     { {536.80,  51.75e5,  0.6220}, {"1-PROPANOL"}               },
     { {563.10,  44.23e5,  0.5940}, {"1-BUTANOL"}                },
     { {611.40,  35.10e5,  0.5790}, {"1-HEXANOL"}                },
+    { {655.00,  27.00e5,  0.5870}, {"1-OCTANOL"}                }, // Tc and Pc from https://webbook.nist.gov/cgi/cbook.cgi?ID=C111875&Mask=6C, and acentric factor from https://www.chemeo.com/cid/49-458-0/1-Octanol (Jan 20 2023)
     { {508.30,  47.62e5,  0.6680}, {"2-PROPANOL"}               },
     { {694.30,  61.30e5,  0.4440}, {"PHENOL"}                   },
     { {719.70,  77.00e5,  0.4870}, {"ETHYLENE-GLYCOL"}          },
