@@ -1,0 +1,51 @@
+title: "Please write a short but descriptive title for your question"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Welcome to this Reaktoro Q&A discussion channel! ☝️
+        
+        📝 Please fill out the form below to let us know about your question and/or issue in as much detail as possible.
+
+        🤔 To help us better understand the problem you're facing, please provide a clear and concise description of the issue along with any relevant error messages or output.
+
+        💻 If possible, please also provide us with a minimal reproducible example that demonstrates the problem.
+
+        🚀 This will greatly help us in identifying the root cause of the issue and providing you with a timely and accurate solution.
+
+  - type: "textarea"
+    id: "description"
+    attributes:
+      label: "Description"
+      description: "Please describe what you want to achieve, your current issue, and/or anything else you need help with."
+    validations:
+      required: true
+  
+  - type: "textarea"
+    id: "example"
+    attributes:
+      label: "Example"
+      description: "Please provide a simple example that reproduces your issue or an example that indicates how a potentially missing feature can be supported."
+    validations:
+      required: false
+
+  - type: "dropdown"
+    id: "os"
+    attributes:
+      label: "What is your operating system?"
+      options:
+        - Linux
+        - macOS
+        - Windows
+
+  - type: "textarea"
+    id: "additional-information"
+    attributes:
+      label: "Additional Information"
+      description: |
+        Provide additional information, if desired.
+  
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to start a new discussion! ❤️
