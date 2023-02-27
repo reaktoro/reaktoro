@@ -616,14 +616,16 @@ struct PitzerModel
     Vec<Param> alpha1; ///< The parameters \eq{alpha_1_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
     Vec<Param> alpha2; ///< The parameters \eq{alpha_2_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
 
-    using Tuples3d = Tuples<double, double, double>; ///< Auxiliary type for a tuple of 3 double values.
+    using Tuples2i = Tuples<Index, Index>;                   ///< Auxiliary type for a tuple of 2 index values.
+    using Tuples3d = Tuples<double, double, double>;         ///< Auxiliary type for a tuple of 3 double values.
     using Tuples4d = Tuples<double, double, double, double>; ///< Auxiliary type for a tuple of 4 double values.
 
     Tuples3d lambda_coeffs; ///< The coefficients multiplying the terms where the lambda Pitzer parameter is involved.
     Tuples4d mu_coeffs;     ///< The coefficients multiplying the terms where the mu Pitzer parameter is involved.
 
-    ArrayXr thetaE;  ///< The current values of the parameters \eq{^{E}\theta_{ij}(I)} associated to the \eq{\theta_{ij}} parameters.
-    ArrayXr thetaEP; ///< The current values of the parameters \eq{^{E}\theta_{ij}^{\prime}(I)} associated to the \eq{\theta_{ij}} parameters.
+    Tuples2i thetaij; ///< The indices (i, j) of the cation-cation and anion-anion species pairs used to account for \eq{^{E}\theta_{ij}(I)} and \eq{^{E}\theta_{ij}^{\prime}(I)} contributions.
+    ArrayXr thetaE;   ///< The current values of the parameters \eq{^{E}\theta_{ij}(I)} associated to the \eq{\theta_{ij}} parameters.
+    ArrayXr thetaEP;  ///< The current values of the parameters \eq{^{E}\theta_{ij}^{\prime}(I)} associated to the \eq{\theta_{ij}} parameters.
 
     BilinearInterpolator Aphi; ///< The parameter \eq{A^\phi(T, P)} in the Pitzer model.
 
@@ -681,6 +683,17 @@ struct PitzerModel
 
         for(auto const& entry : params.beta2)
             alpha2.push_back(determineAlpha2(entry.formulas[0], entry.formulas[1], params.alpha2));
+
+        auto const& ications = solution.indicesCations();
+        auto const& ianions = solution.indicesAnions();
+
+        for(auto i = 0; i < ications.size() - 1; ++i)
+            for(auto j = i + 1; j < ications.size(); ++j)
+                thetaij.emplace_back(ications[i], ications[j]);
+
+        for(auto i = 0; i < ianions.size() - 1; ++i)
+            for(auto j = i + 1; j < ianions.size(); ++j)
+                thetaij.emplace_back(ianions[i], ianions[j]);
 
         auto const& z = solution.charges();
 
@@ -832,12 +845,19 @@ struct PitzerModel
             auto const i0 = param.ispecies[0];
             auto const i1 = param.ispecies[1];
 
-            auto const [etheta, ethetap] = computeThetaValues(I, DI, Aphi0, z[i0], z[i1]);
+            LGAMMA[i0] += 2.0 * M[i1] * param.value;
+            LGAMMA[i1] += 2.0 * M[i0] * param.value;
+            OSMOT += M[i0] * M[i1] * param.value;
+        }
+
+        for(auto const& [i0, i1] : thetaij)
+        {
+            auto const [etheta, ethetap] = computeThetaValuesInterpolation(I, DI, Aphi0, z[i0], z[i1]);
 
             F += M[i0] * M[i1] * ethetap;
-            LGAMMA[i0] += 2.0 * M[i1] * (param.value + etheta);
-            LGAMMA[i1] += 2.0 * M[i0] * (param.value + etheta);
-            OSMOT += M[i0] * M[i1] * (param.value + etheta + I*ethetap);
+            LGAMMA[i0] += 2.0 * M[i1] * etheta;
+            LGAMMA[i1] += 2.0 * M[i0] * etheta;
+            OSMOT += M[i0] * M[i1] * (etheta + I*ethetap);
         }
 
         for(auto const& param : psi)
