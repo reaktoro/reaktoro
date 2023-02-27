@@ -86,7 +86,8 @@ want to read about.
 - @ref Reaktoro::ActivityModelIdealAqueous
 - @ref Reaktoro::ActivityModelDavies
 - @ref Reaktoro::ActivityModelDebyeHuckel
-- @ref Reaktoro::ActivityModelPitzerHMW
+- @ref Reaktoro::ActivityModelPitzerHMW (deprecated - use @ref Reaktoro::ActivityModelPitzer)
+- @ref Reaktoro::ActivityModelPitzer
 - @ref Reaktoro::ActivityModelHKF
 - @ref Reaktoro::ActivityModelDrummond
 - @ref Reaktoro::ActivityModelDuanSun
@@ -108,7 +109,7 @@ want to read about.
 
 - @ref Reaktoro::ActivityModelIdealSolution
 - @ref Reaktoro::ActivityModelRedlichKister
-- @ref Reaktoro::ActivityModelVanLaar (*needs adaptation to v2.0*)
+- @ref Reaktoro::ActivityModelVanLaar (needs adaptation in Reaktoro v2)
 
 ## Standard thermodynamic properties and models
 
