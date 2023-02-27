@@ -1460,6 +1460,7 @@ auto activityModelPitzerHMW(const SpeciesList& species) -> ActivityModel
 
 auto ActivityModelPitzerHMW() -> ActivityModelGenerator
 {
+    warningif(true, "ActivityModelPitzerHMW has been deprecated. Use ActivityModelPitzer instead.");
     return [](const SpeciesList& species) { return activityModelPitzerHMW(species); };
 }
 
