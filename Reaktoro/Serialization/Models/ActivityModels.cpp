@@ -20,6 +20,8 @@
 // Reaktoro includes
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Models/ActivityModels.hpp>
+#include <Reaktoro/Serialization/Common.hpp>
+#include <Reaktoro/Serialization/Core.hpp>
 
 namespace Reaktoro {
 
@@ -48,7 +50,7 @@ REAKTORO_DATA_ENCODE_DEFINE(ActivityModelParamsPitzer::CorrectionModel)
             case ActivityModelParamsPitzer::CorrectionModel::Polya2001:          return "Polya2001";
             case ActivityModelParamsPitzer::CorrectionModel::LiDuan2007:         return "LiDuan2007";
         }
-        errorif(true, "Unable to encode Pitzer parameter (T, P) correction model `", modeltype, "` to a string.");
+        errorif(true, "Unable to encode Pitzer parameter (T, P) correction model to a string.");
         return {};
     };
 
