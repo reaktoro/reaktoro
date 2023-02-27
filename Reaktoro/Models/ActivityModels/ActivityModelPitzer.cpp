@@ -29,6 +29,7 @@
 #include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Common/NamingUtils.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Common/Real.hpp>
@@ -194,12 +195,20 @@ const Vec<double> Aphi_data =
 
 auto interpolate(real x, double x0, double x1, Vec<double> const& ypoints) -> real
 {
-    auto const N  = ypoints.size();
+    auto const N = ypoints.size();
     auto const dx = (x1 - x0)/(N - 1);
 
-    auto const i = Index((x - x0)/dx);
+    auto const k = floor((x.val() - x0)/dx);
+    auto const i = k + 2 < N ? k : N - 3;
 
-    return (i < 0) ? ypoints.front() : (i > N) ? ypoints.back() : ypoints[i];
+    const auto xi0 = x0 + dx*i;
+    const auto xi1 = xi0 + dx;
+    const auto xi2 = xi1 + dx;
+    const auto yi0 = ypoints[i];
+    const auto yi1 = ypoints[i + 1];
+    const auto yi2 = ypoints[i + 2];
+
+    return interpolateQuadratic(x, xi0, xi1, xi2, yi0, yi1, yi2);
 }
 
 auto J0(real x) -> real
