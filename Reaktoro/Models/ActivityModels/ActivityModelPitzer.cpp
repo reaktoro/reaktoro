@@ -566,8 +566,66 @@ auto GP(real const& x) -> real
     return x == 0.0 ? x : -2.0*(1.0 - (1.0 + x + 0.5*x*x)*exp(-x))/(x*x);
 }
 
+/// Compute J0 and J1 exactly as computed in PHREEQC v3.3.7 using a numerical
+/// approximation to the integrals in the expressions for J0 and J1 using a
+/// Chebyshev approximation. J0 and J1 results are very comparable to that using
+/// interpolation.
+auto computeJ0J1PHREEQC(real const& X) -> Tuple<real, real>
+{
+    double BK[23] = {}, DK[23] = {};
+    static const double AKX[42] = {
+        1.925154014814667e0, -.060076477753119e0, -.029779077456514e0,
+        -.007299499690937e0, 0.000388260636404e0, 0.000636874599598e0,
+        0.000036583601823e0, -.000045036975204e0, -.000004537895710e0,
+        0.000002937706971e0, 0.000000396566462e0, -.000000202099617e0,
+        -.000000025267769e0, 0.000000013522610e0, 0.000000001229405e0,
+        -.000000000821969e0, -.000000000050847e0, 0.000000000046333e0,
+        0.000000000001943e0, -.000000000002563e0, -.000000000010991e0,
+        0.628023320520852e0, 0.462762985338493e0, 0.150044637187895e0,
+        -.028796057604906e0, -.036552745910311e0, -.001668087945272e0,
+        0.006519840398744e0, 0.001130378079086e0, -.000887171310131e0,
+        -.000242107641309e0, 0.000087294451594e0, 0.000034682122751e0,
+        -.000004583768938e0, -.000003548684306e0, -.000000250453880e0,
+        0.000000216991779e0, 0.000000080779570e0, 0.000000004558555e0,
+        -.000000006944757e0, -.000000002849257e0, 0.000000000237816e0
+    };
+
+    const double *AK;
+    real L_Z = 0.0;
+    real L_DZ = 0.0;
+
+    if ( X <= 1.0e0 )
+    {
+        const auto powX0_2 = pow( X, 0.2 );
+        L_Z  = 4.0e0 * powX0_2 - 2.0e0;
+        L_DZ = 0.8e0 * powX0_2 / 2.0e0;
+        AK = &AKX[0];
+    }
+    else
+    {
+        const auto powXmin0_1 = pow( X, -0.1 );
+        L_Z  = ( 40.0e0 * powXmin0_1 - 22.0e0 ) / 9.0e0;
+        L_DZ = -4.0e0 * powXmin0_1 / 18.0e0;
+        AK = &AKX[21];
+    }
+
+    BK[20] = AK[20];
+    BK[19] = L_Z * AK[20] + AK[19];
+    DK[19] = AK[20];
+    for ( int i = 18; i >= 0; i-- )
+    {
+        BK[i] = L_Z * BK[i + 1] - BK[i + 2] + AK[i];
+        DK[i] = BK[i + 1] + L_Z * DK[i + 1] - DK[i + 2];
+    }
+
+    real JAY = X / 4.0e0 - 1.0e0 + 0.5e0 * (BK[0] - BK[2]);
+    real JPRIME = X * .25e0 + L_DZ * (DK[0] - DK[2]);
+
+    return { JAY, JPRIME };
+}
+
 /// The function that computes electrostatic mixing effects of unsymmetrical cation-cation and anion-anion pairs \eq{^{E}\theta_{ij}(I)} and \eq{^{E}\theta_{ij}^{\prime}(I)}.
-auto computeThetaValues(real const& I, real const& sqrtI, real const& Aphi, double zi, double zj) -> Pair<real, real>
+auto computeThetaValuesInterpolation(real const& I, real const& sqrtI, real const& Aphi, double zi, double zj) -> Pair<real, real>
 {
     auto const aux = 6.0*Aphi*sqrtI;
 
@@ -582,6 +640,25 @@ auto computeThetaValues(real const& I, real const& sqrtI, real const& Aphi, doub
     auto const J1ij = J1(xij);
     auto const J1ii = J1(xii);
     auto const J1jj = J1(xjj);
+
+    auto const thetaE = zi*zj/(4*I) * (J0ij - 0.5*J0ii - 0.5*J0jj);
+    auto const thetaEP = zi*zj/(8*I*I) * (J1ij - 0.5*J1ii - 0.5*J1jj) - thetaE/I;
+
+    return { thetaE, thetaEP };
+}
+
+/// The function that computes electrostatic mixing effects of unsymmetrical cation-cation and anion-anion pairs \eq{^{E}\theta_{ij}(I)} and \eq{^{E}\theta_{ij}^{\prime}(I)} exactly like in PHREEQC.
+auto computeThetaValuesPHREEQC(real const& I, real const& sqrtI, real const& Aphi, double zi, double zj) -> Pair<real, real>
+{
+    auto const aux = 6.0*Aphi*sqrtI;
+
+    auto const xij = zi*zj*aux;
+    auto const xii = zi*zi*aux;
+    auto const xjj = zj*zj*aux;
+
+    auto const [J0ij, J1ij] = computeJ0J1PHREEQC(xij);
+    auto const [J0ii, J1ii] = computeJ0J1PHREEQC(xii);
+    auto const [J0jj, J1jj] = computeJ0J1PHREEQC(xjj);
 
     auto const thetaE = zi*zj/(4*I) * (J0ij - 0.5*J0ii - 0.5*J0jj);
     auto const thetaEP = zi*zj/(8*I*I) * (J1ij - 0.5*J1ii - 0.5*J1jj) - thetaE/I;
