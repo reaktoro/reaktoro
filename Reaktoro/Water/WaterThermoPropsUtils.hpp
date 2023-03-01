@@ -34,15 +34,15 @@ struct WaterHelmholtzProps;
 ///   New York: Hemisphere Publishing Corporation.
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @param stateofmatter The state of matter of water
+/// @param som The desired state of matter for water (the actual state of matter may end up being different!)
 /// @return The thermodynamic state of water
 /// @see WaterThermoProps
-auto waterThermoPropsHGK(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps;
+auto waterThermoPropsHGK(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps;
 
 /// Calculate the thermodynamic properties of water using the Haar-Gallagher-Kell (1984) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
-auto waterThermoPropsHGKMemoized(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps;
+auto waterThermoPropsHGKMemoized(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps;
 
 /// Calculate the thermodynamic properties of water using the Wagner and Pruss (1995) equation of state.
 /// **References:**
@@ -51,20 +51,20 @@ auto waterThermoPropsHGKMemoized(real const& T, real const& P, StateOfMatter sta
 ///   Reference Data, 31(2), 387. [doi](http://doi.org/10.1063/1.1461829)
 /// @param T The temperature of water (in units of K)
 /// @param P The pressure of water (in units of Pa)
-/// @param stateofmatter The state of matter of water
+/// @param som The desired state of matter for water (the actual state of matter may end up being different!)
 /// @return The thermodynamic state of water
 /// @see WaterThermoProps
-auto waterThermoPropsWagnerPruss(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps;
+auto waterThermoPropsWagnerPruss(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps;
 
 /// Calculate the thermodynamic properties of water using the Wagner and Pruss (1995) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
-auto waterThermoPropsWagnerPrussMemoized(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps;
+auto waterThermoPropsWagnerPrussMemoized(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps;
 
 /// Calculate the thermodynamic properties of water using interpolation of pre-computed properties using the Wagner and Pruss (1995) equation of state.
 /// @note This function will skip the computation if given arguments are the same as
 /// in its last invocation. The cached result will be returned, thus improving performance.
-auto waterThermoPropsWagnerPrussInterpMemoized(real const& T, real const& P) -> WaterThermoProps;
+auto waterThermoPropsWagnerPrussInterpMemoized(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps;
 
 /// Calculate the thermodynamic properties of water.
 /// This is a general method that uses the Helmholtz free energy state

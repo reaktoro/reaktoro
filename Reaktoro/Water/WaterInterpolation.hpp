@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
@@ -32,7 +33,8 @@ struct WaterThermoProps;
 /// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
 /// @param T The temperature value (in K)
 /// @param P The pressure value (in Pa)
-auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real;
+/// @param som The desired state of matter for water (the actual state of matter may end up being different!)
+auto waterDensityWagnerPrussInterp(real const& T, real const& P, StateOfMatter som) -> real;
 
 /// Compute the thermodynamic properties of water at given a temperature and pressure using quadratic interpolation.
 /// The interpolation is performed using pre-computed water properties at temperatures and pressures
@@ -41,7 +43,8 @@ auto waterDensityWagnerPrussInterp(real const& T, real const& P) -> real;
 /// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
 /// @param T The temperature value (in K)
 /// @param P The pressure value (in Pa)
-auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThermoProps;
+/// @param som The desired state of matter for water (the actual state of matter may end up being different!)
+auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps;
 
 /// Return the pre-computed thermodynamic properties of water using Wagner and Pruss (2002) equation of state used for interpolation.
 /// The interpolation data consists of pre-computed water properties at temperatures and pressures
@@ -49,6 +52,7 @@ auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThe
 /// Thermodynamic Properties of Ordinary Water Substance for General and Scientific Use. Journal of
 /// Physical and Chemical Reference Data, 31(2), 387. https://doi.org/10.1063/1.1461829*.
 /// @note The first call to this function will trigger a parsing operation of embedded text data.
-auto waterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>> const&;
+/// @param som The desired state of matter for water (the actual state of matter may end up being different!)
+auto waterThermoPropsWagnerPrussInterpData(StateOfMatter som) -> Vec<Vec<WaterThermoProps>> const&;
 
 } // namespace Reaktoro

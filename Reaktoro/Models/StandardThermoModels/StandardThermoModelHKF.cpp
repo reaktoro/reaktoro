@@ -94,7 +94,7 @@ auto createModelSerializer(const StandardThermoModelParamsHKF& params) -> ModelS
 
 auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> StandardThermoModel
 {
-    waterThermoPropsWagnerPrussInterpData(); // this call exists to force an initialization operation so that when waterThermoPropsWagnerPrussInterp is called for the first time, this initialization has been performed already.
+    waterThermoPropsWagnerPrussInterpData(StateOfMatter::Liquid); // this call exists to force an initialization operation so that when waterThermoPropsWagnerPrussInterp is called for the first time, this initialization has been performed already.
 
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
