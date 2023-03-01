@@ -19,20 +19,23 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Real.hpp>
+#include <Reaktoro/Core/StateOfMatter.hpp>
 
 namespace Reaktoro {
 
 /// Calculate the density of water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in K)
 /// @param P The pressure of water (in Pa)
+/// @param stateofmatter The state of matter of water
 /// @return The density of liquid water (in kg/m3)
-auto waterDensityHGK(real const& T, real const& P) -> real;
+auto waterDensityHGK(real const& T, real const& P, StateOfMatter stateofmatter) -> real;
 
 /// Calculate the density of water using the Wagner and Pruss (1995) equation of state
 /// @param T The temperature of water (in K)
 /// @param P The pressure of water (in Pa)
+/// @param stateofmatter The state of matter of water
 /// @return The density of liquid water (in kg/m3)
-auto waterDensityWagnerPruss(real const& T, real const& P) -> real;
+auto waterDensityWagnerPruss(real const& T, real const& P, StateOfMatter stateofmatter) -> real;
 
 /// Calculate the density of liquid water using the Haar--Gallagher--Kell (1984) equation of state
 /// @param T The temperature of water (in K)

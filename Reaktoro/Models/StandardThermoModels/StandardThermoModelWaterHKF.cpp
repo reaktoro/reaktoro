@@ -52,7 +52,7 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
         auto& [G0, H0, V0, Cp0, VT0, VP0] = props;
         const auto& [Ttr, Str, Gtr, Htr] = params;
 
-        const auto wtp = waterThermoPropsWagnerPrussInterpMemoized(T, P);
+        const auto wtp = waterThermoPropsWagnerPrussMemoized(T, P, StateOfMatter::Liquid);
 
         // Convert from specific properties to molar properties
         const auto Sw = waterMolarMass * wtp.S; // from J/(kg*K) to J/(mol*K)

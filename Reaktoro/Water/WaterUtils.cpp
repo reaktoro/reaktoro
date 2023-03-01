@@ -35,63 +35,81 @@ using std::pow;
 namespace Reaktoro {
 
 template<typename HelmholtsModel>
-auto waterDensity(real const& T, real const& P, HelmholtsModel const& model) -> real
+auto waterDensity(real const& T, real const& P, HelmholtsModel const& model, StateOfMatter stateofmatter) -> real
 {
     // Auxiliary constants for the Newton's iterations
     const auto max_iters = 100;
-    const auto tolerance = 1.0e-08;
+    const auto tolerance = 1.0e-06;
 
-    // Get an adequate initial guess for water density using interpolation
-    real D = waterDensityWagnerPrussInterp(T, P);
+    // Auxiliary constants for initial guess computation for water density
+    const auto R = universalGasConstant;
 
-    // Apply Newton's method to the pressure-density equation
-    for(auto i = 1; i <= max_iters; ++i)
+    // Compute initial guess for density (kg/m3)
+    const auto Dwc_liquid = 5.0 * waterCriticalDensity;
+    const auto Dwc_vapor = waterMolarMass / (R*T/P);
+
+    // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
+    real D = (stateofmatter == StateOfMatter::Liquid) ? real(Dwc_liquid) : real(Dwc_vapor);
+
+    for(int i = 1; i <= max_iters; ++i)
     {
         WaterHelmholtzProps h = model(T, D);
 
-        const auto f  = (D*D*h.helmholtzD - P)/waterCriticalPressure;
-        const auto df = (2*D*h.helmholtzD + D*D*h.helmholtzDD)/waterCriticalPressure;
+        const auto AD = h.helmholtzD;
+        const auto ADD = h.helmholtzDD;
+        const auto ADDD = h.helmholtzDDD;
 
-        D = (D > f/df) ? D - f/df : P/(D*h.helmholtzD);
+        const auto F = D*D*AD/P - 1;
+        const auto FD = (2*D*AD + D*D*ADD)/P;
+        const auto FDD = (2*AD + 2*D*ADD + 2*D*ADD + D*D*ADDD)/P;
 
-        if(abs(f) < tolerance)
+        const auto f = 0.5 * F*F;
+        const auto g = F*FD;
+        const auto H = FD*FD + F*FDD;
+
+        if(D > g/H)
+            D -= g/H;
+        else if(D > F/FD)
+            D -= F/FD;
+        else D *= 0.1;
+
+        if(abs(f) < tolerance || abs(g) < tolerance)
             return D;
     }
 
-    errorif(true, "Unable to calculate the density of water. "
-        "The calculations did not converge at temperature ", T, " K and pressure ", P, " Pa.");
+    errorif(true, "Unable to calculate the density of water because the calculations did not converge at temperature ", T, " K and pressure ", P, " Pa.");
 
     return {};
 }
 
-auto waterDensityHGK(real const& T, real const& P) -> real
+auto waterDensityHGK(real const& T, real const& P, StateOfMatter stateofmatter) -> real
 {
-    return waterDensity(T, P, waterHelmholtzPropsHGK);
+    return waterDensity(T, P, waterHelmholtzPropsHGK, stateofmatter);
 }
 
 auto waterLiquidDensityHGK(real const& T, real const& P) -> real
 {
-    return waterDensityHGK(T, P);
+    return waterDensityHGK(T, P, StateOfMatter::Liquid);
 }
 
 auto waterVaporDensityHGK(real const& T, real const& P) -> real
 {
-    return waterDensityHGK(T, P);
+    return waterDensityHGK(T, P, StateOfMatter::Gas);
 }
 
-auto waterDensityWagnerPruss(real const& T, real const& P) -> real
+auto waterDensityWagnerPruss(real const& T, real const& P, StateOfMatter stateofmatter) -> real
 {
-    return waterDensity(T, P, waterHelmholtzPropsWagnerPruss);
+    return waterDensity(T, P, waterHelmholtzPropsWagnerPruss, stateofmatter);
 }
 
 auto waterLiquidDensityWagnerPruss(real const& T, real const& P) -> real
 {
-    return waterDensityWagnerPruss(T, P);
+    return waterDensityWagnerPruss(T, P, StateOfMatter::Liquid);
 }
 
 auto waterVaporDensityWagnerPruss(real const& T, real const& P) -> real
 {
-    return waterDensityWagnerPruss(T, P);
+    return waterDensityWagnerPruss(T, P, StateOfMatter::Gas);
 }
 
 template<typename HelmholtzModel>

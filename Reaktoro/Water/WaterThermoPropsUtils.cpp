@@ -37,9 +37,9 @@ namespace {
 /// Return a memoized function that computes thermodynamic properties of water using HGK (1984) model.
 auto createMemoizedWaterThermoPropsFnHGK()
 {
-    Fn<WaterThermoProps(real const&, real const&)> fn = [](real const& T, real const& P)
+    Fn<WaterThermoProps(real const&, real const&, StateOfMatter)> fn = [](real const& T, real const& P, StateOfMatter som)
     {
-        return waterThermoPropsHGK(T, P);
+        return waterThermoPropsHGK(T, P, som);
     };
     return memoizeLast(fn);
 }
@@ -47,9 +47,9 @@ auto createMemoizedWaterThermoPropsFnHGK()
 /// Return a memoized function that computes thermodynamic properties of water using Wagner & Pruss (1999) model.
 auto createMemoizedWaterThermoPropsFnWagnerPruss()
 {
-    Fn<WaterThermoProps(real const&, real const&)> fn = [](real const& T, real const& P)
+    Fn<WaterThermoProps(real const&, real const&, StateOfMatter)> fn = [](real const& T, real const& P, StateOfMatter som)
     {
-        return waterThermoPropsWagnerPruss(T, P);
+        return waterThermoPropsWagnerPruss(T, P, som);
     };
     return memoizeLast(fn);
 }
@@ -66,30 +66,30 @@ auto createMemoizedWaterThermoPropsFnWagnerPrussInterp()
 
 } // namespace
 
-auto waterThermoPropsHGK(real const& T, real const& P) -> WaterThermoProps
+auto waterThermoPropsHGK(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
-    const real D = waterDensityHGK(T, P);
+    const real D = waterDensityHGK(T, P, stateofmatter);
     const WaterHelmholtzProps whp = waterHelmholtzPropsHGK(T, D);
     return waterThermoProps(T, P, whp);
 }
 
-auto waterThermoPropsHGKMemoized(real const& T, real const& P) -> WaterThermoProps
+auto waterThermoPropsHGKMemoized(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
     static thread_local auto fn = createMemoizedWaterThermoPropsFnHGK();
-    return fn(T, P);
+    return fn(T, P, stateofmatter);
 }
 
-auto waterThermoPropsWagnerPruss(real const& T, real const& P) -> WaterThermoProps
+auto waterThermoPropsWagnerPruss(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
-    const real D = waterDensityWagnerPruss(T, P);
+    const real D = waterDensityWagnerPruss(T, P, stateofmatter);
     const WaterHelmholtzProps whp = waterHelmholtzPropsWagnerPruss(T, D);
     return waterThermoProps(T, P, whp);
 }
 
-auto waterThermoPropsWagnerPrussMemoized(real const& T, real const& P) -> WaterThermoProps
+auto waterThermoPropsWagnerPrussMemoized(real const& T, real const& P, StateOfMatter stateofmatter) -> WaterThermoProps
 {
     static thread_local auto fn = createMemoizedWaterThermoPropsFnWagnerPruss();
-    return fn(T, P);
+    return fn(T, P, stateofmatter);
 }
 
 auto waterThermoPropsWagnerPrussInterpMemoized(real const& T, real const& P) -> WaterThermoProps
