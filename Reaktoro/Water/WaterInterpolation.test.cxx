@@ -25,47 +25,73 @@
 #include <Reaktoro/Water/WaterUtils.hpp>
 using namespace Reaktoro;
 
-#define CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(T, PMPa, reltol)                          \
-    {                                                                                     \
-        auto expected = waterDensityWagnerPruss(T, PMPa*1e6).val();                       \
-        auto actual = waterDensityWagnerPrussInterp(T, PMPa*1e6).val();                   \
-        CHECK( actual == Approx(expected).epsilon(reltol) );                              \
+#define CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(T, PMPa, reltol, som)          \
+    {                                                                          \
+        auto expected = waterDensityWagnerPruss(T, PMPa*1e6, som).val();       \
+        auto actual = waterDensityWagnerPrussInterp(T, PMPa*1e6, som).val();        \
+        CHECK( actual == Approx(expected).epsilon(reltol) );                   \
     }
 
-#define CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(T, PMPa, reltol)         \
-    {                                                                         \
-        auto expected = waterThermoPropsWagnerPruss(T, PMPa*1e6).D.val();     \
-        auto actual = waterThermoPropsWagnerPrussInterp(T, PMPa*1e6).D.val(); \
-        CHECK( actual == Approx(expected).epsilon(reltol) );                  \
+#define CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(T, PMPa, reltol, som)     \
+    {                                                                          \
+        auto expected = waterThermoPropsWagnerPruss(T, PMPa*1e6, som).D.val(); \
+        auto actual = waterThermoPropsWagnerPrussInterp(T, PMPa*1e6, som).D.val();  \
+        CHECK( actual == Approx(expected).epsilon(reltol) );                   \
     }
 
 TEST_CASE("Testing water interpolation methods", "[WaterInterpolation]")
 {
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 300.000,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 354.467,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 354.468,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 400.000,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(1273.000,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(1273.000, 1000.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 353.000,    2.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 423.000,    8.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 566.000,   14.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 690.000,   87.00, 0.02); // permit 2% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 723.000,  125.00, 0.05); // permit 5% error deviation
-    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 834.000,  345.00, 0.02); // permit 2% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 300.000,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 354.467,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 354.468,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 400.000,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(1273.000,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(1273.000, 1000.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 353.000,    2.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 423.000,    8.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 566.000,   14.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 690.000,   87.00, 0.02, StateOfMatter::Liquid); // permit 2% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 723.000,  125.00, 0.05, StateOfMatter::Liquid); // permit 5% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 834.000,  345.00, 0.02, StateOfMatter::Liquid); // permit 2% error deviation
 
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 300.000,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 354.467,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 354.468,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 400.000,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(1273.000,    0.05, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(1273.000, 1000.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 353.000,    2.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 423.000,    8.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 566.000,   14.00, 0.01); // permit 1% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 690.000,   87.00, 0.02); // permit 2% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 723.000,  125.00, 0.05); // permit 5% error deviation
-    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 834.000,  345.00, 0.02); // permit 2% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 300.000,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 354.467,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 354.468,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 400.000,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(1273.000,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(1273.000, 1000.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 353.000,    2.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 423.000,    8.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 566.000,   14.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 690.000,   87.00, 0.02, StateOfMatter::Gas); // permit 2% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 723.000,  125.00, 0.05, StateOfMatter::Gas); // permit 5% error deviation
+    CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP( 834.000,  345.00, 0.02, StateOfMatter::Gas); // permit 2% error deviation
+
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 300.000,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 354.467,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 354.468,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 400.000,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(1273.000,    0.05, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(1273.000, 1000.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 353.000,    2.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 423.000,    8.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 566.000,   14.00, 0.01, StateOfMatter::Liquid); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 690.000,   87.00, 0.02, StateOfMatter::Liquid); // permit 2% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 723.000,  125.00, 0.05, StateOfMatter::Liquid); // permit 5% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 834.000,  345.00, 0.02, StateOfMatter::Liquid); // permit 2% error deviation
+
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 300.000,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 354.467,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 354.468,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 400.000,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(1273.000,    0.05, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(1273.000, 1000.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 353.000,    2.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 423.000,    8.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 566.000,   14.00, 0.01, StateOfMatter::Gas); // permit 1% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 690.000,   87.00, 0.02, StateOfMatter::Gas); // permit 2% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 723.000,  125.00, 0.05, StateOfMatter::Gas); // permit 5% error deviation
+    CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP( 834.000,  345.00, 0.02, StateOfMatter::Gas); // permit 2% error deviation
 
     // TODO: To reduce errors, above (note the 4.17% error at 723K and 125MPa), more refinement in the grid is needed.
 }
