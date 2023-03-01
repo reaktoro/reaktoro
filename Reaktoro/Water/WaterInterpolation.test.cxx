@@ -25,18 +25,18 @@
 #include <Reaktoro/Water/WaterUtils.hpp>
 using namespace Reaktoro;
 
-#define CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(T, PMPa, reltol, som)          \
-    {                                                                          \
-        auto expected = waterDensityWagnerPruss(T, PMPa*1e6, som).val();       \
-        auto actual = waterDensityWagnerPrussInterp(T, PMPa*1e6, som).val();        \
-        CHECK( actual == Approx(expected).epsilon(reltol) );                   \
+#define CHECK_WATER_DENSITY_WAGNER_PRUSS_INTERP(T, PMPa, reltol, som)         \
+    {                                                                         \
+        auto expected = waterDensityWagnerPruss(T, PMPa*1e6, som).val();      \
+        auto actual = waterDensityWagnerPrussInterp(T, PMPa*1e6, som).val();  \
+        CHECK( actual == Approx(expected).epsilon(reltol) );                  \
     }
 
-#define CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(T, PMPa, reltol, som)     \
-    {                                                                          \
-        auto expected = waterThermoPropsWagnerPruss(T, PMPa*1e6, som).D.val(); \
+#define CHECK_WATER_THERMO_PROPS_WAGNER_PRUSS_INTERP(T, PMPa, reltol, som)          \
+    {                                                                               \
+        auto expected = waterThermoPropsWagnerPruss(T, PMPa*1e6, som).D.val();      \
         auto actual = waterThermoPropsWagnerPrussInterp(T, PMPa*1e6, som).D.val();  \
-        CHECK( actual == Approx(expected).epsilon(reltol) );                   \
+        CHECK( actual == Approx(expected).epsilon(reltol) );                        \
     }
 
 TEST_CASE("Testing water interpolation methods", "[WaterInterpolation]")
