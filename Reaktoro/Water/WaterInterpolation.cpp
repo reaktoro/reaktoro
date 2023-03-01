@@ -245,13 +245,13 @@ auto parseWaterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>>
     return data;
 }
 
-auto waterThermoPropsWagnerPrussInterpData() -> Vec<Vec<WaterThermoProps>> const&
+auto waterThermoPropsWagnerPrussInterpData(StateOfMatter som) -> Vec<Vec<WaterThermoProps>> const&
 {
-    thread_local Vec<Vec<WaterThermoProps>> data = parseWaterThermoPropsWagnerPrussInterpData();
+    thread_local Vec<Vec<WaterThermoProps>> data = parseWaterThermoPropsWagnerPrussInterpData(som);
     return data;
 }
 
-auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThermoProps
+auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P, StateOfMatter som) -> WaterThermoProps
 {
     const auto PMPa = P * 1e-6; // from Pa to MPa
 
@@ -265,7 +265,7 @@ auto waterThermoPropsWagnerPrussInterp(real const& T, real const& P) -> WaterThe
     const Index iP1 = iPmax > 1 ? iP0 + 1 : 0;
     const Index iP2 = iPmax > 0 ? iP1 + 1 : 0;
 
-    auto const& data = waterThermoPropsWagnerPrussInterpData();
+    auto const& data = waterThermoPropsWagnerPrussInterpData(som);
 
     auto interpolateAtT = [&](Index indexP)
     {
