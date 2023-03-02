@@ -21,6 +21,7 @@
 #include <sstream>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
 #include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
@@ -189,30 +190,37 @@ const Vec<Vec<double>> densities_vapor =
 
 auto waterDensityWagnerPrussInterp(real const& T, real const& P, StateOfMatter som) -> real
 {
+    errorif(T <= 0.0, "Unable to interpolate water density at ", T, " K and ", P, " Pa because of zero or negative temperature.");
+    errorif(P <= 0.0, "Unable to interpolate water density at ", T, " K and ", P, " Pa because of zero or negative pressure.");
+
     const auto PMPa = P * 1e-6; // from Pa to MPa
 
+    errorif(PMPa > pressures.back(), "Unable to interpolate water density at ", T, " K and ", PMPa, " MPa because interpolation over pressure is limited to ", pressures.back(), " MPa.");
+
     const Index iP = std::lower_bound(pressures.begin(), pressures.end(), PMPa) - pressures.begin();
-    const Index iT = std::lower_bound(temperatures[iP].begin(), temperatures[iP].end(), T) - temperatures[iP].begin();
 
-    const Index iPmax = iT < transitions[iP] ? pressures.size() : iP; // check if (T, P) is within liquid/supercritical state
+    const Index iPmax = pressures.size() - 1;
 
-    // Set indices of pressures so that if there is phase transition along pressure, pressures below that value are used
-    const Index iP0 = iPmax > 2 ? std::min(iPmax - 3, iP) : 0;
-    const Index iP1 = iPmax > 1 ? iP0 + 1 : 0;
-    const Index iP2 = iPmax > 0 ? iP1 + 1 : 0;
+    // Set indices of pressure so that iP sits on the middle, unless iP is 0 or iPmax
+    const Index iP0 = iP == 0 ? 0 : iP == iPmax ? iPmax - 2 : iP - 1;
+    const Index iP1 = iP0 + 1;
+    const Index iP2 = iP0 + 2;
+
+    auto const& densities = (som == StateOfMatter::Liquid) ? densities_liquid : densities_vapor;
 
     auto interpolateAtT = [&](Index indexP)
     {
         auto const& Ts = temperatures[indexP];
-        auto const& Ds = som == StateOfMatter::Liquid ? densities_liquid[indexP] : densities_vapor[indexP];
+        auto const& Ds = densities[indexP];
+
+        errorif(T > Ts.back(), "Unable to interpolate water density at ", T, " K and ", PMPa, " MPa because interpolation over temperature is limited to ", Ts.back(), " K along the interpolation data row corresponding to ", pressures[indexP], " MPa.");
 
         const Index iT = std::lower_bound(Ts.begin(), Ts.end(), T) - Ts.begin();
 
-        const auto iTtran = std::min(transitions[indexP], Ts.size()); // use min in case transitions[indexP] == 99
-        const auto iTmax = iT < transitions[indexP] ? iTtran : Ts.size(); // used for ensuring that interpolation is performed within same state of matter
+        const Index iTmax = Ts.size() - 1;
 
-        // Set indices of temperature so that if there is phase transition along temperature, temperatures below that value are used
-        const Index iT0 = std::min(iTmax - 3, iT);
+        // Set indices of temperature so that iT sits on the middle, unless iT is 0 or iTmax
+        const Index iT0 = iT == 0 ? 0 : iT == iTmax ? iTmax - 2 : iT - 1;
         const Index iT1 = iT0 + 1;
         const Index iT2 = iT0 + 2;
 
