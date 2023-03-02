@@ -41,15 +41,8 @@ auto waterDensity(real const& T, real const& P, HelmholtsModel const& model, Sta
     const auto max_iters = 100;
     const auto tolerance = 1.0e-06;
 
-    // Auxiliary constants for initial guess computation for water density
-    const auto R = universalGasConstant;
-
-    // Compute initial guess for density (kg/m3)
-    const auto Dwc_liquid = 5.0 * waterCriticalDensity;
-    const auto Dwc_vapor = waterMolarMass / (R*T/P);
-
-    // Determine an adequate initial guess for (dimensionless) density based on the physical state of water
-    real D = (stateofmatter == StateOfMatter::Liquid) ? real(Dwc_liquid) : real(Dwc_vapor);
+    // Determine an adequate initial guess for density based on the desired physical state of water
+    real D = waterDensityWagnerPrussInterp(T, P, stateofmatter);
 
     for(int i = 1; i <= max_iters; ++i)
     {
@@ -73,7 +66,7 @@ auto waterDensity(real const& T, real const& P, HelmholtsModel const& model, Sta
             D -= F/FD;
         else D *= 0.1;
 
-        if(abs(f) < tolerance || abs(g) < tolerance)
+        if(abs(F) < tolerance || abs(g) < tolerance)
             return D;
     }
 
