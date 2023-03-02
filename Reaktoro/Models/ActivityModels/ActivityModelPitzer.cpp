@@ -160,7 +160,6 @@ const Vec<double> J1region5 =
     2.49958395e+02, 4.99971193e+02, 7.49977057e+02, 9.99980578e+02, 1.24998298e+03, 1.49998474e+03, 1.74998611e+03, 1.99998720e+03, 2.24998810e+03, 2.49998886e+03
 };
 
-
 auto interpolate(real x, double x0, double x1, Vec<double> const& ypoints) -> real
 {
     auto const N = ypoints.size();
@@ -672,6 +671,8 @@ struct PitzerModel
     ArrayXr thetaE;   ///< The current values of the parameters \eq{^{E}\theta_{ij}(I)} associated to the \eq{\theta_{ij}} parameters.
     ArrayXr thetaEP;  ///< The current values of the parameters \eq{^{E}\theta_{ij}^{\prime}(I)} associated to the \eq{\theta_{ij}} parameters.
 
+    Fn<real(real const&, real const&)> Aphi; ///< The function that computes the Debye-huckel parameter \eq{A^\phi(T, P)} in the Pitzer model.
+
     /// Construct a default Pitzer object.
     PitzerModel()
     {}
@@ -754,6 +755,21 @@ struct PitzerModel
             auto const i3 = entry.ispecies[2];
             mu_coeffs.push_back(determineMuCoeffs(z[i1], z[i2], z[i3], i1, i2, i3));
         }
+
+        // Define the function Aphi(T, P) according to PHREEQC (see method calc_dielectrics at utilities.cpp for computing A0)
+        Aphi = [](real const& T, real const& P) -> real
+        {
+            auto const rho = PhreeqcUtils::waterDensityPhreeqc(T, P)/1000; // the density of water (in g/cm3)
+            auto const epsilon = PhreeqcUtils::waterDielectricConstantPhreeqc(T, P);
+            auto const AVOGADRO = 6.02252e23;
+            auto const pi = 3.14159265358979;
+            auto const e2_DkT = 1.671008e-3 / (epsilon * T);
+            auto const DH_B = sqrt(8 * pi * AVOGADRO * e2_DkT * rho / 1e3); // Debye length parameter, 1/cm(mol/kg)^-0.5
+            auto const Aphi0 = DH_B * e2_DkT / 6.0;
+            return Aphi0;
+        };
+
+        Aphi = memoizeLast(Aphi); // memoize so that subsequent repeated calls with same (T, P) return cached result.
     }
 
     /// Update all Pitzer interaction parameters according to current temperature and pressure.
@@ -828,14 +844,8 @@ struct PitzerModel
         if(OSUM == 0.0)
             return;
 
-        // Compute the Debye-Huckel coefficient Aphi0 at (T, P) according to PHREEQC (see method calc_dielectrics at utilities.cpp)
-        auto const rho = PhreeqcUtils::waterDensityPhreeqc(T, P)/1000; // the density of water (in g/cm3)
-        auto const epsilon = PhreeqcUtils::waterDielectricConstantPhreeqc(T, P);
-        auto const AVOGADRO = 6.02252e23;
-        auto const pi = 3.14159265358979;
-        auto const e2_DkT = 1.671008e-3 / (epsilon * T);
-        auto const DH_B = sqrt(8 * pi * AVOGADRO * e2_DkT * rho / 1e3); // Debye length parameter, 1/cm(mol/kg)^-0.5
-        auto const Aphi0 = DH_B * e2_DkT / 6.0;
+        // Compute the Debye-Huckel coefficient Aphi0 at (T, P)
+        auto const Aphi0 = Aphi(T, P);
 
         // The b parameter of the Pitzer model
 	    auto const B = 1.2;
