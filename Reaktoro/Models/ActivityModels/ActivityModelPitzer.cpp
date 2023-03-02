@@ -860,8 +860,9 @@ struct PitzerModel
         real BIGZ = (M * z.abs()).sum();
         real OSUM = M.sum() - M[iH2O];
 
-        // The Debye-Huckel coefficient Aphi evaluated at (T, P)
-        auto const Aphi0 = Aphi(T, P);
+        // If OSUM is zero, then solution is very dilluted - skip the rest and avoid division by zero when computing OSMOT
+        if(OSUM == 0.0)
+            return;
 
         // The b parameter of the Pitzer model
 	    auto const B = 1.2;
