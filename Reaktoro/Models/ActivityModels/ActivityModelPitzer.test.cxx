@@ -31,6 +31,64 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
 
     Elements::append(Element("Sg").withMolarMass(0.032066000));
 
+    WHEN("pure water")
+    {
+        const auto species = SpeciesList("OH- H+ H2O");
+
+        const auto T = 25.0 + 273.15;
+        const auto P = 1.0e+5;
+
+        const auto n = ArrayXr{{
+            1.38935e-07, // OH-
+            1.38935e-07, // H+
+            5.55062e+01, // H2O
+        }};
+
+        const auto x = n / n.sum();
+
+        // Construct the activity props function with the given aqueous species.
+        ActivityModel fn = ActivityModelPitzer()(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x});
+
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.000190054) ); // OH-
+        CHECK( props.ln_g[1]/ln10  == Approx(-0.000190054) ); // H+
+        CHECK( props.ln_g[2]/ln10  == Approx( 3.17078e-13) ); // H2O
+    }
+
+    WHEN("pure water - ionic strength is zero")
+    {
+        const auto species = SpeciesList("OH- H+ H2O");
+
+        const auto T = 25.0 + 273.15;
+        const auto P = 1.0e+5;
+
+        const auto n = ArrayXr{{
+            0.0,         // OH-
+            0.0,         // H+
+            5.55062e+01, // H2O
+        }};
+
+        const auto x = n / n.sum();
+
+        // Construct the activity props function with the given aqueous species.
+        ActivityModel fn = ActivityModelPitzer()(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        // Evaluate the activity props function
+        fn(props, {T, P, x});
+
+        CHECK( props.ln_g[0]/ln10  == Approx( 0.000000000) ); // OH-
+        CHECK( props.ln_g[1]/ln10  == Approx( 0.000000000) ); // H+
+        CHECK( props.ln_g[2]/ln10  == Approx( 0.000000000) ); // H2O
+    }
+
     WHEN("less saline at low temperature - chemical elements are Na, Cl")
     {
         // -----------------------------------------------------------------------------
@@ -77,11 +135,11 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.177041000 ) ); // OH- (PHREEQC: -0.17703, difference: 0.0062 % )
-        CHECK( props.ln_g[1]/ln10  == Approx( -0.109118000 ) ); // H+ (PHREEQC: -0.10911, difference: 0.0073 % )
-        CHECK( props.ln_g[2]/ln10  == Approx(  0.000450586 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.159553000 ) ); // Cl- (PHREEQC: -0.15954, difference: 0.0081 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.159553000 ) ); // Na+ (PHREEQC: -0.15954, difference: 0.0081 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.177033000) ); // OH- (PHREEQC: -0.17703, difference: 1.69e-03 %)
+        CHECK( props.ln_g[1]/ln10  == Approx(-0.109110000) ); // H+ (PHREEQC: -0.10911, difference: 0.00e+00 %)
+        CHECK( props.ln_g[2]/ln10  == Approx( 0.000450555) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.159545000) ); // Cl- (PHREEQC: -0.15954, difference: 3.13e-03 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.159545000) ); // Na+ (PHREEQC: -0.15954, difference: 3.13e-03 %)
     }
 
     WHEN("less saline at high temperature - chemical elements are Na, Cl")
@@ -130,11 +188,11 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.195169000 ) ); // OH- (PHREEQC: -0.19486, difference: 0.1586 % )
-        CHECK( props.ln_g[1]/ln10  == Approx( -0.148796000 ) ); // H+ (PHREEQC: -0.14848, difference: 0.2128 % )
-        CHECK( props.ln_g[2]/ln10  == Approx(  0.000492475 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.178501000 ) ); // Cl- (PHREEQC: -0.17819, difference: 0.1745 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.178501000 ) ); // Na+ (PHREEQC: -0.17819, difference: 0.1745 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.194858000) ); // OH- (PHREEQC: -0.19486, difference: 1.03e-03 %)
+        CHECK( props.ln_g[1]/ln10  == Approx(-0.148485000) ); // H+ (PHREEQC: -0.14848, difference: 3.37e-03 %)
+        CHECK( props.ln_g[2]/ln10  == Approx( 0.000491236) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.178190000) ); // Cl- (PHREEQC: -0.17819, difference: 0.00e+00 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.178190000) ); // Na+ (PHREEQC: -0.17819, difference: 0.00e+00 %)
     }
 
     WHEN("more saline at low temperature - chemical elements are Na, Cl")
@@ -183,11 +241,11 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.272281000 ) ); // OH- (PHREEQC: -0.27226, difference: 0.0077 % )
-        CHECK( props.ln_g[1]/ln10  == Approx(  0.348307000 ) ); // H+ (PHREEQC:  0.34830, difference: 0.0020 % )
-        CHECK( props.ln_g[2]/ln10  == Approx( -0.011321500 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.106151000 ) ); // Cl- (PHREEQC: -0.10614, difference: 0.0104 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.106151000 ) ); // Na+ (PHREEQC: -0.10614, difference: 0.0104 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.272265000) ); // OH- (PHREEQC: -0.27226, difference: 1.84e-03 %)
+        CHECK( props.ln_g[1]/ln10  == Approx( 0.348323000) ); // H+ (PHREEQC:  0.34830, difference: 6.60e-03 %)
+        CHECK( props.ln_g[2]/ln10  == Approx(-0.011322000) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.106135000) ); // Cl- (PHREEQC: -0.10614, difference: 4.71e-03 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.106135000) ); // Na+ (PHREEQC: -0.10614, difference: 4.71e-03 %)
     }
 
     WHEN("more saline at high temperature - chemical elements are Na, Cl")
@@ -236,11 +294,11 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.286221000 ) ); // OH- (PHREEQC: -0.28559, difference: 0.2209 % )
-        CHECK( props.ln_g[1]/ln10  == Approx(  0.220514000 ) ); // H+ (PHREEQC:  0.22112, difference: 0.2741 % )
-        CHECK( props.ln_g[2]/ln10  == Approx( -0.010878900 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.125490000 ) ); // Cl- (PHREEQC: -0.12487, difference: 0.4965 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.125490000 ) ); // Na+ (PHREEQC: -0.12487, difference: 0.4965 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.285593000) ); // OH- (PHREEQC: -0.28559, difference: 1.05e-03 %)
+        CHECK( props.ln_g[1]/ln10  == Approx( 0.221143000) ); // H+ (PHREEQC:  0.22112, difference: 1.04e-02 %)
+        CHECK( props.ln_g[2]/ln10  == Approx(-0.010899100) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.124862000) ); // Cl- (PHREEQC: -0.12487, difference: 6.41e-03 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.124862000) ); // Na+ (PHREEQC: -0.12487, difference: 6.41e-03 %)
     }
 
     WHEN("less saline at low temperature - chemical elements are B, Ba, Br, C, Ca, Cl, Fe, K, Li, Mg, Mn, Na, S, Sg, Si, Sr")
@@ -331,39 +389,39 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.315317000 ) ); // OH- (PHREEQC: -0.31654, difference: 0.3864 % )
-        CHECK( props.ln_g[1]/ln10  == Approx( -0.319963000 ) ); // H+ (PHREEQC: -0.31960, difference: 0.1136 % )
-        CHECK( props.ln_g[2]/ln10  == Approx(  0.003825070 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.420930000 ) ); // B(OH)4- (PHREEQC: -0.42056, difference: 0.0880 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.010631900 ) ); // B(OH)3 (PHREEQC: -0.01063, difference: 0.0179 % )
-        CHECK( props.ln_g[5]/ln10  == Approx( -0.440533000 ) ); // B4O5(OH)4-2 (PHREEQC: -0.44017, difference: 0.0825 % )
-        CHECK( props.ln_g[6]/ln10  == Approx( -1.686780000 ) ); // B3O3(OH)4- (PHREEQC: -1.68530, difference: 0.0878 % )
-        CHECK( props.ln_g[7]/ln10  == Approx( -1.073720000 ) ); // Ba+2 (PHREEQC: -1.07227, difference: 0.1352 % )
-        CHECK( props.ln_g[8]/ln10  == Approx( -0.195965000 ) ); // Br- (PHREEQC: -0.19560, difference: 0.1866 % )
-        CHECK( props.ln_g[9]/ln10  == Approx( -1.454360000 ) ); // CO3-2 (PHREEQC: -1.45289, difference: 0.1012 % )
-        CHECK( props.ln_g[10]/ln10 == Approx( -0.310029000 ) ); // HCO3- (PHREEQC: -0.30966, difference: 0.1192 % )
-        CHECK( props.ln_g[11]/ln10 == Approx(  0.043102200 ) ); // CO2 (PHREEQC:  0.04310, difference: 0.0051 % )
-        CHECK( props.ln_g[12]/ln10 == Approx( -1.463490000 ) ); // Ca+2 (PHREEQC: -1.49053, difference: 1.8141 % )
-        CHECK( props.ln_g[13]/ln10 == Approx( -0.383743000 ) ); // CaB(OH)4+ (PHREEQC: -0.38338, difference: 0.0947 % )
-        CHECK( props.ln_g[14]/ln10 == Approx( -0.129128000 ) ); // Cl- (PHREEQC: -0.12908, difference: 0.0372 % )
-        CHECK( props.ln_g[15]/ln10 == Approx( -1.337230000 ) ); // Fe+2 (PHREEQC: -1.33576, difference: 0.1100 % )
-        CHECK( props.ln_g[16]/ln10 == Approx( -0.236991000 ) ); // K+ (PHREEQC: -0.23663, difference: 0.1526 % )
-        CHECK( props.ln_g[17]/ln10 == Approx( -0.302362000 ) ); // Li+ (PHREEQC: -0.30200, difference: 0.1199 % )
-        CHECK( props.ln_g[18]/ln10 == Approx( -0.349412000 ) ); // MgOH+ (PHREEQC: -0.34904, difference: 0.1066 % )
-        CHECK( props.ln_g[19]/ln10 == Approx( -1.279670000 ) ); // Mg+2 (PHREEQC: -1.27821, difference: 0.1142 % )
-        CHECK( props.ln_g[20]/ln10 == Approx(  0.000000000 ) ); // MgCO3 (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[21]/ln10 == Approx( -0.369845000 ) ); // MgB(OH)4+ (PHREEQC: -0.36948, difference: 0.0988 % )
-        CHECK( props.ln_g[22]/ln10 == Approx( -1.344300000 ) ); // Mn+2 (PHREEQC: -1.34283, difference: 0.1095 % )
-        CHECK( props.ln_g[23]/ln10 == Approx( -0.243301000 ) ); // Na+ (PHREEQC: -0.24294, difference: 0.1486 % )
-        CHECK( props.ln_g[24]/ln10 == Approx( -1.323140000 ) ); // SO4-2 (PHREEQC: -1.32168, difference: 0.1105 % )
-        CHECK( props.ln_g[25]/ln10 == Approx( -0.253491000 ) ); // HSO4- (PHREEQC: -0.25313, difference: 0.1426 % )
-        CHECK( props.ln_g[26]/ln10 == Approx( -0.395627000 ) ); // HSg- (PHREEQC: -0.39526, difference: 0.0929 % )
-        CHECK( props.ln_g[27]/ln10 == Approx(  0.035149800 ) ); // H2Sg (PHREEQC:  0.03515, difference: 0.0006 % )
-        CHECK( props.ln_g[28]/ln10 == Approx(  0.001912690 ) ); // (H2Sg)2 (PHREEQC:  0.00191, difference: 0.1408 % )
-        CHECK( props.ln_g[29]/ln10 == Approx( -1.653040000 ) ); // H2SiO4-2 (PHREEQC: -1.65157, difference: 0.0890 % )
-        CHECK( props.ln_g[30]/ln10 == Approx( -0.395627000 ) ); // H3SiO4- (PHREEQC: -0.39526, difference: 0.0929 % )
-        CHECK( props.ln_g[31]/ln10 == Approx(  0.036311100 ) ); // H4SiO4 (PHREEQC:  0.03631, difference: 0.0030 % )
-        CHECK( props.ln_g[32]/ln10 == Approx( -1.319990000 ) ); // Sr+2 (PHREEQC: -1.31852, difference: 0.1115 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.315304000) ); // OH- (PHREEQC: -0.31654, difference: 3.90e-01 %)
+        CHECK( props.ln_g[1]/ln10  == Approx(-0.319948000) ); // H+ (PHREEQC: -0.31960, difference: 1.09e-01 %)
+        CHECK( props.ln_g[2]/ln10  == Approx( 0.003824830) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.420916000) ); // B(OH)4- (PHREEQC: -0.42056, difference: 8.46e-02 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.010631900) ); // B(OH)3 (PHREEQC: -0.01063, difference: 1.79e-02 %)
+        CHECK( props.ln_g[5]/ln10  == Approx(-0.440519000) ); // B4O5(OH)4-2 (PHREEQC: -0.44017, difference: 7.93e-02 %)
+        CHECK( props.ln_g[6]/ln10  == Approx(-1.686720000) ); // B3O3(OH)4- (PHREEQC: -1.68530, difference: 8.43e-02 %)
+        CHECK( props.ln_g[7]/ln10  == Approx(-1.073670000) ); // Ba+2 (PHREEQC: -1.07227, difference: 1.31e-01 %)
+        CHECK( props.ln_g[8]/ln10  == Approx(-0.195952000) ); // Br- (PHREEQC: -0.19560, difference: 1.80e-01 %)
+        CHECK( props.ln_g[9]/ln10  == Approx(-1.454300000) ); // CO3-2 (PHREEQC: -1.45289, difference: 9.70e-02 %)
+        CHECK( props.ln_g[10]/ln10 == Approx(-0.310016000) ); // HCO3- (PHREEQC: -0.30966, difference: 1.15e-01 %)
+        CHECK( props.ln_g[11]/ln10 == Approx( 0.043102200) ); // CO2 (PHREEQC:  0.04310, difference: 5.10e-03 %)
+        CHECK( props.ln_g[12]/ln10 == Approx(-1.463430000) ); // Ca+2 (PHREEQC: -1.49053, difference: 1.82e+00 %)
+        CHECK( props.ln_g[13]/ln10 == Approx(-0.383729000) ); // CaB(OH)4+ (PHREEQC: -0.38338, difference: 9.10e-02 %)
+        CHECK( props.ln_g[14]/ln10 == Approx(-0.129115000) ); // Cl- (PHREEQC: -0.12908, difference: 2.71e-02 %)
+        CHECK( props.ln_g[15]/ln10 == Approx(-1.337170000) ); // Fe+2 (PHREEQC: -1.33576, difference: 1.06e-01 %)
+        CHECK( props.ln_g[16]/ln10 == Approx(-0.236977000) ); // K+ (PHREEQC: -0.23663, difference: 1.47e-01 %)
+        CHECK( props.ln_g[17]/ln10 == Approx(-0.302347000) ); // Li+ (PHREEQC: -0.30200, difference: 1.15e-01 %)
+        CHECK( props.ln_g[18]/ln10 == Approx(-0.349397000) ); // MgOH+ (PHREEQC: -0.34904, difference: 1.02e-01 %)
+        CHECK( props.ln_g[19]/ln10 == Approx(-1.279610000) ); // Mg+2 (PHREEQC: -1.27821, difference: 1.10e-01 %)
+        CHECK( props.ln_g[20]/ln10 == Approx( 0.000000000) ); // MgCO3 (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[21]/ln10 == Approx(-0.369831000) ); // MgB(OH)4+ (PHREEQC: -0.36948, difference: 9.50e-02 %)
+        CHECK( props.ln_g[22]/ln10 == Approx(-1.344240000) ); // Mn+2 (PHREEQC: -1.34283, difference: 1.05e-01 %)
+        CHECK( props.ln_g[23]/ln10 == Approx(-0.243287000) ); // Na+ (PHREEQC: -0.24294, difference: 1.43e-01 %)
+        CHECK( props.ln_g[24]/ln10 == Approx(-1.323090000) ); // SO4-2 (PHREEQC: -1.32168, difference: 1.07e-01 %)
+        CHECK( props.ln_g[25]/ln10 == Approx(-0.253477000) ); // HSO4- (PHREEQC: -0.25313, difference: 1.37e-01 %)
+        CHECK( props.ln_g[26]/ln10 == Approx(-0.395614000) ); // HSg- (PHREEQC: -0.39526, difference: 8.96e-02 %)
+        CHECK( props.ln_g[27]/ln10 == Approx( 0.035149800) ); // H2Sg (PHREEQC:  0.03515, difference: 5.69e-04 %)
+        CHECK( props.ln_g[28]/ln10 == Approx( 0.001912690) ); // (H2Sg)2 (PHREEQC:  0.00191, difference: 1.41e-01 %)
+        CHECK( props.ln_g[29]/ln10 == Approx(-1.652990000) ); // H2SiO4-2 (PHREEQC: -1.65157, difference: 8.60e-02 %)
+        CHECK( props.ln_g[30]/ln10 == Approx(-0.395614000) ); // H3SiO4- (PHREEQC: -0.39526, difference: 8.96e-02 %)
+        CHECK( props.ln_g[31]/ln10 == Approx( 0.036311100) ); // H4SiO4 (PHREEQC:  0.03631, difference: 3.03e-03 %)
+        CHECK( props.ln_g[32]/ln10 == Approx(-1.319930000) ); // Sr+2 (PHREEQC: -1.31852, difference: 1.07e-01 %)
     }
 
     WHEN("less saline at high temperature - chemical elements are B, Ba, Br, C, Ca, Cl, Fe, K, Li, Mg, Mn, Na, S, Sg, Si, Sr")
@@ -454,39 +512,39 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.361251000 ) ); // OH- (PHREEQC: -0.36188, difference: 0.1738 % )
-        CHECK( props.ln_g[1]/ln10  == Approx( -0.389184000 ) ); // H+ (PHREEQC: -0.38817, difference: 0.2612 % )
-        CHECK( props.ln_g[2]/ln10  == Approx(  0.004521510 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.480133000 ) ); // B(OH)4- (PHREEQC: -0.47916, difference: 0.2031 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.010631900 ) ); // B(OH)3 (PHREEQC: -0.01063, difference: 0.0179 % )
-        CHECK( props.ln_g[5]/ln10  == Approx( -0.499812000 ) ); // B4O5(OH)4-2 (PHREEQC: -0.49884, difference: 0.1949 % )
-        CHECK( props.ln_g[6]/ln10  == Approx( -1.933250000 ) ); // B3O3(OH)4- (PHREEQC: -1.92926, difference: 0.2068 % )
-        CHECK( props.ln_g[7]/ln10  == Approx( -1.297240000 ) ); // Ba+2 (PHREEQC: -1.29335, difference: 0.3008 % )
-        CHECK( props.ln_g[8]/ln10  == Approx( -0.215356000 ) ); // Br- (PHREEQC: -0.21439, difference: 0.4506 % )
-        CHECK( props.ln_g[9]/ln10  == Approx( -1.641640000 ) ); // CO3-2 (PHREEQC: -1.63765, difference: 0.2436 % )
-        CHECK( props.ln_g[10]/ln10 == Approx( -0.371845000 ) ); // HCO3- (PHREEQC: -0.37087, difference: 0.2629 % )
-        CHECK( props.ln_g[11]/ln10 == Approx(  0.042842200 ) ); // CO2 (PHREEQC:  0.04284, difference: 0.0051 % )
-        CHECK( props.ln_g[12]/ln10 == Approx( -1.670580000 ) ); // Ca+2 (PHREEQC: -1.70216, difference: 1.8553 % )
-        CHECK( props.ln_g[13]/ln10 == Approx( -0.447349000 ) ); // CaB(OH)4+ (PHREEQC: -0.44633, difference: 0.2283 % )
-        CHECK( props.ln_g[14]/ln10 == Approx( -0.159312000 ) ); // Cl- (PHREEQC: -0.15953, difference: 0.1367 % )
-        CHECK( props.ln_g[15]/ln10 == Approx( -1.574740000 ) ); // Fe+2 (PHREEQC: -1.57084, difference: 0.2483 % )
-        CHECK( props.ln_g[16]/ln10 == Approx( -0.275637000 ) ); // K+ (PHREEQC: -0.27463, difference: 0.3667 % )
-        CHECK( props.ln_g[17]/ln10 == Approx( -0.366432000 ) ); // Li+ (PHREEQC: -0.36542, difference: 0.2769 % )
-        CHECK( props.ln_g[18]/ln10 == Approx( -0.412905000 ) ); // MgOH+ (PHREEQC: -0.41189, difference: 0.2464 % )
-        CHECK( props.ln_g[19]/ln10 == Approx( -1.502130000 ) ); // Mg+2 (PHREEQC: -1.49823, difference: 0.2603 % )
-        CHECK( props.ln_g[20]/ln10 == Approx(  0.000000000 ) ); // MgCO3 (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[21]/ln10 == Approx( -0.433451000 ) ); // MgB(OH)4+ (PHREEQC: -0.43244, difference: 0.2338 % )
-        CHECK( props.ln_g[22]/ln10 == Approx( -1.581810000 ) ); // Mn+2 (PHREEQC: -1.57791, difference: 0.2472 % )
-        CHECK( props.ln_g[23]/ln10 == Approx( -0.256394000 ) ); // Na+ (PHREEQC: -0.25539, difference: 0.3931 % )
-        CHECK( props.ln_g[24]/ln10 == Approx( -1.502600000 ) ); // SO4-2 (PHREEQC: -1.49861, difference: 0.2662 % )
-        CHECK( props.ln_g[25]/ln10 == Approx( -0.313764000 ) ); // HSO4- (PHREEQC: -0.31279, difference: 0.3114 % )
-        CHECK( props.ln_g[26]/ln10 == Approx( -0.454836000 ) ); // HSg- (PHREEQC: -0.45386, difference: 0.2150 % )
-        CHECK( props.ln_g[27]/ln10 == Approx(  0.038135700 ) ); // H2Sg (PHREEQC:  0.03813, difference: 0.0149 % )
-        CHECK( props.ln_g[28]/ln10 == Approx(  0.019454800 ) ); // (H2Sg)2 (PHREEQC:  0.01945, difference: 0.0247 % )
-        CHECK( props.ln_g[29]/ln10 == Approx( -1.899480000 ) ); // H2SiO4-2 (PHREEQC: -1.89549, difference: 0.2105 % )
-        CHECK( props.ln_g[30]/ln10 == Approx( -0.454836000 ) ); // H3SiO4- (PHREEQC: -0.45386, difference: 0.2150 % )
-        CHECK( props.ln_g[31]/ln10 == Approx(  0.028118100 ) ); // H4SiO4 (PHREEQC:  0.02812, difference: 0.0068 % )
-        CHECK( props.ln_g[32]/ln10 == Approx( -1.521460000 ) ); // Sr+2 (PHREEQC: -1.51756, difference: 0.2570 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.360721000) ); // OH- (PHREEQC: -0.36188, difference: 3.20e-01 %)
+        CHECK( props.ln_g[1]/ln10  == Approx(-0.388612000) ); // H+ (PHREEQC: -0.38817, difference: 1.14e-01 %)
+        CHECK( props.ln_g[2]/ln10  == Approx( 0.004511950) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.479603000) ); // B(OH)4- (PHREEQC: -0.47916, difference: 9.25e-02 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.010631900) ); // B(OH)3 (PHREEQC: -0.01063, difference: 1.79e-02 %)
+        CHECK( props.ln_g[5]/ln10  == Approx(-0.499283000) ); // B4O5(OH)4-2 (PHREEQC: -0.49884, difference: 8.88e-02 %)
+        CHECK( props.ln_g[6]/ln10  == Approx(-1.931030000) ); // B3O3(OH)4- (PHREEQC: -1.92926, difference: 9.17e-02 %)
+        CHECK( props.ln_g[7]/ln10  == Approx(-1.295110000) ); // Ba+2 (PHREEQC: -1.29335, difference: 1.36e-01 %)
+        CHECK( props.ln_g[8]/ln10  == Approx(-0.214826000) ); // Br- (PHREEQC: -0.21439, difference: 2.03e-01 %)
+        CHECK( props.ln_g[9]/ln10  == Approx(-1.639410000) ); // CO3-2 (PHREEQC: -1.63765, difference: 1.07e-01 %)
+        CHECK( props.ln_g[10]/ln10 == Approx(-0.371315000) ); // HCO3- (PHREEQC: -0.37087, difference: 1.20e-01 %)
+        CHECK( props.ln_g[11]/ln10 == Approx( 0.042842200) ); // CO2 (PHREEQC:  0.04284, difference: 5.14e-03 %)
+        CHECK( props.ln_g[12]/ln10 == Approx(-1.668450000) ); // Ca+2 (PHREEQC: -1.70216, difference: 1.98e+00 %)
+        CHECK( props.ln_g[13]/ln10 == Approx(-0.446776000) ); // CaB(OH)4+ (PHREEQC: -0.44633, difference: 9.99e-02 %)
+        CHECK( props.ln_g[14]/ln10 == Approx(-0.158782000) ); // Cl- (PHREEQC: -0.15953, difference: 4.69e-01 %)
+        CHECK( props.ln_g[15]/ln10 == Approx(-1.572610000) ); // Fe+2 (PHREEQC: -1.57084, difference: 1.13e-01 %)
+        CHECK( props.ln_g[16]/ln10 == Approx(-0.275064000) ); // K+ (PHREEQC: -0.27463, difference: 1.58e-01 %)
+        CHECK( props.ln_g[17]/ln10 == Approx(-0.365859000) ); // Li+ (PHREEQC: -0.36542, difference: 1.20e-01 %)
+        CHECK( props.ln_g[18]/ln10 == Approx(-0.412333000) ); // MgOH+ (PHREEQC: -0.41189, difference: 1.08e-01 %)
+        CHECK( props.ln_g[19]/ln10 == Approx(-1.499990000) ); // Mg+2 (PHREEQC: -1.49823, difference: 1.17e-01 %)
+        CHECK( props.ln_g[20]/ln10 == Approx( 0.000000000) ); // MgCO3 (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[21]/ln10 == Approx(-0.432878000) ); // MgB(OH)4+ (PHREEQC: -0.43244, difference: 1.01e-01 %)
+        CHECK( props.ln_g[22]/ln10 == Approx(-1.579670000) ); // Mn+2 (PHREEQC: -1.57791, difference: 1.12e-01 %)
+        CHECK( props.ln_g[23]/ln10 == Approx(-0.255822000) ); // Na+ (PHREEQC: -0.25539, difference: 1.69e-01 %)
+        CHECK( props.ln_g[24]/ln10 == Approx(-1.500380000) ); // SO4-2 (PHREEQC: -1.49861, difference: 1.18e-01 %)
+        CHECK( props.ln_g[25]/ln10 == Approx(-0.313235000) ); // HSO4- (PHREEQC: -0.31279, difference: 1.42e-01 %)
+        CHECK( props.ln_g[26]/ln10 == Approx(-0.454306000) ); // HSg- (PHREEQC: -0.45386, difference: 9.83e-02 %)
+        CHECK( props.ln_g[27]/ln10 == Approx( 0.038135700) ); // H2Sg (PHREEQC:  0.03813, difference: 1.49e-02 %)
+        CHECK( props.ln_g[28]/ln10 == Approx( 0.019454800) ); // (H2Sg)2 (PHREEQC:  0.01945, difference: 2.47e-02 %)
+        CHECK( props.ln_g[29]/ln10 == Approx(-1.897260000) ); // H2SiO4-2 (PHREEQC: -1.89549, difference: 9.34e-02 %)
+        CHECK( props.ln_g[30]/ln10 == Approx(-0.454306000) ); // H3SiO4- (PHREEQC: -0.45386, difference: 9.83e-02 %)
+        CHECK( props.ln_g[31]/ln10 == Approx( 0.028118100) ); // H4SiO4 (PHREEQC:  0.02812, difference: 6.76e-03 %)
+        CHECK( props.ln_g[32]/ln10 == Approx(-1.519320000) ); // Sr+2 (PHREEQC: -1.51756, difference: 1.16e-01 %)
     }
 
     WHEN("more saline at low temperature - chemical elements are B, Ba, Br, C, Ca, Cl, Fe, K, Li, Mg, Mn, Na, S, Sg, Si, Sr")
@@ -577,39 +635,39 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.333687000 ) ); // OH- (PHREEQC: -0.33493, difference: 0.3711 % )
-        CHECK( props.ln_g[1]/ln10  == Approx(  0.100480000 ) ); // H+ (PHREEQC:  0.10083, difference: 0.3471 % )
-        CHECK( props.ln_g[2]/ln10  == Approx( -0.027975200 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -0.872613000 ) ); // B(OH)4- (PHREEQC: -0.87223, difference: 0.0439 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.070357000 ) ); // B(OH)3 (PHREEQC: -0.07036, difference: 0.0043 % )
-        CHECK( props.ln_g[5]/ln10  == Approx( -3.099970000 ) ); // B4O5(OH)4-2 (PHREEQC: -3.09843, difference: 0.0497 % )
-        CHECK( props.ln_g[6]/ln10  == Approx( -0.835915000 ) ); // B3O3(OH)4- (PHREEQC: -0.83552, difference: 0.0473 % )
-        CHECK( props.ln_g[7]/ln10  == Approx( -1.953580000 ) ); // Ba+2 (PHREEQC: -1.95196, difference: 0.0830 % )
-        CHECK( props.ln_g[8]/ln10  == Approx( -0.047441300 ) ); // Br- (PHREEQC: -0.04706, difference: 0.8102 % )
-        CHECK( props.ln_g[9]/ln10  == Approx( -2.264760000 ) ); // CO3-2 (PHREEQC: -2.26323, difference: 0.0676 % )
-        CHECK( props.ln_g[10]/ln10 == Approx( -0.386501000 ) ); // HCO3- (PHREEQC: -0.38612, difference: 0.0987 % )
-        CHECK( props.ln_g[11]/ln10 == Approx(  0.412418000 ) ); // CO2 (PHREEQC:  0.41240, difference: 0.0044 % )
-        CHECK( props.ln_g[12]/ln10 == Approx( -3.003410000 ) ); // Ca+2 (PHREEQC: -3.03028, difference: 0.8867 % )
-        CHECK( props.ln_g[13]/ln10 == Approx( -0.443235000 ) ); // CaB(OH)4+ (PHREEQC: -0.44286, difference: 0.0847 % )
-        CHECK( props.ln_g[14]/ln10 == Approx( -0.179621000 ) ); // Cl- (PHREEQC: -0.17953, difference: 0.0507 % )
-        CHECK( props.ln_g[15]/ln10 == Approx( -1.625890000 ) ); // Fe+2 (PHREEQC: -1.62439, difference: 0.0923 % )
-        CHECK( props.ln_g[16]/ln10 == Approx(  0.317051000 ) ); // K+ (PHREEQC:  0.31740, difference: 0.1100 % )
-        CHECK( props.ln_g[17]/ln10 == Approx(  0.007057200 ) ); // Li+ (PHREEQC:  0.00742, difference: 4.8895 % )
-        CHECK( props.ln_g[18]/ln10 == Approx( -1.064470000 ) ); // MgOH+ (PHREEQC: -1.06406, difference: 0.0385 % )
-        CHECK( props.ln_g[19]/ln10 == Approx( -1.087990000 ) ); // Mg+2 (PHREEQC: -1.08652, difference: 0.1353 % )
-        CHECK( props.ln_g[20]/ln10 == Approx(  0.000000000 ) ); // MgCO3 (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[21]/ln10 == Approx( -0.304255000 ) ); // MgB(OH)4+ (PHREEQC: -0.30388, difference: 0.1234 % )
-        CHECK( props.ln_g[22]/ln10 == Approx( -1.898690000 ) ); // Mn+2 (PHREEQC: -1.89717, difference: 0.0801 % )
-        CHECK( props.ln_g[23]/ln10 == Approx(  0.429476000 ) ); // Na+ (PHREEQC:  0.42982, difference: 0.0800 % )
-        CHECK( props.ln_g[24]/ln10 == Approx( -2.089910000 ) ); // SO4-2 (PHREEQC: -2.08838, difference: 0.0733 % )
-        CHECK( props.ln_g[25]/ln10 == Approx( -0.220650000 ) ); // HSO4- (PHREEQC: -0.22028, difference: 0.1680 % )
-        CHECK( props.ln_g[26]/ln10 == Approx( -0.766045000 ) ); // HSg- (PHREEQC: -0.76566, difference: 0.0503 % )
-        CHECK( props.ln_g[27]/ln10 == Approx(  0.397311000 ) ); // H2Sg (PHREEQC:  0.39729, difference: 0.0053 % )
-        CHECK( props.ln_g[28]/ln10 == Approx( -0.037006000 ) ); // (H2Sg)2 (PHREEQC: -0.03700, difference: 0.0162 % )
-        CHECK( props.ln_g[29]/ln10 == Approx( -3.157880000 ) ); // H2SiO4-2 (PHREEQC: -3.15632, difference: 0.0494 % )
-        CHECK( props.ln_g[30]/ln10 == Approx( -0.766045000 ) ); // H3SiO4- (PHREEQC: -0.76566, difference: 0.0503 % )
-        CHECK( props.ln_g[31]/ln10 == Approx(  0.316641000 ) ); // H4SiO4 (PHREEQC:  0.31663, difference: 0.0035 % )
-        CHECK( props.ln_g[32]/ln10 == Approx( -1.487300000 ) ); // Sr+2 (PHREEQC: -1.48580, difference: 0.1010 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.333664000) ); // OH- (PHREEQC: -0.33493, difference: 3.78e-01 %)
+        CHECK( props.ln_g[1]/ln10  == Approx( 0.100507000) ); // H+ (PHREEQC:  0.10083, difference: 3.20e-01 %)
+        CHECK( props.ln_g[2]/ln10  == Approx(-0.027978700) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-0.872589000) ); // B(OH)4- (PHREEQC: -0.87223, difference: 4.12e-02 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.070357000) ); // B(OH)3 (PHREEQC: -0.07036, difference: 4.26e-03 %)
+        CHECK( props.ln_g[5]/ln10  == Approx(-3.099870000) ); // B4O5(OH)4-2 (PHREEQC: -3.09843, difference: 4.65e-02 %)
+        CHECK( props.ln_g[6]/ln10  == Approx(-0.835892000) ); // B3O3(OH)4- (PHREEQC: -0.83552, difference: 4.45e-02 %)
+        CHECK( props.ln_g[7]/ln10  == Approx(-1.953490000) ); // Ba+2 (PHREEQC: -1.95196, difference: 7.84e-02 %)
+        CHECK( props.ln_g[8]/ln10  == Approx(-0.047417600) ); // Br- (PHREEQC: -0.04706, difference: 7.60e-01 %)
+        CHECK( props.ln_g[9]/ln10  == Approx(-2.264660000) ); // CO3-2 (PHREEQC: -2.26323, difference: 6.32e-02 %)
+        CHECK( props.ln_g[10]/ln10 == Approx(-0.386477000) ); // HCO3- (PHREEQC: -0.38612, difference: 9.25e-02 %)
+        CHECK( props.ln_g[11]/ln10 == Approx( 0.412418000) ); // CO2 (PHREEQC:  0.41240, difference: 4.36e-03 %)
+        CHECK( props.ln_g[12]/ln10 == Approx(-3.003310000) ); // Ca+2 (PHREEQC: -3.03028, difference: 8.90e-01 %)
+        CHECK( props.ln_g[13]/ln10 == Approx(-0.443207000) ); // CaB(OH)4+ (PHREEQC: -0.44286, difference: 7.84e-02 %)
+        CHECK( props.ln_g[14]/ln10 == Approx(-0.179597000) ); // Cl- (PHREEQC: -0.17953, difference: 3.73e-02 %)
+        CHECK( props.ln_g[15]/ln10 == Approx(-1.625790000) ); // Fe+2 (PHREEQC: -1.62439, difference: 8.62e-02 %)
+        CHECK( props.ln_g[16]/ln10 == Approx( 0.317079000) ); // K+ (PHREEQC:  0.31740, difference: 1.01e-01 %)
+        CHECK( props.ln_g[17]/ln10 == Approx( 0.007084310) ); // Li+ (PHREEQC:  0.00742, difference: 4.52e+00 %)
+        CHECK( props.ln_g[18]/ln10 == Approx(-1.064450000) ); // MgOH+ (PHREEQC: -1.06406, difference: 3.67e-02 %)
+        CHECK( props.ln_g[19]/ln10 == Approx(-1.087900000) ); // Mg+2 (PHREEQC: -1.08652, difference: 1.27e-01 %)
+        CHECK( props.ln_g[20]/ln10 == Approx( 0.000000000) ); // MgCO3 (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[21]/ln10 == Approx(-0.304228000) ); // MgB(OH)4+ (PHREEQC: -0.30388, difference: 1.15e-01 %)
+        CHECK( props.ln_g[22]/ln10 == Approx(-1.898600000) ); // Mn+2 (PHREEQC: -1.89717, difference: 7.54e-02 %)
+        CHECK( props.ln_g[23]/ln10 == Approx( 0.429503000) ); // Na+ (PHREEQC:  0.42982, difference: 7.38e-02 %)
+        CHECK( props.ln_g[24]/ln10 == Approx(-2.089810000) ); // SO4-2 (PHREEQC: -2.08838, difference: 6.85e-02 %)
+        CHECK( props.ln_g[25]/ln10 == Approx(-0.220626000) ); // HSO4- (PHREEQC: -0.22028, difference: 1.57e-01 %)
+        CHECK( props.ln_g[26]/ln10 == Approx(-0.766021000) ); // HSg- (PHREEQC: -0.76566, difference: 4.71e-02 %)
+        CHECK( props.ln_g[27]/ln10 == Approx( 0.397311000) ); // H2Sg (PHREEQC:  0.39729, difference: 5.29e-03 %)
+        CHECK( props.ln_g[28]/ln10 == Approx(-0.037006000) ); // (H2Sg)2 (PHREEQC: -0.03700, difference: 1.62e-02 %)
+        CHECK( props.ln_g[29]/ln10 == Approx(-3.157770000) ); // H2SiO4-2 (PHREEQC: -3.15632, difference: 4.59e-02 %)
+        CHECK( props.ln_g[30]/ln10 == Approx(-0.766021000) ); // H3SiO4- (PHREEQC: -0.76566, difference: 4.71e-02 %)
+        CHECK( props.ln_g[31]/ln10 == Approx( 0.316641000) ); // H4SiO4 (PHREEQC:  0.31663, difference: 3.47e-03 %)
+        CHECK( props.ln_g[32]/ln10 == Approx(-1.487200000) ); // Sr+2 (PHREEQC: -1.48580, difference: 9.42e-02 %)
     }
 
     WHEN("more saline at high temperature - chemical elements are B, Ba, Br, C, Ca, Cl, Fe, K, Li, Mg, Mn, Na, S, Sg, Si, Sr")
@@ -700,38 +758,38 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx( -0.653708000 ) ); // OH- (PHREEQC: -0.65394, difference: 0.0355 % )
-        CHECK( props.ln_g[1]/ln10  == Approx( -0.053114200 ) ); // H+ (PHREEQC: -0.05164, difference: 2.8548 % )
-        CHECK( props.ln_g[2]/ln10  == Approx(  0.026530200 ) ); // H2O (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[3]/ln10  == Approx( -1.039030000 ) ); // B(OH)4- (PHREEQC: -1.03764, difference: 0.1340 % )
-        CHECK( props.ln_g[4]/ln10  == Approx( -0.070357000 ) ); // B(OH)3 (PHREEQC: -0.07036, difference: 0.0043 % )
-        CHECK( props.ln_g[5]/ln10  == Approx( -3.675560000 ) ); // B4O5(OH)4-2 (PHREEQC: -3.66972, difference: 0.1591 % )
-        CHECK( props.ln_g[6]/ln10  == Approx( -1.002350000 ) ); // B3O3(OH)4- (PHREEQC: -1.00096, difference: 0.1389 % )
-        CHECK( props.ln_g[7]/ln10  == Approx( -1.795770000 ) ); // Ba+2 (PHREEQC: -1.79019, difference: 0.3117 % )
-        CHECK( props.ln_g[8]/ln10  == Approx( -0.222314000 ) ); // Br- (PHREEQC: -0.22093, difference: 0.6264 % )
-        CHECK( props.ln_g[9]/ln10  == Approx( -2.341480000 ) ); // CO3-2 (PHREEQC: -2.33567, difference: 0.2488 % )
-        CHECK( props.ln_g[10]/ln10 == Approx( -0.514021000 ) ); // HCO3- (PHREEQC: -0.51265, difference: 0.2674 % )
-        CHECK( props.ln_g[11]/ln10 == Approx(  0.412705000 ) ); // CO2 (PHREEQC:  0.41269, difference: 0.0036 % )
-        CHECK( props.ln_g[12]/ln10 == Approx( -3.643610000 ) ); // Ca+2 (PHREEQC: -3.67343, difference: 0.8118 % )
-        CHECK( props.ln_g[13]/ln10 == Approx( -0.623739000 ) ); // CaB(OH)4+ (PHREEQC: -0.62223, difference: 0.2425 % )
-        CHECK( props.ln_g[14]/ln10 == Approx( -0.130571000 ) ); // Cl- (PHREEQC: -0.13037, difference: 0.1542 % )
-        CHECK( props.ln_g[15]/ln10 == Approx( -2.173420000 ) ); // Fe+2 (PHREEQC: -2.16788, difference: 0.2555 % )
-        CHECK( props.ln_g[16]/ln10 == Approx(  0.233303000 ) ); // K+ (PHREEQC:  0.23478, difference: 0.6291 % )
-        CHECK( props.ln_g[17]/ln10 == Approx( -0.305938000 ) ); // Li+ (PHREEQC: -0.30444, difference: 0.4921 % )
-        CHECK( props.ln_g[18]/ln10 == Approx( -1.244940000 ) ); // MgOH+ (PHREEQC: -1.24341, difference: 0.1230 % )
-        CHECK( props.ln_g[19]/ln10 == Approx( -1.809450000 ) ); // Mg+2 (PHREEQC: -1.80392, difference: 0.3066 % )
-        CHECK( props.ln_g[20]/ln10 == Approx(  0.000000000 ) ); // MgCO3 (PHREEQC:  0.00000, difference: -- % )
-        CHECK( props.ln_g[21]/ln10 == Approx( -0.484759000 ) ); // MgB(OH)4+ (PHREEQC: -0.48326, difference: 0.3102 % )
-        CHECK( props.ln_g[22]/ln10 == Approx( -2.446250000 ) ); // Mn+2 (PHREEQC: -2.44069, difference: 0.2278 % )
-        CHECK( props.ln_g[23]/ln10 == Approx( -0.017460400 ) ); // Na+ (PHREEQC: -0.01595, difference: 9.4696 % )
-        CHECK( props.ln_g[24]/ln10 == Approx( -2.881710000 ) ); // SO4-2 (PHREEQC: -2.87584, difference: 0.2041 % )
-        CHECK( props.ln_g[25]/ln10 == Approx( -0.386440000 ) ); // HSO4- (PHREEQC: -0.38507, difference: 0.3558 % )
-        CHECK( props.ln_g[26]/ln10 == Approx( -0.932493000 ) ); // HSg- (PHREEQC: -0.93111, difference: 0.1485 % )
-        CHECK( props.ln_g[27]/ln10 == Approx(  0.427170000 ) ); // H2Sg (PHREEQC:  0.42715, difference: 0.0047 % )
-        CHECK( props.ln_g[28]/ln10 == Approx(  0.138415000 ) ); // (H2Sg)2 (PHREEQC:  0.13841, difference: 0.0036 % )
-        CHECK( props.ln_g[29]/ln10 == Approx( -3.733470000 ) ); // H2SiO4-2 (PHREEQC: -3.72762, difference: 0.1569 % )
-        CHECK( props.ln_g[30]/ln10 == Approx( -0.932493000 ) ); // H3SiO4- (PHREEQC: -0.93111, difference: 0.1485 % )
-        CHECK( props.ln_g[31]/ln10 == Approx(  0.239383000 ) ); // H4SiO4 (PHREEQC:  0.23937, difference: 0.0054 % )
-        CHECK( props.ln_g[32]/ln10 == Approx( -1.910710000 ) ); // Sr+2 (PHREEQC: -1.90518, difference: 0.2903 % )
+        CHECK( props.ln_g[0]/ln10  == Approx(-0.652777000) ); // OH- (PHREEQC: -0.65394, difference: 1.78e-01 %)
+        CHECK( props.ln_g[1]/ln10  == Approx(-0.052050400) ); // H+ (PHREEQC: -0.05164, difference: 7.95e-01 %)
+        CHECK( props.ln_g[2]/ln10  == Approx( 0.026394400) ); // H2O (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[3]/ln10  == Approx(-1.038100000) ); // B(OH)4- (PHREEQC: -1.03764, difference: 4.43e-02 %)
+        CHECK( props.ln_g[4]/ln10  == Approx(-0.070357000) ); // B(OH)3 (PHREEQC: -0.07036, difference: 4.26e-03 %)
+        CHECK( props.ln_g[5]/ln10  == Approx(-3.671520000) ); // B4O5(OH)4-2 (PHREEQC: -3.66972, difference: 4.91e-02 %)
+        CHECK( props.ln_g[6]/ln10  == Approx(-1.001420000) ); // B3O3(OH)4- (PHREEQC: -1.00096, difference: 4.60e-02 %)
+        CHECK( props.ln_g[7]/ln10  == Approx(-1.791990000) ); // Ba+2 (PHREEQC: -1.79019, difference: 1.01e-01 %)
+        CHECK( props.ln_g[8]/ln10  == Approx(-0.221383000) ); // Br- (PHREEQC: -0.22093, difference: 2.05e-01 %)
+        CHECK( props.ln_g[9]/ln10  == Approx(-2.337440000) ); // CO3-2 (PHREEQC: -2.33567, difference: 7.58e-02 %)
+        CHECK( props.ln_g[10]/ln10 == Approx(-0.513090000) ); // HCO3- (PHREEQC: -0.51265, difference: 8.58e-02 %)
+        CHECK( props.ln_g[11]/ln10 == Approx( 0.412705000) ); // CO2 (PHREEQC:  0.41269, difference: 3.63e-03 %)
+        CHECK( props.ln_g[12]/ln10 == Approx(-3.639830000) ); // Ca+2 (PHREEQC: -3.67343, difference: 9.15e-01 %)
+        CHECK( props.ln_g[13]/ln10 == Approx(-0.622675000) ); // CaB(OH)4+ (PHREEQC: -0.62223, difference: 7.15e-02 %)
+        CHECK( props.ln_g[14]/ln10 == Approx(-0.129640000) ); // Cl- (PHREEQC: -0.13037, difference: 5.60e-01 %)
+        CHECK( props.ln_g[15]/ln10 == Approx(-2.169640000) ); // Fe+2 (PHREEQC: -2.16788, difference: 8.12e-02 %)
+        CHECK( props.ln_g[16]/ln10 == Approx( 0.234367000) ); // K+ (PHREEQC:  0.23478, difference: 1.76e-01 %)
+        CHECK( props.ln_g[17]/ln10 == Approx(-0.304874000) ); // Li+ (PHREEQC: -0.30444, difference: 1.43e-01 %)
+        CHECK( props.ln_g[18]/ln10 == Approx(-1.243880000) ); // MgOH+ (PHREEQC: -1.24341, difference: 3.78e-02 %)
+        CHECK( props.ln_g[19]/ln10 == Approx(-1.805670000) ); // Mg+2 (PHREEQC: -1.80392, difference: 9.70e-02 %)
+        CHECK( props.ln_g[20]/ln10 == Approx( 0.000000000) ); // MgCO3 (PHREEQC:  0.00000, difference: -- %)
+        CHECK( props.ln_g[21]/ln10 == Approx(-0.483695000) ); // MgB(OH)4+ (PHREEQC: -0.48326, difference: 9.00e-02 %)
+        CHECK( props.ln_g[22]/ln10 == Approx(-2.442470000) ); // Mn+2 (PHREEQC: -2.44069, difference: 7.29e-02 %)
+        CHECK( props.ln_g[23]/ln10 == Approx(-0.016396600) ); // Na+ (PHREEQC: -0.01595, difference: 2.80e+00 %)
+        CHECK( props.ln_g[24]/ln10 == Approx(-2.877660000) ); // SO4-2 (PHREEQC: -2.87584, difference: 6.33e-02 %)
+        CHECK( props.ln_g[25]/ln10 == Approx(-0.385508000) ); // HSO4- (PHREEQC: -0.38507, difference: 1.14e-01 %)
+        CHECK( props.ln_g[26]/ln10 == Approx(-0.931561000) ); // HSg- (PHREEQC: -0.93111, difference: 4.84e-02 %)
+        CHECK( props.ln_g[27]/ln10 == Approx( 0.427170000) ); // H2Sg (PHREEQC:  0.42715, difference: 4.68e-03 %)
+        CHECK( props.ln_g[28]/ln10 == Approx( 0.138415000) ); // (H2Sg)2 (PHREEQC:  0.13841, difference: 3.61e-03 %)
+        CHECK( props.ln_g[29]/ln10 == Approx(-3.729420000) ); // H2SiO4-2 (PHREEQC: -3.72762, difference: 4.83e-02 %)
+        CHECK( props.ln_g[30]/ln10 == Approx(-0.931561000) ); // H3SiO4- (PHREEQC: -0.93111, difference: 4.84e-02 %)
+        CHECK( props.ln_g[31]/ln10 == Approx( 0.239383000) ); // H4SiO4 (PHREEQC:  0.23937, difference: 5.43e-03 %)
+        CHECK( props.ln_g[32]/ln10 == Approx(-1.906930000) ); // Sr+2 (PHREEQC: -1.90518, difference: 9.19e-02 %)
     }
 }
