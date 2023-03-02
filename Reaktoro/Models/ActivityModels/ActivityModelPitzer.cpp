@@ -35,6 +35,7 @@
 #include <Reaktoro/Common/Real.hpp>
 #include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Embedded.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 #include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 #include <Reaktoro/Serialization/Models/ActivityModels.hpp>
@@ -159,39 +160,6 @@ const Vec<double> J1region5 =
     2.49958395e+02, 4.99971193e+02, 7.49977057e+02, 9.99980578e+02, 1.24998298e+03, 1.49998474e+03, 1.74998611e+03, 1.99998720e+03, 2.24998810e+03, 2.49998886e+03
 };
 
-/// The temperature points (in K) for the interpolation of Aphi from 0 to 350 °C.
-const Vec<double> Aphi_temperatures =
-{
-    273.15, 298.15, 323.15, 348.15, 373.15, 398.15, 423.15, 448.15, 473.15, 498.15, 523.15, 548.15, 573.15, 598.15, 623.15
-};
-
-/// The pressure points (in Pa) for the interpolation of Aphi from 1 to 5000 bar.
-const Vec<double> Aphi_pressures =
-{
-    1e5, 100e5, 200e5, 400e5, 600e5, 800e5, 1000e5, 1500e5, 2000e5, 3000e5, 4000e5, 5000e5,
-};
-
-/// The data used for the interpolation of Aphi.
-/// The following equation was used to compute these data:
-/// \f[
-///      A^{\phi}=1.400684\cdot10^{6}\frac{1}{\rho_{w}}\left(\frac{\rho_{w}}{\epsilon_{w}T}\right)^{\frac{3}{2}},
-/// \f]
-/// where @f$T@f$ is temperature in K, @f$\epsilon_{w}@f$ is the dielectric constant of water, and @f$\rho_{w}@f$ its density in g/m<sup>3<\sup>
-const Vec<double> Aphi_data =
-{
-    0.37674222, 0.39147278, 0.41031975, 0.43330198, 0.46058910, 0.49248630, 0.52954906, 0.57258689, 0.62280952, 0.68208055, 0.75343848, 0.84226817, 0.95932062, 1.13030749, 1.43881804,
-    0.37511283, 0.38962104, 0.40816127, 0.43071699, 0.45741532, 0.48854946, 0.52461006, 0.56635820, 0.61497721, 0.67238823, 0.74195091, 0.83021165, 0.95211387, 1.13030749, 1.43881804,
-    0.37349119, 0.38778969, 0.40603633, 0.42818435, 0.45432255, 0.48468653, 0.51967722, 0.55991097, 0.60632611, 0.66040079, 0.72461917, 0.80356970, 0.90695201, 1.06002794, 1.35961218,
-    0.37031872, 0.38423960, 0.40194465, 0.42334123, 0.44845489, 0.47742645, 0.51051253, 0.54810417, 0.59077384, 0.63937254, 0.69522720, 0.76056419, 0.83951064, 0.94084255, 1.08752618,
-    0.36723706, 0.38083131, 0.39805034, 0.41877218, 0.44297410, 0.47072404, 0.50217061, 0.53754295, 0.57716443, 0.62148709, 0.67116338, 0.72719329, 0.79124059, 0.86637464, 0.95905835,
-    0.36424217, 0.37755559, 0.39433845, 0.41445319, 0.43784086, 0.46451346, 0.49453834, 0.52802729, 0.56513171, 0.60604478, 0.65101410, 0.70037330, 0.75461241, 0.81453466, 0.88162611,
-    0.36133042, 0.37440405, 0.39079550, 0.41036291, 0.43302090, 0.45873872, 0.48752239, 0.51939798, 0.55439682, 0.59254133, 0.63383034, 0.67822265, 0.72561799, 0.77583430, 0.82858092,
-    0.35439502, 0.36702034, 0.38260006, 0.40101786, 0.42215421, 0.44591174, 0.47220102, 0.50092041, 0.53193360, 0.56504392, 0.59996245, 0.63626628, 0.67334062, 0.71029469, 0.74583251,
-    0.34791990, 0.36026613, 0.37522638, 0.39274277, 0.41269203, 0.43494673, 0.45937116, 0.48580434, 0.51403915, 0.54379790, 0.57470298, 0.60623985, 0.63770811, 0.66815393, 0.69627074,
-    0.33621768, 0.34833639, 0.36246295, 0.37869462, 0.39694660, 0.41708490, 0.43894731, 0.46233761, 0.48701196, 0.51266165, 0.53889233, 0.56519854, 0.59093075, 0.61524994, 0.63706014,
-    0.32597289, 0.33811759, 0.35176187, 0.36716097, 0.38429206, 0.40304427, 0.42326335, 0.44475696, 0.46728781, 0.49056178, 0.51421251, 0.53778186, 0.56069387, 0.58221783, 0.60141144,
-    0.31695465, 0.32925197, 0.34262585, 0.35747187, 0.37383264, 0.39162945, 0.41072659, 0.43094633, 0.45206745, 0.47381721, 0.49585921, 0.51777702, 0.53905156, 0.55902802, 0.57686399
-};
 
 auto interpolate(real x, double x0, double x1, Vec<double> const& ypoints) -> real
 {
@@ -704,8 +672,6 @@ struct PitzerModel
     ArrayXr thetaE;   ///< The current values of the parameters \eq{^{E}\theta_{ij}(I)} associated to the \eq{\theta_{ij}} parameters.
     ArrayXr thetaEP;  ///< The current values of the parameters \eq{^{E}\theta_{ij}^{\prime}(I)} associated to the \eq{\theta_{ij}} parameters.
 
-    BilinearInterpolator Aphi; ///< The parameter \eq{A^\phi(T, P)} in the Pitzer model.
-
     /// Construct a default Pitzer object.
     PitzerModel()
     {}
@@ -788,8 +754,6 @@ struct PitzerModel
             auto const i3 = entry.ispecies[2];
             mu_coeffs.push_back(determineMuCoeffs(z[i1], z[i2], z[i3], i1, i2, i3));
         }
-
-        Aphi = BilinearInterpolator(Aphi_temperatures, Aphi_pressures, Aphi_data);
     }
 
     /// Update all Pitzer interaction parameters according to current temperature and pressure.
@@ -863,6 +827,15 @@ struct PitzerModel
         // If OSUM is zero, then solution is very dilluted - skip the rest and avoid division by zero when computing OSMOT
         if(OSUM == 0.0)
             return;
+
+        // Compute the Debye-Huckel coefficient Aphi0 at (T, P) according to PHREEQC (see method calc_dielectrics at utilities.cpp)
+        auto const rho = PhreeqcUtils::waterDensityPhreeqc(T, P)/1000; // the density of water (in g/cm3)
+        auto const epsilon = PhreeqcUtils::waterDielectricConstantPhreeqc(T, P);
+        auto const AVOGADRO = 6.02252e23;
+        auto const pi = 3.14159265358979;
+        auto const e2_DkT = 1.671008e-3 / (epsilon * T);
+        auto const DH_B = sqrt(8 * pi * AVOGADRO * e2_DkT * rho / 1e3); // Debye length parameter, 1/cm(mol/kg)^-0.5
+        auto const Aphi0 = DH_B * e2_DkT / 6.0;
 
         // The b parameter of the Pitzer model
 	    auto const B = 1.2;
