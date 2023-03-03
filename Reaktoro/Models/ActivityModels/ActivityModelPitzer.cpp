@@ -180,34 +180,28 @@ auto interpolate(real x, double x0, double x1, Vec<double> const& ypoints) -> re
 
 auto J0(real x) -> real
 {
+    errorif(x < 0.0, "Expecting non-negative x when evaluating the Pitzer function J0(x), but got x = ", x, ".");
+
     if(0.0 <= x && x <= 1.0) return interpolate(x, 0.0, 1.0, J0region1);
     if(1.0 <= x && x <= 10.0) return interpolate(x, 1.0, 10.0, J0region2);
     if(10.0 <= x && x <= 100.0) return interpolate(x, 10.0, 100.0, J0region3);
     if(100.0 <= x && x <= 1000.0) return interpolate(x, 100.0, 1000.0, J0region4);
     if(1000.0 <= x && x <= 10000.0) return interpolate(x, 1000.0, 10000.0, J0region5);
 
-    Exception exception;
-    exception.error << "Cannot interpolate the Pitzer function J0(x) with the provided x = " << x << ".";
-    exception.reason << "The value of x must be within the interval [0, 10000].";
-    RaiseError(exception);
-
-    return 0.0;
+    return 0.25 * x; // for very large values of x, J0 -> x/4
 }
 
 auto J1(real x) -> real
 {
+    errorif(x < 0.0, "Expecting non-negative x when evaluating the Pitzer function J1(x), but got x = ", x, ".");
+
     if(0.0 <= x && x <= 1.0) return interpolate(x, 0.0, 1.0, J1region1);
     if(1.0 <= x && x <= 10.0) return interpolate(x, 1.0, 10.0, J1region2);
     if(10.0 <= x && x <= 100.0) return interpolate(x, 10.0, 100.0, J1region3);
     if(100.0 <= x && x <= 1000.0) return interpolate(x, 100.0, 1000.0, J1region4);
     if(1000.0 <= x && x <= 10000.0) return interpolate(x, 1000.0, 10000.0, J1region5);
 
-    Exception exception;
-    exception.error << "Cannot interpolate the Pitzer function J1(x) with the provided x = " << x << ".";
-    exception.reason << "The value of x must be within the interval [0, 10000].";
-    RaiseError(exception);
-
-    return 0.0;
+    return 0.25 * x; // for very large values of x, J1 -> x/4
 }
 
 /// Auxiliary alias for ActivityModelParamsPitzer::CorrectionModel.
