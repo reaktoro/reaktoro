@@ -1,0 +1,75 @@
+ActivityModelParams:
+  Pitzer:
+    Beta0:
+      # The following are from Marion et al. 2011
+      - { Formulas: [H+    , Cl-   ], CorrectionModel: Phreeqc, Parameters: [ 1.9794612033E-01 , 4.3930392007E-02 , 2.6162364573E-04 , -5.3121505493E-04, 3.4074178888E-10 , -1.3794988905E+00 ] }
+      - { Formulas: [Na+   , Cl-   ], CorrectionModel: Phreeqc, Parameters: [ 7.6273259396E-02 , -1.0677687696E+03, -5.2850452529E+00, 9.0310652648E-03 , -2.5394712901E-06, 1.4568462343E+04 ] }
+      - { Formulas: [Na+   , CO3-2 ], CorrectionModel: Phreeqc, Parameters: [ 3.6204808669E-02 , 1.1083789213E+03 , 1.1198570286E+01 , -2.3301689083E-02, 1.4225931266E-11 , -1.0139889781E-01 ] }
+      - { Formulas: [Na+   , HCO3- ], CorrectionModel: Phreeqc, Parameters: [ 2.8002054979E-02 , 6.8287100127E+02 , 6.8994999437E+00 , -1.4459103667E-02, -1.0139500105E-10, 4.8617733194E-01 ] }
+      - { Formulas: [Na+   , OH-   ], CorrectionModel: Phreeqc, Parameters: [ -7.9555220526E-02, 2.0309032437E+04 , 1.6146658627E+02 , -5.2616228562E-01, 2.9653500975E-04 , -5.1829489159E+05 ] }
+      # The following are from Scharge et al. 2013, 2015
+      - { Formulas: [Na+   , H2PO4-], CorrectionModel: Phreeqc, Parameters: [ -0.0436 ] }
+      - { Formulas: [Na+   , HPO4-2], CorrectionModel: Phreeqc, Parameters: [ -0.0172 ] }
+      - { Formulas: [Na+   , PO4-3 ], CorrectionModel: Phreeqc, Parameters: [ 0.15641 ] }
+    Beta1:
+      # The following are from Marion et al. 2011
+      - { Formulas: [H+    , Cl-   ], CorrectionModel: Phreeqc, Parameters: [ 1.7663995597E-01 , -4.4613022946E+04, -3.1259930375E+02, 9.5812792829E-01 , -5.3080804721E-04, 1.2316610809E+06 ] }
+      - { Formulas: [Na+   , Cl-   ], CorrectionModel: Phreeqc, Parameters: [ 2.8041722849E-01 , -4.7934459033E+03, -6.9757728955E+01, 2.2182662176E-01 , -1.0800038619E-04, -3.1269129963E+05 ] }
+      - { Formulas: [Na+   , CO3-2 ], CorrectionModel: Phreeqc, Parameters: [ 1.5120691287E+00 , 4.4124805360E+03 , 4.4581885679E+01 , -9.9890728880E-02, -2.3470887122E-10, 1.0021144087E+00 ] }
+      - { Formulas: [Na+   , HCO3- ], CorrectionModel: Phreeqc, Parameters: [ 4.4005226296E-02 , 1.1292842314E+03 , 1.1410242105E+01 , -2.4464729852E-02, -7.4828259687E-10, 3.3354784151E+00 ] }
+      - { Formulas: [Na+   , OH-   ], CorrectionModel: Phreeqc, Parameters: [ 2.5311163491E-01 , 1.4885507672E+04 , 1.1834672330E+02 , -3.9540544436E-01, 2.3380756117E-04 , -3.7988491809E+05 ] }
+      # The following are from Scharge et al. 2013, 2015
+      - { Formulas: [Na+   , H2PO4-], CorrectionModel: Phreeqc, Parameters: [ -0.03389 ] }
+      - { Formulas: [Na+   , HPO4-2], CorrectionModel: Phreeqc, Parameters: [ 1.2116 ] }
+      - { Formulas: [Na+   , PO4-3 ], CorrectionModel: Phreeqc, Parameters: [ 3.9397 ] }
+    Cphi:
+      # The following are from Marion et al. 2011
+      - { Formulas: [H+    , Cl-   ], CorrectionModel: Phreeqc, Parameters: [ -2.8913465588E-03, 1.0693004789E-02 , 5.5410207932E-05 , 1.7224827506E-05 , -5.9323763662E-08, -3.7953644554E-01 ] }
+      - { Formulas: [Na+   , Cl-   ], CorrectionModel: Phreeqc, Parameters: [ 1.2711016441E-03 , 7.7695148783E+01 , 2.3007504621E-01 , -8.0897946811E-05, -1.1941587694E-07, -2.0177121991E+03 ] }
+      - { Formulas: [Na+   , CO3-2 ], CorrectionModel: Phreeqc, Parameters: [ 0.0052 ] }
+      - { Formulas: [Na+   , OH-   ], CorrectionModel: Phreeqc, Parameters: [ 4.1159992172E-03 , 7.3302950838E+02 , 5.8279924019E+00 , -2.0502290395E-02, 1.2873934762E-05 , -1.8707050080E+04 ] }
+      # The following are from Scharge et al. 2013, 2015
+      - { Formulas: [Na+   , H2PO4-], CorrectionModel: Phreeqc, Parameters: [ 0.00605 ] }
+      - { Formulas: [Na+   , HPO4-2], CorrectionModel: Phreeqc, Parameters: [ 0.00585 ] }
+      - { Formulas: [Na+   , PO4-3 ], CorrectionModel: Phreeqc, Parameters: [ -0.03498 ] }
+    Lambda:
+      # The following are from Marion et al. 2011
+      - { Formulas: [Cl-   , CO2   ], CorrectionModel: Phreeqc, Parameters: [ 2.0480415080E-02 , -3.3159597997E+04, -3.1582776282E+02, 9.9643227553E-01 , -5.2121983640E-04, -6.0314596673E-01 ] }
+      - { Formulas: [Na+   , CO2   ], CorrectionModel: Phreeqc, Parameters: [ 8.1474353447E-02 , 1.0939930101E+05 , 1.0470213325E+03 , -3.3265653899E+00, 1.7531997031E-03 , 1.2758007796E+00 ] }
+    Psi:
+      # The following are from Marion et al. 2011
+      - { Formulas: [Cl-   , CO3-2  , Na+], CorrectionModel: Phreeqc, Parameters: [ 8.6555626983E-03 , -1.1578726767E+01, -1.1401251201E-01, 4.4733586264E-04 , -4.6816398956E-07, 3.7067215792E+02 ] }
+      - { Formulas: [Cl-   , HCO3-  , Na+], CorrectionModel: Phreeqc, Parameters: [ -1.2777037089E-02, -1.1975486345E+01, -1.4023338938E-01, 5.1084176969E-04 , -5.9489945059E-07, 4.5438567976E+02 ] }
+      - { Formulas: [Cl-   , OH-    , Na+], CorrectionModel: Phreeqc, Parameters: [ -0.006 ] }
+      - { Formulas: [HCO3- , CO3-2  , Na+], CorrectionModel: Phreeqc, Parameters: [ 0.002 ] }
+      - { Formulas: [Na+   , H+     , Cl-], CorrectionModel: Phreeqc, Parameters: [ -0.0037 ] }
+      - { Formulas: [OH-   , CO3-2  , Na+], CorrectionModel: Phreeqc, Parameters: [ -0.017 ] }
+      # The following are from Scharge et al. 2013, 2015
+      - { Formulas: [Cl-   , H2PO4- , Na+], CorrectionModel: Phreeqc, Parameters: [ -0.01208 ] }
+      - { Formulas: [Cl-   , HPO4-2 , Na+], CorrectionModel: Phreeqc, Parameters: [ -0.00883 ] }
+      - { Formulas: [Cl-   , PO4-3  , Na+], CorrectionModel: Phreeqc, Parameters: [ -0.00243 ] }
+      - { Formulas: [HPO4-2, H2PO4- , Na+], CorrectionModel: Phreeqc, Parameters: [ 0.03781 ] }
+      - { Formulas: [PO4-3 , HPO4-2 , Na+], CorrectionModel: Phreeqc, Parameters: [ 0.00207 ] }
+      - { Formulas: [CO3-2 , PO4-3  , Na+], CorrectionModel: Phreeqc, Parameters: [ -0.01449774 ] }
+    Theta:
+      # The following are from Marion et al. 2011
+      - { Formulas: [Cl-   , CO3-2 ], CorrectionModel: Phreeqc, Parameters: [ -0.02 ] }
+      - { Formulas: [Cl-   , HCO3- ], CorrectionModel: Phreeqc, Parameters: [ 0.03 ] }
+      - { Formulas: [Cl-   , OH-   ], CorrectionModel: Phreeqc, Parameters: [ -0.05 ] }
+      - { Formulas: [HCO3- , CO3-2 ], CorrectionModel: Phreeqc, Parameters: [ -0.04 ] }
+      - { Formulas: [Na+   , H+    ], CorrectionModel: Phreeqc, Parameters: [ 0.036 ] }
+      - { Formulas: [OH-   , CO3-2 ], CorrectionModel: Phreeqc, Parameters: [ 0.1 ] }
+      # The following are from Scharge et al. 2013, 2015
+      - { Formulas: [Cl-   , H2PO4-], CorrectionModel: Phreeqc, Parameters: [ 0.10037 ] }
+      - { Formulas: [Cl-   , HPO4-2], CorrectionModel: Phreeqc, Parameters: [ 0.07083 ] }
+      - { Formulas: [Cl-   , PO4-3 ], CorrectionModel: Phreeqc, Parameters: [ 0.24341 ] }
+      - { Formulas: [H2PO4-, HPO4-2], CorrectionModel: Phreeqc, Parameters: [ -0.32361 ] }
+      - { Formulas: [PO4-3 , HPO4-2], CorrectionModel: Phreeqc, Parameters: [ 0.25528 ] }
+      - { Formulas: [CO3-2 , PO4-3 ], CorrectionModel: Phreeqc, Parameters: [ 0.19766089 ] }
+    Zeta:
+      # The following are from Marion et al. 2011
+      - { Formulas: [H+    , Cl-    , CO2], CorrectionModel: Phreeqc, Parameters: [ -4.7051879034E-03, 1.6334349475E+04 , 1.5238364378E+02 , -4.7047340910E-01, 2.4052572265E-04 , 1.2740734776 ] }
+      - { Formulas: [Na+   , Cl-    , CO2], CorrectionModel: Phreeqc, Parameters: [ -5.7153028547E-04, 6.87905500E+03   , 7.3745255829E+01 , -2.58005360E-01  , 1.4782317370E-04 , -7.78048610E-01 ] }
+    # -APHI
+    # # The following are from Marion et al. 2011
+    # 3.9147193099E-01 3.6897938637E+02 3.5956550857E+00 -1.2908353094E-02 9.5199168775E-06 4.7098725794E+01
