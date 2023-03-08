@@ -68,8 +68,8 @@ TEST_CASE("Testing ActivityModelPitzer", "[ActivityModelPitzer]")
         const auto P = 1.0e+5;
 
         const auto n = ArrayXr{{
-            0.0,         // OH-
-            0.0,         // H+
+            1.0e-36,     // OH-
+            1.0e-36,     // H+
             5.55062e+01, // H2O
         }};
 
