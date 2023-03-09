@@ -102,6 +102,10 @@ want to read about.
 - @ref Reaktoro::ActivityModelRedlichKwong
 - @ref Reaktoro::ActivityModelSoaveRedlichKwong
 - @ref Reaktoro::ActivityModelPengRobinson
+- @ref Reaktoro::ActivityModelPengRobinsonPHREEQC (deprecated - use @ref Reaktoro::ActivityModelPengRobinsonPhreeqc)
+- @ref Reaktoro::ActivityModelPengRobinsonPhreeqc
+- @ref Reaktoro::ActivityModelPengRobinsonPhreeqcOriginal
+- @ref Reaktoro::ActivityModelPengRobinsonSoreideWhitson
 - @ref Reaktoro::ActivityModelSpycherPruessEnnis
 - @ref Reaktoro::ActivityModelSpycherReed
 
