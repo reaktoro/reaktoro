@@ -194,7 +194,7 @@ private:
 
 /// The parameters in the binary interaction parameter model of PHREEQC for Peng-Robinson EOS.
 /// The parameters below were collected from method `Phreeqc::calc_PR` in file `gases.cpp` from PHREEQC source code.
-struct BipModelParamsPHREEQC
+struct BipModelParamsPhreeqc
 {
     Param kH2O_CO2  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CO\sub{2}.
     Param kH2O_H2S  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-H\sub{2}S.
@@ -233,10 +233,18 @@ struct BipModelParamsSoreideWhitson
 };
 
 /// Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.
-auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& params = {}) -> BipModel;
+auto BipModelPhreeqc(Strings const& substances, BipModelParamsPhreeqc const& params = {}) -> BipModel;
 
 /// Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that reported in Søreide and Whitson (1992).
 auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhitson const& params = {}) -> BipModel;
+
+// DEPRECATED METHODS TO BE REMOVED IN THE NEAR FUTURE
+
+struct [[deprecated("BipModelParamsPHREEQC has been deprecated and renamed to BipModelParamsPhreeqc.")]] BipModelParamsPHREEQC
+{};
+
+[[deprecated("BipModelPHREEQC has been deprecated and renamed to BipModelPhreeqc.")]]
+auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& params = {}) -> BipModel;
 
 } // namespace CubicEOS
 } // namespace Reaktoro

@@ -101,7 +101,7 @@ auto CubicBipModelPhreeqc() -> CubicBipModelGenerator
     return [](SpeciesList const& specieslist) -> CubicEOS::BipModel
     {
         Strings substances = vectorize(specieslist, RKT_LAMBDA(x, x.formula().str()));
-        return CubicEOS::BipModelPHREEQC(substances, CubicEOS::BipModelParamsPHREEQC());
+        return CubicEOS::BipModelPhreeqc(substances, CubicEOS::BipModelParamsPhreeqc());
     };
 }
 
