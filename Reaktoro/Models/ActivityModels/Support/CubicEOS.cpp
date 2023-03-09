@@ -616,11 +616,19 @@ auto Equation::compute(Props& props, real const& T, real const& P, ArrayXrConstR
 
 auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& params) -> BipModel
 {
-    const auto iH2O = index(substances, "H2O");
-    const auto iCO2 = index(substances, "CO2");
-    const auto iH2S = index(substances, "H2S");
-    const auto iCH4 = index(substances, "CH4");
-    const auto iN2  = index(substances, "N2");
+    auto isubstance = [&](auto... substrs)
+    {
+        return indexfn(substances, RKT_LAMBDA(substance, startswith(substance, substrs...)));
+    };
+
+    const auto iH2O  = isubstance("H2O");
+    const auto iCO2  = isubstance("CO2");
+    const auto iH2S  = isubstance("H2S");
+    const auto iCH4  = isubstance("CH4", "Mtg", "Methane", "METHANE");
+    const auto iN2   = isubstance("N2", "Ntg");
+    const auto iC2H6 = isubstance("C2H6", "Ethane", "ETHANE");
+    const auto iC3H8 = isubstance("C3H8", "Propane", "PROPANE");
+
     const auto size = substances.size();
 
     auto evalfn = [=](Bip& bip, BipModelArgs const& args) -> void
@@ -629,10 +637,12 @@ auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& par
 
         if(iH2O < size)
         {
-            if(iCO2 < size) k(iH2O, iCO2) = k(iH2O, iCO2) = params.kH2O_CO2.value();
-            if(iH2S < size) k(iH2O, iH2S) = k(iH2O, iH2S) = params.kH2O_H2S.value();
-            if(iCH4 < size) k(iH2O, iCH4) = k(iH2O, iCH4) = params.kH2O_CH4.value();
-            if( iN2 < size) k(iH2O,  iN2) = k(iH2O,  iN2) = params.kH2O_N2.value();
+            if( iCO2 < size) k(iH2O,  iCO2) = k( iCO2, iH2O) = params.kH2O_CO2.value();
+            if( iH2S < size) k(iH2O,  iH2S) = k( iH2S, iH2O) = params.kH2O_H2S.value();
+            if( iCH4 < size) k(iH2O,  iCH4) = k( iCH4, iH2O) = params.kH2O_CH4.value();
+            if(  iN2 < size) k(iH2O,   iN2) = k(  iN2, iH2O) = params.kH2O_N2.value();
+            if(iC2H6 < size) k(iH2O, iC2H6) = k(iC2H6, iH2O) = params.kH2O_C2H6.value();
+            if(iC3H8 < size) k(iH2O, iC3H8) = k(iC3H8, iH2O) = params.kH2O_C3H8.value();
         }
     };
 
@@ -641,6 +651,8 @@ auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& par
         params.kH2O_H2S,
         params.kH2O_CH4,
         params.kH2O_N2,
+        params.kH2O_C2H6,
+        params.kH2O_C3H8,
     };
 
     auto serializer = [=]()

@@ -196,10 +196,12 @@ private:
 /// The parameters below were collected from method `Phreeqc::calc_PR` in file `gases.cpp` from PHREEQC source code.
 struct BipModelParamsPHREEQC
 {
-    Param kH2O_CO2 = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H₂O-CO₂.
-    Param kH2O_H2S = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H₂O-H₂S.
-    Param kH2O_CH4 = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H₂O-CH₄.
-    Param kH2O_N2  = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H₂O-N₂.
+    Param kH2O_CO2  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CO\sub{2}.
+    Param kH2O_H2S  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-H\sub{2}S.
+    Param kH2O_CH4  = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CH\sub{4}.
+    Param kH2O_N2   = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-N\sub{2}.
+    Param kH2O_C2H6 = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{2}H\sub{6}.
+    Param kH2O_C3H8 = 0.55; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{3}H\sub{8}.
 };
 
 /// Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.
