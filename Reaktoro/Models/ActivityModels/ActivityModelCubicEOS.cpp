@@ -105,6 +105,15 @@ auto CubicBipModelPHREEQC() -> CubicBipModelGenerator
     };
 }
 
+auto CubicBipModelSoreideWhitson() -> CubicBipModelGenerator
+{
+    return [](SpeciesList const& specieslist) -> CubicEOS::BipModel
+    {
+        Strings substances = vectorize(specieslist, RKT_LAMBDA(x, x.formula().str()));
+        return CubicEOS::BipModelSoreideWhitson(substances, CubicEOS::BipModelParamsSoreideWhitson());
+    };
+}
+
 auto ActivityModelCubicEOS(CubicBipModelGenerator cbipmodel, CubicEOS::EquationModel const& eqmodel) -> ActivityModelGenerator
 {
     return [=](SpeciesList const& specieslist) -> ActivityModel
@@ -147,6 +156,11 @@ auto ActivityModelPengRobinson78(CubicBipModelGenerator cbipmodel) -> ActivityMo
 auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator
 {
     return ActivityModelPengRobinson76(CubicBipModelPHREEQC());
+}
+
+auto ActivityModelPengRobinsonSoreideWhitson() -> ActivityModelGenerator
+{
+    return ActivityModelPengRobinson78(CubicBipModelSoreideWhitson());
 }
 
 } // namespace Reaktoro
