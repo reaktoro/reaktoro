@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ActivityModelPengRobinsonPhreeqc.hpp"
+#include "ActivityModelPengRobinsonPhreeqcOriginal.hpp"
 
 // C++ includes
 #include <cassert>
@@ -224,7 +224,7 @@ struct PengRobinsonPhreeqc
 
 } // namespace anonymous
 
-auto createActivityModelPengRobinsonPhreeqc(SpeciesList const& specieslist) -> ActivityModel
+auto createActivityModelPengRobinsonPhreeqcOriginal(SpeciesList const& specieslist) -> ActivityModel
 {
     const auto numspecies = specieslist.size();
 
@@ -283,9 +283,9 @@ auto createActivityModelPengRobinsonPhreeqc(SpeciesList const& specieslist) -> A
     return fn;
 }
 
-auto ActivityModelPengRobinsonPhreeqc() -> ActivityModelGenerator
+auto ActivityModelPengRobinsonPhreeqcOriginal() -> ActivityModelGenerator
 {
-    return [=](SpeciesList const& species) { return createActivityModelPengRobinsonPhreeqc(species); };
+    return [=](SpeciesList const& species) { return createActivityModelPengRobinsonPhreeqcOriginal(species); };
 }
 
 } // namespace Reaktoro

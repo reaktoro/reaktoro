@@ -19,10 +19,10 @@
 #include <Reaktoro/pybind11.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ActivityModels/ActivityModelPengRobinsonPhreeqc.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPengRobinsonPhreeqcOriginal.hpp>
 using namespace Reaktoro;
 
-void exportActivityModelPengRobinsonPhreeqc(py::module& m)
+void exportActivityModelPengRobinsonPhreeqcOriginal(py::module& m)
 {
-    m.def("ActivityModelPengRobinsonPhreeqc", ActivityModelPengRobinsonPhreeqc);
+    m.def("ActivityModelPengRobinsonPhreeqcOriginal", ActivityModelPengRobinsonPhreeqcOriginal);
 }

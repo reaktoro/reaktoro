@@ -23,6 +23,6 @@
 namespace Reaktoro {
 
 /// Return the activity model for gaseous phases based on PHREEQC's implementation of Peng-Robinson equation of state.
-auto ActivityModelPengRobinsonPhreeqc() -> ActivityModelGenerator;
+auto ActivityModelPengRobinsonPhreeqcOriginal() -> ActivityModelGenerator;
 
 } // namespace Reaktoro

@@ -20,6 +20,6 @@ from reaktoro import *
 import pytest
 
 
-# TODO Implement tests for the python bindings of component ActivityModelPengRobinsonPhreeqc in ActivityModelPengRobinsonPhreeqc[test].py
-def testActivityModelPengRobinsonPhreeqc():
+# TODO Implement tests for the python bindings of component ActivityModelPengRobinsonPhreeqcOriginal in ActivityModelPengRobinsonPhreeqcOriginal[test].py
+def testActivityModelPengRobinsonPhreeqcOriginal():
     pass
