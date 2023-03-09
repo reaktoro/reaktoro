@@ -36,7 +36,7 @@
 #include <Reaktoro/Kinetics/SmartKineticsSolver.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
-#include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzer.hpp>
 #include <Reaktoro/Models/ReactionRateModels/ReactionRateModelPalandriKharaka.hpp>
 using namespace Reaktoro;
 

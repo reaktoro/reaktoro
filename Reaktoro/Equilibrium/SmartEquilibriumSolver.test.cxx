@@ -34,7 +34,7 @@
 #include <Reaktoro/Extensions/Supcrt/SupcrtDatabase.hpp>
 #include <Reaktoro/Math/MathUtils.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
-#include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPitzer.hpp>
 using namespace Reaktoro;
 
 TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
@@ -44,7 +44,7 @@ TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
         SupcrtDatabase db("supcrtbl");
 
         AqueousPhase solution("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)");
-        solution.setActivityModel(ActivityModelPitzerHMW());
+        solution.setActivityModel(ActivityModelPitzer());
 
         MineralPhase calcite("Calcite");
 
@@ -93,8 +93,8 @@ TEST_CASE("Testing SmartEquilibriumSolver", "[SmartEquilibriumSolver]")
         CHECK( result.predicted() );
         CHECK( result.iterations() == 0 );
 
-        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577472659) ); // ~5.8% max relative difference
-        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0034560191) ); // ~0.35% max relative difference in log scale
+        CHECK( largestRelativeDifference(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0577497634) ); // ~5.8% max relative difference
+        CHECK( largestRelativeDifferenceLogScale(state.speciesAmounts(), exactstate.speciesAmounts()) == Approx(0.0034563046) ); // ~0.35% max relative difference in log scale
 
         //-------------------------------------------------------------------------------------------------------------
         // CHANGE THE INITIAL CHEMICAL STATE MORE STRONGLY AND CHECK A LEARNING OPERATION WAS NEEEDED

@@ -71,7 +71,7 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Create an aqueous phase automatically selecting all species with provided elements
 aqueousphase = AqueousPhase(speciate("H O C Ca Cl Na K Mg S Si N"))
-aqueousphase.setActivityModel(ActivityModelPitzerHMW())
+aqueousphase.setActivityModel(ActivityModelPitzer())
 
 # Create carbonates phases
 calcitephase = MineralPhase("Calcite")
