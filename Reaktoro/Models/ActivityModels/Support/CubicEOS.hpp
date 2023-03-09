@@ -204,8 +204,39 @@ struct BipModelParamsPHREEQC
     Param kH2O_C3H8 = 0.55; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{3}H\sub{8}.
 };
 
+/// The parameters in the binary interaction parameter model of Søreide and Whitson (1992) for Peng-Robinson EOS.
+struct BipModelParamsSoreideWhitson
+{
+    /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/CO\sub{2}.
+    Param kH2O_CO2 = 0.1896;
+
+    /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/N\sub{2}.
+    Param kH2O_N2 = 0.4778;
+
+    /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/CH\sub{4}.
+    Param kH2O_CH4 = 0.4850;
+
+    /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/C\sub{2}H\sub{6}.
+    Param kH2O_C2H6 = 0.4920;
+
+    /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/C\sub{3}H\sub{8}.
+    Param kH2O_C3H8 = 0.5525;
+
+    /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/n-C\sub{4}H\sub{10}.
+    Param kH2O_nC4H10 = 0.5525;
+
+    /// The coefficient \{a_1} when computing the binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/H\sub{2}S.
+    Param kH2O_H2S_a1 = 0.19031;
+
+    /// The coefficient \{a_2} when computing the binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/H\sub{2}S.
+    Param kH2O_H2S_a2 = -0.05965;
+};
+
 /// Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.
 auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& params = {}) -> BipModel;
+
+/// Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that reported in Søreide and Whitson (1992).
+auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhitson const& params = {}) -> BipModel;
 
 } // namespace CubicEOS
 } // namespace Reaktoro
