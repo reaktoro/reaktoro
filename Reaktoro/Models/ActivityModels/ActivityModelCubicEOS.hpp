@@ -46,15 +46,24 @@ auto ActivityModelPengRobinson76(CubicBipModelGenerator cbipmodel = {}) -> Activ
 auto ActivityModelPengRobinson78(CubicBipModelGenerator cbipmodel = {}) -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Peng-Robinson (1976) with the binary interaction parameter model used in PHREEQC.
-auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator;
+auto ActivityModelPengRobinsonPhreeqc() -> ActivityModelGenerator;
 
 /// Return the activity model for fluid phases based on the Peng-Robinson (1978) with the binary interaction parameter model of Søreide and Whitson (1992).
 auto ActivityModelPengRobinsonSoreideWhitson() -> ActivityModelGenerator;
 
 /// Return the binary interaction parameter model for Peng-Robinson EOS (1976) equivalent to that used in PHREEQC.
-auto CubicBipModelPHREEQC() -> CubicBipModelGenerator;
+auto CubicBipModelPhreeqc() -> CubicBipModelGenerator;
 
 /// Return the binary interaction parameter model for Peng-Robinson EOS (1978) equivalent to that reported in Søreide and Whitson (1992).
 auto CubicBipModelSoreideWhitson() -> CubicBipModelGenerator;
+
+
+/// Return the activity model for fluid phases based on the Peng-Robinson (1976) with the binary interaction parameter model used in PHREEQC.
+[[deprecated("ActivityModelPengRobinsonPHREEQC has been renamed to ActivityModelPengRobinsonPhreeqc. Please make this change in your code.")]]
+auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator;
+
+/// Return the binary interaction parameter model for Peng-Robinson EOS (1976) equivalent to that used in PHREEQC.
+[[deprecated("CubicBipModelPHREEQC has been renamed to CubicBipModelPhreeqc. Please make this change in your code.")]]
+auto CubicBipModelPHREEQC() -> CubicBipModelGenerator;
 
 } // namespace Reaktoro

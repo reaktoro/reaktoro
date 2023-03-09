@@ -96,7 +96,7 @@ auto activityModelCubicEOS(SpeciesList const& specieslist, CubicEOS::EquationMod
     return model;
 }
 
-auto CubicBipModelPHREEQC() -> CubicBipModelGenerator
+auto CubicBipModelPhreeqc() -> CubicBipModelGenerator
 {
     return [](SpeciesList const& specieslist) -> CubicEOS::BipModel
     {
@@ -153,14 +153,26 @@ auto ActivityModelPengRobinson78(CubicBipModelGenerator cbipmodel) -> ActivityMo
     return ActivityModelCubicEOS(cbipmodel, CubicEOS::EquationModelPengRobinson78());
 }
 
-auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator
+auto ActivityModelPengRobinsonPhreeqc() -> ActivityModelGenerator
 {
-    return ActivityModelPengRobinson76(CubicBipModelPHREEQC());
+    return ActivityModelPengRobinson76(CubicBipModelPhreeqc());
 }
 
 auto ActivityModelPengRobinsonSoreideWhitson() -> ActivityModelGenerator
 {
     return ActivityModelPengRobinson78(CubicBipModelSoreideWhitson());
+}
+
+// METHODS BELOW ARE DEPRECATED AND WILL BE REMOVED IN FUTURE RELEASES
+
+auto ActivityModelPengRobinsonPHREEQC() -> ActivityModelGenerator
+{
+    return ActivityModelPengRobinsonPhreeqc();
+}
+
+auto CubicBipModelPHREEQC() -> CubicBipModelGenerator
+{
+    return CubicBipModelPhreeqc();
 }
 
 } // namespace Reaktoro

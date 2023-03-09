@@ -48,15 +48,23 @@ void exportActivityModelCubicEOS(py::module& m)
         "Return the activity model for fluid phases based on the Peng-Robinson (1978) cubic equation of state.",
             py::arg("cbipmodel") = CubicBipModelGenerator());
 
-    m.def("ActivityModelPengRobinsonPHREEQC", ActivityModelPengRobinsonPHREEQC,
+    m.def("ActivityModelPengRobinsonPhreeqc", ActivityModelPengRobinsonPhreeqc,
         "Return the activity model for fluid phases based on the Peng-Robinson (1976) with the binary interaction parameter model used in PHREEQC.");
 
     m.def("ActivityModelPengRobinsonSoreideWhitson", ActivityModelPengRobinsonSoreideWhitson,
         "Return the activity model for fluid phases based on the Peng-Robinson (1978) with the binary interaction parameter model of Søreide and Whitson (1992).");
 
-    m.def("CubicBipModelPHREEQC", CubicBipModelPHREEQC,
+    m.def("CubicBipModelPhreeqc", CubicBipModelPhreeqc,
         "Return the binary interaction parameter model for Peng-Robinson EOS (1976) equivalent to that used in PHREEQC.");
 
     m.def("CubicBipModelSoreideWhitson", CubicBipModelSoreideWhitson,
         "Return the binary interaction parameter model for Peng-Robinson EOS (1978) equivalent to that reported in Søreide and Whitson (1992).");
+
+    // DEPRECATED METHODS THAT WILL BE REMOVED IN THE FUTURE
+
+    m.def("ActivityModelPengRobinsonPHREEQC", []() -> ActivityModelGenerator { errorif(true, "ActivityModelPengRobinsonPHREEQC has been renamed to ActivityModelPengRobinsonPhreeqc. Please make this change in your code."); return {}; },
+        "ActivityModelPengRobinsonPHREEQC has been renamed to ActivityModelPengRobinsonPhreeqc. Please make this change in your code.");
+
+    m.def("CubicBipModelPHREEQC", []() -> ActivityModelGenerator { errorif(true, "ActivityModelPengRobinsonPHREEQC has been renamed to ActivityModelPengRobinsonPhreeqc. Please make this change in your code."); return {}; },
+        "ActivityModelPengRobinsonPHREEQC has been renamed to ActivityModelPengRobinsonPhreeqc. Please make this change in your code.");
 }
