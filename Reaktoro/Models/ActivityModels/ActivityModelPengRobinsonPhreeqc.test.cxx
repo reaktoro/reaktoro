@@ -19,7 +19,7 @@
 #include <Reaktoro/catch.hxx>
 
 // Reaktoro includes
-#include <Reaktoro/Models/ActivityModels/ActivityModelPengRobinsonPhreeqc.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPengRobinsonPhreeqcOriginal.hpp>
 using namespace Reaktoro;
 
 // Check if the activities of the fluid species are correct assuming activity coefficients are.
@@ -37,7 +37,7 @@ inline auto checkActivities(ArrayXrConstRef x, real P, ActivityPropsConstRef pro
     }
 }
 
-TEST_CASE("Testing ActivityModelPengRobinsonPhreeqc", "[ActivityModelPengRobinsonPhreeqc]")
+TEST_CASE("Testing ActivityModelPengRobinsonPhreeqcOriginal", "[ActivityModelPengRobinsonPhreeqcOriginal]")
 {
     const auto T = 300.0;
     const auto P = 12.3e5;
@@ -52,7 +52,7 @@ TEST_CASE("Testing ActivityModelPengRobinsonPhreeqc", "[ActivityModelPengRobinso
         const ArrayXr x = ArrayXr{{0.90, 0.08, 0.02}};
 
         // Construct the activity props function with the given species.
-        ActivityModel fn = ActivityModelPengRobinsonPhreeqc()(species);
+        ActivityModel fn = ActivityModelPengRobinsonPhreeqcOriginal()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -122,7 +122,7 @@ TEST_CASE("Testing ActivityModelPengRobinsonPhreeqc", "[ActivityModelPengRobinso
         const ArrayXr x = ArrayXr{{0.9, 0.1}};
 
         // Construct the activity props function with the given species.
-        ActivityModel fn = ActivityModelPengRobinsonPhreeqc()(species);
+        ActivityModel fn = ActivityModelPengRobinsonPhreeqcOriginal()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
@@ -189,7 +189,7 @@ TEST_CASE("Testing ActivityModelPengRobinsonPhreeqc", "[ActivityModelPengRobinso
         const ArrayXr x = ArrayXr{{1.0}};
 
         // Construct the activity props function with the given species.
-        ActivityModel fn = ActivityModelPengRobinsonPhreeqc()(species);
+        ActivityModel fn = ActivityModelPengRobinsonPhreeqcOriginal()(species);
 
         // Create the ActivityProps object with the results.
         ActivityProps props = ActivityProps::create(species.size());
