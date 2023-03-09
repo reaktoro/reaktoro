@@ -113,11 +113,23 @@ void exportCubicEOS(py::module& m)
         ;
 
     py::class_<CubicEOS::BipModelParamsPHREEQC>(ceos, "BipModelParamsPHREEQC")
-        .def_readwrite("kH2O_CO2", &CubicEOS::BipModelParamsPHREEQC::kH2O_CO2, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-CO₂.")
-        .def_readwrite("kH2O_H2S", &CubicEOS::BipModelParamsPHREEQC::kH2O_H2S, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-H₂S.")
-        .def_readwrite("kH2O_CH4", &CubicEOS::BipModelParamsPHREEQC::kH2O_CH4, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-CH₄.")
-        .def_readwrite("kH2O_N2", &CubicEOS::BipModelParamsPHREEQC::kH2O_N2, "The binary interaction parameter \eq{k_ij} for the substance pair H₂O-N₂.")
+        .def_readwrite("kH2O_CO2", &CubicEOS::BipModelParamsPHREEQC::kH2O_CO2, "The binary interaction parameter k_ij for the substance pair H2O-CO2.")
+        .def_readwrite("kH2O_H2S", &CubicEOS::BipModelParamsPHREEQC::kH2O_H2S, "The binary interaction parameter k_ij for the substance pair H2O-H2S.")
+        .def_readwrite("kH2O_CH4", &CubicEOS::BipModelParamsPHREEQC::kH2O_CH4, "The binary interaction parameter k_ij for the substance pair H2O-CH4.")
+        .def_readwrite("kH2O_N2", &CubicEOS::BipModelParamsPHREEQC::kH2O_N2, "The binary interaction parameter k_ij for the substance pair H2O-N2.")
+        ;
+
+    py::class_<CubicEOS::BipModelParamsSoreideWhitson>(ceos, "BipModelParamsSoreideWhitson")
+        .def_readwrite("kH2O_CO2", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_CO2, "The binary interaction parameter k_ij for the substance pair H2O/CO2.")
+        .def_readwrite("kH2O_N2", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_N2, "The binary interaction parameter k_ij for the substance pair H2O/N2.")
+        .def_readwrite("kH2O_CH4", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_CH4, "The binary interaction parameter k_ij for the substance pair H2O/CH4.")
+        .def_readwrite("kH2O_C2H6", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_C2H6, "The binary interaction parameter k_ij for the substance pair H2O/C2H6.")
+        .def_readwrite("kH2O_C3H8", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_C3H8, "The binary interaction parameter k_ij for the substance pair H2O/C3H8.")
+        .def_readwrite("kH2O_nC4H10", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_nC4H10, "The binary interaction parameter k_ij for the substance pair H2O/n-C4H10.")
+        .def_readwrite("kH2O_H2S_a1", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_H2S_a1, "The coefficient a_1 when computing the binary interaction parameter k_ij for the substance pair H2O/H2S.")
+        .def_readwrite("kH2O_H2S_a2", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_H2S_a2, "The coefficient a_2 when computing the binary interaction parameter k_ij for the substance pair H2O/H2S.")
         ;
 
     ceos.def("BipModelPHREEQC", &CubicEOS::BipModelPHREEQC, "Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.");
+    ceos.def("BipModelSoreideWhitson", &CubicEOS::BipModelSoreideWhitson, "Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that reported in Søreide and Whitson (1992).");
 }
