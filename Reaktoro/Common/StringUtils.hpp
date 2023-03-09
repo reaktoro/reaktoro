@@ -28,7 +28,7 @@ namespace Reaktoro {
 namespace internal {
 
 template<typename T>
-auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream&
+auto operator<<(std::ostream& out, std::vector<T> const& values) -> std::ostream&
 {
     for(auto i = 0; i < values.size(); ++i)
         out << ((i == 0) ? "" : ", ") << values[i];
@@ -36,13 +36,13 @@ auto operator<<(std::ostream& out, const std::vector<T>& values) -> std::ostream
 }
 
 template <typename Arg>
-auto stringfy(std::ostringstream& ss, const std::string& sep, const Arg& item) -> void
+auto stringfy(std::ostringstream& ss, std::string const& sep, Arg const& item) -> void
 {
     ss << item;
 }
 
 template <typename Arg, typename... Args>
-auto stringfy(std::ostringstream& ss, const std::string& sep, const Arg& item, Args... items) -> void
+auto stringfy(std::ostringstream& ss, std::string const& sep, Arg const& item, Args... items) -> void
 {
     ss << item << sep;
     stringfy(ss, sep, items...);
@@ -52,7 +52,7 @@ auto stringfy(std::ostringstream& ss, const std::string& sep, const Arg& item, A
 
 /// Concatenate the arguments into a string using a given separator string.
 template <typename... Args>
-auto stringfy(const std::string& sep, Args... items) -> std::string
+auto stringfy(std::string const& sep, Args... items) -> std::string
 {
     std::ostringstream ss;
     internal::stringfy(ss, sep, items...);
@@ -61,7 +61,7 @@ auto stringfy(const std::string& sep, Args... items) -> std::string
 
 /// Stringfy a `std::variant` object.
 template <typename... Args>
-auto stringfy(const std::variant<Args...>& var) -> std::string
+auto stringfy(std::variant<Args...> const& var) -> std::string
 {
     std::ostringstream ss;
     std::visit([&](auto arg){ ss << arg; }, var);
@@ -110,20 +110,27 @@ auto trimright(std::string str) -> std::string;
 auto trim(std::string str) -> std::string;
 
 /// Split the string on every occurrence of the specified delimiters and apply a transform function.
-auto split(const std::string& str, const std::string& delims, std::function<std::string(std::string)> transform) -> std::vector<std::string>;
+auto split(std::string const& str, std::string const& delims, std::function<std::string(std::string)> transform) -> std::vector<std::string>;
 
 /// Split the string on every occurrence of the specified delimiters
-auto split(const std::string& str, const std::string& delims = " ") -> std::vector<std::string>;
+auto split(std::string const& str, std::string const& delims = " ") -> std::vector<std::string>;
 
 /// Join several strings into one.
-auto join(const std::vector<std::string>& strs, std::string sep = " ") -> std::string;
+auto join(std::vector<std::string> const& strs, std::string sep = " ") -> std::string;
 
 /// Convert the string into a floating point number
-auto tofloat(const std::string& str) -> double;
+auto tofloat(std::string const& str) -> double;
 
 /// Return a list of words with duplicate names converted to unique ones.
 auto makeunique(std::vector<std::string> words, std::string suffix) -> std::vector<std::string>;
 
+/// Returns true if string `str` starts with `substr`, or any other given sub string in `substrs`.
+template<typename SubStr, typename... SubStrs>
+auto startswith(std::string const& str, SubStr substr, SubStrs... substrs)
+{
+    if constexpr(sizeof...(SubStrs) > 0)
+        return str.find(substr) == 0 || startswith(str, substrs...);
+    return str.find(substr) == 0;
+}
+
 } // namespace Reaktoro
-
-
