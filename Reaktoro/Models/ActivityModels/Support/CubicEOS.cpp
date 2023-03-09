@@ -614,7 +614,7 @@ auto Equation::compute(Props& props, real const& T, real const& P, ArrayXrConstR
     return pimpl->compute(props, T, P, x);
 }
 
-auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& params) -> BipModel
+auto BipModelPhreeqc(Strings const& substances, BipModelParamsPhreeqc const& params) -> BipModel
 {
     auto isubstance = [&](auto... substrs)
     {
@@ -658,8 +658,8 @@ auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& par
     auto serializer = [=]()
     {
         Data node;
-        // node["PHREEQC"] = params; // Implement serialization for BipModelParamsPHREEQC in Serialization/Models.
-        node["PHREEQC"] = "BipModelParamsPHREEQC not yet serialized";
+        // node["Phreeqc"] = params; // Implement serialization for BipModelParamsPhreeqc in Serialization/Models.
+        node["Phreeqc"] = "BipModelParamsPhreeqc not yet serialized";
         return node;
     };
 
@@ -722,6 +722,13 @@ auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhit
     };
 
     return BipModel(evalfn, paramsvec, serializer);
+}
+
+// DEPRECATED METHODS TO BE REMOVED IN THE NEAR FUTURE
+
+auto BipModelPHREEQC(Strings const& substances, BipModelParamsPhreeqc const& params) -> BipModel
+{
+    return BipModelPhreeqc(substances, params);
 }
 
 } // namespace CubicEOS

@@ -112,11 +112,11 @@ void exportCubicEOS(py::module& m)
         .def("compute", &CubicEOS::Equation::compute, "Compute the thermodynamic properties of the phase.")
         ;
 
-    py::class_<CubicEOS::BipModelParamsPHREEQC>(ceos, "BipModelParamsPHREEQC")
-        .def_readwrite("kH2O_CO2", &CubicEOS::BipModelParamsPHREEQC::kH2O_CO2, "The binary interaction parameter k_ij for the substance pair H2O-CO2.")
-        .def_readwrite("kH2O_H2S", &CubicEOS::BipModelParamsPHREEQC::kH2O_H2S, "The binary interaction parameter k_ij for the substance pair H2O-H2S.")
-        .def_readwrite("kH2O_CH4", &CubicEOS::BipModelParamsPHREEQC::kH2O_CH4, "The binary interaction parameter k_ij for the substance pair H2O-CH4.")
-        .def_readwrite("kH2O_N2", &CubicEOS::BipModelParamsPHREEQC::kH2O_N2, "The binary interaction parameter k_ij for the substance pair H2O-N2.")
+    py::class_<CubicEOS::BipModelParamsPhreeqc>(ceos, "BipModelParamsPhreeqc")
+        .def_readwrite("kH2O_CO2", &CubicEOS::BipModelParamsPhreeqc::kH2O_CO2, "The binary interaction parameter k_ij for the substance pair H2O-CO2.")
+        .def_readwrite("kH2O_H2S", &CubicEOS::BipModelParamsPhreeqc::kH2O_H2S, "The binary interaction parameter k_ij for the substance pair H2O-H2S.")
+        .def_readwrite("kH2O_CH4", &CubicEOS::BipModelParamsPhreeqc::kH2O_CH4, "The binary interaction parameter k_ij for the substance pair H2O-CH4.")
+        .def_readwrite("kH2O_N2", &CubicEOS::BipModelParamsPhreeqc::kH2O_N2, "The binary interaction parameter k_ij for the substance pair H2O-N2.")
         ;
 
     py::class_<CubicEOS::BipModelParamsSoreideWhitson>(ceos, "BipModelParamsSoreideWhitson")
@@ -130,6 +130,16 @@ void exportCubicEOS(py::module& m)
         .def_readwrite("kH2O_H2S_a2", &CubicEOS::BipModelParamsSoreideWhitson::kH2O_H2S_a2, "The coefficient a_2 when computing the binary interaction parameter k_ij for the substance pair H2O/H2S.")
         ;
 
-    ceos.def("BipModelPHREEQC", &CubicEOS::BipModelPHREEQC, "Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.");
+    ceos.def("BipModelPhreeqc", &CubicEOS::BipModelPhreeqc, "Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.");
     ceos.def("BipModelSoreideWhitson", &CubicEOS::BipModelSoreideWhitson, "Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that reported in Søreide and Whitson (1992).");
+
+    // DEPRECATED METHODS TO BE REMOVED IN THE NEAR FUTURE
+
+    struct DeprecatedCubicEOSBipModelParamsPHREEQC {};
+    py::class_<DeprecatedCubicEOSBipModelParamsPHREEQC>(ceos, "BipModelParamsPHREEQC")
+        .def(py::init([]() -> DeprecatedCubicEOSBipModelParamsPHREEQC { errorif(true, "BipModelPHREEQC has been deprecated and renamed to BipModelPhreeqc."); return {}; } ))
+        ;
+
+    ceos.def("BipModelPHREEQC", [](Strings const&, CubicEOS::BipModelParamsPhreeqc const&) -> CubicEOS::BipModel { errorif(true, "BipModelPHREEQC has been deprecated and renamed to BipModelPhreeqc."); return {}; },
+        "BipModelPHREEQC has been deprecated and renamed to BipModelPhreeqc.");
 }

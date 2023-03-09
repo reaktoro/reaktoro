@@ -72,7 +72,7 @@ void exportAqueousProps(py::module& m)
         .def("output", py::overload_cast<const String&>(&AqueousProps::output, py::const_), "Output the properties of the aqueous phase to a file.")
         .def("__repr__", [](const AqueousProps& self) { std::stringstream ss; ss << self; return ss.str(); })
 
-        // DEPRECATED METHODS : TO BE REMOVED IN THE NEAR FUTURE
+        // DEPRECATED METHODS TO BE REMOVED IN THE NEAR FUTURE
 
         .def("saturationIndexLn", saturationIndexLn, "Return the saturation index of a given species (in natural log).")
         .def("saturationIndexLg", saturationIndexLg, "Return the saturation index of a given species (in log base 10).")
