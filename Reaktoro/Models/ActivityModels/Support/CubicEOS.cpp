@@ -666,5 +666,63 @@ auto BipModelPHREEQC(Strings const& substances, BipModelParamsPHREEQC const& par
     return BipModel(evalfn, paramsvec, serializer);
 }
 
+auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhitson const& params) -> BipModel
+{
+    auto isubstance = [&](auto... substrs)
+    {
+        return indexfn(substances, RKT_LAMBDA(substance, startswith(substance, substrs...)));
+    };
+
+    const auto iH2O    = isubstance("H2O");
+    const auto iCO2    = isubstance("CO2");
+    const auto iH2S    = isubstance("H2S");
+    const auto iCH4    = isubstance("CH4", "Mtg", "Methane", "METHANE");
+    const auto iN2     = isubstance("N2", "Ntg");
+    const auto iC2H6   = isubstance("C2H6", "Ethane", "ETHANE");
+    const auto iC3H8   = isubstance("C3H8", "Propane", "PROPANE");
+    const auto inC4H10 = isubstance("nC4H10", "n-C4H10", "n-Butane", "n-Butane", "n-BUTANE", "N-BUTANE");
+
+    const auto size = substances.size();
+
+    auto evalfn = [=](Bip& bip, BipModelArgs const& args) -> void
+    {
+        auto& [k, kT, kTT] = bip;
+
+        const auto TrH2S = args.T / args.Tcr[iH2S];
+
+        if(iH2O < size)
+        {
+            if( iCO2   < size) k(iH2O,    iCO2) = k(   iCO2, iH2O) = params.kH2O_CO2.value();
+            if(  iN2   < size) k(iH2O,     iN2) = k(    iN2, iH2O) = params.kH2O_N2.value();
+            if( iH2S   < size) k(iH2O,    iH2S) = k(   iH2S, iH2O) = params.kH2O_H2S_a1.value() + params.kH2O_H2S_a2.value() * TrH2S;
+            if( iCH4   < size) k(iH2O,    iCH4) = k(   iCH4, iH2O) = params.kH2O_CH4.value();
+            if(iC2H6   < size) k(iH2O,   iC2H6) = k(  iC2H6, iH2O) = params.kH2O_C2H6.value();
+            if(iC3H8   < size) k(iH2O,   iC3H8) = k(  iC3H8, iH2O) = params.kH2O_C3H8.value();
+            if(inC4H10 < size) k(iH2O, inC4H10) = k(inC4H10, iH2O) = params.kH2O_nC4H10.value();
+        }
+    };
+
+    Vec<Param> paramsvec = {
+        params.kH2O_CO2,
+        params.kH2O_N2,
+        params.kH2O_CH4,
+        params.kH2O_C2H6,
+        params.kH2O_C3H8,
+        params.kH2O_nC4H10,
+        params.kH2O_H2S_a1,
+        params.kH2O_H2S_a2,
+    };
+
+    auto serializer = [=]()
+    {
+        Data node;
+        // node["SoreideWhitson"] = params; // Implement serialization for BipModelParamsSoreideWhitson in Serialization/Models.
+        node["SoreideWhitson"] = "BipModelParamsSoreideWhitson not yet serialized";
+        return node;
+    };
+
+    return BipModel(evalfn, paramsvec, serializer);
+}
+
 } // namespace CubicEOS
 } // namespace Reaktoro
