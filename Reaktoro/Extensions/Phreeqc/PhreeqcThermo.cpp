@@ -19,7 +19,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelConstLgK.hpp>
@@ -28,12 +27,6 @@
 
 namespace Reaktoro {
 namespace PhreeqcUtils {
-
-auto memoizedPhreeqcWaterProps(real T, real P)
-{
-    static auto memoized_water_props = memoizeLast(PhreeqcUtils::waterProps);
-    return memoized_water_props(T, P);
-}
 
 auto standardVolume(const PhreeqcSpecies* species, real T, real P, const PhreeqcWaterProps& wprops) -> real
 {
@@ -89,6 +82,62 @@ auto standardVolume(const PhreeqcSpecies* species, real T, real P, const Phreeqc
         const auto m1 = species->millero[1];
         const auto m2 = species->millero[2];
         return m0 + tc*(m1 + tc*m2); // in cm3/mol
+    }
+
+    return 0.0;
+}
+
+auto standardVolumeIonicStrengthCorrection(const PhreeqcSpecies* species, real T, real P, real mu, const PhreeqcWaterProps& wprops) -> real
+{
+    //--------------------------------------------------------------------------------
+    // Implementation based on PHREEQC method `Phreeqc::calc_vm`
+    //--------------------------------------------------------------------------------
+
+    const auto z = PhreeqcUtils::charge(species);
+
+    if(z == 0.0)
+        return 0.0;
+
+    const auto sqrt_mu = sqrt(mu);
+
+    const auto& DH_B = wprops.wep.DH_B;
+    const auto& DH_Av = wprops.wep.DH_Av;
+
+    const auto tc = T - 273.15;
+    const auto TK_s = tc + 45.15;
+
+    const auto i1 = species->logk[vmi1];
+    const auto i2 = species->logk[vmi2];
+    const auto i3 = species->logk[vmi3];
+    const auto i4 = species->logk[vmi4];
+
+    if(species->logk[vma1])
+    {
+        real corr = 0.0;
+
+        const auto bAv = species->logk[b_Av];
+
+        if(bAv < 1e-5)
+            corr += z * z * 0.5 * DH_Av * sqrt_mu;
+        else
+            corr += z * z * 0.5 * DH_Av * sqrt_mu / (1 + bAv * DH_B * sqrt_mu);
+
+        if(i1 != 0.0 || i2 != 0.0 || i3 != 0.0)
+        {
+            real bi = i1 + i2 / TK_s + i3 * TK_s;
+            corr += i4 == 1.0 ? bi * mu : bi * pow(mu, i4);
+        }
+
+        return corr;
+    }
+
+    if(species->millero[0])
+    {
+        const auto m3 = species->millero[3];
+        const auto m4 = species->millero[4];
+        const auto m5 = species->millero[5];
+
+        return z * z * 0.5 * DH_Av * sqrt_mu + (m3 + tc * (m4 + tc * m5)) * mu;
     }
 
     return 0.0;
@@ -163,7 +212,7 @@ auto standardVolumeModel(const PhreeqcSpecies* species) -> Model<real(real,real)
 {
     return Model<real(real,real)>([=](real T, real P) -> real
     {
-        const auto wprops = memoizedPhreeqcWaterProps(T, P); // TODO: Ensure phreeqc_water_props has been properly memoized
+        const auto wprops = waterPropsMemoized(T, P);
         return standardVolume(species, T, P, wprops) * cubicCentimeterToCubicMeter;
     });
 }

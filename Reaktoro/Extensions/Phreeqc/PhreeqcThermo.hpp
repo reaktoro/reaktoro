@@ -34,6 +34,14 @@ namespace PhreeqcUtils {
 /// @param wprops The thermodynamic and electrostatic properties of water
 auto standardVolume(const PhreeqcSpecies* species, real T, real P, const PhreeqcWaterProps& wprops) -> real;
 
+/// Return the correction for the standard molar volume of a PHREEQC species due to ionic strength using same model as used in PHREEQC (in cm3/mol).
+/// @param species The pointer to the Phreeqc species
+/// @param T The temperature value (in K)
+/// @param P The pressure value (in Pa)
+/// @param mu The ionic strength of the solution where the species exists (in molal)
+/// @param wprops The thermodynamic and electrostatic properties of water
+auto standardVolumeIonicStrengthCorrection(const PhreeqcSpecies* species, real T, real P, real mu, const PhreeqcWaterProps& wprops) -> real;
+
 /// Return the standard molar volume of a PHREEQC phase using same model as used in PHREEQC (in cm3/mol).
 /// @param phase The pointer to the Phreeqc phase
 /// @param T The temperature value (in K)
