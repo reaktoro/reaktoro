@@ -32,7 +32,7 @@ endfunction()
 ReaktoroFindPackage(autodiff 1.0.1 REQUIRED)
 ReaktoroFindPackage(Eigen3 3.3.90 REQUIRED)
 ReaktoroFindPackage(nlohmann_json 3.6.1 REQUIRED)
-ReaktoroFindPackage(Optima 0.3.0 REQUIRED)
+ReaktoroFindPackage(Optima 0.3.1 REQUIRED)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1 REQUIRED)
 ReaktoroFindPackage(tabulate 1.4.0 REQUIRED)
 ReaktoroFindPackage(ThermoFun 0.3.8 REQUIRED)
@@ -40,7 +40,7 @@ ReaktoroFindPackage(tsl-ordered-map 1.0.0 REQUIRED)
 ReaktoroFindPackage(yaml-cpp 0.6.3 REQUIRED)
 
 # Optional dependencies
-ReaktoroFindPackage(reaktplot 0.3.1)
+ReaktoroFindPackage(reaktplot 0.4.0)
 ReaktoroFindPackage(pybind11 2.10.0)
 ReaktoroFindPackage(Catch2 2.6.2)
 
