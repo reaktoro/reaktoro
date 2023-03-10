@@ -17,6 +17,9 @@
 
 #pragma once
 
+#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
+#include <Reaktoro/Models/ActivityModels/Support/IonExchangeSurface.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelCubicEOS.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelDavies.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelDebyeHuckel.hpp>
@@ -28,6 +31,8 @@
 #include <Reaktoro/Models/ActivityModels/ActivityModelIdealIonExchange.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPengRobinsonPhreeqcOriginal.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPhreeqcIonicStrengthPressureCorrection.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzer.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelRedlichKister.hpp>
@@ -36,9 +41,6 @@
 #include <Reaktoro/Models/ActivityModels/ActivityModelSpycherPruessEnnis.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelSpycherReed.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelVanLaar.hpp>
-#include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
-#include <Reaktoro/Models/ActivityModels/Support/CubicEOS.hpp>
-#include <Reaktoro/Models/ActivityModels/Support/IonExchangeSurface.hpp>
 
 /// @defgroup ActivityModels Activity Models
 /// @ingroup Models
