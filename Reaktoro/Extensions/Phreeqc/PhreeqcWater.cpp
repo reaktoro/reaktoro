@@ -20,6 +20,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Memoization.hpp>
 
 namespace Reaktoro {
 namespace PhreeqcUtils {
@@ -175,6 +176,12 @@ auto waterProps(real T, real P) -> PhreeqcWaterProps
     const auto wtp = waterThermoProps(T, P);
     const auto wep = waterElectroProps(T, P, wtp);
     return {wtp, wep};
+}
+
+auto waterPropsMemoized(real T, real P) -> PhreeqcWaterProps
+{
+    static thread_local auto memoized_water_props = memoizeLast(waterProps);
+    return memoized_water_props(T, P);
 }
 
 auto waterDensityPhreeqc(real T, real P) -> real
