@@ -24,5 +24,5 @@ using namespace Reaktoro;
 
 void exportActivityModelPitzerHMW(py::module& m)
 {
-    m.def("ActivityModelPitzerHMW", ActivityModelPitzerHMW);
+    m.def("ActivityModelPitzerHMW", []() -> ActivityModelGenerator { errorif(true, "ActivityModelPitzerHMW has been deprecated. Use ActivityModelPitzer instead, which is a newer and superior Pitzer activity model implementation for Reaktoro."); return {}; });
 }
