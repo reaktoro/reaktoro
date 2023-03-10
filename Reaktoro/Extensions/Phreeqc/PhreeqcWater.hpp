@@ -81,6 +81,11 @@ auto waterElectroProps(real T, real P, PhreeqcWaterThermoProps wtp) -> PhreeqcWa
 /// @param P The pressure for the calculation (in Pa)
 auto waterProps(real T, real P) -> PhreeqcWaterProps;
 
+/// Compute the thermodynamic and electrostatic properties of water using same model as used in PHREEQC (with memoized last result).
+/// @param T The temperature for the calculation (in K)
+/// @param P The pressure for the calculation (in Pa)
+auto waterPropsMemoized(real T, real P) -> PhreeqcWaterProps;
+
 /// Return the water density used in the evaluation of Debye--Hückel coefficients @eq{A_\gamma} and  @eq{B_\gamma}.
 /// This function implements equation (2.6) of Wagner and Pruss (2002)\sup{\cite Wagner2002}
 /// for the calculation of liquid water density along the saturation curve (0-300 celsius).
