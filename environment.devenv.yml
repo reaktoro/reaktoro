@@ -39,7 +39,7 @@ dependencies:
   - pytest-regressions
   - pytest-xdist
   - python ={{ python_version }}
-  - reaktplot >=0.3.1
+  - reaktplot >=0.4.0
   - thermofun =0.3.8
   - tsl_ordered_map
   - valgrind  # [unix]
