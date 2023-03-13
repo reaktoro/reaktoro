@@ -31,13 +31,16 @@ public:
     /// @param mineral The name of the mineral as found in the database.
     explicit MineralReaction(String const& mineral);
 
-    /// Set the mineral reaction rate model of the reaction.
-    auto setRateModel(MineralReactionRateModel const& model) -> MineralReaction&;
-
     // Consider GeneralReaction::setRateModel methods as well.
     using GeneralReaction::setRateModel;
 
-    /// Set the mineral reaction rate model generator of the reaction.
+    /// Set the mineral reaction rate model of the reaction as a rate function.
+    auto setRateModel(MineralReactionRateModel const& model) -> MineralReaction&;
+
+    /// Set the mineral reaction rate model of the reaction as a rate function.
+    auto setRateFunction(MineralReactionRateModel const& model) -> MineralReaction&;
+
+    /// Set the mineral reaction rate model of the reaction as a model generator function.
     /// Use this method to set a MineralReactionRateModelGenerator in case you
     /// need the MineralReactionRateModel of the reaction to be constructed
     /// later, when the chemical system is assembled.
