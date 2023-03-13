@@ -27,5 +27,6 @@ void exportMineralReaction(py::module& m)
 {
     py::class_<MineralReaction, GeneralReaction>(m, "MineralReaction")
         .def(py::init<String const&>(), "Construct a MineralReaction object with given mineral name.")
+        .def("setRateFunction", &MineralReaction::setRateFunction)
         ;
 }

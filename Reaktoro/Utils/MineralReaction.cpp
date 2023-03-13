@@ -60,6 +60,11 @@ MineralReaction::MineralReaction(String const& mineral)
 
 auto MineralReaction::setRateModel(MineralReactionRateModel const& model) -> MineralReaction&
 {
+    return MineralReaction::setRateFunction(model);
+}
+
+auto MineralReaction::setRateFunction(MineralReactionRateModel const& model) -> MineralReaction&
+{
     ReactionRateModel converted = detail::convert(mineral(), model);
     GeneralReaction::setRateModel(converted);
     return *this;
