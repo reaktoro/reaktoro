@@ -66,4 +66,9 @@ void exportReactionRate(py::module& m)
         .def(+py::self)
         .def(-py::self)
         ;
+
+    // In case the user forgets to define a reaction rate function returning a
+    // ReactionRate object, make sure the returning autodiff::real object can be
+    // implictly convertible to the expected ReactionRate object.
+    py::implicitly_convertible<real, ReactionRate>();
 }
