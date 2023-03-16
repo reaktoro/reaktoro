@@ -34,8 +34,6 @@ namespace test { extern auto createChemicalSystem() -> ChemicalSystem; }
 
 TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
 {
-    Warnings::disable(525); // Disables warning "Hey, if you were using method saturationIndex in AqueousProps class before to compute IAP/K, please use the newly added saturationRatio method instead, because saturationIndex now computes log10(IAP/K) and not IAP/K."
-
     ChemicalSystem system = test::createChemicalSystem();
 
     EquilibriumSolver solver(system);
