@@ -570,11 +570,6 @@ auto AqueousProps::saturationSpecies() const -> SpeciesList
 
 auto AqueousProps::saturationIndex(StringOrIndex const& species) const -> real
 {
-    warningif(Warnings::isEnabled(525),
-        "Hey, if you were using method saturationIndex in AqueousProps class before to "
-        "compute IAP/K, please use the newly added saturationRatio method instead, "
-        "because saturationIndex now computes log10(IAP/K) and not IAP/K.\n"
-        "Disable this temporary warning by executing `Warnings.disable(525)` in Python or `Warnings::disable(525);` in C++. ");
     return pimpl->saturationRatioLn(species) / ln10;
 }
 
