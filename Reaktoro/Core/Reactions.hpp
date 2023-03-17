@@ -90,6 +90,9 @@ public:
     /// chemical system is assembled.
     auto setRateModel(ReactionRateModelGenerator const& model_generator) -> GeneralReaction&;
 
+    /// Set the reaction rate model generator of the reaction (equivalent to GeneralReaction::setRateModel).
+    auto set(ReactionRateModelGenerator const& model_generator) -> GeneralReaction&;
+
     /// Return the name of the reaction.
     auto name() const -> String const&;
 
