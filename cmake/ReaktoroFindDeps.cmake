@@ -40,7 +40,7 @@ ReaktoroFindPackage(tsl-ordered-map 1.0.0 REQUIRED)
 ReaktoroFindPackage(yaml-cpp 0.6.3 REQUIRED)
 
 # Optional dependencies
-ReaktoroFindPackage(reaktplot 0.4.0)
+ReaktoroFindPackage(reaktplot 0.4.1)
 ReaktoroFindPackage(pybind11 2.10.0)
 ReaktoroFindPackage(Catch2 2.6.2)
 
