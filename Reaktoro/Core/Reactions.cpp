@@ -57,6 +57,11 @@ auto GeneralReaction::setRateModel(ReactionRateModelGenerator const& model_gener
     return *this;
 }
 
+auto GeneralReaction::set(ReactionRateModelGenerator const& model_generator) -> GeneralReaction&
+{
+    return setRateModel(model_generator);
+}
+
 auto GeneralReaction::name() const -> String const&
 {
     return reaction_name;
