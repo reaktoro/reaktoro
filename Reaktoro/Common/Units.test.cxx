@@ -67,4 +67,11 @@ TEST_CASE("Testing Units module", "[Units]")
     REQUIRE( units::convert(x, "inH2O"  , "Pa") == Approx(x * 249.08891)       );
     REQUIRE( units::convert(x, "ftH2O"  , "Pa") == Approx(x * 249.08891 * 12)  );
     REQUIRE( units::convert(x, "pascal" , "Pa") == Approx(x * 1.0)             );
+
+    //-------------------------------------------------------------------------
+    // CONVENIENCE FUNCTIONS
+    //-------------------------------------------------------------------------
+
+    REQUIRE( units::seconds(1.23, "year") == units::convert(1.23, "year", "s") );
+    REQUIRE( units::seconds(2.34, "minute") == units::convert(1.23, "minute", "s") );
 }

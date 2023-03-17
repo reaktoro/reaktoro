@@ -27,6 +27,10 @@ void exportUnits(py::module& m)
     auto sub = m.def_submodule("units");
 
     sub.def("convertible", &units::convertible);
+
     sub.def("convert", &units::convert<double>);
     sub.def("convert", &units::convert<real>);
+
+    sub.def("seconds", &units::seconds<double>);
+    sub.def("seconds", &units::seconds<real>);
 }

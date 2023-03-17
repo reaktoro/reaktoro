@@ -24,14 +24,14 @@ namespace Reaktoro {
 namespace units {
 
 /// Return the slope factor in the linear function that converts a numeric value from a unit to another.
-/// @param from The string representing the unit from which the conversion is made
-/// @param to The string representing the unit to which the conversion is made
+/// @param from The string representing the unit from which the conversion is done
+/// @param to The string representing the unit to which the conversion is done
 /// @return The slope factor
 auto slope(const std::string& from, const std::string& to) -> double;
 
 /// Return the intercept term in the linear function that converts a numeric value from a unit to another.
-/// @param from The string representing the unit from which the conversion is made
-/// @param to The string representing the unit to which the conversion is made
+/// @param from The string representing the unit from which the conversion is done
+/// @param to The string representing the unit to which the conversion is done
 /// @return The intercept term
 auto intercept(const std::string& from, const std::string& to) -> double;
 
@@ -41,13 +41,23 @@ auto convertible(const std::string& from, const std::string& to) -> bool;
 
 /// Convert a numeric value from a unit to another
 /// @param value The value
-/// @param from The string representing the unit from which the conversion is made
-/// @param to The string representing the unit to which the conversion is made
+/// @param from The string representing the unit from which the conversion is done
+/// @param to The string representing the unit to which the conversion is done
 /// @return The converted value
 template<typename T>
 auto convert(const T& value, const std::string& from, const std::string& to) -> T
 {
     return (from == to) ? value : value * slope(from, to) + intercept(from, to);
+}
+
+/// Convenience function to convert a value from a time unit to seconds.
+/// @param value The value
+/// @param from The string representing the time unit from which the conversion is done
+/// @return The converted time value to seconds
+template<typename T>
+auto seconds(const T& value, const std::string& from) -> T
+{
+    return convert(value, from, "s");
 }
 
 } // namespace units
