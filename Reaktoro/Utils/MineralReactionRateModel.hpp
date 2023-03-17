@@ -39,10 +39,10 @@ struct MineralReactionRateModelArgs
     /// The properties of the aqueous solution.
     AqueousProps const& aprops;
 
-    /// The temperature of the system (in K).
+    /// The temperature of the chemical system (in K).
     real const& T;
 
-    /// The pressure of the system (in Pa).
+    /// The pressure of the chemical system (in Pa).
     real const& P;
 
     /// The pH of the aqueous solution.
