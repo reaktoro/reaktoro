@@ -126,7 +126,29 @@ struct KineticsSolver::Impl
 
     //=================================================================================================================
     //
-    // CHEMICAL KINETICS METHODS
+    // CHEMICAL KINETICS PRECONDITION METHODS
+    //
+    //=================================================================================================================
+    auto precondition(ChemicalState& state) -> KineticsResult
+    {
+        return solve(state, 0.0);
+    }
+    auto precondition(ChemicalState& state, EquilibriumRestrictions const& restrictions) -> KineticsResult
+    {
+        return solve(state, 0.0, restrictions);
+    }
+    auto precondition(ChemicalState& state, EquilibriumConditions const& conditions) -> KineticsResult
+    {
+        return solve(state, 0.0, conditions);
+    }
+    auto precondition(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> KineticsResult
+    {
+        return solve(state, 0.0, conditions, restrictions);
+    }
+
+    //=================================================================================================================
+    //
+    // CHEMICAL KINETICS SOLVE METHODS
     //
     //=================================================================================================================
 
@@ -160,7 +182,7 @@ struct KineticsSolver::Impl
 
     //=================================================================================================================
     //
-    // CHEMICAL KINETICS METHODS WITH SENSITIVITY CALCULATION
+    // CHEMICAL KINETICS SOLVE METHODS WITH SENSITIVITY CALCULATION
     //
     //=================================================================================================================
 
@@ -212,6 +234,26 @@ auto KineticsSolver::operator=(KineticsSolver other) -> KineticsSolver&
 {
     pimpl = std::move(other.pimpl);
     return *this;
+}
+
+auto KineticsSolver::precondition(ChemicalState& state) -> KineticsResult
+{
+    return pimpl->precondition(state);
+}
+
+auto KineticsSolver::precondition(ChemicalState& state, EquilibriumRestrictions const& restrictions) -> KineticsResult
+{
+    return pimpl->precondition(state, restrictions);
+}
+
+auto KineticsSolver::precondition(ChemicalState& state, EquilibriumConditions const& conditions) -> KineticsResult
+{
+    return pimpl->precondition(state, conditions);
+}
+
+auto KineticsSolver::precondition(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> KineticsResult
+{
+    return pimpl->precondition(state, conditions, restrictions);
 }
 
 auto KineticsSolver::solve(ChemicalState& state, real const& dt) -> KineticsResult
