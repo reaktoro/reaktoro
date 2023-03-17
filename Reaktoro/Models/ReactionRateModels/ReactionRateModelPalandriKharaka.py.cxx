@@ -48,6 +48,7 @@ void exportReactionRateModelPalandriKharaka(py::module& m)
         .def_readwrite("mechanisms", &ReactionRateModelParamsPalandriKharaka::mechanisms, "The reaction mechanisms considered in the mineral dissolution/precipitation rate model.")
         ;
 
+    m.def("ReactionRateModelPalandriKharaka", py::overload_cast<>(ReactionRateModelPalandriKharaka));
     m.def("ReactionRateModelPalandriKharaka", py::overload_cast<Params const&>(ReactionRateModelPalandriKharaka));
     m.def("ReactionRateModelPalandriKharaka", py::overload_cast<ReactionRateModelParamsPalandriKharaka const&>(ReactionRateModelPalandriKharaka));
     m.def("ReactionRateModelPalandriKharaka", py::overload_cast<Vec<ReactionRateModelParamsPalandriKharaka> const&>(ReactionRateModelPalandriKharaka));

@@ -76,6 +76,10 @@ struct ReactionRateModelParamsPalandriKharaka
 };
 
 /// Return the reaction rate model of @cite{Palandri2004} for dissolution/precipitation kinetics of minerals.
+/// The required model parameters will be fetched from the default parameters in `PalandriKharaka.yaml`.
+auto ReactionRateModelPalandriKharaka() -> ReactionRateModelGenerator;
+
+/// Return the reaction rate model of @cite{Palandri2004} for dissolution/precipitation kinetics of minerals.
 /// The required model parameters will be fetched from the Params object `params`.
 /// They must be available under a `PalandriKharaka` section inside a section `ReactionRateModelParams`.
 /// @param params The object where mineral reaction rate parameters should be found.
