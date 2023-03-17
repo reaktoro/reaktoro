@@ -35,6 +35,11 @@ void exportKineticsSolver(py::module& m)
         .def(py::init<ChemicalSystem const&>())
         .def(py::init<EquilibriumSpecs const&>())
 
+        .def("precondition", py::overload_cast<ChemicalState&>(&KineticsSolver::precondition), "React a chemical state for zero seconds to precondition it.", py::arg("state"))
+        .def("precondition", py::overload_cast<ChemicalState&, EquilibriumRestrictions const&>(&KineticsSolver::precondition), "React a chemical state for zero seconds to precondition it respecting given reactivity restrictions.", py::arg("state"), py::arg("restrictions"))
+        .def("precondition", py::overload_cast<ChemicalState&, EquilibriumConditions const&>(&KineticsSolver::precondition), "React a chemical state for zero seconds to precondition it respecting given constraint conditions.", py::arg("state"), py::arg("conditions"))
+        .def("precondition", py::overload_cast<ChemicalState&, EquilibriumConditions const&, EquilibriumRestrictions const&>(&KineticsSolver::precondition), "React a chemical state for zero seconds to precondition it respecting given constraint conditions and reactivity restrictions.", py::arg("state"), py::arg("conditions"), py::arg("restrictions"))
+
         .def("solve", py::overload_cast<ChemicalState&, real const&>(&KineticsSolver::solve), "React a chemical state for a given time interval.", py::arg("state"), py::arg("dt"))
         .def("solve", py::overload_cast<ChemicalState&, real const&, EquilibriumRestrictions const&>(&KineticsSolver::solve), "React a chemical state for a given time interval respecting given reactivity restrictions.", py::arg("state"), py::arg("dt"), py::arg("restrictions"))
         .def("solve", py::overload_cast<ChemicalState&, real const&, EquilibriumConditions const&>(&KineticsSolver::solve), "React a chemical state for a given time interval respecting given constraint conditions.", py::arg("state"), py::arg("dt"), py::arg("conditions"))
