@@ -55,7 +55,39 @@ public:
 
     //=================================================================================================================
     //
-    // CHEMICAL KINETICS METHODS
+    // CHEMICAL KINETICS PRECONDITION METHODS
+    //
+    //=================================================================================================================
+
+    /// React a chemical state for zero seconds to precondition it.
+    /// Use this method when your chemical system has species that do not react kinetically and their chemical state
+    /// is in complete disequilibrium. For example, right after you have set an initial chemical state with an
+    /// aqueous solution phase in disequilibrium, even though all aqueous species react according to equilibrium,
+    /// while the mineral phases do not. This method will apply a chemical kinetics step with zero seconds in the
+    /// given chemical state. This operation will equilibrate only those species that react according to chemical
+    /// equilibrium, leaving the kinetically controlled species unchanged.
+    /// @param[in,out] state The initial guess for the calculation (in) and the computed reacted state (out)
+    auto precondition(ChemicalState& state) -> KineticsResult;
+
+    /// React a chemical state for zero seconds to precondition it respecting given reactivity restrictions.
+    /// \copydetails KineticsSolver::precondition(ChemicalState&)
+    /// @param restrictions The reactivity restrictions on the amounts of selected species
+    auto precondition(ChemicalState& state, EquilibriumRestrictions const& restrictions) -> KineticsResult;
+
+    /// React a chemical state for zero seconds to precondition it respecting given constraint conditions.
+    /// \copydetails KineticsSolver::precondition(ChemicalState&)
+    /// @param conditions The specified constraint conditions to be attained during chemical kinetics
+    auto precondition(ChemicalState& state, EquilibriumConditions const& conditions) -> KineticsResult;
+
+    /// React a chemical state for zero seconds to precondition it respecting given constraint conditions and reactivity restrictions.
+    /// \copydetails KineticsSolver::precondition(ChemicalState&)
+    /// @param conditions The specified constraint conditions to be attained during chemical kinetics
+    /// @param restrictions The reactivity restrictions on the amounts of selected species
+    auto precondition(ChemicalState& state, EquilibriumConditions const& conditions, EquilibriumRestrictions const& restrictions) -> KineticsResult;
+
+    //=================================================================================================================
+    //
+    // CHEMICAL KINETICS SOLVE METHODS
     //
     //=================================================================================================================
 
@@ -85,7 +117,7 @@ public:
 
     //=================================================================================================================
     //
-    // CHEMICAL KINETICS METHODS WITH SENSITIVITY CALCULATION
+    // CHEMICAL KINETICS SOLVE METHODS WITH SENSITIVITY CALCULATION
     //
     //=================================================================================================================
 
