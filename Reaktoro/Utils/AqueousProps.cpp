@@ -673,6 +673,9 @@ auto operator<<(std::ostream& out, AqueousProps const& props) -> std::ostream&
     table.add_row({ "Saturation Indices:" });
     for(auto [i, species] : enumerate(props.saturationSpecies()))
         table.add_row({ ":: " + species.repr(), strfix(((lgOmega[i] + 1000)) - 1000), "-" }); // + 1000 - 1000 as a trick to transform -1e15 into 0.0
+    table.add_row({ "Saturation Ratios:" });
+    for(auto [i, species] : enumerate(props.saturationSpecies()))
+        table.add_row({ ":: " + species.repr(), strsci(pow(10.0, lgOmega[i])), "-" });
 
     auto i = 0;
     for(auto& row : table)
