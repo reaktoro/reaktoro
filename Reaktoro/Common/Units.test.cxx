@@ -73,5 +73,5 @@ TEST_CASE("Testing Units module", "[Units]")
     //-------------------------------------------------------------------------
 
     REQUIRE( units::seconds(1.23, "year") == units::convert(1.23, "year", "s") );
-    REQUIRE( units::seconds(2.34, "minute") == units::convert(1.23, "minute", "s") );
+    REQUIRE( units::seconds(2.34, "minute") == units::convert(2.34, "minute", "s") );
 }
