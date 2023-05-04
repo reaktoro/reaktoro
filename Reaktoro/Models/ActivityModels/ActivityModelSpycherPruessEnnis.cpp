@@ -127,10 +127,10 @@ auto activityModelSpycherPruessEnnis(const SpeciesList& species) -> ActivityMode
 
         // Calculate the fugacity coefficients of H2O(g) and CO2(g) (in natural log scale)
         const auto ln_phiH2O = aux1 + bH2O / (v - bmix) - aH2OCO2 * aux2 +
-            bH2O * aux3*(log((v + bH2O) / v) - bmix / (v + bmix)) - aux4;
+            bH2O * aux3*(log((v + bmix) / v) - bmix / (v + bmix)) - aux4;
 
         const auto ln_phiCO2 = aux1 + bCO2 / (v - bmix) - amix * aux2 +
-            bCO2 * aux3*(log((v + bCO2) / v) - bmix / (v + bmix)) - aux4;
+            bCO2 * aux3*(log((v + bmix) / v) - bmix / (v + bmix)) - aux4;
 
         // The ln mole fractions of all gaseous species
         const auto ln_x = x.log();
