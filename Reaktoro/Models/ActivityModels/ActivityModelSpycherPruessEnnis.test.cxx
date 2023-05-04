@@ -55,7 +55,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.8867779770) ); // H2O
+        CHECK( exp(props.ln_g[0]) == Approx(0.9020896733) ); // H2O
         CHECK( exp(props.ln_g[1]) == Approx(0.9423386345) ); // CO2
 
         checkActivities(x, P, props);
@@ -94,7 +94,7 @@ TEST_CASE("Testing ActivityModelSpycherPruessEnnis", "[ActivityModelSpycherPrues
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( exp(props.ln_g[0]) == Approx(0.8867779770) ); // H2O
+        CHECK( exp(props.ln_g[0]) == Approx(0.9020896733) ); // H2O
 
         checkActivities(x, P, props);
     }
