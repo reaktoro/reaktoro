@@ -40,6 +40,7 @@ void exportStringList(py::module& m)
         .def("data", &StringList::data, return_internal_ref)
         .def("__getitem__", __getitem__, return_internal_ref)
         .def("__setitem__", __setitem__)
+        .def("__iter__", [](StringList const& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         ;
 
     py::implicitly_convertible<std::string, StringList>();
