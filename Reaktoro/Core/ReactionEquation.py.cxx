@@ -35,6 +35,7 @@ void exportReactionEquation(py::module& m)
         .def("coefficients", &ReactionEquation::coefficients)
         .def("coefficient", &ReactionEquation::coefficient)
         .def("__str__", [](ReactionEquation const& self) { return String(self); })
+        .def("__iter__", [](ReactionEquation const& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         ;
 
     py::implicitly_convertible<String, ReactionEquation>();
