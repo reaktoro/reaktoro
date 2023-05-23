@@ -62,7 +62,7 @@ public:
     static auto withTag(String tag) -> Vec<Element>;
 
     /// Return the elements with given tags.
-    static auto withTags(const StringList& tags) -> Vec<Element>;
+    static auto withTags(StringList const& tags) -> Vec<Element>;
 
     /// Return begin const iterator of this Elements instance.
     auto begin() const { return data().begin(); }
