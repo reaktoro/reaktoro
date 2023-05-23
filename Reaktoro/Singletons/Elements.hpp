@@ -40,7 +40,11 @@ public:
     static auto instance() -> Elements&;
 
     /// Return the elements in the periodic table.
-    static auto elements() -> const Vec<Element>&;
+    static auto data() -> Vec<Element> const&;
+
+    /// Return the elements in the periodic table.
+    [[deprecated("Use Elements::data() instead.")]]
+    static auto elements() -> Vec<Element> const&;
 
     /// Append a custom element to the periodic table.
     static auto append(Element element) -> void;

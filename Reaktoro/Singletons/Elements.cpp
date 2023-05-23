@@ -164,7 +164,12 @@ auto Elements::instance() -> Elements&
     return obj;
 }
 
-auto Elements::elements() -> const Vec<Element>&
+auto Elements::data() -> Vec<Element> const&
+{
+    return instance().m_elements;
+}
+
+auto Elements::elements() -> Vec<Element> const&
 {
     return instance().m_elements;
 }
@@ -177,29 +182,29 @@ auto Elements::append(Element element) -> void
 
 auto Elements::size() -> std::size_t
 {
-    return elements().size();
+    return data().size();
 }
 
 auto Elements::withSymbol(String symbol) -> Optional<Element>
 {
-    const auto idx = indexfn(elements(), [&](auto&& e) { return e.symbol() == symbol; });
-    if(idx < size()) return elements()[idx];
+    const auto idx = indexfn(data(), [&](auto&& e) { return e.symbol() == symbol; });
+    if(idx < size()) return data()[idx];
     return {};
 }
 
 auto Elements::withName(String name) -> Optional<Element>
 {
-    const auto idx = indexfn(elements(), [&](auto&& e) { return e.name() == name; });
-    if(idx < size()) return elements()[idx];
+    const auto idx = indexfn(data(), [&](auto&& e) { return e.name() == name; });
+    if(idx < size()) return data()[idx];
     return {};
 }
 
 auto Elements::withTag(String tag) -> Vec<Element>
 {
-    return filter(elements(), [&](auto&& e) { return contains(e.tags(), tag); });
+    return filter(data(), [&](auto&& e) { return contains(e.tags(), tag); });
 }
 
-auto Elements::withTags(const StringList& tags) -> Vec<Element>
+auto Elements::withTags(StringList const& tags) -> Vec<Element>
 {
     return filter(data(), [&](auto&& e) { return contained(tags, e.tags()); });
 }
