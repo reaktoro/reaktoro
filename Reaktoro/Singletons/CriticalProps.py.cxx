@@ -32,8 +32,8 @@ void exportCriticalProps(py::module& m)
         ;
 
     py::class_<SubstanceCriticalProps>(m, "SubstanceCriticalProps")
-        .def(py::init<const StringList&>())
-        .def(py::init<const SubstanceCriticalPropsData&, const StringList&>())
+        .def(py::init<StringList const&>())
+        .def(py::init<SubstanceCriticalPropsData const&, StringList const&>())
         .def("setTemperature", &SubstanceCriticalProps::setTemperature)
         .def("setPressure", &SubstanceCriticalProps::setPressure)
         .def("setAcentricFactor", &SubstanceCriticalProps::setAcentricFactor)
@@ -54,10 +54,9 @@ void exportCriticalProps(py::module& m)
         .def_static("setMissingAs", &CriticalProps::setMissingAs)
         .def_static("size", &CriticalProps::size)
         .def_static("find", &CriticalProps::find)
-        .def_static("get", py::overload_cast<const String&>(&CriticalProps::get))
-        .def_static("get", py::overload_cast<const StringList&>(&CriticalProps::get))
-        .def("__len__", &CriticalProps::size)
-        .def("__getitem__", [](const CriticalProps& self, Index i) { return self.data()[i]; }, py::return_value_policy::reference)
-        .def("__iter__", [](const CriticalProps& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
+        .def_static("get", py::overload_cast<String const&>(&CriticalProps::get))
+        .def_static("get", py::overload_cast<StringList const&>(&CriticalProps::get))
+        .def("__getitem__", [](CriticalProps const& self, Index i) { return self.data()[i]; }, py::return_value_policy::reference)
+        .def("__iter__", [](CriticalProps const& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         ;
 }
