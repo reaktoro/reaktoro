@@ -155,11 +155,11 @@ auto correctNames(Strings names) -> Strings
 
 } // namespace detail
 
-SubstanceCriticalProps::SubstanceCriticalProps(const StringList& names)
+SubstanceCriticalProps::SubstanceCriticalProps(StringList const& names)
 : SubstanceCriticalProps({}, names)
 {}
 
-SubstanceCriticalProps::SubstanceCriticalProps(const SubstanceCriticalPropsData& data, const StringList& names)
+SubstanceCriticalProps::SubstanceCriticalProps(SubstanceCriticalPropsData const& data, StringList const& names)
 : m_data(std::move(data)), m_names(detail::correctNames(names))
 {}
 
@@ -181,7 +181,7 @@ auto SubstanceCriticalProps::setAcentricFactor(real value) -> void
     m_data.omega = value;
 }
 
-auto SubstanceCriticalProps::names() const -> const Strings&
+auto SubstanceCriticalProps::names() const -> Strings const&
 {
     return m_names;
 }
@@ -201,7 +201,7 @@ auto SubstanceCriticalProps::acentricFactor() const -> real
     return m_data.omega;
 }
 
-auto SubstanceCriticalProps::data() const -> const SubstanceCriticalPropsData&
+auto SubstanceCriticalProps::data() const -> SubstanceCriticalPropsData const&
 {
     return m_data;
 }
@@ -224,12 +224,12 @@ auto CriticalProps::instance() -> CriticalProps&
     return obj;
 }
 
-auto CriticalProps::data() -> const Deque<SubstanceCriticalProps>&
+auto CriticalProps::data() -> Deque<SubstanceCriticalProps> const&
 {
     return instance().m_data;
 }
 
-auto CriticalProps::defaultCriticalProps() -> const Optional<SubstanceCriticalProps>&
+auto CriticalProps::defaultCriticalProps() -> Optional<SubstanceCriticalProps> const&
 {
     return instance().m_default_crprops;
 }
@@ -268,7 +268,7 @@ auto CriticalProps::overwrite(SubstanceCriticalProps substance) -> void
     substances.push_back(substance);
 }
 
-auto CriticalProps::setMissingAs(const String& substance) -> void
+auto CriticalProps::setMissingAs(String const& substance) -> void
 {
     const auto idx = find(substance);
     errorif(idx >= size(),
@@ -282,20 +282,20 @@ auto CriticalProps::size() -> Index
     return data().size();
 }
 
-auto CriticalProps::find(const String& substance) -> Index
+auto CriticalProps::find(String const& substance) -> Index
 {
     const auto name = detail::correctName(substance);
     return indexfn(data(), [&](auto&& s) { return contains(s.names(), name); });
 }
 
-auto CriticalProps::get(const String& substance) -> Optional<SubstanceCriticalProps>
+auto CriticalProps::get(String const& substance) -> Optional<SubstanceCriticalProps>
 {
     const auto idx = find(substance);
     if(idx < size()) return data()[idx];
     return defaultCriticalProps();
 }
 
-auto CriticalProps::get(const StringList& substances) -> Optional<SubstanceCriticalProps>
+auto CriticalProps::get(StringList const& substances) -> Optional<SubstanceCriticalProps>
 {
     for(auto&& substance : substances)
         if(const auto subs = get(substance); subs)

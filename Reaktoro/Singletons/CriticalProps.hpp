@@ -42,7 +42,7 @@ class SubstanceCriticalProps
 {
 public:
     /// Construct a SubstanceCriticalProps instance.
-    SubstanceCriticalProps(const StringList& names);
+    SubstanceCriticalProps(StringList const& names);
 
     /// Construct a SubstanceCriticalProps instance with given data.
     /// The given names will be converted to uppercase, suffix will be removed,
@@ -50,7 +50,7 @@ public:
     /// `carbon dioxide` is replaced by `CARBON-DIOXIDE` and `HCl(g)` by `HCL`.
     /// @param data The critical property data of the substance
     /// @param names The names that can uniquely identify the substance *(case-insensitive)*
-    SubstanceCriticalProps(const SubstanceCriticalPropsData& data, const StringList& names);
+    SubstanceCriticalProps(SubstanceCriticalPropsData const& data, StringList const& names);
 
     /// Set the critical temperature of the substance with given unit.
     auto setTemperature(real value, String unit) -> void;
@@ -62,7 +62,7 @@ public:
     auto setAcentricFactor(real value) -> void;
 
     /// Return the names that uniquely identify the substance.
-    auto names() const -> const Strings&;
+    auto names() const -> Strings const&;
 
     /// Return the critical temperature of the substance (in K)
     auto temperature() const -> real;
@@ -74,7 +74,7 @@ public:
     auto acentricFactor() const -> real;
 
     /// Return the critical properties data of the substance.
-    auto data() const -> const SubstanceCriticalPropsData&;
+    auto data() const -> SubstanceCriticalPropsData const&;
 
     /// Return the critical properties data of the substance.
     operator SubstanceCriticalPropsData() const;
@@ -92,19 +92,19 @@ class CriticalProps
 {
 public:
     /// Construct a copy of a CriticalProps object [deleted].
-    CriticalProps(const CriticalProps&) = delete;
+    CriticalProps(CriticalProps const&) = delete;
 
     /// Assign a CriticalProps object to this [deleted].
-    auto operator=(const CriticalProps&) -> CriticalProps& = delete;
+    auto operator=(CriticalProps const&) -> CriticalProps& = delete;
 
     /// Return the single CriticalProps object.
     static auto instance() -> CriticalProps&;
 
     /// Return the critical properties data in the database.
-    static auto data() -> const Deque<SubstanceCriticalProps>&;
+    static auto data() -> Deque<SubstanceCriticalProps> const&;
 
     /// Return the default critical properties used for missing substances in the database.
-    static auto defaultCriticalProps() -> const Optional<SubstanceCriticalProps>&;
+    static auto defaultCriticalProps() -> Optional<SubstanceCriticalProps> const&;
 
     /// Append critical properties for a substance in the database.
     static auto append(SubstanceCriticalProps crprops) -> void;
@@ -113,19 +113,19 @@ public:
     static auto overwrite(SubstanceCriticalProps crprops) -> void;
 
     /// Set a given existing substance in the database as the default choice for missing substances when using @ref get.
-    static auto setMissingAs(const String& substance) -> void;
+    static auto setMissingAs(String const& substance) -> void;
 
     /// Return the number of substances in the database.
     static auto size() -> Index;
 
     /// Return the index of a substance in the database or number of substances if not found.
-    static auto find(const String& substance) -> Index;
+    static auto find(String const& substance) -> Index;
 
     /// Return the substance and its critical properties with given name (e.g. "WATER", "CARBON-DIOXIDE", "HYDROGEN-SULFIDE", etc.).
-    static auto get(const String& substance) -> Optional<SubstanceCriticalProps>;
+    static auto get(String const& substance) -> Optional<SubstanceCriticalProps>;
 
     /// Return the substance and its critical properties with given alternative names.
-    static auto get(const StringList& substances) -> Optional<SubstanceCriticalProps>;
+    static auto get(StringList const& substances) -> Optional<SubstanceCriticalProps>;
 
     /// Return begin const iterator of this ChemicalProps instance.
     auto begin() const { return data().begin(); }
