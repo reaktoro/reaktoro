@@ -19,8 +19,10 @@
 #include <Reaktoro/pybind11.hxx>
 
 void exportCriticalProps(py::module& m);
+void exportElements(py::module& m);
 
 void exportSingletons(py::module& m)
 {
     exportCriticalProps(m);
+    exportElements(m);
 }
