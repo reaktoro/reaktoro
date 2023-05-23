@@ -60,17 +60,17 @@ public:
     /// Return the elements with given tags.
     static auto withTags(const StringList& tags) -> Vec<Element>;
 
-    /// Return begin const iterator of this Elements instance
-    auto begin() const;
+    /// Return begin const iterator of this Elements instance.
+    auto begin() const { return data().begin(); }
 
-    /// Return begin iterator of this Elements instance
-    auto begin();
+    /// Return begin iterator of this Elements instance.
+    auto begin() { return data().begin(); }
 
-    /// Return end const iterator of this Elements instance
-    auto end() const;
+    /// Return end const iterator of this Elements instance.
+    auto end() const { return data().end(); }
 
-    /// Return end iterator of this Elements instance
-    auto end();
+    /// Return end iterator of this Elements instance.
+    auto end() { return data().end(); }
 
 private:
     /// The elements stored in the periodic table.

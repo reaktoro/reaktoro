@@ -201,27 +201,7 @@ auto Elements::withTag(String tag) -> Vec<Element>
 
 auto Elements::withTags(const StringList& tags) -> Vec<Element>
 {
-    return filter(elements(), [&](auto&& e) { return contained(tags, e.tags()); });
-}
-
-auto Elements::begin() const
-{
-    return m_elements.begin();
-}
-
-auto Elements::begin()
-{
-    return m_elements.begin();
-}
-
-auto Elements::end() const
-{
-    return m_elements.end();
-}
-
-auto Elements::end()
-{
-    return m_elements.end();
+    return filter(data(), [&](auto&& e) { return contained(tags, e.tags()); });
 }
 
 } // namespace Reaktoro
