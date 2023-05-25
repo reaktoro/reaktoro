@@ -24,7 +24,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing Elements", "[Elements]")
 {
-    REQUIRE(Elements::size() == Elements::elements().size());
+    REQUIRE(Elements::size() == Elements::data().size());
 
     REQUIRE_NOTHROW( Elements::withSymbol("H"  ).value().name() == "Hydrogen"      );
     REQUIRE_NOTHROW( Elements::withSymbol("He" ).value().name() == "Helium"        );
