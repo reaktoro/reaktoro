@@ -23,7 +23,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Singletons/DissociationReactions.hpp>
-#include <Reaktoro/Water/WaterConstants.hpp>
 #include <Reaktoro/Water/WaterElectroProps.hpp>
 #include <Reaktoro/Water/WaterElectroPropsJohnsonNorton.hpp>
 #include <Reaktoro/Water/WaterThermoProps.hpp>
@@ -99,7 +98,7 @@ struct AqueousMixture::Impl
     {}
 
     /// Construct an AqueousMixture::Impl instance with given species.
-    Impl(const SpeciesList& species)
+    Impl(SpeciesList const& species)
     : species(species)
     {
         // Initialize the index related data
@@ -185,10 +184,11 @@ struct AqueousMixture::Impl
     /// Return the molalities of the aqueous species with given mole fractions.
     auto molalities(ArrayXrConstRef x) const -> ArrayXr
     {
+        const auto Mw = water.molarMass();
         const auto xw = x[idx_water];
         if(xw == 0.0)
             return ArrayXr::Zero(x.size());
-        return x/(waterMolarMass * xw);
+        return x/(Mw * xw);
     }
 
     /// Return the stoichiometric molalities of the charged species with given molalities.
@@ -239,7 +239,7 @@ AqueousMixture::AqueousMixture()
 : pimpl(new Impl())
 {}
 
-AqueousMixture::AqueousMixture(const SpeciesList& species)
+AqueousMixture::AqueousMixture(SpeciesList const& species)
 : pimpl(new Impl(species))
 {}
 
@@ -264,32 +264,32 @@ auto AqueousMixture::withWaterDielectricConstantFn(Fn<real(real,real)> epsilon) 
     return copy;
 }
 
-auto AqueousMixture::species(Index idx) const -> const Species&
+auto AqueousMixture::species(Index idx) const -> Species const&
 {
     return pimpl->species[idx];
 }
 
-auto AqueousMixture::species() const -> const SpeciesList&
+auto AqueousMixture::species() const -> SpeciesList const&
 {
     return pimpl->species;
 }
 
-auto AqueousMixture::neutral() const -> const SpeciesList&
+auto AqueousMixture::neutral() const -> SpeciesList const&
 {
     return pimpl->neutral;
 }
 
-auto AqueousMixture::charged() const -> const SpeciesList&
+auto AqueousMixture::charged() const -> SpeciesList const&
 {
     return pimpl->charged;
 }
 
-auto AqueousMixture::cations() const -> const SpeciesList&
+auto AqueousMixture::cations() const -> SpeciesList const&
 {
     return pimpl->cations;
 }
 
-auto AqueousMixture::anions() const -> const SpeciesList&
+auto AqueousMixture::anions() const -> SpeciesList const&
 {
     return pimpl->anions;
 }
@@ -299,21 +299,22 @@ auto AqueousMixture::water() const -> Species const&
     return pimpl->water;
 }
 
+auto AqueousMixture::indicesNeutral() const -> Indices const&
 {
     return pimpl->idx_neutral_species;
 }
 
-auto AqueousMixture::indicesCharged() const -> const Indices&
+auto AqueousMixture::indicesCharged() const -> Indices const&
 {
     return pimpl->idx_charged_species;
 }
 
-auto AqueousMixture::indicesCations() const -> const Indices&
+auto AqueousMixture::indicesCations() const -> Indices const&
 {
     return pimpl->idx_cations;
 }
 
-auto AqueousMixture::indicesAnions() const -> const Indices&
+auto AqueousMixture::indicesAnions() const -> Indices const&
 {
     return pimpl->idx_anions;
 }

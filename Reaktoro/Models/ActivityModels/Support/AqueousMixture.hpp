@@ -69,7 +69,7 @@ public:
     AqueousMixture();
 
     /// Construct an AqueousMixture instance with given species.
-    explicit AqueousMixture(const SpeciesList& species);
+    explicit AqueousMixture(SpeciesList const& species);
 
     /// Return a deep copy of this AqueousMixture object.
     auto clone() const -> AqueousMixture;
@@ -81,41 +81,42 @@ public:
     auto withWaterDielectricConstantFn(Fn<real(real,real)> epsilon) const -> AqueousMixture;
 
     /// Return the aqueous species in the mixture with given index.
-    auto species(Index idx) const -> const Species&;
+    auto species(Index idx) const -> Species const&;
 
     /// Return the aqueous species in the mixture.
-    auto species() const -> const SpeciesList&;
+    auto species() const -> SpeciesList const&;
 
     /// Return the neutral aqueous solutes in the mixture.
-    auto neutral() const -> const SpeciesList&;
+    auto neutral() const -> SpeciesList const&;
 
     /// Return the charged aqueous solutes in the mixture.
-    auto charged() const -> const SpeciesList&;
+    auto charged() const -> SpeciesList const&;
 
     /// Return the cation solutes in the mixture.
-    auto cations() const -> const SpeciesList&;
+    auto cations() const -> SpeciesList const&;
 
     /// Return the anion solutes in the mixture.
+    auto anions() const -> SpeciesList const&;
 
     /// Return the aqueous solvent species in the mixture.
     auto water() const -> Species const&;
 
     /// Return the indices of the neutral aqueous solutes in the mixture.
-    auto indicesNeutral() const -> const Indices&;
+    auto indicesNeutral() const -> Indices const&;
 
     /// Return the indices of the charged aqueous solutes in the mixture.
-    auto indicesCharged() const -> const Indices&;
+    auto indicesCharged() const -> Indices const&;
 
     /// Return the indices of the cations in the mixture.
-    auto indicesCations() const -> const Indices&;
+    auto indicesCations() const -> Indices const&;
 
     /// Return the indices of the anions in the mixture.
-    auto indicesAnions() const -> const Indices&;
+    auto indicesAnions() const -> Indices const&;
 
     /// Return the index of the solvent species in the mixture.
     auto indexWater() const -> Index;
 
-    /// Return the charges of the aqueous species in the mixture.
+    /// Return the electric charges of the aqueous species in the mixture.
     auto charges() const -> ArrayXdConstRef;
 
     /// Return the dissociation matrix of the neutral species into charged species.
