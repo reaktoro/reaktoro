@@ -63,6 +63,9 @@ TEST_CASE("Testing AqueousMixture class", "[AqueousMixture]")
             if(x.charge()  < 0.0) REQUIRE( contains(mixture.indicesAnions(), species.index(x.name())) );
         }
 
+        // Test AqueousMixture::water method
+        REQUIRE( mixture.water().formula().equivalent("H2O") );
+
         // Test AqueousMixture::indexWater method
         REQUIRE( mixture.indexWater() == species.index("H2O") );
 
