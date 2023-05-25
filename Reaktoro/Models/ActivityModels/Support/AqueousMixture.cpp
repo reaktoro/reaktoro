@@ -184,8 +184,8 @@ struct AqueousMixture::Impl
     /// Return the molalities of the aqueous species with given mole fractions.
     auto molalities(ArrayXrConstRef x) const -> ArrayXr
     {
-        const auto Mw = water.molarMass();
         const auto xw = x[idx_water];
+        const auto Mw = water.molarMass();
         if(xw == 0.0)
             return ArrayXr::Zero(x.size());
         return x/(Mw * xw);
