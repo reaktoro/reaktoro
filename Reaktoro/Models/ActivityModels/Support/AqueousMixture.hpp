@@ -96,7 +96,9 @@ public:
     auto cations() const -> const SpeciesList&;
 
     /// Return the anion solutes in the mixture.
-    auto anions() const -> const SpeciesList&;
+
+    /// Return the aqueous solvent species in the mixture.
+    auto water() const -> Species const&;
 
     /// Return the indices of the neutral aqueous solutes in the mixture.
     auto indicesNeutral() const -> const Indices&;
