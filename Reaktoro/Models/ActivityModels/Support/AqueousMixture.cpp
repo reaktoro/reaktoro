@@ -64,23 +64,26 @@ struct AqueousMixture::Impl
     /// The anion species in the mixture.
     SpeciesList anions;
 
-    /// The electric charges of the aqueous species.
-    ArrayXd z;
+    /// The aqueous solvent species in the mixture.
+    Species water;
 
-    /// The index of the water species.
-    Index idx_water;
-
-    /// The indices of the neutral aqueous species.
+    /// The indices of the neutral aqueous species in the mixture.
     Indices idx_neutral_species;
 
-    /// The indices of the charged aqueous species.
+    /// The indices of the charged aqueous species in the mixture.
     Indices idx_charged_species;
 
-    /// The indices of the cations.
+    /// The indices of the cation species in the mixture.
     Indices idx_cations;
 
-    /// The indices of the anions.
+    /// The indices of the anion species in the mixture.
     Indices idx_anions;
+
+    /// The index of the aqueous solvent species in the mixture.
+    Index idx_water;
+
+    /// The electric charges of the aqueous species in the mixture.
+    ArrayXd z;
 
     /// The matrix that represents the dissociation of the aqueous complexes into ions.
     MatrixXd dissociation_matrix;
@@ -118,8 +121,9 @@ struct AqueousMixture::Impl
     /// Initialize the index related data of the species.
     auto initializeIndices() -> void
     {
-        // Initialize the index of the water species
+        // Initialize the water species and its index
         idx_water = species.indexWithFormula("H2O");
+        water = species[idx_water];
 
         // Initialize the indices of the charged and neutral species
         for(auto i = 0; i < species.size(); ++i)
@@ -290,7 +294,11 @@ auto AqueousMixture::anions() const -> const SpeciesList&
     return pimpl->anions;
 }
 
-auto AqueousMixture::indicesNeutral() const -> const Indices&
+auto AqueousMixture::water() const -> Species const&
+{
+    return pimpl->water;
+}
+
 {
     return pimpl->idx_neutral_species;
 }
