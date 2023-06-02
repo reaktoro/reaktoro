@@ -58,9 +58,9 @@ TEST_CASE("Testing ActivityModelPhreeqcIonicStrengthPressureCorrection", "[Activ
     CHECK( ln_a[4]  == Approx(-36.84130) );
     CHECK( ln_a[5]  == Approx(-37.89070) );
     CHECK( ln_a[6]  == Approx(-36.84130) );
-    CHECK( ln_a[7]  == Approx(  1.17187) );
+    CHECK( ln_a[7]  == Approx(  1.17181) );
     CHECK( ln_a[8]  == Approx(-36.84130) );
-    CHECK( ln_a[9]  == Approx(  1.17168) );
+    CHECK( ln_a[9]  == Approx(  1.17163) );
     CHECK( ln_a[10] == Approx(-37.94700) );
     CHECK( ln_a[11] == Approx(-36.84130) );
     CHECK( ln_a[12] == Approx(-37.44610) );

@@ -815,7 +815,7 @@ struct PitzerModel
         auto const& z = solution.charges();
         auto const& iH2O = solution.indexWater();
         auto const& icharged = solution.indicesCharged();
-        auto const& Mw = waterMolarMass; // in kg/mol
+        auto const& Mw = solution.water().molarMass(); // in kg/mol
 
         /// Update all Pitzer interaction parameters according to current temperature and pressure.
         updateParams(T, P);

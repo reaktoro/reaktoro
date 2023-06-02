@@ -1243,7 +1243,7 @@ auto lnActivityWater(const AqueousMixtureState& state, const PitzerParams& pitze
     const auto sqrtI = sqrt(I);
 
     // The molar mass of water
-    const auto Mw = waterMolarMass;
+    const auto Mw = state.m[iH2O];
 
     // The Debye-Huckel coefficient Aphi
     const auto Aphi = pitzer.Aphi(state.T, state.P);

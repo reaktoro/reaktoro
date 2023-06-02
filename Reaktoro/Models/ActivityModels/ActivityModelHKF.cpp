@@ -323,7 +323,7 @@ auto activityModelHKF(const SpeciesList& species) -> ActivityModel
     const auto ln10 = std::log(10);
 
     // The molar mass of water
-    const auto Mw = waterMolarMass;
+    const auto Mw = mixture.water().molarMass();
 
     // Collect the effective radii of the ions
     for(Index idx_ion : icharged_species)

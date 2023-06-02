@@ -817,14 +817,14 @@ auto Phreeqc::Impl::updateAqueousProperties() -> void
     const auto n_total = sum(n_aqueous);
 
     // Calculate the mole fraction of H2O
-    const auto nH2O = aqueous_species[iH2O]->moles;
-    const auto xH2O = nH2O/n_total;
+    const auto nw = aqueous_species[iH2O]->moles;
+    const auto xw = nw/n_total;
 
     // Calculate the activity of water
     if(phreeqc.pitzer_model || phreeqc.sit_model)
         ln_a[iH2O] = std::log(phreeqc.AW);
     else
-        ln_a[iH2O] = std::log(xH2O);
+        ln_a[iH2O] = std::log(xw);
 
     // Get the molar volumes of the aqueous species with T, P, I corrections
     const auto v_aqueous = standard_molar_volumes_TPI.head(num_aqueous_species);
@@ -912,8 +912,9 @@ auto Phreeqc::Impl::setSpeciesAmounts(ArrayXdConstRef n) -> void
     auto n_mineral = n.tail(num_mineral);
 
     // Get data related to water
-    const auto nH2O = n_aqueous[iH2O];
-    const auto massH2O = nH2O * waterMolarMass;
+    const auto nw = n_aqueous[iH2O];
+    const auto Mw = aqueous_species[iH2O]->gfw * 1e-3; // from g/mol to kg/mol
+    const auto massH2O = nw * Mw;
 
     // Set the copy of current molar amounts of all species in PHREEQC
     this->n = n;
