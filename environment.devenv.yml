@@ -10,7 +10,6 @@ dependencies:
   - catch2 =2
   - ccache  # [unix]
   - clangxx_osx-64  # [osx]
-  - clcache  # [win]
   - cmake
   - cpp-tabulate
   - doxygen =1.9.1  # [linux]
