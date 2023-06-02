@@ -29,7 +29,7 @@ auto ActivityModelIdealAqueous() -> ActivityModelGenerator
     ActivityModelGenerator model = [](const SpeciesList& species)
     {
         const auto iw = species.indexWithFormula("H2O");
-        const auto Mw = waterMolarMass;
+        const auto Mw = species[iw].molarMass();
 
         ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {

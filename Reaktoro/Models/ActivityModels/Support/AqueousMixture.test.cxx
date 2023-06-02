@@ -101,15 +101,16 @@ TEST_CASE("Testing AqueousMixture class", "[AqueousMixture]")
 
         const auto state = mixture.state(T, P, x);
 
-        const ArrayXd z  = mixture.charges();                            // charges of the species
-        const ArrayXd zc = mixture.charges()(mixture.indicesCharged());  // charges of charged species
+        const ArrayXd z  = mixture.charges();                            // the electric charges of the species
+        const ArrayXd zc = mixture.charges()(mixture.indicesCharged());  // the electric charges of charged species
 
-        const auto m  = x/(waterMolarMass * x[mixture.indexWater()]); // molalities of spcies
-        const auto mc = m(mixture.indicesCharged()).matrix();         // molalities of charged solutes
-        const auto mn = m(mixture.indicesNeutral()).matrix();         // molalities of neutral solutes
-        const auto ms = (mc + M.transpose() * mn).array();            // stoichiometric molalities (as array)
-        const auto Ie = 0.5 * (m * z * z).sum();                      // effective ionic strength
-        const auto Is = 0.5 * (ms * zc * zc).sum();                   // stoichiometric ionic strength
+        const auto Mw = mixture.water().molarMass();                  // the molar mass of water (in kg/mol)
+        const auto m  = x/(Mw * x[mixture.indexWater()]);             // the molalities of the aqueous species
+        const auto mc = m(mixture.indicesCharged()).matrix();         // the molalities of the charged aqueous solutes
+        const auto mn = m(mixture.indicesNeutral()).matrix();         // the molalities of the neutral aqueous solutes
+        const auto ms = (mc + M.transpose() * mn).array();            // the stoichiometric molalities (as array)
+        const auto Ie = 0.5 * (m * z * z).sum();                      // the effective ionic strength of the solution
+        const auto Is = 0.5 * (ms * zc * zc).sum();                   // the stoichiometric ionic strength of the solution
 
         REQUIRE( state.T       == T                      );
         REQUIRE( state.P       == P                      );

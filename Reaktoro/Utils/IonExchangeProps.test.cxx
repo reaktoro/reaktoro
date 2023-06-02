@@ -258,40 +258,39 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
         exprops.update(state);
 
         // Check molalities of all species
-        CHECK( exprops.speciesAmount("NaX" ) == Approx(9.84068e-09 ) );
-        CHECK( exprops.speciesAmount("CaX2") == Approx(3.03997e-07 ) );
-        CHECK( exprops.speciesAmount("KX"  ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesAmount("AlX3") == Approx(1e-16       ) );
-        CHECK( exprops.speciesAmount("MgX2") == Approx(1.91083e-07 ) );
+        CHECK( exprops.speciesAmount("NaX" ) == Approx(0.000000009840476) );
+        CHECK( exprops.speciesAmount("CaX2") == Approx(0.000000303996601) );
+        CHECK( exprops.speciesAmount("KX"  ) == Approx(1e-16) );
+        CHECK( exprops.speciesAmount("AlX3") == Approx(1e-16) );
+        CHECK( exprops.speciesAmount("MgX2") == Approx(0.000000191083162) );
 
         // Check amounts of all elements
-        CHECK( exprops.elementAmount("X" ) == Approx(1e-06       ) );
-        CHECK( exprops.elementAmount("Na") == Approx(9.84068e-09 ) );
-        CHECK( exprops.elementAmount("Mg") == Approx(1.91083e-07 ) );
-        CHECK( exprops.elementAmount("Al") == Approx(1e-16       ) );
-        CHECK( exprops.elementAmount("K" ) == Approx(1e-16       ) );
-        CHECK( exprops.elementAmount("Ca") == Approx(3.03997e-07 ) );
+        CHECK( exprops.elementAmount("X" ) == Approx(0.000001000000001) );
+        CHECK( exprops.elementAmount("Na") == Approx(0.000000009840476) );
+        CHECK( exprops.elementAmount("Mg") == Approx(0.000000191083162) );
+        CHECK( exprops.elementAmount("Al") == Approx(1e-16) );
+        CHECK( exprops.elementAmount("K" ) == Approx(1e-16) );
+        CHECK( exprops.elementAmount("Ca") == Approx(0.000000303996601) );
 
         // Check equivalents of all species
-        CHECK( exprops.speciesEquivalent("NaX" ) == Approx(9.84068e-09 ) );
-        CHECK( exprops.speciesEquivalent("CaX2") == Approx(6.07993e-07 ) );
-        CHECK( exprops.speciesEquivalent("KX"  ) == Approx(1e-16       ) );
-        CHECK( exprops.speciesEquivalent("AlX3") == Approx(3e-16       ) );
-        CHECK( exprops.speciesEquivalent("MgX2") == Approx(3.82166e-07 ) );
+        CHECK( exprops.speciesEquivalent("NaX" ) == Approx(0.000000009840476) );
+        CHECK( exprops.speciesEquivalent("CaX2") == Approx(0.000000607993201) );
+        CHECK( exprops.speciesEquivalent("KX"  ) == Approx(1e-16) );
+        CHECK( exprops.speciesEquivalent("AlX3") == Approx(3e-16) );
+        CHECK( exprops.speciesEquivalent("MgX2") == Approx(0.000000382166324) );
 
         // Check equivalent fractions of all species
-        CHECK( exprops.speciesEquivalentFraction("NaX" ) == Approx(0.00984068 ) );
-        CHECK( exprops.speciesEquivalentFraction("CaX2") == Approx(0.607993   ) );
-        CHECK( exprops.speciesEquivalentFraction("KX"  ) == Approx(1e-10      ) );
-        CHECK( exprops.speciesEquivalentFraction("AlX3") == Approx(3e-10      ) );
-        CHECK( exprops.speciesEquivalentFraction("MgX2") == Approx(0.382166   ) );
+        CHECK( exprops.speciesEquivalentFraction("NaX" ) == Approx(0.009840475562761) );
+        CHECK( exprops.speciesEquivalentFraction("CaX2") == Approx(0.607993200605439) );
+        CHECK( exprops.speciesEquivalentFraction("KX"  ) == Approx(0.0000000001) );
+        CHECK( exprops.speciesEquivalentFraction("AlX3") == Approx(0.0000000003) );
+        CHECK( exprops.speciesEquivalentFraction("MgX2") == Approx(0.3821663234318) );
 
         // Check log10 gammas of all species
-        CHECK(exprops.speciesActivityCoefficientLg("NaX") == Approx(-0.0311024 ) );
-        CHECK(exprops.speciesActivityCoefficientLg("CaX2") == Approx(-0.122843  ) );
-        CHECK(exprops.speciesActivityCoefficientLg("KX") == Approx(-0.0317777 ) );
-        CHECK(exprops.speciesActivityCoefficientLg("AlX3") == Approx(-0.257599  ) );
-        CHECK(exprops.speciesActivityCoefficientLg("MgX2") == Approx(-0.12147   ) );
-
+        CHECK(exprops.speciesActivityCoefficientLg("NaX") == Approx(-0.031101873608401) );
+        CHECK(exprops.speciesActivityCoefficientLg("CaX2") == Approx(-0.122840438209092) );
+        CHECK(exprops.speciesActivityCoefficientLg("KX") == Approx(-0.031777056785285) );
+        CHECK(exprops.speciesActivityCoefficientLg("AlX3") == Approx(-0.257594194930404) );
+        CHECK(exprops.speciesActivityCoefficientLg("MgX2") == Approx(-0.121467607608033) );
     }
 }

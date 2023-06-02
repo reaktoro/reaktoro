@@ -37,7 +37,7 @@ auto activityModelDavies(const SpeciesList& species, ActivityModelDaviesParams p
     AqueousMixture mixture(species);
 
     // The molar mass of water
-    const auto Mw = waterMolarMass;
+    const auto Mw = mixture.water().molarMass();
 
     // The number of moles of water per kg
     const auto nwo = 1.0/Mw;
