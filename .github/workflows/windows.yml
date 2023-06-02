@@ -33,17 +33,17 @@ jobs:
           string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
           message("::set-output name=now::${current_date}")
 
-      - name: Configuring Cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            C:\Users\runneradmin\clcache
-            C:\Users\runneradmin\conda_pkgs_dir
-          key:
-            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-clcache-${ { steps.timestamp.outputs.now } }
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-clcache-
+#       - name: Configuring Cache
+#         id: cache
+#         uses: actions/cache@v3
+#         with:
+#           path: |
+#             C:\Users\runneradmin\clcache
+#             C:\Users\runneradmin\conda_pkgs_dir
+#           key:
+#             ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-clcache-${ { steps.timestamp.outputs.now } }
+#           restore-keys: |
+#             ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-clcache-
 
       - uses: conda-incubator/setup-miniconda@v2
         with:
@@ -62,14 +62,22 @@ jobs:
 
       - name: Building, Testing & Installing Reaktoro
         shell: cmd
+#         run: |
+#           call conda activate reaktoro || goto :eof
+#           clcache -s || goto :eof
+#           clcache -z || goto :eof
+#           mkdir .build && cd .build || goto :eof
+#           cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} || goto :eof
+#           ninja || goto :eof
+#           ninja install || goto :eof
+#           ninja tests || goto :eof
+#           ninja examples/install || goto :eof
+#           clcache -s || goto :eof        
         run: |
           call conda activate reaktoro || goto :eof
-          clcache -s || goto :eof
-          clcache -z || goto :eof
           mkdir .build && cd .build || goto :eof
           cmake -GNinja .. -DCMAKE_BUILD_TYPE=${{ matrix.config }} || goto :eof
           ninja || goto :eof
           ninja install || goto :eof
           ninja tests || goto :eof
           ninja examples/install || goto :eof
-          clcache -s || goto :eof
