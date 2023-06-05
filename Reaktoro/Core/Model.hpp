@@ -235,12 +235,13 @@ auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
     using ResultRef = Ref<Result>;
 
     const auto evalfns = vectorize(models, RKT_LAMBDA(model, model.evaluatorFn()));
+    const auto paramsvec = vectorize(models, RKT_LAMBDA(model, model.params()));
     const auto serializerfns = vectorize(models, RKT_LAMBDA(model, model.serializerFn()));
 
     auto evalfn = [=](ResultRef res, const Args&... args)
     {
         for(auto i = 0; i < evalfns.size(); ++i)
-            evalfns[i](res, args...);
+            evalfns[i](res, args..., paramsvec[i]);
     };
 
     auto serializerfn = [serializerfns]() -> Data
