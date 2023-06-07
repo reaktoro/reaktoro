@@ -34,7 +34,7 @@ void exportElements(py::module& m)
         .def_static("withName", &Elements::withName)
         .def_static("withTag", &Elements::withTag)
         .def_static("withTags", &Elements::withTags)
-        .def("__getitem__", [](Elements const& self, Index i) { return self.elements()[i]; }, py::return_value_policy::reference)
+        .def("__getitem__", [](Elements const& self, Index i) { return self.data()[i]; }, py::return_value_policy::reference)
         .def("__iter__", [](Elements const& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0, 1>()) // keep object alive while iterator exists;
         ;
 }
