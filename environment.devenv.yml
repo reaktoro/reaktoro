@@ -6,7 +6,7 @@ channels:
   - conda-forge
 
 dependencies:
-  - autodiff >=1.0.1
+  - autodiff >=1.0.3
   - catch2 =2
   - ccache  # [unix]
   - clangxx_osx-64  # [osx]
