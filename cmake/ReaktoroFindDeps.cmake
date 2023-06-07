@@ -30,7 +30,7 @@ endfunction()
 
 # Required dependencies
 ReaktoroFindPackage(autodiff 1.0.3 REQUIRED)
-ReaktoroFindPackage(Eigen3 3.3.90 REQUIRED)
+ReaktoroFindPackage(Eigen3 3.4 REQUIRED)
 ReaktoroFindPackage(nlohmann_json 3.6.1 REQUIRED)
 ReaktoroFindPackage(Optima 0.3.3 REQUIRED)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1 REQUIRED)

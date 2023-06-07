@@ -13,7 +13,7 @@ dependencies:
   - cmake
   - cpp-tabulate
   - doxygen =1.9.1  # [linux]
-  - eigen4rkt
+  - eigen
   - fire
   - git
   - graphviz  # [linux]
