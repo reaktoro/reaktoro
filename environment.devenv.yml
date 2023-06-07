@@ -27,7 +27,7 @@ dependencies:
   - nlohmann_json
   - numpy
   - openlibm
-  - optima >=0.3.1
+  - optima >=0.3.3
   - pandas
   - phreeqc4rkt
   - pip
