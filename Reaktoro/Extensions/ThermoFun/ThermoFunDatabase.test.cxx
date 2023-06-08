@@ -19,6 +19,7 @@
 #include <catch2/catch.hpp>
 
 // ThermoFun includes
+#include <spdlog/spdlog.h>
 #include <ThermoFun/Database.h>
 
 // Reaktoro includes
@@ -141,6 +142,7 @@ TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
     CHECK( props.VP0 == Approx(0.00000000000) );
     CHECK( props.Cp0 == Approx( 8.337073e+01) );
 
+    spdlog::set_level(spdlog::level::off); // Disable log's from ThermoFun for the tests below that are expected to raise exceptions
     CHECK_THROWS( ThermoFunDatabase("not-a-valid-file-name") );
     CHECK_THROWS( ThermoFunDatabase::withName("not-a-valid-file-name") );
     CHECK_THROWS( ThermoFunDatabase::fromFile("not-a-valid-file-name") );
