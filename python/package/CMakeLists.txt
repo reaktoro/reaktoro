@@ -3,9 +3,11 @@ configure_file(setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 
 # Create pybind11-stubgen command string depending if this program has been found or not
 if(PYBIND11_STUBGEN)
-    set(PYBIND11_STUBGEN_COMMAND ${PYBIND11_STUBGEN} --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro)
-else()
-    set(PYBIND11_STUBGEN_COMMAND ${CMAKE_COMMAND} -E true)  # do nothing when it it's time to generate python stubs for reaktoro in the target below
+    set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH}" ${PYBIND11_STUBGEN} --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro)
+    set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro)
+    else()
+    set(STUBGEN_COMMAND1 "")  # do nothing when it it's time to generate python stubs for reaktoro in the target below
+    set(STUBGEN_COMMAND2 "")  # do nothing when it it's time to copy the generated stub directory
 endif()
 
 # Create a custom target to build the python package during build stage
@@ -15,10 +17,8 @@ add_custom_target(reaktoro-setuptools ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/reaktoro reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:reaktoro4py> reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Reaktoro> reaktoro
-    COMMAND ${CMAKE_COMMAND} -E env
-        "PYTHONPATH=${REAKTORO_PYTHONPATH}"
-            ${PYBIND11_STUBGEN_COMMAND}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro
+    COMMAND ${STUBGEN_COMMAND1}
+    COMMAND ${STUBGEN_COMMAND2}
     COMMAND ${PYTHON_EXECUTABLE} setup.py --quiet build --force
     COMMAND ${CMAKE_COMMAND} -E rm reaktoro/$<TARGET_FILE_NAME:reaktoro4py>
     COMMAND ${CMAKE_COMMAND} -E rm reaktoro/$<TARGET_FILE_NAME:Reaktoro>
