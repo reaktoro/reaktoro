@@ -36,8 +36,6 @@ ReaktoroFindPackage(Optima 0.3.3 REQUIRED)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1 REQUIRED)
 ReaktoroFindPackage(tabulate 1.4.0 REQUIRED)
 ReaktoroFindPackage(ThermoFun 0.4.3 REQUIRED)
-ReaktoroFindPackage(ChemicalFun 0.1.8 REQUIRED)  # TODO: Remove when ThermoFun is v0.4.4+ (this will be automatically done)
-ReaktoroFindPackage(spdlog)  # TODO: Remove when ThermoFun is v0.4.4+ (this will be automatically done)
 ReaktoroFindPackage(tsl-ordered-map 1.0.0 REQUIRED)
 ReaktoroFindPackage(yaml-cpp 0.6.3 REQUIRED)
 
