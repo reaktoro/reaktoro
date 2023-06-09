@@ -128,6 +128,15 @@ auto defaultChemicalPotentialModels(SpeciesList const& nonaqueous, ChemicalSyste
     return vectorize(nonaqueous, RKT_LAMBDA(x, defaultChemicalPotentialModel(x, system)));
 }
 
+// Return the index of species H+ if found, otherwise the index of H3O+.
+auto findHydrogenIon(SpeciesList const& species) -> Index
+{
+    const auto idx = species.findWithFormula("H+");
+    if(idx < species.size())
+        return idx;
+    else return species.findWithFormula("H3O+");
+}
+
 } // namespace
 
 struct AqueousProps::Impl
@@ -147,7 +156,7 @@ struct AqueousProps::Impl
     /// The index of the aqueous solvent species H2O in the aqueous phase (not in the system!)
     const Index iH2O;
 
-    /// The index of the aqueous solute species H+ in the aqueous phase (not in the system!)
+    /// The index of chemical species H+ or H3O+ in the aqueous phase (not in the system!)
     const Index iH;
 
     /// The chemical properties of the system.
@@ -184,15 +193,15 @@ struct AqueousProps::Impl
       props(system),
       aqsolution(phase.species()),
       iH2O(phase.species().findWithFormula("H2O")),
-      iH(phase.species().findWithFormula("H+"))
+      iH(findHydrogenIon(phase.species()))
     {
-        const auto size = phase.species().size();
+        const auto Naq = phase.species().size();
 
-        error(iH2O >= size, "Cannot create AqueousProps object for phase ", phase.name(), " "
+        error(iH2O >= Naq, "Cannot create AqueousProps object for phase ", phase.name(), " "
             "because it does not contain a species with formula H2O.");
 
-        error(iH >= size, "Cannot create AqueousProps object for phase ", phase.name(), " "
-            "because it does not contain a species with formula H+.");
+        error(iH >= Naq, "Cannot create AqueousProps object for phase ", phase.name(), " "
+            "because it does not contain a species with formula H+ or H3O+.");
 
         // The symbols of the elements in the aqueous phase
         const auto symbols = vectorize(phase.elements(), RKT_LAMBDA(x, x.symbol()));
@@ -222,8 +231,8 @@ struct AqueousProps::Impl
         aqstate.epsilon = NaN;
         aqstate.Ie = NaN;
         aqstate.Is = NaN;
-        aqstate.m.setConstant(size, NaN);
-        aqstate.ms.setConstant(size, NaN);
+        aqstate.m.setConstant(Naq, NaN);
+        aqstate.ms.setConstant(Naq, NaN);
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
