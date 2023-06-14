@@ -66,7 +66,7 @@ auto EquilibriumProblem::startWithPressure(real value) -> void
 
 auto EquilibriumProblem::startWithPressure(real value, Chars unit) -> void
 {
-    auto converted = units::convert(value, unit, "K");
+    auto converted = units::convert(value, unit, "Pa");
     errorif(converted <= 0.0, "EquilibriumProblem::startWithPressure requires a positive pressure value in Pa, but the given value was ", value, " ", unit);
     m_initial_pressure = converted;
 }
