@@ -80,6 +80,8 @@ TEST_CASE("Testing Material class", "[Material]")
 
     CHECK( getSpeciesAmount(material, "Ca++(aq)") == Approx(1.0) );
 
+    CHECK_THROWS( material.addSpeciesAmount("CH4(aq)", 1.0, "mmol") );  // Species CH4(aq) does not exist in the system
+
     //-------------------------------------------------------------------------
     // TESTING METHOD: Material::addSpeciesMass
     //-------------------------------------------------------------------------
@@ -88,6 +90,8 @@ TEST_CASE("Testing Material class", "[Material]")
     material.addSpeciesMass("H2O(aq)", 1.0, "kg");
 
     CHECK( getSpeciesMass(material, "H2O(aq)") == Approx(1.0) );
+
+    CHECK_THROWS( material.addSpeciesMass("CH3COOH(aq)", 1.0, "mg") );  // Species CH3COOH(aq) does not exist in the system
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Material::addSubstanceAmount
@@ -99,6 +103,8 @@ TEST_CASE("Testing Material class", "[Material]")
 
     CHECK( getSubstanceAmount(material, "Ca++") == Approx(3.0) );
 
+    CHECK_THROWS( material.addSubstanceAmount("BrCl2", 1.0, "mol") ); // Substance contains element Br which is not in the system!
+
     //-------------------------------------------------------------------------
     // TESTING METHOD: Material::addSubstanceMass
     //-------------------------------------------------------------------------
@@ -107,6 +113,8 @@ TEST_CASE("Testing Material class", "[Material]")
     material.addSubstanceMass("SiO2", 2.0, "kg");
 
     CHECK( getSubstanceMass(material, "SiO2") == Approx(2.0) );
+
+    CHECK_THROWS( material.addSubstanceMass("ZnCl2", 1.0, "mol") ); // Substance contains element Zn which is not in the system!
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Material::addMaterialAmount
@@ -119,6 +127,11 @@ TEST_CASE("Testing Material class", "[Material]")
     CHECK( getSpeciesMass(othermaterial, "H2O(aq)")    == Approx(0.003/material.amount() * getSpeciesMass(material, "H2O(aq)") ) );
     CHECK( getSubstanceAmount(othermaterial, "Ca++")   == Approx(0.003/material.amount() * getSubstanceAmount(material, "Ca++") ) );
     CHECK( getSubstanceMass(othermaterial, "SiO2")     == Approx(0.003/material.amount() * getSubstanceMass(material, "SiO2") ) );
+
+    ChemicalSystem empty_system;
+    Material empty_material(empty_system);
+
+    CHECK_THROWS( othermaterial.addMaterialAmount(empty_material, 1.0, "mmol") ); // Material objects must have the same elements but one is empty!
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: Material::addMaterialMass
