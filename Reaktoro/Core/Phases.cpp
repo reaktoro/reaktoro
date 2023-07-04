@@ -19,13 +19,18 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/ParseUtils.hpp>
 
 namespace Reaktoro {
 
-auto speciate(const StringList& symbols) -> Speciate
+auto speciate(StringList const& substances) -> Speciate
 {
-    errorif(symbols.empty(), "Expecting a non-empty list of element names in method `speciate`.");
-    return Speciate{symbols};
+    errorif(substances.empty(), "Expecting a non-empty list of substance formulas in method `speciate`.");
+    Set<String> elements;
+    for(auto const& substance : substances)
+        for(auto const& [symbol, coeff] : parseChemicalFormula(substance))
+            elements.insert(symbol);
+    return Speciate{Strings(elements.begin(), elements.end())};
 }
 
 auto exclude(const StringList& tags) -> Exclude

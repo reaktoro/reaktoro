@@ -98,6 +98,17 @@ TEST_CASE("Testing Phases", "[Phases]")
 
     //=================================================================================================================
     //-----------------------------------------------------------------------------------------------------------------
+    // TESTING METHOD: speciate
+    //-----------------------------------------------------------------------------------------------------------------
+    //=================================================================================================================
+
+    CHECK( identical(speciate("H O Na").symbols, Strings{"H", "O", "Na"}) );
+    CHECK( identical(speciate("H2O NaCl").symbols, Strings{"H", "O", "Na", "Cl"}) );
+    CHECK( identical(speciate("H2O NaCl CO2 MgOH2").symbols, Strings{"H", "O", "Na", "Cl", "C", "Mg"}) );
+    CHECK( identical(speciate("Xy Aa2Bb3").symbols, Strings{"Xy", "Aa", "Bb"}) );
+
+    //=================================================================================================================
+    //-----------------------------------------------------------------------------------------------------------------
     // TESTING CLASS: GeneralPhase
     //-----------------------------------------------------------------------------------------------------------------
     //=================================================================================================================
@@ -426,7 +437,7 @@ TEST_CASE("Testing Phases", "[Phases]")
     {
         Phases phases(db);
 
-        phases.add( AqueousPhase(speciate("H O Na Cl C")) );
+        phases.add( AqueousPhase(speciate("H2O NaCl CO2")) );
         phases.add( GaseousPhase("H2O(g) CO2(g)") );
         phases.add( MineralPhase("Halite") );
 
@@ -459,7 +470,7 @@ TEST_CASE("Testing Phases", "[Phases]")
         Phases phases(db);
 
         phases.add( AqueousPhase() );
-        phases.add( GaseousPhase(speciate("H O C")) );
+        phases.add( GaseousPhase(speciate("H2O CO2")) );
         phases.add( MineralPhases("Halite Calcite Magnesite Dolomite Quartz") );
 
         Vec<Phase> phasevec = phases.convert();

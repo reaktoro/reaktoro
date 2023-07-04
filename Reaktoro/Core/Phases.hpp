@@ -41,8 +41,8 @@ struct Speciate
     auto operator+=(Strings const& othersymbols) -> Speciate& { symbols = merge(symbols, othersymbols); return *this; }
 };
 
-/// The auxiliary function used to specify phase species to be determined from element symbols.
-auto speciate(StringList const& symbols) -> Speciate;
+/// The function used to specify phase species to be determined from element symbols in a list of substance formulas.
+auto speciate(StringList const& substances) -> Speciate;
 
 /// The auxiliary type used to specify species that should be filtered out when contructing a phase.
 struct Exclude
@@ -54,7 +54,7 @@ struct Exclude
     auto operator+=(Strings const& othertags) -> Exclude& { tags = merge(tags, othertags); return *this; }
 };
 
-/// The auxiliary function used to specify species that should be filtered out when contructing a phase.
+/// The function used to specify species that should be filtered out when contructing a phase.
 auto exclude(StringList const& tags) -> Exclude;
 
 /// The base type for all other classes defining more specific phases.
