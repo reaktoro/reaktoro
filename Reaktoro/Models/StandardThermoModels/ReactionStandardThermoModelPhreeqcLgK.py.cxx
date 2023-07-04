@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportReactionStandardThermoModelPhreeqcLgK(py::module& m)
 {
     py::class_<ReactionStandardThermoModelParamsPhreeqcLgK>(m, "ReactionStandardThermoModelParamsPhreeqcLgK")
+        .def(py::init<>())
         .def_readwrite("A1", &ReactionStandardThermoModelParamsPhreeqcLgK::A1)
         .def_readwrite("A2", &ReactionStandardThermoModelParamsPhreeqcLgK::A2)
         .def_readwrite("A3", &ReactionStandardThermoModelParamsPhreeqcLgK::A3)

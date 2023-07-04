@@ -25,7 +25,8 @@ using namespace Reaktoro;
 void exportStandardVolumeModelConstant(py::module& m)
 {
     py::class_<StandardVolumeModelParamsConstant>(m, "StandardVolumeModelParamsConstant")
-        .def_readwrite("V0",  &StandardVolumeModelParamsConstant::V0)
+        .def(py::init<>())
+        .def_readwrite("V0", &StandardVolumeModelParamsConstant::V0)
         ;
 
     m.def("StandardVolumeModelConstant", StandardVolumeModelConstant);
