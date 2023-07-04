@@ -53,14 +53,14 @@ void exportPhases(py::module& m)
         .def_readwrite("symbols", &Speciate::symbols)
         ;
 
-    m.def("speciate", speciate);
+    m.def("speciate", speciate, "The function used to specify phase species to be determined from element symbols in a list of substance formulas.");
 
     py::class_<Exclude>(m, "Exclude")
         .def(py::init<>())
         .def_readwrite("tags", &Exclude::tags)
         ;
 
-    m.def("exclude", exclude);
+    m.def("exclude", exclude, "The function used to specify species that should be filtered out when contructing a phase.");
 
     py::class_<Phases>(m, "Phases")
         .def(py::init<const Database&>())
