@@ -25,6 +25,7 @@ using namespace Reaktoro;
 void exportSmartEquilibriumResult(py::module& m)
 {
     py::class_<SmartEquilibriumTiming>(m, "SmartEquilibriumTiming")
+        .def(py::init<>())
         .def_readwrite("solve", &SmartEquilibriumTiming::solve, "The time spent for solving the chemical equilibrium problem (in seconds).")
         .def_readwrite("learning", &SmartEquilibriumTiming::learning, "The time spent for learning a new chemical equilibrium state (in seconds).")
         .def_readwrite("learning_solve", &SmartEquilibriumTiming::learning_solve, "The time spent for a conventional iterative chemical equilibrium calculation during the learning operation (in seconds).")
@@ -41,6 +42,7 @@ void exportSmartEquilibriumResult(py::module& m)
         ;
 
     py::class_<SmartEquilibriumResultDuringPrediction>(m, "SmartEquilibriumResultDuringPrediction")
+        .def(py::init<>())
         .def_readwrite("accepted", &SmartEquilibriumResultDuringPrediction::accepted)
         .def_readwrite("failed_with_species", &SmartEquilibriumResultDuringPrediction::failed_with_species)
         .def_readwrite("failed_with_amount", &SmartEquilibriumResultDuringPrediction::failed_with_amount)
@@ -49,11 +51,13 @@ void exportSmartEquilibriumResult(py::module& m)
         ;
 
     py::class_<SmartEquilibriumResultDuringLearning>(m, "SmartEquilibriumResultDuringLearning")
+        .def(py::init<>())
         .def_readwrite("solve", &SmartEquilibriumResultDuringLearning::solve)
         .def(py::self += py::self)
         ;
 
     py::class_<SmartEquilibriumResult>(m, "SmartEquilibriumResult")
+        .def(py::init<>())
         .def("succeeded", &SmartEquilibriumResult::succeeded, "Return true if the calculation succeeded.")
         .def("predicted", &SmartEquilibriumResult::predicted, "Return true if the calculation was performed using a fast first-order Taylor prediction.")
         .def("learned", &SmartEquilibriumResult::learned, "Return true if the calculation was learned, not predicted, and performed using the conventional algorithm.")
