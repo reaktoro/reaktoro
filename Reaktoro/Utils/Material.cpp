@@ -73,6 +73,12 @@ auto Material::addSpeciesMass(StringOrIndex const& species, double mass, Chars u
 
 auto Material::addSubstanceAmount(ChemicalFormula const& substance, double amount) -> void
 {
+    auto const& system_elements = m_system.elements();
+    for(auto const& [element, coefficient] : substance.elements())
+        errorifnot(system_elements.find(element) < system_elements.size(),
+            "While adding substance `", substance, "` to this material, I found that "
+            "element `", element, "` does not exist in the underlying chemical system. "
+            "Please consider this element in the definition of your chemical system.");
     const auto idx = indexfn(m_substances, RKT_LAMBDA(x, x.first == substance)); // check if m_substances already contains substance
     if(idx < m_substances.size())
         m_substances[idx].second += amount; // accumulate on existing entry for substance
