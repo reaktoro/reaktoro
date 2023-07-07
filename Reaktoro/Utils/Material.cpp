@@ -220,7 +220,9 @@ auto Material::elementAmounts() const -> ArrayXd
 
     const auto idx = [&](auto const& symbol)
     {
-        return m_system.elements().find(symbol);
+        auto ielement = m_system.elements().find(symbol);
+        errorifnot(ielement < E, "The Material object contains substances with element `", symbol, "`, which does not exist in the chemical system.");
+        return ielement;
     };
 
     ArrayXd res = ArrayXd::Zero(E);
