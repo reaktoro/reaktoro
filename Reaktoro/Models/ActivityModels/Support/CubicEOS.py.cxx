@@ -40,6 +40,7 @@ void exportCubicEOS(py::module& m)
         ;
 
     py::class_<CubicEOS::Props>(ceos, "Props")
+        .def(py::init<>())
         .def_readwrite("V", &CubicEOS::Props::V, "The molar volume of the phase (in m3/mol).")
         .def_readwrite("VT", &CubicEOS::Props::VT, "The temperature derivative of the molar volume at constant pressure (in m3/(mol*K)).")
         .def_readwrite("VP", &CubicEOS::Props::VP, "The pressure derivative of the molar volume constant temperature (in m3/(mol*Pa)).")
