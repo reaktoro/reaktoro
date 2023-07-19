@@ -567,7 +567,8 @@ struct Equation::Impl
         //=========================================================================================
         // Calculate the fugacity coefficients for each species
         //=========================================================================================
-        props.ln_phi.resize(nspecies);
+        props.Vi.resize(nspecies);
+        props.ln_phi.resize(nspecies);        
         for(auto k = 0; k < nspecies; ++k)
         {
             const real betak = P*bbar[k]/(R*T);
@@ -581,6 +582,7 @@ struct Equation::Impl
                 I + ((Zk + sigma*betak)/(Z + sigma*beta) - (Zk + epsilon*betak)/(Z + epsilon*beta))/(sigma - epsilon) :
                 I * (1 + betak/beta - (Zk + epsilon*betak)/(Z + epsilon*beta));
 
+            props.Vi[k] = R * T * Zk / P;
             props.ln_phi[k] = Zk - (Zk - betak)/(Z - beta) - log(Z - beta) + q*I - qk*I - q*Ik;
         }
     }

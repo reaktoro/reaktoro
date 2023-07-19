@@ -36,6 +36,7 @@ auto createTemplateClassForChemicalPropsPhaseType(py::module& m, const char* nam
         .def("speciesActivityCoefficientsLn", &ChemicalPropsPhaseType::speciesActivityCoefficientsLn, return_internal_ref, "Return the ln activity coefficients of the species in the phase.")
         .def("speciesActivitiesLn", &ChemicalPropsPhaseType::speciesActivitiesLn, return_internal_ref, "Return the ln activities of the species in the phase.")
         .def("speciesChemicalPotentials", &ChemicalPropsPhaseType::speciesChemicalPotentials, return_internal_ref, "Return the chemical potentials of the species in the phase (in J/mol).")
+        .def("speciesPartialMolarVolumes", &ChemicalPropsPhaseType::speciesPartialMolarVolumes, "Return the partial molar volumes of the species in the phase (in m³/mol).")
         .def("speciesStandardVolumes", &ChemicalPropsPhaseType::speciesStandardVolumes, return_internal_ref, "Return the standard partial molar volumes of the species in the phase (in m³/mol).")
         .def("speciesStandardVolumesT", &ChemicalPropsPhaseType::speciesStandardVolumesT, return_internal_ref, "Return the temperature derivative of the standard molar volumes of the species in the phase (in m³/(mol·K)).")
         .def("speciesStandardVolumesP", &ChemicalPropsPhaseType::speciesStandardVolumesP, return_internal_ref, "Return the pressure derivative of the standard molar volumes of the species in the phase (in m³/(mol·K)).")

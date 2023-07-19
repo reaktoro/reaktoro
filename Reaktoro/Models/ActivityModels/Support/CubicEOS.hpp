@@ -46,6 +46,7 @@ struct Props
     real Hres;         ///< The residual molar enthalpy of the phase (in J/mol).
     real Cpres;        ///< The residual molar heat capacity at constant pressure of the phase (in J/(mol*K)).
     real Cvres;        ///< The residual molar heat capacity at constant volume of the phase (in J/(mol*K)).
+    ArrayXr Vi;        ///< Species partial molar volumes (in m3/mol). 
     ArrayXr ln_phi;    ///< The ln fugacity coefficients of the species in the phase.
     StateOfMatter som; ///< The state of matter of the fluid phase
 };

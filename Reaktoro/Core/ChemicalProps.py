@@ -20,14 +20,17 @@ from reaktoro import *
 import pytest
 from math import *
 
-
-def testChemicalProps():
-    db = Database([
+@pytest.fixture
+def database() -> Database:
+    return Database([
         Species("H2O(g)").withStandardGibbsEnergy(0.0),
         Species("CO2(g)").withStandardGibbsEnergy(0.0),
     ])
 
-    phases = Phases(db)
+
+def testChemicalProps(database: Database) -> None:
+
+    phases = Phases(database)
     phases.add( GaseousPhase("H2O(g) CO2(g)") )
 
     system = ChemicalSystem(phases)
@@ -46,4 +49,28 @@ def testChemicalProps():
 
     assert props.speciesMoleFractions() == [0.3, 0.7]
     assert props.speciesActivitiesLn().asarray() == pytest.approx([log(3.0), log(7.0)])
+    # Partial molar volumes are only evaluated for phases with activity models with cubic EoSs.
+    assert props.speciesPartialMolarVolumes() == 0.
 
+
+def testChemicalPropsPengRobinsonPartialMolarVolumes(database: Database) -> None:
+
+    phases = Phases(database)
+    phases.add( GaseousPhase("H2O(g) CO2(g)").set(ActivityModelPengRobinson()) )
+
+    system = ChemicalSystem(phases)
+    state = ChemicalState(system)
+
+    state.setTemperature(0.0, "celsius")
+    state.setPressure(1.0, "atm")
+    state.setSpeciesAmounts([0.3, 0.7])
+
+    props = ChemicalProps(state)
+
+    assert props.temperature() == state.temperature()
+    assert props.pressure() == state.pressure()
+    assert props.speciesAmounts() == state.speciesAmounts()
+    assert props.speciesAmounts() == [0.3, 0.7]
+
+    assert props.speciesMoleFractions() == [0.3, 0.7]
+    assert props.speciesPartialMolarVolumes().asarray() == pytest.approx([0.0220046, 0.0222578])
