@@ -288,6 +288,9 @@ public:
     /// Return the chemical potentials of the species in the system (in J/mol).
     auto speciesChemicalPotentials() const -> ArrayXrConstRef;
 
+    /// Return the partial molar volumes of the species in the system (in m³/mol).
+    auto speciesPartialMolarVolumes() const->ArrayXrConstRef;
+
     /// Return the standard partial molar volumes of the species in the system (in m³/mol).
     auto speciesStandardVolumes() const -> ArrayXrConstRef;
 
@@ -537,6 +540,9 @@ private:
 
     /// The corrective molar isobaric heat capacity of each phase in the system (in J/(mol·K)).
     ArrayXr Cpx;
+
+    /// The partial molar volumes of the species in the phase (in m3/mol).
+    ArrayXr Vi;
 
     /// The activity coefficients (natural log) of the species in the system.
     ArrayXr ln_g;

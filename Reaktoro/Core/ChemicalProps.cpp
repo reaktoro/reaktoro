@@ -60,6 +60,7 @@ ChemicalProps::ChemicalProps(ChemicalSystem const& system)
     Gx   = ArrayXr::Zero(K);
     Hx   = ArrayXr::Zero(K);
     Cpx  = ArrayXr::Zero(K);
+    Vi   = ArrayXr::Zero(N);
     ln_g = ArrayXr::Zero(N);
     ln_a = ArrayXr::Zero(N);
     u    = ArrayXr::Zero(N);
@@ -205,10 +206,11 @@ auto ChemicalProps::phasePropsRef(StringOrIndex phaseid) -> ChemicalPropsPhaseRe
         Gx[iphase],
         Hx[iphase],
         Cpx[iphase],
+        Vi.segment(begin,size),
         ln_g.segment(begin, size),
         ln_a.segment(begin, size),
         u.segment(begin, size),
-        som[iphase]
+        som[iphase],
     });
 }
 
@@ -529,6 +531,11 @@ auto ChemicalProps::speciesActivitiesLn() const -> ArrayXrConstRef
 auto ChemicalProps::speciesChemicalPotentials() const -> ArrayXrConstRef
 {
     return u;
+}
+
+auto ChemicalProps::speciesPartialMolarVolumes() const -> ArrayXrConstRef
+{
+    return Vi;
 }
 
 auto ChemicalProps::speciesStandardVolumes() const -> ArrayXrConstRef

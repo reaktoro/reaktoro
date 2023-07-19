@@ -75,6 +75,9 @@ struct ActivityPropsBase
     /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol*K)).
     TypeOp<real> Cpx;
 
+    /// The partial molar volumes of the species in the phase (in m3/mol).
+    TypeOp<ArrayXr> Vi;
+
     /// The activity coefficients (natural log) of the species in the phase.
     TypeOp<ArrayXr> ln_g;
 
@@ -111,6 +114,7 @@ struct ActivityPropsBase
         Gx    = other.Gx;
         Hx    = other.Hx;
         Cpx   = other.Cpx;
+        Vi    = other.Vi;
         ln_g  = other.ln_g;
         ln_a  = other.ln_a;
         som   = other.som;
@@ -122,14 +126,14 @@ struct ActivityPropsBase
     template<template<typename> typename OtherTypeOp>
     operator ActivityPropsBase<OtherTypeOp>()
     {
-        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
+        return { Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, som, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
     template<template<typename> typename OtherTypeOp>
     operator ActivityPropsBase<OtherTypeOp>() const
     {
-        return { Vx, VxT, VxP, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
+        return { Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, som, extra };
     }
 
     /// Create a ActivityPropsBase object with given number of species.
@@ -144,6 +148,7 @@ struct ActivityPropsBase
         props.Gx  = 0.0;
         props.Hx  = 0.0;
         props.Cpx = 0.0;
+        props.Vi = ArrayXr::Zero(numspecies);
         props.ln_g = ArrayXr::Zero(numspecies);
         props.ln_a = ArrayXr::Zero(numspecies);
         return props;
