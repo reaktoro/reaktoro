@@ -66,8 +66,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 217.568
         Vr: 0.000103
         a: 339.02952
@@ -306,8 +306,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 14.14192
         Vr: 8.309e-06
         a: 35.3548
@@ -381,8 +381,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 313.3816
         Vr: 0.0001571
         a: 335.766
@@ -426,8 +426,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 639.7336
         Vr: 0.00024776
         a: 610.864
@@ -471,8 +471,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 176.1464
         Vr: 6.98e-05
         a: 253.67592
@@ -651,8 +651,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 533.46
         Vr: 0.0002719
         a: 775.04416
@@ -711,8 +711,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 197.0664
         Vr: 9.93e-05
         a: 304.46968
@@ -891,8 +891,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 336.30992
         Vr: 0.00014637
         a: 402.20792
@@ -906,8 +906,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 541.4096
         Vr: 0.00027045
         a: 768.76816
@@ -981,8 +981,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 543.92
         Vr: 0.0002697
         a: 796.04784
@@ -1071,8 +1071,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 683.2472
         Vr: 0.00025667
         a: 831.90472
@@ -1101,8 +1101,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 203.00768
         Vr: 9.93e-05
         a: 304.46968
@@ -1251,8 +1251,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 922.1536
         Vr: 0.00040786
         a: 983.24
@@ -1386,8 +1386,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 349.364
         Vr: 0.00014786
         a: 369.48904
@@ -1716,8 +1716,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 575.7184
         Vr: 0.0002728
         a: 815.0432
@@ -1956,8 +1956,8 @@ Species:
     AggregateState: Solid
     StandardThermoModel:
       MaierKelley:
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 489.9464
         Vr: 0.0002244
         a: 866.59008
@@ -2173,7 +2173,7 @@ Species:
         a: -12.769568
         b: 0.22129176
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Arg)(cr):
     Name: (Arg)(cr)
     Formula: C4H10N3
@@ -2188,7 +2188,7 @@ Species:
         a: -14.259072
         b: 0.59881408
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Asn)(cr):
     Name: (Asn)(cr)
     Formula: C2H4NO
@@ -2203,7 +2203,7 @@ Species:
         a: -7.882656
         b: 0.33321376
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Asp)(cr):
     Name: (Asp)(cr)
     Formula: C2H3O2
@@ -2218,7 +2218,7 @@ Species:
         a: -7.602328
         b: 0.31459496
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Cys)(cr):
     Name: (Cys)(cr)
     Formula: CH3S
@@ -2233,7 +2233,7 @@ Species:
         a: -32.179144
         b: 0.420492
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Glu)(cr):
     Name: (Glu)(cr)
     Formula: C3H5O2
@@ -2248,7 +2248,7 @@ Species:
         a: -7.376392
         b: 0.38028376
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Gln)(cr):
     Name: (Gln)(cr)
     Formula: C3H6NO
@@ -2263,7 +2263,7 @@ Species:
         a: -2.305384
         b: 0.3937144
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Gly)(cr):
     Name: (Gly)(cr)
     Formula: H
@@ -2278,7 +2278,7 @@ Species:
         a: -22.020392
         b: 0.1753096
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (His)(cr):
     Name: (His)(cr)
     Formula: C4H5N2
@@ -2293,7 +2293,7 @@ Species:
         a: -18.689928
         b: 0.57479792
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Ile)(cr):
     Name: (Ile)(cr)
     Formula: C4H9
@@ -2308,7 +2308,7 @@ Species:
         a: -6.63164
         b: 0.42250032
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Leu)(cr):
     Name: (Leu)(cr)
     Formula: C4H9
@@ -2323,7 +2323,7 @@ Species:
         a: -8.903552
         b: 0.44630728
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Lys)(cr):
     Name: (Lys)(cr)
     Formula: C4H10N
@@ -2338,7 +2338,7 @@ Species:
         a: -22.878112
         b: 0.55320848
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Met)(cr):
     Name: (Met)(cr)
     Formula: C3H7S
@@ -2353,7 +2353,7 @@ Species:
         a: 2.05016
         b: 0.42329528
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Phe)(cr):
     Name: (Phe)(cr)
     Formula: C7H7
@@ -2368,7 +2368,7 @@ Species:
         a: -28.099744
         b: 0.5437108
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Pro)(cr):
     Name: (Pro)(cr)
     Formula: C3H5
@@ -2383,7 +2383,7 @@ Species:
         a: -21.740064
         b: 0.34919664
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Ser)(cr):
     Name: (Ser)(cr)
     Formula: CH3O
@@ -2398,7 +2398,7 @@ Species:
         a: -7.623248
         b: 0.24878064
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Thr)(cr):
     Name: (Thr)(cr)
     Formula: C2H5O
@@ -2413,7 +2413,7 @@ Species:
         a: -20.338424
         b: 0.36601632
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Trp)(cr):
     Name: (Trp)(cr)
     Formula: C9H8N
@@ -2428,7 +2428,7 @@ Species:
         a: -27.831968
         b: 0.66019336
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Tyr)(cr):
     Name: (Tyr)(cr)
     Formula: C7H7O
@@ -2443,7 +2443,7 @@ Species:
         a: -27.55164
         b: 0.58718256
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Val)(cr):
     Name: (Val)(cr)
     Formula: C3H7
@@ -2458,7 +2458,7 @@ Species:
         a: -5.673504
         b: 0.35388272
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Hyd-Pro)(cr):
     Name: (Hyd-Pro)(cr)
     Formula: C3H5O
@@ -2473,7 +2473,7 @@ Species:
         a: -193.69828
         b: 1.120015
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (Hyd-Lys)(cr):
     Name: (Hyd-Lys)(cr)
     Formula: C4H10NO
@@ -2488,7 +2488,7 @@ Species:
         a: -194.89909
         b: 1.323985
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (AABB)(cr):
     Name: (AABB)(cr)
     Formula: C2H4NO2
@@ -2503,7 +2503,7 @@ Species:
         a: 36.919616
         b: 0.10761248
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   (PBB)(cr):
     Name: (PBB)(cr)
     Formula: C2H2NO
@@ -2518,7 +2518,7 @@ Species:
         a: 39.191528
         b: -0.02096184
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   Alanylglycine(cr):
     Name: Alanylglycine(cr)
     Formula: C5H10N2O3
@@ -2533,7 +2533,7 @@ Species:
         a: 42.819056
         b: 0.4681896
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   Cysteine(cr):
     Name: Cysteine(cr)
     Formula: C3H7NO2S
@@ -2578,7 +2578,7 @@ Species:
         a: 35.43848
         b: 0.43040808
         c: 0.0
-        Tmax: .nan
+        Tmax: 0.0
   Diglycylglycine(cr):
     Name: Diglycylglycine(cr)
     Formula: C6H11N3O4
@@ -2925,9 +2925,9 @@ Species:
         b: [0.0581576, 0.014869936]
         c: [-6280184.0, -20984434.0]
         Ttr: [473.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1200.0
   Albite,high:
     Name: Albite,high
@@ -2945,9 +2945,9 @@ Species:
         b: [0.0581576, 0.0581576]
         c: [-6280184.0, -6280184.0]
         Ttr: [623.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1400.0
   Almandine:
     Name: Almandine
@@ -2957,17 +2957,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 316.3104
         Vr: 0.00011528
         a: [408.1492, 448.06456]
         b: [0.14074976, 0.06217424]
         c: [-7836632.0, -4447592.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1600.0
   Amesite,14A:
     Name: Amesite,14A
@@ -2977,17 +2977,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 455.6376
         Vr: 0.0002054
         a: [722.11656, 708.7696]
         b: [0.14635632, 0.17254816]
         c: [-17434728.0, -18564408.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Antigorite:
     Name: Antigorite
@@ -3005,9 +3005,9 @@ Species:
         b: [2.1495718, 2.0971882]
         c: [-119946910.0, -117687550.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Clinochlore,7A:
     Name: Clinochlore,7A
@@ -3025,9 +3025,9 @@ Species:
         b: [0.21179408, 0.18560224]
         c: [-17104192.0, -15974512.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 900.0
   Coesite:
     Name: Coesite
@@ -3045,9 +3045,9 @@ Species:
         b: [0.0343088, 0.00811696]
         c: [-1129680.0, 0.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 2000.0
   Cristobalite:
     Name: Cristobalite
@@ -3066,8 +3066,8 @@ Species:
         c: [-1594104.0, -4137976.0]
         Ttr: [543.0]
         Htr: [1343.064]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 2000.0
   Daphnite,7A:
     Name: Daphnite,7A
@@ -3077,17 +3077,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 581.1576
         Vr: 0.0002212
         a: [721.86552, 735.21248]
         b: [0.21873952, 0.19254768]
         c: [-15577032.0, -14489192.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Edenite:
     Name: Edenite
@@ -3097,17 +3097,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 673.624
         Vr: 0.000271
         a: [835.58664, 848.9336]
         b: [0.20409552, 0.17790368]
         c: [-19250584.0, -18120904.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Epistilbite:
     Name: Epistilbite
@@ -3117,17 +3117,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 639.7336
         Vr: 0.00026756
         a: [657.05536, 683.74928]
         b: [0.25468008, 0.2022964]
         c: [-9133672.0, -6874312.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Ferroedenite:
     Name: Ferroedenite
@@ -3137,17 +3137,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 810.4408
         Vr: 0.0002809
         a: [876.21328, 889.56024]
         b: [0.21104096, 0.18484912]
         c: [-17723424.0, -16593744.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Ferrosilite:
     Name: Ferrosilite
@@ -3177,17 +3177,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 613.7928
         Vr: 0.0002725
         a: [816.84232, 830.18928]
         b: [0.19556016, 0.16936832]
         c: [-18794528.0, -17664848.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Heulandite:
     Name: Heulandite
@@ -3197,17 +3197,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 763.1616
         Vr: 0.00031637
         a: [751.69744, 791.73832]
         b: [0.28898888, 0.21041336]
         c: [-10263352.0, -6874312.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Kalsilite:
     Name: Kalsilite
@@ -3226,8 +3226,8 @@ Species:
         c: [-2225888.0, 0.0]
         Ttr: [810.0]
         Htr: [669.44]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1800.0
   Lawsonite:
     Name: Lawsonite
@@ -3245,9 +3245,9 @@ Species:
         b: [0.09773824, 0.0715464]
         c: [-6803184.0, -5673504.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Magnetite:
     Name: Magnetite
@@ -3265,9 +3265,9 @@ Species:
         b: [0.2016688, 0.0]
         c: [0.0, 0.0]
         Ttr: [900.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1800.0
   Margarite:
     Name: Margarite
@@ -3285,9 +3285,9 @@ Species:
         b: [0.0684084, 0.09460024]
         c: [-11736120.0, -12865800.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Natrolite:
     Name: Natrolite
@@ -3297,17 +3297,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 425.0944
         Vr: 0.00016972
         a: [400.65984, 387.31288]
         b: [0.16769472, 0.19388656]
         c: [-6301104.0, -7430784.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Nesquehonite:
     Name: Nesquehonite
@@ -3326,8 +3326,8 @@ Species:
         c: [-174608780.0, -1766484.8]
         Ttr: [306.5]
         Htr: [769.856]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 340.0
   Nickel:
     Name: Nickel
@@ -3346,8 +3346,8 @@ Species:
         c: [0.0, 0.0]
         Ttr: [633.0]
         Htr: [0.0]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1725.0
   Phillipsite,Ca:
     Name: Phillipsite,Ca
@@ -3357,17 +3357,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 697.0544
         Vr: 0.000265
         a: [610.11088, 623.45784]
         b: [0.22037128, 0.19417944]
         c: [-8003992.0, -6874312.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Phillipsite,K:
     Name: Phillipsite,K
@@ -3377,17 +3377,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 720.0664
         Vr: 0.000265
         a: [638.72944, 652.0764]
         b: [0.25204416, 0.22585232]
         c: [-7719480.0, -6589800.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Phillipsite,Na:
     Name: Phillipsite,Na
@@ -3397,17 +3397,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 721.3216
         Vr: 0.000265
         a: [637.6416, 650.98856]
         b: [0.23631232, 0.21012048]
         c: [-8560464.0, -7430784.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Prehnite:
     Name: Prehnite
@@ -3425,9 +3425,9 @@ Species:
         b: [0.15823888, 0.07966336]
         c: [-8200640.0, -4811600.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Pyrope:
     Name: Pyrope
@@ -3437,17 +3437,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 260.6632
         Vr: 0.00011327
         a: [383.63096, 423.67184]
         b: [0.13656576, 0.05799024]
         c: [-8752928.0, -5363888.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1800.0
   Quartz:
     Name: Quartz
@@ -3486,8 +3486,8 @@ Species:
         c: [79496.0, 0.0]
         Ttr: [629.0]
         Htr: [59161.76]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 3000.0
   Selenium:
     Name: Selenium
@@ -3506,8 +3506,8 @@ Species:
         c: [-173325.97, 2576339.8]
         Ttr: [494.0]
         Htr: [6158.848]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 957.0
   Spessartine:
     Name: Spessartine
@@ -3517,17 +3517,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 311.708
         Vr: 0.0001179
         a: [395.30432, 435.3452]
         b: [0.13907616, 0.06050064]
         c: [-7999808.0, -4610768.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1800.0
   Stilbite:
     Name: Stilbite
@@ -3537,17 +3537,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 1
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 1670.6712
         Vr: 0.00064991
         a: [1634.0612, 1674.1021]
         b: [0.57605312, 0.4974776]
         c: [-20853056.0, -17464016.0]
         Ttr: [848.0]
-        Htr: [.nan]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Htr: [0.0]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 1000.0
   Tin:
     Name: Tin
@@ -3566,8 +3566,8 @@ Species:
         c: [0.0, 0.0]
         Ttr: [505.06]
         Htr: [7029.12]
-        Vtr: [.nan]
-        dPdTtr: [.nan]
+        Vtr: [0.0]
+        dPdTtr: [0.0]
         Tmax: 3000.0
   Acanthite:
     Name: Acanthite
@@ -3586,8 +3586,8 @@ Species:
         c: [0.0, 0.0, 0.0]
         Ttr: [450.0, 620.0]
         Htr: [3974.8, 2510.4]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1000.0
   Aegerine:
     Name: Aegerine
@@ -3597,17 +3597,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 153.5528
         Vr: 6.437e-05
         a: [193.13344, 219.32528, 210.32968]
         b: [0.08079304, 0.04188184, 0.04556376]
         c: [-3958064.0, -3213312.0, -3213312.0]
         Ttr: [950.0, 1050.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1400.0
   Anthophyllite:
     Name: Anthophyllite
@@ -3625,9 +3625,9 @@ Species:
         b: [0.25344162, 0.17411298, 0.17411298]
         c: [-16092501.0, -5582292.8, -5582292.8]
         Ttr: [903.0, 1258.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1800.0
   Bornite:
     Name: Bornite
@@ -3646,8 +3646,8 @@ Species:
         c: [-564840.0, 0.0, 0.0]
         Ttr: [485.0, 540.0]
         Htr: [5983.12, 0.0]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1200.0
   Bunsenite:
     Name: Bunsenite
@@ -3666,8 +3666,8 @@ Species:
         c: [1627576.0, 0.0, 0.0]
         Ttr: [525.0, 565.0]
         Htr: [0.0, 0.0]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 2000.0
   Chalcocite:
     Name: Chalcocite
@@ -3686,8 +3686,8 @@ Species:
         c: [0.0, 0.0, 0.0]
         Ttr: [376.0, 717.0]
         Htr: [3849.28, 1200.808]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1400.0
   Chalcopyrite:
     Name: Chalcopyrite
@@ -3706,8 +3706,8 @@ Species:
         c: [-560656.0, 0.0, 0.0]
         Ttr: [830.0, 930.0]
         Htr: [10062.52, 0.0]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1200.0
   Cronstedtite,7A:
     Name: Cronstedtite,7A
@@ -3717,17 +3717,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 307.524
         Vr: 0.0001109
         a: [354.76136, 407.1032, 389.15384]
         b: [0.17505856, 0.09723616, 0.1046]
         c: [-5219958.4, -3736312.0, -3736312.0]
         Ttr: [950.0, 1050.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1500.0
   Enstatite:
     Name: Enstatite
@@ -3757,17 +3757,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 642.244
         Vr: 0.0002659
         a: [821.19368, 856.4648, 860.60696]
         b: [0.24430376, 0.20463944, 0.20463944]
         c: [-16321784.0, -11066680.0, -11066680.0]
         Ttr: [903.0, 1258.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1500.0
   Hastingsite:
     Name: Hastingsite
@@ -3777,17 +3777,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 791.6128
         Vr: 0.0002803
         a: [885.20888, 911.35888, 902.40512]
         b: [0.21288192, 0.17397072, 0.17765264]
         c: [-18777792.0, -18033040.0, -18033040.0]
         Ttr: [950.0, 1050.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1500.0
   Hematite:
     Name: Hematite
@@ -3806,8 +3806,8 @@ Species:
         c: [-1485320.0, 0.0, 0.0]
         Ttr: [950.0, 1050.0]
         Htr: [669.44, 0.0]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1800.0
   Larnite:
     Name: Larnite
@@ -3817,8 +3817,8 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 127.612
         Vr: 5.16e-05
         a: [145.89608, 134.55744, 205.016]
@@ -3826,8 +3826,8 @@ Species:
         c: [-2619184.0, 0.0, 0.0]
         Ttr: [970.0, 1710.0]
         Htr: [1840.96, 14183.76]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 2000.0
   Magnesiohastingsite:
     Name: Magnesiohastingsite
@@ -3837,17 +3837,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 685.3392
         Vr: 0.0002738
         a: [852.6992, 878.89104, 869.89544]
         b: [0.2073172, 0.168406, 0.17208792]
         c: [-19999520.0, -19254768.0, -19254768.0]
         Ttr: [950.0, 1050.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1500.0
   Magnesioriebeckite:
     Name: Magnesioriebeckite
@@ -3857,17 +3857,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 577.392
         Vr: 0.0002713
         a: [779.31184, 831.65368, 813.70432]
         b: [0.31438576, 0.23656336, 0.2439272]
         c: [-18903312.0, -17417992.0, -17417992.0]
         Ttr: [950.0, 1050.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1500.0
   Pyrrhotite:
     Name: Pyrrhotite
@@ -3886,8 +3886,8 @@ Species:
         c: [0.0, 0.0, 0.0]
         Ttr: [411.0, 598.0]
         Htr: [2384.88, 502.08]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1468.0
   Riebeckite:
     Name: Riebeckite
@@ -3897,17 +3897,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 2
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 655.2144
         Vr: 0.0002749
         a: [803.70456, 856.0464, 838.09704]
         b: [0.31856976, 0.24074736, 0.2481112]
         c: [-17987016.0, -16501696.0, -16501696.0]
         Ttr: [950.0, 1050.0]
-        Htr: [.nan, .nan]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Htr: [0.0, 0.0]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 1500.0
   Sulfur:
     Name: Sulfur
@@ -3926,8 +3926,8 @@ Species:
         c: [0.0, 0.0, 0.0]
         Ttr: [368.6, 392.0]
         Htr: [355.64, 1401.64]
-        Vtr: [.nan, .nan]
-        dPdTtr: [.nan, .nan]
+        Vtr: [0.0, 0.0]
+        dPdTtr: [0.0, 0.0]
         Tmax: 717.8
   Iron:
     Name: Iron
@@ -3946,8 +3946,8 @@ Species:
         c: [251040.0, 0.0, 0.0, 0.0]
         Ttr: [1033.0, 1183.0, 1673.0]
         Htr: [1363.984, 899.56, 690.36]
-        Vtr: [.nan, .nan, .nan]
-        dPdTtr: [.nan, .nan, .nan]
+        Vtr: [0.0, 0.0, 0.0]
+        dPdTtr: [0.0, 0.0, 0.0]
         Tmax: 1812.0
   Pd-Oxyannite:
     Name: Pd-Oxyannite
@@ -3957,17 +3957,17 @@ Species:
     StandardThermoModel:
       MineralHKF:
         ntr: 3
-        Gf: .nan
-        Hf: .nan
+        Gf: 0.0
+        Hf: 0.0
         Sr: 286.604
         Vr: 0.0001432
         a: [369.61456, 409.65544, 488.18912, 461.24416]
         b: [0.22643808, 0.14786256, 0.03112896, 0.04217472]
         c: [-7556304.0, -4167264.0, -1937192.0, -1937192.0]
         Ttr: [848.0, 950.0, 1050.0]
-        Htr: [.nan, .nan, .nan]
-        Vtr: [.nan, .nan, .nan]
-        dPdTtr: [.nan, .nan, .nan]
+        Htr: [0.0, 0.0, 0.0]
+        Vtr: [0.0, 0.0, 0.0]
+        dPdTtr: [0.0, 0.0, 0.0]
         Tmax: 1100.0
   Ar(g):
     Name: Ar(g)

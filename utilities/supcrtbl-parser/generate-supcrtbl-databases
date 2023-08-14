@@ -240,7 +240,7 @@ def getParamsMineralHollandPowell(lines):
     assert(len(lines) == 4)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
+    numbers = [float(x) if x != "999.9999" else 0.0 for x in numbers]  # use 0.0 instead of 999.9999
     assert(len(numbers) == 14)
     params = {}
     params["Model"]    = "HollandPowell"
@@ -278,7 +278,7 @@ def getParamsMineralHollandPowellLandau(lines):
     assert(len(lines) == 5)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
+    numbers = [float(x) if x != "999.9999" else 0.0 for x in numbers]
     assert(len(numbers) == 17)
     params = {}
     params["Model"]    = "HollandPowell"
@@ -321,7 +321,7 @@ def getParamsMineralHollandPowellBraggWilliams(lines):
     assert(len(lines) == 5)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
+    numbers = [float(x) if x != "999.9999" else 0.0 for x in numbers]
     assert(len(numbers) == 20)
     params = {}
     params["Model"]     = "HollandPowell"
@@ -365,7 +365,7 @@ def getParamsGaseousSpecies(lines):
     assert(len(lines) == 3)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
+    numbers = [float(x) if x != "999.9999" else 0.0 for x in numbers]
     assert(len(numbers) == 9)
     params = {}
     params["Model"] = "HollandPowell"
@@ -394,7 +394,7 @@ def getParamsAqueousSolute(lines):
     assert(len(lines) == 3)
     line = "".join(lines)
     numbers = line.strip().split()
-    numbers = [float(x) if x != "999.9999" else float("nan") for x in numbers]
+    numbers = [float(x) if x != "999.9999" else 0.0 for x in numbers]
     assert(len(numbers) == 11)
     params = {}
     params["Model"]  = "HKF"
