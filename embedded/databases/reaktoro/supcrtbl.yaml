@@ -14356,13 +14356,13 @@ Species:
         Gf: -507402.0
         Hf: 4183996.0
         Sr: 4183.996
-        a1: .nan
-        a2: .nan
-        a3: .nan
-        a4: .nan
-        c1: .nan
-        c2: .nan
-        wref: .nan
+        a1: 0.0
+        a2: 0.0
+        a3: 0.0
+        a4: 0.0
+        c1: 0.0
+        c2: 0.0
+        wref: 0.0
         charge: -2.0
   AsO3-3:
     Name: AsO3-3
@@ -14375,13 +14375,13 @@ Species:
         Gf: -421802.0
         Hf: 4183996.0
         Sr: 4183.996
-        a1: .nan
-        a2: .nan
-        a3: .nan
-        a4: .nan
-        c1: .nan
-        c2: .nan
-        wref: .nan
+        a1: 0.0
+        a2: 0.0
+        a3: 0.0
+        a4: 0.0
+        c1: 0.0
+        c2: 0.0
+        wref: 0.0
         charge: -3.0
   As3S4(HS)2-:
     Name: As3S4(HS)2-
@@ -14394,13 +14394,13 @@ Species:
         Gf: -125599.0
         Hf: 4183996.0
         Sr: 4183.996
-        a1: .nan
-        a2: .nan
-        a3: .nan
-        a4: .nan
-        c1: .nan
-        c2: .nan
-        wref: .nan
+        a1: 0.0
+        a2: 0.0
+        a3: 0.0
+        a4: 0.0
+        c1: 0.0
+        c2: 0.0
+        wref: 0.0
         charge: -1.0
   HSbO2(aq):
     Name: HSbO2(aq)
