@@ -22,6 +22,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <iomanip>
+#include <cstring>
 
 namespace Reaktoro {
 
@@ -140,6 +141,16 @@ auto makeunique(std::vector<std::string> words, std::string suffix) -> std::vect
         words[i] = uniqueword;
     }
     return words;
+}
+
+auto strlength(std::string const& str) -> std::size_t
+{
+    return str.size();
+}
+
+auto strlength(const char* str) -> std::size_t
+{
+    return std::strlen(str);
 }
 
 } // namespace Reaktoro

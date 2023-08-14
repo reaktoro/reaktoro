@@ -160,4 +160,28 @@ TEST_CASE("Testing StringUtils", "[StringUtils]")
     REQUIRE( words[5] == "beta!!"  );
     REQUIRE( words[6] == "gamma!!" );
     REQUIRE( words[7] == "alpha!"  );
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: startswith
+    //-------------------------------------------------------------------------
+
+    REQUIRE( startswith("ABC", "A") );
+    REQUIRE( startswith("BAC", "A", "B") ); // starts with A or B
+
+    REQUIRE( startswith("Hello", "Hel") );
+    REQUIRE( startswith("Hello", "There", "Hel") ); // starts with Hel or There
+
+    REQUIRE_FALSE( startswith("BAC", "A") ); // does not start with A
+    REQUIRE_FALSE( startswith("BAC", "A", "C") ); // does not start with A or C
+
+    //-------------------------------------------------------------------------
+    // TESTING METHOD: endswith
+    //-------------------------------------------------------------------------
+
+    REQUIRE( endswith("ABC", "C") );
+    REQUIRE( endswith("BAC", "A", "C") ); // ends with A or C
+    REQUIRE( endswith("BAC", "B", "A", "C") ); // ends with B, A or C
+
+    REQUIRE_FALSE( endswith("Hello", "Hel") ); // does not end with Hel
+    REQUIRE_FALSE( endswith("Hello", "There", "Hel") ); // does not end with Hel or There
 }
