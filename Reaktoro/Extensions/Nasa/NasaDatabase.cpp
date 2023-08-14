@@ -37,7 +37,7 @@ auto NasaDatabase::withName(String name) -> NasaDatabase
         "The currently supported names are: \n"
         "    - nasa-cea \n",
         "");
-    const String contents = Embedded::get("databases/reaktoro/" + name + ".yaml");
+    const String contents = Embedded::get("databases/reaktoro/" + name + ".json");
     return fromContents(contents);
 }
 
