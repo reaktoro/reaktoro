@@ -150,7 +150,7 @@ auto mineralMechanismFn(Mechanism const& mechanism, ReactionRateModelGeneratorAr
 
 auto ReactionRateModelPalandriKharaka() -> ReactionRateModelGenerator
 {
-    const auto params = Params::embedded("PalandriKharaka.yaml");
+    const auto params = Params::embedded("PalandriKharaka.json");
     return ReactionRateModelPalandriKharaka(params);
 }
 
