@@ -236,20 +236,34 @@ auto Database::fromFile(String const& path) -> Database
     DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
+
+template<typename Source>
+auto createDatabaseFromContents(Source& contents)
+{
+    Data doc;
+
+    try { doc = Data::parseYaml(contents); }
+    catch(...)
+    {
+        try { doc = Data::parseJson(contents); }
+        catch(...)
+        {
+            errorif(true, "Could not parse given text in Database::fromContents as it does not seem to be either YAML or JSON formats.");
+        }
+    }
+
+    DatabaseParser dbparser(doc);
+    return Database(dbparser);
 }
 
 auto Database::fromContents(String const& contents) -> Database
 {
-    auto doc = Data::parse(contents);
-    DatabaseParser dbparser(doc);
-    return dbparser;
+    return createDatabaseFromContents(contents);
 }
 
 auto Database::fromStream(std::istream& stream) -> Database
 {
-    auto doc = Data::parse(stream);
-    DatabaseParser dbparser(doc);
-    return dbparser;
+    return createDatabaseFromContents(stream);
 }
 
 } // namespace Reaktoro
