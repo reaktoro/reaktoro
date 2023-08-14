@@ -27,8 +27,7 @@ void exportNasaDatabase(py::module& m)
     py::class_<NasaDatabase, Database>(m, "NasaDatabase")
         .def(py::init<>())
         .def(py::init<String>())
+        .def(py::init<const Database&>())
         .def_static("withName", &NasaDatabase::withName)
-        .def_static("fromFile", &NasaDatabase::fromFile)
-        .def_static("fromStream", &NasaDatabase::fromStream)
         ;
 }
