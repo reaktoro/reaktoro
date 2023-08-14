@@ -54,15 +54,6 @@ public:
     /// @warning An exception is thrown if `name` is not one of the above names.
     /// @param name The name of the embedded database.
     static auto withName(const String& name) -> SupcrtDatabase;
-
-    /// Return a SupcrtDatabase object constructed with a given local file.
-    /// @warning An exception is thrown if `path` does not point to a valid database file.
-    /// @param path The path, including file name, to the database file.
-    static auto fromFile(const String& path) -> SupcrtDatabase;
-
-    /// Return a SupcrtDatabase object initialized with given database text contents.
-    /// @param contents The contents of the database as a string.
-    static auto fromContents(const String& contents) -> SupcrtDatabase;
 };
 
 } // namespace Reaktoro
