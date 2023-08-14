@@ -1,0 +1,1356 @@
+{
+  "ActivityModelParams": {
+    "Pitzer": {
+      "Beta0": [
+        {
+          "Formulas": [ "B(OH)4-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.035 ]
+        },
+        {
+          "Formulas": [ "B(OH)4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0427 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.13 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.056 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.022 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.11 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Br-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.31455, 0, 0, -0.00033825 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.5268, 0, 0, 0, 0, 47500 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.17175 ]
+        },
+        {
+          "Formulas": [ "Br-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.196, 0, 0, -0.0002049 ]
+        },
+        {
+          "Formulas": [ "Br-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0569, 0, 0, 0.000739 ]
+        },
+        {
+          "Formulas": [ "Br-", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1748, 0, 0, -0.0001819 ]
+        },
+        {
+          "Formulas": [ "Br-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.4327, 0, 0, -0.00005625 ]
+        },
+        {
+          "Formulas": [ "Br-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0973, 0, 0, 0.0007692 ]
+        },
+        {
+          "Formulas": [ "Br-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.331125, 0, 0, -0.00032775 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Br-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.3816, 0, 0, -0.00052275 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.3159, 0, 0, -0.000327, 1.4e-7 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "HCO3-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.4 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2145 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.1747 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0 ]
+        },
+        {
+          "Formulas": [ "CaB(OH)4+", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.12 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Fe+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.335925 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1775, 0, 0, -0.0003081 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.04808, -758.48, -4.7062, 0.010072, -0.0000037599 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1494, 0, 0, -0.0001685 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.351, 0, 0, -0.000932, 5.94e-7 ]
+        },
+        {
+          "Formulas": [ "Cl-", "MgB(OH)4+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.16 ]
+        },
+        {
+          "Formulas": [ "Cl-", "MgOH+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.1 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mn+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.327225 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.07534, 9598.4, 35.48, -0.058731, 0.00001798, -500000 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2858, 0, 0, 0.000717 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1488, 0, 0, 0.001788 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0399, 0, 0, 0.00179 ]
+        },
+        {
+          "Formulas": [ "Fe+2", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.4273 ]
+        },
+        {
+          "Formulas": [ "Fe+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2568 ]
+        },
+        {
+          "Formulas": [ "H+", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2065 ]
+        },
+        {
+          "Formulas": [ "H+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0298 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0296, 0, 0, 0.000996 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.329 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.018 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.12 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0003 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.4746 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0454 ]
+        },
+        {
+          "Formulas": [ "K+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1298 ]
+        },
+        {
+          "Formulas": [ "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0317, 0, 0, 0.000928 ]
+        },
+        {
+          "Formulas": [ "Li+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.015 ]
+        },
+        {
+          "Formulas": [ "Li+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.136275, 0, 0, 0.0005055 ]
+        },
+        {
+          "Formulas": [ "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2135, -951, 0, -0.0234, 0.0000228 ]
+        },
+        {
+          "Formulas": [ "Mn+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2065 ]
+        },
+        {
+          "Formulas": [ "Na+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0864, 0, 0, 0.0007 ]
+        },
+        {
+          "Formulas": [ "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0273, 0, -5.8, 0.00989, 0, -156300 ]
+        },
+        {
+          "Formulas": [ "SO4-2", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2, 0, 0, -0.0029 ]
+        }
+      ],
+      "Beta1": [
+        {
+          "Formulas": [ "B(OH)4-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.14 ]
+        },
+        {
+          "Formulas": [ "B(OH)4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.089 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.91 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.4 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Br-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.56975, 0, 0, 0.00678 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.687, 0, 0, 0.01417 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.2 ]
+        },
+        {
+          "Formulas": [ "Br-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.3564, 0, 0, 0.0004467 ]
+        },
+        {
+          "Formulas": [ "Br-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2212, 0, 0, 0.00174 ]
+        },
+        {
+          "Formulas": [ "Br-", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2547, 0, 0, 0.0006636 ]
+        },
+        {
+          "Formulas": [ "Br-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.753, 0, 0, 0.0038625 ]
+        },
+        {
+          "Formulas": [ "Br-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2791, 0, 0, 0.001079 ]
+        },
+        {
+          "Formulas": [ "Br-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.7115, 0, 0, 0.0065325 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Br-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.613, 0, 0, 0.0060375 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.614, 0, 0, 0.00763, -8.19e-7 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "HCO3-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 2.977 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 2.53 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.2303 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 3.546, 0, 0, 0.00577 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Fe+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.53225 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2945, 0, 0, 0.0001419 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2168, 0, -6.895, 0.02262, -0.000009293, -100000 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.3074, 0, 0, 0.0005366 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.65, 0, 0, -0.0109, 0.000026 ]
+        },
+        {
+          "Formulas": [ "Cl-", "MgOH+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.658 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mn+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.55025 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.2769, 13770, 46.8, -0.069512, 0.00002, -748230 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.667, 0, 0, 0.0028425 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.43, 0, 0, 0.002051 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.389, 0, 0, 0.00205 ]
+        },
+        {
+          "Formulas": [ "Fe+2", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 3.48 ]
+        },
+        {
+          "Formulas": [ "Fe+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 3.063 ]
+        },
+        {
+          "Formulas": [ "H+", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.5556 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.25, 0, 0, 0.001104 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.6072 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1735 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.729 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.398 ]
+        },
+        {
+          "Formulas": [ "K+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.32 ]
+        },
+        {
+          "Formulas": [ "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.756, -15140, -80.3, 0.1091 ]
+        },
+        {
+          "Formulas": [ "Li+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.14 ]
+        },
+        {
+          "Formulas": [ "Li+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 1.2705, 0, 0, 0.00141 ]
+        },
+        {
+          "Formulas": [ "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 3.367, -5780, 0, -0.148, 0.0001576 ]
+        },
+        {
+          "Formulas": [ "Mn+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 2.9511 ]
+        },
+        {
+          "Formulas": [ "Na+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.253, 0, 0, 0.000134 ]
+        },
+        {
+          "Formulas": [ "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.956, 2663, 0, 0.01158, 0, -319400 ]
+        },
+        {
+          "Formulas": [ "SO4-2", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 3.1973, 0, 0, 0.027 ]
+        }
+      ],
+      "Beta2": [
+        {
+          "Formulas": [ "Ca+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -1.13, 0, 0, -0.0476 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -5.72 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -59.3, 0, 0, -0.443, -0.00000396 ]
+        },
+        {
+          "Formulas": [ "Fe+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -42 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 8.22, 0, 0, -0.049 ]
+        },
+        {
+          "Formulas": [ "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -32.45, 0, -3236, 21.812, -0.018859 ]
+        },
+        {
+          "Formulas": [ "Mn+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -40 ]
+        },
+        {
+          "Formulas": [ "SO4-2", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -54.24, 0, 0, -0.42 ]
+        }
+      ],
+      "Cphi": [
+        {
+          "Formulas": [ "B(OH)4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0114 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Br-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0159576 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.143, -114.5 ]
+        },
+        {
+          "Formulas": [ "Br-", "Ca+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.00257 ]
+        },
+        {
+          "Formulas": [ "Br-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00827, 0, 0, -0.00005685 ]
+        },
+        {
+          "Formulas": [ "Br-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0018, 0, 0, -0.00007004 ]
+        },
+        {
+          "Formulas": [ "Br-", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0053, 0, 0, -0.00002813 ]
+        },
+        {
+          "Formulas": [ "Br-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00312 ]
+        },
+        {
+          "Formulas": [ "Br-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00116, 0, 0, -0.000093 ]
+        },
+        {
+          "Formulas": [ "Br-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00122506 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00014, -57, -0.098, -0.000783, 7.18e-7 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.114 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Fe+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.00860725 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0008, 0, 0, 0.00006213 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.000788, 91.27, 0.58643, -0.001298, 4.9567e-7 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00359, 0, 0, -0.0000452 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00651, 0, 0, -0.00025, 2.418e-7 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mn+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0204972 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00148, -120.5, -0.2081, 0, 1.166e-7, 11121 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0013 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0015 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0044 ]
+        },
+        {
+          "Formulas": [ "Fe+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0209 ]
+        },
+        {
+          "Formulas": [ "H+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0438 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.008 ]
+        },
+        {
+          "Formulas": [ "K+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0041 ]
+        },
+        {
+          "Formulas": [ "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.00818, -625, -3.3, 0.00406 ]
+        },
+        {
+          "Formulas": [ "Li+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.00399338, 0, 0, -0.000233345 ]
+        },
+        {
+          "Formulas": [ "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.02875, 0, -2.084, 0.011428, -0.000008228 ]
+        },
+        {
+          "Formulas": [ "Mn+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.01636 ]
+        },
+        {
+          "Formulas": [ "Na+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0044, 0, 0, -0.0001894 ]
+        },
+        {
+          "Formulas": [ "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.003418, -384, 0, -0.0008451, 0, 51770 ]
+        }
+      ],
+      "Theta": [
+        {
+          "Formulas": [ "B(OH)4-", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.065 ]
+        },
+        {
+          "Formulas": [ "B(OH)4-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.012 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.12 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "HCO3-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.1 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.074 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "HCO3-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.087 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.12 ]
+        },
+        {
+          "Formulas": [ "Ba+2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.07 ]
+        },
+        {
+          "Formulas": [ "Br-", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.065 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.092 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.00535, 0, 0, 0.000308 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.007 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0922, 0, 0, -0.000429, 0.00000121 ]
+        },
+        {
+          "Formulas": [ "Cl-", "CO3-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.02 ]
+        },
+        {
+          "Formulas": [ "Cl-", "HCO3-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.03 ]
+        },
+        {
+          "Formulas": [ "Cl-", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.006 ]
+        },
+        {
+          "Formulas": [ "Cl-", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.05 ]
+        },
+        {
+          "Formulas": [ "Cl-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.03 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.02 ]
+        },
+        {
+          "Formulas": [ "H+", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.005 ]
+        },
+        {
+          "Formulas": [ "H+", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1 ]
+        },
+        {
+          "Formulas": [ "H+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.036 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "CO3-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.04 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.01 ]
+        },
+        {
+          "Formulas": [ "K+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.012 ]
+        },
+        {
+          "Formulas": [ "Mg+2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.07 ]
+        },
+        {
+          "Formulas": [ "Na+", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.051 ]
+        },
+        {
+          "Formulas": [ "OH-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.013 ]
+        }
+      ],
+      "Lambda": [
+        {
+          "Formulas": [ "B(OH)3", "Cl-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.091 ]
+        },
+        {
+          "Formulas": [ "B(OH)3", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.14 ]
+        },
+        {
+          "Formulas": [ "B(OH)3", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.097 ]
+        },
+        {
+          "Formulas": [ "B(OH)3", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.018 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "B(OH)3" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.2 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "CO2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.183 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "H4SiO4" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.238 ]
+        },
+        {
+          "Formulas": [ "Cl-", "CO2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.005 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H2Sg" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.005 ]
+        },
+        {
+          "Formulas": [ "Cl-", "(H2Sg)2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.005 ]
+        },
+        {
+          "Formulas": [ "CO2", "CO2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0134, 348, 0.803 ]
+        },
+        {
+          "Formulas": [ "CO2", "HSO4-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.003 ]
+        },
+        {
+          "Formulas": [ "CO2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.051 ]
+        },
+        {
+          "Formulas": [ "CO2", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.183 ]
+        },
+        {
+          "Formulas": [ "CO2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.085 ]
+        },
+        {
+          "Formulas": [ "CO2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.075 ]
+        },
+        {
+          "Formulas": [ "H2Sg", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.1047, 0, -0.0413 ]
+        },
+        {
+          "Formulas": [ "H2Sg", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0, 0, 0.679 ]
+        },
+        {
+          "Formulas": [ "(H2Sg)2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0123, 0, 0.256 ]
+        },
+        {
+          "Formulas": [ "H4SiO4", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0298 ]
+        },
+        {
+          "Formulas": [ "H4SiO4", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.143 ]
+        },
+        {
+          "Formulas": [ "H4SiO4", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.238, -1788, -9.023, 0.0103 ]
+        },
+        {
+          "Formulas": [ "H4SiO4", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0566, 75.3, 0.115 ]
+        },
+        {
+          "Formulas": [ "H4SiO4", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.085, 0, 0.28, -0.000825 ]
+        }
+      ],
+      "Zeta": [
+        {
+          "Formulas": [ "B(OH)3", "Cl-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0102 ]
+        },
+        {
+          "Formulas": [ "B(OH)3", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.046 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H4SiO4", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0153 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H4SiO4", "Li+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0196 ]
+        },
+        {
+          "Formulas": [ "CO2", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.015 ]
+        },
+        {
+          "Formulas": [ "H2Sg", "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0123 ]
+        },
+        {
+          "Formulas": [ "H2Sg", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.157 ]
+        },
+        {
+          "Formulas": [ "(H2Sg)2", "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0119 ]
+        },
+        {
+          "Formulas": [ "(H2Sg)2", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.167 ]
+        }
+      ],
+      "Psi": [
+        {
+          "Formulas": [ "B(OH)4-", "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0073 ]
+        },
+        {
+          "Formulas": [ "B3O3(OH)4-", "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.024 ]
+        },
+        {
+          "Formulas": [ "B4O5(OH)4-2", "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.026 ]
+        },
+        {
+          "Formulas": [ "Br-", "K+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0022 ]
+        },
+        {
+          "Formulas": [ "Br-", "K+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.014 ]
+        },
+        {
+          "Formulas": [ "Br-", "Na+", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.012 ]
+        },
+        {
+          "Formulas": [ "Br-", "Na+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.018 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.015 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.025 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.012 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0148, 0, 0, -0.0000052 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.025 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Cl-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.122, 0, 0, -0.00121 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0365 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.024 ]
+        },
+        {
+          "Formulas": [ "Ca+2", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.055, 17.2 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Br-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0 ]
+        },
+        {
+          "Formulas": [ "Cl-", "CO3-2", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.004 ]
+        },
+        {
+          "Formulas": [ "Cl-", "CO3-2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.0085 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H+", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.011 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H+", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.011 ]
+        },
+        {
+          "Formulas": [ "Cl-", "H+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.004 ]
+        },
+        {
+          "Formulas": [ "Cl-", "HCO3-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.096 ]
+        },
+        {
+          "Formulas": [ "Cl-", "HCO3-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0 ]
+        },
+        {
+          "Formulas": [ "Cl-", "HSO4-", "H+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.013 ]
+        },
+        {
+          "Formulas": [ "Cl-", "HSO4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.006 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.022, -14.27 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0015, 0, 0, 0.000018 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.006 ]
+        },
+        {
+          "Formulas": [ "Cl-", "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.001 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mg+2", "MgOH+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.028 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mg+2", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.012, -9.51 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.008, 32.63 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Na+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.006 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0 ]
+        },
+        {
+          "Formulas": [ "Cl-", "Na+", "Sr+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0021 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "HCO3-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.012 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "HCO3-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.002 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "K+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.003 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "K+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.01 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.009 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "Na+", "OH-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.017 ]
+        },
+        {
+          "Formulas": [ "CO3-2", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.005 ]
+        },
+        {
+          "Formulas": [ "H+", "HSO4-", "K+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0265 ]
+        },
+        {
+          "Formulas": [ "H+", "HSO4-", "Mg+2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0178 ]
+        },
+        {
+          "Formulas": [ "H+", "HSO4-", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0129 ]
+        },
+        {
+          "Formulas": [ "H+", "K+", "Br-" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.021 ]
+        },
+        {
+          "Formulas": [ "H+", "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ 0.197 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "K+", "Na+" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.003 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.161 ]
+        },
+        {
+          "Formulas": [ "HCO3-", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.005 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "K+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0677 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0425 ]
+        },
+        {
+          "Formulas": [ "HSO4-", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.0094 ]
+        },
+        {
+          "Formulas": [ "K+", "Mg+2", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.048 ]
+        },
+        {
+          "Formulas": [ "K+", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.01 ]
+        },
+        {
+          "Formulas": [ "K+", "OH-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.05 ]
+        },
+        {
+          "Formulas": [ "Mg+2", "Na+", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.015 ]
+        },
+        {
+          "Formulas": [ "Na+", "OH-", "SO4-2" ],
+          "CorrectionModel": "Phreeqc",
+          "Parameters": [ -0.009 ]
+        }
+      ],
+      "Alpha1": [
+        {
+          "Formulas": [ "Na+", "Cl-" ],
+          "CorrectionModel": "Constant",
+          "Parameters": [ 2 ]
+        }
+      ],
+      "Alpha2": [
+        {
+          "Formulas": [ "Na+", "Cl-" ],
+          "CorrectionModel": "Constant",
+          "Parameters": [ 12 ]
+        }
+      ]
+    }
+  }
+}
