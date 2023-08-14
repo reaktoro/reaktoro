@@ -80,7 +80,9 @@ TEST_CASE("Testing Params class", "[Params]")
     {
         Params params = GENERATE(
             Params::embedded("PalandriKharaka.yaml"),
-            Params::local(REAKTORO_PARAMS_DIR"/PalandriKharaka.yaml")
+            Params::embedded("PalandriKharaka.json"),
+            Params::local(REAKTORO_PARAMS_DIR"/PalandriKharaka.yaml"),
+            Params::local(REAKTORO_PARAMS_DIR"/PalandriKharaka.json")
         );
 
         auto const& data = params.data();
