@@ -227,8 +227,15 @@ auto Database::fromFile(String const& path) -> Database
         "(not necessarily where the executable is located!). Alternatively, "
         "try a full path to the file (e.g., "
         "in Windows, `C:\\User\\username\\mydata\\mydatabase.yaml`, "
-        "in Linux, `/home/username/mydata/mydatabase.yaml`).");
-    return fromStream(file);
+        "in Linux and macOS, `/home/username/mydata/mydatabase.yaml`). "
+        "File formats accepted are JSON and YAML and expected file extensions are .json, .yaml, or .yml.");
+    auto isJson = endswith(path, ".json");
+    auto isYaml = endswith(path, ".yaml") || endswith(path, ".yml");
+    errorifnot(isJson || isYaml, "The file `", path, "` must be a JSON or YAML file terminating with .json, .yaml, or .yml.");
+    auto doc = isJson ? Data::parseJson(file) : Data::parseYaml(file);
+    DatabaseParser dbparser(doc);
+    return Database(dbparser);
+}
 }
 
 auto Database::fromContents(String const& contents) -> Database
