@@ -124,13 +124,30 @@ auto tofloat(std::string const& str) -> double;
 /// Return a list of words with duplicate names converted to unique ones.
 auto makeunique(std::vector<std::string> words, std::string suffix) -> std::vector<std::string>;
 
+/// Return the length of the string.
+auto strlength(std::string const& str) -> std::size_t;
+
+/// Return the length of the string.
+auto strlength(const char* str) -> std::size_t;
+
 /// Returns true if string `str` starts with `substr`, or any other given sub string in `substrs`.
 template<typename SubStr, typename... SubStrs>
 auto startswith(std::string const& str, SubStr substr, SubStrs... substrs)
 {
+    auto const aux = str.find(substr) == 0;
     if constexpr(sizeof...(SubStrs) > 0)
-        return str.find(substr) == 0 || startswith(str, substrs...);
-    return str.find(substr) == 0;
+        return aux || startswith(str, substrs...);
+    return aux;
+}
+
+/// Returns true if string `str` ends with `substr`, or any other given sub string in `substrs`.
+template<typename SubStr, typename... SubStrs>
+auto endswith(std::string const& str, SubStr substr, SubStrs... substrs)
+{
+    auto const aux = str.rfind(substr) == str.size() - strlength(substr);
+    if constexpr(sizeof...(SubStrs) > 0)
+        return aux || endswith(str, substrs...);
+    return aux;
 }
 
 } // namespace Reaktoro
