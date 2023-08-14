@@ -22,6 +22,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/StringUtils.hpp>
 #include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/Support/DatabaseParser.hpp>
@@ -62,30 +63,8 @@ auto SupcrtDatabase::withName(const String& name) -> SupcrtDatabase
         "    - supcrtbl \n",
         "    - supcrtbl-organics \n",
         "");
-    const auto text = Embedded::get("databases/reaktoro/" + name + ".yaml");
-    const auto doc = Data::parse(text);
-    DatabaseParser dbparser(doc);
-    return Database(dbparser);
-}
-
-auto SupcrtDatabase::fromFile(const String& path) -> SupcrtDatabase
-{
-    std::ifstream file(path);
-    errorif(!file.is_open(),
-        "Could not open file `", path, "`. Ensure the given file path "
-        "is relative to the directory where your application is RUNNING "
-        "(not necessarily where the executable is located!). Alternatively, "
-        "try a full path to the file (e.g., "
-        "in Windows, `C:\\User\\username\\mydata\\mydatabase.yaml`, "
-        "in Linux and macOS, `/home/username/mydata/mydatabase.yaml`).");
-    auto doc = Data::parse(file);
-    DatabaseParser dbparser(doc);
-    return Database(dbparser);
-}
-
-auto SupcrtDatabase::fromContents(const String& contents) -> SupcrtDatabase
-{
-    auto doc = Data::parse(contents);
+    const auto text = Embedded::get("databases/reaktoro/" + name + ".json");
+    const auto doc = Data::parseJson(text);
     DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
