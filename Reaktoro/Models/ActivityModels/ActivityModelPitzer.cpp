@@ -1048,7 +1048,7 @@ auto createActivityModelPitzer(SpeciesList const& species, ActivityModelParamsPi
 
 auto ActivityModelPitzer() -> ActivityModelGenerator
 {
-    return ActivityModelPitzer(Params::embedded("Pitzer.yaml"));
+    return ActivityModelPitzer(Params::embedded("Pitzer.json"));
 }
 
 auto ActivityModelPitzer(ActivityModelParamsPitzer const& params) -> ActivityModelGenerator
