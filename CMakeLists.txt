@@ -14,8 +14,10 @@ include(CMakeRC)
 project(Reaktoro VERSION 2.7.3 LANGUAGES CXX)
 
 # Generate compile_commands.json file in the binary directory
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_custom_target(compile-commands ALL COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR})
+if(NOT MSVC)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    add_custom_target(compile-commands ALL COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR})
+endif()
 
 # Check if a conda environment is active
 include(CondaAware)
