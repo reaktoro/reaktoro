@@ -255,7 +255,7 @@ TEST_CASE("Testing Database class", "[Database]")
     check_same_contents_in_databases(db, new_db2);
 }
 
-TEST_CASE("Testing Database object creation using Database::fromContents", "[Database]")
+TEST_CASE("Testing Database object creation using Database::fromContents using YAML", "[Database]")
 {
     String contents = R"#(
         Species:
@@ -280,4 +280,39 @@ TEST_CASE("Testing Database object creation using Database::fromContents", "[Dat
 
     CHECK(db.species().size() == 1);
     CHECK(db.species()[0].name() == "Akermanite");
+    CHECK(db.species()[0].formula() == "Ca2MgSi2O7");
+}
+
+TEST_CASE("Testing Database object creation using Database::fromContents using JSON", "[Database]")
+{
+    String contents = R"#(
+        {
+          "Species": {
+            "Akermanite": {
+              "Name": "Akermanite",
+              "Formula": "Ca2MgSi2O7",
+              "Elements": "2:Ca 1:Mg 2:Si 7:O",
+              "AggregateState": "Solid",
+              "StandardThermoModel": {
+                "MaierKelley": {
+                  "Gf": -3679250.6,
+                  "Hf": -3876463.4,
+                  "Sr": 209.32552,
+                  "Vr": 0.00009281,
+                  "a": 251.41656,
+                  "b": 0.0476976,
+                  "c": -4769760,
+                  "Tmax": 1700
+                }
+              }
+            }
+          }
+        }
+        )#";
+
+    Database db = Database::fromContents(contents);
+
+    CHECK(db.species().size() == 1);
+    CHECK(db.species()[0].name() == "Akermanite");
+    CHECK(db.species()[0].formula() == "Ca2MgSi2O7");
 }
