@@ -69,11 +69,14 @@ struct ChemicalPropsPhaseBaseData
     /// The corrective molar volume of the phase (in m³/mol).
     TypeOp<real> Vx;
 
-    /// The temperature derivative of the corrective molar volume at constant pressure (in m³/(mol·K)).
+    /// The derivative of the corrective molar volume with respect to temperature at constant pressure and species mole fractions (in m³/(mol⋅K)).
     TypeOp<real> VxT;
 
-    /// The pressure derivative of the corrective molar volume at constant temperature (in m³/(mol·Pa)).
+    /// The derivative of the corrective molar volume with respect to pressure at constant temperature and species mole fractions (in m³/(mol⋅Pa)).
     TypeOp<real> VxP;
+
+    /// The derivatives of the corrective molar volume with respect to species mole fractions at constant temperature and pressure (in m³/mol).
+    TypeOp<ArrayXr> Vxi;
 
     /// The corrective molar Gibbs energy of the phase (in units of J/mol).
     TypeOp<real> Gx;
@@ -83,9 +86,6 @@ struct ChemicalPropsPhaseBaseData
 
     /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol·K)).
     TypeOp<real> Cpx;
-
-    /// The partial molar volumes of the species in the phase (in m3/mol).
-    TypeOp<ArrayXr> Vi;
 
     /// The activity coefficients (natural log) of the species in the phase.
     TypeOp<ArrayXr> ln_g;
@@ -118,10 +118,10 @@ struct ChemicalPropsPhaseBaseData
         Vx   = other.Vx;
         VxT  = other.VxT;
         VxP  = other.VxP;
+        Vxi  = other.Vxi;
         Gx   = other.Gx;
         Hx   = other.Hx;
         Cpx  = other.Cpx;
-        Vi = other.Vi;
         ln_g = other.ln_g;
         ln_a = other.ln_a;
         u    = other.u;
@@ -133,27 +133,27 @@ struct ChemicalPropsPhaseBaseData
     template<template<typename> typename OtherTypeOp>
     operator ChemicalPropsPhaseBaseData<OtherTypeOp>()
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, u, som };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into another.
     template<template<typename> typename OtherTypeOp>
     operator ChemicalPropsPhaseBaseData<OtherTypeOp>() const
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, u, som };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 
     /// Assign the given array data to this ChemicalPropsPhaseBaseData object.
     auto operator=(const ArrayStream<real>& array)
     {
-        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, u, som);
+        array.to(T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, u, som);
         return *this;
     }
 
     /// Convert this ChemicalPropsPhaseBaseData object into an array.
     operator ArrayStream<real>() const
     {
-        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, u, som };
+        return { T, P, n, nsum, msum, x, G0, H0, V0, VT0, VP0, Cp0, Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, u, som };
     }
 };
 
@@ -188,7 +188,7 @@ public:
         mdata.VT0  = ArrayXr::Zero(N);
         mdata.VP0  = ArrayXr::Zero(N);
         mdata.Cp0  = ArrayXr::Zero(N);
-        mdata.Vi   = ArrayXr::Zero(N);
+        mdata.Vxi  = ArrayXr::Zero(N);
         mdata.ln_g = ArrayXr::Zero(N);
         mdata.ln_a = ArrayXr::Zero(N);
         mdata.u    = ArrayXr::Zero(N);
@@ -300,7 +300,7 @@ public:
     /// Return the partial molar volumes of the species in the phase (in m³/mol).
     auto speciesPartialMolarVolumes() const -> ArrayXrConstRef
     {
-        return mdata.Vi;
+        return mdata.V0 + mdata.Vxi;
     }
 
     /// Return the standard partial molar volumes of the species in the phase (in m³/mol).
@@ -647,7 +647,7 @@ private:
         auto& Gx   = mdata.Gx;
         auto& Hx   = mdata.Hx;
         auto& Cpx  = mdata.Cpx;
-        auto& Vi = mdata.Vi;
+        auto& Vxi = mdata.Vxi;
         auto& ln_g = mdata.ln_g;
         auto& ln_a = mdata.ln_a;
         auto& u    = mdata.u;
@@ -666,7 +666,7 @@ private:
         assert( ln_g.size() == N );
         assert( ln_a.size() == N );
         assert(    u.size() == N );
-        assert(   Vi.size() == N );
+        assert(   Vxi.size() == N );
 
         // Compute the standard thermodynamic properties of the species in the phase.
         StandardThermoProps aux;
@@ -697,7 +697,7 @@ private:
             phase().name(), " because it has one or more species with zero amounts.");
 
         // Compute the activity properties of the phase
-        ActivityPropsRef aprops{ Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, som, extra };
+        ActivityPropsRef aprops{ Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
         ActivityModelArgs args{ T, P, x };
         const ActivityModel& activity_model = use_ideal_activity_model ?  // IMPORTANT: Use `const ActivityModel&` here instead of `ActivityModel`, otherwise a new model is constructed without cache, and so memoization will not take effect.
             phase().idealActivityModel() : phase().activityModel();

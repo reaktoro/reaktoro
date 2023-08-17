@@ -289,7 +289,7 @@ public:
     auto speciesChemicalPotentials() const -> ArrayXrConstRef;
 
     /// Return the partial molar volumes of the species in the system (in m³/mol).
-    auto speciesPartialMolarVolumes() const->ArrayXrConstRef;
+    auto speciesPartialMolarVolumes() const-> ArrayXr;
 
     /// Return the standard partial molar volumes of the species in the system (in m³/mol).
     auto speciesStandardVolumes() const -> ArrayXrConstRef;
@@ -526,11 +526,14 @@ private:
     /// The corrective molar volume of each phase in the system (in m³/mol).
     ArrayXr Vx;
 
-    /// The temperature derivative at constant pressure of the corrective molar volume of each phase in the system (in m³/(mol·K)).
+    /// The derivative of the corrective molar volume of each phase in the system with respect to temperature at constant pressure and species mole fractions (in m³/(mol⋅K)).
     ArrayXr VxT;
 
-    /// The pressure derivative at constant temperature of the corrective molar volume of each phase in the system (in m³/(mol·Pa)).
+    /// The derivative of the corrective molar volume of each phase in the system with respect to pressure at constant temperature and species mole fractions (in m³/(mol⋅Pa)).
     ArrayXr VxP;
+
+    /// The derivatives of the corrective molar volume of each phase in the system with respect to species mole fractions at constant temperature and pressure (in m³/mol).
+    ArrayXr Vxi;
 
     /// The corrective molar Gibbs energy of each phase in the system (in J/mol).
     ArrayXr Gx;
@@ -540,9 +543,6 @@ private:
 
     /// The corrective molar isobaric heat capacity of each phase in the system (in J/(mol·K)).
     ArrayXr Cpx;
-
-    /// The partial molar volumes of the species in the phase (in m3/mol).
-    ArrayXr Vi;
 
     /// The activity coefficients (natural log) of the species in the system.
     ArrayXr ln_g;
