@@ -85,10 +85,10 @@ auto activityModelCubicEOS(SpeciesList const& specieslist, CubicEOS::EquationMod
         props.Vx   = cprops.V;
         props.VxT  = cprops.VT;
         props.VxP  = cprops.VP;
+        props.Vxi  = cprops.Vi;
         props.Gx   = cprops.Gres;
         props.Hx   = cprops.Hres;
         props.Cpx  = cprops.Cpres;
-        props.Vi   = cprops.Vi;
         props.ln_g = cprops.ln_phi;
         props.ln_a = cprops.ln_phi + log(x) + log(Pbar);
         props.som  = cprops.som;

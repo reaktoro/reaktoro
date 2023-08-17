@@ -57,14 +57,17 @@ namespace Reaktoro {
 template<template<typename> typename TypeOp>
 struct ActivityPropsBase
 {
-    /// The corrective molar volume of the phase (in m3/mol).
+    /// The corrective molar volume of the phase (in m³/mol).
     TypeOp<real> Vx;
 
-    /// The temperature derivative of the corrective molar volume at constant pressure (in m3/(mol*K)).
+    /// The derivative of the corrective molar volume with respect to temperature at constant pressure and species mole fractions (in m³/(mol⋅K)).
     TypeOp<real> VxT;
 
-    /// The pressure derivative of the corrective molar volume at constant temperature (in m3/(mol*Pa)).
+    /// The derivative of the corrective molar volume with respect to pressure at constant temperature and species mole fractions (in m³/(mol⋅Pa)).
     TypeOp<real> VxP;
+
+    /// The derivatives of the corrective molar volume with respect to species mole fractions at constant temperature and pressure (in m³/mol).
+    TypeOp<ArrayXr> Vxi;
 
     /// The corrective molar Gibbs energy of the phase (in units of J/mol).
     TypeOp<real> Gx;
@@ -72,11 +75,8 @@ struct ActivityPropsBase
     /// The corrective molar enthalpy of the phase (in units of J/mol).
     TypeOp<real> Hx;
 
-    /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol*K)).
+    /// The corrective molar isobaric heat capacity of the phase (in units of J/(mol⋅K)).
     TypeOp<real> Cpx;
-
-    /// The partial molar volumes of the species in the phase (in m3/mol).
-    TypeOp<ArrayXr> Vi;
 
     /// The activity coefficients (natural log) of the species in the phase.
     TypeOp<ArrayXr> ln_g;
@@ -111,10 +111,10 @@ struct ActivityPropsBase
         Vx    = other.Vx;
         VxT   = other.VxT;
         VxP   = other.VxP;
+        Vxi   = other.Vxi;
         Gx    = other.Gx;
         Hx    = other.Hx;
         Cpx   = other.Cpx;
-        Vi    = other.Vi;
         ln_g  = other.ln_g;
         ln_a  = other.ln_a;
         som   = other.som;
@@ -126,14 +126,14 @@ struct ActivityPropsBase
     template<template<typename> typename OtherTypeOp>
     operator ActivityPropsBase<OtherTypeOp>()
     {
-        return { Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, som, extra };
+        return { Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
     }
 
     /// Convert this ActivityPropsBase object into another.
     template<template<typename> typename OtherTypeOp>
     operator ActivityPropsBase<OtherTypeOp>() const
     {
-        return { Vx, VxT, VxP, Gx, Hx, Cpx, Vi, ln_g, ln_a, som, extra };
+        return { Vx, VxT, VxP, Vxi, Gx, Hx, Cpx, ln_g, ln_a, som, extra };
     }
 
     /// Create a ActivityPropsBase object with given number of species.
@@ -148,7 +148,7 @@ struct ActivityPropsBase
         props.Gx  = 0.0;
         props.Hx  = 0.0;
         props.Cpx = 0.0;
-        props.Vi = ArrayXr::Zero(numspecies);
+        props.Vxi  = ArrayXr::Zero(numspecies);
         props.ln_g = ArrayXr::Zero(numspecies);
         props.ln_a = ArrayXr::Zero(numspecies);
         return props;
