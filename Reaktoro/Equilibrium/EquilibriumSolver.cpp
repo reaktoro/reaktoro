@@ -242,8 +242,8 @@ struct EquilibriumSolver::Impl
         // Initialize optstate with that stored in state0 (note state0 may have empty Optima::State object!)
         optstate = state0.equilibrium().optimaState();
 
-        // In case optstate is empty, initialize it with necessary memory
-        if(optstate.dims.x != dims.Nx)
+        // In case optstate corresponds to an equilibrium problem of different structure, initialize it with a clean slate
+        if(optstate.dims.x != dims.Nx || optstate.dims.p != dims.Np || optstate.dims.be != dims.Nc || optstate.dims.c != dims.Nw + dims.Nc)  // TODO: Replace this by a code that represents the EquilibriumSpecs object used for the previous calculation. Consider a dictionary of saved optstates and corresponding EquilibriumSpecs objects in case the same ChemicalState object is used within different solvers.
             optstate = Optima::State(optdims);
 
         // Overwrite n in x = (n, q) with species amounts from the chemical state
