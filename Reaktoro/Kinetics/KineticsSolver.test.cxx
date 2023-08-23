@@ -59,10 +59,6 @@ TEST_CASE("Testing KineticsSolver", "[KineticsSolver]")
 
         KineticsSolver solver(specs);
 
-        KineticsOptions options;
-        options.optima.output.active = true;
-        solver.setOptions(options);
-
         const auto dt = 1.0;
 
         auto res = solver.solve(state, dt);
@@ -78,10 +74,6 @@ TEST_CASE("Testing KineticsSolver", "[KineticsSolver]")
 
         KineticsSolver solver(specs);
 
-        KineticsOptions options;
-        options.optima.output.active = true;
-        solver.setOptions(options);
-
         const auto dt = 1.0;
 
         EquilibriumConditions conditions(specs);
@@ -93,5 +85,47 @@ TEST_CASE("Testing KineticsSolver", "[KineticsSolver]")
         REQUIRE( res.succeeded() );
 
         CHECK( state.speciesAmount("C(gr)") == Approx(0.990099) );
+    }
+
+    SECTION("When initial amounts of components are specified")
+    {
+        auto const& iC = system.elements().index("C");
+        auto const& iO = system.elements().index("O");
+
+        VectorXd b0 = state.componentAmounts();
+
+        b0[iC] += 1.0;
+        b0[iO] += 2.0;
+
+        KineticsSolver solver(system);
+
+        EquilibriumConditions conditions(system);
+        conditions.temperature(props.temperature());
+        conditions.pressure(props.pressure());
+        conditions.setInitialComponentAmounts(b0);
+
+        const auto dt = 1.0;
+
+        auto res = solver.solve(state, dt, conditions);
+
+        REQUIRE( res.succeeded() );
+
+        auto const bfinal = state.elementAmounts();
+
+        CHECK( bfinal[iC] == Approx(b0[iC]) );
+        CHECK( bfinal[iO] == Approx(b0[iO]) );
+    }
+
+    SECTION("When a state previously used in an equilibrium calculation is used in a kinetics calculation")
+    {
+        EquilibriumSolver esolver(system);
+
+        esolver.solve(state);
+
+        KineticsSolver solver(system);
+
+        const auto dt = 1.0;
+
+        REQUIRE_NOTHROW( solver.solve(state, dt) ); // state was previously used in an equilibrium calculation can the underlying Optima:State does not have p variables (which exist in the kinetic calculations)
     }
 }
