@@ -20,6 +20,9 @@
 // Reaktoro includes
 #include <Reaktoro/Core/Database.hpp>
 
+// Forward declaration of PHREEQC class
+class PHREEQC;
+
 namespace Reaktoro {
 
 /// The class used to store and retrieve data of chemical species from PHREEQC databases.
@@ -49,6 +52,9 @@ public:
     /// file name, or a multi-line string containing the database contents.
     /// @param database The path to the database file or its contents as a string
     auto load(const String& database) -> PhreeqcDatabase&;
+
+    /// Return the underlying PHREEQC object.
+    auto ptr() const -> SharedPtr<PHREEQC> const&;
 
     /// Return a PhreeqcDatabase object constructed with an embedded database file.
     /// If `name` does not correspond to one of the following names, an exception is thrown:
@@ -81,6 +87,10 @@ public:
 
     /// Return the names of the currently supported embedded PHREEQC databases.
     static auto namesEmbeddedDatabases() -> Strings;
+
+private:
+    /// The underlying PHREEQC object containing the state of PHREEQC after parsing the database.
+    SharedPtr<PHREEQC> m_ptr;
 };
 
 } // namespace Reaktoro

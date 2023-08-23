@@ -259,6 +259,11 @@ auto PhreeqcDatabase::load(const String& filename) -> PhreeqcDatabase&
     return *this;
 }
 
+auto PhreeqcDatabase::ptr() const -> SharedPtr<PHREEQC> const&
+{
+    return m_ptr;
+}
+
 auto PhreeqcDatabase::withName(const String& name) -> PhreeqcDatabase
 {
     PhreeqcDatabase db;
@@ -266,6 +271,7 @@ auto PhreeqcDatabase::withName(const String& name) -> PhreeqcDatabase
     detail::PhreeqcDatabaseHelper helper(content);
     db.addSpecies(helper.species_list);
     db.attachData(helper);
+    db.m_ptr = helper.phreeqc;
     return db;
 }
 
@@ -275,6 +281,7 @@ auto PhreeqcDatabase::fromFile(const String& path) -> PhreeqcDatabase
     PhreeqcDatabase db;
     db.addSpecies(helper.species_list);
     db.attachData(helper);
+    db.m_ptr = helper.phreeqc;
     return db;
 }
 
