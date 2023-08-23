@@ -215,19 +215,20 @@ auto getPhreeqcDatabaseContent(String name) -> String
     error(!contains(PhreeqcDatabase::namesEmbeddedDatabases(), name),
         "Could not load embedded PHREEQC database file with name `", name, "`. ",
         "The currently supported names are: \n"
-        "    - Amm.dat            \n"
-        "    - ColdChem.dat       \n"
-        "    - core10.dat         \n"
-        "    - frezchem.dat       \n"
-        "    - iso.dat            \n"
-        "    - llnl.dat           \n"
-        "    - minteq.dat         \n"
-        "    - minteq.v4.dat      \n"
-        "    - phreeqc.dat        \n"
-        "    - pitzer.dat         \n"
-        "    - sit.dat            \n"
-        "    - Tipping_Hurley.dat \n"
-        "    - wateq4f.da         \n"
+        "    - Amm.dat              \n"
+        "    - ColdChem.dat         \n"
+        "    - core10.dat           \n"
+        "    - frezchem.dat         \n"
+        "    - iso.dat              \n"
+        "    - llnl.dat             \n"
+        "    - minteq.dat           \n"
+        "    - minteq.v4.dat        \n"
+        "    - phreeqc.dat          \n"
+        "    - pitzer.dat           \n"
+        "    - sit.dat              \n"
+        "    - thermoddem-v1.10.dat \n"
+        "    - Tipping_Hurley.dat   \n"
+        "    - wateq4f.da           \n"
         "");
     return Embedded::get("databases/phreeqc/" + name);
 }
@@ -301,6 +302,7 @@ auto PhreeqcDatabase::namesEmbeddedDatabases() -> Strings
         "phreeqc.dat",
         "pitzer.dat",
         "sit.dat",
+        "thermoddem-v1.10.dat",
         "Tipping_Hurley.dat",
         "wateq4f.dat"
     };
