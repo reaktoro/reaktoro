@@ -69,13 +69,13 @@ struct ActivityModelParamsPitzer
     Vec<InteractionParamAttribs> alpha2; ///< The parameters \eq{\alpha_2_{ij}} associated to the parameters \eq{\beta^{(2)}_{ij}}.
 };
 
-/// Return the activity model for aqueous electrolyte phases based on PHREEQC's implementation.
+/// Return the Pitzer activity model for aqueous electrolyte phases based on PHREEQC's implementation.
 auto ActivityModelPitzer() -> ActivityModelGenerator;
 
-/// Return the activity model for aqueous electrolyte phases based on PHREEQC's implementation.
+/// Return the Pitzer activity model for aqueous electrolyte phases based on PHREEQC's implementation.
 auto ActivityModelPitzer(ActivityModelParamsPitzer const& params) -> ActivityModelGenerator;
 
-/// Return the activity model for aqueous electrolyte phases based on PHREEQC's implementation.
+/// Return the Pitzer activity model for aqueous electrolyte phases based on PHREEQC's implementation.
 auto ActivityModelPitzer(Params const& params) -> ActivityModelGenerator;
 
 } // namespace Reaktoro
