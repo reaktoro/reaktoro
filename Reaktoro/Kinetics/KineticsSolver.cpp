@@ -46,7 +46,8 @@ struct KineticsSolver::Impl
     EquilibriumConditions kconditions; ///< The equilibrium conditions used for the kinetics calculations.
     KineticsOptions koptions;          ///< The options of this kinetics solver.
     KineticsResult kresult;            ///< The result of the equilibrium calculation with kinetic constraints
-    VectorXr w;                        ///< The auxiliary vector used to set the w input variables of the equilibrium conditions used for the kinetics calculations.
+    VectorXr w;                        ///< The auxiliary vector used to set the input variables w of the equilibrium conditions used for the kinetics calculations.
+    VectorXd c0;                       ///< The auxiliary vector used to set the initial amounts c0 of the conservative components of the equilibrium conditions used for the kinetics calculations.
     VectorXd plower;                   ///< The auxiliary vector used to set the lower bounds of p variables of the equilibrium conditions used for the kinetics calculations.
     VectorXd pupper;                   ///< The auxiliary vector used to set the upper bounds of p variables of the equilibrium conditions used for the kinetics calculations.
 
@@ -61,6 +62,7 @@ struct KineticsSolver::Impl
       ksolver(kspecs),
       kconditions(kspecs),
       w(kdims.Nw),
+      c0(kdims.Nc),
       plower(kdims.Np),
       pupper(kdims.Np)
     {
@@ -100,7 +102,11 @@ struct KineticsSolver::Impl
     /// Update the equilibrium conditions for kinetics with given state, time step, and equilibrium conditions to be attained during chemical kinetics.
     auto updateEquilibriumConditionsForKinetics(ChemicalState& state, real const& dt, EquilibriumConditions const& econditions) -> void
     {
+        auto const& K = system.stoichiometricMatrix();
+        auto const& n0 = state.speciesAmounts();
+
         w << econditions.inputValues(), dt;
+        c0 << econditions.initialComponentAmountsGetOrCompute(state), K.transpose() * n0.matrix();
 
         plower.head(edims.Np) = econditions.lowerBoundsControlVariablesP();
         plower.tail(kdims.Nr).fill(-inf); // no lower bounds for Δξ
@@ -109,6 +115,7 @@ struct KineticsSolver::Impl
         pupper.tail(kdims.Nr).fill(+inf); // no upper bounds for Δξ
 
         kconditions.setInputVariables(w);
+        kconditions.setInitialComponentAmounts(c0);
         kconditions.setLowerBoundsControlVariablesP(plower);
         kconditions.setUpperBoundsControlVariablesP(pupper);
     }
