@@ -209,4 +209,8 @@ TEST_CASE("Testing ActivityModelPhreeqc", "[ActivityModelPhreeqc]")
             CHECK( la_actual == Approx(la_expected).epsilon(1e-2) ); // Check Reaktoro's calculated activities (log base 10) are within 1% of PHREEQC's reported values.
         }
     }
+
+    CHECK_THROWS( ActivityModelPhreeqc(PhreeqcDatabase()) ); // Not initialized
+    CHECK_THROWS( ActivityModelPhreeqc(PhreeqcDatabase("pitzer.dat")) ); // Pitzer not supported
+    CHECK_THROWS( ActivityModelPhreeqc(PhreeqcDatabase("sit.dat")) ); // SIT not supported
 }
