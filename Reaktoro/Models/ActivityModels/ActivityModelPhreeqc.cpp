@@ -52,11 +52,9 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
 
     // The PHREEQC pointer that gives us access to the internal state of PHREEQC after parsing the database.
     auto const phq = db.ptr();
-    errorif(phq == nullptr, "The PhreeqcDatabase object you are using with ActivityModelPhreeqc does not seem to have been properly initialized. Ensure you have specified a PHREEQC database file for its initialization.");
 
     // The PHREEQC pointer to H2O species
     PhreeqcSpecies const* s_h2o = phq->s_h2o;
-    errorif(s_h2o == nullptr, "The species pointer s_h2o in PHREEQC does not seem to have been initialized properly. Ensure the PHREEQC database you are using is valid and it contains a species that PHREEQC can recognize as water.");
 
     // The llnl arrays in PHREEQC. These arrays are used to compute the activity coefficients of the species when using LLNL activity model.
     Vec<double> llnl_temp(phq->llnl_temp, phq->llnl_temp + phq->llnl_count_temp);
@@ -263,8 +261,20 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
 
 auto ActivityModelPhreeqc(PhreeqcDatabase const& db) -> ActivityModelGenerator
 {
+    // The PHREEQC pointer that gives us access to the internal state of PHREEQC after parsing the database.
+    auto const phq = db.ptr();
+
+    // Check if database object has been properly initialized
+    errorif(phq == nullptr, "The PhreeqcDatabase object you are using with ActivityModelPhreeqc does not seem to have been properly initialized. Ensure you have specified a PHREEQC database file for its initialization.");
+
+    // Check the database has a valid species pointer for water
+    errorif(phq->s_h2o == nullptr, "The species pointer s_h2o in PHREEQC does not seem to have been initialized properly. Ensure the PHREEQC database you are using is valid and it contains a species that PHREEQC can recognize as water.");
+
+    // Check if either a SIT or Pitzer based database is being used
+    errorif(phq->sit_model, "ActivityModelPhreeqc currently does not support the SIT activity model of PHREEQC. Get in touch if this is a feature you need.");
+    errorif(phq->pitzer_model, "ActivityModelPhreeqc currently does not support the Pitzer activity model of PHREEQC. Please use ActivityModelPitzer.");
+
     return [=](SpeciesList const& species) { return createActivityModelPhreeqc(species, db); };
 }
-
 
 } // namespace Reaktoro
