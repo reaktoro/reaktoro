@@ -20,29 +20,16 @@
 // C++ includes
 #include <cassert>
 #include <cmath>
-#include <set>
-#include <string>
-#include <vector>
 
 // Reaktoro includes
-#include <Reaktoro/Common/Algorithms.hpp>
 #include <Reaktoro/Common/Constants.hpp>
-#include <Reaktoro/Common/ConvertUtils.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
-#include <Reaktoro/Common/InterpolationUtils.hpp>
-#include <Reaktoro/Common/NamingUtils.hpp>
-#include <Reaktoro/Common/ParseUtils.hpp>
-#include <Reaktoro/Common/Real.hpp>
-#include <Reaktoro/Common/StringUtils.hpp>
-#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
-#include <Reaktoro/Math/BilinearInterpolator.hpp>
 #include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
-#include <Reaktoro/Serialization/Models/ActivityModels.hpp>
 #include <Reaktoro/Water/WaterConstants.hpp>
 
 namespace Reaktoro {
@@ -58,26 +45,32 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
     AqueousMixture solution(species);
 
     // The index of water in the solution
-    const Index iw = solution.indexWater();
+    auto const iw = solution.indexWater();
 
+    // The molar mass of water (in kg/mol)
     auto const Mw = solution.species(iw).molarMass();
 
-    auto const s_h2o = std::any_cast<const PhreeqcSpecies*>(solution.species(iw).attachedData());
-
-    auto const gfw_water = s_h2o->gfw;
+    // The PHREEQC pointer that gives us access to the internal state of PHREEQC after parsing the database.
     auto const phq = db.ptr();
+    errorif(phq == nullptr, "The PhreeqcDatabase object you are using with ActivityModelPhreeqc does not seem to have been properly initialized. Ensure you have specified a PHREEQC database file for its initialization.");
 
+    // The PHREEQC pointer to H2O species
+    PhreeqcSpecies const* s_h2o = phq->s_h2o;
+    errorif(s_h2o == nullptr, "The species pointer s_h2o in PHREEQC does not seem to have been initialized properly. Ensure the PHREEQC database you are using is valid and it contains a species that PHREEQC can recognize as water.");
+
+    // The llnl arrays in PHREEQC. These arrays are used to compute the activity coefficients of the species when using LLNL activity model.
     Vec<double> llnl_temp(phq->llnl_temp, phq->llnl_temp + phq->llnl_count_temp);
     Vec<double> llnl_adh(phq->llnl_adh, phq->llnl_adh + phq->llnl_count_adh);
     Vec<double> llnl_bdh(phq->llnl_bdh, phq->llnl_bdh + phq->llnl_count_bdh);
     Vec<double> llnl_bdot(phq->llnl_bdot, phq->llnl_bdot + phq->llnl_count_bdot);
     Vec<double> llnl_co2_coefs(phq->llnl_co2_coefs, phq->llnl_co2_coefs + phq->llnl_count_co2_coefs);
 
+    // The PHREEQC species pointers for all species in the aqueous solution.
     Vec<PhreeqcSpecies const*> s_x;
     for(auto const& species : solution.species())
     {
         PhreeqcSpecies const* s = PhreeqcUtils::findSpecies(*phq, species.name());
-        errorif(s == nullptr, "Species " + species.name() + " not found in PHREEQC database. Make sure you are assigning ActivityModelPhreeqc to an aqueous phase containing species from a PHREEQC database using PhreeqcDatabase class.");
+        errorif(s == nullptr, "The species " + species.name() + " was not found in the PHREEQC database. Make sure you are assigning ActivityModelPhreeqc to an aqueous phase whose all species can be found in your chosen PHREEQC database.");
         s_x.push_back(s);
     }
 
@@ -89,6 +82,9 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
     {
         // The arguments for the activity model evaluation
         auto const& [T, P, x] = args;
+
+        // Check the validity of the mole fractions of the species (only at debug mode!)
+        assert(x.minCoeff() > 0.0 && x.maxCoeff() <= 1.0);
 
         // Evaluate the state of the aqueous solution
         auto const& aqstate = *aqstateptr = solution.state(T, P, x);
