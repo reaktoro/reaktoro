@@ -22,6 +22,9 @@
 #   • Svetlana Kyas (13 July 2022)
 # -----------------------------------------------------------------------------
 
+# NOTE (by Allan Leal, 28 August 2023): This example is not working and it will
+# be archived for now until it's further investigated.
+
 # https://water.usgs.gov/water-resources/software/PHREEQC/documentation/phreeqc3-html/phreeqc3-64.htm
 
 from reaktoro import *
@@ -32,11 +35,8 @@ import math
 db = PhreeqcDatabase("phreeqc.dat")
 
 # Create an aqueous phase automatically selecting all species with provided elements
-aqueousphase = AqueousPhase(speciate("H O C Ca Cl Na K Mg S Si"))
-aqueousphase.setActivityModel(chain(
-    ActivityModelHKF(),
-    ActivityModelDrummond("CO2")
-))
+aqueousphase = AqueousPhase()
+aqueousphase.set(ActivityModelPhreeqc(db))
 
 # Gypsum
 # 	CaSO4:2H2O = Ca+2 + SO4-2 + 2 H2O

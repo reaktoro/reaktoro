@@ -20,6 +20,10 @@
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
 #   • Svetlana Kyas (29 September 2021)
+#
+# and since revised by:
+#   • Allan Leal (28 August 2023)
+#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
 # -----------------------------------------------------------------------------
 
 
@@ -29,12 +33,12 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
 solution = AqueousPhase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2")
-solution.setActivityModel(ActivityModelHKF())
+solution.set(ActivityModelPhreeqc(db))
 
 # Define an ion exchange phase
 exchange_species = "NaX KX CaX2 MgX2"
 exchange = IonExchangePhase(exchange_species)
-exchange.setActivityModel(ActivityModelIonExchangeGainesThomas())
+exchange.set(ActivityModelIonExchangeGainesThomas())
 
 # Create chemical system
 system = ChemicalSystem(db, solution, exchange)

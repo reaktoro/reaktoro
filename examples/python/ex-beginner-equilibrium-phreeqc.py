@@ -19,7 +19,12 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (29 September)
+#   • Svetlana Kyas (29 September 2021)
+#
+# and since revised by:
+#   • Allan Leal (28 August 2023)
+#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
+#     - Using ActivityModelPengRobinsonPhreeqc instead of ActivityModelPengRobinson for gaseous phase.
 # -----------------------------------------------------------------------------
 
 
@@ -28,13 +33,10 @@ from reaktoro import *
 db = PhreeqcDatabase("phreeqc.dat")
 
 solution = AqueousPhase(speciate("H O C Na Cl"))
-solution.setActivityModel(chain(
-    ActivityModelHKF(),
-    ActivityModelDrummond("CO2")
-))
+solution.set(ActivityModelPhreeqc(db))
 
 gases = GaseousPhase("CO2(g)")
-gases.setActivityModel(ActivityModelPengRobinson())
+gases.set(ActivityModelPengRobinsonPhreeqc())
 
 system = ChemicalSystem(db, solution, gases)
 

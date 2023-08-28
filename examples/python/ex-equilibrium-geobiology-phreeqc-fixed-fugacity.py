@@ -22,6 +22,9 @@
 #   • Svetlana Kyas (21 July, 2022)
 # -----------------------------------------------------------------------------
 
+# NOTE (by Allan Leal, 28 August 2023): This example requires the Pitzer
+# parameters in the PHREEQC database below to be used, but this is not being
+# done here yet. The activity model should be changed to ActivityModelPitzer.
 
 from reaktoro import *
 import numpy as np

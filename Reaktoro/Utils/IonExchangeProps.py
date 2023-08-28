@@ -26,11 +26,11 @@ def testIonExchangeProps():
 
     # Define an aqueous phase
     solution = AqueousPhase(speciate("H O C Ca Na Mg Cl"))
-    solution.setActivityModel(ActivityModelHKF())
+    solution.set(ActivityModelHKF())
 
     # Define an ion exchange phase
     exchange = IonExchangePhase("NaX CaX2 KX AlX3 MgX2")
-    exchange.setActivityModel(ActivityModelIonExchange())
+    exchange.set(ActivityModelIonExchange())
 
     # Create chemical system
     system = ChemicalSystem(db, solution, exchange)

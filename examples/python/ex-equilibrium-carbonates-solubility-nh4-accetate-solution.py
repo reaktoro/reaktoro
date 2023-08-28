@@ -19,7 +19,11 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (13 July, 2022)
+#   • Svetlana Kyas (13 July 2022)
+#
+# and since revised by:
+#   • Allan Leal (28 August 2023)
+#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase
 # -----------------------------------------------------------------------------
 
 
@@ -71,7 +75,7 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Create an aqueous phase automatically selecting all species with provided elements
 aqueousphase = AqueousPhase(speciate("H O C Ca Cl Na K Mg S Si N"))
-aqueousphase.setActivityModel(ActivityModelPitzer())
+aqueousphase.set(ActivityModelPhreeqc(db))
 
 # Create carbonates phases
 calcitephase = MineralPhase("Calcite")

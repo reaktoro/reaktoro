@@ -20,6 +20,10 @@
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
 #   • Svetlana Kyas (14 October 2021)
+#
+# and since revised by:
+#   • Allan Leal (28 August 2023)
+#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
 # -----------------------------------------------------------------------------
 
 
@@ -29,15 +33,11 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
 solution = AqueousPhase(speciate("H O C Ca Na Mg Cl"))
-solution.setActivityModel(chain(
-    ActivityModelHKF(),
-    ActivityModelDrummond("CO2")
-))
+solution.set(ActivityModelPhreeqc(db))
 
 # Define an ion exchange phase
-exchange_species = "NaX CaX2 MgX2"
-exchange = IonExchangePhase(exchange_species)
-exchange.setActivityModel(ActivityModelIonExchangeGainesThomas())
+exchange = IonExchangePhase("NaX CaX2 MgX2")
+exchange.set(ActivityModelIonExchangeGainesThomas())
 
 # Create chemical system
 system = ChemicalSystem(db, solution, exchange)
@@ -49,11 +49,13 @@ P = 1.0  # pressure in bar
 state = ChemicalState(system)
 state.temperature(T, "celsius")
 state.pressure(P, "bar")
+
 # Scale solution recipe to match the values of the PHREEQC examples
 state.set("H2O"   , 1.e6, "kg")
 state.set("Na+" , 1.10, "kmol")
 state.set("Mg+2", 0.48, "kmol")
 state.set("Ca+2", 1.90, "kmol")
+
 # Set the number of exchange assuming that it is completely occupied by sodium
 state.set("NaX" , 0.06, "mol")
 
