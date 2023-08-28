@@ -59,7 +59,7 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
     Phases phases(db);
 
     phases.add( AqueousPhase(speciate("H O C Na Cl Ca Mg")) );
-    phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2").setActivityModel(ActivityModelIonExchange()) );
+    phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2").set(ActivityModelIonExchange()) );
 
     ChemicalSystem system(phases);
 
@@ -226,8 +226,8 @@ TEST_CASE("Testing IonExchangeProps class", "[IonExchangeProps]")
 
         Phases phases(dbphreeqc);
 
-        phases.add( AqueousPhase(speciate("H O C Na Cl Ca Mg")).setActivityModel(ActivityModelHKF()) );
-        phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2").setActivityModel(ActivityModelIonExchange()) );
+        phases.add( AqueousPhase(speciate("H O C Na Cl Ca Mg")).set(ActivityModelHKF()) );
+        phases.add( IonExchangePhase("NaX CaX2 KX AlX3 MgX2").set(ActivityModelIonExchange()) );
 
         ChemicalSystem system(phases);
 

@@ -20,6 +20,11 @@
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
 #   • Svetlana Kyas (14 July 2021)
+#
+# and since revised by:
+#   • Allan Leal (28 August 2023)
+#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase
+#     - Using ActivityModelPengRobinsonPhreeqc instead of ActivityModelPengRobinson for gaseous phase.
 # -----------------------------------------------------------------------------
 
 
@@ -58,14 +63,11 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Create an aqueous phase automatically selecting all species with provided elements
 aqueousphase = AqueousPhase(speciate("H O C Na Cl"))
-aqueousphase.setActivityModel(chain(
-    ActivityModelHKF(),
-    ActivityModelDrummond("CO2"),
-))
+aqueousphase.set(ActivityModelPhreeqc(db))
 
 # Create a gaseous phase
 gaseousphase = GaseousPhase("CO2(g)")
-gaseousphase.setActivityModel(ActivityModelPengRobinson())
+gaseousphase.set(ActivityModelPengRobinsonPhreeqc())
 
 # Collecting all above-defined phases
 phases = Phases(db)

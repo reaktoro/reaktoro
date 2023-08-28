@@ -19,10 +19,11 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (23 July, 2021)
+#   • Svetlana Kyas (23 July 2021)
 #
 # and since revised by:
-#   •
+#   • Allan Leal (28 August 2023)
+#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
 # -----------------------------------------------------------------------------
 
 
@@ -34,14 +35,11 @@ db = PhreeqcDatabase("phreeqc.dat")
 
 # Define an aqueous phase
 solution = AqueousPhase(speciate("H O C Ca Na Cl Cd"))
-solution.setActivityModel(chain(
-    ActivityModelHKF(),
-    ActivityModelDrummond("CO2")
-))
+solution.set(ActivityModelPhreeqc(db))
 
 # Define an ion exchange phase
 exchange = IonExchangePhase("NaX CdX2")
-exchange.setActivityModel(ActivityModelIonExchangeGainesThomas())
+exchange.set(ActivityModelIonExchangeGainesThomas())
 
 # Create chemical system
 system = ChemicalSystem(db, solution, exchange)

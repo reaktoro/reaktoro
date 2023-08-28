@@ -22,6 +22,9 @@
 #   • Svetlana Kyas (21 July, 2022)
 # -----------------------------------------------------------------------------
 
+# NOTE (by Allan Leal, 28 August 2023): This example requires the Pitzer
+# parameters in the PHREEQC database below to be used, but this is not being
+# done here yet. The activity model should be changed to ActivityModelPitzer.
 
 from reaktoro import *
 import numpy as np
@@ -108,7 +111,7 @@ from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 
 levels = MaxNLocator(nbins=15).tick_values(data_pH.min(), data_pH.max())
-cmap = ml.cm.get_cmap('rainbow')
+cmap = ml.colormaps['rainbow']
 reversed_map = cmap.reversed() # reversing the original colormap using reversed() function
 norm = BoundaryNorm(levels, ncolors=reversed_map.N, clip=True)
 
@@ -123,7 +126,7 @@ plt.savefig('pH-colormesh.png', bbox_inches='tight')
 plt.close('all')
 
 levels = MaxNLocator(nbins=15).tick_values(np.log10(data_P).min(), np.log10(data_P).max())
-cmap = ml.cm.get_cmap('cividis')
+cmap = ml.colormaps['cividis']
 norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
 
 fig, ax = plt.subplots(1, 1)
