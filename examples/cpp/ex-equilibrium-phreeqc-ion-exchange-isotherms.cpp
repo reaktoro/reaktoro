@@ -20,10 +20,13 @@
 // -----------------------------------------------------------------------------
 // This example was originally authored by:
 //   • Svetlana Kyas (23 November 2021)
+//
+// and since revised by:
+//   • Allan Leal (28 August 2023)
+//     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 using namespace Reaktoro;
 
@@ -33,18 +36,15 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueous_phase(speciate("H O C Ca Na Mg Cl K"));
-    aqueous_phase.setActivityModel(chain(
-        ActivityModelHKF(),
-        ActivityModelDrummond("CO2")
-    ));
+    AqueousPhase aqueousphase(speciate("H O C Ca Na Mg Cl K"));
+    aqueousphase.set(ActivityModelPhreeqc(db));
 
     // Define an ion exchange phase
-    IonExchangePhase exchange_phase("KX CaX2");
-    exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
+    IonExchangePhase exchangephase("KX CaX2");
+    exchangephase.set(ActivityModelIonExchangeGainesThomas());
 
     // Construct the chemical system
-    ChemicalSystem system(db, aqueous_phase, exchange_phase);
+    ChemicalSystem system(db, aqueousphase, exchangephase);
 
     const auto T = 25.0; // temperature in celsius
     const auto P = 1.0;  // pressure in bar
@@ -74,6 +74,7 @@ int main()
     EquilibriumSolver solver(system);
 
     // Output the header of the table
+    // TODO: Use class Table here to make this data collection and output code simpler.
     std::cout << "   mols(K)   mols(Ca)          I   mols(K+) mols(Ca+2)   beta(KX) beta(CaX2)   mols(KX) mols(CaX2)" << std::endl;
 
     for(auto i = 0; i < num_steps; i++)

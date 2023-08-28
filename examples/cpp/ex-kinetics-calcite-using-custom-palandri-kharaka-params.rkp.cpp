@@ -15,6 +15,18 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// -----------------------------------------------------------------------------
+// 👏 Acknowledgements 👏
+// -----------------------------------------------------------------------------
+// This example was originally authored by:
+//   • Allan Leal (15 November 2022)
+//
+// and since revised by:
+//   • Allan Leal (28 August 2023)
+//     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
+//     - Using automatic collection of aqueous species with AqueousPhase() constructor.
+// -----------------------------------------------------------------------------
+
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
@@ -34,14 +46,14 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     ChemicalSystem system(db,
-        AqueousPhase("H2O(aq) H+ OH- Ca+2 HCO3- CO3-2 CO2(aq)").set(ActivityModelDavies()),
+        AqueousPhase().set(ActivityModelPhreeqc(db)),
         MineralPhase("Calcite"),
-        MineralReaction("Calcite").setRateModel(ReactionRateModelPalandriKharaka(params)),
+        MineralReaction("Calcite").set(ReactionRateModelPalandriKharaka(params)),
         MineralSurface("Calcite", 5.0, "cm2", 70, "mg", 0.667)  // surface area = (initial surface area)*((current mass)/(initial mass))**power = (5 cm2)*((current mass in mg)/(70 mg))**0.667
     );
 
     ChemicalState state(system);
-    state.set("H2O(aq)", 1.0, "kg");
+    state.set("H2O", 1.0, "kg");
     state.set("Calcite", 70, "mg");
 
     AqueousProps aprops(system);
@@ -66,7 +78,7 @@ int main()
         table.column("Ca+2")     << aprops.speciesMolality("Ca+2");
         table.column("HCO3-")    << aprops.speciesMolality("HCO3-");
         table.column("CO3-2")    << aprops.speciesMolality("CO3-2");
-        table.column("CO2(aq)")  << aprops.speciesMolality("CO2(aq)");
+        table.column("CO2")  << aprops.speciesMolality("CO2");
         table.column("pH")       << aprops.pH();
     }
 
@@ -79,7 +91,7 @@ int main()
     fig1.drawLine(table["Time"], table["Ca+2"], "Ca<sup>+2</sup>");
     fig1.drawLine(table["Time"], table["HCO3-"], "HCO<sub>3</sub><sup>-</sup>");
     fig1.drawLine(table["Time"], table["CO3-2"], "CO<sub>3</sub><sup>-2</sup>");
-    fig1.drawLine(table["Time"], table["CO2(aq)"], "CO<sub>2</sub>(aq)");
+    fig1.drawLine(table["Time"], table["CO2"], "CO<sub>2</sub>");
     fig1.yaxisScaleLog();
     fig1.show();
     fig1.save("ex-kinetics-calcite-using-embedded-params-fig1.pdf");

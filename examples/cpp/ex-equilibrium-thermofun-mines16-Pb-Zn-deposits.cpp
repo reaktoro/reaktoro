@@ -36,9 +36,9 @@ int main()
     // Define aqueous phase
     AqueousPhase solution(speciate(selected_elements));
     solution.setActivityModel(chain(
-            ActivityModelHKF(),
-            ActivityModelDrummond("CO2")
-            ));
+        ActivityModelHKF(),
+        ActivityModelDrummond("CO2")
+    ));
 
     // Define minerals
     MineralPhases minerals("Arg Ang Gp Gn Sp Tro Smt Znc Ankerite Calcite "
