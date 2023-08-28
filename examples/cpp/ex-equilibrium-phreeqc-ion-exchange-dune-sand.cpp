@@ -20,6 +20,11 @@
 // -----------------------------------------------------------------------------
 // This example was originally authored by:
 //   • Svetlana Kyas (30 August 2021)
+//
+// and since revised by:
+//   • Allan Leal (28 August 2023)
+//     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
+//   • Allan Leal (16 July 2021)
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
@@ -32,18 +37,15 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueous_phase(speciate("H O C Ca Na Mg Cl"));
-    aqueous_phase.setActivityModel(chain(
-        ActivityModelHKF(),
-        ActivityModelDrummond("CO2")
-    ));
+    AqueousPhase aqueousphase(speciate("H O C Ca Na Mg Cl"));
+    aqueousphase.set(ActivityModelPhreeqc(db));
 
     // Define an ion exchange phase
-    IonExchangePhase exchange_phase("NaX CaX2 MgX2");
-    exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
+    IonExchangePhase exchangephase("NaX CaX2 MgX2");
+    exchangephase.setActivityModel(ActivityModelIonExchangeGainesThomas());
 
     // Construct the chemical system
-    ChemicalSystem system(db, aqueous_phase, exchange_phase);
+    ChemicalSystem system(db, aqueousphase, exchangephase);
 
     const auto T = 25.0; // temperature in celsius
     const auto P = 1.0;  // pressure in atm
@@ -53,10 +55,12 @@ int main()
     solutionstate.temperature(T, "celsius");
     solutionstate.pressure(P, "atm");
     solutionstate.set("H2O"    , 1.00, "kg");
+
     // Scale solution recipe to match the values of the PHREEQC examples
     solutionstate.set("Na+"  , 1.10, "mol");
     solutionstate.set("Mg+2" , 0.48, "mol");
     solutionstate.set("Ca+2" , 1.90, "mol");
+
     // Set the number of exchange assuming that it is completely occupied by Na
     solutionstate.set("NaX"  , 0.06, "umol");
 

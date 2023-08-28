@@ -20,10 +20,13 @@
 // -----------------------------------------------------------------------------
 // This example was originally authored by:
 //   • Svetlana Kyas (30 August 2021)
+//
+// and since revised by:
+//   • Allan Leal (28 August 2023)
+//     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
 // -----------------------------------------------------------------------------
 
 #include <Reaktoro/Reaktoro.hpp>
-#include <Reaktoro/Core/Utils.hpp>
 
 using namespace Reaktoro;
 
@@ -33,14 +36,15 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     // Define an aqueous phase
-    AqueousPhase aqueous_phase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2");
-    aqueous_phase.setActivityModel(ActivityModelHKF());
+    AqueousPhase aqueousphase("H2O Na+ Cl- H+ OH- K+ Ca+2 Mg+2");
+    aqueousphase.set(ActivityModelPhreeqc(db));
 
     // Define an ion exchange phase
-    IonExchangePhase exchange_phase("NaX KX CaX2 MgX2");
-    exchange_phase.setActivityModel(ActivityModelIonExchangeGainesThomas());
+    IonExchangePhase exchangephase("NaX KX CaX2 MgX2");
+    exchangephase.set(ActivityModelIonExchangeGainesThomas());
+
     // Construct the chemical system
-    ChemicalSystem system(db, aqueous_phase, exchange_phase);
+    ChemicalSystem system(db, aqueousphase, exchangephase);
 
     const auto T = 25.0; // temperature in celsius
     const auto P = 1.0;  // pressure in bar

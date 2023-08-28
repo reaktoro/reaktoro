@@ -15,6 +15,17 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+// -----------------------------------------------------------------------------
+// 👏 Acknowledgements 👏
+// -----------------------------------------------------------------------------
+// This example was originally authored by:
+//   • Allan Leal (15 November 2022)
+//
+// and since revised by:
+//   • Allan Leal (28 August 2023)
+//     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
+// -----------------------------------------------------------------------------
+
 #include <Reaktoro/Reaktoro.hpp>
 using namespace Reaktoro;
 
@@ -39,7 +50,7 @@ int main()
     PhreeqcDatabase db("phreeqc.dat");
 
     ChemicalSystem system(db,
-        AqueousPhase("H2O H+ OH- Na+ Cl-").set(ActivityModelHKF()),
+        AqueousPhase("H2O H+ OH- Na+ Cl-").set(ActivityModelPhreeqc(db)),
         MineralPhase("Halite"),
         GeneralReaction("Halite = Na+ + Cl-").setRateModel(ratefn)
     );

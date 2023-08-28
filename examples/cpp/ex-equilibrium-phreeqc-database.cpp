@@ -22,6 +22,9 @@
 //   • Svetlana Kyas (14 July 2021)
 //
 // and since revised by:
+//   • Allan Leal (28 August 2023)
+//     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
+//     - Using ActivityModelPengRobinsonPhreeqc instead of ActivityModelPengRobinson for gaseous phase
 //   • Allan Leal (16 July 2021)
 // -----------------------------------------------------------------------------
 
@@ -35,14 +38,11 @@ int main()
 
     // Define aqueous phase
     AqueousPhase aqueousphase(speciate("H O C Na Cl"));
-    aqueousphase.setActivityModel(chain(
-        ActivityModelHKF(),
-        ActivityModelDrummond("CO2")
-    ));
+    aqueousphase.set(ActivityModelPhreeqc(db));
 
     // Define gaseous phase
     GaseousPhase gaseousphase("CO2(g)");
-    gaseousphase.setActivityModel(ActivityModelPengRobinson());
+    gaseousphase.set(ActivityModelPengRobinsonPhreeqc());
 
     // Initialize phases with aqueous and gaseous phase
     Phases phases(db);
