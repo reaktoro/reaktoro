@@ -32,6 +32,7 @@
 #include <Reaktoro/Models/ActivityModels/ActivityModelIdealSolution.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelIonExchange.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPengRobinsonPhreeqcOriginal.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPhreeqc.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPhreeqcIonicStrengthPressureCorrection.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzer.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzerHMW.hpp>
