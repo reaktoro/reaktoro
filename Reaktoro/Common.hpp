@@ -27,6 +27,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Index.hpp>
 #include <Reaktoro/Common/InterpolationUtils.hpp>
+#include <Reaktoro/Common/Macros.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Common/Memoization.hpp>
 #include <Reaktoro/Common/Meta.hpp>
