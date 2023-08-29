@@ -87,6 +87,7 @@ want to read about.
 - @ref Reaktoro::ActivityModelDavies
 - @ref Reaktoro::ActivityModelDebyeHuckel
 - @ref Reaktoro::ActivityModelPitzerHMW (deprecated - use @ref Reaktoro::ActivityModelPitzer)
+- @ref Reaktoro::ActivityModelPhreeqc
 - @ref Reaktoro::ActivityModelPitzer
 - @ref Reaktoro::ActivityModelHKF
 - @ref Reaktoro::ActivityModelDrummond
