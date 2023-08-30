@@ -35,7 +35,7 @@ ReaktoroFindPackage(nlohmann_json 3.6.1 REQUIRED)
 ReaktoroFindPackage(Optima 0.3.3 REQUIRED)
 ReaktoroFindPackage(phreeqc4rkt 3.6.2.1 REQUIRED)
 ReaktoroFindPackage(tabulate 1.4.0 REQUIRED)
-ReaktoroFindPackage(ThermoFun 0.4.3 REQUIRED)
+ReaktoroFindPackage(ThermoFun 0.4.5 REQUIRED)
 ReaktoroFindPackage(tsl-ordered-map 1.0.0 REQUIRED)
 ReaktoroFindPackage(yaml-cpp 0.6.3 REQUIRED)
 
