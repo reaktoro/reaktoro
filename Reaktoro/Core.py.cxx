@@ -63,46 +63,49 @@ void exportCoreUtils(py::module& m);
 
 void exportCore(py::module& m)
 {
-    exportActivityModel(m);
-    exportActivityProps(m);
-    exportAggregateState(m);
-    exportChemicalFormula(m);
-    exportChemicalProps(m);
-    exportChemicalPropsPhase(m);
-    exportChemicalState(m);
-    exportChemicalSystem(m);
+    // NOTE: The order below is important for the Python bindings to work
+    // properly and to avoid C++ types in docstrings when producing stubs via pybind11-stubgen.
+    // https://pybind11.readthedocs.io/en/latest/advanced/misc.html#avoiding-c-types-in-docstrings
+    exportParam(m);
     exportData(m);
-    exportDatabase(m);
+    exportChemicalFormula(m);
     exportElement(m);
-    exportElementalComposition(m);
     exportElementList(m);
-    exportEmbedded(m);
+    exportAggregateState(m);
+    exportElementalComposition(m);
     exportFormationReaction(m);
+    exportSpecies(m);
+    exportSpeciesList(m);
     exportPhase(m);
     exportPhaseList(m);
     exportPhases(m);
-    exportParam(m);
-    exportParams(m);
-    exportReaction(m);
-    exportReactions(m);
+    exportDatabase(m);
     exportReactionEquation(m);
-    exportReactionList(m);
     exportReactionRate(m);
     exportReactionRateModel(m);
+    exportReaction(m);
+    exportReactionList(m);
+    exportReactions(m);
+    exportActivityModel(m);
+    exportActivityProps(m);
+    exportEmbedded(m);
+    exportParams(m);
     exportReactionThermoProps(m);
     exportReactionStandardThermoProps(m);
     exportReactionStandardThermoModel(m);
-    exportSpecies(m);
-    exportSpeciesList(m);
     exportSpeciesThermoProps(m);
     exportStandardThermoProps(m);
     exportStandardThermoModel(m);
     exportStateOfMatter(m);
     exportSurface(m);
     exportSurfaceAreaModel(m);
-    exportSurfaces(m);
     exportSurfaceList(m);
+    exportSurfaces(m);
     exportThermoProps(m);
     exportThermoPropsPhase(m);
     exportCoreUtils(m);
+    exportChemicalSystem(m);
+    exportChemicalState(m);
+    exportChemicalPropsPhase(m);
+    exportChemicalProps(m);
 }
