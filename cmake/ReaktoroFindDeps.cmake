@@ -40,8 +40,9 @@ ReaktoroFindPackage(tsl-ordered-map 1.0.0 REQUIRED)
 ReaktoroFindPackage(yaml-cpp 0.6.3 REQUIRED)
 
 # Optional dependencies
-ReaktoroFindPackage(reaktplot 0.4.1)
+set(PYBIND11_FINDPYTHON ON)  # needed when using cmake 3.27+; otherwise, cmake emits warning (https://github.com/pybind/pybind11/issues/4785)
 ReaktoroFindPackage(pybind11 2.10.0)
+ReaktoroFindPackage(reaktplot 0.4.1)
 ReaktoroFindPackage(Catch2 2.6.2)
 
 if(REAKTORO_BUILD_TESTS)
