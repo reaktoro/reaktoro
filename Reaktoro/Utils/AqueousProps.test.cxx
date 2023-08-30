@@ -213,68 +213,68 @@ TEST_CASE("Testing AqueousProps class", "[AqueousProps]")
         aqprops.update(state);
 
         // Check values of aqueous properties
-        CHECK( aqprops.pressure()                    == Approx(P*1e5)        );
-        CHECK( aqprops.temperature()                 == Approx(T + 273.15)   );
-        CHECK( aqprops.ionicStrength()               == Approx(27.2725)      );
-        CHECK( aqprops.Eh()                          == Approx(0.000754269)  );
-        CHECK( aqprops.pH()                          == Approx(-0.0605375)   );
-        CHECK( aqprops.ionicStrengthEffective()      == Approx(27.2725)      );
-        CHECK( aqprops.ionicStrengthStoichiometric() == Approx(27.273)       );
+        CHECK( aqprops.pressure().val()                    == Approx(P*1e5)         );
+        CHECK( aqprops.temperature().val()                 == Approx(T + 273.15)    );
+        CHECK( aqprops.ionicStrength().val()               == Approx(27.2721122969) );
+        CHECK( aqprops.Eh().val()                          == Approx(0.000754321)   );
+        CHECK( aqprops.pH().val()                          == Approx(-0.0605375)    );
+        CHECK( aqprops.ionicStrengthEffective().val()      == Approx(27.2721122969) );
+        CHECK( aqprops.ionicStrengthStoichiometric().val() == Approx(27.2725395818) );
 
         // Check water properties
-        CHECK( aqprops.waterAmount() == Approx(state.speciesAmount(iH2O))  );
-        CHECK( aqprops.waterMass()   == Approx(state.speciesMass(iH2O))    );
+        CHECK( aqprops.waterAmount().val() == Approx(state.speciesAmount(iH2O))  );
+        CHECK( aqprops.waterMass().val()   == Approx(state.speciesMass(iH2O))    );
 
         // Check electric charge properties
-        CHECK( aqprops.charge() == Approx(state.charge()) );
-        CHECK( aqprops.chargeMolality() == Approx(state.charge() / state.speciesMass(iH2O)) );
+        CHECK( aqprops.charge().val() == Approx(state.charge()) );
+        CHECK( aqprops.chargeMolality().val() == Approx(state.charge() / state.speciesMass(iH2O)) );
 
         // Check molalities of all species
-        CHECK( aqprops.speciesMolality("H2O(aq)"  ) == Approx(55.5085)     );
-        CHECK( aqprops.speciesMolality("H+(aq)"   ) == Approx(27.2723)     );
-        CHECK( aqprops.speciesMolality("OH-(aq)"  ) == Approx(27.2723)     );
-        CHECK( aqprops.speciesMolality("H2(aq)"   ) == Approx(44.0212)     );
-        CHECK( aqprops.speciesMolality("O2(aq)"   ) == Approx(22.0106)     );
-        CHECK( aqprops.speciesMolality("Na+(aq)"  ) == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("Cl-(aq)"  ) == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("NaCl(aq)" ) == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("HCl(aq)"  ) == Approx(0.000223584) );
-        CHECK( aqprops.speciesMolality("NaOH(aq)" ) == Approx(0.000203703) );
-        CHECK( aqprops.speciesMolality("Ca++(aq)" ) == Approx(8.09398e-05) );
-        CHECK( aqprops.speciesMolality("Mg++(aq)" ) == Approx(3.6657e-05)  );
-        CHECK( aqprops.speciesMolality("CO2(aq)"  ) == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("HCO3-(aq)") == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("CO3--(aq)") == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("CaCl2(aq)") == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("MgCl2(aq)") == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("SiO2(aq)" ) == Approx(2.28438e-16) );
-        CHECK( aqprops.speciesMolality("e-(aq)"   ) == Approx(2.28438e-16) );
+        CHECK( aqprops.speciesMolality("H2O(aq)"  ).val() == Approx(55.5085)       );
+        CHECK( aqprops.speciesMolality("H+(aq)"   ).val() == Approx(27.2718671642) );
+        CHECK( aqprops.speciesMolality("OH-(aq)"  ).val() == Approx(27.2718671642) );
+        CHECK( aqprops.speciesMolality("H2(aq)"   ).val() == Approx(44.0212)       );
+        CHECK( aqprops.speciesMolality("O2(aq)"   ).val() == Approx(22.0106)       );
+        CHECK( aqprops.speciesMolality("Na+(aq)"  ).val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("Cl-(aq)"  ).val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("NaCl(aq)" ).val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("HCl(aq)"  ).val() == Approx(0.000223584)   );
+        CHECK( aqprops.speciesMolality("NaOH(aq)" ).val() == Approx(0.000203703)   );
+        CHECK( aqprops.speciesMolality("Ca++(aq)" ).val() == Approx(8.09398e-05)   );
+        CHECK( aqprops.speciesMolality("Mg++(aq)" ).val() == Approx(3.66570e-05)   );
+        CHECK( aqprops.speciesMolality("CO2(aq)"  ).val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("HCO3-(aq)").val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("CO3--(aq)").val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("CaCl2(aq)").val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("MgCl2(aq)").val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("SiO2(aq)" ).val() == Approx(2.28438e-16)   );
+        CHECK( aqprops.speciesMolality("e-(aq)"   ).val() == Approx(2.28438e-16)   );
 
         // Check molalities of all elements
-        CHECK( aqprops.elementMolality("H")  == Approx(253.604)     );
-        CHECK( aqprops.elementMolality("C")  == Approx(6.85313e-16) );
-        CHECK( aqprops.elementMolality("O")  == Approx(126.802)     );
-        CHECK( aqprops.elementMolality("Na") == Approx(0.000203703) );
-        CHECK( aqprops.elementMolality("Mg") == Approx(3.6657e-05)  );
-        CHECK( aqprops.elementMolality("Si") == Approx(2.28438e-16) );
-        CHECK( aqprops.elementMolality("Cl") == Approx(0.000223584) );
-        CHECK( aqprops.elementMolality("Ca") == Approx(8.09398e-05) );
+        CHECK( aqprops.elementMolality("H").val()  == Approx(253.604)     );
+        CHECK( aqprops.elementMolality("C").val()  == Approx(6.85313e-16) );
+        CHECK( aqprops.elementMolality("O").val()  == Approx(126.802)     );
+        CHECK( aqprops.elementMolality("Na").val() == Approx(0.000203703) );
+        CHECK( aqprops.elementMolality("Mg").val() == Approx(3.6657e-05)  );
+        CHECK( aqprops.elementMolality("Si").val() == Approx(2.28438e-16) );
+        CHECK( aqprops.elementMolality("Cl").val() == Approx(0.000223584) );
+        CHECK( aqprops.elementMolality("Ca").val() == Approx(8.09398e-05) );
 
         // Test convenience methods species and element molalities
         for(const auto& s : aqspecies)
         {
             const auto name = s.name();
             const auto idx = aqspecies.index(name);
-            CHECK( aqprops.speciesMolality(name) == Approx(aqprops.speciesMolalities()[idx]) );
-            CHECK( aqprops.speciesMolality(idx)  == Approx(aqprops.speciesMolalities()[idx]) );
+            CHECK( aqprops.speciesMolality(name).val() == Approx(aqprops.speciesMolalities()[idx]) );
+            CHECK( aqprops.speciesMolality(idx).val()  == Approx(aqprops.speciesMolalities()[idx]) );
         }
 
         for(const auto& e : aqelements)
         {
             const auto symbol = e.symbol();
             const auto idx = aqelements.index(symbol);
-            CHECK( aqprops.elementMolality(symbol) == Approx(aqprops.elementMolalities()[idx]) );
-            CHECK( aqprops.elementMolality(idx)    == Approx(aqprops.elementMolalities()[idx]) );
+            CHECK( aqprops.elementMolality(symbol).val() == Approx(aqprops.elementMolalities()[idx]) );
+            CHECK( aqprops.elementMolality(idx).val()    == Approx(aqprops.elementMolalities()[idx]) );
         }
     }
 
