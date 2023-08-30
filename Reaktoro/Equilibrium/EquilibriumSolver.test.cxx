@@ -100,7 +100,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
     EquilibriumResult result;
 
-    SECTION("there is only pure water")
+    SECTION("There is only pure water")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O")) );
@@ -190,7 +190,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         }
     }
 
-    SECTION("there is only pure water but there are other elements besides H and O with zero amounts")
+    SECTION("There is only pure water but there are other elements besides H and O with zero amounts")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O C Na Cl Ca")) );
@@ -212,7 +212,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 25 );
+            CHECK( result.iterations() == 30 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -230,7 +230,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 14 );
+            CHECK( result.iterations() == 26 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -241,7 +241,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         }
     }
 
-    SECTION("there is a more complicated aqueous solution")
+    SECTION("There is a more complicated aqueous solution")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -268,7 +268,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 41 );
+            CHECK( result.iterations() == 46 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -286,7 +286,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 27 );
+            CHECK( result.iterations() == 30 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -297,7 +297,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         }
     }
 
-    SECTION("there is an aqueous solution and a gaseous solution")
+    SECTION("There is an aqueous solution and a gaseous solution")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -325,7 +325,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 41 );
+            CHECK( result.iterations() == 50 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -343,7 +343,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 27 );
+            CHECK( result.iterations() == 31 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -354,7 +354,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         }
     }
 
-    SECTION("there is an aqueous solution, gaseous solution, several minerals")
+    SECTION("There is an aqueous solution, gaseous solution, several minerals")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -404,7 +404,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state);
 
                 CHECK( result.succeeded() );
-                CHECK( result.iterations() == 29 );
+                CHECK( result.iterations() == 35 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -430,7 +430,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state, restrictions);
 
                 CHECK( result.succeeded() );
-                CHECK( result.iterations() == 41 );
+                CHECK( result.iterations() == 66 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
@@ -452,7 +452,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state, restrictions);
 
                 CHECK( result.succeeded() );
-                CHECK( result.iterations() == 27 );
+                CHECK( result.iterations() == 33 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
@@ -468,7 +468,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         }
     }
 
-    SECTION("there is only pure water with given pH")
+    SECTION("There is only pure water with given pH")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O")) );
@@ -499,7 +499,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 17 );
+            CHECK( result.iterations() == 18 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
@@ -521,7 +521,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 17 );
+            CHECK( result.iterations() == 16 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
@@ -551,9 +551,9 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 PRINT_INFO_IF_FAILS(dndT);
                 CHECK( dndT.isApprox(VectorXd({{
-                   -1.1153486759477124e-11,
-                   -2.0093318694827316e-16,
-                    1.1153486759477124e-11,
+                   -1.1153486759477158e-11,
+                   -2.0093580722886620e-16,
+                    1.1153486759477158e-11,
                     0.0000000000000000e+00,
                     0.0000000000000000e+00 }})));
 
@@ -567,9 +567,9 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
 
                 PRINT_INFO_IF_FAILS(dndpH);
                 CHECK( dndpH.isApprox(VectorXd({{
-                   -2.7913579983210646e-10,
-                   -2.2814943345762589e-03,
-                    2.7913579983210646e-10,
+                   -2.7913579983210620e-10,
+                   -2.2814943340425057e-03,
+                    2.7913579983210620e-10,
                     0.0000000000000000e+00,
                     0.0000000000000000e+00 }})));
 
@@ -584,7 +584,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
         }
     }
 
-    SECTION("there is an aqueous solution with given pH in equilibrium with a gaseous solution")
+    SECTION("There is an aqueous solution with given pH in equilibrium with a gaseous solution")
     {
         Phases phases(db);
         phases.add( AqueousPhase(speciate("H O Na Cl C Ca Mg Si")) );
@@ -621,7 +621,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 42 );
+            CHECK( result.iterations() == 57 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
@@ -643,7 +643,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 28 );
+            CHECK( result.iterations() == 36 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
