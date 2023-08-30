@@ -34,6 +34,8 @@
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSolver.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
+#include <Reaktoro/Models/ActivityModels/ActivityModelPhreeqc.hpp>
 using namespace Reaktoro;
 
 #define PRINT_INFO_IF_FAILS(x) INFO(#x " = \n" << std::scientific << std::setprecision(16) << x)
@@ -656,5 +658,31 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             CHECK( state.pressure() == Approx(80.0 * 1.0e+5) );
             CHECK( state.speciesAmount("H+") == Approx(0.00099125) );
         }
+    }
+
+    SECTION("There is an aqueous solution in equilibrium with one or another mineral")
+    {
+        PhreeqcDatabase db("phreeqc.dat");
+
+        AqueousPhase aqueousphase;
+        aqueousphase.set(ActivityModelPhreeqc(db));
+
+        MineralPhases minerals("Gypsum Anhydrite");
+
+        ChemicalSystem system(db, aqueousphase, minerals);
+
+        ChemicalState state(system);
+        state.temperature(25.0, "°C");
+        state.pressure(1.0, "atm");
+        state.set("H2O", 1.0, "kg");
+        state.set("Gypsum", 1.0, "mol");
+        state.set("Anhydrite", 1.0, "mol");
+
+        EquilibriumSolver solver(system);
+
+        result = solver.solve(state);
+
+        CHECK( result.succeeded() );
+        CHECK( result.iterations() == 32 );
     }
 }
