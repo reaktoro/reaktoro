@@ -33,9 +33,9 @@ void exportKineticsSensitivity(py::module& m)
         .def(py::init<EquilibriumSpecs const&>())
         .def(py::init<EquilibriumSensitivity const&>())
         .def("initialize", &KineticsSensitivity::initialize, "Initialize this KineticsSensitivity object with given equilibrium problem specifications.")
-        .def("dnddt", &KineticsSensitivity::dnddt, return_internal_ref, "Return the derivatives of the species amounts n with respect to time step Δt.")
-        .def("dpddt", &KineticsSensitivity::dpddt, return_internal_ref, "Return the derivatives of the p control variables with respect to time step Δt.")
-        .def("dqddt", &KineticsSensitivity::dqddt, return_internal_ref, "Return the derivatives of the q control variables with respect to time step Δt.")
-        .def("duddt", &KineticsSensitivity::duddt, return_internal_ref, "Return the sensitivity derivatives of the chemical properties u with respect to time step Δt.")
+        .def("dnddt", &KineticsSensitivity::dnddt, return_internal_ref, "Return the derivatives of the species amounts n with respect to time step dt.")
+        .def("dpddt", &KineticsSensitivity::dpddt, return_internal_ref, "Return the derivatives of the p control variables with respect to time step dt.")
+        .def("dqddt", &KineticsSensitivity::dqddt, return_internal_ref, "Return the derivatives of the q control variables with respect to time step dt.")
+        .def("duddt", &KineticsSensitivity::duddt, return_internal_ref, "Return the sensitivity derivatives of the chemical properties u with respect to time step dt.")
         ;
 }

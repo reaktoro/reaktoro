@@ -65,13 +65,13 @@ void exportCubicEOS(py::module& m)
         .def_property_readonly("Tcr"       , [](CubicEOS::BipModelArgs const& self) { return self.Tcr; }       , "The critical temperatures of the substances in the fluid phase (in K)")
         .def_property_readonly("Pcr"       , [](CubicEOS::BipModelArgs const& self) { return self.Pcr; }       , "The critical pressures of the substances in the fluid phase (in Pa)")
         .def_property_readonly("omega"     , [](CubicEOS::BipModelArgs const& self) { return self.omega; }     , "The acentric factors of the substances in the fluid phase")
-        .def_property_readonly("a"         , [](CubicEOS::BipModelArgs const& self) { return self.a; }         , "The variables aᵢ in the cubic equation of state for each substance in the fluid phase computed at current temperature")
-        .def_property_readonly("aT"        , [](CubicEOS::BipModelArgs const& self) { return self.aT; }        , "The first-order temperature derivative of aᵢ")
-        .def_property_readonly("aTT"       , [](CubicEOS::BipModelArgs const& self) { return self.aTT; }       , "The second-order temperature derivative of aᵢ")
-        .def_property_readonly("alpha"     , [](CubicEOS::BipModelArgs const& self) { return self.alpha; }     , "The variables αᵢ in the cubic equation of state for each substance in the fluid phase computed at current temperature")
-        .def_property_readonly("alphaT"    , [](CubicEOS::BipModelArgs const& self) { return self.alphaT; }    , "The first-order temperature derivative of αᵢ")
-        .def_property_readonly("alphaTT"   , [](CubicEOS::BipModelArgs const& self) { return self.alphaTT; }   , "The second-order temperature derivative of αᵢ")
-        .def_property_readonly("b"         , [](CubicEOS::BipModelArgs const& self) { return self.b; }         , "The variables bᵢ in the cubic equation of state for each substance in the fluid phase computed at current temperature")
+        .def_property_readonly("a"         , [](CubicEOS::BipModelArgs const& self) { return self.a; }         , "The variables a[i] in the cubic equation of state for each substance in the fluid phase computed at current temperature")
+        .def_property_readonly("aT"        , [](CubicEOS::BipModelArgs const& self) { return self.aT; }        , "The first-order temperature derivative of a[i]")
+        .def_property_readonly("aTT"       , [](CubicEOS::BipModelArgs const& self) { return self.aTT; }       , "The second-order temperature derivative of a[i]")
+        .def_property_readonly("alpha"     , [](CubicEOS::BipModelArgs const& self) { return self.alpha; }     , "The variables alpha[i] in the cubic equation of state for each substance in the fluid phase computed at current temperature")
+        .def_property_readonly("alphaT"    , [](CubicEOS::BipModelArgs const& self) { return self.alphaT; }    , "The first-order temperature derivative of alpha[i]")
+        .def_property_readonly("alphaTT"   , [](CubicEOS::BipModelArgs const& self) { return self.alphaTT; }   , "The second-order temperature derivative of alpha[i]")
+        .def_property_readonly("b"         , [](CubicEOS::BipModelArgs const& self) { return self.b; }         , "The variables b[i] in the cubic equation of state for each substance in the fluid phase computed at current temperature")
         ;
 
     exportModel<CubicEOS::Bip, CubicEOS::BipModelArgs const&>(ceos, "BipModel");
@@ -81,15 +81,15 @@ void exportCubicEOS(py::module& m)
             py::arg("alpha") = 0.0,
             py::arg("alphaT") = 0.0,
             py::arg("alphaTT") = 0.0)
-        .def_readwrite("alpha", &CubicEOS::Alpha::alpha, "The evaluated value of the α(T; ω) function in a cubic equation of state.")
-        .def_readwrite("alphaT", &CubicEOS::Alpha::alphaT, "The evaluated first-order temperature derivative of the α(T; ω) function.")
-        .def_readwrite("alphaTT", &CubicEOS::Alpha::alphaTT, "The evaluated second-order temperature derivative of the α(T; ω) function.")
+        .def_readwrite("alpha", &CubicEOS::Alpha::alpha, "The evaluated value of the alpha(T; w) function in a cubic equation of state.")
+        .def_readwrite("alphaT", &CubicEOS::Alpha::alphaT, "The evaluated first-order temperature derivative of the alpha(T; w) function.")
+        .def_readwrite("alphaTT", &CubicEOS::Alpha::alphaTT, "The evaluated second-order temperature derivative of the alpha(T; w) function.")
         ;
 
     py::class_<CubicEOS::AlphaModelArgs>(ceos, "AlphaModelArgs")
-        .def_property_readonly("Tr", [](CubicEOS::AlphaModelArgs const& self) { return self.Tr; }, "The reduced temperature Tr = T/Tcr with respect to the substance for which α(T; ω) is computed.")
+        .def_property_readonly("Tr", [](CubicEOS::AlphaModelArgs const& self) { return self.Tr; }, "The reduced temperature Tr = T/Tcr with respect to the substance for which alpha(T; w) is computed.")
         .def_property_readonly("TrT", [](CubicEOS::AlphaModelArgs const& self) { return self.TrT; }, "The first-order temperature derivative of Tr for convenience.")
-        .def_property_readonly("omega", [](CubicEOS::AlphaModelArgs const& self) { return self.omega; }, "The acentric factor of the substance for which α(T; ω) is computed.")
+        .def_property_readonly("omega", [](CubicEOS::AlphaModelArgs const& self) { return self.omega; }, "The acentric factor of the substance for which alpha(T; w) is computed.")
         ;
 
     exportModel<CubicEOS::Alpha, CubicEOS::AlphaModelArgs const&>(ceos, "AlphaModel");
