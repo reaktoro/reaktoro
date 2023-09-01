@@ -95,10 +95,6 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
     const auto P = 100.0; // in bar
 
     EquilibriumOptions options;
-    // options.optima.output.active = true;
-    options.hessian = GibbsHessian::Exact;
-    options.optima.maxiters = 100;
-    options.optima.convergence.tolerance = 1e-10;
 
     EquilibriumResult result;
 
@@ -124,7 +120,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 17 );
+            CHECK( result.iterations() == 18 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -214,7 +210,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 30 );
+            CHECK( result.iterations() == 29 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -232,7 +228,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 26 );
+            CHECK( result.iterations() == 17 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -270,7 +266,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 46 );
+            CHECK( result.iterations() == 45 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -288,7 +284,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 30 );
+            CHECK( result.iterations() == 29 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -327,7 +323,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 50 );
+            CHECK( result.iterations() == 59 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -388,7 +384,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state);
 
                 CHECK( result.succeeded() );
-                CHECK( result.iterations() <= 62 ); // for some reason, 57 iterations are needed in Linux and 62 in Windows and macOS! This started to appear after ChemicalState was changed (initial species amounts became 1e-16 instead of zero)
+                CHECK( result.iterations() == 54 ); // for some reason, 57 iterations are needed in Linux and 62 in Windows and macOS! This started to appear after ChemicalState was changed (initial species amounts became 1e-16 instead 54 zero)
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state); // check a recalculation converges in 0 iterations
@@ -432,7 +428,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state, restrictions);
 
                 CHECK( result.succeeded() );
-                CHECK( result.iterations() == 66 );
+                CHECK( result.iterations() == 56 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
@@ -454,7 +450,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
                 result = solver.solve(state, restrictions);
 
                 CHECK( result.succeeded() );
-                CHECK( result.iterations() == 33 );
+                CHECK( result.iterations() == 35 );
                 checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
                 result = solver.solve(state, restrictions); // check a recalculation converges in 0 iterations
@@ -645,7 +641,7 @@ TEST_CASE("Testing EquilibriumSolver", "[EquilibriumSolver]")
             result = solver.solve(state, conditions);
 
             CHECK( result.succeeded() );
-            CHECK( result.iterations() == 36 );
+            CHECK( result.iterations() == 34 );
             checkChemicalEquilibriumStateHasZeroDerivativeValues(state);
 
             result = solver.solve(state, conditions); // check a recalculation converges in 0 iterations
