@@ -19,7 +19,7 @@ add_custom_target(reaktoro-setuptools ALL
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Reaktoro> reaktoro
     COMMAND ${STUBGEN_COMMAND1}
     COMMAND ${STUBGEN_COMMAND2}
-    COMMAND ${PYTHON_EXECUTABLE} setup.py --quiet build --force
+    COMMAND ${Python_EXECUTABLE} setup.py --quiet build --force
     COMMAND ${CMAKE_COMMAND} -E rm reaktoro/$<TARGET_FILE_NAME:reaktoro4py>
     COMMAND ${CMAKE_COMMAND} -E rm reaktoro/$<TARGET_FILE_NAME:Reaktoro>
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -31,4 +31,3 @@ endif()
 
 # Create an install target for the reaktoro python package
 install(CODE "execute_process(COMMAND pip install . --no-deps --force-reinstall --ignore-installed --no-compile --prefix=${REAKTORO_PYTHON_INSTALL_PREFIX} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})")
-
