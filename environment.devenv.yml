@@ -8,7 +8,7 @@ channels:
 dependencies:
   - autodiff >=1.0.3
   - catch2 =2
-  - ccache  # [unix]
+  - ccache
   - clangxx_osx-64  # [osx]
   - cmake
   - cpp-tabulate
