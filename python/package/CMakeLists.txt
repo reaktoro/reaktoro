@@ -4,8 +4,11 @@ configure_file(setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 # Create pybind11-stubgen command string depending if this program has been found or not
 if(PYBIND11_STUBGEN)
     string(REPLACE ";" "\\;" REAKTORO_PYTHONPATH_ESCAPED "${REAKTORO_PYTHONPATH}")
-    set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH_ESCAPED}" ${PYBIND11_STUBGEN} --ignore-all-errors reaktoro)
-    set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro/ reaktoro)
+    set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH_ESCAPED}" ${PYBIND11_STUBGEN} --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro)
+    set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro)
+    # Commented lines below are for pybind11-stubgen v2+ (while above for v0.15.1)
+    # set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH_ESCAPED}" ${PYBIND11_STUBGEN} --ignore-all-errors reaktoro)
+    # set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro/ reaktoro)
     else()
     set(STUBGEN_COMMAND1 "")  # do nothing when it it's time to generate python stubs for reaktoro in the target below
     set(STUBGEN_COMMAND2 "")  # do nothing when it it's time to copy the generated stub directory
