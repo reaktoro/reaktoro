@@ -3,13 +3,9 @@ configure_file(setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 
 # Create pybind11-stubgen command string depending if this program has been found or not
 if(PYBIND11_STUBGEN)
-    string(REPLACE ";" "\\;" REAKTORO_PYTHONPATH_ESCAPED "${REAKTORO_PYTHONPATH}")
-    set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH_ESCAPED}" ${PYBIND11_STUBGEN} --ignore-invalid=all --no-setup-py --log-level=ERROR reaktoro)
-    set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro-stubs/ reaktoro)
-    # Commented lines below are for pybind11-stubgen v2+ (while above for v0.15.1)
-    # set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${REAKTORO_PYTHONPATH_ESCAPED}" ${PYBIND11_STUBGEN} --ignore-all-errors reaktoro)
-    # set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro/ reaktoro)
-    else()
+    set(STUBGEN_COMMAND1 ${CMAKE_COMMAND} -E env "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}" ${PYBIND11_STUBGEN} --ignore-all-errors reaktoro)
+    set(STUBGEN_COMMAND2 ${CMAKE_COMMAND} -E copy_directory stubs/reaktoro/ reaktoro)
+else()
     set(STUBGEN_COMMAND1 "")  # do nothing when it it's time to generate python stubs for reaktoro in the target below
     set(STUBGEN_COMMAND2 "")  # do nothing when it it's time to copy the generated stub directory
 endif()
@@ -17,7 +13,7 @@ endif()
 # Create a custom target to build the python package during build stage
 add_custom_target(reaktoro-setuptools ALL
     DEPENDS reaktoro4py
-    COMMAND ${CMAKE_COMMAND} -E rm -rf build  # remove build dir created by previous `python setup.py install` commands (see next) to ensure fresh rebuild since changed python files are not overwritten even with --force option
+    COMMAND ${CMAKE_COMMAND} -E rm -rf build  # remove any previously created build dir (due to `python setup.py install` below) to ensure fresh rebuild since any modified python files are not overwritten even when --force option is used
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/reaktoro reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:reaktoro4py> reaktoro
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Reaktoro> reaktoro
