@@ -68,27 +68,18 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # The directories where the built C++ library may be located
-file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/Reaktoro REAKTORO_LIBRARY_DIR_1)
-file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/Reaktoro/$<CONFIG> REAKTORO_LIBRARY_DIR_2)
+file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/Reaktoro/$<CONFIG> REAKTORO_LIBRARY_DIR)
 
 # The directory where the python package reaktoro is built
-# Note: This needs improvement. The complication below is due to the need of
-# pybind11-stubgen in importing reaktoro, and this is done before running
-# python setup.y install in reaktoro-setuptools target.
-# Once the package is built with setuptools, the directory
-# REAKTORO_PYTHON_PACKAGE_DIR_1 is created. But directory
-# REAKTORO_PYTHON_PACKAGE_DIR_2 always exist and its used by pybind11-stubgen.
-file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/python/package/build/lib REAKTORO_PYTHON_PACKAGE_DIR_1)
-file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/python/package REAKTORO_PYTHON_PACKAGE_DIR_2)
+file(TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/python/package/build/lib REAKTORO_PYTHON_PACKAGE_DIR)
 
 # Define variables REAKTORO_PATH and REAKTORO_PYTHONPATH used to set environment variables PATH and PYTHONPATH.
 if(WIN32)
-    set(REAKTORO_PATH "${REAKTORO_LIBRARY_DIR_1}\;${REAKTORO_LIBRARY_DIR_2}\;$ENV{PATH}")
-    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR_1}\;${REAKTORO_PYTHON_PACKAGE_DIR_2}\;$ENV{PYTHONPATH}")
+    set(REAKTORO_PATH "${REAKTORO_LIBRARY_DIR}\;$ENV{PATH}")
+    set(REAKTORO_PYTHONPATH "${REAKTORO_PYTHON_PACKAGE_DIR}\;$ENV{PYTHONPATH}")
 else()
-    # Surround path values with '' to avoid cmake errors when ( or ) exists such as in `Program Files (x86)` when compiling in WSL (Windows Subsystem for Linux).
-    set(REAKTORO_PATH '$ENV{PATH}')
-    set(REAKTORO_PYTHONPATH '${REAKTORO_PYTHON_PACKAGE_DIR_1}:${REAKTORO_PYTHON_PACKAGE_DIR_2}:$ENV{PYTHONPATH}')
+    set(REAKTORO_PATH '$ENV{PATH}')  # Surround path values with '' to avoid cmake errors when ( or ) exists such as in `Program Files (x86)` when compiling in WSL (Windows Subsystem for Linux).
+    set(REAKTORO_PYTHONPATH '${REAKTORO_PYTHON_PACKAGE_DIR}:$ENV{PYTHONPATH}')
 endif()
 
 # Find all Reaktoro dependencies
