@@ -1,17 +1,19 @@
-# This cmake module determines if a conda environment is active.
+# CondaAware: CMake projects consitently configured with activated conda environments
 #
-# Note: CMAKE_INSTALL_PREFIX is set to the environment variable CONDA_PREFIX
-# if a conda environment is found active.
+# Copyright © 2019-2023 Allan Leal
 #
-# This automatic behavior can be overriden by manually
-# specifying a different CMAKE_INSTALL_PREFIX.
-
-# Skip if this file has already been included
-if(CONDA_AWARE_INCLUDED)
-    return()
-else()
-    set(CONDA_AWARE_INCLUDED TRUE)
-endif()
+# This cmake module determines if a conda environment is active. If so, it aims
+# to set the Python_EXECUTABLE variable to the Python executable located within
+# the currently activated conda environment. It intentionally avoids using the
+# base environment defined by the environment variable CONDA_PYTHON_EXE.
+#
+# Note 1: Python_EXECUTABLE follows the naming convention of CMake's FindPython
+# module. This ensures that find_package(Python) identifies the Python
+# executable within the active conda environment.
+#
+# Note 2: CMAKE_INSTALL_PREFIX is set to the environment variable CONDA_PREFIX
+# if a conda environment is found active. This automatic behavior can be
+# overriden by manually specifying a different CMAKE_INSTALL_PREFIX.
 
 # Check if a conda environment is active
 if(DEFINED ENV{CONDA_PREFIX})
@@ -19,35 +21,32 @@ if(DEFINED ENV{CONDA_PREFIX})
     message(STATUS "CondaAware: Conda environment detected!")
     message(STATUS "CondaAware: Found environment variable CONDA_PREFIX=$ENV{CONDA_PREFIX}")
 
-    # Check if environment variable PYTHON is defined, and if so, set PYTHON_EXECUTABLE to PYTHON
+    # Check if environment variable PYTHON is defined, and if so, set Python_EXECUTABLE to PYTHON
     if(DEFINED ENV{PYTHON})
         message(STATUS "CondaAware: Found environment variable PYTHON=$ENV{PYTHON}")
-        message(STATUS "CondaAware: Setting PYTHON_EXECUTABLE to PYTHON=$ENV{PYTHON}")
-        set(PYTHON_EXECUTABLE $ENV{PYTHON})
+        message(STATUS "CondaAware: Setting Python_EXECUTABLE to $ENV{PYTHON}")
+        set(Python_EXECUTABLE $ENV{PYTHON})
     endif()
 
-    # Ensure python executable is properly selected if not specified yet using
-    # cmake variables PYTHON_EXECUTABLE or environment variable PYTHON. The
-    # code below tries to set PYTHON_EXECUTABLE with the python executable in
-    # the activated conda environment and not in the base environment given by
-    # the environment variable CONDA_PYTHON_EXE!
-    if(NOT DEFINED PYTHON_EXECUTABLE)
+    # Ensure the Python executable is correctly selected, either through the use
+    # of CMake variables Python_EXECUTABLE or an environment variable PYTHON.
+    if(NOT DEFINED Python_EXECUTABLE)
         if(UNIX)
-            message(STATUS "CondaAware: Setting PYTHON_EXECUTABLE=$ENV{CONDA_PREFIX}/bin/python")
-            set(PYTHON_EXECUTABLE "$ENV{CONDA_PREFIX}/bin/python")
+            message(STATUS "CondaAware: Setting Python_EXECUTABLE=$ENV{CONDA_PREFIX}/bin/python")
+            set(Python_EXECUTABLE "$ENV{CONDA_PREFIX}/bin/python")
         endif()
 
         if(WIN32)
-            message(STATUS "CondaAware: Setting PYTHON_EXECUTABLE=$ENV{CONDA_PREFIX}\\python.exe")
-            set(PYTHON_EXECUTABLE "$ENV{CONDA_PREFIX}\\python.exe")
+            message(STATUS "CondaAware: Setting Python_EXECUTABLE=$ENV{CONDA_PREFIX}\\python.exe")
+            set(Python_EXECUTABLE "$ENV{CONDA_PREFIX}\\python.exe")
         endif()
 
-        if(NOT DEFINED PYTHON_EXECUTABLE)
-            message(FATAL_ERROR "CondaAware: Could not determine a value for PYTHON_EXECUTABLE. Expecting Unix or Windows systems.")
+        if(NOT DEFINED Python_EXECUTABLE)
+            message(FATAL_ERROR "CondaAware: Could not determine a value for Python_EXECUTABLE. Expecting Unix or Windows systems.")
         endif()
     endif()
 
-    # Set auxiliary variable CONDA_AWARE_PREFIX as according to the logic below.
+    # Set auxiliary variable CONDA_AWARE_PREFIX according to the logic below.
     if(DEFINED ENV{CONDA_BUILD})
         message(STATUS "CondaAware: Detected conda build task (e.g., in a conda-forge build)!")
         if(UNIX)
@@ -68,7 +67,7 @@ if(DEFINED ENV{CONDA_PREFIX})
 
     # Check if CONDA_AWARE_PREFIX has been successfully set
     if(DEFINED CONDA_AWARE_PREFIX)
-        message(STATUS "CondaAware: Set CONDA_AWARE_PREFIX=${CONDA_AWARE_PREFIX}")
+        message(STATUS "CondaAware: Setting CONDA_AWARE_PREFIX=${CONDA_AWARE_PREFIX}")
     else()
         message(FATAL_ERROR "CondaAware: Could not determine a value for CONDA_AWARE_PREFIX. Expecting Unix or Windows systems.")
     endif()
