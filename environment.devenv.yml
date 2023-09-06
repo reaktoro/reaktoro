@@ -9,6 +9,7 @@ dependencies:
   - autodiff >=1.0.3
   - catch2 =2
   - ccache
+  - clangxx  # [linux]
   - clangxx_osx-64  # [osx]
   - cmake
   - cpp-tabulate
