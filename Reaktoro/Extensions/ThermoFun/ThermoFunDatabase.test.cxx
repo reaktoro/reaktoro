@@ -19,7 +19,6 @@
 #include <catch2/catch.hpp>
 
 // ThermoFun includes
-#include <spdlog/spdlog.h>
 #include <ThermoFun/Database.h>
 
 // Reaktoro includes
@@ -28,7 +27,7 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ThermoFunDatabase", "[ThermoFunDatabase]")
 {
-    spdlog::set_level(spdlog::level::off); // Disable log's from ThermoFun for the tests below that are expected to overwrite species or raise exceptions
+    ThermoFunDatabase::disableLogging(); // Disable logs from ThermoFun for the tests below that are expected to overwrite species or raise exceptions
 
     const auto T = 298.15;
     const auto P = 1.0e5;

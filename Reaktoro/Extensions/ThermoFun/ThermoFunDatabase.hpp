@@ -58,6 +58,9 @@ public:
     /// @param contents The contents of the database as a string.
     static auto fromContents(const String& contents) ->  ThermoFunDatabase;
 
+    /// Disable all logs emitted by ThermoFun.
+    static auto disableLogging() ->  void;
+
     /// Construct a default ThermoFunDatabase object.
     ThermoFunDatabase();
 

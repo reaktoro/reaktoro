@@ -26,6 +26,7 @@
 #include <Reaktoro/Extensions/ThermoFun/ThermoFunEngine.hpp>
 
 // ThermoFun includes
+#include <spdlog/spdlog.h>
 #include <ThermoFun/ThermoFun.h>
 
 namespace Reaktoro {
@@ -171,6 +172,11 @@ auto ThermoFunDatabase::fromFiles(const Strings& filepaths) ->  ThermoFunDatabas
 auto ThermoFunDatabase::fromContents(const String& contents) ->  ThermoFunDatabase
 {
     return ThermoFunDatabase::fromFile(contents);
+}
+
+auto ThermoFunDatabase::disableLogging() ->  void
+{
+    spdlog::set_level(spdlog::level::off);
 }
 
 } // namespace Reaktoro

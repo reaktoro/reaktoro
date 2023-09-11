@@ -35,5 +35,6 @@ void exportThermoFunDatabase(py::module& m)
         .def_static("fromFile", &ThermoFunDatabase::fromFile)
         .def_static("fromFiles", &ThermoFunDatabase::fromFiles)
         .def_static("fromContents", &ThermoFunDatabase::fromContents)
+        .def_static("disableLogging", &ThermoFunDatabase::disableLogging)
         ;
 }
