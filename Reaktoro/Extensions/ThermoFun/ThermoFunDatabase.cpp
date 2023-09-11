@@ -153,9 +153,18 @@ auto ThermoFunDatabase::withName(const String& name) -> ThermoFunDatabase
     return fromFile(text);
 }
 
-auto ThermoFunDatabase::fromFile(const String& file) ->  ThermoFunDatabase
+auto ThermoFunDatabase::fromFile(const String& filepath) ->  ThermoFunDatabase
 {
-    ThermoFun::Database db(file);
+    ThermoFun::Database db(filepath);
+    return ThermoFunDatabase(db);
+}
+
+auto ThermoFunDatabase::fromFiles(const Strings& filepaths) ->  ThermoFunDatabase
+{
+    errorif(filepaths.empty(), "Expecting at least one file path in method ThermoFunDatabase::fromFiles.");
+    ThermoFun::Database db(filepaths[0]);
+    for(auto i = 1; i < filepaths.size(); ++i)
+        db.appendData(filepaths[i]);
     return ThermoFunDatabase(db);
 }
 
