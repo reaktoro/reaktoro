@@ -49,6 +49,11 @@ public:
     /// @warning An exception is thrown if `filepath` does not point to a valid database file.
     static auto fromFile(const String& filepath) ->  ThermoFunDatabase;
 
+    /// Return a ThermoFunDatabase object constructed with given local files.
+    /// @param filepaths The paths, including file name, to the database files.
+    /// @warning An exception is thrown if `filepaths` contain paths to invalid database files.
+    static auto fromFiles(const Strings& filepaths) ->  ThermoFunDatabase;
+
     /// Return a ThermoFunDatabase object constructed with given database text contents.
     /// @param contents The contents of the database as a string.
     static auto fromContents(const String& contents) ->  ThermoFunDatabase;
