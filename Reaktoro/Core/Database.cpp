@@ -52,11 +52,16 @@ struct Database::Impl
     /// Add an element in the database.
     auto addElement(Element const& element) -> void
     {
-        if(element_symbols.find(element.symbol()) == element_symbols.end())
+        auto const ielement = elements.findWithSymbol(element.symbol());
+
+        if(ielement < elements.size())
         {
-            elements.append(element);
-            element_symbols.insert(element.symbol());
+            errorif(element.molarMass() != elements[ielement].molarMass(), "Element with symbol `", element.symbol(), "` already exists in the database with molar mass ", elements[ielement].molarMass(), "kg/mol. You are trying to add a new element with molar mass ", element.molarMass(), "kg/mol. It's possible that your database has a duplicated element entry with inconsistent molar mass and other attributes");
+            errorif(element.name() != elements[ielement].name(), "Element with symbol `", element.symbol(), "` already exists in the database with name `", elements[ielement].name(), "`. You are trying to add a new element with name `", element.name(), "`. It's possible that your database has a duplicated element entry with inconsistent names and other attributes");
         }
+
+        elements.append(element);
+        element_symbols.insert(element.symbol());
     }
 
     /// Add a species in the database.
@@ -71,7 +76,7 @@ struct Database::Impl
         // Replace name if not unique.
         if(name != unique_name) {
             newspecies = newspecies.withName(unique_name);
-            warning(true, "Species should have unique names in Database, but species ", name, " "
+            warningif(true, "Species should have unique names in Database, but species ", name, " "
                 "violates this rule. The unique name ", unique_name, " has been assigned instead.");
         }
 
