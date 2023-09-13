@@ -43,10 +43,10 @@ struct PhreeqcDatabaseHelper
     SpeciesList species_list;
 
     /// The symbols of the elements already in the database (needed for fast existence check)
-    Set<String> element_symbols;
+    Set<String> inserted_elements_set;
 
-    /// The names of the species already in the database (needed for fast existence check)
-    Set<String> species_names;
+    /// The ids of the species already inserted in the database, with id = name + aggregate state (needed for fast existence check)
+    Set<String> inserted_species_set;
 
     /// Construct a default PhreeqcDatabaseHelper object.
     PhreeqcDatabaseHelper()
@@ -76,13 +76,14 @@ struct PhreeqcDatabaseHelper
     /// Return true if an Element object with given symbol already exists in the database.
     auto containsElement(String symbol) -> bool
     {
-        return element_symbols.find(symbol) != element_symbols.end();
+        return inserted_elements_set.find(symbol) != inserted_elements_set.end();
     }
 
     /// Return true if a Species object with given name already exists in the database.
-    auto containsSpecies(String name) -> bool
+    auto containsSpecies(String name, AggregateState agstate) -> bool
     {
-        return species_names.find(name) != species_names.end();
+        auto const id = name + std::to_string(static_cast<int>(agstate));
+        return inserted_species_set.find(id) != inserted_species_set.end();
     }
 
     /// Append an Element object with given PhreeqcElement pointer.
@@ -97,23 +98,24 @@ struct PhreeqcDatabaseHelper
             .withName(PhreeqcUtils::name(e))     // element name is H+, H2, CO3-2, Fe+2, Fe+3, etc.
             .withMolarMass(PhreeqcUtils::molarMass(e)));
 
-        element_symbols.insert(PhreeqcUtils::symbol(e));
+        inserted_elements_set.insert(PhreeqcUtils::symbol(e));
     }
 
     /// Create a Species object with given Phreeqc species pointer.
     template<typename SpeciesType>
     auto addSpecies(const SpeciesType* s) -> Species const&
     {
-        // Skip if species with same name has already been appended!
+        // Skip if species with same name and same aggregate state has already been appended!
         const auto name = PhreeqcUtils::name(s);
-        const auto idx = indexfn(species_list, RKT_LAMBDA(x, x.name() == name));
+        const auto agstate = PhreeqcUtils::aggregateState(s);
+        const auto idx = indexfn(species_list, RKT_LAMBDA(x, x.name() == name && x.aggregateState() == agstate));
         if(idx < species_list.size())
             return species_list[idx];
 
         const auto newspecies = PhreeqcUtils::isMasterSpecies(s) ? createMasterSpecies(s) : createProductSpecies(s);
 
         species_list.append(newspecies);
-        species_names.insert(name);
+        inserted_species_set.insert(name + std::to_string(static_cast<int>(agstate)));
 
         return species_list.back();
     }
