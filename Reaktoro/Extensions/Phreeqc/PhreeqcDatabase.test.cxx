@@ -139,6 +139,26 @@ TEST_CASE("Testing PhreeqcDatabase constructor and load method", "[PhreeqcDataba
     CHECK_THROWS( db.species().index("UO2(CO3)2-2")   );
     CHECK_THROWS( db.species().index("UO2(CO3)3-4")   );
 
+    //-------------------------------------------------------------------------
+    // Testing species with same name but different aggregate states are both added
+    //-------------------------------------------------------------------------
+    {
+        PhreeqcDatabase db("llnl.dat");
+
+        auto const aqueous = db.species().withAggregateState(AggregateState::Aqueous);
+        auto const solids = db.species().withAggregateState(AggregateState::Solid);
+
+        CHECK_NOTHROW( aqueous.getWithName("Cd(OH)2") );
+        CHECK_NOTHROW( aqueous.getWithName("Fe(OH)2") );
+        CHECK_NOTHROW( aqueous.getWithName("Fe(OH)3") );
+        CHECK_NOTHROW( aqueous.getWithName("FeSO4") );
+
+        CHECK_NOTHROW( solids.getWithName("Cd(OH)2") );
+        CHECK_NOTHROW( solids.getWithName("Fe(OH)2") );
+        CHECK_NOTHROW( solids.getWithName("Fe(OH)3") );
+        CHECK_NOTHROW( solids.getWithName("FeSO4") );
+    }
+
     // // // In this new load operation, complement the PhreeqcDatabase object with more contents
     // db.extend(getStringContentsPhreeqcDatabaseComplement()); // TODO Implement PhreeqcDatabase::extend method using PhreeqcUtis::execute for this.
 
