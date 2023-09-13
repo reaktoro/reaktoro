@@ -41,10 +41,10 @@ struct Database::Impl
     Any attached_data;
 
     /// The symbols of all elements already in the database.
-    Set<String> element_symbols;
+    Set<String> inserted_elements_set;
 
-    /// The names of all species already in the database.
-    Set<String> species_names;
+    /// The ids of the species already inserted in the database, with id = species name + aggregate state
+    Set<String> inserted_species_set;
 
     /// The species in the database grouped in terms of their aggregate state
     Map<AggregateState, SpeciesList> species_with_aggregate_state;
@@ -57,7 +57,7 @@ struct Database::Impl
         if(ielement == elements.size())
         {
             elements.append(element);
-            element_symbols.insert(element.symbol());
+            inserted_elements_set.insert(element.symbol());
         }
         else
         {
@@ -69,17 +69,24 @@ struct Database::Impl
     /// Add a species in the database.
     auto addSpecies(Species newspecies) -> void
     {
-        // Ensure a unique name is used when storing this species!
-        auto name = newspecies.name();
-        auto unique_name = name;
-        while(species_names.find(unique_name) != species_names.end())
-            unique_name = unique_name + "!"; // keep adding symbol ! to the name such as H2O, H2O!, H2O!!, H2O!!! if many H2O are given
+        // Ensure unique names for species with same aggregate state are used when storing a new species!
+        auto const name = newspecies.name();
+        auto const agstate = newspecies.aggregateState();
 
-        // Replace name if not unique.
+        // Find a unique name and id next, if needed.
+        auto unique_id = name + std::to_string(static_cast<int>(agstate));
+        auto unique_name = name;
+
+        while(inserted_species_set.find(unique_id) != inserted_species_set.end())
+        {
+            unique_name = unique_name + "!"; // keep adding symbol ! to the name such as H2O, H2O!, H2O!!, H2O!!! if many H2O are given
+            unique_id = unique_name + std::to_string(static_cast<int>(agstate));
+        }
+
+        // Replace original name with found unique name (using appended !) if name is not unique among the species with same aggregate state.
         if(name != unique_name) {
             newspecies = newspecies.withName(unique_name);
-            warningif(true, "Species should have unique names in Database, but species ", name, " "
-                "violates this rule. The unique name ", unique_name, " has been assigned instead.");
+            warningif(true, "Species with same aggregate state should have unique names in Database, but species `", name, "` with aggregate state `", agstate, "` violates this rule. The unique name ", unique_name, " has been assigned instead.");
         }
 
         // Replace aggregate state to Aqueous if undefined. If this default
@@ -98,8 +105,8 @@ struct Database::Impl
         // Append the new Species object in the species container
         species.append(newspecies);
 
-        // Update the list of unique species names.
-        species_names.insert(newspecies.name());
+        // Update the list of unique species ids.
+        inserted_species_set.insert(unique_id);
 
         // Update the container of elements with the Element objects in this new species.
         for(auto&& [element, coeff] : newspecies.elements())
