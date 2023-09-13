@@ -191,6 +191,13 @@ TEST_CASE("Testing Database class", "[Database]")
     REQUIRE_NOTHROW( db.species().index("Iron")   );
     REQUIRE_NOTHROW( db.species().index("Copper") );
 
+    // Check that species with same name but different aggregate states are successfully added
+    db.addSpecies( Species("Fe(OH)2").withAggregateState(AggregateState::Aqueous) );
+    db.addSpecies( Species("Fe(OH)2").withAggregateState(AggregateState::Solid) );
+
+    REQUIRE_NOTHROW( db.species().withAggregateState(AggregateState::Aqueous).index("Fe(OH)2") );
+    REQUIRE_NOTHROW( db.species().withAggregateState(AggregateState::Solid).index("Fe(OH)2") );
+
     //-------------------------------------------------------------------------
     // TESTING METHOD: Database::attachData
     //-------------------------------------------------------------------------
