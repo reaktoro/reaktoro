@@ -29,6 +29,7 @@
 #include <Reaktoro/Common/ArrayStream.hpp>
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Warnings.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumConditions.hpp>
@@ -42,6 +43,13 @@
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
+
+auto const EQUILIBRIUM_FAILURE_MESSAGE = R"(The chemical equilibrium/kinetics calculation did not converge.
+This can occur due to various factors, such as:
+  1. Infeasible Problem Formulation: The problem you have defined lacks a feasible solution within the given constraints and assumptions.
+  2. Out-of-Range Thermodynamic Conditions: The conditions you have specified for the system may fall outside the valid range supported by the thermodynamic models used.
+  3. Numerical Instabilities: Convergence issues may arise from numerical problems during the execution of the chemical/kinetic equilibrium algorithm. Consider reporting the issue with a minimal reproducible example if you believe the algorithm is responsible for this issue.
+Disable this warning message with Warnings.disable(906) in Python and Warnings::disable(906) in C++.)";
 
 struct EquilibriumSolver::Impl
 {
@@ -353,6 +361,8 @@ struct EquilibriumSolver::Impl
         updateOptState(state);
 
         result.optima = optsolver.solve(optproblem, optstate);
+
+        warningif(!result.optima.succeeded && Warnings::isEnabled(906), EQUILIBRIUM_FAILURE_MESSAGE);
 
         updateChemicalState(state, conditions);
 
