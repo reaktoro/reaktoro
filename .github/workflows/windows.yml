@@ -11,6 +11,10 @@ on:
   schedule:
     - cron: "0 5 * * 1"  # runs at 05:00 UTC on Mondays
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: ${{ matrix.config }} build on ${{ matrix.os }} (Python ${{ matrix.python-version }})
@@ -72,7 +76,7 @@ jobs:
 #           ninja install || goto :eof
 #           ninja tests || goto :eof
 #           ninja examples/install || goto :eof
-#           clcache -s || goto :eof        
+#           clcache -s || goto :eof
         run: |
           call conda activate reaktoro || goto :eof
           mkdir .build && cd .build || goto :eof
