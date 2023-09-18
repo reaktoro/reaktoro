@@ -48,6 +48,16 @@ auto const ACTIVITY_MODEL_PHREEQC_IONIC_STRENGTH_WARNING_MESSAGE =
     "Prefer ActivityModelPitzer instead. Disable this warning message with "
     "Warnings.disable(548) in Python and Warnings::disable(548) in C++.";
 
+auto const ACTIVITY_MODEL_PHREEQC_NEGATIVE_ACTIVITY_ERROR_MESSAGE =
+    "The aqueous solution was too concentrated, with water mole fraction below the "
+    "limit supported by equation 18 in PHREEQC's v2 manual to compute the activity of "
+    "water (xw > 0.485492). As a result, negative water activity was produced. It is "
+    "possible that your aqueous solution is not expected to be concentrated and this "
+    "error is the result of an intermediate aqueous solution state produced during "
+    "the chemical equilibrium/kinetics calculation. In this case, you may want to revisit "
+    "your initial guess procedure. If your solution is indeed expected to be very "
+    "concentrated, prefer using ActivityModelPitzer instead of ActivityModelPhreeqc.";
+
 auto const LOG_10 = ln10;
 
 auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase const& db) -> ActivityModel
@@ -256,6 +266,11 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
         // The mole fraction of water
         auto const xw = x[iw];
 
+        // Compute the activity of water according to Equation (18) in PHREEQC's v2 manual; Note that: 1 - 0.0017*sum(n[i]/Waq) ≡ 1 - 0.017/Mw*sum(n[i]/n[w]) ≡ 1 - 0.017/Mw*sum(x[i]/x[w]) ≡ 1 - 0.017/Mw*(1 - x[w])/x[w] where sum is over solutes only; no water
+        auto const aw = 1.0 - 0.017/Mw * (1.0 - xw)/xw;
+
+        errorif(aw < 0.0, ACTIVITY_MODEL_PHREEQC_NEGATIVE_ACTIVITY_ERROR_MESSAGE)
+
         // Set the activity coefficients of the species
         props.ln_g = lg * ln10;
 
@@ -263,7 +278,7 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
         props.ln_a = props.ln_g + log(aqstate.m);
 
         // Set the activitiy of water
-        props.ln_a[iw] = log(1.0 - 0.017/Mw * (1.0 - xw)/xw); // From Equation (18) in PHREEQC's v2 manual; Note that: 1 - 0.0017*sum(n[i]/Waq) ≡ 1 - 0.017/Mw*sum(n[i]/n[w]) ≡ 1 - 0.017/Mw*sum(x[i]/x[w]) ≡ 1 - 0.017/Mw*(1 - x[w])/x[w] where sum is over solutes only; no water
+        props.ln_a[iw] = log(1.0 - 0.017/Mw * (1.0 - xw)/xw);
 
         // Set the activity coefficient of water (mole fraction scale)
         props.ln_g[iw] = props.ln_a[iw] - log(xw);
