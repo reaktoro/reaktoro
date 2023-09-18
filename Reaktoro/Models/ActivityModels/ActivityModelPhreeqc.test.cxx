@@ -21,6 +21,7 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
+#include <Reaktoro/Common/Warnings.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPhreeqc.hpp>
 using namespace Reaktoro;
@@ -213,4 +214,35 @@ TEST_CASE("Testing ActivityModelPhreeqc", "[ActivityModelPhreeqc]")
     CHECK_THROWS( ActivityModelPhreeqc(PhreeqcDatabase()) ); // Not initialized
     CHECK_THROWS( ActivityModelPhreeqc(PhreeqcDatabase("pitzer.dat")) ); // Pitzer not supported
     CHECK_THROWS( ActivityModelPhreeqc(PhreeqcDatabase("sit.dat")) ); // SIT not supported
+
+    WHEN("The solution is too saline beyond limit point supported by PHREEQC's activity model")
+    {
+        PhreeqcDatabase db("phreeqc.dat");
+
+        // The list of aqueous species in the aqueous solution.
+        auto const species = SpeciesList("H2O H+ OH- Na+ Cl-");
+
+        // Construct the activity props function with the given aqueous species.
+        ActivityModel fn = ActivityModelPhreeqc(db)(species);
+
+        // Create the ActivityProps object with the results.
+        ActivityProps props = ActivityProps::create(species.size());
+
+        // The temperature used in the PHREEQC script (in K)
+        auto const T = 25.0 + 273.15;
+
+        // The pressure used in the PHREEQC script (in Pa)
+        auto const P = 1.0 * 101325.0;
+
+        // Compute the mole fractions of the species
+        auto const x_with_xw_above_threshold = ArrayXr{{ 0.80, 1e-7, 1e-7, 0.10, 0.10 }}; // xw >= 0.48549234635
+        auto const x_with_xw_below_threshold = ArrayXr{{ 0.48, 1e-7, 1e-7, 0.26, 0.26 }}; // xw < 0.48549234635
+
+        // Disable warning about solution being too saline
+        Warnings::disable(548);
+
+        // Evaluate the activity props function for both cases of xw
+        CHECK_NOTHROW( fn(props, {T, P, x_with_xw_above_threshold}) );
+        CHECK_THROWS( fn(props, {T, P, x_with_xw_below_threshold}) );
+    }
 }
