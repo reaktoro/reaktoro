@@ -25,10 +25,11 @@
 #include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
+#include <Reaktoro/Common/Warnings.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcDatabase.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcLegacy.hpp>
-#include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 #include <Reaktoro/Extensions/Phreeqc/PhreeqcUtils.hpp>
+#include <Reaktoro/Extensions/Phreeqc/PhreeqcWater.hpp>
 #include <Reaktoro/Models/ActivityModels/Support/AqueousMixture.hpp>
 #include <Reaktoro/Water/WaterConstants.hpp>
 
@@ -36,6 +37,16 @@ namespace Reaktoro {
 
 using std::log10;
 using std::exp;
+
+namespace {
+
+auto const IONIC_STRENGTH_TOO_HIGH_LEVEL = 6.0;
+
+auto const ACTIVITY_MODEL_PHREEQC_IONIC_STRENGTH_WARNING_MESSAGE =
+    "The ionic strength of the aqueous solution is greater than 6 molal and "
+    "ActivityModelPhreeqc is not appropriate for strongly saline aqueous solutions. "
+    "Prefer ActivityModelPitzer instead. Disable this warning message with "
+    "Warnings.disable(548) in Python and Warnings::disable(548) in C++.";
 
 auto const LOG_10 = ln10;
 
@@ -107,6 +118,8 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
         real tk_x = T; // temperature in K
         real tc_x = T - 273.15; // temperature from K to °C
         real patm_x = P / 101325.0; // pressure from Pa to atm
+
+        warningif(mu > 6.0 && Warnings::isEnabled(548), ACTIVITY_MODEL_PHREEQC_IONIC_STRENGTH_WARNING_MESSAGE);
 
         ArrayXr lg(s_x.size());
 
@@ -258,6 +271,8 @@ auto createActivityModelPhreeqc(SpeciesList const& species, PhreeqcDatabase cons
 
     return fn;
 }
+
+} // anonymous namespace
 
 auto ActivityModelPhreeqc(PhreeqcDatabase const& db) -> ActivityModelGenerator
 {
