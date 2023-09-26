@@ -1,5 +1,5 @@
 # The path where cmake config files are installed
-set(REAKTORO_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/Reaktoro)
+set(REAKTORO_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
 
 install(EXPORT ReaktoroTargets
     FILE ReaktoroTargets.cmake
