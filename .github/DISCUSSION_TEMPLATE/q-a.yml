@@ -25,7 +25,7 @@ body:
     id: "example"
     attributes:
       label: "Example"
-      description: "Please provide a simple example that reproduces your issue or an example that indicates how a potentially missing feature can be supported."
+      description: "Please provide a simple example that reproduces your issue or an example that indicates how a potentially missing feature can be supported. For your code example, please [format it using markdown](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks) so that it is properly rendered with syntax highlighting."
     validations:
       required: false
 
