@@ -65,12 +65,12 @@ public:
     {
         assert(evalfn);
 
-        m_evalfn = [evalfn](ResultRef res, const Args&... args, const Vec<Param>& w)
+        m_evalfn = [evalfn](ResultRef res, const Vec<Param>& w, const Args&... args)
         {
             evalfn(res, args...);
         };
 
-        m_calcfn = [evalfn](const Args&... args, const Vec<Param>& w) -> Result
+        m_calcfn = [evalfn](const Vec<Param>& w, const Args&... args) -> Result
         {
             Result res;
             evalfn(res, args...);
@@ -87,12 +87,12 @@ public:
     {
         assert(calcfn);
 
-        m_evalfn = [calcfn](ResultRef res, const Args&... args, const Vec<Param>& w)
+        m_evalfn = [calcfn](ResultRef res, const Vec<Param>& w, const Args&... args)
         {
             res = calcfn(args...);
         };
 
-        m_calcfn = [calcfn](const Args&... args, const Vec<Param>& w) -> Result
+        m_calcfn = [calcfn](const Vec<Param>& w, const Args&... args) -> Result
         {
             return calcfn(args...);
         };
@@ -125,14 +125,14 @@ public:
     auto apply(ResultRef res, const Args&... args) const -> void
     {
         assert(m_evalfn);
-        m_evalfn(res, args..., m_params);
+        m_evalfn(res, m_params, args...);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
     auto operator()(const Args&... args) const -> Result
     {
         assert(m_calcfn);
-        return m_calcfn(args..., m_params);
+        return m_calcfn(m_params, args...);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
@@ -154,13 +154,13 @@ public:
     }
 
     /// Return the model evaluator function of this Model function object.
-    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args..., const Vec<Param>&>&
+    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, const Vec<Param>&, Args...>&
     {
         return m_evalfn;
     }
 
     /// Return the model calculator function of this Model function object.
-    auto calculatorFn() const -> const ModelCalculator<Result, Args..., const Vec<Param>&>&
+    auto calculatorFn() const -> const ModelCalculator<Result, const Vec<Param>&, Args...>&
     {
         return m_calcfn;
     }
@@ -212,12 +212,12 @@ private:
     Vec<Param> m_params;
 
     /// The underlying model function that performs property evaluations.
-    ModelEvaluator<ResultRef, Args..., const Vec<Param>&> m_evalfn;
+    ModelEvaluator<ResultRef, const Vec<Param>&, Args...> m_evalfn;
 
     /// The underlying model function that performs property calculations.
     /// Note the added dependency on `const Vec<Param>&`.
     /// This is needed for proper memoization optimization!
-    ModelCalculator<Result, Args..., const Vec<Param>&> m_calcfn;
+    ModelCalculator<Result, const Vec<Param>&, Args...> m_calcfn;
 
     /// The function that serializes the underlying model function to a Data object.
     /// This has to be a function because if we stored the serialization of the
