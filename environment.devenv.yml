@@ -43,7 +43,7 @@ dependencies:
   - thermofun =0.4.5
   - tsl_ordered_map
   - valgrind  # [unix]
-  - vs2019_win-64  # [win]
+  - vs2022_win-64  # [win]
   - yaml-cpp =0.7.0
   - pip:
     - oyaml
