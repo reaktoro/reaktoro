@@ -20,6 +20,7 @@
 // C++ includes
 #include <algorithm>
 #include <cassert>
+#include <iterator>
 #include <vector>
 
 // Reaktoro includes
