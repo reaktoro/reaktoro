@@ -781,19 +781,19 @@ auto ChemicalState::Equilibrium::setNamesControlVariablesQ(Strings const& qnames
 
 auto ChemicalState::Equilibrium::setInputVariables(ArrayXdConstRef const& w) -> void
 {
-    assert(w.size() == pimpl->wnames.size());
+    errorifnot(w.size() == pimpl->wnames.size(), "The number of input variables in the equilibrium calculation must be equal to the number of registered input variables in the specifications of the equilibrium problem. Have you constructed an EquilibriumSolver object with a ChemicalSystem object instead of an EquilibriumSpecs object (e.g., EquilibriumSolver(system) instead of EquilibriumSolver(specs))?");
     pimpl->w = w;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesP(ArrayXdConstRef const& p) -> void
 {
-    assert(p.size() == pimpl->pnames.size());
+    errorifnot(p.size() == pimpl->pnames.size(), "The number of input control variables p in the equilibrium calculation must be equal to the number of registered input control variables p in the specifications of the equilibrium problem. Have you constructed an EquilibriumSolver object with a ChemicalSystem object instead of an EquilibriumSpecs object (e.g., EquilibriumSolver(system) instead of EquilibriumSolver(specs))?");
     pimpl->optstate.p = p;
 }
 
 auto ChemicalState::Equilibrium::setControlVariablesQ(ArrayXdConstRef const& q) -> void
 {
-    assert(q.size() == pimpl->qnames.size());
+    errorifnot(q.size() == pimpl->qnames.size(), "The number of input control variables q in the equilibrium calculation must be equal to the number of registered input control variables q in the specifications of the equilibrium problem. Have you constructed an EquilibriumSolver object with a ChemicalSystem object instead of an EquilibriumSpecs object (e.g., EquilibriumSolver(system) instead of EquilibriumSolver(specs))?");
     if(pimpl->Nq > 0)
         pimpl->optstate.x.tail(pimpl->Nq) = q;
 }
