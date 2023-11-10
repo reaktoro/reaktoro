@@ -386,7 +386,7 @@ struct AqueousProps::Impl
         return res;
     }
 
-        auto alkalinity() const -> real
+    auto alkalinity() const -> real
     {
         // The number of species in the system
         const Index num_species = system.species().size();
