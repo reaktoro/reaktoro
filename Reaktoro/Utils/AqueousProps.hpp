@@ -126,16 +126,19 @@ public:
     /// Return the reduction potential of the aqueous phase (in V).
     auto Eh() const -> real;
 
-    /// Return the total alkalinity of the aqueous phase (in eq/L).
+    /// Return the explicitly conservative form of total alkalinity of the aqueous phase (in eq/L).
     /// The total alkalinity (Alk) of the aqueous phase is by default
     /// calculated as the *acid neutralizing capacity* (ANC) of the solution
     /// using the formula:
     /// @f[
-    /// \mathrm{Alk=[Na^{+}]+[K^{+}]+2[Ca^{2+}]+2[Mg^{2+}]-[Cl^{-}]-2[SO_{4}^{2-}]},
+    /// \mathrm{Alk=[Na^{+}]+[K^{+}]+2[Ca^{2+}]+2[Mg^{2+}]-[Cl^{-}]-[Br^{-}]-[NO_{3}^{-}]-2[SO_{4}^{2-}]
+    /// -[TPO_{4}]+[TNH_{3}]-2[TSO_{4}]-[THF]-[THNO_{2}]},
     /// @f] where @f$[\mathrm{species}]@f$ is the free molar concentration
     /// (mol/L) of the species in the solution. This formula is simpler,
     /// derived from the charge balance condition, and equivalent to the
-    /// standard formula of total alkalinity.
+    /// standard formula of total alkalinity. The above formula considers the contributions of biogeochemical
+    /// processes (if any). See https://doi.org/10.1016/j.marchem.2007.01.006 (Wolf-Gladrow et al. (2007))
+    /// for further details.
     auto alkalinity() const -> real;
 
     /// Return the non-aqueous species that could be formed from the aqueous solution.
