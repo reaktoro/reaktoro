@@ -386,10 +386,62 @@ struct AqueousProps::Impl
         return res;
     }
 
-    auto alkalinity() const -> real
+        auto alkalinity() const -> real
     {
-        error(true, "AqueousProps::alkalinity has not been implemented yet.");
-        return {};
+        // The number of species in the system
+        const Index num_species = system.species().size();
+
+        // The factors_and_species that contribute to alkalinity
+        static const auto factors_and_species = Pairs<double, std::string>{
+            {1, "Na+"},
+            {2, "Mg+2"},
+            {2, "Ca+2"},
+            {1, "K+"},
+            {2, "Sr+2"},
+            {-1, "Cl-"},
+            {-1, "Br-"},
+            {-1, "NO3-"},
+            // TPO4 in Wolf-Gladrow et al. (2007)
+            {-1, "H3PO4"},
+            {-1, "H2PO4-"},
+            {-1, "HPO4-2"},  // note that factor here is -1 as in the paper
+            {-1, "PO4-3"},  // note that factor here is -1 as in the paper
+            // TNH3 in Wolf-Gladrow et al. (2007)
+            {1, "NH3"},
+            {1, "NH4+"},
+            // TSO4 in Wolf-Gladrow et al. (2007)
+            {-2, "SO4-2"},
+            {-2, "HSO4-"},  // note that factor here is -2 as in the paper
+            // THF in Wolf-Gladrow et al. (2007)
+            {-1, "F-"},
+            {-1, "HF"},
+            // THNO2 in Wolf-Gladrow et al. (2007)
+            {-1, "NO2-"},
+            {-1, "HNO2"},  // note that factor here is -1 as in the paper
+        };
+
+        // Iterate over all alkalinity factors and ions
+        auto molar_amounts = props.speciesAmounts();
+        real alkalinity = 0.0;
+        for(const auto& [alkalinity_factor, alkalinity_species_name] : factors_and_species)
+        {
+            // Get the index of the current ion
+            const Index i = system.species().findWithFormula(alkalinity_species_name);
+
+            // Calculate contribution to alkalinity if the species is in the system
+            if (i < num_species) {
+                auto alkalinity_species_amount = molar_amounts[i];
+                alkalinity += alkalinity_factor * alkalinity_species_amount;
+            }
+        }
+
+        // Convert to eq/L
+        auto m3_to_liter = 1000.0;
+        auto V = props.volume();  // in m3
+        auto V_in_liter = V * m3_to_liter;
+        alkalinity /= V_in_liter;
+
+        return alkalinity;
     }
 
     auto saturationRatioLn(StringOrIndex const& species) const -> real
@@ -670,6 +722,7 @@ auto operator<<(std::ostream& out, AqueousProps const& props) -> std::ostream&
     table.add_row({ "pH", strfix(props.pH()), "" });
     table.add_row({ "pE", strfix(props.pE()), "" });
     table.add_row({ "Eh", strfix(props.Eh()), "V" });
+    table.add_row({ "Alkalinity", strfix(props.alkalinity()), "eq/L" });
     table.add_row({ "Charge Molality", strsci(props.chargeMolality()), "molal" });
     table.add_row({ "Element Molality:" });
     for(auto i = 0; i < elements.size(); ++i)
