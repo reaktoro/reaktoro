@@ -426,7 +426,8 @@ struct AqueousProps::Impl
         for(const auto& [alkalinity_factor, alkalinity_species_name] : factors_and_species)
         {
             // Get the index of the current ion
-            const Index i = system.species().findWithFormula(alkalinity_species_name);
+            const auto& aq_species_list = system.species().withAggregateState(AggregateState::Aqueous);
+            const Index i = aq_species_list.findWithFormula(alkalinity_species_name);
 
             // Calculate contribution to alkalinity if the species is in the system
             if (i < num_species) {
