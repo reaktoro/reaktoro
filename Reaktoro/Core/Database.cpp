@@ -287,5 +287,15 @@ auto Database::fromStream(std::istream& stream) -> Database
     return createDatabaseFromContents(stream);
 }
 
+auto Database::local(String const& path) -> Database
+{
+    return fromFile(path);
+}
+
+auto Database::embedded(String const& path) -> Database
+{
+    return fromEmbeddedFile(path);
+}
+
 } // namespace Reaktoro
 

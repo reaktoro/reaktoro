@@ -49,6 +49,12 @@ public:
     /// @param stream The input stream containing the database file contents.
     static auto fromStream(std::istream& stream) -> Database;
 
+    /// @copydoc Database::fromFile
+    static auto local(String const& path) -> Database;
+
+    /// @copydoc Database::fromEmbeddedFile
+    static auto embedded(String const& path) -> Database;
+
     /// Construct a default Database object.
     Database();
 
