@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Core/Data.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/Support/DatabaseParser.hpp>
 
 namespace Reaktoro {
@@ -249,6 +250,12 @@ auto Database::fromFile(String const& path) -> Database
     auto doc = isJson ? Data::parseJson(file) : Data::parseYaml(file);
     DatabaseParser dbparser(doc);
     return Database(dbparser);
+}
+
+auto Database::fromEmbeddedFile(String const& path) -> Database
+{
+    const String contents = Embedded::get("databases/reaktoro/" + path);
+    return fromContents(contents);
 }
 
 template<typename Source>
