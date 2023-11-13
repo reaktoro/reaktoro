@@ -70,7 +70,6 @@ auto StandardThermoModelExtendedUNIQUAC(StandardThermoModelParamsExtendedUNIQUAC
         const auto TmTr  = T - Tr;
         const auto PmPr  = Pb - Pr;
         const auto TmTr2 = TmTr*TmTr;
-        const auto PmPr2 = PmPr*PmPr;
         const auto Gr    = GrkJ * KJ_TO_J;
         const auto Hr    = HrkJ * KJ_TO_J;
 

@@ -8,7 +8,6 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Sr: 205.138
       a: 29.355
       b: 0.0
       c: 0.0
@@ -20,7 +19,6 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Sr: 130.684
       a: 28.824
       b: 0.0
       c: 0.0
@@ -32,7 +30,6 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -228.572
       Hr: -241.818
-      Sr: 188.825
       a: 33.577
       b: 0.0
       c: 0.0
@@ -44,7 +41,6 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -394.359
       Hr: -393.509
-      Sr: 213.74
       a: 37.11
       b: 0.0
       c: 0.0
@@ -56,7 +52,6 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -300.194
       Hr: -296.830
-      Sr: 248.22
       a: 39.87
       b: 0.0
       c: 0.0
@@ -69,7 +64,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -237.129  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -285.830
-      Sr: 69.91
       a: 58.37000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.03896
       c: 523.88000
@@ -94,7 +88,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: 0.0  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: 0.0
-      Sr: 0.0
       a: 0.0  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.0
       c: 0.0
@@ -107,7 +100,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -261.905  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -240.12
-      Sr: 59.0
       a: 600.62000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.10060
       c: -23232.0
@@ -168,7 +160,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -157.244  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -229.994
-      Sr: -10.75
       a: 1418.2  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -3.44460
       c: -51473.0
@@ -181,7 +172,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -131.228  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -167.159
-      Sr: 56.5
       a: 400.35000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.13120
       c: -18574.0
@@ -194,7 +184,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -744.53  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -909.27
-      Sr: 20.1
       a: 643.3  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.76050
       c: -37903.0
@@ -207,7 +196,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -527.81  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -677.14
-      Sr: -56.9
       a: 894.688  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       b: -2.8272
       c: -21149
@@ -220,7 +208,6 @@ Species:
     ExtendedUNIQUAC:
       Gr: -586.77  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -691.99
-      Sr: 91.2
       a: -0.67710  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       b: 0.27375
       c: -10090
@@ -466,17 +453,6 @@ Species:
       Hr: -2816.396
       a: 140.25
       b: 0.2907
-      c: 0.0
-- Name: Na2SO4
-  Formula: Na2SO4
-  Elements: 2:Na 1:S 4:O
-  AggregateState: Solid
-  StandardThermoModel:
-    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
-      Gr: -1270.16
-      Hr: -1387.08
-      a: 128.2
-      b: 0.0
       c: 0.0
 - Name: CaCl2
   Formula: CaCl2
