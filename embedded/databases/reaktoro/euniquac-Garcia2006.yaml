@@ -4,46 +4,51 @@ Species:
   Elements: 2:O
   AggregateState: Gas
   StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: 0.0
-      H0: 0.0
-      Cp0: 29.355
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gf: 0.0
+      Hf: 0.0
+      Cp: 29.355
+      S0: 205.138
 - Name: H2(g)
   Formula: H2
   Elements: 2:H
   AggregateState: Gas
-  StandardThermoModel:  # Reference: NIST/NBS tables
-    ExtendedUNIQUAC:
-      G0: 0.0
-      H0: 0.0
-      Cp0: 28.824
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gf: 0.0
+      Hf: 0.0
+      Cp: 28.824
+      S0: 130.684
 - Name: H2O(g)
   Formula: H2O
   Elements: 2:H 1:O
   AggregateState: Gas
   StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: -228.572
-      H0: -241.818
-      Cp0: 33.577
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gf: -228.572
+      Hf: -241.818
+      Cp: 33.577
+      S0: 188.825
 - Name: CO2(g)
   Formula: CO2
   Elements: 1:C 2:O
   AggregateState: Gas
   StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: -394.359
-      H0: -393.509
-      Cp0: 37.11
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gf: -394.359
+      Hf: -393.509
+      Cp: 37.11
+      S0: 213.74
 - Name: SO2(g)
   Formula: SO2
   Elements: 1:S 2:O
   AggregateState: Gas
-  StandardThermoModel:  # Reference: NIST/NBS tables
-    ExtendedUNIQUAC:
-      G0: -300.194
-      H0: -296.830
-      Cp0: 39.87
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gf: -300.194
+      Hf: -296.830
+      Cp: 39.87
+      S0: 248.22
 - Name: H+
   Formula: H+
   Elements: 1:H
