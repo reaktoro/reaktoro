@@ -70,7 +70,6 @@ Species:
       Gr: -237.129  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -285.830
       Sr: 69.91
-      Cp: 75.291
       a: 58.37000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.03896
       c: 523.88000
@@ -83,7 +82,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -385.98
       Hr: -413.8
-      Cp: 243.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 243.0
       b: 0.0
       c: 0.0
@@ -97,7 +95,6 @@ Species:
       Gr: 0.0  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: 0.0
       Sr: 0.0
-      Cp: 0.0
       a: 0.0  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.0
       c: 0.0
@@ -111,7 +108,6 @@ Species:
       Gr: -261.905  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -240.12
       Sr: 59.0
-      Cp: 46.4
       a: 600.62000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.10060
       c: -23232.0
@@ -124,7 +120,6 @@ Species:
     ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -553.58
       Hr: -542.83
-      Cp: -32.808867
       a: -403.2824
       b: 0.8858481
       c: 10439.03
@@ -137,7 +132,6 @@ Species:
     ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -560.77
       Hr: -537.64
-      Cp: 0.6954
       a: 0.6954
       b: 0.0
       c: 0.0
@@ -150,7 +144,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -559.48
       Hr: -545.8
-      Cp: -96.01  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: -1124.756
       b: 3.450446
       c: 0.0
@@ -163,7 +156,6 @@ Species:
     ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -454.8
       Hr: -466.85
-      Cp: -18.635063
       a: -646.9708
       b: 1.331126
       c: 22717.85
@@ -177,7 +169,6 @@ Species:
       Gr: -157.244  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -229.994
       Sr: -10.75
-      Cp: -148.5
       a: 1418.2  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -3.44460
       c: -51473.0
@@ -191,7 +182,6 @@ Species:
       Gr: -131.228  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -167.159
       Sr: 56.5
-      Cp: -136.4
       a: 400.35000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.13120
       c: -18574.0
@@ -205,7 +195,6 @@ Species:
       Gr: -744.53  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -909.27
       Sr: 20.1
-      Cp: -293.
       a: 643.3  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.76050
       c: -37903.0
@@ -243,7 +232,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1129.057
       Hr: -1208.726
-      Cp: 81.88  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 81.88
       b: 0.0
       c: 0.0
@@ -257,7 +245,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -833.51
       Hr: -921.1407
-      Cp: 77.03  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 77.03
       b: 0.0
       c: 0.0
@@ -269,7 +256,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1270.16
       Hr: -1387.08
-      Cp: 128.2  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 128.2
       b: 0.0
       c: 0.0
@@ -281,7 +267,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -384.1258
       Hr: -411.9584
-      Cp: 45.13074  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 45.13074
       b: 0.0
       c: 0.0
@@ -295,7 +280,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1012.1
       Hr: -1095.8
-      Cp: 75.52  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 75.52
       b: 0.0
       c: 0.0
@@ -307,7 +291,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1723.487
       Hr: -1953.29
-      Cp: 301.4968  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 301.4968
       b: 0.0
       c: 0.0
@@ -319,7 +302,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2197.745
       Hr: -2524.95
-      Cp: 367.367  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 367.367
       b: 0.0
       c: 0.0
@@ -331,7 +313,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -4602.818
       Hr: -5069.43
-      Cp: 478.6986  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 478.6986
       b: 0.0
       c: 0.0
@@ -343,7 +324,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1136.054
       Hr: -1222.907
-      Cp: 85.5  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 85.5
       b: 0.0
       c: 0.0
@@ -355,7 +335,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1139.745
       Hr: -1227.633
-      Cp: 200.72536  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 1259.146863
       b: -2.827237
       c: -21149.44
@@ -367,7 +346,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2140.89
       Hr: -2302.72
-      Cp: 157.4  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 157.4
       b: 0.0
       c: 0.0
@@ -379,7 +357,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1055.669
       Hr: -1160.79
-      Cp: 120.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 120.0
       b: 0.0
       c: 0.0
@@ -391,7 +368,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1296.32
       Hr: -1460.13
-      Cp: 161.96  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 161.96
       b: 0.0
       c: 0.0
@@ -403,7 +379,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20, 5-18 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1361.866
       Hr: -1467.929
-      Cp: 104.0038  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 104.0038
       b: 0.0
       c: 0.0
@@ -417,7 +392,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1341.538
       Hr: -1452.955
-      Cp: 100.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 100.0
       b: 0.0
       c: 0.0
@@ -431,7 +405,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1284.587
       Hr: -1456.694
-      Cp: 160.2  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 160.2
       b: 0.0
       c: 0.0
@@ -443,7 +416,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2240.92
       Hr: -2623.8
-      Cp: 320.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 320.0
       b: 0.0
       c: 0.0
@@ -455,7 +427,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2714.505
       Hr: -2954.863
-      Cp: 201.75  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 201.75
       b: 0.0
       c: 0.0
@@ -467,7 +438,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1321.8
       Hr: -1436.132
-      Cp: 73.154  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 70.21
       b: 0.009874
       c: 0.0
@@ -481,7 +451,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1797.407
       Hr: -2026.294
-      Cp: 186.192  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 91.38
       b: 0.318
       c: 0.0
@@ -495,7 +464,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2594.808
       Hr: -2816.396
-      Cp: 226.922205  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 140.25
       b: 0.2907
       c: 0.0
@@ -507,7 +475,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1270.16
       Hr: -1387.08
-      Cp: 128.2  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 128.2
       b: 0.0
       c: 0.0
@@ -519,7 +486,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -748.1
       Hr: -795.8
-      Cp: 72.59  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 72.59
       b: 0.0
       c: 0.0
@@ -531,7 +497,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1253.87
       Hr: -1402.9
-      Cp: 153.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 153.0
       b: 0.0
       c: 0.0
@@ -543,7 +508,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1738.434
       Hr: -2014.119
-      Cp: 233.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 233.0
       b: 0.0
       c: 0.0
@@ -555,7 +519,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2219.378
       Hr: -2607.658
-      Cp: 313.0  # Computed from a + b⋅Tr + c/(T - 200), Tr ≡ 298.15 (Warning: Possibly inconsistent with value from NIST/NBS Tables of Chemical Thermodynamic Properties)
       a: 313.0
       b: 0.0
       c: 0.0
