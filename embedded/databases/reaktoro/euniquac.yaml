@@ -60,7 +60,7 @@ Species:
       c: 0
 - Name: OH-
   Formula: OH-
-  Elements: 1:H 1:O
+  Elements: 1:O 1:H
   Charge: -1
   AggregateState: Aqueous
   StandardThermoModel:  # Reference: https://doi.org/10.1021/ie801168e
@@ -125,7 +125,7 @@ Species:
       c: 0
 - Name: HSO4-
   Formula: HSO4-
-  Elements: 1:S 1:H 4:O
+  Elements: 1:H 1:S 4:O
   Charge: -1
   AggregateState: Aqueous
   StandardThermoModel:
@@ -190,7 +190,7 @@ Species:
       c: -21149.44
 - Name: HCO3-
   Formula: HCO3-
-  Elements: 1:C 1:H 3:O
+  Elements: 1:H 1:C 3:O
   Charge: -1
   AggregateState: Aqueous
   StandardThermoModel:  # Reference: From https://doi.org/10.1021/ie801168e
@@ -272,7 +272,7 @@ Species:
       c: -16316
 - Name: Mg(OH)2
   Formula: Mg(OH)2
-  Elements: 1:Mg 2:H 2:O
+  Elements: 1:Mg 2:O 2:H
   AggregateState: Mineral
   StandardThermoModel:
     ExtendedUNIQUAC:
@@ -338,7 +338,7 @@ Species:
       c: 0
 - Name: Gypsum
   Formula: CaSO4*2H2O
-  Elements: 1:Ca 1:S 4:H 6:O
+  Elements: 1:Ca 1:S 6:O 4:H
   AggregateState: Mineral
   StandardThermoModel:
     ExtendedUNIQUAC:
@@ -452,7 +452,7 @@ Species:
       Cp: 128.2
 - Name: Na2SO4*10H2O
   Formula: Na2SO4*10H2O
-  Elements: 2:Na 1:S 20:H 14:O
+  Elements: 2:Na 1:S 14:O 20:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -461,7 +461,7 @@ Species:
       Cp: 492.2
 - Name: NaK3(SO4)2
   Formula: NaK3(SO4)2
-  Elements: 2:Na 3:K 2:S 8:O
+  Elements: 1:Na 3:K 2:S 8:O
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -470,7 +470,7 @@ Species:
       Cp: 287.5
 - Name: NaNO3*Na2SO4*H2O
   Formula: NaNO3*Na2SO4*H2O
-  Elements: 3:Na 1:N 1:S 2:H 8:O
+  Elements: 3:Na 1:N 8:O 1:S 2:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -479,7 +479,7 @@ Species:
       Cp: 300
 - Name: Na2CO3*2Na2SO4
   Formula: NaNO3*Na2SO4*H2O
-  Elements: 3:Na 1:N 1:S 2:H 8:O
+  Elements: 3:Na 1:N 8:O 1:S 2:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -488,7 +488,7 @@ Species:
       Cp: 840.07
 - Name: Na2CO3*NaHCO3*2H2O
   Formula: Na2CO3*NaHCO3*2H2O
-  Elements: 3:Na 2:C 5:H 8:O
+  Elements: 3:Na 2:C 8:O 5:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -497,7 +497,7 @@ Species:
       Cp: 256.8
 - Name: Na2CO3*3NaHCO3
   Formula: Na2CO3*3NaHCO3
-  Elements: 5:Na 4:C 3:H 12:O
+  Elements: 5:Na 4:C 12:O 3:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -506,7 +506,7 @@ Species:
       Cp: 182.03
 - Name: KHCO3
   Formula: KHCO3
-  Elements: 1:K 1:C 1:H 3:O
+  Elements: 1:K 1:H 1:C 3:O
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -515,7 +515,7 @@ Species:
       Cp: 85.51
 - Name: NaKCO3*6H2O
   Formula: NaKCO3*6H2O
-  Elements: 1:Na 1:K 1:C 12:H 9:O
+  Elements: 1:Na 1:K 1:C 9:O 12:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -524,16 +524,16 @@ Species:
       Cp: 300
 - Name: K2CO3*Na2CO3
   Formula: K2CO3*Na2CO3
-  Elements: 2:K 2:Na 2:C 6:O
+  Elements: 2:K 2:C 6:O 2:Na
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
       G0: -2121.47
       H0: -2299.1
       Cp: 420.23
-- Name: K2CO3*NaHCO3•2H2O
+- Name: K2CO3*NaHCO3*2H2O
   Formula: K2CO3*NaHCO3*2H2O
-  Elements: 2:K 1:Na 2:C 5:H 8:O
+  Elements: 2:K 2:C 8:O 1:Na 5:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -542,7 +542,7 @@ Species:
       Cp: 300
 - Name: (NH4)2SO4*3NH4NO3
   Formula: (NH4)2SO4*3NH4NO3
-  Elements: 8:N 1:S 20:H 13:O
+  Elements: 8:N 20:H 1:S 13:O
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -551,7 +551,7 @@ Species:
       Cp: 987.19
 - Name: (NH4)2SO4*2NH4NO3
   Formula: (NH4)2SO4*2NH4NO3
-  Elements: 6:N 1:S 16:H 10:O
+  Elements: 6:N 16:H 1:S 10:O
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -560,7 +560,7 @@ Species:
       Cp: 764.42
 - Name: Na2SO4*(NH4)2SO4*4H2O
   Formula: Na2SO4*(NH4)2SO4*4H2O
-  Elements: 2:Na 2:S 2:N 16:H 12:O
+  Elements: 2:Na 2:S 12:O 2:N 16:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -569,7 +569,7 @@ Species:
       Cp: 874.92
 - Name: 2NaNO3*NH4NO3
   Formula: 2NaNO3*NH4NO3
-  Elements: 2:Na 4:N 4:H 9:O
+  Elements: 2:Na 4:N 9:O 4:H
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
@@ -587,7 +587,7 @@ Species:
       Cp: 665.38
 - Name: (NH4)2S2O8
   Formula: (NH4)2S2O8
-  Elements: 2:N 2:S 8:H 8:O
+  Elements: 2:N 8:H 2:S 8:O
   AggregateState: Mineral
   StandardThermoModel:  # Reference: Thomsen's Thesis
     ExtendedUNIQUAC:
