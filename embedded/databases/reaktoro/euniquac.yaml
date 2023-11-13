@@ -260,7 +260,7 @@ Species:
 - Name: K+
   Formula: K+
   Elements: 1:K
-  Charge: 0
+  Charge: 1
   AggregateState: Aqueous
   StandardThermoModel:
     ExtendedUNIQUAC:
