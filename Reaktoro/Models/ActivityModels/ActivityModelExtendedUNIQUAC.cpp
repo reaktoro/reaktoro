@@ -123,15 +123,12 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
     iR = unique(iR);
     iQ = unique(iQ);
     iU = unique(iU);
-    // iUQ = intersect(iU, iQ);
 
     auto const irw = index(iR, iw);
     auto const iqw = index(iQ, iw);
 
     errorifnot(irw < iR.size(), "The surface area parameter rᵢ in the Extended UNIQUAC model is expected for H2O.");
     errorifnot(iqw < iQ.size(), "The volume parameter qᵢ in the Extended UNIQUAC model is expected for H2O.");
-
-    // errorif(identical(iR, iQ), "Expecting both rᵢ and qᵢ parameters in the Extended UNIQUAC model, but for some species, only one of these parameters were provided.");
 
     r = ArrayXr(r(iR));
     q = ArrayXr(q(iQ));
