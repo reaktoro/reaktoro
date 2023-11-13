@@ -1,3 +1,8 @@
+# Thermodynamic database for the extended UNIQUAC model based on data from
+# Garcia's (2005) doctoral thesis and references therein.
+#
+# https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals
+
 Species:
 - Name: O2(g)
   Formula: O2
@@ -7,8 +12,9 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Cr: 29.355
-      Sr: 205.138
+      a: 29.355
+      b: 0.0
+      c: 0.0
 - Name: H2(g)
   Formula: H2
   Elements: 2:H
@@ -17,8 +23,9 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Cr: 28.824
-      Sr: 130.684
+      a: 28.824
+      b: 0.0
+      c: 0.0
 - Name: H2O(g)
   Formula: H2O
   Elements: 2:H 1:O
@@ -27,8 +34,9 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -228.572
       Hr: -241.818
-      Cr: 33.577
-      Sr: 188.825
+      a: 33.577
+      b: 0.0
+      c: 0.0
 - Name: CO2(g)
   Formula: CO2
   Elements: 1:C 2:O
@@ -37,8 +45,9 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -394.359
       Hr: -393.509
-      Cr: 37.11
-      Sr: 213.74
+      a: 37.11
+      b: 0.0
+      c: 0.0
 - Name: SO2(g)
   Formula: SO2
   Elements: 1:S 2:O
@@ -47,8 +56,9 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -300.194
       Hr: -296.830
-      Cr: 39.87
-      Sr: 248.22
+      a: 39.87
+      b: 0.0
+      c: 0.0
 - Name: H2O
   Formula: H2O
   Elements: 2:H 1:O
@@ -56,13 +66,9 @@ Species:
   Charge: 0.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -237.129
+      Gr: -237.129  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -285.830
-      Cr: 75.291
-      Sr: 69.91
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 58.37000
+      a: 58.37000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.03896
       c: 523.88000
 - Name: CO2
@@ -74,8 +80,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -385.98
       Hr: -413.8
-      Cr: 243.0
-      a: 0.0
+      a: 243.0
       b: 0.0
       c: 0.0
 - Name: H+
@@ -85,13 +90,9 @@ Species:
   Charge: 1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: 0.0
+      Gr: 0.0  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: 0.0
-      Cr: 0.0
-      Sr: 0.0
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 0.0
+      a: 0.0  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.0
       c: 0.0
 - Name: Na+
@@ -101,13 +102,9 @@ Species:
   Charge: 1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -261.905
+      Gr: -261.905  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -240.12
-      Cr: 46.4
-      Sr: 59.0
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 600.62000
+      a: 600.62000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.10060
       c: -23232.0
 - Name: Ca+2
@@ -116,10 +113,9 @@ Species:
   AggregateState: Aqueous
   Charge: 2.0
   StandardThermoModel:
-    ExtendedUNIQUAC:
+    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -553.58
       Hr: -542.83
-      Cp0: -32.808867
       a: -403.2824
       b: 0.8858481
       c: 10439.03
@@ -129,10 +125,9 @@ Species:
   AggregateState: Aqueous
   Charge: 2.0
   StandardThermoModel:
-    ExtendedUNIQUAC:
+    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -560.77
       Hr: -537.64
-      Cp0: 0.6954
       a: 0.6954
       b: 0.0
       c: 0.0
@@ -145,9 +140,8 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -559.48
       Hr: -545.8
-      Cr: -1124.756
-      a: 3.450446
-      b: 0.0
+      a: -1124.756
+      b: 3.450446
       c: 0.0
 - Name: Mg+2
   Formula: Mg+2
@@ -155,10 +149,9 @@ Species:
   AggregateState: Aqueous
   Charge: 2.0
   StandardThermoModel:
-    ExtendedUNIQUAC:
+    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -454.8
       Hr: -466.85
-      Cp0: -18.635063
       a: -646.9708
       b: 1.331126
       c: 22717.85
@@ -169,13 +162,9 @@ Species:
   Charge: -1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -157.244
+      Gr: -157.244  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -229.994
-      Cr: -148.5
-      Sr: -10.75
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 1418.2
+      a: 1418.2  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -3.44460
       c: -51473.0
 - Name: Cl-
@@ -185,13 +174,9 @@ Species:
   Charge: -1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -131.228
+      Gr: -131.228  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -167.159
-      Cr: -136.4
-      Sr: 56.5
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 400.35000
+      a: 400.35000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.13120
       c: -18574.0
 - Name: SO4-2
@@ -201,13 +186,9 @@ Species:
   Charge: -2.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -744.53
+      Gr: -744.53  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -909.27
-      Cr: -293.
-      Sr: 20.1
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 643.3
+      a: 643.3  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.76050
       c: -37903.0
 - Name: CO3-2
@@ -217,15 +198,11 @@ Species:
   Charge: -2.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -527.81
+      Gr: -527.81  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -677.14
-      Cr: null
-      Sr: -56.9
-      # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
-      Cp1: 894.688
-      Cp2: -2.8272
-      Cp3: -21149
+      a: 894.688  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
+      b: -2.8272
+      c: -21149
 - Name: HCO3-
   Formula: HCO3-
   Elements: 1:H 1:C 3:O
@@ -233,15 +210,11 @@ Species:
   Charge: -1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -586.77
+      Gr: -586.77  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -691.99
-      Cr: null
-      Sr: 91.2
-      # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
-      Cp1: -0.67710
-      Cp2: 0.27375
-      Cp3: -10090
+      a: -0.67710  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
+      b: 0.27375
+      c: -10090
 - Name: CaCO3
   Formula: CaCO3
   Elements: 1:Ca 1:C 3:O
@@ -250,8 +223,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1129.057
       Hr: -1208.726
-      Cr: 81.88
-      a: 0.0
+      a: 81.88
       b: 0.0
       c: 0.0
       alpha: -3.916945e-3
@@ -264,8 +236,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -833.51
       Hr: -921.1407
-      Cr: 77.03
-      a: 0.0
+      a: 77.03
       b: 0.0
       c: 0.0
 - Name: Na2SO4
@@ -276,8 +247,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1270.16
       Hr: -1387.08
-      Cr: 128.2
-      a: 0.0
+      a: 128.2
       b: 0.0
       c: 0.0
 - Name: NaCl
@@ -288,8 +258,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -384.1258
       Hr: -411.9584
-      Cr: 45.13074
-      a: 0.0
+      a: 45.13074
       b: 0.0
       c: 0.0
       alpha: 9.927134e-5
@@ -302,8 +271,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1012.1
       Hr: -1095.8
-      Cr: 75.52
-      a: 0.0
+      a: 75.52
       b: 0.0
       c: 0.0
 - Name: MgCO3*3H2O
@@ -314,8 +282,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1723.487
       Hr: -1953.29
-      Cr: 301.4968
-      a: 0.0
+      a: 301.4968
       b: 0.0
       c: 0.0
 - Name: MgCO3*5H2O
@@ -326,8 +293,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2197.745
       Hr: -2524.95
-      Cr: 367.367
-      a: 0.0
+      a: 367.367
       b: 0.0
       c: 0.0
 - Name: 3MgCO3*Mg(OH)2*3H2O
@@ -338,8 +304,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -4602.818
       Hr: -5069.43
-      Cr: 478.6986
-      a: 0.0
+      a: 478.6986
       b: 0.0
       c: 0.0
 - Name: BaCO3
@@ -350,8 +315,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1136.054
       Hr: -1222.907
-      Cr: 85.5
-      a: 0.0
+      a: 85.5
       b: 0.0
       c: 0.0
 - Name: SrCO3
@@ -362,10 +326,9 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1139.745
       Hr: -1227.633
-      Cr: 1259.146863
-      a: -2.827237
-      b: -21149.44
-      c: 0.0
+      a: 1259.146863
+      b: -2.827237
+      c: -21149.44
 - Name: CaCO3*MgCO3
   Formula: CaCO3*MgCO3
   Elements: 1:Ca 2:C 6:O 1:Mg
@@ -374,8 +337,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2140.89
       Hr: -2302.72
-      Cr: 157.4
-      a: 0.0
+      a: 157.4
       b: 0.0
       c: 0.0
 - Name: BaCl2*H2O
@@ -386,8 +348,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1055.669
       Hr: -1160.79
-      Cr: 120.0
-      a: 0.0
+      a: 120.0
       b: 0.0
       c: 0.0
 - Name: BaCl2*2H2O
@@ -398,8 +359,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1296.32
       Hr: -1460.13
-      Cr: 161.96
-      a: 0.0
+      a: 161.96
       b: 0.0
       c: 0.0
 - Name: BaSO4
@@ -410,8 +370,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20, 5-18 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1361.866
       Hr: -1467.929
-      Cr: 104.0038
-      a: 0.0
+      a: 104.0038
       b: 0.0
       c: 0.0
       alpha: 1.636629e-3
@@ -424,8 +383,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1341.538
       Hr: -1452.955
-      Cr: 100.0
-      a: 0.0
+      a: 100.0
       b: 0.0
       c: 0.0
       alpha: 1.035686e-3
@@ -438,8 +396,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1284.587
       Hr: -1456.694
-      Cr: 160.2
-      a: 0.0
+      a: 160.2
       b: 0.0
       c: 0.0
 - Name: SrCl2*6H2O
@@ -450,8 +407,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2240.92
       Hr: -2623.8
-      Cr: 320.0
-      a: 0.0
+      a: 320.0
       b: 0.0
       c: 0.0
 - Name: BaSO4*SrSO4
@@ -462,8 +418,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2714.505
       Hr: -2954.863
-      Cr: 201.75
-      a: 0.0
+      a: 201.75
       b: 0.0
       c: 0.0
 - Name: CaSO4
@@ -474,9 +429,8 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1321.8
       Hr: -1436.132
-      Cr: 70.21
-      a: 0.009874
-      b: 0.0
+      a: 70.21
+      b: 0.009874
       c: 0.0
       alpha: 2.328718e-3
       beta: -8.421355e-7
@@ -488,9 +442,8 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1797.407
       Hr: -2026.294
-      Cr: 91.38
-      a: 0.318
-      b: 0.0
+      a: 91.38
+      b: 0.318
       c: 0.0
       alpha: 1.078224e-3
       beta: 3.078141e-7
@@ -502,21 +455,8 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2594.808
       Hr: -2816.396
-      Cr: 140.25
-      a: 0.2907
-      b: 0.0
-      c: 0.0
-- Name: Na2SO4
-  Formula: Na2SO4
-  Elements: 2:Na 1:S 4:O
-  AggregateState: Solid
-  StandardThermoModel:
-    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
-      Gr: -1270.16
-      Hr: -1387.08
-      Cr: 128.2
-      a: 0.0
-      b: 0.0
+      a: 140.25
+      b: 0.2907
       c: 0.0
 - Name: CaCl2
   Formula: CaCl2
@@ -526,8 +466,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -748.1
       Hr: -795.8
-      Cr: 72.59
-      a: 0.0
+      a: 72.59
       b: 0.0
       c: 0.0
 - Name: CaCl2*2H2O
@@ -538,8 +477,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1253.87
       Hr: -1402.9
-      Cr: 153.0
-      a: 0.0
+      a: 153.0
       b: 0.0
       c: 0.0
 - Name: CaCl2*4H2O
@@ -550,8 +488,7 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -1738.434
       Hr: -2014.119
-      Cr: 233.0
-      a: 0.0
+      a: 233.0
       b: 0.0
       c: 0.0
 - Name: CaCl2*6H2O
@@ -562,7 +499,6 @@ Species:
     ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
       Gr: -2219.378
       Hr: -2607.658
-      Cr: 313.0
-      a: 0.0
+      a: 313.0
       b: 0.0
       c: 0.0

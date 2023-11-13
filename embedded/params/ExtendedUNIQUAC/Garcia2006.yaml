@@ -1,4 +1,6 @@
-# Parameters collected from Garcia et al. (2006) (https://dx.doi.org/10.1016/j.geothermics.2006.03.001)
+# Extended UNIQUAC parameters collected from from Garcia et al. (2006).
+#
+# https://dx.doi.org/10.1016/j.geothermics.2006.03.001
 
 ActivityModelParams:
   ExtendedUNIQUAC:
