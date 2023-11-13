@@ -67,8 +67,7 @@ Species:
   Charge: 0.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -237.129
+      Gr: -237.129  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -285.830
       Sr: 69.91
       Cp: 75.291
@@ -95,8 +94,7 @@ Species:
   Charge: 1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: 0.0
+      Gr: 0.0  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: 0.0
       Sr: 0.0
       Cp: 0.0
@@ -110,8 +108,7 @@ Species:
   Charge: 1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -261.905
+      Gr: -261.905  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -240.12
       Sr: 59.0
       Cp: 46.4
@@ -177,8 +174,7 @@ Species:
   Charge: -1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -157.244
+      Gr: -157.244  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -229.994
       Sr: -10.75
       Cp: -148.5
@@ -192,8 +188,7 @@ Species:
   Charge: -1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -131.228
+      Gr: -131.228  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -167.159
       Sr: 56.5
       Cp: -136.4
@@ -207,8 +202,7 @@ Species:
   Charge: -2.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -744.53
+      Gr: -744.53  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -909.27
       Sr: 20.1
       Cp: -293.
@@ -222,8 +216,7 @@ Species:
   Charge: -2.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -527.81
+      Gr: -527.81  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -677.14
       Sr: -56.9
       a: 894.688  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
@@ -236,8 +229,7 @@ Species:
   Charge: -1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gr: -586.77
+      Gr: -586.77  # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Hr: -691.99
       Sr: 91.2
       a: -0.67710  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
