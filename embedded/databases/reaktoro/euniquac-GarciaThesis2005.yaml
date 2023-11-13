@@ -116,7 +116,7 @@ Species:
   AggregateState: Aqueous
   Charge: 2
   StandardThermoModel:
-    ExtendedUNIQUAC:
+    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -553.58
       Hr: -542.83
       Cp: -32.808867
@@ -129,7 +129,7 @@ Species:
   AggregateState: Aqueous
   Charge: 2
   StandardThermoModel:
-    ExtendedUNIQUAC:
+    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -560.77
       Hr: -537.64
       Cp: 0.6954
@@ -154,7 +154,7 @@ Species:
   AggregateState: Aqueous
   Charge: 2
   StandardThermoModel:
-    ExtendedUNIQUAC:
+    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
       Gr: -454.8
       Hr: -466.85
       Cp: -18.635063
