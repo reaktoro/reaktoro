@@ -52,9 +52,9 @@ TEST_CASE("Testing ActivityModelExtendedUNIQUAC", "[ActivityModelExtendedUNIQUAC
         // Evaluate the activity props function
         fn(props, {T, P, x});
 
-        CHECK( props.ln_g[0]/ln10  == Approx(-0.000190054) ); // OH-
-        CHECK( props.ln_g[1]/ln10  == Approx(-0.000190054) ); // H+
-        CHECK( props.ln_g[2]/ln10  == Approx( 3.17078e-13) ); // H2O
+        CHECK( props.ln_g[0].val()/ln10  == Approx(-0.0001895461) );  // OH-
+        CHECK( props.ln_g[1].val()/ln10  == Approx(-0.0001895777) );  // H+
+        CHECK( props.ln_g[2].val()/ln10  == Approx(0.0).scale(1.0) ); // H2O
     }
 
     // WHEN("pure water - ionic strength is zero")
