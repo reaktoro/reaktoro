@@ -83,12 +83,14 @@ void exportEquilibriumSpecs(py::module& m)
         ;
 
     py::class_<ReactivityConstraint>(m, "ReactivityConstraint")
+        .def(py::init<>())
         .def_readwrite("id", &ReactivityConstraint::id)
         .def_readwrite("Kn", &ReactivityConstraint::Kn)
         .def_readwrite("Kp", &ReactivityConstraint::Kp)
         ;
 
     py::class_<ReactivityConstraints>(m, "ReactivityConstraints")
+        .def(py::init<>())
         .def_readwrite("ids", &ReactivityConstraints::ids)
         .def_readwrite("Kn", &ReactivityConstraints::Kn)
         .def_readwrite("Kp", &ReactivityConstraints::Kp)
