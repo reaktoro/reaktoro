@@ -143,6 +143,33 @@ TEST_CASE("Testing parseChemicalFormula method", "[ParseUtils]")
 
     formula = parseChemicalFormula("Fe0.875S1");
     CHECK( formula == Pairs<String, double>{{"Fe", 0.875}, {"S", 1}} );
+
+    formula = parseChemicalFormula("CaCl2*6H2O");
+    CHECK( formula == Pairs<String, double>{{"Ca", 1}, {"Cl", 2}, {"H", 12}, {"O", 6}} );
+
+    formula = parseChemicalFormula("SrCl2*2H2O");
+    CHECK( formula == Pairs<String, double>{{"Sr", 1}, {"Cl", 2}, {"H", 4}, {"O", 2}} );
+
+    formula = parseChemicalFormula("(NH4)2SO4*3NH4NO3");
+    CHECK( formula == Pairs<String, double>{{"N", 8}, {"H", 20}, {"S", 1}, {"O", 13}} );
+
+    formula = parseChemicalFormula("Na2SO4*(NH4)2SO4*4H2O");
+    CHECK( formula == Pairs<String, double>{{"Na", 2}, {"S", 2}, {"O", 12}, {"N", 2}, {"H", 16}} );
+
+    formula = parseChemicalFormula("CaCl2:6H2O");
+    CHECK( formula == Pairs<String, double>{{"Ca", 1}, {"Cl", 2}, {"H", 12}, {"O", 6}} );
+
+    formula = parseChemicalFormula("SrCl2:2H2O");
+    CHECK( formula == Pairs<String, double>{{"Sr", 1}, {"Cl", 2}, {"H", 4}, {"O", 2}} );
+
+    formula = parseChemicalFormula("(NH4)2SO4:3NH4NO3");
+    CHECK( formula == Pairs<String, double>{{"N", 8}, {"H", 20}, {"S", 1}, {"O", 13}} );
+
+    formula = parseChemicalFormula("Na2SO4:(NH4)2SO4*4H2O");
+    CHECK( formula == Pairs<String, double>{{"Na", 2}, {"S", 2}, {"O", 12}, {"N", 2}, {"H", 16}} );
+
+    formula = parseChemicalFormula("Na2SO4:(NH4)2SO4:4H2O");
+    CHECK( formula == Pairs<String, double>{{"Na", 2}, {"S", 2}, {"O", 12}, {"N", 2}, {"H", 16}} );
 }
 
 TEST_CASE("Testing parseElectricCharge method", "[ParseUtils]")
