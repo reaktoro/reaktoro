@@ -38,6 +38,8 @@ auto StandardThermoModelFromData(Data const& data) -> StandardThermoModel
 
     if(name == "Constant")
         return StandardThermoModelConstant(params.as<StandardThermoModelParamsConstant>());
+    if(name == "ExtendedUNIQUAC")
+        return StandardThermoModelExtendedUNIQUAC(params.as<StandardThermoModelParamsExtendedUNIQUAC>());
     if(name == "HKF")
         return StandardThermoModelHKF(params.as<StandardThermoModelParamsHKF>());
     if(name == "HollandPowell")
