@@ -78,7 +78,7 @@ auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Pairs<Str
 {
     if(begin == end) return;
 
-    if(*begin != '(' && *begin != '.' && !isupper(*begin))
+    if(*begin != '(' && *begin != ':' && *begin != '*' && !isupper(*begin))
     {
         parseChemicalFormulaAux(begin + 1, end, result, scalar);
     }
@@ -97,7 +97,7 @@ auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Pairs<Str
         parseChemicalFormulaAux(begin1, end1, result, scalar * number);
         parseChemicalFormulaAux(begin2, end2, result, scalar);
     }
-    else if(*begin == '.')
+    else if(*begin == ':' || *begin == '*')
     {
         auto res = parseNumAtoms(begin + 1, end);
 
@@ -134,6 +134,8 @@ auto parseChemicalFormula(String formula) -> Pairs<String, double>
     // Parse the formula for elements and their coefficients (without charge)
     Pairs<String, double> result;
     parseChemicalFormulaAux(formula.begin(), formula.end(), result, 1.0);
+    for(auto& pair : result)
+        pair.second = (pair.second + 1e8) - 1e8; // round to nearest integer when small numerical errors accumulate due to multiplication and addition (e.g., 13.49999998 becomes 14.5, or 5.00000002 becomes 5.0)
     return result;
 }
 
