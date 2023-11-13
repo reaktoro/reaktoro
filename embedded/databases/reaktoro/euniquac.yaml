@@ -71,7 +71,7 @@ Species:
       cp_a: 1418.157
       cp_b: -3.445769
       cp_c: -51473.13
-- Name: H2O(l)
+- Name: H2O(aq)
   Formula: H2O
   Elements: 2:H 1:O
   Charge: 0
@@ -97,7 +97,7 @@ Species:
       cp_a: 400.35
       cp_b: -1.1312
       cp_c: -18574
-- Name: SO4--
+- Name: SO4-2
   Formula: SO4-2
   Elements: 1:S 4:O
   Charge: -2
@@ -110,7 +110,7 @@ Species:
       cp_a: 643.3
       cp_b: -1.7605
       cp_c: -37903
-- Name: S2O8--
+- Name: S2O8-2
   Formula: S2O8-2
   Elements: 2:S 8:O
   Charge: -2
@@ -175,7 +175,7 @@ Species:
       cp_a: 243
       cp_b: 0
       cp_c: 0
-- Name: CO3--
+- Name: CO3-2
   Formula: CO3-2
   Elements: 1:C 3:O
   Charge: -2
@@ -201,7 +201,7 @@ Species:
       cp_a: -0.6770971
       cp_b: 0.2737451
       cp_c: -10089.51
-- Name: Ca++
+- Name: Ca+2
   Formula: Ca+2
   Elements: 1:Ca
   Charge: 2
@@ -211,7 +211,7 @@ Species:
       G0: -553.58
       H0: -542.83
       Cp: -32.808867
-- Name: Mg++
+- Name: Mg+2
   Formula: Mg+2
   Elements: 1:Mg
   Charge: 2
@@ -221,7 +221,7 @@ Species:
       G0: -454.8
       H0: -466.85
       Cp: -18.635063
-- Name: Sr++
+- Name: Sr+2
   Formula: Sr+2
   Elements: 1:Sr
   Charge: 2
@@ -234,7 +234,7 @@ Species:
       cp_a: -1124.756
       cp_b: 3.450446
       cp_c: 0
-- Name: Ba++
+- Name: Ba+2
   Formula: Ba+2
   Elements: 1:Ba
   Charge: 2
