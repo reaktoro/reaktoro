@@ -69,21 +69,16 @@ auto StandardThermoModelExtendedUNIQUAC(StandardThermoModelParamsExtendedUNIQUAC
         const auto PmPr2 = PmPr*PmPr;
 
         // Compute the standard heat capacity (constant pressure) using the model Cp°(T) = a + bT + c/(T - Θ)
-        const auto Cp0 = a + b*T + c/(T - Theta); // in J/(mol·K)
+        props.Cp0 = a + b*T + c/(T - Theta); // in J/(mol·K)
 
         // Compute the standard enthalpy of the substance using the previous heat capacity model
-        const auto H0 = Hr + a*TmTr + 0.5*b*(T2 - Tr2) + c*log((T - Theta)/(Tr - Theta)); // in kJ/(mol·K)
+        props.H0 = (Hr*KJ_TO_J) + a*TmTr + 0.5*b*(T2 - Tr2) + c*log((T - Theta)/(Tr - Theta)); // in J/(mol·K)
 
         // Compute the standard Gibbs energy of the substance using the previous heat capacity model
-        auto G0 = Gr*T/Tr + Hr*(1 - T/Tr) - a*T*(log(T/Tr) + Tr/T - 1) - 0.5*b*TmTr2 - c*T/Theta*((T - Theta)/T*log((T - Theta)/(Tr - Theta)) - log(T/Tr)); // in kJ/(mol·K)
+        props.G0 = (Gr*KJ_TO_J)*T/Tr + Hr*(1 - T/Tr) - a*T*(log(T/Tr) + Tr/T - 1) - 0.5*b*TmTr2 - c*T/Theta*((T - Theta)/T*log((T - Theta)/(Tr - Theta)) - log(T/Tr)); // in J/(mol·K)
 
         // Compute the pressure-correction for the standard Gibbs energy: α(P - Pr) + β(P - Pr)²
-        G0 += (alpha + beta*PmPr)*PmPr; // in kJ/(mol·K)
-
-        // Set the corresponding properties in the StandardThermoProps object
-        props.Cp0 = Cp0;
-        props.H0  = H0 * KJ_TO_J;
-        props.G0  = G0 * KJ_TO_J;
+        props.G0 -= (alpha + beta*PmPr)*PmPr*KJ_TO_J; // in J/(mol·K)
     };
 
     return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
