@@ -1,0 +1,631 @@
+Species:
+- Name: O2(g)
+  Formula: O2
+  Elements: 2:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: 0
+      H0: 0
+      Cp: 29.355
+- Name: H2O(g)
+  Formula: H2O
+  Elements: 2:H 1:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -228.572
+      H0: -241.818
+      Cp: 33.577
+- Name: N2(g)
+  Formula: N2
+  Elements: 2:N
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: 0
+      H0: 0
+      Cp: 29.125
+- Name: CO2(g)
+  Formula: CO2
+  Elements: 1:C 2:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -394.359
+      H0: -393.509
+      Cp: 37.11
+- Name: O2(aq)
+  Formula: O2
+  Elements: 2:O
+  Charge: 0
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: 16.4
+      H0: -11.7
+      Cp: '-'
+- Name: H+
+  Formula: H+
+  Elements: 1:H
+  Charge: 1
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: 0
+      H0: 0
+      Cp: 0
+      cp_a: 0
+      cp_b: 0
+      cp_c: 0
+- Name: OH-
+  Formula: OH-
+  Elements: 1:H 1:O
+  Charge: -1
+  AggregateState: Aqueous
+  StandardThermoModel:  # Reference: https://doi.org/10.1021/ie801168e
+    ExtendedUNIQUAC:
+      G0: -157.2481
+      H0: -230.2433
+      Cp: -148.5
+      cp_a: 1418.157
+      cp_b: -3.445769
+      cp_c: -51473.13
+- Name: H2O(l)
+  Formula: H2O
+  Elements: 2:H 1:O
+  Charge: 0
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -237.129
+      H0: -285.83
+      Cp: 75.291
+      cp_a: 58.3695
+      cp_b: 0.03896
+      cp_c: 523.88
+- Name: Cl-
+  Formula: Cl-
+  Elements: 1:Cl
+  Charge: -1
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -131.228
+      H0: -167.159
+      Cp: -136.4
+      cp_a: 400.35
+      cp_b: -1.1312
+      cp_c: -18574
+- Name: SO4--
+  Formula: SO4-2
+  Elements: 1:S 4:O
+  Charge: -2
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -744.53
+      H0: -909.27
+      Cp: -293
+      cp_a: 643.3
+      cp_b: -1.7605
+      cp_c: -37903
+- Name: S2O8--
+  Formula: S2O8-2
+  Elements: 2:S 8:O
+  Charge: -2
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1114.9
+      H0: -1344.7
+      Cp: '-'
+      cp_a: -110
+      cp_b: 0
+      cp_c: 0
+- Name: HSO4-
+  Formula: HSO4-
+  Elements: 1:S 1:H 4:O
+  Charge: -1
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -755.91
+      H0: -887.34
+      Cp: -4.1313
+      cp_a: 647.3
+      cp_b: -1.5857
+      cp_c: -17536
+- Name: NO3-
+  Formula: NO3-
+  Elements: 1:N 3:O
+  Charge: -1
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: '-111.25*'
+      H0: '-207.36*'
+      Cp: -86.6
+      cp_a: 2.2926
+      cp_b: 0.1211
+      cp_c: -9753.2
+- Name: NH4+
+  Formula: NH4+
+  Elements: 1:N 4:H
+  Charge: 1
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -79.31
+      H0: -132.51
+      Cp: 79.9
+      cp_a: 71.008
+      cp_b: 0
+      cp_c: 0
+- Name: CO2(aq)
+  Formula: CO2
+  Elements: 1:C 2:O
+  Charge: 0
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -385.98
+      H0: -413.8
+      Cp: 243
+      cp_a: 243
+      cp_b: 0
+      cp_c: 0
+- Name: CO3--
+  Formula: CO3-2
+  Elements: 1:C 3:O
+  Charge: -2
+  AggregateState: Aqueous
+  StandardThermoModel:  # Reference: From https://doi.org/10.1021/ie801168e
+    ExtendedUNIQUAC:
+      G0: -527.81
+      H0: -677.14
+      Cp: '-'
+      cp_a: 894.688
+      cp_b: -2.8272
+      cp_c: -21149.44
+- Name: HCO3-
+  Formula: HCO3-
+  Elements: 1:C 1:H 3:O
+  Charge: -1
+  AggregateState: Aqueous
+  StandardThermoModel:  # Reference: From https://doi.org/10.1021/ie801168e
+    ExtendedUNIQUAC:
+      G0: -586.77
+      H0: -691.99
+      Cp: '-'
+      cp_a: -0.6770971
+      cp_b: 0.2737451
+      cp_c: -10089.51
+- Name: Ca++
+  Formula: Ca+2
+  Elements: 1:Ca
+  Charge: 2
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -553.58
+      H0: -542.83
+      Cp: -32.808867
+- Name: Mg++
+  Formula: Mg+2
+  Elements: 1:Mg
+  Charge: 2
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -454.8
+      H0: -466.85
+      Cp: -18.635063
+- Name: Sr++
+  Formula: Sr+2
+  Elements: 1:Sr
+  Charge: 2
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -559.48
+      H0: -545.8
+      Cp: -1124.756
+      cp_a: -1124.756
+      cp_b: 3.450446
+      cp_c: 0
+- Name: Ba++
+  Formula: Ba+2
+  Elements: 1:Ba
+  Charge: 2
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -560.77
+      H0: -537.64
+      Cp: 0.6954
+- Name: Na+
+  Formula: Na+
+  Elements: 1:Na
+  Charge: 1
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -261.905
+      H0: -240.12
+      Cp: 46.4
+      cp_a: 600.62
+      cp_b: -1.1006
+      cp_c: -23232
+- Name: K+
+  Formula: K+
+  Elements: 1:K
+  Charge: 0
+  AggregateState: Aqueous
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -283.27
+      H0: -252.38
+      Cp: 21.8
+      cp_a: 415.09
+      cp_b: -0.8142
+      cp_c: -16316
+- Name: Mg(OH)2
+  Formula: Mg(OH)2
+  Elements: 1:Mg 2:H 2:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -833.51
+      H0: -921.1407
+      Cp: 77.03
+- Name: Magnesite
+  Formula: MgCO3
+  Elements: 1:Mg 1:C 3:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1012.1
+      H0: -1095.8
+      Cp: 75.52
+- Name: CaCl2
+  Formula: CaCl2
+  Elements: 1:Ca 2:Cl
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -748.1
+      H0: -795.8
+      Cp: 72.59
+- Name: CaCl2*2H2O
+  Formula: CaCl2*2H2O
+  Elements: 1:Ca 2:Cl 4:H 2:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1253.87
+      H0: -1402.9
+      Cp: 153
+- Name: CaCl2*4H2O
+  Formula: CaCl2*4H2O
+  Elements: 1:Ca 2:Cl 8:H 4:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1738.434
+      H0: -2014.119
+      Cp: 233
+- Name: CaCl2*6H2O
+  Formula: CaCl2*6H2O
+  Elements: 1:Ca 2:Cl 12:H 6:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -2219.378
+      H0: -2607.9
+      Cp: 313
+- Name: Anhydrite
+  Formula: CaSO4
+  Elements: 1:Ca 1:S 4:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1321.8
+      H0: -1436.132
+      Cp: 70.21
+      cp_a: 70.21
+      cp_b: 0.009874
+      cp_c: 0
+- Name: Gypsum
+  Formula: CaSO4*2H2O
+  Elements: 1:Ca 1:S 4:H 6:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1797.407
+      H0: -2026.294
+      Cp: 91.38
+      cp_a: 91.38
+      cp_b: 0.318
+      cp_c: 0
+- Name: Calcite
+  Formula: CaCO3
+  Elements: 1:Ca 1:C 3:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Garcia's Thesis
+    ExtendedUNIQUAC:
+      G0: -1129.057
+      H0: -1208.726
+      Cp: 81.88
+- Name: Aragonite
+  Formula: CaCO3
+  Elements: 1:Ca 1:C 3:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1127.75
+      H0: -1207.13
+      Cp: 81.25
+- Name: Dolomite
+  Formula: CaMg(CO3)2
+  Elements: 1:Ca 1:Mg 2:C 6:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -2140.89
+      H0: -2302.72
+      Cp: 157.4
+- Name: SrCl2*2H2O
+  Formula: SrCl2*2H2O
+  Elements: 1:Sr 2:Cl 4:H 2:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1284.587
+      H0: -1456.694
+      Cp: 160.2
+- Name: SrCl2*6H2O
+  Formula: SrCl2*6H2O
+  Elements: 1:Sr 2:Cl 12:H 6:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -2240.92
+      H0: -2623.8
+      Cp: 320
+- Name: Celestite
+  Formula: SrSO4
+  Elements: 1:Sr 1:S 4:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1341.538
+      H0: -1452.955
+      Cp: 100
+- Name: Strontianite
+  Formula: SrCO3
+  Elements: 1:Sr 1:C 3:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1139.745
+      H0: -1227.633
+      Cp: 1259.146863
+      cp_a: 1259.146863
+      cp_b: -2.827237
+      cp_c: -21149.44
+- Name: Barite
+  Formula: BaSO4
+  Elements: 1:Ba 1:S 4:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1361.866
+      H0: -1467.929
+      Cp: 104.0038
+- Name: Witherite
+  Formula: BaCO3
+  Elements: 1:Ba 1:C 3:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1136.054
+      H0: -1222.907
+      Cp: 85.5
+- Name: Halite
+  Formula: NaCl
+  Elements: 1:Na 1:Cl
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Garcia's Thesis
+    ExtendedUNIQUAC:
+      G0: -384.1258
+      H0: -411.9584
+      Cp: 45.13074
+- Name: Na2SO4
+  Formula: Na2SO4
+  Elements: 2:Na 1:S 4:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      G0: -1270.16
+      H0: -1387.08
+      Cp: 128.2
+- Name: Na2SO4*10H2O
+  Formula: Na2SO4*10H2O
+  Elements: 2:Na 1:S 20:H 14:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -3646.85
+      H0: -4327.26
+      Cp: 492.2
+- Name: NaK3(SO4)2
+  Formula: NaK3(SO4)2
+  Elements: 2:Na 3:K 2:S 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -2622.82
+      H0: -2854.62
+      Cp: 287.5
+- Name: NaNO3*Na2SO4*H2O
+  Formula: NaNO3*Na2SO4*H2O
+  Elements: 3:Na 1:N 1:S 2:H 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -1876.74
+      H0: -2152.96
+      Cp: 300
+- Name: Na2CO3*2Na2SO4
+  Formula: NaNO3*Na2SO4*H2O
+  Elements: 3:Na 1:N 1:S 2:H 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -3593.19
+      H0: -3921.49
+      Cp: 840.07
+- Name: Na2CO3*NaHCO3*2H2O
+  Formula: Na2CO3*NaHCO3*2H2O
+  Elements: 3:Na 2:C 5:H 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -2380.11
+      H0: -2684.9
+      Cp: 256.8
+- Name: Na2CO3*3NaHCO3
+  Formula: Na2CO3*3NaHCO3
+  Elements: 5:Na 4:C 3:H 12:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -3602.78
+      H0: -3982.7
+      Cp: 182.03
+- Name: KHCO3
+  Formula: KHCO3
+  Elements: 1:K 1:C 1:H 3:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -868.7
+      H0: -963.2
+      Cp: 85.51
+- Name: NaKCO3*6H2O
+  Formula: NaKCO3*6H2O
+  Elements: 1:Na 1:K 1:C 12:H 9:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -2495.69
+      H0: -2920.78
+      Cp: 300
+- Name: K2CO3*Na2CO3
+  Formula: K2CO3*Na2CO3
+  Elements: 2:K 2:Na 2:C 6:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -2121.47
+      H0: -2299.1
+      Cp: 420.23
+- Name: K2CO3*NaHCO3•2H2O
+  Formula: K2CO3*NaHCO3*2H2O
+  Elements: 2:K 1:Na 2:C 5:H 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -2410.63
+      H0: -2718.66
+      Cp: 300
+- Name: (NH4)2SO4*3NH4NO3
+  Formula: (NH4)2SO4*3NH4NO3
+  Elements: 8:N 1:S 20:H 13:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -1454.53
+      H0: -2278.72
+      Cp: 987.19
+- Name: (NH4)2SO4*2NH4NO3
+  Formula: (NH4)2SO4*2NH4NO3
+  Elements: 6:N 1:S 16:H 10:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -1270.61
+      H0: -1914.1
+      Cp: 764.42
+- Name: Na2SO4*(NH4)2SO4*4H2O
+  Formula: Na2SO4*(NH4)2SO4*4H2O
+  Elements: 2:Na 2:S 2:N 16:H 12:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -3127.82
+      H0: -3752.02
+      Cp: 874.92
+- Name: 2NaNO3*NH4NO3
+  Formula: 2NaNO3*NH4NO3
+  Elements: 2:Na 4:N 4:H 9:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -920.19
+      H0: '-'
+      Cp: 874.92
+- Name: Na2S2O8
+  Formula: Na2S2O8
+  Elements: 2:Na 2:S 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -1638.13
+      H0: -1893.64
+      Cp: 665.38
+- Name: (NH4)2S2O8
+  Formula: (NH4)2S2O8
+  Elements: 2:N 2:S 8:H 8:O
+  Charge: 0
+  AggregateState: Mineral
+  StandardThermoModel:  # Reference: Thomsen's Thesis
+    ExtendedUNIQUAC:
+      G0: -1273.6
+      H0: -1648.1
+      Cp: 569.6
