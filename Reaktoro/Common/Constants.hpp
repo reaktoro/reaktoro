@@ -28,8 +28,14 @@ constexpr auto universalGasConstant = 8.3144621;
 /// The Faraday constant (in C/mol)
 constexpr auto faradayConstant = 96485.3329;
 
+/// The Avogadro's number (in 1/mol)
+constexpr auto avogadroNumber = 6.02214076e+23;
+
+/// The vacuum permittivity (in C²/(J*m))
+constexpr auto vacuumPermittivity = 8.8541878128e-12;
+
 /// The molar mass of an electron (in kg/mol)
-constexpr auto molarMassElectron = 5.4857990888E-07;
+constexpr auto molarMassElectron = 5.4857990888e-07;
 
 /// The constant factor that converts joule to calorie
 constexpr auto jouleToCalorie = 0.239005736;
