@@ -54,7 +54,10 @@ void exportDatabase(py::module& m)
         .def("reaction", &Database::reaction)
         .def("attachedData", &Database::attachedData)
         .def_static("fromFile", &Database::fromFile)
+        .def_static("fromEmbeddedFile", &Database::fromEmbeddedFile)
         .def_static("fromContents", &Database::fromContents)
         .def_static("fromStream", &Database::fromStream)
+        .def_static("local", &Database::local)
+        .def_static("embedded", &Database::embedded)
         ;
 }
