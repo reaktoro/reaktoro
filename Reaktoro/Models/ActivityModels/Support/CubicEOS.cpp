@@ -568,7 +568,7 @@ struct Equation::Impl
         // Calculate the fugacity coefficients for each species
         //=========================================================================================
         props.Vi.resize(nspecies);
-        props.ln_phi.resize(nspecies);        
+        props.ln_phi.resize(nspecies);
         for(auto k = 0; k < nspecies; ++k)
         {
             const real betak = P*bbar[k]/(R*T);

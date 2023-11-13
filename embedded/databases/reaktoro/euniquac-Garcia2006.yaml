@@ -5,464 +5,564 @@ Species:
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: 0.0
-      Hf: 0.0
-      Cp: 29.355
-      S0: 205.138
+      Gr: 0.0
+      Hr: 0.0
+      Cr: 29.355
+      Sr: 205.138
 - Name: H2(g)
   Formula: H2
   Elements: 2:H
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: 0.0
-      Hf: 0.0
-      Cp: 28.824
-      S0: 130.684
+      Gr: 0.0
+      Hr: 0.0
+      Cr: 28.824
+      Sr: 130.684
 - Name: H2O(g)
   Formula: H2O
   Elements: 2:H 1:O
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -228.572
-      Hf: -241.818
-      Cp: 33.577
-      S0: 188.825
+      Gr: -228.572
+      Hr: -241.818
+      Cr: 33.577
+      Sr: 188.825
 - Name: CO2(g)
   Formula: CO2
   Elements: 1:C 2:O
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -394.359
-      Hf: -393.509
-      Cp: 37.11
-      S0: 213.74
+      Gr: -394.359
+      Hr: -393.509
+      Cr: 37.11
+      Sr: 213.74
 - Name: SO2(g)
   Formula: SO2
   Elements: 1:S 2:O
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -300.194
-      Hf: -296.830
-      Cp: 39.87
-      S0: 248.22
-- Name: H+
-  Formula: H+
-  Elements: 1:H
-  AggregateState: Aqueous
-  Charge: 1
-  StandardThermoModel:  # Reference: Thomsen's thesis
-    ExtendedUNIQUAC:
-      G0: 0.0
-      H0: 0.0
-      Cp0: 0.0
-      a: 0.0
-      b: 0.0
-      c: 0.0
-- Name: OH-
-  Formula: OH-
-  Elements: 1:O 1:H
-  AggregateState: Aqueous
-  Charge: -1
-  StandardThermoModel:  # Reference: Thomsen's thesis
-    ExtendedUNIQUAC:
-      G0: -157.2481
-      H0: -230.2433
-      Cp0: -148.5
-      a: 1418.2
-      b: -3.4446
-      c: -51473
+      Gr: -300.194
+      Hr: -296.830
+      Cr: 39.87
+      Sr: 248.22
 - Name: H2O
   Formula: H2O
   Elements: 2:H 1:O
   AggregateState: Aqueous
   Charge: 0.0
-  StandardThermoModel:  # Reference: Thomsen's thesis
+  StandardThermoModel:
     ExtendedUNIQUAC:
-      G0: -237.129
-      H0: -285.830
-      Cp0: 75.291
-      a: 58.370
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -237.129
+      Hr: -285.830
+      Cr: 75.291
+      Sr: 69.91
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 58.37000
       b: 0.03896
-      c: 523.88
-- Name: SO4-2
-  Formula: SO4-2
-  Elements: 1:S 4:O
-  AggregateState: Aqueous
-  Charge: -2
-  StandardThermoModel:  # Reference: Thomsen's thesis
-    ExtendedUNIQUAC:
-      G0: -744.53
-      H0: -909.27
-      Cp0: -293.
-      a: 643.30
-      b: -1.7605
-      c: -37903
-- Name: Cl-
-  Formula: Cl-
-  Elements: 1:Cl
-  AggregateState: Aqueous
-  Charge: -1
-  StandardThermoModel:  # Reference: Thomsen's thesis
-    ExtendedUNIQUAC:
-      G0: -131.228
-      H0: -167.159
-      Cp0: -136.4
-      a: 400.35
-      b: -1.1312
-      c: -18574
+      c: 523.88000
 - Name: CO2
   Formula: CO2
   Elements: 1:C 2:O
   AggregateState: Aqueous
   Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -385.98
-      H0: -413.8
-      Cp0: 243
-- Name: CO3-2
-  Formula: CO3-2
-  Elements: 1:C 3:O
-  AggregateState: Aqueous
-  Charge: -2
-  StandardThermoModel:  # Reference: Thomsen's thesis
-    ExtendedUNIQUAC:
-      G0: -527.81
-      H0: -677.14
-      Cp0: -
-      a: 894.688
-      b: -2.8272
-      c: -21149.44
-- Name: HCO3-
-  Formula: HCO3-
-  Elements: 1:H 1:C 3:O
-  AggregateState: Aqueous
-  Charge: -1
-  StandardThermoModel:  # Reference: Thomsen's thesis
-    ExtendedUNIQUAC:
-      G0: -586.77
-      H0: -691.99
-      Cp0: -
-      a: -0.6770971
-      b: 0.2737451
-      c: -10089.51
-- Name: Ca+2
-  Formula: Ca+2
-  Elements: 1:Ca
-  AggregateState: Aqueous
-  Charge: 2
   StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: -553.58
-      H0: -542.83
-      Cp0: -32.808867
-      a: -403.2824
-      b: 0.8858481
-      c: 10439.03
-- Name: Mg+2
-  Formula: Mg+2
-  Elements: 1:Mg
-  AggregateState: Aqueous
-  Charge: 2
-  StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: -454.8
-      H0: -466.85
-      Cp0: -18.635063
-      a: -646.9708
-      b: 1.331126
-      c: 22717.85
-- Name: Sr+2
-  Formula: Sr+2
-  Elements: 1:Sr
-  AggregateState: Aqueous
-  Charge: 2
-  StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: -559.48
-      H0: -545.80
-      Cp0: -1124.756
-      a: -1124.756
-      b: 3.450446
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -385.98
+      Hr: -413.8
+      Cr: 243.0
+      a: 0.0
+      b: 0.0
       c: 0.0
-- Name: Ba+2
-  Formula: Ba+2
-  Elements: 1:Ba
+- Name: H+
+  Formula: H+
+  Elements: 1:H
   AggregateState: Aqueous
-  Charge: 2
+  Charge: 1.0
   StandardThermoModel:
     ExtendedUNIQUAC:
-      G0: -560.77
-      H0: -537.64
-      Cp0: 0.6954
-      a: 0.6954
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: 0.0
+      Hr: 0.0
+      Cr: 0.0
+      Sr: 0.0
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 0.0
       b: 0.0
       c: 0.0
 - Name: Na+
   Formula: Na+
   Elements: 1:Na
   AggregateState: Aqueous
-  Charge: 1
-  StandardThermoModel:  # Reference: Thomsen's thesis
+  Charge: 1.0
+  StandardThermoModel:
     ExtendedUNIQUAC:
-      G0: -261.905
-      H0: -240.12
-      Cp0: 46.4
-      a: 600.62
-      b: -1.1006
-      c: -23232
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -261.905
+      Hr: -240.12
+      Cr: 46.4
+      Sr: 59.0
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 600.62000
+      b: -1.10060
+      c: -23232.0
+- Name: Ca+2
+  Formula: Ca+2
+  Elements: 1:Ca
+  AggregateState: Aqueous
+  Charge: 2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      Gr: -553.58
+      Hr: -542.83
+      Cp0: -32.808867
+      a: -403.2824
+      b: 0.8858481
+      c: 10439.03
+- Name: Ba+2
+  Formula: Ba+2
+  Elements: 1:Ba
+  AggregateState: Aqueous
+  Charge: 2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      Gr: -560.77
+      Hr: -537.64
+      Cp0: 0.6954
+      a: 0.6954
+      b: 0.0
+      c: 0.0
+- Name: Sr+2
+  Formula: Sr+2
+  Elements: 1:Sr
+  AggregateState: Aqueous
+  Charge: 2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -559.48
+      Hr: -545.8
+      Cr: -1124.756
+      a: 3.450446
+      b: 0.0
+      c: 0.0
+- Name: Mg+2
+  Formula: Mg+2
+  Elements: 1:Mg
+  AggregateState: Aqueous
+  Charge: 2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      Gr: -454.8
+      Hr: -466.85
+      Cp0: -18.635063
+      a: -646.9708
+      b: 1.331126
+      c: 22717.85
+- Name: OH-
+  Formula: OH-
+  Elements: 1:O 1:H
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -157.244
+      Hr: -229.994
+      Cr: -148.5
+      Sr: -10.75
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 1418.2
+      b: -3.44460
+      c: -51473.0
+- Name: Cl-
+  Formula: Cl-
+  Elements: 1:Cl
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -131.228
+      Hr: -167.159
+      Cr: -136.4
+      Sr: 56.5
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 400.35000
+      b: -1.13120
+      c: -18574.0
+- Name: SO4-2
+  Formula: SO4-2
+  Elements: 1:S 4:O
+  AggregateState: Aqueous
+  Charge: -2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -744.53
+      Hr: -909.27
+      Cr: -293.
+      Sr: 20.1
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 643.3
+      b: -1.76050
+      c: -37903.0
+- Name: CO3-2
+  Formula: CO3-2
+  Elements: 1:C 3:O
+  AggregateState: Aqueous
+  Charge: -2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -527.81
+      Hr: -677.14
+      Cr: null
+      Sr: -56.9
+      # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
+      Cp1: 894.688
+      Cp2: -2.8272
+      Cp3: -21149
+- Name: HCO3-
+  Formula: HCO3-
+  Elements: 1:H 1:C 3:O
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -586.77
+      Hr: -691.99
+      Cr: null
+      Sr: 91.2
+      # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
+      Cp1: -0.67710
+      Cp2: 0.27375
+      Cp3: -10090
+- Name: CaCO3
+  Formula: CaCO3
+  Elements: 1:Ca 1:C 3:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1129.057
+      Hr: -1208.726
+      Cr: 81.88
+      a: 0.0
+      b: 0.0
+      c: 0.0
+      alpha: -3.916945e-3
+      beta: -2.092925e-5
 - Name: Mg(OH)2
   Formula: Mg(OH)2
   Elements: 1:Mg 2:O 2:H
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -833.51
-      H0: -921.1407
-      Cp0: 77.03
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -833.51
+      Hr: -921.1407
+      Cr: 77.03
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: Na2SO4
+  Formula: Na2SO4
+  Elements: 2:Na 1:S 4:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1270.16
+      Hr: -1387.08
+      Cr: 128.2
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: NaCl
+  Formula: NaCl
+  Elements: 1:Na 1:Cl
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -384.1258
+      Hr: -411.9584
+      Cr: 45.13074
+      a: 0.0
+      b: 0.0
+      c: 0.0
+      alpha: 9.927134e-5
+      beta: -1.358719e-8
 - Name: MgCO3
   Formula: MgCO3
   Elements: 1:Mg 1:C 3:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -1012.1
-      H0: -1095.8
-      Cp0: 75.52
-- Name: CaCl2
-  Formula: CaCl2
-  Elements: 1:Ca 2:Cl
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -748.1
-      H0: -795.8
-      Cp0: 72.59
-- Name: CaCl2*2H2O
-  Formula: CaCl2*2H2O
-  Elements: 1:Ca 2:Cl 4:H 2:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -1253.87
-      H0: -1402.9
-      Cp0: 153.0
-- Name: CaCl2*4H2O
-  Formula: CaCl2*4H2O
-  Elements: 1:Ca 2:Cl 8:H 4:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -1738.434
-      H0: -2014.119
-      Cp0: 233.0
-- Name: CaCl2*6H2O
-  Formula: CaCl2*6H2O
-  Elements: 1:Ca 2:Cl 12:H 6:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -2219.378
-      H0: -2607.9
-      Cp0: 313.0
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1012.1
+      Hr: -1095.8
+      Cr: 75.52
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: MgCO3*3H2O
+  Formula: MgCO3*3H2O
+  Elements: 1:Mg 1:C 6:O 6:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1723.487
+      Hr: -1953.29
+      Cr: 301.4968
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: MgCO3*5H2O
+  Formula: MgCO3*5H2O
+  Elements: 1:Mg 1:C 8:O 10:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -2197.745
+      Hr: -2524.95
+      Cr: 367.367
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: 3MgCO3*Mg(OH)2*3H2O
+  Formula: 3MgCO3*Mg(OH)2*3H2O
+  Elements: 4:Mg 3:C 14:O 8:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -4602.818
+      Hr: -5069.43
+      Cr: 478.6986
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: BaCO3
+  Formula: BaCO3
+  Elements: 1:Ba 1:C 3:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1136.054
+      Hr: -1222.907
+      Cr: 85.5
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: SrCO3
+  Formula: SrCO3
+  Elements: 1:Sr 1:C 3:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1139.745
+      Hr: -1227.633
+      Cr: 1259.146863
+      a: -2.827237
+      b: -21149.44
+      c: 0.0
+- Name: CaCO3*MgCO3
+  Formula: CaCO3*MgCO3
+  Elements: 1:Ca 2:C 6:O 1:Mg
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 5-19 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -2140.89
+      Hr: -2302.72
+      Cr: 157.4
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: BaCl2*H2O
+  Formula: BaCl2*H2O
+  Elements: 1:Ba 2:Cl 2:H 1:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1055.669
+      Hr: -1160.79
+      Cr: 120.0
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: BaCl2*2H2O
+  Formula: BaCl2*2H2O
+  Elements: 1:Ba 2:Cl 4:H 2:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1296.32
+      Hr: -1460.13
+      Cr: 161.96
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: BaSO4
+  Formula: BaSO4
+  Elements: 1:Ba 1:S 4:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20, 5-18 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1361.866
+      Hr: -1467.929
+      Cr: 104.0038
+      a: 0.0
+      b: 0.0
+      c: 0.0
+      alpha: 1.636629e-3
+      beta: 3.333826e-7
+- Name: SrSO4
+  Formula: SrSO4
+  Elements: 1:Sr 1:S 4:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1341.538
+      Hr: -1452.955
+      Cr: 100.0
+      a: 0.0
+      b: 0.0
+      c: 0.0
+      alpha: 1.035686e-3
+      beta: 7.153236e-7
+- Name: SrCl2*2H2O
+  Formula: SrCl2*2H2O
+  Elements: 1:Sr 2:Cl 4:H 2:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1284.587
+      Hr: -1456.694
+      Cr: 160.2
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: SrCl2*6H2O
+  Formula: SrCl2*6H2O
+  Elements: 1:Sr 2:Cl 12:H 6:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -2240.92
+      Hr: -2623.8
+      Cr: 320.0
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: BaSO4*SrSO4
+  Formula: BaSO4*SrSO4
+  Elements: 1:Ba 2:S 8:O 1:Sr
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -2714.505
+      Hr: -2954.863
+      Cr: 201.75
+      a: 0.0
+      b: 0.0
+      c: 0.0
 - Name: CaSO4
   Formula: CaSO4
   Elements: 1:Ca 1:S 4:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -1321.8
-      H0: -1436.132
-      Cp0: 70.21
-      a: 70.21
-      b: 0.009874
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1321.8
+      Hr: -1436.132
+      Cr: 70.21
+      a: 0.009874
+      b: 0.0
       c: 0.0
       alpha: 2.328718e-3
       beta: -8.421355e-7
 - Name: CaSO4*2H2O
   Formula: CaSO4*2H2O
   Elements: 1:Ca 1:S 6:O 4:H
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's thesis
-    ExtendedUNIQUAC:
-      G0: -1797.407
-      H0: -2026.294
-      Cp0: 91.38
-      a: 91.38
-      b: 0.318
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1797.407
+      Hr: -2026.294
+      Cr: 91.38
+      a: 0.318
+      b: 0.0
       c: 0.0
       alpha: 1.078224e-3
       beta: 3.078141e-7
-- Name: CaCO3
-  Formula: CaCO3
-  Elements: 1:Ca 1:C 3:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -1129.057
-      H0: -1208.726
-      Cp0: 81.88
-      alpha: -3.916945e-3
-      beta: -2.092925e-5
-- Name: CaCO3*MgCO3
-  Formula: CaMg(CO3)2
-  Elements: 1:Ca 1:Mg 2:C 6:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -2140.89
-      H0: -2302.72
-      Cp0: 157.40
-- Name: SrCl2*2H2O
-  Formula: SrCl2*2H2O
-  Elements: 1:Sr 2:Cl 4:H 2:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -1284.587
-      H0: -1456.694
-      Cp0: 160.2
-- Name: SrCl2*6H2O
-  Formula: SrCl2*6H2O
-  Elements: 1:Sr 2:Cl 12:H 6:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -2240.92
-      H0: -2623.8
-      Cp0: 320
-- Name: SrSO4
-  Formula: SrSO4
-  Elements: 1:Sr 1:S 4:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -1341.538
-      H0: -1452.955
-      Cp0: 100.0
-      alpha: 1.035686e-3
-      beta: 7.153236e-7
-- Name: SrCO3
-  Formula: SrCO3
-  Elements: 1:Sr 1:C 3:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -1139.745
-      H0: -1227.633
-      Cp0: 1259.146863
-      a: 1259.146863
-      b: -2.827237
-      c: -21149.44
-- Name: BaSO4
-  Formula: BaSO4
-  Elements: 1:Ba 1:S 4:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -1361.866
-      H0: -1467.929
-      Cp0: 104.0038
-      alpha: 1.636629e-3
-      beta: 3.333826e-7
-- Name: BaCO3
-  Formula: BaCO3
-  Elements: 1:Ba 1:C 3:O
-  AggregateState: Mineral
-  Charge: 0.0
+- Name: Na2SO4*CaSO4
+  Formula: Na2SO4*CaSO4
+  Elements: 2:Na 2:S 8:O 1:Ca
+  AggregateState: Solid
   StandardThermoModel:
-    ExtendedUNIQUAC:
-      G0: -1136.054
-      H0: -1222.907
-      Cp0: 85.5
-- Name: NaCl
-  Formula: NaCl
-  Elements: 1:Na 1:Cl
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -384.1258
-      H0: -411.9584
-      Cp0: 45.13074
-      alpha: 9.927134e-5
-      beta: -1.358719e-8
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -2594.808
+      Hr: -2816.396
+      Cr: 140.25
+      a: 0.2907
+      b: 0.0
+      c: 0.0
 - Name: Na2SO4
   Formula: Na2SO4
   Elements: 2:Na 1:S 4:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Garcia's Thesis
-    ExtendedUNIQUAC:
-      G0: -1270.16
-      H0: -1387.08
-      Cp0: 128.20
-- Name: Na2SO4*10H2O
-  Formula: Na2SO4*10H2O
-  Elements: 2:Na 1:S 14:O 20:H
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Thomsen's Thesis
-    ExtendedUNIQUAC:
-      G0: -3646.85
-      H0: -4327.26
-      Cp0: 492.2
-- Name: Na2CO3*2Na2SO4
-  Formula: NaNO3*Na2SO4*H2O
-  Elements: 3:Na 1:N 8:O 1:S 2:H
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Thomsen's Thesis
-    ExtendedUNIQUAC:
-      G0: -3593.19
-      H0: -3921.49
-      Cp0: 840.07
-- Name: Na2CO3*NaHCO3*2H2O
-  Formula: Na2CO3*NaHCO3*2H2O
-  Elements: 3:Na 2:C 8:O 5:H
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Thomsen's Thesis
-    ExtendedUNIQUAC:
-      G0: -2380.11
-      H0: -2684.9
-      Cp0: 256.80
-- Name: Na2CO3*3NaHCO3
-  Formula: Na2CO3*3NaHCO3
-  Elements: 5:Na 4:C 12:O 3:H
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: Thomsen's Thesis
-    ExtendedUNIQUAC:
-      G0: -3602.78
-      H0: -3982.7
-      Cp0: 182.03
-- Name: NaHCO3
-  Formula: NaHCO3
-  Elements: 1:Na 1:H 1:C 3:O
-  AggregateState: Mineral
-  Charge: 0.0
-  StandardThermoModel:  # Reference: EUNIQUAC
-    ExtendedUNIQUAC:
-      G0: -851.0
-      H0: -950.81
-      Cp0: 87.61
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1270.16
+      Hr: -1387.08
+      Cr: 128.2
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: CaCl2
+  Formula: CaCl2
+  Elements: 1:Ca 2:Cl
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -748.1
+      Hr: -795.8
+      Cr: 72.59
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: CaCl2*2H2O
+  Formula: CaCl2*2H2O
+  Elements: 1:Ca 2:Cl 4:H 2:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1253.87
+      Hr: -1402.9
+      Cr: 153.0
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: CaCl2*4H2O
+  Formula: CaCl2*4H2O
+  Elements: 1:Ca 2:Cl 8:H 4:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -1738.434
+      Hr: -2014.119
+      Cr: 233.0
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: CaCl2*6H2O
+  Formula: CaCl2*6H2O
+  Elements: 1:Ca 2:Cl 12:H 6:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Garcia PhD Thesis (2005), Table 4-20 (https://orbit.dtu.dk/en/publications/measurement-and-modelling-of-scaling-minerals)
+      Gr: -2219.378
+      Hr: -2607.658
+      Cr: 313.0
+      a: 0.0
+      b: 0.0
+      c: 0.0
