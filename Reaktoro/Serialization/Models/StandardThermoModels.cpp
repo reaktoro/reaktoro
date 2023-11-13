@@ -52,6 +52,38 @@ REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsConstant)
 
 //----------------------------------------------------------------------
 
+REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsExtendedUNIQUAC)
+{
+    data["Gr"] = obj.Gr;
+    data["Hr"] = obj.Hr;
+    data["Sr"] = obj.Sr;
+    data["Vr"] = obj.Vr;
+    data["Cp"] = obj.Cp;
+    data["a"] = obj.a;
+    data["b"] = obj.b;
+    data["c"] = obj.c;
+    data["alpha"] = obj.alpha;
+    data["beta"] = obj.beta;
+    data["Theta"] = obj.Theta;
+}
+
+REAKTORO_DATA_DECODE_DEFINE(StandardThermoModelParamsExtendedUNIQUAC)
+{
+    data.required("Gr").to(obj.Gr);
+    data.required("Hr").to(obj.Hr);
+    data.optional("Sr").to(obj.Sr); // Currently optional because this data is not always available.
+    data.optional("Vr").to(obj.Vr); // Currently optional because this data is not always available.
+    data.optional("Cp").to(obj.Cp); // Currently optional because this data is not always available.
+    data.required("a").to(obj.a);
+    data.optional("b").to(obj.b);
+    data.optional("c").to(obj.c);
+    data.optional("alpha").to(obj.alpha);
+    data.optional("beta").to(obj.beta);
+    data.optional("Theta").to(obj.Theta);
+}
+
+//----------------------------------------------------------------------
+
 REAKTORO_DATA_ENCODE_DEFINE(StandardThermoModelParamsHKF)
 {
     data["Gf"] = obj.Gf;
