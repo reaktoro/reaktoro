@@ -215,7 +215,7 @@ Species:
       a: -0.67710  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       b: 0.27375
       c: -10090
-- Name: CaCO3
+- Name: Calcite
   Formula: CaCO3
   Elements: 1:Ca 1:C 3:O
   AggregateState: Solid
@@ -228,7 +228,7 @@ Species:
       c: 0.0
       alpha: -3.916945e-3
       beta: -2.092925e-5
-- Name: Mg(OH)2
+- Name: Brucite
   Formula: Mg(OH)2
   Elements: 1:Mg 2:O 2:H
   AggregateState: Solid
@@ -239,7 +239,7 @@ Species:
       a: 77.03
       b: 0.0
       c: 0.0
-- Name: Na2SO4
+- Name: Thenardite
   Formula: Na2SO4
   Elements: 2:Na 1:S 4:O
   AggregateState: Solid
@@ -250,7 +250,7 @@ Species:
       a: 128.2
       b: 0.0
       c: 0.0
-- Name: NaCl
+- Name: Halite
   Formula: NaCl
   Elements: 1:Na 1:Cl
   AggregateState: Solid
@@ -263,7 +263,7 @@ Species:
       c: 0.0
       alpha: 9.927134e-5
       beta: -1.358719e-8
-- Name: MgCO3
+- Name: Magnesite
   Formula: MgCO3
   Elements: 1:Mg 1:C 3:O
   AggregateState: Solid
@@ -274,7 +274,7 @@ Species:
       a: 75.52
       b: 0.0
       c: 0.0
-- Name: MgCO3*3H2O
+- Name: Nesquehonite
   Formula: MgCO3*3H2O
   Elements: 1:Mg 1:C 6:O 6:H
   AggregateState: Solid
@@ -307,7 +307,7 @@ Species:
       a: 478.6986
       b: 0.0
       c: 0.0
-- Name: BaCO3
+- Name: Witherite
   Formula: BaCO3
   Elements: 1:Ba 1:C 3:O
   AggregateState: Solid
@@ -318,7 +318,7 @@ Species:
       a: 85.5
       b: 0.0
       c: 0.0
-- Name: SrCO3
+- Name: Strontianite
   Formula: SrCO3
   Elements: 1:Sr 1:C 3:O
   AggregateState: Solid
@@ -329,7 +329,7 @@ Species:
       a: 1259.146863
       b: -2.827237
       c: -21149.44
-- Name: CaCO3*MgCO3
+- Name: Dolomite
   Formula: CaCO3*MgCO3
   Elements: 1:Ca 2:C 6:O 1:Mg
   AggregateState: Solid
@@ -362,7 +362,7 @@ Species:
       a: 161.96
       b: 0.0
       c: 0.0
-- Name: BaSO4
+- Name: Barite
   Formula: BaSO4
   Elements: 1:Ba 1:S 4:O
   AggregateState: Solid
@@ -375,7 +375,7 @@ Species:
       c: 0.0
       alpha: 1.636629e-3
       beta: 3.333826e-7
-- Name: SrSO4
+- Name: Celestine
   Formula: SrSO4
   Elements: 1:Sr 1:S 4:O
   AggregateState: Solid
@@ -421,7 +421,7 @@ Species:
       a: 201.75
       b: 0.0
       c: 0.0
-- Name: CaSO4
+- Name: Anhydrite
   Formula: CaSO4
   Elements: 1:Ca 1:S 4:O
   AggregateState: Solid
@@ -434,7 +434,7 @@ Species:
       c: 0.0
       alpha: 2.328718e-3
       beta: -8.421355e-7
-- Name: CaSO4*2H2O
+- Name: Gypsum
   Formula: CaSO4*2H2O
   Elements: 1:Ca 1:S 6:O 4:H
   AggregateState: Solid
@@ -447,7 +447,7 @@ Species:
       c: 0.0
       alpha: 1.078224e-3
       beta: 3.078141e-7
-- Name: Na2SO4*CaSO4
+- Name: Glauberite
   Formula: Na2SO4*CaSO4
   Elements: 2:Na 2:S 8:O 1:Ca
   AggregateState: Solid
@@ -458,7 +458,7 @@ Species:
       a: 140.25
       b: 0.2907
       c: 0.0
-- Name: CaCl2
+- Name: Hydrophilite
   Formula: CaCl2
   Elements: 1:Ca 2:Cl
   AggregateState: Solid
@@ -469,7 +469,7 @@ Species:
       a: 72.59
       b: 0.0
       c: 0.0
-- Name: CaCl2*2H2O
+- Name: Sinjarite
   Formula: CaCl2*2H2O
   Elements: 1:Ca 2:Cl 4:H 2:O
   AggregateState: Solid
@@ -491,7 +491,7 @@ Species:
       a: 233.0
       b: 0.0
       c: 0.0
-- Name: CaCl2*6H2O
+- Name: Antarcticite
   Formula: CaCl2*6H2O
   Elements: 1:Ca 2:Cl 12:H 6:O
   AggregateState: Solid
