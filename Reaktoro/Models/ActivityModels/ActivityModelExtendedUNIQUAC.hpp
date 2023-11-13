@@ -26,39 +26,14 @@ namespace Reaktoro {
 /// The parameters in the Extended UNIQUAC activity model for aqueous electrolyte solutions.
 struct ActivityModelParamsExtendedUNIQUAC
 {
-    /// The available temperature-pressure correction models for the Extended UNIQUAC interaction parameters.
-    enum class CorrectionModel
-    {
-        Constant,  ///< Correction model based on formula \eq{\mathrm{Param}(T,P)=c_{0}}.
-        Linear,    ///< Correction model based on formula \eq{\mathrm{Param}(T,P)=c_{0}+c_{1}T}.
-        Quadratic, ///< Correction model based on formula \eq{\mathrm{Param}(T,P)=c_{0}+c_{1}T+c_{1}T^2}.
-    };
+    /// The volume parameters \eq{r_i} for the aqueous species.
+    Tuples<String, real> r;
 
-    /// The attributes of an interaction parameter in the Extended UNIQUAC activity model.
-    struct InteractionParamAttribs
-    {
-        /// The chemical formulas of the species associated to this species interaction parameter sorted in descending order of charge.
-        Vec<ChemicalFormula> formulas;
+    /// The surface parameters \eq{r_i} for the aqueous species.
+    Tuples<String, real> q;
 
-        /// The model used for temperature-pressure correction of this species interaction parameter (options).
-        CorrectionModel model = CorrectionModel::Constant;
-
-        /// The parameters for the temperature-pressure correction model of this species interaction parameter.
-        Vec<Param> parameters;
-    };
-
-    Vec<InteractionParamAttribs> beta0;  ///< The parameters \eq{\beta^{(0)}_{ij}(T, P)} in the Extended UNIQUAC model for cation-anion interactions.
-    Vec<InteractionParamAttribs> beta1;  ///< The parameters \eq{\beta^{(1)}_{ij}(T, P)} in the Extended UNIQUAC model for cation-anion interactions.
-    Vec<InteractionParamAttribs> beta2;  ///< The parameters \eq{\beta^{(2)}_{ij}(T, P)} in the Extended UNIQUAC model for cation-anion interactions.
-    Vec<InteractionParamAttribs> Cphi;   ///< The parameters \eq{C^{\phi}_{ij}(T, P)} in the Extended UNIQUAC model for cation-anion interactions.
-    Vec<InteractionParamAttribs> theta;  ///< The parameters \eq{\theta_{ij}(T, P)} in the Extended UNIQUAC model for cation-cation and anion-anion interactions.
-    Vec<InteractionParamAttribs> lambda; ///< The parameters \eq{\lambda_{ij}(T, P)} in the Extended UNIQUAC model for neutral-cation and neutral-anion interactions.
-    Vec<InteractionParamAttribs> zeta;   ///< The parameters \eq{\zeta_{ijk}(T, P)} in the Extended UNIQUAC model for neutral-cation-anion interactions.
-    Vec<InteractionParamAttribs> psi;    ///< The parameters \eq{\psi_{ijk}(T, P)} in the Extended UNIQUAC model for cation-cation-anion and anion-anion-cation interactions.
-    Vec<InteractionParamAttribs> mu;     ///< The parameters \eq{\mu_{ijk}(T, P)} in the Extended UNIQUAC model for neutral-neutral-neutral, neutral-neutral-cation, and neutral-neutral-anion interactions.
-    Vec<InteractionParamAttribs> eta;    ///< The parameters \eq{\eta_{ijk}(T, P)} in the Extended UNIQUAC model for neutral-cation-cation and neutral-anion-anion interactions.
-    Vec<InteractionParamAttribs> alpha1; ///< The parameters \eq{\alpha_1_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
-    Vec<InteractionParamAttribs> alpha2; ///< The parameters \eq{\alpha_2_{ij}} associated to the parameters \eq{\beta^{(2)}_{ij}}.
+    /// The binary interaction parameters \eq{u_{ij}} among the aqueous species.
+    Tuples<String, String, Vec<real>> u;
 };
 
 /// Return the activity model for aqueous electrolyte phases based on PHREEQC's implementation.
