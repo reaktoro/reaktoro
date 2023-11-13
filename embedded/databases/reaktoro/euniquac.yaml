@@ -55,9 +55,9 @@ Species:
       G0: 0
       H0: 0
       Cp: 0
-      cp_a: 0
-      cp_b: 0
-      cp_c: 0
+      a: 0
+      b: 0
+      c: 0
 - Name: OH-
   Formula: OH-
   Elements: 1:H 1:O
@@ -68,9 +68,9 @@ Species:
       G0: -157.2481
       H0: -230.2433
       Cp: -148.5
-      cp_a: 1418.157
-      cp_b: -3.445769
-      cp_c: -51473.13
+      a: 1418.157
+      b: -3.445769
+      c: -51473.13
 - Name: H2O(l)
   Formula: H2O
   Elements: 2:H 1:O
@@ -81,9 +81,9 @@ Species:
       G0: -237.129
       H0: -285.83
       Cp: 75.291
-      cp_a: 58.3695
-      cp_b: 0.03896
-      cp_c: 523.88
+      a: 58.3695
+      b: 0.03896
+      c: 523.88
 - Name: Cl-
   Formula: Cl-
   Elements: 1:Cl
@@ -94,9 +94,9 @@ Species:
       G0: -131.228
       H0: -167.159
       Cp: -136.4
-      cp_a: 400.35
-      cp_b: -1.1312
-      cp_c: -18574
+      a: 400.35
+      b: -1.1312
+      c: -18574
 - Name: SO4-2
   Formula: SO4-2
   Elements: 1:S 4:O
@@ -107,9 +107,9 @@ Species:
       G0: -744.53
       H0: -909.27
       Cp: -293
-      cp_a: 643.3
-      cp_b: -1.7605
-      cp_c: -37903
+      a: 643.3
+      b: -1.7605
+      c: -37903
 - Name: S2O8-2
   Formula: S2O8-2
   Elements: 2:S 8:O
@@ -120,9 +120,9 @@ Species:
       G0: -1114.9
       H0: -1344.7
       Cp: '-'
-      cp_a: -110
-      cp_b: 0
-      cp_c: 0
+      a: -110
+      b: 0
+      c: 0
 - Name: HSO4-
   Formula: HSO4-
   Elements: 1:S 1:H 4:O
@@ -133,9 +133,9 @@ Species:
       G0: -755.91
       H0: -887.34
       Cp: -4.1313
-      cp_a: 647.3
-      cp_b: -1.5857
-      cp_c: -17536
+      a: 647.3
+      b: -1.5857
+      c: -17536
 - Name: NO3-
   Formula: NO3-
   Elements: 1:N 3:O
@@ -146,9 +146,9 @@ Species:
       G0: '-111.25*'
       H0: '-207.36*'
       Cp: -86.6
-      cp_a: 2.2926
-      cp_b: 0.1211
-      cp_c: -9753.2
+      a: 2.2926
+      b: 0.1211
+      c: -9753.2
 - Name: NH4+
   Formula: NH4+
   Elements: 1:N 4:H
@@ -159,9 +159,9 @@ Species:
       G0: -79.31
       H0: -132.51
       Cp: 79.9
-      cp_a: 71.008
-      cp_b: 0
-      cp_c: 0
+      a: 71.008
+      b: 0
+      c: 0
 - Name: CO2(aq)
   Formula: CO2
   Elements: 1:C 2:O
@@ -172,9 +172,9 @@ Species:
       G0: -385.98
       H0: -413.8
       Cp: 243
-      cp_a: 243
-      cp_b: 0
-      cp_c: 0
+      a: 243
+      b: 0
+      c: 0
 - Name: CO3-2
   Formula: CO3-2
   Elements: 1:C 3:O
@@ -185,9 +185,9 @@ Species:
       G0: -527.81
       H0: -677.14
       Cp: '-'
-      cp_a: 894.688
-      cp_b: -2.8272
-      cp_c: -21149.44
+      a: 894.688
+      b: -2.8272
+      c: -21149.44
 - Name: HCO3-
   Formula: HCO3-
   Elements: 1:C 1:H 3:O
@@ -198,9 +198,9 @@ Species:
       G0: -586.77
       H0: -691.99
       Cp: '-'
-      cp_a: -0.6770971
-      cp_b: 0.2737451
-      cp_c: -10089.51
+      a: -0.6770971
+      b: 0.2737451
+      c: -10089.51
 - Name: Ca+2
   Formula: Ca+2
   Elements: 1:Ca
@@ -231,9 +231,9 @@ Species:
       G0: -559.48
       H0: -545.8
       Cp: -1124.756
-      cp_a: -1124.756
-      cp_b: 3.450446
-      cp_c: 0
+      a: -1124.756
+      b: 3.450446
+      c: 0
 - Name: Ba+2
   Formula: Ba+2
   Elements: 1:Ba
@@ -254,9 +254,9 @@ Species:
       G0: -261.905
       H0: -240.12
       Cp: 46.4
-      cp_a: 600.62
-      cp_b: -1.1006
-      cp_c: -23232
+      a: 600.62
+      b: -1.1006
+      c: -23232
 - Name: K+
   Formula: K+
   Elements: 1:K
@@ -267,9 +267,9 @@ Species:
       G0: -283.27
       H0: -252.38
       Cp: 21.8
-      cp_a: 415.09
-      cp_b: -0.8142
-      cp_c: -16316
+      a: 415.09
+      b: -0.8142
+      c: -16316
 - Name: Mg(OH)2
   Formula: Mg(OH)2
   Elements: 1:Mg 2:H 2:O
@@ -333,9 +333,9 @@ Species:
       G0: -1321.8
       H0: -1436.132
       Cp: 70.21
-      cp_a: 70.21
-      cp_b: 0.009874
-      cp_c: 0
+      a: 70.21
+      b: 0.009874
+      c: 0
 - Name: Gypsum
   Formula: CaSO4*2H2O
   Elements: 1:Ca 1:S 4:H 6:O
@@ -345,9 +345,9 @@ Species:
       G0: -1797.407
       H0: -2026.294
       Cp: 91.38
-      cp_a: 91.38
-      cp_b: 0.318
-      cp_c: 0
+      a: 91.38
+      b: 0.318
+      c: 0
 - Name: Calcite
   Formula: CaCO3
   Elements: 1:Ca 1:C 3:O
@@ -411,9 +411,9 @@ Species:
       G0: -1139.745
       H0: -1227.633
       Cp: 1259.146863
-      cp_a: 1259.146863
-      cp_b: -2.827237
-      cp_c: -21149.44
+      a: 1259.146863
+      b: -2.827237
+      c: -21149.44
 - Name: Barite
   Formula: BaSO4
   Elements: 1:Ba 1:S 4:O
