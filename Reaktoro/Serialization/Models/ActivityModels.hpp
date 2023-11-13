@@ -26,8 +26,12 @@ namespace Reaktoro {
 // ActivityModelParams Types
 //======================================================================
 struct ActivityModelParamsPitzer;
+struct ActivityModelParamsExtendedUNIQUAC;
 
 REAKTORO_DATA_ENCODE_DECLARE(ActivityModelParamsPitzer);
 REAKTORO_DATA_DECODE_DECLARE(ActivityModelParamsPitzer);
+
+REAKTORO_DATA_ENCODE_DECLARE(ActivityModelParamsExtendedUNIQUAC);
+REAKTORO_DATA_DECODE_DECLARE(ActivityModelParamsExtendedUNIQUAC);
 
 } // namespace Reaktoro
