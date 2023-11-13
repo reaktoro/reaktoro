@@ -201,10 +201,10 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
         ln_gCinf = 0.0;
         ln_gRinf = 0.0;
 
-        // Calculate the Debye-Huckel activity coefficients for charged species -- see equation (8) of Thomsen (2005)
+        // Calculate the Debye-Huckel activity coefficients for charged species -- see equation (8) of Thomsen (2005) or equation (4-12) of Thomsen (1997)
         ln_gDH(iDH) = -z2(iDH)*alpha;
 
-        // Calculate the Debye-Huckel activity coefficients for water species -- see equation (9) of Thomsen (2005)
+        // Calculate the Debye-Huckel activity coefficients for water species -- see equation (9) of Thomsen (2005) or equation (4-11) of Thomsen (1997)
         ln_gDH[iw] = 2*Mw*A*(Lambda - 1/Lambda - 2*log(Lambda))/(b*b*b);
 
         // Calculate the UNIQUAC combinatorial activity coefficients for the species -- see equation (10) of Thomsen (2005) and equation (13) of Hingerl et al. (2014)
@@ -219,21 +219,20 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
             ln_gRinf[ispecies] = q[i]*(1 - log(psi(iqw, i)) - psi(i, iqw)/psi(iqw, iqw)); // Note: Thomsen (2005) always assume ψ(w,w) = 1, but here we don't necessarily; that's why psi(iqw, iqw) is used here.
         }
 
-        // Set the activity coefficients of the species in the unsymmetrical convention and molal scale
+        // Set the activity coefficients of the species in the unsymmetrical convention and molal scale -- see equation (4-14) of Thomsen (1997) -- note extra ln(xw) here to convert to molal scale
         props.ln_g = ln_gDH + (ln_gC - ln_gCinf) + (ln_gR - ln_gRinf) + ln_xw;
 
-        // Set the activity coefficient of water species in the symmetrical convention and mole-fraction scale
+        // Set the activity coefficient of water species in the symmetrical convention and mole-fraction scale -- see equation (4-13) of Thomsen (1997)
         props.ln_g[iw] = ln_gDH[iw] + ln_gC[iw] + ln_gR[iw];
 
-        // Set the activities of the aqueous species
+        // Set the activities of the aqueous species (in molality scale)
         props.ln_a = props.ln_g + ln_m;
 
-        // Set the activitiy of water species
+        // Set the activitiy of water species (in mole fraction scale)
         props.ln_a[iw] = props.ln_g[iw] + ln_xw;
 
         // auto const GxDH = -4*xw*Mw*A*(log(Lambda) - Lambda + 1 + 0.5*b*b*I)/(b*b*b);
         // props.Gx =
-
     };
 
     return fn;
