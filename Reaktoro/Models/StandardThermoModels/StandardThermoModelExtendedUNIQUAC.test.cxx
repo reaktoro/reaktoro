@@ -43,6 +43,7 @@ TEST_CASE("Testing StandardThermoModelExtendedUNIQUAC class", "[StandardThermoMo
     const auto Tr = 298.15;
     const auto Pr = 1.0;
     const auto KJ_TO_J = 1.0e3;
+    const auto R = universalGasConstant;
 
     auto T = 360.0;
     auto P = 10.0e5;
@@ -52,7 +53,7 @@ TEST_CASE("Testing StandardThermoModelExtendedUNIQUAC class", "[StandardThermoMo
 
     CHECK(props.Cp0 == Approx(a + b*T + c/(T - Theta)));
     CHECK(props.H0  == Approx(Hr*KJ_TO_J + a*(T - Tr) + 0.5*b*(T*T - Tr*Tr) + c*log((T - Theta)/(Tr - Theta))));
-    CHECK(props.G0  == Approx(Gr*KJ_TO_J*T/Tr + Hr*(1 - T/Tr) - a*T*(log(T/Tr) + Tr/T - 1) - 0.5*b*(T - Tr)*(T - Tr) - c*T/Theta*((T - Theta)/T*log((T - Theta)/(Tr - Theta)) - log(T/Tr)) - (alpha + beta*(Pb - Pr))*(Pb - Pr)*KJ_TO_J));
+    CHECK(props.G0  == Approx(Gr*KJ_TO_J*T/Tr + Hr*KJ_TO_J*(1 - T/Tr) - a*T*(log(T/Tr) + Tr/T - 1) - 0.5*b*(T - Tr)*(T - Tr) - c*T/Theta*((T - Theta)/T*log((T - Theta)/(Tr - Theta)) - log(T/Tr)) + R*T*(alpha + beta*(Pb - Pr))*(Pb - Pr)));
 
     //======================================================================
     // Test method Model::params()

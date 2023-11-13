@@ -21,6 +21,7 @@
 #include <cmath>
 
 // Reaktoro includes
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Serialization/Models/StandardThermoModels.hpp>
 
 namespace Reaktoro {
@@ -53,11 +54,14 @@ auto StandardThermoModelExtendedUNIQUAC(StandardThermoModelParamsExtendedUNIQUAC
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {
         // Unpack the model parameters
-        auto const& [Gr, Hr, Sr, Vr, Cp, a, b, c, alpha, beta, Theta] = params;
+        auto const& [GrkJ, HrkJ, Sr, Vr, Cp, a, b, c, alpha, beta, Theta] = params;
 
-        // Auxiliary variables
+        // Auxiliary constants
         const auto PA_TO_BAR = 1.0e-5;
         const auto KJ_TO_J = 1.0e3;
+
+        // Auxiliary variables
+        const auto R     = universalGasConstant;
         const auto Tr    = 298.15;   // referente temperature in K (equivalent to 25 °C)
         const auto Pr    = 1.0;      // referente pressure in bar
         const auto Pb    = P * PA_TO_BAR; // converted pressure from Pa to bar
@@ -67,18 +71,20 @@ auto StandardThermoModelExtendedUNIQUAC(StandardThermoModelParamsExtendedUNIQUAC
         const auto PmPr  = Pb - Pr;
         const auto TmTr2 = TmTr*TmTr;
         const auto PmPr2 = PmPr*PmPr;
+        const auto Gr    = GrkJ * KJ_TO_J;
+        const auto Hr    = HrkJ * KJ_TO_J;
 
         // Compute the standard heat capacity (constant pressure) using the model Cp°(T) = a + bT + c/(T - Θ)
         props.Cp0 = a + b*T + c/(T - Theta); // in J/(mol·K)
 
         // Compute the standard enthalpy of the substance using the previous heat capacity model
-        props.H0 = (Hr*KJ_TO_J) + a*TmTr + 0.5*b*(T2 - Tr2) + c*log((T - Theta)/(Tr - Theta)); // in J/(mol·K)
+        props.H0 = Hr + a*TmTr + 0.5*b*(T2 - Tr2) + c*log((T - Theta)/(Tr - Theta)); // in J/(mol·K)
 
         // Compute the standard Gibbs energy of the substance using the previous heat capacity model
-        props.G0 = (Gr*KJ_TO_J)*T/Tr + Hr*(1 - T/Tr) - a*T*(log(T/Tr) + Tr/T - 1) - 0.5*b*TmTr2 - c*T/Theta*((T - Theta)/T*log((T - Theta)/(Tr - Theta)) - log(T/Tr)); // in J/(mol·K)
+        props.G0 = Gr*T/Tr + Hr*(1 - T/Tr) - a*T*(log(T/Tr) + Tr/T - 1) - 0.5*b*TmTr2 - c*T/Theta*((T - Theta)/T*log((T - Theta)/(Tr - Theta)) - log(T/Tr)); // in J/(mol·K)
 
         // Compute the pressure-correction for the standard Gibbs energy: α(P - Pr) + β(P - Pr)²
-        props.G0 -= (alpha + beta*PmPr)*PmPr*KJ_TO_J; // in J/(mol·K)
+        props.G0 += R*T*(alpha + beta*PmPr)*PmPr; // in J/(mol·K)
     };
 
     return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
