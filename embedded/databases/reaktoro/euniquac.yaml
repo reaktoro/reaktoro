@@ -71,7 +71,7 @@ Species:
       cp_a: 1418.157
       cp_b: -3.445769
       cp_c: -51473.13
-- Name: H2O(aq)
+- Name: H2O(l)
   Formula: H2O
   Elements: 2:H 1:O
   Charge: 0
