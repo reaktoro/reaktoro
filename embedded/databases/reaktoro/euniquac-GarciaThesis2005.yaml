@@ -8,8 +8,8 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Cp: 29.355
       Sr: 205.138
+      Cp: 29.355
 - Name: H2(g)
   Formula: H2
   Elements: 2:H
@@ -18,8 +18,8 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Cp: 28.824
       Sr: 130.684
+      Cp: 28.824
 - Name: H2O(g)
   Formula: H2O
   Elements: 2:H 1:O
@@ -28,8 +28,8 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -228.572
       Hr: -241.818
-      Cp: 33.577
       Sr: 188.825
+      Cp: 33.577
 - Name: CO2(g)
   Formula: CO2
   Elements: 1:C 2:O
@@ -38,8 +38,8 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -394.359
       Hr: -393.509
-      Cp: 37.11
       Sr: 213.74
+      Cp: 37.11
 - Name: SO2(g)
   Formula: SO2
   Elements: 1:S 2:O
@@ -48,8 +48,8 @@ Species:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -300.194
       Hr: -296.830
-      Cp: 39.87
       Sr: 248.22
+      Cp: 39.87
 - Name: H2O
   Formula: H2O
   Elements: 2:H 1:O
@@ -60,8 +60,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -237.129
       Hr: -285.830
-      Cp: 75.291
       Sr: 69.91
+      Cp: 75.291
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 58.37000
       b: 0.03896
@@ -89,8 +89,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: 0.0
       Hr: 0.0
-      Cp: 0.0
       Sr: 0.0
+      Cp: 0.0
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 0.0
       b: 0.0
@@ -105,8 +105,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -261.905
       Hr: -240.12
-      Cp: 46.4
       Sr: 59.0
+      Cp: 46.4
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 600.62000
       b: -1.10060
@@ -173,8 +173,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -157.244
       Hr: -229.994
-      Cp: -148.5
       Sr: -10.75
+      Cp: -148.5
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 1418.2
       b: -3.44460
@@ -189,8 +189,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -131.228
       Hr: -167.159
-      Cp: -136.4
       Sr: 56.5
+      Cp: -136.4
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 400.35000
       b: -1.13120
@@ -205,8 +205,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -744.53
       Hr: -909.27
-      Cp: -293.
       Sr: 20.1
+      Cp: -293.
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 643.3
       b: -1.76050
@@ -221,8 +221,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -527.81
       Hr: -677.14
-      Cp: null
       Sr: -56.9
+      Cp: null
       # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       a: 894.688
       b: -2.8272
@@ -237,8 +237,8 @@ Species:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
       Gr: -586.77
       Hr: -691.99
-      Cp: null
       Sr: 91.2
+      Cp: null
       # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       a: -0.67710
       b: 0.27375
