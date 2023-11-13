@@ -9,7 +9,9 @@ Species:
       Gr: 0.0
       Hr: 0.0
       Sr: 205.138
-      Cp: 29.355
+      a: 29.355
+      b: 0.0
+      c: 0.0
 - Name: H2(g)
   Formula: H2
   Elements: 2:H
@@ -19,7 +21,9 @@ Species:
       Gr: 0.0
       Hr: 0.0
       Sr: 130.684
-      Cp: 28.824
+      a: 28.824
+      b: 0.0
+      c: 0.0
 - Name: H2O(g)
   Formula: H2O
   Elements: 2:H 1:O
@@ -29,7 +33,9 @@ Species:
       Gr: -228.572
       Hr: -241.818
       Sr: 188.825
-      Cp: 33.577
+      a: 33.577
+      b: 0.0
+      c: 0.0
 - Name: CO2(g)
   Formula: CO2
   Elements: 1:C 2:O
@@ -39,7 +45,9 @@ Species:
       Gr: -394.359
       Hr: -393.509
       Sr: 213.74
-      Cp: 37.11
+      a: 37.11
+      b: 0.0
+      c: 0.0
 - Name: SO2(g)
   Formula: SO2
   Elements: 1:S 2:O
@@ -49,7 +57,9 @@ Species:
       Gr: -300.194
       Hr: -296.830
       Sr: 248.22
-      Cp: 39.87
+      a: 39.87
+      b: 0.0
+      c: 0.0
 - Name: H2O
   Formula: H2O
   Elements: 2:H 1:O
@@ -62,8 +72,7 @@ Species:
       Hr: -285.830
       Sr: 69.91
       Cp: 75.291
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 58.37000
+      a: 58.37000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.03896
       c: 523.88000
 - Name: CO2
@@ -91,8 +100,7 @@ Species:
       Hr: 0.0
       Sr: 0.0
       Cp: 0.0
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 0.0
+      a: 0.0  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: 0.0
       c: 0.0
 - Name: Na+
@@ -107,8 +115,7 @@ Species:
       Hr: -240.12
       Sr: 59.0
       Cp: 46.4
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 600.62000
+      a: 600.62000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.10060
       c: -23232.0
 - Name: Ca+2
@@ -175,8 +182,7 @@ Species:
       Hr: -229.994
       Sr: -10.75
       Cp: -148.5
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 1418.2
+      a: 1418.2  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -3.44460
       c: -51473.0
 - Name: Cl-
@@ -191,8 +197,7 @@ Species:
       Hr: -167.159
       Sr: 56.5
       Cp: -136.4
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 400.35000
+      a: 400.35000  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.13120
       c: -18574.0
 - Name: SO4-2
@@ -207,8 +212,7 @@ Species:
       Hr: -909.27
       Sr: 20.1
       Cp: -293.
-      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
-      a: 643.3
+      a: 643.3  # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       b: -1.76050
       c: -37903.0
 - Name: CO3-2
@@ -222,9 +226,7 @@ Species:
       Gr: -527.81
       Hr: -677.14
       Sr: -56.9
-      Cp: null
-      # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
-      a: 894.688
+      a: 894.688  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       b: -2.8272
       c: -21149
 - Name: HCO3-
@@ -238,9 +240,7 @@ Species:
       Gr: -586.77
       Hr: -691.99
       Sr: 91.2
-      Cp: null
-      # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
-      a: -0.67710
+      a: -0.67710  # Parameters below from Thomsen and Rasmussen (1999), Table 8. (https://doi.org/10.1016/S0009-2509(99)00019-6)
       b: 0.27375
       c: -10090
 - Name: CaCO3
