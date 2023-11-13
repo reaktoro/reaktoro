@@ -32,9 +32,14 @@ class Database
 {
 public:
     /// Return a Database object constructed with a given local file.
-    /// @warning An exception is thrown if `path` does not point to a valid database file.
-    /// @param path The path, including file name, to the database file.
+    /// @warning An exception is thrown if `path` does not point to a valid local database file.
+    /// @param path The path, including file name, to the local database file.
     static auto fromFile(String const& path) -> Database;
+
+    /// Return a Database object constructed with a given embedded file.
+    /// @warning An exception is thrown if `path` does not point to a valid embedded database file.
+    /// @param path The path, including file name, to the embedded database file.
+    static auto fromEmbeddedFile(String const& path) -> Database;
 
     /// Return a Database object constructed with given database text contents.
     /// @param contents The contents of the database as a string.
