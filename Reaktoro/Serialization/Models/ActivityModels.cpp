@@ -131,4 +131,31 @@ REAKTORO_DATA_DECODE_DEFINE(ActivityModelParamsPitzer)
     data.optional("Alpha2").to(obj.alpha2);
 }
 
+REAKTORO_DATA_ENCODE_DEFINE(ActivityModelParamsExtendedUNIQUAC)
+{
+    for(auto const& [formula, param] : obj.r)
+        data["r"].add(Vec<Data>{formula, param});
+
+    for(auto const& [formula, param] : obj.q)
+        data["q"].add(Vec<Data>{formula, param});
+
+    for(auto const& [formula1, formula2, params] : obj.u)
+        data["u"].add(Vec<Data>{formula1, formula2, params});
+}
+
+REAKTORO_DATA_DECODE_DEFINE(ActivityModelParamsExtendedUNIQUAC)
+{
+    if(data.exists("r"))
+        for(auto const& entry : data["r"].asList())
+            obj.r.push_back(Tuple<String, real>{ entry[0], entry[1] });
+
+    if(data.exists("q"))
+        for(auto const& entry : data["q"].asList())
+            obj.q.push_back(Tuple<String, real>{ entry[0], entry[1] });
+
+    if(data.exists("u"))
+        for(auto const& entry : data["u"].asList())
+            obj.u.push_back(Tuple<String, String, Vec<real>>{ entry[0], entry[1], entry[2] });
+}
+
 } // namespace Reaktoro
