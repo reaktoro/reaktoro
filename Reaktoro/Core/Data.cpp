@@ -189,8 +189,8 @@ auto convertJsonToData(json const& obj) -> Data
         case json::value_t::number_integer: return Param(obj.get<int>());
         case json::value_t::number_unsigned: return Param(obj.get<int>());
         case json::value_t::number_float: return Param(obj.get<double>());
-        case json::value_t::binary:
-        case json::value_t::discarded:
+        case json::value_t::binary: break;
+        case json::value_t::discarded: break;
     }
 
     errorif(true, "Could not convert JSON node to Data object: ", obj.dump());
