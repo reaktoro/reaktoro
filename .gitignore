@@ -43,3 +43,4 @@ compile_commands.json
 .DS_Store
 .directory
 ~lock.*
+*.log.txt
