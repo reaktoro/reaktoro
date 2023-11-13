@@ -170,6 +170,15 @@ TEST_CASE("Testing parseChemicalFormula method", "[ParseUtils]")
 
     formula = parseChemicalFormula("Na2SO4:(NH4)2SO4:4H2O");
     CHECK( formula == Pairs<String, double>{{"Na", 2}, {"S", 2}, {"O", 12}, {"N", 2}, {"H", 16}} );
+
+    formula = parseChemicalFormula("2NaNO3*NH4NO3");
+    CHECK( formula == Pairs<String, double>{{"Na", 2}, {"N", 4}, {"O", 9}, {"H", 4}} );
+
+    formula = parseChemicalFormula("2NaNO3:NH4NO3");
+    CHECK( formula == Pairs<String, double>{{"Na", 2}, {"N", 4}, {"O", 9}, {"H", 4}} );
+
+    formula = parseChemicalFormula("2Ab:3Cd*5EfHg2");
+    CHECK( formula == Pairs<String, double>{{"Ab", 2}, {"Cd", 3}, {"Ef", 5}, {"Hg", 10}} );
 }
 
 TEST_CASE("Testing parseElectricCharge method", "[ParseUtils]")

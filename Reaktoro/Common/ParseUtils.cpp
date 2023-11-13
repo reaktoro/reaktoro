@@ -135,7 +135,7 @@ auto parseChemicalFormulaAux(String const& formula, StringIterator begin, String
     }
     else if(*begin == '*' || *begin == ':') // Symbols that are ignored, e.g., 2NaNO3*NH4NO3, 2NaNO3:NH4NO3
     {
-        parseChemicalFormulaAux(formula, begin + 1, end, result, scalar);
+        parseChemicalFormulaAux(formula, begin + 1, end, result, 1.0); // scalar is reset to 1.0 so that the formula following * or : does not use the current scalar, otherwise 2CaCl2*20H2O would be parsed with 40 atoms of O instead of 20!
     }
     else if(*begin == '+' || *begin == '-' || *begin == '[') // Ignore everything after these symbols
         return;
