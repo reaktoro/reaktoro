@@ -4125,8 +4125,8 @@
         }
       }
     },
-    "H2O(aq)": {
-      "Name": "H2O(aq)",
+    "H2O(l)": {
+      "Name": "H2O(l)",
       "Formula": "H2O",
       "Elements": "2:H 1:O",
       "Charge": 0.0,

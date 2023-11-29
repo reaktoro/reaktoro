@@ -38,14 +38,14 @@ TEST_CASE("Testing SupcrtDatabase module", "[SupcrtDatabase]")
 {
     SupcrtDatabase db("supcrt98");
 
-    CHECK( db.species().findWithName("H2O(aq)") );
+    CHECK( db.species().findWithName("H2O(l)") );
     CHECK( db.species().findWithName("H+") );
     CHECK( db.species().findWithName("OH-") );
     CHECK( db.species().findWithName("CO2(aq)") );
 
     // TODO: More tests are needed for SupcrtDatabase, at different T and P values,
     {
-        auto sp = db.species().getWithName("H2O(aq)");
+        auto sp = db.species().getWithName("H2O(l)");
 
         const auto T = 25.0 + 273.15;
         const auto P =  1.0 * 1e5;
