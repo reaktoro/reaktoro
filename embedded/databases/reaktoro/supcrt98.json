@@ -4206,9 +4206,9 @@
         }
       }
     },
-    "Ag(CO3)2-3": {
-      "Name": "Ag(CO3)2-3",
-      "Formula": "Ag(CO3)2-3",
+    "Ag(CO3)2---": {
+      "Name": "Ag(CO3)2---",
+      "Formula": "Ag(CO3)2---",
       "Elements": "1:Ag 2:C 6:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -4250,9 +4250,9 @@
         }
       }
     },
-    "Ag+2": {
-      "Name": "Ag+2",
-      "Formula": "Ag+2",
+    "Ag++": {
+      "Name": "Ag++",
+      "Formula": "Ag++",
       "Elements": "1:Ag",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -4316,9 +4316,9 @@
         }
       }
     },
-    "AgCl3-2": {
-      "Name": "AgCl3-2",
-      "Formula": "AgCl3-2",
+    "AgCl3--": {
+      "Name": "AgCl3--",
+      "Formula": "AgCl3--",
       "Elements": "1:Ag 3:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -4338,9 +4338,9 @@
         }
       }
     },
-    "AgCl4-3": {
-      "Name": "AgCl4-3",
-      "Formula": "AgCl4-3",
+    "AgCl4---": {
+      "Name": "AgCl4---",
+      "Formula": "AgCl4---",
       "Elements": "1:Ag 4:Cl",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -4426,9 +4426,9 @@
         }
       }
     },
-    "Al+3": {
-      "Name": "Al+3",
-      "Formula": "Al+3",
+    "Al+++": {
+      "Name": "Al+++",
+      "Formula": "Al+++",
       "Elements": "1:Al",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -4470,9 +4470,9 @@
         }
       }
     },
-    "AlOH+2": {
-      "Name": "AlOH+2",
-      "Formula": "AlOH+2",
+    "AlOH++": {
+      "Name": "AlOH++",
+      "Formula": "AlOH++",
       "Elements": "1:Al 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -4558,9 +4558,9 @@
         }
       }
     },
-    "Au+3": {
-      "Name": "Au+3",
-      "Formula": "Au+3",
+    "Au+++": {
+      "Name": "Au+++",
+      "Formula": "Au+++",
       "Elements": "1:Au",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -4668,9 +4668,9 @@
         }
       }
     },
-    "Ba+2": {
-      "Name": "Ba+2",
-      "Formula": "Ba+2",
+    "Ba++": {
+      "Name": "Ba++",
+      "Formula": "Ba++",
       "Elements": "1:Ba",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -4734,9 +4734,9 @@
         }
       }
     },
-    "Be+2": {
-      "Name": "Be+2",
-      "Formula": "Be+2",
+    "Be++": {
+      "Name": "Be++",
+      "Formula": "Be++",
       "Elements": "1:Be",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -4822,9 +4822,9 @@
         }
       }
     },
-    "BeO2-2": {
-      "Name": "BeO2-2",
-      "Formula": "BeO2-2",
+    "BeO2--": {
+      "Name": "BeO2--",
+      "Formula": "BeO2--",
       "Elements": "1:Be 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -4998,9 +4998,9 @@
         }
       }
     },
-    "Ce+4": {
-      "Name": "Ce+4",
-      "Formula": "Ce+4",
+    "Ce++++": {
+      "Name": "Ce++++",
+      "Formula": "Ce++++",
       "Elements": "1:Ce",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -5108,9 +5108,9 @@
         }
       }
     },
-    "CO3-2": {
-      "Name": "CO3-2",
-      "Formula": "CO3-2",
+    "CO3--": {
+      "Name": "CO3--",
+      "Formula": "CO3--",
       "Elements": "1:C 3:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -5152,9 +5152,9 @@
         }
       }
     },
-    "Ca+2": {
-      "Name": "Ca+2",
-      "Formula": "Ca+2",
+    "Ca++": {
+      "Name": "Ca++",
+      "Formula": "Ca++",
       "Elements": "1:Ca",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -5262,9 +5262,9 @@
         }
       }
     },
-    "Cd+2": {
-      "Name": "Cd+2",
-      "Formula": "Cd+2",
+    "Cd++": {
+      "Name": "Cd++",
+      "Formula": "Cd++",
       "Elements": "1:Cd",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -5350,9 +5350,9 @@
         }
       }
     },
-    "CdO2-2": {
-      "Name": "CdO2-2",
-      "Formula": "CdO2-2",
+    "CdO2--": {
+      "Name": "CdO2--",
+      "Formula": "CdO2--",
       "Elements": "1:Cd 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -5372,9 +5372,9 @@
         }
       }
     },
-    "Ce+2": {
-      "Name": "Ce+2",
-      "Formula": "Ce+2",
+    "Ce++": {
+      "Name": "Ce++",
+      "Formula": "Ce++",
       "Elements": "1:Ce",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -5394,9 +5394,9 @@
         }
       }
     },
-    "Ce+3": {
-      "Name": "Ce+3",
-      "Formula": "Ce+3",
+    "Ce+++": {
+      "Name": "Ce+++",
+      "Formula": "Ce+++",
       "Elements": "1:Ce",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -5548,9 +5548,9 @@
         }
       }
     },
-    "Co+2": {
-      "Name": "Co+2",
-      "Formula": "Co+2",
+    "Co++": {
+      "Name": "Co++",
+      "Formula": "Co++",
       "Elements": "1:Co",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -5570,9 +5570,9 @@
         }
       }
     },
-    "Co+3": {
-      "Name": "Co+3",
-      "Formula": "Co+3",
+    "Co+++": {
+      "Name": "Co+++",
+      "Formula": "Co+++",
       "Elements": "1:Co",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -5658,9 +5658,9 @@
         }
       }
     },
-    "CoO2-2": {
-      "Name": "CoO2-2",
-      "Formula": "CoO2-2",
+    "CoO2--": {
+      "Name": "CoO2--",
+      "Formula": "CoO2--",
       "Elements": "1:Co 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -5680,9 +5680,9 @@
         }
       }
     },
-    "CoOH+2": {
-      "Name": "CoOH+2",
-      "Formula": "CoOH+2",
+    "CoOH++": {
+      "Name": "CoOH++",
+      "Formula": "CoOH++",
       "Elements": "1:Co 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -5702,9 +5702,9 @@
         }
       }
     },
-    "Cr2O7-2": {
-      "Name": "Cr2O7-2",
-      "Formula": "Cr2O7-2",
+    "Cr2O7--": {
+      "Name": "Cr2O7--",
+      "Formula": "Cr2O7--",
       "Elements": "2:Cr 7:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -5724,9 +5724,9 @@
         }
       }
     },
-    "CrO4-2": {
-      "Name": "CrO4-2",
-      "Formula": "CrO4-2",
+    "CrO4--": {
+      "Name": "CrO4--",
+      "Formula": "CrO4--",
       "Elements": "1:Cr 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -5878,9 +5878,9 @@
         }
       }
     },
-    "Cu+2": {
-      "Name": "Cu+2",
-      "Formula": "Cu+2",
+    "Cu++": {
+      "Name": "Cu++",
+      "Formula": "Cu++",
       "Elements": "1:Cu",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -5966,9 +5966,9 @@
         }
       }
     },
-    "CuO2-2": {
-      "Name": "CuO2-2",
-      "Formula": "CuO2-2",
+    "CuO2--": {
+      "Name": "CuO2--",
+      "Formula": "CuO2--",
       "Elements": "1:Cu 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -5988,9 +5988,9 @@
         }
       }
     },
-    "Dy+2": {
-      "Name": "Dy+2",
-      "Formula": "Dy+2",
+    "Dy++": {
+      "Name": "Dy++",
+      "Formula": "Dy++",
       "Elements": "1:Dy",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6010,9 +6010,9 @@
         }
       }
     },
-    "Dy+3": {
-      "Name": "Dy+3",
-      "Formula": "Dy+3",
+    "Dy+++": {
+      "Name": "Dy+++",
+      "Formula": "Dy+++",
       "Elements": "1:Dy",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -6032,9 +6032,9 @@
         }
       }
     },
-    "Dy+4": {
-      "Name": "Dy+4",
-      "Formula": "Dy+4",
+    "Dy++++": {
+      "Name": "Dy++++",
+      "Formula": "Dy++++",
       "Elements": "1:Dy",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -6054,9 +6054,9 @@
         }
       }
     },
-    "Er+2": {
-      "Name": "Er+2",
-      "Formula": "Er+2",
+    "Er++": {
+      "Name": "Er++",
+      "Formula": "Er++",
       "Elements": "1:Er",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6076,9 +6076,9 @@
         }
       }
     },
-    "Er+3": {
-      "Name": "Er+3",
-      "Formula": "Er+3",
+    "Er+++": {
+      "Name": "Er+++",
+      "Formula": "Er+++",
       "Elements": "1:Er",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -6098,9 +6098,9 @@
         }
       }
     },
-    "Er+4": {
-      "Name": "Er+4",
-      "Formula": "Er+4",
+    "Er++++": {
+      "Name": "Er++++",
+      "Formula": "Er++++",
       "Elements": "1:Er",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -6120,9 +6120,9 @@
         }
       }
     },
-    "Eu+2": {
-      "Name": "Eu+2",
-      "Formula": "Eu+2",
+    "Eu++": {
+      "Name": "Eu++",
+      "Formula": "Eu++",
       "Elements": "1:Eu",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6142,9 +6142,9 @@
         }
       }
     },
-    "Eu+3": {
-      "Name": "Eu+3",
-      "Formula": "Eu+3",
+    "Eu+++": {
+      "Name": "Eu+++",
+      "Formula": "Eu+++",
       "Elements": "1:Eu",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -6164,9 +6164,9 @@
         }
       }
     },
-    "Eu+4": {
-      "Name": "Eu+4",
-      "Formula": "Eu+4",
+    "Eu++++": {
+      "Name": "Eu++++",
+      "Formula": "Eu++++",
       "Elements": "1:Eu",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -6208,9 +6208,9 @@
         }
       }
     },
-    "Fe+2": {
-      "Name": "Fe+2",
-      "Formula": "Fe+2",
+    "Fe++": {
+      "Name": "Fe++",
+      "Formula": "Fe++",
       "Elements": "1:Fe",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6230,9 +6230,9 @@
         }
       }
     },
-    "Fe+3": {
-      "Name": "Fe+3",
-      "Formula": "Fe+3",
+    "Fe+++": {
+      "Name": "Fe+++",
+      "Formula": "Fe+++",
       "Elements": "1:Fe",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -6296,9 +6296,9 @@
         }
       }
     },
-    "FeOH+2": {
-      "Name": "FeOH+2",
-      "Formula": "FeOH+2",
+    "FeOH++": {
+      "Name": "FeOH++",
+      "Formula": "FeOH++",
       "Elements": "1:Fe 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6450,9 +6450,9 @@
         }
       }
     },
-    "Ga+3": {
-      "Name": "Ga+3",
-      "Formula": "Ga+3",
+    "Ga+++": {
+      "Name": "Ga+++",
+      "Formula": "Ga+++",
       "Elements": "1:Ga",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -6472,9 +6472,9 @@
         }
       }
     },
-    "GaOH+2": {
-      "Name": "GaOH+2",
-      "Formula": "GaOH+2",
+    "GaOH++": {
+      "Name": "GaOH++",
+      "Formula": "GaOH++",
       "Elements": "1:Ga 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6560,9 +6560,9 @@
         }
       }
     },
-    "Gd+2": {
-      "Name": "Gd+2",
-      "Formula": "Gd+2",
+    "Gd++": {
+      "Name": "Gd++",
+      "Formula": "Gd++",
       "Elements": "1:Gd",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -6582,9 +6582,9 @@
         }
       }
     },
-    "Gd+3": {
-      "Name": "Gd+3",
-      "Formula": "Gd+3",
+    "Gd+++": {
+      "Name": "Gd+++",
+      "Formula": "Gd+++",
       "Elements": "1:Gd",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -6604,9 +6604,9 @@
         }
       }
     },
-    "Gd+4": {
-      "Name": "Gd+4",
-      "Formula": "Gd+4",
+    "Gd++++": {
+      "Name": "Gd++++",
+      "Formula": "Gd++++",
       "Elements": "1:Gd",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -6714,9 +6714,9 @@
         }
       }
     },
-    "H2P2O7-2": {
-      "Name": "H2P2O7-2",
-      "Formula": "H2P2O7-2",
+    "H2P2O7--": {
+      "Name": "H2P2O7--",
+      "Formula": "H2P2O7--",
       "Elements": "2:H 2:P 7:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -6868,9 +6868,9 @@
         }
       }
     },
-    "HAsO4-2": {
-      "Name": "HAsO4-2",
-      "Formula": "HAsO4-2",
+    "HAsO4--": {
+      "Name": "HAsO4--",
+      "Formula": "HAsO4--",
       "Elements": "1:H 1:As 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -7022,9 +7022,9 @@
         }
       }
     },
-    "HPO4-2": {
-      "Name": "HPO4-2",
-      "Formula": "HPO4-2",
+    "HPO4--": {
+      "Name": "HPO4--",
+      "Formula": "HPO4--",
       "Elements": "1:H 1:P 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -7242,9 +7242,9 @@
         }
       }
     },
-    "HVO4-2": {
-      "Name": "HVO4-2",
-      "Formula": "HVO4-2",
+    "HVO4--": {
+      "Name": "HVO4--",
+      "Formula": "HVO4--",
       "Elements": "1:H 1:V 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -7286,9 +7286,9 @@
         }
       }
     },
-    "Hg+2": {
-      "Name": "Hg+2",
-      "Formula": "Hg+2",
+    "Hg++": {
+      "Name": "Hg++",
+      "Formula": "Hg++",
       "Elements": "1:Hg",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -7374,9 +7374,9 @@
         }
       }
     },
-    "Hg2+2": {
-      "Name": "Hg2+2",
-      "Formula": "Hg2+2",
+    "Hg2++": {
+      "Name": "Hg2++",
+      "Formula": "Hg2++",
       "Elements": "2:Hg",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -7396,9 +7396,9 @@
         }
       }
     },
-    "Ho+2": {
-      "Name": "Ho+2",
-      "Formula": "Ho+2",
+    "Ho++": {
+      "Name": "Ho++",
+      "Formula": "Ho++",
       "Elements": "1:Ho",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -7418,9 +7418,9 @@
         }
       }
     },
-    "Ho+3": {
-      "Name": "Ho+3",
-      "Formula": "Ho+3",
+    "Ho+++": {
+      "Name": "Ho+++",
+      "Formula": "Ho+++",
       "Elements": "1:Ho",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -7440,9 +7440,9 @@
         }
       }
     },
-    "Ho+4": {
-      "Name": "Ho+4",
-      "Formula": "Ho+4",
+    "Ho++++": {
+      "Name": "Ho++++",
+      "Formula": "Ho++++",
       "Elements": "1:Ho",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -7594,9 +7594,9 @@
         }
       }
     },
-    "In+3": {
-      "Name": "In+3",
-      "Formula": "In+3",
+    "In+++": {
+      "Name": "In+++",
+      "Formula": "In+++",
       "Elements": "1:In",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -7616,9 +7616,9 @@
         }
       }
     },
-    "InOH+2": {
-      "Name": "InOH+2",
-      "Formula": "InOH+2",
+    "InOH++": {
+      "Name": "InOH++",
+      "Formula": "InOH++",
       "Elements": "1:In 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -7880,9 +7880,9 @@
         }
       }
     },
-    "La+3": {
-      "Name": "La+3",
-      "Formula": "La+3",
+    "La+++": {
+      "Name": "La+++",
+      "Formula": "La+++",
       "Elements": "1:La",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -7924,9 +7924,9 @@
         }
       }
     },
-    "Lu+3": {
-      "Name": "Lu+3",
-      "Formula": "Lu+3",
+    "Lu+++": {
+      "Name": "Lu+++",
+      "Formula": "Lu+++",
       "Elements": "1:Lu",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -7946,9 +7946,9 @@
         }
       }
     },
-    "Lu+4": {
-      "Name": "Lu+4",
-      "Formula": "Lu+4",
+    "Lu++++": {
+      "Name": "Lu++++",
+      "Formula": "Lu++++",
       "Elements": "1:Lu",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -7990,9 +7990,9 @@
         }
       }
     },
-    "Mg+2": {
-      "Name": "Mg+2",
-      "Formula": "Mg+2",
+    "Mg++": {
+      "Name": "Mg++",
+      "Formula": "Mg++",
       "Elements": "1:Mg",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -8078,9 +8078,9 @@
         }
       }
     },
-    "Mn+2": {
-      "Name": "Mn+2",
-      "Formula": "Mn+2",
+    "Mn++": {
+      "Name": "Mn++",
+      "Formula": "Mn++",
       "Elements": "1:Mn",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -8100,9 +8100,9 @@
         }
       }
     },
-    "Mn+3": {
-      "Name": "Mn+3",
-      "Formula": "Mn+3",
+    "Mn+++": {
+      "Name": "Mn+++",
+      "Formula": "Mn+++",
       "Elements": "1:Mn",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -8210,9 +8210,9 @@
         }
       }
     },
-    "MnO2-2": {
-      "Name": "MnO2-2",
-      "Formula": "MnO2-2",
+    "MnO2--": {
+      "Name": "MnO2--",
+      "Formula": "MnO2--",
       "Elements": "1:Mn 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -8254,9 +8254,9 @@
         }
       }
     },
-    "MnO4-2": {
-      "Name": "MnO4-2",
-      "Formula": "MnO4-2",
+    "MnO4--": {
+      "Name": "MnO4--",
+      "Formula": "MnO4--",
       "Elements": "1:Mn 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -8320,9 +8320,9 @@
         }
       }
     },
-    "MoO4-2": {
-      "Name": "MoO4-2",
-      "Formula": "MoO4-2",
+    "MoO4--": {
+      "Name": "MoO4--",
+      "Formula": "MoO4--",
       "Elements": "1:Mo 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -8650,9 +8650,9 @@
         }
       }
     },
-    "Nd+2": {
-      "Name": "Nd+2",
-      "Formula": "Nd+2",
+    "Nd++": {
+      "Name": "Nd++",
+      "Formula": "Nd++",
       "Elements": "1:Nd",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -8672,9 +8672,9 @@
         }
       }
     },
-    "Nd+3": {
-      "Name": "Nd+3",
-      "Formula": "Nd+3",
+    "Nd+++": {
+      "Name": "Nd+++",
+      "Formula": "Nd+++",
       "Elements": "1:Nd",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -8694,9 +8694,9 @@
         }
       }
     },
-    "Nd+4": {
-      "Name": "Nd+4",
-      "Formula": "Nd+4",
+    "Nd++++": {
+      "Name": "Nd++++",
+      "Formula": "Nd++++",
       "Elements": "1:Nd",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -8738,9 +8738,9 @@
         }
       }
     },
-    "Ni+2": {
-      "Name": "Ni+2",
-      "Formula": "Ni+2",
+    "Ni++": {
+      "Name": "Ni++",
+      "Formula": "Ni++",
       "Elements": "1:Ni",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -8848,9 +8848,9 @@
         }
       }
     },
-    "NiO2-2": {
-      "Name": "NiO2-2",
-      "Formula": "NiO2-2",
+    "NiO2--": {
+      "Name": "NiO2--",
+      "Formula": "NiO2--",
       "Elements": "1:Ni 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -8914,9 +8914,9 @@
         }
       }
     },
-    "PO4-3": {
-      "Name": "PO4-3",
-      "Formula": "PO4-3",
+    "PO4---": {
+      "Name": "PO4---",
+      "Formula": "PO4---",
       "Elements": "1:P 4:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -8936,9 +8936,9 @@
         }
       }
     },
-    "Pb+2": {
-      "Name": "Pb+2",
-      "Formula": "Pb+2",
+    "Pb++": {
+      "Name": "Pb++",
+      "Formula": "Pb++",
       "Elements": "1:Pb",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -9024,9 +9024,9 @@
         }
       }
     },
-    "PbCl4-2": {
-      "Name": "PbCl4-2",
-      "Formula": "PbCl4-2",
+    "PbCl4--": {
+      "Name": "PbCl4--",
+      "Formula": "PbCl4--",
       "Elements": "1:Pb 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -9156,9 +9156,9 @@
         }
       }
     },
-    "Pd(SO4)2-2": {
-      "Name": "Pd(SO4)2-2",
-      "Formula": "Pd(SO4)2-2",
+    "Pd(SO4)2--": {
+      "Name": "Pd(SO4)2--",
+      "Formula": "Pd(SO4)2--",
       "Elements": "1:Pd 2:S 8:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -9178,9 +9178,9 @@
         }
       }
     },
-    "Pd(SO4)3-4": {
-      "Name": "Pd(SO4)3-4",
-      "Formula": "Pd(SO4)3-4",
+    "Pd(SO4)3----": {
+      "Name": "Pd(SO4)3----",
+      "Formula": "Pd(SO4)3----",
       "Elements": "1:Pd 3:S 12:O",
       "Charge": -4.0,
       "AggregateState": "Aqueous",
@@ -9200,9 +9200,9 @@
         }
       }
     },
-    "Pd+2": {
-      "Name": "Pd+2",
-      "Formula": "Pd+2",
+    "Pd++": {
+      "Name": "Pd++",
+      "Formula": "Pd++",
       "Elements": "1:Pd",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -9288,9 +9288,9 @@
         }
       }
     },
-    "PdCl4-2": {
-      "Name": "PdCl4-2",
-      "Formula": "PdCl4-2",
+    "PdCl4--": {
+      "Name": "PdCl4--",
+      "Formula": "PdCl4--",
       "Elements": "1:Pd 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -9332,9 +9332,9 @@
         }
       }
     },
-    "Pr+2": {
-      "Name": "Pr+2",
-      "Formula": "Pr+2",
+    "Pr++": {
+      "Name": "Pr++",
+      "Formula": "Pr++",
       "Elements": "1:Pr",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -9354,9 +9354,9 @@
         }
       }
     },
-    "Pr+3": {
-      "Name": "Pr+3",
-      "Formula": "Pr+3",
+    "Pr+++": {
+      "Name": "Pr+++",
+      "Formula": "Pr+++",
       "Elements": "1:Pr",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -9376,9 +9376,9 @@
         }
       }
     },
-    "Pr+4": {
-      "Name": "Pr+4",
-      "Formula": "Pr+4",
+    "Pr++++": {
+      "Name": "Pr++++",
+      "Formula": "Pr++++",
       "Elements": "1:Pr",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -9442,9 +9442,9 @@
         }
       }
     },
-    "Pt(SO4)2-2": {
-      "Name": "Pt(SO4)2-2",
-      "Formula": "Pt(SO4)2-2",
+    "Pt(SO4)2--": {
+      "Name": "Pt(SO4)2--",
+      "Formula": "Pt(SO4)2--",
       "Elements": "1:Pt 2:S 8:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -9464,9 +9464,9 @@
         }
       }
     },
-    "Pt(SO4)3-4": {
-      "Name": "Pt(SO4)3-4",
-      "Formula": "Pt(SO4)3-4",
+    "Pt(SO4)3----": {
+      "Name": "Pt(SO4)3----",
+      "Formula": "Pt(SO4)3----",
       "Elements": "1:Pt 3:S 12:O",
       "Charge": -4.0,
       "AggregateState": "Aqueous",
@@ -9486,9 +9486,9 @@
         }
       }
     },
-    "Pt+2": {
-      "Name": "Pt+2",
-      "Formula": "Pt+2",
+    "Pt++": {
+      "Name": "Pt++",
+      "Formula": "Pt++",
       "Elements": "1:Pt",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -9574,9 +9574,9 @@
         }
       }
     },
-    "PtCl4-2": {
-      "Name": "PtCl4-2",
-      "Formula": "PtCl4-2",
+    "PtCl4--": {
+      "Name": "PtCl4--",
+      "Formula": "PtCl4--",
       "Elements": "1:Pt 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -9618,9 +9618,9 @@
         }
       }
     },
-    "Ra+2": {
-      "Name": "Ra+2",
-      "Formula": "Ra+2",
+    "Ra++": {
+      "Name": "Ra++",
+      "Formula": "Ra++",
       "Elements": "1:Ra",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -9816,8 +9816,8 @@
         }
       }
     },
-    "RhOH+2": {
-      "Name": "RhOH+2",
+    "RhOH++": {
+      "Name": "RhOH++",
       "Formula": "Rh(OH)+2",
       "Elements": "1:Rh 1:O 1:H",
       "Charge": 2.0,
@@ -9904,9 +9904,9 @@
         }
       }
     },
-    "Rh(SO4)2-2": {
-      "Name": "Rh(SO4)2-2",
-      "Formula": "Rh(SO4)2-2",
+    "Rh(SO4)2--": {
+      "Name": "Rh(SO4)2--",
+      "Formula": "Rh(SO4)2--",
       "Elements": "1:Rh 2:S 8:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -9926,9 +9926,9 @@
         }
       }
     },
-    "Rh(SO4)3-3": {
-      "Name": "Rh(SO4)3-3",
-      "Formula": "Rh(SO4)3-3",
+    "Rh(SO4)3---": {
+      "Name": "Rh(SO4)3---",
+      "Formula": "Rh(SO4)3---",
       "Elements": "1:Rh 3:S 12:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -9948,9 +9948,9 @@
         }
       }
     },
-    "Rh(SO4)3-4": {
-      "Name": "Rh(SO4)3-4",
-      "Formula": "Rh(SO4)3-4",
+    "Rh(SO4)3----": {
+      "Name": "Rh(SO4)3----",
+      "Formula": "Rh(SO4)3----",
       "Elements": "1:Rh 3:S 12:O",
       "Charge": -4.0,
       "AggregateState": "Aqueous",
@@ -9970,9 +9970,9 @@
         }
       }
     },
-    "Rh+2": {
-      "Name": "Rh+2",
-      "Formula": "Rh+2",
+    "Rh++": {
+      "Name": "Rh++",
+      "Formula": "Rh++",
       "Elements": "1:Rh",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -9992,9 +9992,9 @@
         }
       }
     },
-    "Rh+3": {
-      "Name": "Rh+3",
-      "Formula": "Rh+3",
+    "Rh+++": {
+      "Name": "Rh+++",
+      "Formula": "Rh+++",
       "Elements": "1:Rh",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -10036,9 +10036,9 @@
         }
       }
     },
-    "RhCl+2": {
-      "Name": "RhCl+2",
-      "Formula": "RhCl+2",
+    "RhCl++": {
+      "Name": "RhCl++",
+      "Formula": "RhCl++",
       "Elements": "1:Rh 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -10168,9 +10168,9 @@
         }
       }
     },
-    "RhCl4-2": {
-      "Name": "RhCl4-2",
-      "Formula": "RhCl4-2",
+    "RhCl4--": {
+      "Name": "RhCl4--",
+      "Formula": "RhCl4--",
       "Elements": "1:Rh 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10278,8 +10278,8 @@
         }
       }
     },
-    "RuOH+2": {
-      "Name": "RuOH+2",
+    "RuOH++": {
+      "Name": "RuOH++",
       "Formula": "Ru(OH)+2",
       "Elements": "1:Ru 1:O 1:H",
       "Charge": 2.0,
@@ -10300,9 +10300,9 @@
         }
       }
     },
-    "RuO4-2": {
-      "Name": "RuO4-2",
-      "Formula": "RuO4-2",
+    "RuO4--": {
+      "Name": "RuO4--",
+      "Formula": "RuO4--",
       "Elements": "1:Ru 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10388,9 +10388,9 @@
         }
       }
     },
-    "Ru(SO4)2-2": {
-      "Name": "Ru(SO4)2-2",
-      "Formula": "Ru(SO4)2-2",
+    "Ru(SO4)2--": {
+      "Name": "Ru(SO4)2--",
+      "Formula": "Ru(SO4)2--",
       "Elements": "1:Ru 2:S 8:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10410,9 +10410,9 @@
         }
       }
     },
-    "Ru(SO4)3-3": {
-      "Name": "Ru(SO4)3-3",
-      "Formula": "Ru(SO4)3-3",
+    "Ru(SO4)3---": {
+      "Name": "Ru(SO4)3---",
+      "Formula": "Ru(SO4)3---",
       "Elements": "1:Ru 3:S 12:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -10432,9 +10432,9 @@
         }
       }
     },
-    "Ru(SO4)3-4": {
-      "Name": "Ru(SO4)3-4",
-      "Formula": "Ru(SO4)3-4",
+    "Ru(SO4)3----": {
+      "Name": "Ru(SO4)3----",
+      "Formula": "Ru(SO4)3----",
       "Elements": "1:Ru 3:S 12:O",
       "Charge": -4.0,
       "AggregateState": "Aqueous",
@@ -10454,9 +10454,9 @@
         }
       }
     },
-    "Ru+2": {
-      "Name": "Ru+2",
-      "Formula": "Ru+2",
+    "Ru++": {
+      "Name": "Ru++",
+      "Formula": "Ru++",
       "Elements": "1:Ru",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -10476,9 +10476,9 @@
         }
       }
     },
-    "Ru+3": {
-      "Name": "Ru+3",
-      "Formula": "Ru+3",
+    "Ru+++": {
+      "Name": "Ru+++",
+      "Formula": "Ru+++",
       "Elements": "1:Ru",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -10520,9 +10520,9 @@
         }
       }
     },
-    "RuCl+2": {
-      "Name": "RuCl+2",
-      "Formula": "RuCl+2",
+    "RuCl++": {
+      "Name": "RuCl++",
+      "Formula": "RuCl++",
       "Elements": "1:Ru 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -10652,9 +10652,9 @@
         }
       }
     },
-    "RuCl4-2": {
-      "Name": "RuCl4-2",
-      "Formula": "RuCl4-2",
+    "RuCl4--": {
+      "Name": "RuCl4--",
+      "Formula": "RuCl4--",
       "Elements": "1:Ru 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10674,9 +10674,9 @@
         }
       }
     },
-    "RuCl5-2": {
-      "Name": "RuCl5-2",
-      "Formula": "RuCl5-2",
+    "RuCl5--": {
+      "Name": "RuCl5--",
+      "Formula": "RuCl5--",
       "Elements": "1:Ru 5:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10696,9 +10696,9 @@
         }
       }
     },
-    "RuCl6-3": {
-      "Name": "RuCl6-3",
-      "Formula": "RuCl6-3",
+    "RuCl6---": {
+      "Name": "RuCl6---",
+      "Formula": "RuCl6---",
       "Elements": "1:Ru 6:Cl",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -10762,9 +10762,9 @@
         }
       }
     },
-    "S2-2": {
-      "Name": "S2-2",
-      "Formula": "S2-2",
+    "S2--": {
+      "Name": "S2--",
+      "Formula": "S2--",
       "Elements": "2:S",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10784,9 +10784,9 @@
         }
       }
     },
-    "S2O3-2": {
-      "Name": "S2O3-2",
-      "Formula": "S2O3-2",
+    "S2O3--": {
+      "Name": "S2O3--",
+      "Formula": "S2O3--",
       "Elements": "2:S 3:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10850,9 +10850,9 @@
         }
       }
     },
-    "S2O4-2": {
-      "Name": "S2O4-2",
-      "Formula": "S2O4-2",
+    "S2O4--": {
+      "Name": "S2O4--",
+      "Formula": "S2O4--",
       "Elements": "2:S 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10916,9 +10916,9 @@
         }
       }
     },
-    "S2O5-2": {
-      "Name": "S2O5-2",
-      "Formula": "S2O5-2",
+    "S2O5--": {
+      "Name": "S2O5--",
+      "Formula": "S2O5--",
       "Elements": "2:S 5:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10938,9 +10938,9 @@
         }
       }
     },
-    "S2O6-2": {
-      "Name": "S2O6-2",
-      "Formula": "S2O6-2",
+    "S2O6--": {
+      "Name": "S2O6--",
+      "Formula": "S2O6--",
       "Elements": "2:S 6:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10960,9 +10960,9 @@
         }
       }
     },
-    "S2O8-2": {
-      "Name": "S2O8-2",
-      "Formula": "S2O8-2",
+    "S2O8--": {
+      "Name": "S2O8--",
+      "Formula": "S2O8--",
       "Elements": "2:S 8:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -10982,9 +10982,9 @@
         }
       }
     },
-    "S3-2": {
-      "Name": "S3-2",
-      "Formula": "S3-2",
+    "S3--": {
+      "Name": "S3--",
+      "Formula": "S3--",
       "Elements": "3:S",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11004,9 +11004,9 @@
         }
       }
     },
-    "S3O6-2": {
-      "Name": "S3O6-2",
-      "Formula": "S3O6-2",
+    "S3O6--": {
+      "Name": "S3O6--",
+      "Formula": "S3O6--",
       "Elements": "3:S 6:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11026,9 +11026,9 @@
         }
       }
     },
-    "S4-2": {
-      "Name": "S4-2",
-      "Formula": "S4-2",
+    "S4--": {
+      "Name": "S4--",
+      "Formula": "S4--",
       "Elements": "4:S",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11048,9 +11048,9 @@
         }
       }
     },
-    "S4O6-2": {
-      "Name": "S4O6-2",
-      "Formula": "S4O6-2",
+    "S4O6--": {
+      "Name": "S4O6--",
+      "Formula": "S4O6--",
       "Elements": "4:S 6:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11070,9 +11070,9 @@
         }
       }
     },
-    "S5-2": {
-      "Name": "S5-2",
-      "Formula": "S5-2",
+    "S5--": {
+      "Name": "S5--",
+      "Formula": "S5--",
       "Elements": "5:S",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11092,9 +11092,9 @@
         }
       }
     },
-    "S5O6-2": {
-      "Name": "S5O6-2",
-      "Formula": "S5O6-2",
+    "S5O6--": {
+      "Name": "S5O6--",
+      "Formula": "S5O6--",
       "Elements": "5:S 6:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11136,9 +11136,9 @@
         }
       }
     },
-    "SO3-2": {
-      "Name": "SO3-2",
-      "Formula": "SO3-2",
+    "SO3--": {
+      "Name": "SO3--",
+      "Formula": "SO3--",
       "Elements": "1:S 3:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11158,9 +11158,9 @@
         }
       }
     },
-    "SO4-2": {
-      "Name": "SO4-2",
-      "Formula": "SO4-2",
+    "SO4--": {
+      "Name": "SO4--",
+      "Formula": "SO4--",
       "Elements": "1:S 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11180,9 +11180,9 @@
         }
       }
     },
-    "Sc+3": {
-      "Name": "Sc+3",
-      "Formula": "Sc+3",
+    "Sc+++": {
+      "Name": "Sc+++",
+      "Formula": "Sc+++",
       "Elements": "1:Sc",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -11202,9 +11202,9 @@
         }
       }
     },
-    "ScOH+2": {
-      "Name": "ScOH+2",
-      "Formula": "ScOH+2",
+    "ScOH++": {
+      "Name": "ScOH++",
+      "Formula": "ScOH++",
       "Elements": "1:Sc 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11290,9 +11290,9 @@
         }
       }
     },
-    "SeO3-2": {
-      "Name": "SeO3-2",
-      "Formula": "SeO3-2",
+    "SeO3--": {
+      "Name": "SeO3--",
+      "Formula": "SeO3--",
       "Elements": "1:Se 3:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11312,9 +11312,9 @@
         }
       }
     },
-    "SeO4-2": {
-      "Name": "SeO4-2",
-      "Formula": "SeO4-2",
+    "SeO4--": {
+      "Name": "SeO4--",
+      "Formula": "SeO4--",
       "Elements": "1:Se 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11334,9 +11334,9 @@
         }
       }
     },
-    "SiF6-2": {
-      "Name": "SiF6-2",
-      "Formula": "SiF6-2",
+    "SiF6--": {
+      "Name": "SiF6--",
+      "Formula": "SiF6--",
       "Elements": "1:Si 6:F",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -11378,9 +11378,9 @@
         }
       }
     },
-    "Sm+2": {
-      "Name": "Sm+2",
-      "Formula": "Sm+2",
+    "Sm++": {
+      "Name": "Sm++",
+      "Formula": "Sm++",
       "Elements": "1:Sm",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11400,9 +11400,9 @@
         }
       }
     },
-    "Sm+3": {
-      "Name": "Sm+3",
-      "Formula": "Sm+3",
+    "Sm+++": {
+      "Name": "Sm+++",
+      "Formula": "Sm+++",
       "Elements": "1:Sm",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -11422,9 +11422,9 @@
         }
       }
     },
-    "Sm+4": {
-      "Name": "Sm+4",
-      "Formula": "Sm+4",
+    "Sm++++": {
+      "Name": "Sm++++",
+      "Formula": "Sm++++",
       "Elements": "1:Sm",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -11444,9 +11444,9 @@
         }
       }
     },
-    "Sn+2": {
-      "Name": "Sn+2",
-      "Formula": "Sn+2",
+    "Sn++": {
+      "Name": "Sn++",
+      "Formula": "Sn++",
       "Elements": "1:Sn",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11554,9 +11554,9 @@
         }
       }
     },
-    "Sr+2": {
-      "Name": "Sr+2",
-      "Formula": "Sr+2",
+    "Sr++": {
+      "Name": "Sr++",
+      "Formula": "Sr++",
       "Elements": "1:Sr",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11642,9 +11642,9 @@
         }
       }
     },
-    "Tb+2": {
-      "Name": "Tb+2",
-      "Formula": "Tb+2",
+    "Tb++": {
+      "Name": "Tb++",
+      "Formula": "Tb++",
       "Elements": "1:Tb",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11664,9 +11664,9 @@
         }
       }
     },
-    "Tb+3": {
-      "Name": "Tb+3",
-      "Formula": "Tb+3",
+    "Tb+++": {
+      "Name": "Tb+++",
+      "Formula": "Tb+++",
       "Elements": "1:Tb",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -11686,9 +11686,9 @@
         }
       }
     },
-    "Tb+4": {
-      "Name": "Tb+4",
-      "Formula": "Tb+4",
+    "Tb++++": {
+      "Name": "Tb++++",
+      "Formula": "Tb++++",
       "Elements": "1:Tb",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -11708,9 +11708,9 @@
         }
       }
     },
-    "Th+4": {
-      "Name": "Th+4",
-      "Formula": "Th+4",
+    "Th++++": {
+      "Name": "Th++++",
+      "Formula": "Th++++",
       "Elements": "1:Th",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -11752,9 +11752,9 @@
         }
       }
     },
-    "Tl+3": {
-      "Name": "Tl+3",
-      "Formula": "Tl+3",
+    "Tl+++": {
+      "Name": "Tl+++",
+      "Formula": "Tl+++",
       "Elements": "1:Tl",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -11796,9 +11796,9 @@
         }
       }
     },
-    "TlOH+2": {
-      "Name": "TlOH+2",
-      "Formula": "TlOH+2",
+    "TlOH++": {
+      "Name": "TlOH++",
+      "Formula": "TlOH++",
       "Elements": "1:Tl 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11884,9 +11884,9 @@
         }
       }
     },
-    "Tm+2": {
-      "Name": "Tm+2",
-      "Formula": "Tm+2",
+    "Tm++": {
+      "Name": "Tm++",
+      "Formula": "Tm++",
       "Elements": "1:Tm",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -11906,9 +11906,9 @@
         }
       }
     },
-    "Tm+3": {
-      "Name": "Tm+3",
-      "Formula": "Tm+3",
+    "Tm+++": {
+      "Name": "Tm+++",
+      "Formula": "Tm+++",
       "Elements": "1:Tm",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -11928,9 +11928,9 @@
         }
       }
     },
-    "Tm+4": {
-      "Name": "Tm+4",
-      "Formula": "Tm+4",
+    "Tm++++": {
+      "Name": "Tm++++",
+      "Formula": "Tm++++",
       "Elements": "1:Tm",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -11950,9 +11950,9 @@
         }
       }
     },
-    "U+3": {
-      "Name": "U+3",
-      "Formula": "U+3",
+    "U+++": {
+      "Name": "U+++",
+      "Formula": "U+++",
       "Elements": "1:U",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -11972,9 +11972,9 @@
         }
       }
     },
-    "U+4": {
-      "Name": "U+4",
-      "Formula": "U+4",
+    "U++++": {
+      "Name": "U++++",
+      "Formula": "U++++",
       "Elements": "1:U",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -12016,9 +12016,9 @@
         }
       }
     },
-    "UO2+2": {
-      "Name": "UO2+2",
-      "Formula": "UO2+2",
+    "UO2++": {
+      "Name": "UO2++",
+      "Formula": "UO2++",
       "Elements": "1:U 2:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12060,9 +12060,9 @@
         }
       }
     },
-    "VO+2": {
-      "Name": "VO+2",
-      "Formula": "VO+2",
+    "VO++": {
+      "Name": "VO++",
+      "Formula": "VO++",
       "Elements": "1:V 1:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12104,9 +12104,9 @@
         }
       }
     },
-    "VOH+2": {
-      "Name": "VOH+2",
-      "Formula": "VOH+2",
+    "VOH++": {
+      "Name": "VOH++",
+      "Formula": "VOH++",
       "Elements": "1:V 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12170,9 +12170,9 @@
         }
       }
     },
-    "WO4-2": {
-      "Name": "WO4-2",
-      "Formula": "WO4-2",
+    "WO4--": {
+      "Name": "WO4--",
+      "Formula": "WO4--",
       "Elements": "1:W 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -12236,9 +12236,9 @@
         }
       }
     },
-    "Y+3": {
-      "Name": "Y+3",
-      "Formula": "Y+3",
+    "Y+++": {
+      "Name": "Y+++",
+      "Formula": "Y+++",
       "Elements": "1:Y",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -12258,9 +12258,9 @@
         }
       }
     },
-    "YOH+2": {
-      "Name": "YOH+2",
-      "Formula": "YOH+2",
+    "YOH++": {
+      "Name": "YOH++",
+      "Formula": "YOH++",
       "Elements": "1:Y 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12346,9 +12346,9 @@
         }
       }
     },
-    "Yb+2": {
-      "Name": "Yb+2",
-      "Formula": "Yb+2",
+    "Yb++": {
+      "Name": "Yb++",
+      "Formula": "Yb++",
       "Elements": "1:Yb",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12368,9 +12368,9 @@
         }
       }
     },
-    "Yb+3": {
-      "Name": "Yb+3",
-      "Formula": "Yb+3",
+    "Yb+++": {
+      "Name": "Yb+++",
+      "Formula": "Yb+++",
       "Elements": "1:Yb",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -12390,9 +12390,9 @@
         }
       }
     },
-    "Yb+4": {
-      "Name": "Yb+4",
-      "Formula": "Yb+4",
+    "Yb++++": {
+      "Name": "Yb++++",
+      "Formula": "Yb++++",
       "Elements": "1:Yb",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -12412,9 +12412,9 @@
         }
       }
     },
-    "Zn+2": {
-      "Name": "Zn+2",
-      "Formula": "Zn+2",
+    "Zn++": {
+      "Name": "Zn++",
+      "Formula": "Zn++",
       "Elements": "1:Zn",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12566,9 +12566,9 @@
         }
       }
     },
-    "ZnO2-2": {
-      "Name": "ZnO2-2",
-      "Formula": "ZnO2-2",
+    "ZnO2--": {
+      "Name": "ZnO2--",
+      "Formula": "ZnO2--",
       "Elements": "1:Zn 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -12610,8 +12610,8 @@
         }
       }
     },
-    "UOH+2": {
-      "Name": "UOH+2",
+    "UOH++": {
+      "Name": "UOH++",
       "Formula": "U(OH)+2",
       "Elements": "1:U 1:O 1:H",
       "Charge": 2.0,
@@ -12698,9 +12698,9 @@
         }
       }
     },
-    "UO+2": {
-      "Name": "UO+2",
-      "Formula": "UO+2",
+    "UO++": {
+      "Name": "UO++",
+      "Formula": "UO++",
       "Elements": "1:U 1:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -12896,9 +12896,9 @@
         }
       }
     },
-    "UO4-2": {
-      "Name": "UO4-2",
-      "Formula": "UO4-2",
+    "UO4--": {
+      "Name": "UO4--",
+      "Formula": "UO4--",
       "Elements": "1:U 4:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -13072,9 +13072,9 @@
         }
       }
     },
-    "N2O2-2": {
-      "Name": "N2O2-2",
-      "Formula": "N2O2-2",
+    "N2O2--": {
+      "Name": "N2O2--",
+      "Formula": "N2O2--",
       "Elements": "2:N 2:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -13116,9 +13116,9 @@
         }
       }
     },
-    "N2H6+2": {
-      "Name": "N2H6+2",
-      "Formula": "N2H6+2",
+    "N2H6++": {
+      "Name": "N2H6++",
+      "Formula": "N2H6++",
       "Elements": "2:N 6:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -13226,9 +13226,9 @@
         }
       }
     },
-    "HPO3-2": {
-      "Name": "HPO3-2",
-      "Formula": "HPO3-2",
+    "HPO3--": {
+      "Name": "HPO3--",
+      "Formula": "HPO3--",
       "Elements": "1:H 1:P 3:O",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -13248,9 +13248,9 @@
         }
       }
     },
-    "P2O7-4": {
-      "Name": "P2O7-4",
-      "Formula": "P2O7-4",
+    "P2O7----": {
+      "Name": "P2O7----",
+      "Formula": "P2O7----",
       "Elements": "2:P 7:O",
       "Charge": -4.0,
       "AggregateState": "Aqueous",
@@ -13270,9 +13270,9 @@
         }
       }
     },
-    "HP2O7-3": {
-      "Name": "HP2O7-3",
-      "Formula": "HP2O7-3",
+    "HP2O7---": {
+      "Name": "HP2O7---",
+      "Formula": "HP2O7---",
       "Elements": "1:H 2:P 7:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -13314,9 +13314,9 @@
         }
       }
     },
-    "AsO4-3": {
-      "Name": "AsO4-3",
-      "Formula": "AsO4-3",
+    "AsO4---": {
+      "Name": "AsO4---",
+      "Formula": "AsO4---",
       "Elements": "1:As 4:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -13446,9 +13446,9 @@
         }
       }
     },
-    "Bi+3": {
-      "Name": "Bi+3",
-      "Formula": "Bi+3",
+    "Bi+++": {
+      "Name": "Bi+++",
+      "Formula": "Bi+++",
       "Elements": "1:Bi",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -13490,9 +13490,9 @@
         }
       }
     },
-    "BiOH+2": {
-      "Name": "BiOH+2",
-      "Formula": "BiOH+2",
+    "BiOH++": {
+      "Name": "BiOH++",
+      "Formula": "BiOH++",
       "Elements": "1:Bi 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -13622,9 +13622,9 @@
         }
       }
     },
-    "V+2": {
-      "Name": "V+2",
-      "Formula": "V+2",
+    "V++": {
+      "Name": "V++",
+      "Formula": "V++",
       "Elements": "1:V",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -13644,9 +13644,9 @@
         }
       }
     },
-    "V+3": {
-      "Name": "V+3",
-      "Formula": "V+3",
+    "V+++": {
+      "Name": "V+++",
+      "Formula": "V+++",
       "Elements": "1:V",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -13666,9 +13666,9 @@
         }
       }
     },
-    "VO4-3": {
-      "Name": "VO4-3",
-      "Formula": "VO4-3",
+    "VO4---": {
+      "Name": "VO4---",
+      "Formula": "VO4---",
       "Elements": "1:V 4:O",
       "Charge": -3.0,
       "AggregateState": "Aqueous",
@@ -13688,9 +13688,9 @@
         }
       }
     },
-    "Cr+2": {
-      "Name": "Cr+2",
-      "Formula": "Cr+2",
+    "Cr++": {
+      "Name": "Cr++",
+      "Formula": "Cr++",
       "Elements": "1:Cr",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -13710,9 +13710,9 @@
         }
       }
     },
-    "Cr+3": {
-      "Name": "Cr+3",
-      "Formula": "Cr+3",
+    "Cr+++": {
+      "Name": "Cr+++",
+      "Formula": "Cr+++",
       "Elements": "1:Cr",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -13732,9 +13732,9 @@
         }
       }
     },
-    "CrOH+2": {
-      "Name": "CrOH+2",
-      "Formula": "CrOH+2",
+    "CrOH++": {
+      "Name": "CrOH++",
+      "Formula": "CrOH++",
       "Elements": "1:Cr 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -13820,9 +13820,9 @@
         }
       }
     },
-    "Zr+4": {
-      "Name": "Zr+4",
-      "Formula": "Zr+4",
+    "Zr++++": {
+      "Name": "Zr++++",
+      "Formula": "Zr++++",
       "Elements": "1:Zr",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -13842,8 +13842,8 @@
         }
       }
     },
-    "ZrOH+3": {
-      "Name": "ZrOH+3",
+    "ZrOH+++": {
+      "Name": "ZrOH+++",
       "Formula": "Zr(OH)+3",
       "Elements": "1:Zr 1:O 1:H",
       "Charge": 3.0,
@@ -13864,9 +13864,9 @@
         }
       }
     },
-    "ZrO+2": {
-      "Name": "ZrO+2",
-      "Formula": "ZrO+2",
+    "ZrO++": {
+      "Name": "ZrO++",
+      "Formula": "ZrO++",
       "Elements": "1:Zr 1:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14018,9 +14018,9 @@
         }
       }
     },
-    "Pm+2": {
-      "Name": "Pm+2",
-      "Formula": "Pm+2",
+    "Pm++": {
+      "Name": "Pm++",
+      "Formula": "Pm++",
       "Elements": "1:Pm",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14040,9 +14040,9 @@
         }
       }
     },
-    "Pm+3": {
-      "Name": "Pm+3",
-      "Formula": "Pm+3",
+    "Pm+++": {
+      "Name": "Pm+++",
+      "Formula": "Pm+++",
       "Elements": "1:Pm",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -14062,9 +14062,9 @@
         }
       }
     },
-    "Pm+4": {
-      "Name": "Pm+4",
-      "Formula": "Pm+4",
+    "Pm++++": {
+      "Name": "Pm++++",
+      "Formula": "Pm++++",
       "Elements": "1:Pm",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -14084,9 +14084,9 @@
         }
       }
     },
-    "Hf+4": {
-      "Name": "Hf+4",
-      "Formula": "Hf+4",
+    "Hf++++": {
+      "Name": "Hf++++",
+      "Formula": "Hf++++",
       "Elements": "1:Hf",
       "Charge": 4.0,
       "AggregateState": "Aqueous",
@@ -14106,9 +14106,9 @@
         }
       }
     },
-    "HfOH+3": {
-      "Name": "HfOH+3",
-      "Formula": "HfOH+3",
+    "HfOH+++": {
+      "Name": "HfOH+++",
+      "Formula": "HfOH+++",
       "Elements": "1:Hf 1:O 1:H",
       "Charge": 3.0,
       "AggregateState": "Aqueous",
@@ -14128,9 +14128,9 @@
         }
       }
     },
-    "HfO+2": {
-      "Name": "HfO+2",
-      "Formula": "HfO+2",
+    "HfO++": {
+      "Name": "HfO++",
+      "Formula": "HfO++",
       "Elements": "1:Hf 1:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14216,9 +14216,9 @@
         }
       }
     },
-    "La+2": {
-      "Name": "La+2",
-      "Formula": "La+2",
+    "La++": {
+      "Name": "La++",
+      "Formula": "La++",
       "Elements": "1:La",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14260,9 +14260,9 @@
         }
       }
     },
-    "LaHCO3+2": {
-      "Name": "LaHCO3+2",
-      "Formula": "LaHCO3+2",
+    "LaHCO3++": {
+      "Name": "LaHCO3++",
+      "Formula": "LaHCO3++",
       "Elements": "1:La 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14282,9 +14282,9 @@
         }
       }
     },
-    "LaOH+2": {
-      "Name": "LaOH+2",
-      "Formula": "LaOH+2",
+    "LaOH++": {
+      "Name": "LaOH++",
+      "Formula": "LaOH++",
       "Elements": "1:La 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14370,9 +14370,9 @@
         }
       }
     },
-    "LaCl+2": {
-      "Name": "LaCl+2",
-      "Formula": "LaCl+2",
+    "LaCl++": {
+      "Name": "LaCl++",
+      "Formula": "LaCl++",
       "Elements": "1:La 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14458,9 +14458,9 @@
         }
       }
     },
-    "LaNO3+2": {
-      "Name": "LaNO3+2",
-      "Formula": "LaNO3+2",
+    "LaNO3++": {
+      "Name": "LaNO3++",
+      "Formula": "LaNO3++",
       "Elements": "1:La 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14480,9 +14480,9 @@
         }
       }
     },
-    "LaF+2": {
-      "Name": "LaF+2",
-      "Formula": "LaF+2",
+    "LaF++": {
+      "Name": "LaF++",
+      "Formula": "LaF++",
       "Elements": "1:La 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14568,9 +14568,9 @@
         }
       }
     },
-    "LaH2PO4+2": {
-      "Name": "LaH2PO4+2",
-      "Formula": "LaH2PO4+2",
+    "LaH2PO4++": {
+      "Name": "LaH2PO4++",
+      "Formula": "LaH2PO4++",
       "Elements": "1:La 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14634,9 +14634,9 @@
         }
       }
     },
-    "CeHCO3+2": {
-      "Name": "CeHCO3+2",
-      "Formula": "CeHCO3+2",
+    "CeHCO3++": {
+      "Name": "CeHCO3++",
+      "Formula": "CeHCO3++",
       "Elements": "1:Ce 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14656,9 +14656,9 @@
         }
       }
     },
-    "CeOH+2": {
-      "Name": "CeOH+2",
-      "Formula": "CeOH+2",
+    "CeOH++": {
+      "Name": "CeOH++",
+      "Formula": "CeOH++",
       "Elements": "1:Ce 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14744,9 +14744,9 @@
         }
       }
     },
-    "CeCl+2": {
-      "Name": "CeCl+2",
-      "Formula": "CeCl+2",
+    "CeCl++": {
+      "Name": "CeCl++",
+      "Formula": "CeCl++",
       "Elements": "1:Ce 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14832,9 +14832,9 @@
         }
       }
     },
-    "CeH2PO4+2": {
-      "Name": "CeH2PO4+2",
-      "Formula": "CeH2PO4+2",
+    "CeH2PO4++": {
+      "Name": "CeH2PO4++",
+      "Formula": "CeH2PO4++",
       "Elements": "1:Ce 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14854,9 +14854,9 @@
         }
       }
     },
-    "CeNO3+2": {
-      "Name": "CeNO3+2",
-      "Formula": "CeNO3+2",
+    "CeNO3++": {
+      "Name": "CeNO3++",
+      "Formula": "CeNO3++",
       "Elements": "1:Ce 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14876,9 +14876,9 @@
         }
       }
     },
-    "CeF+2": {
-      "Name": "CeF+2",
-      "Formula": "CeF+2",
+    "CeF++": {
+      "Name": "CeF++",
+      "Formula": "CeF++",
       "Elements": "1:Ce 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14964,9 +14964,9 @@
         }
       }
     },
-    "CeBr+2": {
-      "Name": "CeBr+2",
-      "Formula": "CeBr+2",
+    "CeBr++": {
+      "Name": "CeBr++",
+      "Formula": "CeBr++",
       "Elements": "1:Ce 1:Br",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -14986,9 +14986,9 @@
         }
       }
     },
-    "CeIO3+2": {
-      "Name": "CeIO3+2",
-      "Formula": "CeIO3+2",
+    "CeIO3++": {
+      "Name": "CeIO3++",
+      "Formula": "CeIO3++",
       "Elements": "1:Ce 1:I 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15008,9 +15008,9 @@
         }
       }
     },
-    "CeClO4+2": {
-      "Name": "CeClO4+2",
-      "Formula": "CeClO4+2",
+    "CeClO4++": {
+      "Name": "CeClO4++",
+      "Formula": "CeClO4++",
       "Elements": "1:Ce 1:Cl 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15074,9 +15074,9 @@
         }
       }
     },
-    "PrHCO3+2": {
-      "Name": "PrHCO3+2",
-      "Formula": "PrHCO3+2",
+    "PrHCO3++": {
+      "Name": "PrHCO3++",
+      "Formula": "PrHCO3++",
       "Elements": "1:Pr 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15096,9 +15096,9 @@
         }
       }
     },
-    "PrCl+2": {
-      "Name": "PrCl+2",
-      "Formula": "PrCl+2",
+    "PrCl++": {
+      "Name": "PrCl++",
+      "Formula": "PrCl++",
       "Elements": "1:Pr 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15184,9 +15184,9 @@
         }
       }
     },
-    "PrH2PO4+2": {
-      "Name": "PrH2PO4+2",
-      "Formula": "PrH2PO4+2",
+    "PrH2PO4++": {
+      "Name": "PrH2PO4++",
+      "Formula": "PrH2PO4++",
       "Elements": "1:Pr 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15206,9 +15206,9 @@
         }
       }
     },
-    "PrNO3+2": {
-      "Name": "PrNO3+2",
-      "Formula": "PrNO3+2",
+    "PrNO3++": {
+      "Name": "PrNO3++",
+      "Formula": "PrNO3++",
       "Elements": "1:Pr 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15228,9 +15228,9 @@
         }
       }
     },
-    "PrF+2": {
-      "Name": "PrF+2",
-      "Formula": "PrF+2",
+    "PrF++": {
+      "Name": "PrF++",
+      "Formula": "PrF++",
       "Elements": "1:Pr 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15316,9 +15316,9 @@
         }
       }
     },
-    "PrOH+2": {
-      "Name": "PrOH+2",
-      "Formula": "PrOH+2",
+    "PrOH++": {
+      "Name": "PrOH++",
+      "Formula": "PrOH++",
       "Elements": "1:Pr 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15448,9 +15448,9 @@
         }
       }
     },
-    "NdHCO3+2": {
-      "Name": "NdHCO3+2",
-      "Formula": "NdHCO3+2",
+    "NdHCO3++": {
+      "Name": "NdHCO3++",
+      "Formula": "NdHCO3++",
       "Elements": "1:Nd 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15470,9 +15470,9 @@
         }
       }
     },
-    "NdOH+2": {
-      "Name": "NdOH+2",
-      "Formula": "NdOH+2",
+    "NdOH++": {
+      "Name": "NdOH++",
+      "Formula": "NdOH++",
       "Elements": "1:Nd 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15558,9 +15558,9 @@
         }
       }
     },
-    "NdCl+2": {
-      "Name": "NdCl+2",
-      "Formula": "NdCl+2",
+    "NdCl++": {
+      "Name": "NdCl++",
+      "Formula": "NdCl++",
       "Elements": "1:Nd 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15646,9 +15646,9 @@
         }
       }
     },
-    "NdH2PO4+2": {
-      "Name": "NdH2PO4+2",
-      "Formula": "NdH2PO4+2",
+    "NdH2PO4++": {
+      "Name": "NdH2PO4++",
+      "Formula": "NdH2PO4++",
       "Elements": "1:Nd 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15668,9 +15668,9 @@
         }
       }
     },
-    "NdNO3+2": {
-      "Name": "NdNO3+2",
-      "Formula": "NdNO3+2",
+    "NdNO3++": {
+      "Name": "NdNO3++",
+      "Formula": "NdNO3++",
       "Elements": "1:Nd 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15690,9 +15690,9 @@
         }
       }
     },
-    "NdF+2": {
-      "Name": "NdF+2",
-      "Formula": "NdF+2",
+    "NdF++": {
+      "Name": "NdF++",
+      "Formula": "NdF++",
       "Elements": "1:Nd 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15822,9 +15822,9 @@
         }
       }
     },
-    "SmOH+2": {
-      "Name": "SmOH+2",
-      "Formula": "SmOH+2",
+    "SmOH++": {
+      "Name": "SmOH++",
+      "Formula": "SmOH++",
       "Elements": "1:Sm 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15910,9 +15910,9 @@
         }
       }
     },
-    "SmHCO3+2": {
-      "Name": "SmHCO3+2",
-      "Formula": "SmHCO3+2",
+    "SmHCO3++": {
+      "Name": "SmHCO3++",
+      "Formula": "SmHCO3++",
       "Elements": "1:Sm 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -15932,9 +15932,9 @@
         }
       }
     },
-    "SmCl+2": {
-      "Name": "SmCl+2",
-      "Formula": "SmCl+2",
+    "SmCl++": {
+      "Name": "SmCl++",
+      "Formula": "SmCl++",
       "Elements": "1:Sm 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16020,9 +16020,9 @@
         }
       }
     },
-    "SmH2PO4+2": {
-      "Name": "SmH2PO4+2",
-      "Formula": "SmH2PO4+2",
+    "SmH2PO4++": {
+      "Name": "SmH2PO4++",
+      "Formula": "SmH2PO4++",
       "Elements": "1:Sm 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16042,9 +16042,9 @@
         }
       }
     },
-    "SmNO3+2": {
-      "Name": "SmNO3+2",
-      "Formula": "SmNO3+2",
+    "SmNO3++": {
+      "Name": "SmNO3++",
+      "Formula": "SmNO3++",
       "Elements": "1:Sm 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16064,9 +16064,9 @@
         }
       }
     },
-    "SmF+2": {
-      "Name": "SmF+2",
-      "Formula": "SmF+2",
+    "SmF++": {
+      "Name": "SmF++",
+      "Formula": "SmF++",
       "Elements": "1:Sm 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16196,9 +16196,9 @@
         }
       }
     },
-    "EuOH+2": {
-      "Name": "EuOH+2",
-      "Formula": "EuOH+2",
+    "EuOH++": {
+      "Name": "EuOH++",
+      "Formula": "EuOH++",
       "Elements": "1:Eu 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16284,9 +16284,9 @@
         }
       }
     },
-    "EuHCO3+2": {
-      "Name": "EuHCO3+2",
-      "Formula": "EuHCO3+2",
+    "EuHCO3++": {
+      "Name": "EuHCO3++",
+      "Formula": "EuHCO3++",
       "Elements": "1:Eu 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16306,9 +16306,9 @@
         }
       }
     },
-    "EuCl+2": {
-      "Name": "EuCl+2",
-      "Formula": "EuCl+2",
+    "EuCl++": {
+      "Name": "EuCl++",
+      "Formula": "EuCl++",
       "Elements": "1:Eu 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16460,9 +16460,9 @@
         }
       }
     },
-    "EuF4-2": {
-      "Name": "EuF4-2",
-      "Formula": "EuF4-2",
+    "EuF4--": {
+      "Name": "EuF4--",
+      "Formula": "EuF4--",
       "Elements": "1:Eu 4:F",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -16548,9 +16548,9 @@
         }
       }
     },
-    "EuCl4-2": {
-      "Name": "EuCl4-2",
-      "Formula": "EuCl4-2",
+    "EuCl4--": {
+      "Name": "EuCl4--",
+      "Formula": "EuCl4--",
       "Elements": "1:Eu 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -16570,9 +16570,9 @@
         }
       }
     },
-    "EuH2PO4+2": {
-      "Name": "EuH2PO4+2",
-      "Formula": "EuH2PO4+2",
+    "EuH2PO4++": {
+      "Name": "EuH2PO4++",
+      "Formula": "EuH2PO4++",
       "Elements": "1:Eu 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16592,9 +16592,9 @@
         }
       }
     },
-    "EuNO3+2": {
-      "Name": "EuNO3+2",
-      "Formula": "EuNO3+2",
+    "EuNO3++": {
+      "Name": "EuNO3++",
+      "Formula": "EuNO3++",
       "Elements": "1:Eu 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16614,9 +16614,9 @@
         }
       }
     },
-    "EuF+2": {
-      "Name": "EuF+2",
-      "Formula": "EuF+2",
+    "EuF++": {
+      "Name": "EuF++",
+      "Formula": "EuF++",
       "Elements": "1:Eu 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16746,9 +16746,9 @@
         }
       }
     },
-    "GdOH+2": {
-      "Name": "GdOH+2",
-      "Formula": "GdOH+2",
+    "GdOH++": {
+      "Name": "GdOH++",
+      "Formula": "GdOH++",
       "Elements": "1:Gd 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16834,9 +16834,9 @@
         }
       }
     },
-    "GdHCO3+2": {
-      "Name": "GdHCO3+2",
-      "Formula": "GdHCO3+2",
+    "GdHCO3++": {
+      "Name": "GdHCO3++",
+      "Formula": "GdHCO3++",
       "Elements": "1:Gd 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16856,9 +16856,9 @@
         }
       }
     },
-    "GdCl+2": {
-      "Name": "GdCl+2",
-      "Formula": "GdCl+2",
+    "GdCl++": {
+      "Name": "GdCl++",
+      "Formula": "GdCl++",
       "Elements": "1:Gd 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16944,9 +16944,9 @@
         }
       }
     },
-    "GdH2PO4+2": {
-      "Name": "GdH2PO4+2",
-      "Formula": "GdH2PO4+2",
+    "GdH2PO4++": {
+      "Name": "GdH2PO4++",
+      "Formula": "GdH2PO4++",
       "Elements": "1:Gd 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16966,9 +16966,9 @@
         }
       }
     },
-    "GdNO3+2": {
-      "Name": "GdNO3+2",
-      "Formula": "GdNO3+2",
+    "GdNO3++": {
+      "Name": "GdNO3++",
+      "Formula": "GdNO3++",
       "Elements": "1:Gd 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -16988,9 +16988,9 @@
         }
       }
     },
-    "GdF+2": {
-      "Name": "GdF+2",
-      "Formula": "GdF+2",
+    "GdF++": {
+      "Name": "GdF++",
+      "Formula": "GdF++",
       "Elements": "1:Gd 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17120,9 +17120,9 @@
         }
       }
     },
-    "TbOH+2": {
-      "Name": "TbOH+2",
-      "Formula": "TbOH+2",
+    "TbOH++": {
+      "Name": "TbOH++",
+      "Formula": "TbOH++",
       "Elements": "1:Tb 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17208,9 +17208,9 @@
         }
       }
     },
-    "TbHCO3+2": {
-      "Name": "TbHCO3+2",
-      "Formula": "TbHCO3+2",
+    "TbHCO3++": {
+      "Name": "TbHCO3++",
+      "Formula": "TbHCO3++",
       "Elements": "1:Tb 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17230,9 +17230,9 @@
         }
       }
     },
-    "TbCl+2": {
-      "Name": "TbCl+2",
-      "Formula": "TbCl+2",
+    "TbCl++": {
+      "Name": "TbCl++",
+      "Formula": "TbCl++",
       "Elements": "1:Tb 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17318,9 +17318,9 @@
         }
       }
     },
-    "TbH2PO4+2": {
-      "Name": "TbH2PO4+2",
-      "Formula": "TbH2PO4+2",
+    "TbH2PO4++": {
+      "Name": "TbH2PO4++",
+      "Formula": "TbH2PO4++",
       "Elements": "1:Tb 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17340,9 +17340,9 @@
         }
       }
     },
-    "TbNO3+2": {
-      "Name": "TbNO3+2",
-      "Formula": "TbNO3+2",
+    "TbNO3++": {
+      "Name": "TbNO3++",
+      "Formula": "TbNO3++",
       "Elements": "1:Tb 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17362,9 +17362,9 @@
         }
       }
     },
-    "TbF+2": {
-      "Name": "TbF+2",
-      "Formula": "TbF+2",
+    "TbF++": {
+      "Name": "TbF++",
+      "Formula": "TbF++",
       "Elements": "1:Tb 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17494,9 +17494,9 @@
         }
       }
     },
-    "DyHCO3+2": {
-      "Name": "DyHCO3+2",
-      "Formula": "DyHCO3+2",
+    "DyHCO3++": {
+      "Name": "DyHCO3++",
+      "Formula": "DyHCO3++",
       "Elements": "1:Dy 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17516,9 +17516,9 @@
         }
       }
     },
-    "DyCl+2": {
-      "Name": "DyCl+2",
-      "Formula": "DyCl+2",
+    "DyCl++": {
+      "Name": "DyCl++",
+      "Formula": "DyCl++",
       "Elements": "1:Dy 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17604,9 +17604,9 @@
         }
       }
     },
-    "DyH2PO4+2": {
-      "Name": "DyH2PO4+2",
-      "Formula": "DyH2PO4+2",
+    "DyH2PO4++": {
+      "Name": "DyH2PO4++",
+      "Formula": "DyH2PO4++",
       "Elements": "1:Dy 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17626,9 +17626,9 @@
         }
       }
     },
-    "DyNO3+2": {
-      "Name": "DyNO3+2",
-      "Formula": "DyNO3+2",
+    "DyNO3++": {
+      "Name": "DyNO3++",
+      "Formula": "DyNO3++",
       "Elements": "1:Dy 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17648,9 +17648,9 @@
         }
       }
     },
-    "DyF+2": {
-      "Name": "DyF+2",
-      "Formula": "DyF+2",
+    "DyF++": {
+      "Name": "DyF++",
+      "Formula": "DyF++",
       "Elements": "1:Dy 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17736,9 +17736,9 @@
         }
       }
     },
-    "DyOH+2": {
-      "Name": "DyOH+2",
-      "Formula": "DyOH+2",
+    "DyOH++": {
+      "Name": "DyOH++",
+      "Formula": "DyOH++",
       "Elements": "1:Dy 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17868,9 +17868,9 @@
         }
       }
     },
-    "HoHCO3+2": {
-      "Name": "HoHCO3+2",
-      "Formula": "HoHCO3+2",
+    "HoHCO3++": {
+      "Name": "HoHCO3++",
+      "Formula": "HoHCO3++",
       "Elements": "1:Ho 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17890,9 +17890,9 @@
         }
       }
     },
-    "HoCl+2": {
-      "Name": "HoCl+2",
-      "Formula": "HoCl+2",
+    "HoCl++": {
+      "Name": "HoCl++",
+      "Formula": "HoCl++",
       "Elements": "1:Ho 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -17978,9 +17978,9 @@
         }
       }
     },
-    "HoH2PO4+2": {
-      "Name": "HoH2PO4+2",
-      "Formula": "HoH2PO4+2",
+    "HoH2PO4++": {
+      "Name": "HoH2PO4++",
+      "Formula": "HoH2PO4++",
       "Elements": "1:Ho 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18000,9 +18000,9 @@
         }
       }
     },
-    "HoNO3+2": {
-      "Name": "HoNO3+2",
-      "Formula": "HoNO3+2",
+    "HoNO3++": {
+      "Name": "HoNO3++",
+      "Formula": "HoNO3++",
       "Elements": "1:Ho 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18022,9 +18022,9 @@
         }
       }
     },
-    "HoF+2": {
-      "Name": "HoF+2",
-      "Formula": "HoF+2",
+    "HoF++": {
+      "Name": "HoF++",
+      "Formula": "HoF++",
       "Elements": "1:Ho 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18110,9 +18110,9 @@
         }
       }
     },
-    "HoOH+2": {
-      "Name": "HoOH+2",
-      "Formula": "HoOH+2",
+    "HoOH++": {
+      "Name": "HoOH++",
+      "Formula": "HoOH++",
       "Elements": "1:Ho 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18242,9 +18242,9 @@
         }
       }
     },
-    "ErHCO3+2": {
-      "Name": "ErHCO3+2",
-      "Formula": "ErHCO3+2",
+    "ErHCO3++": {
+      "Name": "ErHCO3++",
+      "Formula": "ErHCO3++",
       "Elements": "1:Er 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18264,9 +18264,9 @@
         }
       }
     },
-    "ErCl+2": {
-      "Name": "ErCl+2",
-      "Formula": "ErCl+2",
+    "ErCl++": {
+      "Name": "ErCl++",
+      "Formula": "ErCl++",
       "Elements": "1:Er 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18352,9 +18352,9 @@
         }
       }
     },
-    "ErH2PO4+2": {
-      "Name": "ErH2PO4+2",
-      "Formula": "ErH2PO4+2",
+    "ErH2PO4++": {
+      "Name": "ErH2PO4++",
+      "Formula": "ErH2PO4++",
       "Elements": "1:Er 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18374,9 +18374,9 @@
         }
       }
     },
-    "ErNO3+2": {
-      "Name": "ErNO3+2",
-      "Formula": "ErNO3+2",
+    "ErNO3++": {
+      "Name": "ErNO3++",
+      "Formula": "ErNO3++",
       "Elements": "1:Er 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18396,9 +18396,9 @@
         }
       }
     },
-    "ErF+2": {
-      "Name": "ErF+2",
-      "Formula": "ErF+2",
+    "ErF++": {
+      "Name": "ErF++",
+      "Formula": "ErF++",
       "Elements": "1:Er 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18484,9 +18484,9 @@
         }
       }
     },
-    "ErOH+2": {
-      "Name": "ErOH+2",
-      "Formula": "ErOH+2",
+    "ErOH++": {
+      "Name": "ErOH++",
+      "Formula": "ErOH++",
       "Elements": "1:Er 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18616,9 +18616,9 @@
         }
       }
     },
-    "TmHCO3+2": {
-      "Name": "TmHCO3+2",
-      "Formula": "TmHCO3+2",
+    "TmHCO3++": {
+      "Name": "TmHCO3++",
+      "Formula": "TmHCO3++",
       "Elements": "1:Tm 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18638,9 +18638,9 @@
         }
       }
     },
-    "TmCl+2": {
-      "Name": "TmCl+2",
-      "Formula": "TmCl+2",
+    "TmCl++": {
+      "Name": "TmCl++",
+      "Formula": "TmCl++",
       "Elements": "1:Tm 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18726,9 +18726,9 @@
         }
       }
     },
-    "TmH2PO4+2": {
-      "Name": "TmH2PO4+2",
-      "Formula": "TmH2PO4+2",
+    "TmH2PO4++": {
+      "Name": "TmH2PO4++",
+      "Formula": "TmH2PO4++",
       "Elements": "1:Tm 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18748,9 +18748,9 @@
         }
       }
     },
-    "TmNO3+2": {
-      "Name": "TmNO3+2",
-      "Formula": "TmNO3+2",
+    "TmNO3++": {
+      "Name": "TmNO3++",
+      "Formula": "TmNO3++",
       "Elements": "1:Tm 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18770,9 +18770,9 @@
         }
       }
     },
-    "TmF+2": {
-      "Name": "TmF+2",
-      "Formula": "TmF+2",
+    "TmF++": {
+      "Name": "TmF++",
+      "Formula": "TmF++",
       "Elements": "1:Tm 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18858,9 +18858,9 @@
         }
       }
     },
-    "TmOH+2": {
-      "Name": "TmOH+2",
-      "Formula": "TmOH+2",
+    "TmOH++": {
+      "Name": "TmOH++",
+      "Formula": "TmOH++",
       "Elements": "1:Tm 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -18990,9 +18990,9 @@
         }
       }
     },
-    "YbOH+2": {
-      "Name": "YbOH+2",
-      "Formula": "YbOH+2",
+    "YbOH++": {
+      "Name": "YbOH++",
+      "Formula": "YbOH++",
       "Elements": "1:Yb 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19078,9 +19078,9 @@
         }
       }
     },
-    "YbHCO3+2": {
-      "Name": "YbHCO3+2",
-      "Formula": "YbHCO3+2",
+    "YbHCO3++": {
+      "Name": "YbHCO3++",
+      "Formula": "YbHCO3++",
       "Elements": "1:Yb 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19100,9 +19100,9 @@
         }
       }
     },
-    "YbCl+2": {
-      "Name": "YbCl+2",
-      "Formula": "YbCl+2",
+    "YbCl++": {
+      "Name": "YbCl++",
+      "Formula": "YbCl++",
       "Elements": "1:Yb 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19188,9 +19188,9 @@
         }
       }
     },
-    "YbH2PO4+2": {
-      "Name": "YbH2PO4+2",
-      "Formula": "YbH2PO4+2",
+    "YbH2PO4++": {
+      "Name": "YbH2PO4++",
+      "Formula": "YbH2PO4++",
       "Elements": "1:Yb 2:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19210,9 +19210,9 @@
         }
       }
     },
-    "YbNO3+2": {
-      "Name": "YbNO3+2",
-      "Formula": "YbNO3+2",
+    "YbNO3++": {
+      "Name": "YbNO3++",
+      "Formula": "YbNO3++",
       "Elements": "1:Yb 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19232,9 +19232,9 @@
         }
       }
     },
-    "YbF+2": {
-      "Name": "YbF+2",
-      "Formula": "YbF+2",
+    "YbF++": {
+      "Name": "YbF++",
+      "Formula": "YbF++",
       "Elements": "1:Yb 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19364,9 +19364,9 @@
         }
       }
     },
-    "LuOH+2": {
-      "Name": "LuOH+2",
-      "Formula": "LuOH+2",
+    "LuOH++": {
+      "Name": "LuOH++",
+      "Formula": "LuOH++",
       "Elements": "1:Lu 1:O 1:H",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19452,9 +19452,9 @@
         }
       }
     },
-    "LuHCO3+2": {
-      "Name": "LuHCO3+2",
-      "Formula": "LuHCO3+2",
+    "LuHCO3++": {
+      "Name": "LuHCO3++",
+      "Formula": "LuHCO3++",
       "Elements": "1:Lu 1:H 1:C 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19474,9 +19474,9 @@
         }
       }
     },
-    "LuCl+2": {
-      "Name": "LuCl+2",
-      "Formula": "LuCl+2",
+    "LuCl++": {
+      "Name": "LuCl++",
+      "Formula": "LuCl++",
       "Elements": "1:Lu 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19562,9 +19562,9 @@
         }
       }
     },
-    "LuH2PO4+2": {
-      "Name": "LuH2PO4+2",
-      "Formula": "LuH2PO4+2",
+    "LuH2PO4++": {
+      "Name": "LuH2PO4++",
+      "Formula": "LuH2PO4++",
       "Elements": "1:Lu 1:H 1:P 4:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19584,9 +19584,9 @@
         }
       }
     },
-    "LuNO3+2": {
-      "Name": "LuNO3+2",
-      "Formula": "LuNO3+2",
+    "LuNO3++": {
+      "Name": "LuNO3++",
+      "Formula": "LuNO3++",
       "Elements": "1:Lu 1:N 3:O",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19606,9 +19606,9 @@
         }
       }
     },
-    "LuF+2": {
-      "Name": "LuF+2",
-      "Formula": "LuF+2",
+    "LuF++": {
+      "Name": "LuF++",
+      "Formula": "LuF++",
       "Elements": "1:Lu 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -19914,9 +19914,9 @@
         }
       }
     },
-    "FeCl+2": {
-      "Name": "FeCl+2",
-      "Formula": "FeCl+2",
+    "FeCl++": {
+      "Name": "FeCl++",
+      "Formula": "FeCl++",
       "Elements": "1:Fe 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -20002,9 +20002,9 @@
         }
       }
     },
-    "CuCl3-2": {
-      "Name": "CuCl3-2",
-      "Formula": "CuCl3-2",
+    "CuCl3--": {
+      "Name": "CuCl3--",
+      "Formula": "CuCl3--",
       "Elements": "1:Cu 3:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -20090,9 +20090,9 @@
         }
       }
     },
-    "CuCl4-2": {
-      "Name": "CuCl4-2",
-      "Formula": "CuCl4-2",
+    "CuCl4--": {
+      "Name": "CuCl4--",
+      "Formula": "CuCl4--",
       "Elements": "1:Cu 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -20178,9 +20178,9 @@
         }
       }
     },
-    "CdCl4-2": {
-      "Name": "CdCl4-2",
-      "Formula": "CdCl4-2",
+    "CdCl4--": {
+      "Name": "CdCl4--",
+      "Formula": "CdCl4--",
       "Elements": "1:Cd 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -20222,9 +20222,9 @@
         }
       }
     },
-    "TlCl+2": {
-      "Name": "TlCl+2",
-      "Formula": "TlCl+2",
+    "TlCl++": {
+      "Name": "TlCl++",
+      "Formula": "TlCl++",
       "Elements": "1:Tl 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -20288,9 +20288,9 @@
         }
       }
     },
-    "AuCl3-2": {
-      "Name": "AuCl3-2",
-      "Formula": "AuCl3-2",
+    "AuCl3--": {
+      "Name": "AuCl3--",
+      "Formula": "AuCl3--",
       "Elements": "1:Au 3:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -20398,9 +20398,9 @@
         }
       }
     },
-    "HgCl4-2": {
-      "Name": "HgCl4-2",
-      "Formula": "HgCl4-2",
+    "HgCl4--": {
+      "Name": "HgCl4--",
+      "Formula": "HgCl4--",
       "Elements": "1:Hg 4:Cl",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -20420,9 +20420,9 @@
         }
       }
     },
-    "InCl+2": {
-      "Name": "InCl+2",
-      "Formula": "InCl+2",
+    "InCl++": {
+      "Name": "InCl++",
+      "Formula": "InCl++",
       "Elements": "1:In 1:Cl",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -20508,9 +20508,9 @@
         }
       }
     },
-    "BeF4-2": {
-      "Name": "BeF4-2",
-      "Formula": "BeF4-2",
+    "BeF4--": {
+      "Name": "BeF4--",
+      "Formula": "BeF4--",
       "Elements": "1:Be 4:F",
       "Charge": -2.0,
       "AggregateState": "Aqueous",
@@ -20574,9 +20574,9 @@
         }
       }
     },
-    "FeF+2": {
-      "Name": "FeF+2",
-      "Formula": "FeF+2",
+    "FeF++": {
+      "Name": "FeF++",
+      "Formula": "FeF++",
       "Elements": "1:Fe 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",
@@ -20816,9 +20816,9 @@
         }
       }
     },
-    "InF+2": {
-      "Name": "InF+2",
-      "Formula": "InF+2",
+    "InF++": {
+      "Name": "InF++",
+      "Formula": "InF++",
       "Elements": "1:In 1:F",
       "Charge": 2.0,
       "AggregateState": "Aqueous",

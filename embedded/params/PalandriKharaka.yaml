@@ -353,18 +353,18 @@ ReactionRateModelParams:
       Pyrite:
         Mineral: Pyrite
         Mechanisms:
-          Acid: { lgk: -7.52, E: 56.9, a(H+): -0.500, a(Fe+3): 0.500 }
+          Acid: { lgk: -7.52, E: 56.9, a(H+): -0.500, a(Fe+++): 0.500 }
           Neutral: { lgk: -4.55, E: 56.9, a(O2): 0.500 }
       Pyrrhotite:
         Mineral: Pyrrhotite
         OtherNames:
           - Pyrrhotite,monoclinic
         Mechanisms:
-          Acid: { lgk: -8.04, E: 50.8, a(H+): -0.597, a(Fe+3): 0.355 }
+          Acid: { lgk: -8.04, E: 50.8, a(H+): -0.597, a(Fe+++): 0.355 }
       Pyrrhotite,hexagonal:
         Mineral: Pyrrhotite,hexagonal
         Mechanisms:
-          Acid: { lgk: -6.79, E: 63.0, a(H+): -0.090, a(Fe+3): 0.356 }
+          Acid: { lgk: -6.79, E: 63.0, a(H+): -0.090, a(Fe+++): 0.356 }
       As2S3:
         Mineral: As2S3
         Mechanisms:
