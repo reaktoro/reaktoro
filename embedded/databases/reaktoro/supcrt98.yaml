@@ -3479,8 +3479,8 @@ Species:
         b: 0.0
         c: 0.0
         Tmax: 8000.0
-  H2O(aq):
-    Name: H2O(aq)
+  H2O(l):
+    Name: H2O(l)
     Formula: H2O
     Elements: 2:H 1:O
     Charge: 0.0
@@ -3548,9 +3548,9 @@ Species:
         c2: -213898.63
         wref: 682410.4
         charge: -1.0
-  Ag(CO3)2-3:
-    Name: Ag(CO3)2-3
-    Formula: Ag(CO3)2-3
+  Ag(CO3)2---:
+    Name: Ag(CO3)2---
+    Formula: Ag(CO3)2---
     Elements: 1:Ag 2:C 6:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -3586,9 +3586,9 @@ Species:
         c2: -59638.736
         wref: 90374.4
         charge: 1.0
-  Ag+2:
-    Name: Ag+2
-    Formula: Ag+2
+  Ag++:
+    Name: Ag++
+    Formula: Ag++
     Elements: 1:Ag
     Charge: 2.0
     AggregateState: Aqueous
@@ -3643,9 +3643,9 @@ Species:
         c2: -60488.088
         wref: 383630.96
         charge: -1.0
-  AgCl3-2:
-    Name: AgCl3-2
-    Formula: AgCl3-2
+  AgCl3--:
+    Name: AgCl3--
+    Formula: AgCl3--
     Elements: 1:Ag 3:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -3662,9 +3662,9 @@ Species:
         c2: -35856.88
         wref: 1062819.7
         charge: -2.0
-  AgCl4-3:
-    Name: AgCl4-3
-    Formula: AgCl4-3
+  AgCl4---:
+    Name: AgCl4---
+    Formula: AgCl4---
     Elements: 1:Ag 4:Cl
     Charge: -3.0
     AggregateState: Aqueous
@@ -3738,9 +3738,9 @@ Species:
         c2: 139628.45
         wref: -15899.2
         charge: 0.0
-  Al+3:
-    Name: Al+3
-    Formula: Al+3
+  Al+++:
+    Name: Al+++
+    Formula: Al+++
     Elements: 1:Al
     Charge: 3.0
     AggregateState: Aqueous
@@ -3776,9 +3776,9 @@ Species:
         c2: -382647.72
         wref: 400408.8
         charge: 1.0
-  AlOH+2:
-    Name: AlOH+2
-    Formula: AlOH+2
+  AlOH++:
+    Name: AlOH++
+    Formula: AlOH++
     Elements: 1:Al 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -3852,9 +3852,9 @@ Species:
         c2: -129519.9
         wref: 68952.32
         charge: 1.0
-  Au+3:
-    Name: Au+3
-    Formula: Au+3
+  Au+++:
+    Name: Au+++
+    Formula: Au+++
     Elements: 1:Au
     Charge: 3.0
     AggregateState: Aqueous
@@ -3947,9 +3947,9 @@ Species:
         c2: 186606.4
         wref: -66107.2
         charge: 1.0
-  Ba+2:
-    Name: Ba+2
-    Formula: Ba+2
+  Ba++:
+    Name: Ba++
+    Formula: Ba++
     Elements: 1:Ba
     Charge: 2.0
     AggregateState: Aqueous
@@ -4004,9 +4004,9 @@ Species:
         c2: -317875.22
         wref: 56986.08
         charge: 1.0
-  Be+2:
-    Name: Be+2
-    Formula: Be+2
+  Be++:
+    Name: Be++
+    Formula: Be++
     Elements: 1:Be
     Charge: 2.0
     AggregateState: Aqueous
@@ -4080,9 +4080,9 @@ Species:
         c2: 315364.82
         wref: 893325.84
         charge: -1.0
-  BeO2-2:
-    Name: BeO2-2
-    Formula: BeO2-2
+  BeO2--:
+    Name: BeO2--
+    Formula: BeO2--
     Elements: 1:Be 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -4232,9 +4232,9 @@ Species:
         c2: -115030.71
         wref: 188112.64
         charge: 1.0
-  Ce+4:
-    Name: Ce+4
-    Formula: Ce+4
+  Ce++++:
+    Name: Ce++++
+    Formula: Ce++++
     Elements: 1:Ce
     Charge: 4.0
     AggregateState: Aqueous
@@ -4327,9 +4327,9 @@ Species:
         c2: 368208.74
         wref: -8368.0
         charge: 0.0
-  CO3-2:
-    Name: CO3-2
-    Formula: CO3-2
+  CO3--:
+    Name: CO3--
+    Formula: CO3--
     Elements: 1:C 3:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -4365,9 +4365,9 @@ Species:
         c2: 348778.24
         wref: 128867.2
         charge: 1.0
-  Ca+2:
-    Name: Ca+2
-    Formula: Ca+2
+  Ca++:
+    Name: Ca++
+    Formula: Ca++
     Elements: 1:Ca
     Charge: 2.0
     AggregateState: Aqueous
@@ -4460,9 +4460,9 @@ Species:
         c2: -340037.86
         wref: -418.4
         charge: 0.0
-  Cd+2:
-    Name: Cd+2
-    Formula: Cd+2
+  Cd++:
+    Name: Cd++
+    Formula: Cd++
     Elements: 1:Cd
     Charge: 2.0
     AggregateState: Aqueous
@@ -4536,9 +4536,9 @@ Species:
         c2: -119294.21
         wref: 751655.6
         charge: -1.0
-  CdO2-2:
-    Name: CdO2-2
-    Formula: CdO2-2
+  CdO2--:
+    Name: CdO2--
+    Formula: CdO2--
     Elements: 1:Cd 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -4555,9 +4555,9 @@ Species:
         c2: -637478.42
         wref: 1472349.6
         charge: -2.0
-  Ce+2:
-    Name: Ce+2
-    Formula: Ce+2
+  Ce++:
+    Name: Ce++
+    Formula: Ce++
     Elements: 1:Ce
     Charge: 2.0
     AggregateState: Aqueous
@@ -4574,9 +4574,9 @@ Species:
         c2: -230940.06
         wref: 434131.84
         charge: 2.0
-  Ce+3:
-    Name: Ce+3
-    Formula: Ce+3
+  Ce+++:
+    Name: Ce+++
+    Formula: Ce+++
     Elements: 1:Ce
     Charge: 3.0
     AggregateState: Aqueous
@@ -4707,9 +4707,9 @@ Species:
         c2: -274888.8
         wref: 405806.16
         charge: -1.0
-  Co+2:
-    Name: Co+2
-    Formula: Co+2
+  Co++:
+    Name: Co++
+    Formula: Co++
     Elements: 1:Co
     Charge: 2.0
     AggregateState: Aqueous
@@ -4726,9 +4726,9 @@ Species:
         c2: -193443.06
         wref: 617934.96
         charge: 2.0
-  Co+3:
-    Name: Co+3
-    Formula: Co+3
+  Co+++:
+    Name: Co+++
+    Formula: Co+++
     Elements: 1:Co
     Charge: 3.0
     AggregateState: Aqueous
@@ -4802,9 +4802,9 @@ Species:
         c2: 163661.34
         wref: 845628.24
         charge: -1.0
-  CoO2-2:
-    Name: CoO2-2
-    Formula: CoO2-2
+  CoO2--:
+    Name: CoO2--
+    Formula: CoO2--
     Elements: 1:Co 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -4821,9 +4821,9 @@ Species:
         c2: -396283.38
         wref: 1553435.5
         charge: -2.0
-  CoOH+2:
-    Name: CoOH+2
-    Formula: CoOH+2
+  CoOH++:
+    Name: CoOH++
+    Formula: CoOH++
     Elements: 1:Co 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -4840,9 +4840,9 @@ Species:
         c2: -173841.02
         wref: 617934.96
         charge: 2.0
-  Cr2O7-2:
-    Name: Cr2O7-2
-    Formula: Cr2O7-2
+  Cr2O7--:
+    Name: Cr2O7--
+    Formula: Cr2O7--
     Elements: 2:Cr 7:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -4859,9 +4859,9 @@ Species:
         c2: -374978.45
         wref: 887677.44
         charge: -2.0
-  CrO4-2:
-    Name: CrO4-2
-    Formula: CrO4-2
+  CrO4--:
+    Name: CrO4--
+    Formula: CrO4--
     Elements: 1:Cr 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -4992,9 +4992,9 @@ Species:
         c2: -10200.592
         wref: 169284.64
         charge: 1.0
-  Cu+2:
-    Name: Cu+2
-    Formula: Cu+2
+  Cu++:
+    Name: Cu++
+    Formula: Cu++
     Elements: 1:Cu
     Charge: 2.0
     AggregateState: Aqueous
@@ -5068,9 +5068,9 @@ Species:
         c2: -337477.26
         wref: 228613.76
         charge: -1.0
-  CuO2-2:
-    Name: CuO2-2
-    Formula: CuO2-2
+  CuO2--:
+    Name: CuO2--
+    Formula: CuO2--
     Elements: 1:Cu 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -5087,9 +5087,9 @@ Species:
         c2: -582935.8
         wref: 1491470.5
         charge: -2.0
-  Dy+2:
-    Name: Dy+2
-    Formula: Dy+2
+  Dy++:
+    Name: Dy++
+    Formula: Dy++
     Elements: 1:Dy
     Charge: 2.0
     AggregateState: Aqueous
@@ -5106,9 +5106,9 @@ Species:
         c2: -222417.26
         wref: 466264.96
         charge: 2.0
-  Dy+3:
-    Name: Dy+3
-    Formula: Dy+3
+  Dy+++:
+    Name: Dy+++
+    Formula: Dy+++
     Elements: 1:Dy
     Charge: 3.0
     AggregateState: Aqueous
@@ -5125,9 +5125,9 @@ Species:
         c2: -397141.1
         wref: 995457.28
         charge: 3.0
-  Dy+4:
-    Name: Dy+4
-    Formula: Dy+4
+  Dy++++:
+    Name: Dy++++
+    Formula: Dy++++
     Elements: 1:Dy
     Charge: 4.0
     AggregateState: Aqueous
@@ -5144,9 +5144,9 @@ Species:
         c2: -136339.82
         wref: 1568330.6
         charge: 4.0
-  Er+2:
-    Name: Er+2
-    Formula: Er+2
+  Er++:
+    Name: Er++
+    Formula: Er++
     Elements: 1:Er
     Charge: 2.0
     AggregateState: Aqueous
@@ -5163,9 +5163,9 @@ Species:
         c2: -219860.83
         wref: 478524.08
         charge: 2.0
-  Er+3:
-    Name: Er+3
-    Formula: Er+3
+  Er+++:
+    Name: Er+++
+    Formula: Er+++
     Elements: 1:Er
     Charge: 3.0
     AggregateState: Aqueous
@@ -5182,9 +5182,9 @@ Species:
         c2: -419299.56
         wref: 1008971.6
         charge: 3.0
-  Er+4:
-    Name: Er+4
-    Formula: Er+4
+  Er++++:
+    Name: Er++++
+    Formula: Er++++
     Elements: 1:Er
     Charge: 4.0
     AggregateState: Aqueous
@@ -5201,9 +5201,9 @@ Species:
         c2: -138896.25
         wref: 1573811.6
         charge: 4.0
-  Eu+2:
-    Name: Eu+2
-    Formula: Eu+2
+  Eu++:
+    Name: Eu++
+    Formula: Eu++
     Elements: 1:Eu
     Charge: 2.0
     AggregateState: Aqueous
@@ -5220,9 +5220,9 @@ Species:
         c2: -224124.33
         wref: 457269.36
         charge: 2.0
-  Eu+3:
-    Name: Eu+3
-    Formula: Eu+3
+  Eu+++:
+    Name: Eu+++
+    Formula: Eu+++
     Elements: 1:Eu
     Charge: 3.0
     AggregateState: Aqueous
@@ -5239,9 +5239,9 @@ Species:
         c2: -438901.6
         wref: 969056.24
         charge: 3.0
-  Eu+4:
-    Name: Eu+4
-    Formula: Eu+4
+  Eu++++:
+    Name: Eu++++
+    Formula: Eu++++
     Elements: 1:Eu
     Charge: 4.0
     AggregateState: Aqueous
@@ -5277,9 +5277,9 @@ Species:
         c2: -313297.92
         wref: 747680.8
         charge: -1.0
-  Fe+2:
-    Name: Fe+2
-    Formula: Fe+2
+  Fe++:
+    Name: Fe++
+    Formula: Fe++
     Elements: 1:Fe
     Charge: 2.0
     AggregateState: Aqueous
@@ -5296,9 +5296,9 @@ Species:
         c2: -194292.41
         wref: 601742.88
         charge: 2.0
-  Fe+3:
-    Name: Fe+3
-    Formula: Fe+3
+  Fe+++:
+    Name: Fe+++
+    Formula: Fe+++
     Elements: 1:Fe
     Charge: 3.0
     AggregateState: Aqueous
@@ -5353,9 +5353,9 @@ Species:
         c2: 121900.84
         wref: -15899.2
         charge: 0.0
-  FeOH+2:
-    Name: FeOH+2
-    Formula: FeOH+2
+  FeOH++:
+    Name: FeOH++
+    Formula: FeOH++
     Elements: 1:Fe 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -5486,9 +5486,9 @@ Species:
         c2: -606797.15
         wref: 613458.08
         charge: -1.0
-  Ga+3:
-    Name: Ga+3
-    Formula: Ga+3
+  Ga+++:
+    Name: Ga+++
+    Formula: Ga+++
     Elements: 1:Ga
     Charge: 3.0
     AggregateState: Aqueous
@@ -5505,9 +5505,9 @@ Species:
         c2: -352819.98
         wref: 1162608.1
         charge: 3.0
-  GaOH+2:
-    Name: GaOH+2
-    Formula: GaOH+2
+  GaOH++:
+    Name: GaOH++
+    Formula: GaOH++
     Elements: 1:Ga 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -5581,9 +5581,9 @@ Species:
         c2: -245429.26
         wref: 743789.68
         charge: -1.0
-  Gd+2:
-    Name: Gd+2
-    Formula: Gd+2
+  Gd++:
+    Name: Gd++
+    Formula: Gd++
     Elements: 1:Gd
     Charge: 2.0
     AggregateState: Aqueous
@@ -5600,9 +5600,9 @@ Species:
         c2: -221567.9
         wref: 469277.44
         charge: 2.0
-  Gd+3:
-    Name: Gd+3
-    Formula: Gd+3
+  Gd+++:
+    Name: Gd+++
+    Formula: Gd+++
     Elements: 1:Gd
     Charge: 3.0
     AggregateState: Aqueous
@@ -5619,9 +5619,9 @@ Species:
         c2: -432935.22
         wref: 973407.6
         charge: 3.0
-  Gd+4:
-    Name: Gd+4
-    Formula: Gd+4
+  Gd++++:
+    Name: Gd++++
+    Formula: Gd++++
     Elements: 1:Gd
     Charge: 4.0
     AggregateState: Aqueous
@@ -5714,9 +5714,9 @@ Species:
         c2: -132076.33
         wref: 504381.2
         charge: -1.0
-  H2P2O7-2:
-    Name: H2P2O7-2
-    Formula: H2P2O7-2
+  H2P2O7--:
+    Name: H2P2O7--
+    Formula: H2P2O7--
     Elements: 2:H 2:P 7:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -5847,9 +5847,9 @@ Species:
         c2: 74169.768
         wref: -92048.0
         charge: 0.0
-  HAsO4-2:
-    Name: HAsO4-2
-    Formula: HAsO4-2
+  HAsO4--:
+    Name: HAsO4--
+    Formula: HAsO4--
     Elements: 1:H 1:As 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -5980,9 +5980,9 @@ Species:
         c2: -445717.34
         wref: 646386.16
         charge: -1.0
-  HPO4-2:
-    Name: HPO4-2
-    Formula: HPO4-2
+  HPO4--:
+    Name: HPO4--
+    Formula: HPO4--
     Elements: 1:H 1:P 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -6170,9 +6170,9 @@ Species:
         c2: -305946.63
         wref: 648980.24
         charge: -1.0
-  HVO4-2:
-    Name: HVO4-2
-    Formula: HVO4-2
+  HVO4--:
+    Name: HVO4--
+    Formula: HVO4--
     Elements: 1:H 1:V 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -6208,9 +6208,9 @@ Species:
         c2: 190932.66
         wref: -88826.32
         charge: 0.0
-  Hg+2:
-    Name: Hg+2
-    Formula: Hg+2
+  Hg++:
+    Name: Hg++
+    Formula: Hg++
     Elements: 1:Hg
     Charge: 2.0
     AggregateState: Aqueous
@@ -6284,9 +6284,9 @@ Species:
         c2: -375827.8
         wref: 667850.08
         charge: -1.0
-  Hg2+2:
-    Name: Hg2+2
-    Formula: Hg2+2
+  Hg2++:
+    Name: Hg2++
+    Formula: Hg2++
     Elements: 2:Hg
     Charge: 2.0
     AggregateState: Aqueous
@@ -6303,9 +6303,9 @@ Species:
         c2: -9347.056
         wref: 343129.84
         charge: 2.0
-  Ho+2:
-    Name: Ho+2
-    Formula: Ho+2
+  Ho++:
+    Name: Ho++
+    Formula: Ho++
     Elements: 1:Ho
     Charge: 2.0
     AggregateState: Aqueous
@@ -6322,9 +6322,9 @@ Species:
         c2: -221567.9
         wref: 469277.44
         charge: 2.0
-  Ho+3:
-    Name: Ho+3
-    Formula: Ho+3
+  Ho+++:
+    Name: Ho+++
+    Formula: Ho+++
     Elements: 1:Ho
     Charge: 3.0
     AggregateState: Aqueous
@@ -6341,9 +6341,9 @@ Species:
         c2: -410776.75
         wref: 999934.16
         charge: 3.0
-  Ho+4:
-    Name: Ho+4
-    Formula: Ho+4
+  Ho++++:
+    Name: Ho++++
+    Formula: Ho++++
     Elements: 1:Ho
     Charge: 4.0
     AggregateState: Aqueous
@@ -6474,9 +6474,9 @@ Species:
         c2: -144009.1
         wref: 345765.76
         charge: -1.0
-  In+3:
-    Name: In+3
-    Formula: In+3
+  In+++:
+    Name: In+++
+    Formula: In+++
     Elements: 1:In
     Charge: 3.0
     AggregateState: Aqueous
@@ -6493,9 +6493,9 @@ Species:
         c2: -259918.45
         wref: 1060476.6
         charge: 3.0
-  InOH+2:
-    Name: InOH+2
-    Formula: InOH+2
+  InOH++:
+    Name: InOH++
+    Formula: InOH++
     Elements: 1:In 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -6721,9 +6721,9 @@ Species:
         c2: 363945.24
         wref: -95437.04
         charge: 0.0
-  La+3:
-    Name: La+3
-    Formula: La+3
+  La+++:
+    Name: La+++
+    Formula: La+++
     Elements: 1:La
     Charge: 3.0
     AggregateState: Aqueous
@@ -6759,9 +6759,9 @@ Species:
         c2: -10041.6
         wref: 203426.08
         charge: 1.0
-  Lu+3:
-    Name: Lu+3
-    Formula: Lu+3
+  Lu+++:
+    Name: Lu+++
+    Formula: Lu+++
     Elements: 1:Lu
     Charge: 3.0
     AggregateState: Aqueous
@@ -6778,9 +6778,9 @@ Species:
         c2: -406517.44
         wref: 1027339.4
         charge: 3.0
-  Lu+4:
-    Name: Lu+4
-    Formula: Lu+4
+  Lu++++:
+    Name: Lu++++
+    Formula: Lu++++
     Elements: 1:Lu
     Charge: 4.0
     AggregateState: Aqueous
@@ -6816,9 +6816,9 @@ Species:
         c2: 390785.6
         wref: 250621.6
         charge: 1.0
-  Mg+2:
-    Name: Mg+2
-    Formula: Mg+2
+  Mg++:
+    Name: Mg++
+    Formula: Mg++
     Elements: 1:Mg
     Charge: 2.0
     AggregateState: Aqueous
@@ -6892,9 +6892,9 @@ Species:
         c2: 135536.5
         wref: 353506.16
         charge: 1.0
-  Mn+2:
-    Name: Mn+2
-    Formula: Mn+2
+  Mn++:
+    Name: Mn++
+    Formula: Mn++
     Elements: 1:Mn
     Charge: 2.0
     AggregateState: Aqueous
@@ -6911,9 +6911,9 @@ Species:
         c2: -161908.25
         wref: 586011.04
         charge: 2.0
-  Mn+3:
-    Name: Mn+3
-    Formula: Mn+3
+  Mn+++:
+    Name: Mn+++
+    Formula: Mn+++
     Elements: 1:Mn
     Charge: 3.0
     AggregateState: Aqueous
@@ -7006,9 +7006,9 @@ Species:
         c2: -155088.33
         wref: 739940.4
         charge: -1.0
-  MnO2-2:
-    Name: MnO2-2
-    Formula: MnO2-2
+  MnO2--:
+    Name: MnO2--
+    Formula: MnO2--
     Elements: 1:Mn 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -7044,9 +7044,9 @@ Species:
         c2: -142306.21
         wref: 386936.32
         charge: -1.0
-  MnO4-2:
-    Name: MnO4-2
-    Formula: MnO4-2
+  MnO4--:
+    Name: MnO4--
+    Formula: MnO4--
     Elements: 1:Mn 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -7101,9 +7101,9 @@ Species:
         c2: 116783.81
         wref: 475260.56
         charge: -1.0
-  MoO4-2:
-    Name: MoO4-2
-    Formula: MoO4-2
+  MoO4--:
+    Name: MoO4--
+    Formula: MoO4--
     Elements: 1:Mo 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -7386,9 +7386,9 @@ Species:
         c2: -154234.79
         wref: -12552.0
         charge: 0.0
-  Nd+2:
-    Name: Nd+2
-    Formula: Nd+2
+  Nd++:
+    Name: Nd++
+    Formula: Nd++
     Elements: 1:Nd
     Charge: 2.0
     AggregateState: Aqueous
@@ -7405,9 +7405,9 @@ Species:
         c2: -227534.29
         wref: 445554.16
         charge: 2.0
-  Nd+3:
-    Name: Nd+3
-    Formula: Nd+3
+  Nd+++:
+    Name: Nd+++
+    Formula: Nd+++
     Elements: 1:Nd
     Charge: 3.0
     AggregateState: Aqueous
@@ -7424,9 +7424,9 @@ Species:
         c2: -495151.3
         wref: 943492.0
         charge: 3.0
-  Nd+4:
-    Name: Nd+4
-    Formula: Nd+4
+  Nd++++:
+    Name: Nd++++
+    Formula: Nd++++
     Elements: 1:Nd
     Charge: 4.0
     AggregateState: Aqueous
@@ -7462,9 +7462,9 @@ Species:
         c2: 211388.23
         wref: -106064.4
         charge: 0.0
-  Ni+2:
-    Name: Ni+2
-    Formula: Ni+2
+  Ni++:
+    Name: Ni++
+    Formula: Ni++
     Elements: 1:Ni
     Charge: 2.0
     AggregateState: Aqueous
@@ -7557,9 +7557,9 @@ Species:
         c2: 282127.12
         wref: 906421.76
         charge: -1.0
-  NiO2-2:
-    Name: NiO2-2
-    Formula: NiO2-2
+  NiO2--:
+    Name: NiO2--
+    Formula: NiO2--
     Elements: 1:Ni 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -7614,9 +7614,9 @@ Species:
         c2: -432876.64
         wref: 721572.64
         charge: -1.0
-  PO4-3:
-    Name: PO4-3
-    Formula: PO4-3
+  PO4---:
+    Name: PO4---
+    Formula: PO4---
     Elements: 1:P 4:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -7633,9 +7633,9 @@ Species:
         c2: -1188904.5
         wref: 2347809.8
         charge: -3.0
-  Pb+2:
-    Name: Pb+2
-    Formula: Pb+2
+  Pb++:
+    Name: Pb++
+    Formula: Pb++
     Elements: 1:Pb
     Charge: 2.0
     AggregateState: Aqueous
@@ -7709,9 +7709,9 @@ Species:
         c2: -228387.82
         wref: 307775.04
         charge: -1.0
-  PbCl4-2:
-    Name: PbCl4-2
-    Formula: PbCl4-2
+  PbCl4--:
+    Name: PbCl4--
+    Formula: PbCl4--
     Elements: 1:Pb 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -7823,9 +7823,9 @@ Species:
         c2: -297930.09
         wref: -12552.0
         charge: 0.0
-  Pd(SO4)2-2:
-    Name: Pd(SO4)2-2
-    Formula: Pd(SO4)2-2
+  Pd(SO4)2--:
+    Name: Pd(SO4)2--
+    Formula: Pd(SO4)2--
     Elements: 1:Pd 2:S 8:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -7842,9 +7842,9 @@ Species:
         c2: -420148.91
         wref: 1222606.6
         charge: -2.0
-  Pd(SO4)3-4:
-    Name: Pd(SO4)3-4
-    Formula: Pd(SO4)3-4
+  Pd(SO4)3----:
+    Name: Pd(SO4)3----
+    Formula: Pd(SO4)3----
     Elements: 1:Pd 3:S 12:O
     Charge: -4.0
     AggregateState: Aqueous
@@ -7861,9 +7861,9 @@ Species:
         c2: -537761.15
         wref: 2464794.4
         charge: -4.0
-  Pd+2:
-    Name: Pd+2
-    Formula: Pd+2
+  Pd++:
+    Name: Pd++
+    Formula: Pd++
     Elements: 1:Pd
     Charge: 2.0
     AggregateState: Aqueous
@@ -7937,9 +7937,9 @@ Species:
         c2: 253094.34
         wref: 665046.8
         charge: -1.0
-  PdCl4-2:
-    Name: PdCl4-2
-    Formula: PdCl4-2
+  PdCl4--:
+    Name: PdCl4--
+    Formula: PdCl4--
     Elements: 1:Pd 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -7975,9 +7975,9 @@ Species:
         c2: -167021.1
         wref: -12552.0
         charge: 0.0
-  Pr+2:
-    Name: Pr+2
-    Formula: Pr+2
+  Pr++:
+    Name: Pr++
+    Formula: Pr++
     Elements: 1:Pr
     Charge: 2.0
     AggregateState: Aqueous
@@ -7994,9 +7994,9 @@ Species:
         c2: -229237.18
         wref: 436976.96
         charge: 2.0
-  Pr+3:
-    Name: Pr+3
-    Formula: Pr+3
+  Pr+++:
+    Name: Pr+++
+    Formula: Pr+++
     Elements: 1:Pr
     Charge: 3.0
     AggregateState: Aqueous
@@ -8013,9 +8013,9 @@ Species:
         c2: -472139.3
         wref: 977758.96
         charge: 3.0
-  Pr+4:
-    Name: Pr+4
-    Formula: Pr+4
+  Pr++++:
+    Name: Pr++++
+    Formula: Pr++++
     Elements: 1:Pr
     Charge: 4.0
     AggregateState: Aqueous
@@ -8070,9 +8070,9 @@ Species:
         c2: -309264.54
         wref: -12552.0
         charge: 0.0
-  Pt(SO4)2-2:
-    Name: Pt(SO4)2-2
-    Formula: Pt(SO4)2-2
+  Pt(SO4)2--:
+    Name: Pt(SO4)2--
+    Formula: Pt(SO4)2--
     Elements: 1:Pt 2:S 8:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -8089,9 +8089,9 @@ Species:
         c2: -431822.27
         wref: 1240179.4
         charge: -2.0
-  Pt(SO4)3-4:
-    Name: Pt(SO4)3-4
-    Formula: Pt(SO4)3-4
+  Pt(SO4)3----:
+    Name: Pt(SO4)3----
+    Formula: Pt(SO4)3----
     Elements: 1:Pt 3:S 12:O
     Charge: -4.0
     AggregateState: Aqueous
@@ -8108,9 +8108,9 @@ Species:
         c2: -554384.18
         wref: 2482576.4
         charge: -4.0
-  Pt+2:
-    Name: Pt+2
-    Formula: Pt+2
+  Pt++:
+    Name: Pt++
+    Formula: Pt++
     Elements: 1:Pt
     Charge: 2.0
     AggregateState: Aqueous
@@ -8184,9 +8184,9 @@ Species:
         c2: 170882.93
         wref: 701196.56
         charge: -1.0
-  PtCl4-2:
-    Name: PtCl4-2
-    Formula: PtCl4-2
+  PtCl4--:
+    Name: PtCl4--
+    Formula: PtCl4--
     Elements: 1:Pt 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -8222,9 +8222,9 @@ Species:
         c2: -132929.86
         wref: -12552.0
         charge: 0.0
-  Ra+2:
-    Name: Ra+2
-    Formula: Ra+2
+  Ra++:
+    Name: Ra++
+    Formula: Ra++
     Elements: 1:Ra
     Charge: 2.0
     AggregateState: Aqueous
@@ -8393,8 +8393,8 @@ Species:
         c2: 72466.88
         wref: 308946.56
         charge: 1.0
-  RhOH+2:
-    Name: RhOH+2
+  RhOH++:
+    Name: RhOH++
     Formula: Rh(OH)+2
     Elements: 1:Rh 1:O 1:H
     Charge: 2.0
@@ -8469,9 +8469,9 @@ Species:
         c2: -629470.25
         wref: 673540.32
         charge: -1.0
-  Rh(SO4)2-2:
-    Name: Rh(SO4)2-2
-    Formula: Rh(SO4)2-2
+  Rh(SO4)2--:
+    Name: Rh(SO4)2--
+    Formula: Rh(SO4)2--
     Elements: 1:Rh 2:S 8:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -8488,9 +8488,9 @@ Species:
         c2: -452110.49
         wref: 1272856.5
         charge: -2.0
-  Rh(SO4)3-3:
-    Name: Rh(SO4)3-3
-    Formula: Rh(SO4)3-3
+  Rh(SO4)3---:
+    Name: Rh(SO4)3---
+    Formula: Rh(SO4)3---
     Elements: 1:Rh 3:S 12:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -8507,9 +8507,9 @@ Species:
         c2: -752027.98
         wref: 1773011.8
         charge: -3.0
-  Rh(SO4)3-4:
-    Name: Rh(SO4)3-4
-    Formula: Rh(SO4)3-4
+  Rh(SO4)3----:
+    Name: Rh(SO4)3----
+    Formula: Rh(SO4)3----
     Elements: 1:Rh 3:S 12:O
     Charge: -4.0
     AggregateState: Aqueous
@@ -8526,9 +8526,9 @@ Species:
         c2: -574668.22
         wref: 2519395.6
         charge: -4.0
-  Rh+2:
-    Name: Rh+2
-    Formula: Rh+2
+  Rh++:
+    Name: Rh++
+    Formula: Rh++
     Elements: 1:Rh
     Charge: 2.0
     AggregateState: Aqueous
@@ -8545,9 +8545,9 @@ Species:
         c2: -206990.85
         wref: 617934.96
         charge: 2.0
-  Rh+3:
-    Name: Rh+3
-    Formula: Rh+3
+  Rh+++:
+    Name: Rh+++
+    Formula: Rh+++
     Elements: 1:Rh
     Charge: 3.0
     AggregateState: Aqueous
@@ -8583,9 +8583,9 @@ Species:
         c2: -18643.904
         wref: 308946.56
         charge: 1.0
-  RhCl+2:
-    Name: RhCl+2
-    Formula: RhCl+2
+  RhCl++:
+    Name: RhCl++
+    Formula: RhCl++
     Elements: 1:Rh 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -8697,9 +8697,9 @@ Species:
         c2: -597521.22
         wref: 1062317.6
         charge: -1.0
-  RhCl4-2:
-    Name: RhCl4-2
-    Formula: RhCl4-2
+  RhCl4--:
+    Name: RhCl4--
+    Formula: RhCl4--
     Elements: 1:Rh 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -8792,8 +8792,8 @@ Species:
         c2: 52864.84
         wref: 296896.64
         charge: 1.0
-  RuOH+2:
-    Name: RuOH+2
+  RuOH++:
+    Name: RuOH++
     Formula: Ru(OH)+2
     Elements: 1:Ru 1:O 1:H
     Charge: 2.0
@@ -8811,9 +8811,9 @@ Species:
         c2: -138042.71
         wref: 643164.48
         charge: 2.0
-  RuO4-2:
-    Name: RuO4-2
-    Formula: RuO4-2
+  RuO4--:
+    Name: RuO4--
+    Formula: RuO4--
     Elements: 1:Ru 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -8887,9 +8887,9 @@ Species:
         c2: -616683.94
         wref: 667850.08
         charge: -1.0
-  Ru(SO4)2-2:
-    Name: Ru(SO4)2-2
-    Formula: Ru(SO4)2-2
+  Ru(SO4)2--:
+    Name: Ru(SO4)2--
+    Formula: Ru(SO4)2--
     Elements: 1:Ru 2:S 8:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -8906,9 +8906,9 @@ Species:
         c2: -445374.25
         wref: 1263233.3
         charge: -2.0
-  Ru(SO4)3-3:
-    Name: Ru(SO4)3-3
-    Formula: Ru(SO4)3-3
+  Ru(SO4)3---:
+    Name: Ru(SO4)3---
+    Formula: Ru(SO4)3---
     Elements: 1:Ru 3:S 12:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -8925,9 +8925,9 @@ Species:
         c2: -739241.67
         wref: 1767279.8
         charge: -3.0
-  Ru(SO4)3-4:
-    Name: Ru(SO4)3-4
-    Formula: Ru(SO4)3-4
+  Ru(SO4)3----:
+    Name: Ru(SO4)3----
+    Formula: Ru(SO4)3----
     Elements: 1:Ru 3:S 12:O
     Charge: -4.0
     AggregateState: Aqueous
@@ -8944,9 +8944,9 @@ Species:
         c2: -567931.98
         wref: 2507722.2
         charge: -4.0
-  Ru+2:
-    Name: Ru+2
-    Formula: Ru+2
+  Ru++:
+    Name: Ru++
+    Formula: Ru++
     Elements: 1:Ru
     Charge: 2.0
     AggregateState: Aqueous
@@ -8963,9 +8963,9 @@ Species:
         c2: -200258.79
         wref: 609776.16
         charge: 2.0
-  Ru+3:
-    Name: Ru+3
-    Formula: Ru+3
+  Ru+++:
+    Name: Ru+++
+    Formula: Ru+++
     Elements: 1:Ru
     Charge: 3.0
     AggregateState: Aqueous
@@ -9001,9 +9001,9 @@ Species:
         c2: -3301.176
         wref: 300871.44
         charge: 1.0
-  RuCl+2:
-    Name: RuCl+2
-    Formula: RuCl+2
+  RuCl++:
+    Name: RuCl++
+    Formula: RuCl++
     Elements: 1:Ru 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -9115,9 +9115,9 @@ Species:
         c2: 127340.04
         wref: 1052359.7
         charge: -1.0
-  RuCl4-2:
-    Name: RuCl4-2
-    Formula: RuCl4-2
+  RuCl4--:
+    Name: RuCl4--
+    Formula: RuCl4--
     Elements: 1:Ru 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -9134,9 +9134,9 @@ Species:
         c2: -54241.376
         wref: 1531971.6
         charge: -2.0
-  RuCl5-2:
-    Name: RuCl5-2
-    Formula: RuCl5-2
+  RuCl5--:
+    Name: RuCl5--
+    Formula: RuCl5--
     Elements: 1:Ru 5:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -9153,9 +9153,9 @@ Species:
         c2: 71186.576
         wref: 2094928.8
         charge: -2.0
-  RuCl6-3:
-    Name: RuCl6-3
-    Formula: RuCl6-3
+  RuCl6---:
+    Name: RuCl6---
+    Formula: RuCl6---
     Elements: 1:Ru 6:Cl
     Charge: -3.0
     AggregateState: Aqueous
@@ -9210,9 +9210,9 @@ Species:
         c2: -475545.07
         wref: 344008.48
         charge: 1.0
-  S2-2:
-    Name: S2-2
-    Formula: S2-2
+  S2--:
+    Name: S2--
+    Formula: S2--
     Elements: 2:S
     Charge: -2.0
     AggregateState: Aqueous
@@ -9229,9 +9229,9 @@ Species:
         c2: -681803.72
         wref: 1300512.7
         charge: -2.0
-  S2O3-2:
-    Name: S2O3-2
-    Formula: S2O3-2
+  S2O3--:
+    Name: S2O3--
+    Formula: S2O3--
     Elements: 2:S 3:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9286,9 +9286,9 @@ Species:
         c2: 107411.65
         wref: -142883.6
         charge: 0.0
-  S2O4-2:
-    Name: S2O4-2
-    Formula: S2O4-2
+  S2O4--:
+    Name: S2O4--
+    Formula: S2O4--
     Elements: 2:S 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9343,9 +9343,9 @@ Species:
         c2: 191786.19
         wref: -180874.32
         charge: 0.0
-  S2O5-2:
-    Name: S2O5-2
-    Formula: S2O5-2
+  S2O5--:
+    Name: S2O5--
+    Formula: S2O5--
     Elements: 2:S 5:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9362,9 +9362,9 @@ Species:
         c2: -538614.69
         wref: 1185871.1
         charge: -2.0
-  S2O6-2:
-    Name: S2O6-2
-    Formula: S2O6-2
+  S2O6--:
+    Name: S2O6--
+    Formula: S2O6--
     Elements: 2:S 6:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9381,9 +9381,9 @@ Species:
         c2: -513046.26
         wref: 1154240.1
         charge: -2.0
-  S2O8-2:
-    Name: S2O8-2
-    Formula: S2O8-2
+  S2O8--:
+    Name: S2O8--
+    Formula: S2O8--
     Elements: 2:S 8:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9400,9 +9400,9 @@ Species:
         c2: -340037.86
         wref: 974077.04
         charge: -2.0
-  S3-2:
-    Name: S3-2
-    Formula: S3-2
+  S3--:
+    Name: S3--
+    Formula: S3--
     Elements: 3:S
     Charge: -2.0
     AggregateState: Aqueous
@@ -9419,9 +9419,9 @@ Species:
         c2: -620436.99
         wref: 1244698.2
         charge: -2.0
-  S3O6-2:
-    Name: S3O6-2
-    Formula: S3O6-2
+  S3O6--:
+    Name: S3O6--
+    Formula: S3O6--
     Elements: 3:S 6:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9438,9 +9438,9 @@ Species:
         c2: -497703.54
         wref: 1135161.0
         charge: -2.0
-  S4-2:
-    Name: S4-2
-    Formula: S4-2
+  S4--:
+    Name: S4--
+    Formula: S4--
     Elements: 4:S
     Charge: -2.0
     AggregateState: Aqueous
@@ -9457,9 +9457,9 @@ Species:
         c2: -559074.45
         wref: 1187837.6
         charge: -2.0
-  S4O6-2:
-    Name: S4O6-2
-    Formula: S4O6-2
+  S4O6--:
+    Name: S4O6--
+    Formula: S4O6--
     Elements: 4:S 6:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9476,9 +9476,9 @@ Species:
         c2: -351966.45
         wref: 954161.2
         charge: -2.0
-  S5-2:
-    Name: S5-2
-    Formula: S5-2
+  S5--:
+    Name: S5--
+    Formula: S5--
     Elements: 5:S
     Charge: -2.0
     AggregateState: Aqueous
@@ -9495,9 +9495,9 @@ Species:
         c2: -498561.26
         wref: 1131813.8
         charge: -2.0
-  S5O6-2:
-    Name: S5O6-2
-    Formula: S5O6-2
+  S5O6--:
+    Name: S5O6--
+    Formula: S5O6--
     Elements: 5:S 6:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9533,9 +9533,9 @@ Species:
         c2: 270194.35
         wref: -102968.24
         charge: 0.0
-  SO3-2:
-    Name: SO3-2
-    Formula: SO3-2
+  SO3--:
+    Name: SO3--
+    Formula: SO3--
     Elements: 1:S 3:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9552,9 +9552,9 @@ Species:
         c2: -702255.11
         wref: 1389506.4
         charge: -2.0
-  SO4-2:
-    Name: SO4-2
-    Formula: SO4-2
+  SO4--:
+    Name: SO4--
+    Formula: SO4--
     Elements: 1:S 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9571,9 +9571,9 @@ Species:
         c2: -753036.32
         wref: 1316411.9
         charge: -2.0
-  Sc+3:
-    Name: Sc+3
-    Formula: Sc+3
+  Sc+++:
+    Name: Sc+++
+    Formula: Sc+++
     Elements: 1:Sc
     Charge: 3.0
     AggregateState: Aqueous
@@ -9590,9 +9590,9 @@ Species:
         c2: -244579.9
         wref: 1046125.5
         charge: 3.0
-  ScOH+2:
-    Name: ScOH+2
-    Formula: ScOH+2
+  ScOH++:
+    Name: ScOH++
+    Formula: ScOH++
     Elements: 1:Sc 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -9666,9 +9666,9 @@ Species:
         c2: -758504.81
         wref: 559358.96
         charge: -1.0
-  SeO3-2:
-    Name: SeO3-2
-    Formula: SeO3-2
+  SeO3--:
+    Name: SeO3--
+    Formula: SeO3--
     Elements: 1:Se 3:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9685,9 +9685,9 @@ Species:
         c2: -650264.73
         wref: 1324570.7
         charge: -2.0
-  SeO4-2:
-    Name: SeO4-2
-    Formula: SeO4-2
+  SeO4--:
+    Name: SeO4--
+    Formula: SeO4--
     Elements: 1:Se 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -9704,9 +9704,9 @@ Species:
         c2: -600830.77
         wref: 1263233.3
         charge: -2.0
-  SiF6-2:
-    Name: SiF6-2
-    Formula: SiF6-2
+  SiF6--:
+    Name: SiF6--
+    Formula: SiF6--
     Elements: 1:Si 6:F
     Charge: -2.0
     AggregateState: Aqueous
@@ -9742,9 +9742,9 @@ Species:
         c2: -2142208.0
         wref: 54015.44
         charge: 0.0
-  Sm+2:
-    Name: Sm+2
-    Formula: Sm+2
+  Sm++:
+    Name: Sm++
+    Formula: Sm++
     Elements: 1:Sm
     Charge: 2.0
     AggregateState: Aqueous
@@ -9761,9 +9761,9 @@ Species:
         c2: -218157.94
         wref: 481662.08
         charge: 2.0
-  Sm+3:
-    Name: Sm+3
-    Formula: Sm+3
+  Sm+++:
+    Name: Sm+++
+    Formula: Sm+++
     Elements: 1:Sm
     Charge: 3.0
     AggregateState: Aqueous
@@ -9780,9 +9780,9 @@ Species:
         c2: -496004.83
         wref: 960437.2
         charge: 3.0
-  Sm+4:
-    Name: Sm+4
-    Formula: Sm+4
+  Sm++++:
+    Name: Sm++++
+    Formula: Sm++++
     Elements: 1:Sm
     Charge: 4.0
     AggregateState: Aqueous
@@ -9799,9 +9799,9 @@ Species:
         c2: -128666.37
         wref: 1551971.1
         charge: 4.0
-  Sn+2:
-    Name: Sn+2
-    Formula: Sn+2
+  Sn++:
+    Name: Sn++
+    Formula: Sn++
     Elements: 1:Sn
     Charge: 2.0
     AggregateState: Aqueous
@@ -9894,9 +9894,9 @@ Species:
         c2: 300453.04
         wref: -9623.2
         charge: 1.0
-  Sr+2:
-    Name: Sr+2
-    Formula: Sr+2
+  Sr++:
+    Name: Sr++
+    Formula: Sr++
     Elements: 1:Sr
     Charge: 2.0
     AggregateState: Aqueous
@@ -9970,9 +9970,9 @@ Species:
         c2: -191735.98
         wref: 138323.04
         charge: 1.0
-  Tb+2:
-    Name: Tb+2
-    Formula: Tb+2
+  Tb++:
+    Name: Tb++
+    Formula: Tb++
     Elements: 1:Tb
     Charge: 2.0
     AggregateState: Aqueous
@@ -9989,9 +9989,9 @@ Species:
         c2: -223270.79
         wref: 460240.0
         charge: 2.0
-  Tb+3:
-    Name: Tb+3
-    Formula: Tb+3
+  Tb+++:
+    Name: Tb+++
+    Formula: Tb+++
     Elements: 1:Tb
     Charge: 3.0
     AggregateState: Aqueous
@@ -10008,9 +10008,9 @@ Species:
         c2: -433784.57
         wref: 1004452.9
         charge: 3.0
-  Tb+4:
-    Name: Tb+4
-    Formula: Tb+4
+  Tb++++:
+    Name: Tb++++
+    Formula: Tb++++
     Elements: 1:Tb
     Charge: 4.0
     AggregateState: Aqueous
@@ -10027,9 +10027,9 @@ Species:
         c2: -137189.18
         wref: 1568330.6
         charge: 4.0
-  Th+4:
-    Name: Th+4
-    Formula: Th+4
+  Th++++:
+    Name: Th++++
+    Formula: Th++++
     Elements: 1:Th
     Charge: 4.0
     AggregateState: Aqueous
@@ -10065,9 +10065,9 @@ Species:
         c2: -162757.6
         wref: 40752.16
         charge: 1.0
-  Tl+3:
-    Name: Tl+3
-    Formula: Tl+3
+  Tl+++:
+    Name: Tl+++
+    Formula: Tl+++
     Elements: 1:Tl
     Charge: 3.0
     AggregateState: Aqueous
@@ -10103,9 +10103,9 @@ Species:
         c2: -366455.64
         wref: -12552.0
         charge: 0.0
-  TlOH+2:
-    Name: TlOH+2
-    Formula: TlOH+2
+  TlOH++:
+    Name: TlOH++
+    Formula: TlOH++
     Elements: 1:Tl 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -10179,9 +10179,9 @@ Species:
         c2: -1184645.2
         wref: 405806.16
         charge: -1.0
-  Tm+2:
-    Name: Tm+2
-    Formula: Tm+2
+  Tm++:
+    Name: Tm++
+    Formula: Tm++
     Elements: 1:Tm
     Charge: 2.0
     AggregateState: Aqueous
@@ -10198,9 +10198,9 @@ Species:
         c2: -217304.41
         wref: 484800.08
         charge: 2.0
-  Tm+3:
-    Name: Tm+3
-    Formula: Tm+3
+  Tm+++:
+    Name: Tm+++
+    Formula: Tm+++
     Elements: 1:Tm
     Charge: 3.0
     AggregateState: Aqueous
@@ -10217,9 +10217,9 @@ Species:
         c2: -419299.56
         wref: 1018092.7
         charge: 3.0
-  Tm+4:
-    Name: Tm+4
-    Formula: Tm+4
+  Tm++++:
+    Name: Tm++++
+    Formula: Tm++++
     Elements: 1:Tm
     Charge: 4.0
     AggregateState: Aqueous
@@ -10236,9 +10236,9 @@ Species:
         c2: -140599.14
         wref: 1579334.5
         charge: 4.0
-  U+3:
-    Name: U+3
-    Formula: U+3
+  U+++:
+    Name: U+++
+    Formula: U+++
     Elements: 1:U
     Charge: 3.0
     AggregateState: Aqueous
@@ -10255,9 +10255,9 @@ Species:
         c2: -437194.53
         wref: 951943.68
         charge: 3.0
-  U+4:
-    Name: U+4
-    Formula: U+4
+  U++++:
+    Name: U++++
+    Formula: U++++
     Elements: 1:U
     Charge: 4.0
     AggregateState: Aqueous
@@ -10293,9 +10293,9 @@ Species:
         c2: -315318.79
         wref: 267273.92
         charge: 1.0
-  UO2+2:
-    Name: UO2+2
-    Formula: UO2+2
+  UO2++:
+    Name: UO2++
+    Formula: UO2++
     Elements: 1:U 2:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -10331,9 +10331,9 @@ Species:
         c2: -692878.77
         wref: 200790.16
         charge: 1.0
-  VO+2:
-    Name: VO+2
-    Formula: VO+2
+  VO++:
+    Name: VO++
+    Formula: VO++
     Elements: 1:V 1:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -10369,9 +10369,9 @@ Species:
         c2: 109114.54
         wref: 334803.68
         charge: 1.0
-  VOH+2:
-    Name: VOH+2
-    Formula: VOH+2
+  VOH++:
+    Name: VOH++
+    Formula: VOH++
     Elements: 1:V 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -10426,9 +10426,9 @@ Species:
         c2: 121896.66
         wref: 344008.48
         charge: 1.0
-  WO4-2:
-    Name: WO4-2
-    Formula: WO4-2
+  WO4--:
+    Name: WO4--
+    Formula: WO4--
     Elements: 1:W 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -10483,9 +10483,9 @@ Species:
         c2: 425311.97
         wref: -92633.76
         charge: 0.0
-  Y+3:
-    Name: Y+3
-    Formula: Y+3
+  Y+++:
+    Name: Y+++
+    Formula: Y+++
     Elements: 1:Y
     Charge: 3.0
     AggregateState: Aqueous
@@ -10502,9 +10502,9 @@ Species:
         c2: -236906.45
         wref: 1041397.6
         charge: 3.0
-  YOH+2:
-    Name: YOH+2
-    Formula: YOH+2
+  YOH++:
+    Name: YOH++
+    Formula: YOH++
     Elements: 1:Y 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -10578,9 +10578,9 @@ Species:
         c2: -785776.12
         wref: 549986.8
         charge: -1.0
-  Yb+2:
-    Name: Yb+2
-    Formula: Yb+2
+  Yb++:
+    Name: Yb++
+    Formula: Yb++
     Elements: 1:Yb
     Charge: 2.0
     AggregateState: Aqueous
@@ -10597,9 +10597,9 @@ Species:
         c2: -210488.67
         wref: 514004.4
         charge: 2.0
-  Yb+3:
-    Name: Yb+3
-    Formula: Yb+3
+  Yb+++:
+    Name: Yb+++
+    Formula: Yb+++
     Elements: 1:Yb
     Charge: 3.0
     AggregateState: Aqueous
@@ -10616,9 +10616,9 @@ Species:
         c2: -437198.71
         wref: 1022695.1
         charge: 3.0
-  Yb+4:
-    Name: Yb+4
-    Formula: Yb+4
+  Yb++++:
+    Name: Yb++++
+    Formula: Yb++++
     Elements: 1:Yb
     Charge: 4.0
     AggregateState: Aqueous
@@ -10635,9 +10635,9 @@ Species:
         c2: -143155.56
         wref: 1584899.2
         charge: 4.0
-  Zn+2:
-    Name: Zn+2
-    Formula: Zn+2
+  Zn++:
+    Name: Zn++
+    Formula: Zn++
     Elements: 1:Zn
     Charge: 2.0
     AggregateState: Aqueous
@@ -10768,9 +10768,9 @@ Species:
         c2: 43488.496
         wref: 781110.96
         charge: -1.0
-  ZnO2-2:
-    Name: ZnO2-2
-    Formula: ZnO2-2
+  ZnO2--:
+    Name: ZnO2--
+    Formula: ZnO2--
     Elements: 1:Zn 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -10806,8 +10806,8 @@ Species:
         c2: 550154.16
         wref: -24141.68
         charge: 0.0
-  UOH+2:
-    Name: UOH+2
+  UOH++:
+    Name: UOH++
     Formula: U(OH)+2
     Elements: 1:U 1:O 1:H
     Charge: 2.0
@@ -10882,9 +10882,9 @@ Species:
         c2: 20476.496
         wref: 964746.72
         charge: 3.0
-  UO+2:
-    Name: UO+2
-    Formula: UO+2
+  UO++:
+    Name: UO++
+    Formula: UO++
     Elements: 1:U 1:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -11053,9 +11053,9 @@ Species:
         c2: 61387.648
         wref: 809143.76
         charge: -1.0
-  UO4-2:
-    Name: UO4-2
-    Formula: UO4-2
+  UO4--:
+    Name: UO4--
+    Formula: UO4--
     Elements: 1:U 4:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -11205,9 +11205,9 @@ Species:
         c2: -47701.784
         wref: 465762.88
         charge: -1.0
-  N2O2-2:
-    Name: N2O2-2
-    Formula: N2O2-2
+  N2O2--:
+    Name: N2O2--
+    Formula: N2O2--
     Elements: 2:N 2:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -11243,9 +11243,9 @@ Species:
         c2: 16217.184
         wref: 2384.88
         charge: 1.0
-  N2H6+2:
-    Name: N2H6+2
-    Formula: N2H6+2
+  N2H6++:
+    Name: N2H6++
+    Formula: N2H6++
     Elements: 2:N 6:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -11338,9 +11338,9 @@ Species:
         c2: -80090.128
         wref: 480783.44
         charge: -1.0
-  HPO3-2:
-    Name: HPO3-2
-    Formula: HPO3-2
+  HPO3--:
+    Name: HPO3--
+    Formula: HPO3--
     Elements: 1:H 1:P 3:O
     Charge: -2.0
     AggregateState: Aqueous
@@ -11357,9 +11357,9 @@ Species:
         c2: -469578.69
         wref: 1319089.7
         charge: -2.0
-  P2O7-4:
-    Name: P2O7-4
-    Formula: P2O7-4
+  P2O7----:
+    Name: P2O7----
+    Formula: P2O7----
     Elements: 2:P 7:O
     Charge: -4.0
     AggregateState: Aqueous
@@ -11376,9 +11376,9 @@ Species:
         c2: -1312487.3
         wref: 2889847.0
         charge: -4.0
-  HP2O7-3:
-    Name: HP2O7-3
-    Formula: HP2O7-3
+  HP2O7---:
+    Name: HP2O7---
+    Formula: HP2O7---
     Elements: 1:H 2:P 7:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -11414,9 +11414,9 @@ Species:
         c2: 374175.12
         wref: -263257.28
         charge: 0.0
-  AsO4-3:
-    Name: AsO4-3
-    Formula: AsO4-3
+  AsO4---:
+    Name: AsO4---
+    Formula: AsO4---
     Elements: 1:As 4:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -11528,9 +11528,9 @@ Species:
         c2: -502820.57
         wref: 790148.4
         charge: -1.0
-  Bi+3:
-    Name: Bi+3
-    Formula: Bi+3
+  Bi+++:
+    Name: Bi+++
+    Formula: Bi+++
     Elements: 1:Bi
     Charge: 3.0
     AggregateState: Aqueous
@@ -11566,9 +11566,9 @@ Species:
         c2: -830946.58
         wref: 110206.56
         charge: 1.0
-  BiOH+2:
-    Name: BiOH+2
-    Formula: BiOH+2
+  BiOH++:
+    Name: BiOH++
+    Formula: BiOH++
     Elements: 1:Bi 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -11680,9 +11680,9 @@ Species:
         c2: 34965.688
         wref: -110541.28
         charge: 0.0
-  V+2:
-    Name: V+2
-    Formula: V+2
+  V++:
+    Name: V++
+    Formula: V++
     Elements: 1:V
     Charge: 2.0
     AggregateState: Aqueous
@@ -11699,9 +11699,9 @@ Species:
         c2: -219860.83
         wref: 638854.96
         charge: 2.0
-  V+3:
-    Name: V+3
-    Formula: V+3
+  V+++:
+    Name: V+++
+    Formula: V+++
     Elements: 1:V
     Charge: 3.0
     AggregateState: Aqueous
@@ -11718,9 +11718,9 @@ Species:
         c2: -198555.9
         wref: 1008971.6
         charge: 3.0
-  VO4-3:
-    Name: VO4-3
-    Formula: VO4-3
+  VO4---:
+    Name: VO4---
+    Formula: VO4---
     Elements: 1:V 4:O
     Charge: -3.0
     AggregateState: Aqueous
@@ -11737,9 +11737,9 @@ Species:
         c2: 196899.04
         wref: 2235260.2
         charge: -3.0
-  Cr+2:
-    Name: Cr+2
-    Formula: Cr+2
+  Cr++:
+    Name: Cr++
+    Formula: Cr++
     Elements: 1:Cr
     Charge: 2.0
     AggregateState: Aqueous
@@ -11756,9 +11756,9 @@ Species:
         c2: -189179.56
         wref: 597768.08
         charge: 2.0
-  Cr+3:
-    Name: Cr+3
-    Formula: Cr+3
+  Cr+++:
+    Name: Cr+++
+    Formula: Cr+++
     Elements: 1:Cr
     Charge: 3.0
     AggregateState: Aqueous
@@ -11775,9 +11775,9 @@ Species:
         c2: -322134.53
         wref: 1146541.5
         charge: 3.0
-  CrOH+2:
-    Name: CrOH+2
-    Formula: CrOH+2
+  CrOH++:
+    Name: CrOH++
+    Formula: CrOH++
     Elements: 1:Cr 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -11851,9 +11851,9 @@ Species:
         c2: -303386.02
         wref: 725129.04
         charge: -1.0
-  Zr+4:
-    Name: Zr+4
-    Formula: Zr+4
+  Zr++++:
+    Name: Zr++++
+    Formula: Zr++++
     Elements: 1:Zr
     Charge: 4.0
     AggregateState: Aqueous
@@ -11870,8 +11870,8 @@ Species:
         c2: -153385.44
         wref: 1607367.3
         charge: 4.0
-  ZrOH+3:
-    Name: ZrOH+3
+  ZrOH+++:
+    Name: ZrOH+++
     Formula: Zr(OH)+3
     Elements: 1:Zr 1:O 1:H
     Charge: 3.0
@@ -11889,9 +11889,9 @@ Species:
         c2: 251445.85
         wref: 1115203.4
         charge: 3.0
-  ZrO+2:
-    Name: ZrO+2
-    Formula: ZrO+2
+  ZrO++:
+    Name: ZrO++
+    Formula: ZrO++
     Elements: 1:Zr 1:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12022,9 +12022,9 @@ Species:
         c2: -248948.0
         wref: 380785.84
         charge: -1.0
-  Pm+2:
-    Name: Pm+2
-    Formula: Pm+2
+  Pm++:
+    Name: Pm++
+    Formula: Pm++
     Elements: 1:Pm
     Charge: 2.0
     AggregateState: Aqueous
@@ -12041,9 +12041,9 @@ Species:
         c2: -224977.86
         wref: 454298.72
         charge: 2.0
-  Pm+3:
-    Name: Pm+3
-    Formula: Pm+3
+  Pm+++:
+    Name: Pm+++
+    Formula: Pm+++
     Elements: 1:Pm
     Charge: 3.0
     AggregateState: Aqueous
@@ -12060,9 +12060,9 @@ Species:
         c2: -507079.88
         wref: 977758.96
         charge: 3.0
-  Pm+4:
-    Name: Pm+4
-    Formula: Pm+4
+  Pm++++:
+    Name: Pm++++
+    Formula: Pm++++
     Elements: 1:Pm
     Charge: 4.0
     AggregateState: Aqueous
@@ -12079,9 +12079,9 @@ Species:
         c2: -125260.59
         wref: 1541176.4
         charge: 4.0
-  Hf+4:
-    Name: Hf+4
-    Formula: Hf+4
+  Hf++++:
+    Name: Hf++++
+    Formula: Hf++++
     Elements: 1:Hf
     Charge: 4.0
     AggregateState: Aqueous
@@ -12098,9 +12098,9 @@ Species:
         c2: -155941.86
         wref: 1613015.7
         charge: 4.0
-  HfOH+3:
-    Name: HfOH+3
-    Formula: HfOH+3
+  HfOH+++:
+    Name: HfOH+++
+    Formula: HfOH+++
     Elements: 1:Hf 1:O 1:H
     Charge: 3.0
     AggregateState: Aqueous
@@ -12117,9 +12117,9 @@ Species:
         c2: 263378.62
         wref: 1120349.7
         charge: 3.0
-  HfO+2:
-    Name: HfO+2
-    Formula: HfO+2
+  HfO++:
+    Name: HfO++
+    Formula: HfO++
     Elements: 1:Hf 1:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12193,9 +12193,9 @@ Species:
         c2: 334966.86
         wref: 899811.04
         charge: -1.0
-  La+2:
-    Name: La+2
-    Formula: La+2
+  La++:
+    Name: La++
+    Formula: La++
     Elements: 1:La
     Charge: 2.0
     AggregateState: Aqueous
@@ -12231,9 +12231,9 @@ Species:
         c2: -673276.73
         wref: 513586.0
         charge: 1.0
-  LaHCO3+2:
-    Name: LaHCO3+2
-    Formula: LaHCO3+2
+  LaHCO3++:
+    Name: LaHCO3++
+    Formula: LaHCO3++
     Elements: 1:La 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12250,9 +12250,9 @@ Species:
         c2: 166201.03
         wref: 531075.12
         charge: 2.0
-  LaOH+2:
-    Name: LaOH+2
-    Formula: LaOH+2
+  LaOH++:
+    Name: LaOH++
+    Formula: LaOH++
     Elements: 1:La 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -12326,9 +12326,9 @@ Species:
         c2: -1013335.5
         wref: 467436.48
         charge: -1.0
-  LaCl+2:
-    Name: LaCl+2
-    Formula: LaCl+2
+  LaCl++:
+    Name: LaCl++
+    Formula: LaCl++
     Elements: 1:La 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -12402,9 +12402,9 @@ Species:
         c2: -1274061.5
         wref: 732451.04
         charge: -1.0
-  LaNO3+2:
-    Name: LaNO3+2
-    Formula: LaNO3+2
+  LaNO3++:
+    Name: LaNO3++
+    Formula: LaNO3++
     Elements: 1:La 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12421,9 +12421,9 @@ Species:
         c2: 40605.72
         wref: 683330.88
         charge: 2.0
-  LaF+2:
-    Name: LaF+2
-    Formula: LaF+2
+  LaF++:
+    Name: LaF++
+    Formula: LaF++
     Elements: 1:La 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -12497,9 +12497,9 @@ Species:
         c2: -1052857.6
         wref: 997214.56
         charge: -1.0
-  LaH2PO4+2:
-    Name: LaH2PO4+2
-    Formula: LaH2PO4+2
+  LaH2PO4++:
+    Name: LaH2PO4++
+    Formula: LaH2PO4++
     Elements: 1:La 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12554,9 +12554,9 @@ Species:
         c2: -685209.5
         wref: 490741.36
         charge: 1.0
-  CeHCO3+2:
-    Name: CeHCO3+2
-    Formula: CeHCO3+2
+  CeHCO3++:
+    Name: CeHCO3++
+    Formula: CeHCO3++
     Elements: 1:Ce 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12573,9 +12573,9 @@ Species:
         c2: 139356.49
         wref: 504088.32
         charge: 2.0
-  CeOH+2:
-    Name: CeOH+2
-    Formula: CeOH+2
+  CeOH++:
+    Name: CeOH++
+    Formula: CeOH++
     Elements: 1:Ce 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -12649,9 +12649,9 @@ Species:
         c2: -1099417.1
         wref: 437186.16
         charge: -1.0
-  CeCl+2:
-    Name: CeCl+2
-    Formula: CeCl+2
+  CeCl++:
+    Name: CeCl++
+    Formula: CeCl++
     Elements: 1:Ce 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -12725,9 +12725,9 @@ Species:
         c2: -1409367.8
         wref: 679397.92
         charge: -1.0
-  CeH2PO4+2:
-    Name: CeH2PO4+2
-    Formula: CeH2PO4+2
+  CeH2PO4++:
+    Name: CeH2PO4++
+    Formula: CeH2PO4++
     Elements: 1:Ce 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12744,9 +12744,9 @@ Species:
         c2: 162447.98
         wref: 605717.68
         charge: 2.0
-  CeNO3+2:
-    Name: CeNO3+2
-    Formula: CeNO3+2
+  CeNO3++:
+    Name: CeNO3++
+    Formula: CeNO3++
     Elements: 1:Ce 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12763,9 +12763,9 @@ Species:
         c2: 13756.992
         wref: 647474.0
         charge: 2.0
-  CeF+2:
-    Name: CeF+2
-    Formula: CeF+2
+  CeF++:
+    Name: CeF++
+    Formula: CeF++
     Elements: 1:Ce 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -12839,9 +12839,9 @@ Species:
         c2: -1188164.0
         wref: 972319.76
         charge: -1.0
-  CeBr+2:
-    Name: CeBr+2
-    Formula: CeBr+2
+  CeBr++:
+    Name: CeBr++
+    Formula: CeBr++
     Elements: 1:Ce 1:Br
     Charge: 2.0
     AggregateState: Aqueous
@@ -12858,9 +12858,9 @@ Species:
         c2: -208011.74
         wref: 601742.88
         charge: 2.0
-  CeIO3+2:
-    Name: CeIO3+2
-    Formula: CeIO3+2
+  CeIO3++:
+    Name: CeIO3++
+    Formula: CeIO3++
     Elements: 1:Ce 1:I 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12877,9 +12877,9 @@ Species:
         c2: 16920.096
         wref: 626219.28
         charge: 2.0
-  CeClO4+2:
-    Name: CeClO4+2
-    Formula: CeClO4+2
+  CeClO4++:
+    Name: CeClO4++
+    Formula: CeClO4++
     Elements: 1:Ce 1:Cl 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12934,9 +12934,9 @@ Species:
         c2: -701401.58
         wref: 498188.88
         charge: 1.0
-  PrHCO3+2:
-    Name: PrHCO3+2
-    Formula: PrHCO3+2
+  PrHCO3++:
+    Name: PrHCO3++
+    Formula: PrHCO3++
     Elements: 1:Pr 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -12953,9 +12953,9 @@ Species:
         c2: 102918.03
         wref: 622035.28
         charge: 2.0
-  PrCl+2:
-    Name: PrCl+2
-    Formula: PrCl+2
+  PrCl++:
+    Name: PrCl++
+    Formula: PrCl++
     Elements: 1:Pr 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -13029,9 +13029,9 @@ Species:
         c2: -1592999.4
         wref: 697933.04
         charge: -1.0
-  PrH2PO4+2:
-    Name: PrH2PO4+2
-    Formula: PrH2PO4+2
+  PrH2PO4++:
+    Name: PrH2PO4++
+    Formula: PrH2PO4++
     Elements: 1:Pr 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13048,9 +13048,9 @@ Species:
         c2: 126013.71
         wref: 613834.64
         charge: 2.0
-  PrNO3+2:
-    Name: PrNO3+2
-    Formula: PrNO3+2
+  PrNO3++:
+    Name: PrNO3++
+    Formula: PrNO3++
     Elements: 1:Pr 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13067,9 +13067,9 @@ Species:
         c2: -22673.096
         wref: 656218.56
         charge: 2.0
-  PrF+2:
-    Name: PrF+2
-    Formula: PrF+2
+  PrF++:
+    Name: PrF++
+    Formula: PrF++
     Elements: 1:Pr 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -13143,9 +13143,9 @@ Species:
         c2: -1371795.5
         wref: 980436.72
         charge: -1.0
-  PrOH+2:
-    Name: PrOH+2
-    Formula: PrOH+2
+  PrOH++:
+    Name: PrOH++
+    Formula: PrOH++
     Elements: 1:Pr 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -13257,9 +13257,9 @@ Species:
         c2: -724413.58
         wref: 490741.36
         charge: 1.0
-  NdHCO3+2:
-    Name: NdHCO3+2
-    Formula: NdHCO3+2
+  NdHCO3++:
+    Name: NdHCO3++
+    Formula: NdHCO3++
     Elements: 1:Nd 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13276,9 +13276,9 @@ Species:
         c2: 51145.216
         wref: 507351.84
         charge: 2.0
-  NdOH+2:
-    Name: NdOH+2
-    Formula: NdOH+2
+  NdOH++:
+    Name: NdOH++
+    Formula: NdOH++
     Elements: 1:Nd 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -13352,9 +13352,9 @@ Species:
         c2: -1084927.9
         wref: 441788.56
         charge: -1.0
-  NdCl+2:
-    Name: NdCl+2
-    Formula: NdCl+2
+  NdCl++:
+    Name: NdCl++
+    Formula: NdCl++
     Elements: 1:Nd 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -13428,9 +13428,9 @@ Species:
         c2: -1853951.3
         wref: 688477.2
         charge: -1.0
-  NdH2PO4+2:
-    Name: NdH2PO4+2
-    Formula: NdH2PO4+2
+  NdH2PO4++:
+    Name: NdH2PO4++
+    Formula: NdH2PO4++
     Elements: 1:Nd 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13447,9 +13447,9 @@ Species:
         c2: 74236.712
         wref: 609776.16
         charge: 2.0
-  NdNO3+2:
-    Name: NdNO3+2
-    Formula: NdNO3+2
+  NdNO3++:
+    Name: NdNO3++
+    Formula: NdNO3++
     Elements: 1:Nd 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13466,9 +13466,9 @@ Species:
         c2: -74450.096
         wref: 651825.36
         charge: 2.0
-  NdF+2:
-    Name: NdF+2
-    Formula: NdF+2
+  NdF++:
+    Name: NdF++
+    Formula: NdF++
     Elements: 1:Nd 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -13580,9 +13580,9 @@ Species:
         c2: -725262.93
         wref: 498188.88
         charge: 1.0
-  SmOH+2:
-    Name: SmOH+2
-    Formula: SmOH+2
+  SmOH++:
+    Name: SmOH++
+    Formula: SmOH++
     Elements: 1:Sm 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -13656,9 +13656,9 @@ Species:
         c2: -1050836.7
         wref: 453880.32
         charge: -1.0
-  SmHCO3+2:
-    Name: SmHCO3+2
-    Formula: SmHCO3+2
+  SmHCO3++:
+    Name: SmHCO3++
+    Formula: SmHCO3++
     Elements: 1:Sm 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13675,9 +13675,9 @@ Species:
         c2: 49224.76
         wref: 517393.44
         charge: 2.0
-  SmCl+2:
-    Name: SmCl+2
-    Formula: SmCl+2
+  SmCl++:
+    Name: SmCl++
+    Formula: SmCl++
     Elements: 1:Sm 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -13751,9 +13751,9 @@ Species:
         c2: -1863616.4
         wref: 707807.28
         charge: -1.0
-  SmH2PO4+2:
-    Name: SmH2PO4+2
-    Formula: SmH2PO4+2
+  SmH2PO4++:
+    Name: SmH2PO4++
+    Formula: SmH2PO4++
     Elements: 1:Sm 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13770,9 +13770,9 @@ Species:
         c2: 72320.44
         wref: 622035.28
         charge: 2.0
-  SmNO3+2:
-    Name: SmNO3+2
-    Formula: SmNO3+2
+  SmNO3++:
+    Name: SmNO3++
+    Formula: SmNO3++
     Elements: 1:Sm 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13789,9 +13789,9 @@ Species:
         c2: -76366.368
         wref: 665130.48
         charge: 2.0
-  SmF+2:
-    Name: SmF+2
-    Formula: SmF+2
+  SmF++:
+    Name: SmF++
+    Formula: SmF++
     Elements: 1:Sm 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -13903,9 +13903,9 @@ Species:
         c2: -668163.88
         wref: 521535.6
         charge: 1.0
-  EuOH+2:
-    Name: EuOH+2
-    Formula: EuOH+2
+  EuOH++:
+    Name: EuOH++
+    Formula: EuOH++
     Elements: 1:Eu 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -13979,9 +13979,9 @@ Species:
         c2: -985210.66
         wref: 477980.16
         charge: -1.0
-  EuHCO3+2:
-    Name: EuHCO3+2
-    Formula: EuHCO3+2
+  EuHCO3++:
+    Name: EuHCO3++
+    Formula: EuHCO3++
     Elements: 1:Eu 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -13998,9 +13998,9 @@ Species:
         c2: 177707.03
         wref: 538062.4
         charge: 2.0
-  EuCl+2:
-    Name: EuCl+2
-    Formula: EuCl+2
+  EuCl++:
+    Name: EuCl++
+    Formula: EuCl++
     Elements: 1:Eu 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -14131,9 +14131,9 @@ Species:
         c2: 1138554.3
         wref: 809143.76
         charge: -1.0
-  EuF4-2:
-    Name: EuF4-2
-    Formula: EuF4-2
+  EuF4--:
+    Name: EuF4--
+    Formula: EuF4--
     Elements: 1:Eu 4:F
     Charge: -2.0
     AggregateState: Aqueous
@@ -14207,9 +14207,9 @@ Species:
         c2: 992992.9
         wref: 398609.68
         charge: -1.0
-  EuCl4-2:
-    Name: EuCl4-2
-    Formula: EuCl4-2
+  EuCl4--:
+    Name: EuCl4--
+    Formula: EuCl4--
     Elements: 1:Eu 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -14226,9 +14226,9 @@ Species:
         c2: 1356825.2
         wref: 1035749.2
         charge: -2.0
-  EuH2PO4+2:
-    Name: EuH2PO4+2
-    Formula: EuH2PO4+2
+  EuH2PO4++:
+    Name: EuH2PO4++
+    Formula: EuH2PO4++
     Elements: 1:Eu 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14245,9 +14245,9 @@ Species:
         c2: 200802.71
         wref: 643164.48
         charge: 2.0
-  EuNO3+2:
-    Name: EuNO3+2
-    Formula: EuNO3+2
+  EuNO3++:
+    Name: EuNO3++
+    Formula: EuNO3++
     Elements: 1:Eu 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14264,9 +14264,9 @@ Species:
         c2: 52111.72
         wref: 692703.04
         charge: 2.0
-  EuF+2:
-    Name: EuF+2
-    Formula: EuF+2
+  EuF++:
+    Name: EuF++
+    Formula: EuF++
     Elements: 1:Eu 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -14378,9 +14378,9 @@ Species:
         c2: -662197.5
         wref: 490741.36
         charge: 1.0
-  GdOH+2:
-    Name: GdOH+2
-    Formula: GdOH+2
+  GdOH++:
+    Name: GdOH++
+    Formula: GdOH++
     Elements: 1:Gd 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -14454,9 +14454,9 @@ Species:
         c2: -1093450.7
         wref: 439110.8
         charge: -1.0
-  GdHCO3+2:
-    Name: GdHCO3+2
-    Formula: GdHCO3+2
+  GdHCO3++:
+    Name: GdHCO3++
+    Formula: GdHCO3++
     Elements: 1:Gd 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14473,9 +14473,9 @@ Species:
         c2: 191129.3
         wref: 504088.32
         charge: 2.0
-  GdCl+2:
-    Name: GdCl+2
-    Formula: GdCl+2
+  GdCl++:
+    Name: GdCl++
+    Formula: GdCl++
     Elements: 1:Gd 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -14549,9 +14549,9 @@ Species:
         c2: -1148416.0
         wref: 682410.4
         charge: -1.0
-  GdH2PO4+2:
-    Name: GdH2PO4+2
-    Formula: GdH2PO4+2
+  GdH2PO4++:
+    Name: GdH2PO4++
+    Formula: GdH2PO4++
     Elements: 1:Gd 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14568,9 +14568,9 @@ Species:
         c2: 214224.98
         wref: 609776.16
         charge: 2.0
-  GdNO3+2:
-    Name: GdNO3+2
-    Formula: GdNO3+2
+  GdNO3++:
+    Name: GdNO3++
+    Formula: GdNO3++
     Elements: 1:Gd 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14587,9 +14587,9 @@ Species:
         c2: 65533.992
         wref: 647474.0
         charge: 2.0
-  GdF+2:
-    Name: GdF+2
-    Formula: GdF+2
+  GdF++:
+    Name: GdF++
+    Formula: GdF++
     Elements: 1:Gd 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -14701,9 +14701,9 @@ Species:
         c2: -619583.46
         wref: 334803.68
         charge: 1.0
-  TbOH+2:
-    Name: TbOH+2
-    Formula: TbOH+2
+  TbOH++:
+    Name: TbOH++
+    Formula: TbOH++
     Elements: 1:Tb 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -14777,9 +14777,9 @@ Species:
         c2: -957085.82
         wref: 488523.84
         charge: -1.0
-  TbHCO3+2:
-    Name: TbHCO3+2
-    Formula: TbHCO3+2
+  TbHCO3++:
+    Name: TbHCO3++
+    Formula: TbHCO3++
     Elements: 1:Tb 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14796,9 +14796,9 @@ Species:
         c2: 189213.03
         wref: 660653.6
         charge: 2.0
-  TbCl+2:
-    Name: TbCl+2
-    Formula: TbCl+2
+  TbCl++:
+    Name: TbCl++
+    Formula: TbCl++
     Elements: 1:Tb 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -14872,9 +14872,9 @@ Species:
         c2: -1158081.0
         wref: 763872.88
         charge: -1.0
-  TbH2PO4+2:
-    Name: TbH2PO4+2
-    Formula: TbH2PO4+2
+  TbH2PO4++:
+    Name: TbH2PO4++
+    Formula: TbH2PO4++
     Elements: 1:Tb 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14891,9 +14891,9 @@ Species:
         c2: 212308.71
         wref: 651825.36
         charge: 2.0
-  TbNO3+2:
-    Name: TbNO3+2
-    Formula: TbNO3+2
+  TbNO3++:
+    Name: TbNO3++
+    Formula: TbNO3++
     Elements: 1:Tb 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -14910,9 +14910,9 @@ Species:
         c2: 63617.72
         wref: 706970.48
         charge: 2.0
-  TbF+2:
-    Name: TbF+2
-    Formula: TbF+2
+  TbF++:
+    Name: TbF++
+    Formula: TbF++
     Elements: 1:Tb 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -15024,9 +15024,9 @@ Species:
         c2: -626399.19
         wref: 537978.72
         charge: 1.0
-  DyHCO3+2:
-    Name: DyHCO3+2
-    Formula: DyHCO3+2
+  DyHCO3++:
+    Name: DyHCO3++
+    Formula: DyHCO3++
     Elements: 1:Dy 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15043,9 +15043,9 @@ Species:
         c2: 271671.3
         wref: 559610.0
         charge: 2.0
-  DyCl+2:
-    Name: DyCl+2
-    Formula: DyCl+2
+  DyCl++:
+    Name: DyCl++
+    Formula: DyCl++
     Elements: 1:Dy 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -15119,9 +15119,9 @@ Species:
         c2: -742492.64
         wref: 785587.84
         charge: -1.0
-  DyH2PO4+2:
-    Name: DyH2PO4+2
-    Formula: DyH2PO4+2
+  DyH2PO4++:
+    Name: DyH2PO4++
+    Formula: DyH2PO4++
     Elements: 1:Dy 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15138,9 +15138,9 @@ Species:
         c2: 294766.98
         wref: 665130.48
         charge: 2.0
-  DyNO3+2:
-    Name: DyNO3+2
-    Formula: DyNO3+2
+  DyNO3++:
+    Name: DyNO3++
+    Formula: DyNO3++
     Elements: 1:Dy 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15157,9 +15157,9 @@ Species:
         c2: 146075.99
         wref: 721614.48
         charge: 2.0
-  DyF+2:
-    Name: DyF+2
-    Formula: DyF+2
+  DyF++:
+    Name: DyF++
+    Formula: DyF++
     Elements: 1:Dy 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -15233,9 +15233,9 @@ Species:
         c2: -521288.74
         wref: 1033113.3
         charge: -1.0
-  DyOH+2:
-    Name: DyOH+2
-    Formula: DyOH+2
+  DyOH++:
+    Name: DyOH++
+    Formula: DyOH++
     Elements: 1:Dy 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -15347,9 +15347,9 @@ Species:
         c2: -640034.85
         wref: 529652.56
         charge: 1.0
-  HoHCO3+2:
-    Name: HoHCO3+2
-    Formula: HoHCO3+2
+  HoHCO3++:
+    Name: HoHCO3++
+    Formula: HoHCO3++
     Elements: 1:Ho 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15366,9 +15366,9 @@ Species:
         c2: 240990.03
         wref: 548731.6
         charge: 2.0
-  HoCl+2:
-    Name: HoCl+2
-    Formula: HoCl+2
+  HoCl++:
+    Name: HoCl++
+    Formula: HoCl++
     Elements: 1:Ho 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -15442,9 +15442,9 @@ Species:
         c2: -897129.1
         wref: 772366.4
         charge: -1.0
-  HoH2PO4+2:
-    Name: HoH2PO4+2
-    Formula: HoH2PO4+2
+  HoH2PO4++:
+    Name: HoH2PO4++
+    Formula: HoH2PO4++
     Elements: 1:Ho 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15461,9 +15461,9 @@ Species:
         c2: 264085.71
         wref: 656218.56
         charge: 2.0
-  HoNO3+2:
-    Name: HoNO3+2
-    Formula: HoNO3+2
+  HoNO3++:
+    Name: HoNO3++
+    Formula: HoNO3++
     Elements: 1:Ho 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15480,9 +15480,9 @@ Species:
         c2: 115390.54
         wref: 711823.92
         charge: 2.0
-  HoF+2:
-    Name: HoF+2
-    Formula: HoF+2
+  HoF++:
+    Name: HoF++
+    Formula: HoF++
     Elements: 1:Ho 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -15556,9 +15556,9 @@ Species:
         c2: -675925.2
         wref: 1023866.6
         charge: -1.0
-  HoOH+2:
-    Name: HoOH+2
-    Formula: HoOH+2
+  HoOH++:
+    Name: HoOH++
+    Formula: HoOH++
     Elements: 1:Ho 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -15670,9 +15670,9 @@ Species:
         c2: -648557.66
         wref: 564003.2
         charge: 1.0
-  ErHCO3+2:
-    Name: ErHCO3+2
-    Formula: ErHCO3+2
+  ErHCO3++:
+    Name: ErHCO3++
+    Formula: ErHCO3++
     Elements: 1:Er 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15689,9 +15689,9 @@ Species:
         c2: 221814.76
         wref: 586011.04
         charge: 2.0
-  ErCl+2:
-    Name: ErCl+2
-    Formula: ErCl+2
+  ErCl++:
+    Name: ErCl++
+    Formula: ErCl++
     Elements: 1:Er 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -15765,9 +15765,9 @@ Species:
         c2: -993779.5
         wref: 840147.2
         charge: -1.0
-  ErH2PO4+2:
-    Name: ErH2PO4+2
-    Formula: ErH2PO4+2
+  ErH2PO4++:
+    Name: ErH2PO4++
+    Formula: ErH2PO4++
     Elements: 1:Er 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15784,9 +15784,9 @@ Species:
         c2: 244906.26
         wref: 692703.04
         charge: 2.0
-  ErNO3+2:
-    Name: ErNO3+2
-    Formula: ErNO3+2
+  ErNO3++:
+    Name: ErNO3++
+    Formula: ErNO3++
     Elements: 1:Er 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -15803,9 +15803,9 @@ Species:
         c2: 96215.264
         wref: 757304.0
         charge: 2.0
-  ErF+2:
-    Name: ErF+2
-    Formula: ErF+2
+  ErF++:
+    Name: ErF++
+    Formula: ErF++
     Elements: 1:Er 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -15879,9 +15879,9 @@ Species:
         c2: -772575.6
         wref: 1062317.6
         charge: -1.0
-  ErOH+2:
-    Name: ErOH+2
-    Formula: ErOH+2
+  ErOH++:
+    Name: ErOH++
+    Formula: ErOH++
     Elements: 1:Er 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -15993,9 +15993,9 @@ Species:
         c2: -648557.66
         wref: 555133.12
         charge: 1.0
-  TmHCO3+2:
-    Name: TmHCO3+2
-    Formula: TmHCO3+2
+  TmHCO3++:
+    Name: TmHCO3++
+    Formula: TmHCO3++
     Elements: 1:Tm 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16012,9 +16012,9 @@ Species:
         c2: 221814.76
         wref: 586011.04
         charge: 2.0
-  TmCl+2:
-    Name: TmCl+2
-    Formula: TmCl+2
+  TmCl++:
+    Name: TmCl++
+    Formula: TmCl++
     Elements: 1:Tm 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -16088,9 +16088,9 @@ Species:
         c2: -993779.5
         wref: 834749.84
         charge: -1.0
-  TmH2PO4+2:
-    Name: TmH2PO4+2
-    Formula: TmH2PO4+2
+  TmH2PO4++:
+    Name: TmH2PO4++
+    Formula: TmH2PO4++
     Elements: 1:Tm 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16107,9 +16107,9 @@ Species:
         c2: 244906.26
         wref: 688016.96
         charge: 2.0
-  TmNO3+2:
-    Name: TmNO3+2
-    Formula: TmNO3+2
+  TmNO3++:
+    Name: TmNO3++
+    Formula: TmNO3++
     Elements: 1:Tm 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16126,9 +16126,9 @@ Species:
         c2: 96215.264
         wref: 757304.0
         charge: 2.0
-  TmF+2:
-    Name: TmF+2
-    Formula: TmF+2
+  TmF++:
+    Name: TmF++
+    Formula: TmF++
     Elements: 1:Tm 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -16202,9 +16202,9 @@ Species:
         c2: -772575.6
         wref: 1052359.7
         charge: -1.0
-  TmOH+2:
-    Name: TmOH+2
-    Formula: TmOH+2
+  TmOH++:
+    Name: TmOH++
+    Formula: TmOH++
     Elements: 1:Tm 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -16316,9 +16316,9 @@ Species:
         c2: -648557.66
         wref: 555133.12
         charge: 1.0
-  YbOH+2:
-    Name: YbOH+2
-    Formula: YbOH+2
+  YbOH++:
+    Name: YbOH++
+    Formula: YbOH++
     Elements: 1:Yb 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -16392,9 +16392,9 @@ Species:
         c2: -874414.16
         wref: 518481.28
         charge: -1.0
-  YbHCO3+2:
-    Name: YbHCO3+2
-    Formula: YbHCO3+2
+  YbHCO3++:
+    Name: YbHCO3++
+    Formula: YbHCO3++
     Elements: 1:Yb 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16411,9 +16411,9 @@ Species:
         c2: 181543.76
         wref: 574546.88
         charge: 2.0
-  YbCl+2:
-    Name: YbCl+2
-    Formula: YbCl+2
+  YbCl++:
+    Name: YbCl++
+    Formula: YbCl++
     Elements: 1:Yb 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -16487,9 +16487,9 @@ Species:
         c2: -1196741.2
         wref: 814080.88
         charge: -1.0
-  YbH2PO4+2:
-    Name: YbH2PO4+2
-    Formula: YbH2PO4+2
+  YbH2PO4++:
+    Name: YbH2PO4++
+    Formula: YbH2PO4++
     Elements: 1:Yb 2:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16506,9 +16506,9 @@ Species:
         c2: 204639.44
         wref: 678728.48
         charge: 2.0
-  YbNO3+2:
-    Name: YbNO3+2
-    Formula: YbNO3+2
+  YbNO3++:
+    Name: YbNO3++
+    Formula: YbNO3++
     Elements: 1:Yb 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16525,9 +16525,9 @@ Species:
         c2: 55944.264
         wref: 741739.52
         charge: 2.0
-  YbF+2:
-    Name: YbF+2
-    Formula: YbF+2
+  YbF++:
+    Name: YbF++
+    Formula: YbF++
     Elements: 1:Yb 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -16639,9 +16639,9 @@ Species:
         c2: -628955.62
         wref: 591868.64
         charge: 1.0
-  LuOH+2:
-    Name: LuOH+2
-    Formula: LuOH+2
+  LuOH++:
+    Name: LuOH++
+    Formula: LuOH++
     Elements: 1:Lu 1:O 1:H
     Charge: 2.0
     AggregateState: Aqueous
@@ -16715,9 +16715,9 @@ Species:
         c2: -697991.62
         wref: 581617.84
         charge: -1.0
-  LuHCO3+2:
-    Name: LuHCO3+2
-    Formula: LuHCO3+2
+  LuHCO3++:
+    Name: LuHCO3++
+    Formula: LuHCO3++
     Elements: 1:Lu 1:H 1:C 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16734,9 +16734,9 @@ Species:
         c2: 265918.3
         wref: 630403.28
         charge: 2.0
-  LuCl+2:
-    Name: LuCl+2
-    Formula: LuCl+2
+  LuCl++:
+    Name: LuCl++
+    Formula: LuCl++
     Elements: 1:Lu 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -16810,9 +16810,9 @@ Species:
         c2: -771487.76
         wref: 920061.6
         charge: -1.0
-  LuH2PO4+2:
-    Name: LuH2PO4+2
-    Formula: LuH2PO4+2
+  LuH2PO4++:
+    Name: LuH2PO4++
+    Formula: LuH2PO4++
     Elements: 1:Lu 1:H 1:P 4:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16829,9 +16829,9 @@ Species:
         c2: 289013.98
         wref: 736676.88
         charge: 2.0
-  LuNO3+2:
-    Name: LuNO3+2
-    Formula: LuNO3+2
+  LuNO3++:
+    Name: LuNO3++
+    Formula: LuNO3++
     Elements: 1:Lu 1:N 3:O
     Charge: 2.0
     AggregateState: Aqueous
@@ -16848,9 +16848,9 @@ Species:
         c2: 140322.99
         wref: 812239.92
         charge: 2.0
-  LuF+2:
-    Name: LuF+2
-    Formula: LuF+2
+  LuF++:
+    Name: LuF++
+    Formula: LuF++
     Elements: 1:Lu 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -17114,9 +17114,9 @@ Species:
         c2: 365104.21
         wref: -15899.2
         charge: 0.0
-  FeCl+2:
-    Name: FeCl+2
-    Formula: FeCl+2
+  FeCl++:
+    Name: FeCl++
+    Formula: FeCl++
     Elements: 1:Fe 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -17190,9 +17190,9 @@ Species:
         c2: 154163.66
         wref: 511242.96
         charge: -1.0
-  CuCl3-2:
-    Name: CuCl3-2
-    Formula: CuCl3-2
+  CuCl3--:
+    Name: CuCl3--
+    Formula: CuCl3--
     Elements: 1:Cu 3:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -17266,9 +17266,9 @@ Species:
         c2: 489979.87
         wref: 694753.2
         charge: -1.0
-  CuCl4-2:
-    Name: CuCl4-2
-    Formula: CuCl4-2
+  CuCl4--:
+    Name: CuCl4--
+    Formula: CuCl4--
     Elements: 1:Cu 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -17342,9 +17342,9 @@ Species:
         c2: 407768.46
         wref: 613458.08
         charge: -1.0
-  CdCl4-2:
-    Name: CdCl4-2
-    Formula: CdCl4-2
+  CdCl4--:
+    Name: CdCl4--
+    Formula: CdCl4--
     Elements: 1:Cd 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -17380,9 +17380,9 @@ Species:
         c2: -302796.08
         wref: -15899.2
         charge: 0.0
-  TlCl+2:
-    Name: TlCl+2
-    Formula: TlCl+2
+  TlCl++:
+    Name: TlCl++
+    Formula: TlCl++
     Elements: 1:Tl 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -17437,9 +17437,9 @@ Species:
         c2: -335975.2
         wref: 341958.32
         charge: -1.0
-  AuCl3-2:
-    Name: AuCl3-2
-    Formula: AuCl3-2
+  AuCl3--:
+    Name: AuCl3--
+    Formula: AuCl3--
     Elements: 1:Au 3:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -17532,9 +17532,9 @@ Species:
         c2: 761910.58
         wref: 488523.84
         charge: -1.0
-  HgCl4-2:
-    Name: HgCl4-2
-    Formula: HgCl4-2
+  HgCl4--:
+    Name: HgCl4--
+    Formula: HgCl4--
     Elements: 1:Hg 4:Cl
     Charge: -2.0
     AggregateState: Aqueous
@@ -17551,9 +17551,9 @@ Species:
         c2: 1003574.2
         wref: 1165076.6
         charge: -2.0
-  InCl+2:
-    Name: InCl+2
-    Formula: InCl+2
+  InCl++:
+    Name: InCl++
+    Formula: InCl++
     Elements: 1:In 1:Cl
     Charge: 2.0
     AggregateState: Aqueous
@@ -17627,9 +17627,9 @@ Species:
         c2: 692058.7
         wref: 16777.84
         charge: -1.0
-  BeF4-2:
-    Name: BeF4-2
-    Formula: BeF4-2
+  BeF4--:
+    Name: BeF4--
+    Formula: BeF4--
     Elements: 1:Be 4:F
     Charge: -2.0
     AggregateState: Aqueous
@@ -17684,9 +17684,9 @@ Species:
         c2: 50634.768
         wref: 363296.72
         charge: 1.0
-  FeF+2:
-    Name: FeF+2
-    Formula: FeF+2
+  FeF++:
+    Name: FeF++
+    Formula: FeF++
     Elements: 1:Fe 1:F
     Charge: 2.0
     AggregateState: Aqueous
@@ -17893,9 +17893,9 @@ Species:
         c2: 242395.86
         wref: 260370.32
         charge: 1.0
-  InF+2:
-    Name: InF+2
-    Formula: InF+2
+  InF++:
+    Name: InF++
+    Formula: InF++
     Elements: 1:In 1:F
     Charge: 2.0
     AggregateState: Aqueous
