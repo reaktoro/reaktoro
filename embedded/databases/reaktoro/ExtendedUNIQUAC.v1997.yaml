@@ -1,3 +1,8 @@
+# Thermodynamic database for the extended UNIQUAC model based on data from
+# Thomsen (1997).
+#
+# https://dx.doi.org/10.11581/dtu:00000074
+
 Species:
 - Name: O2(g)
   Formula: O2
@@ -5,50 +10,55 @@ Species:
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: 0.0
-      Hf: 0.0
+      Gr: 0.0
+      Hr: 0.0
+      Sr: 205.138
       Cp: 29.355
-      S0: 205.138
+      a: 29.355
 - Name: H2(g)
   Formula: H2
   Elements: 2:H
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: 0.0
-      Hf: 0.0
+      Gr: 0.0
+      Hr: 0.0
+      Sr: 130.684
       Cp: 28.824
-      S0: 130.684
+      a: 28.824
 - Name: H2O(g)
   Formula: H2O
   Elements: 2:H 1:O
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -228.572
-      Hf: -241.818
+      Gr: -228.572
+      Hr: -241.818
+      Sr: 188.825
       Cp: 33.577
-      S0: 188.825
+      a: 33.577
 - Name: CO2(g)
   Formula: CO2
   Elements: 1:C 2:O
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -394.359
-      Hf: -393.509
+      Gr: -394.359
+      Hr: -393.509
+      Sr: 213.74
       Cp: 37.11
-      S0: 213.74
+      a: 37.11
 - Name: SO2(g)
   Formula: SO2
   Elements: 1:S 2:O
   AggregateState: Gas
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -300.194
-      Hf: -296.830
+      Gr: -300.194
+      Hr: -296.830
+      Sr: 248.22
       Cp: 39.87
-      S0: 248.22
+      a: 39.87
 - Name: H2O
   Formula: H2O
   Elements: 2:H 1:O
@@ -57,10 +67,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -237.129
-      Hf: -285.830
+      Gr: -237.129
+      Hr: -285.830
+      Sr: 69.91
       Cp: 75.291
-      S0: 69.91
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 58.37000
       b: 0.03896
@@ -73,10 +83,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: 0.0
-      Hf: 0.0
+      Gr: 0.0
+      Hr: 0.0
+      Sr: 0.0
       Cp: 0.0
-      S0: 0.0
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 0.0
       b: 0.0
@@ -89,10 +99,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -261.905
-      Hf: -240.12
+      Gr: -261.905
+      Hr: -240.12
+      Sr: 59.0
       Cp: 46.4
-      S0: 59.0
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 600.62000
       b: -1.10060
@@ -105,10 +115,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -283.27
-      Hf: -252.38
+      Gr: -283.27
+      Hr: -252.38
+      Sr: 102.5
       Cp: 21.8
-      S0: 102.5
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 415.09000
       b: -0.81420
@@ -121,10 +131,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -79.31
-      Hf: -132.51
+      Gr: -79.31
+      Hr: -132.51
+      Sr: 113.4
       Cp: 79.9
-      S0: 113.4
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 71.00800
       b: 0.0
@@ -137,10 +147,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -131.228
-      Hf: -167.159
+      Gr: -131.228
+      Hr: -167.159
+      Sr: 56.5
       Cp: -136.4
-      S0: 56.5
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 400.35000
       b: -1.13120
@@ -153,10 +163,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -744.53
-      Hf: -909.27
+      Gr: -744.53
+      Hr: -909.27
+      Sr: 20.1
       Cp: -293.
-      S0: 20.1
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 643.3
       b: -1.76050
@@ -169,10 +179,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -755.91
-      Hf: -887.34
+      Gr: -755.91
+      Hr: -887.34
+      Sr: 131.8
       Cp: -84.
-      S0: 131.8
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 647.3
       b: -1.58570
@@ -185,10 +195,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -111.25
-      Hf: -207.36
+      Gr: -111.25
+      Hr: -207.36
+      Sr: 146.4
       Cp: -86.6
-      S0: 146.4
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 2.29260
       b: 0.12110
@@ -201,10 +211,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -157.244
-      Hf: -229.994
+      Gr: -157.244
+      Hr: -229.994
+      Sr: -10.75
       Cp: -148.5
-      S0: -10.75
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 1418.2
       b: -3.44460
@@ -217,10 +227,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -527.81
-      Hf: -677.14
-      Cp: null
-      S0: -56.9
+      Gr: -527.81
+      Hr: -677.14
+      Sr: -56.9
+      Cp: 0.0
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 850.61000
       b: -2.80400
@@ -233,10 +243,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -586.77
-      Hf: -691.99
-      Cp: null
-      S0: 91.2
+      Gr: -586.77
+      Hr: -691.99
+      Sr: 91.2
+      Cp: 0.0
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: 585.75000
       b: -1.36120
@@ -249,10 +259,10 @@ Species:
   StandardThermoModel:
     ExtendedUNIQUAC:
       # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
-      Gf: -1114.9
-      Hf: -1344.7
-      Cp: null
-      S0: 244.3
+      Gr: -1114.9
+      Hr: -1344.7
+      Sr: 244.3
+      Cp: 0.0
       # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
       a: -110.0
       b: 0.0
@@ -263,199 +273,219 @@ Species:
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -3646.85
-      Hf: -4327.26
+      Gr: -3646.85
+      Hr: -4327.26
       Cp: 492.2
+      a: 492.2
 - Name: NaK3(SO4)2
   Formula: NaK3(SO4)2
   Elements: 1:Na 3:K 2:S 8:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -2622.82
-      Hf: -2854.62
+      Gr: -2622.82
+      Hr: -2854.62
       Cp: 287.5
+      a: 287.5
 - Name: NaNO3*Na2SO4*H2O
   Formula: NaNO3*Na2SO4*H2O
   Elements: 3:Na 1:N 8:O 1:S 2:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -1876.74
-      Hf: -2152.96
+      Gr: -1876.74
+      Hr: -2152.96
       Cp: 300.0
+      a: 300.0
 - Name: Na2CO3*2Na2SO4
   Formula: Na2CO3*2Na2SO4
   Elements: 6:Na 1:C 11:O 2:S
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -3593.19
-      Hf: -3921.49
+      Gr: -3593.19
+      Hr: -3921.49
       Cp: 840.07
+      a: 840.07
 - Name: Na2CO3*NaHCO3*2H2O
   Formula: Na2CO3*NaHCO3*2H2O
   Elements: 3:Na 2:C 8:O 5:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -2380.11
-      Hf: -2684.9
+      Gr: -2380.11
+      Hr: -2684.9
       Cp: 256.8
+      a: 256.8
 - Name: Na2CO3*3NaHCO3
   Formula: Na2CO3*3NaHCO3
   Elements: 5:Na 4:C 12:O 3:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -3602.78
-      Hf: -3982.7
+      Gr: -3602.78
+      Hr: -3982.7
       Cp: 182.03
+      a: 182.03
 - Name: NaHCO3
   Formula: NaHCO3
   Elements: 1:Na 1:H 1:C 3:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.18434/M32124)
-      Gf: -851.0
-      Hf: -950.81
+      Gr: -851.0
+      Hr: -950.81
       Cp: 87.61
+      a: 87.61
 - Name: K2CO3*1.5H2O
   Formula: K2CO3*1.5H2O
   Elements: 2:K 1:C 4.5:O 3:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -2865.0
-      Hf: -3218.4
+      Gr: -2865.0
+      Hr: -3218.4
       Cp: 1199.0
+      a: 1199.0
 - Name: KHCO3
   Formula: KHCO3
   Elements: 1:K 1:H 1:C 3:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -868.7
-      Hf: -963.2
+      Gr: -868.7
+      Hr: -963.2
       Cp: 85.51
+      a: 85.51
 - Name: NaKCO3*6H2O
   Formula: NaKCO3*6H2O
   Elements: 1:Na 1:K 1:C 9:O 12:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -2495.69
-      Hf: -2920.78
+      Gr: -2495.69
+      Hr: -2920.78
       Cp: 300.0
+      a: 300.0
 - Name: K2CO3*Na2CO3
   Formula: K2CO3*Na2CO3
   Elements: 2:K 2:C 6:O 2:Na
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -2121.47
-      Hf: -2299.1
+      Gr: -2121.47
+      Hr: -2299.1
       Cp: 420.23
+      a: 420.23
 - Name: K2CO3*NaHCO3*2H2O
   Formula: K2CO3*NaHCO3*2H2O
   Elements: 2:K 2:C 8:O 1:Na 5:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -2410.63
-      Hf: -2718.66
+      Gr: -2410.63
+      Hr: -2718.66
       Cp: 300.0
+      a: 300.0
 - Name: K2CO3*2KHCO3*1.5H2O
   Formula: K2CO3*2KHCO3*1.5H2O
   Elements: 4:K 3:C 10.5:O 5:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -6341.55
-      Hf: -7026.36
+      Gr: -6341.55
+      Hr: -7026.36
       Cp: 193.74
+      a: 193.74
 - Name: (NH4)2SO4*3NH4NO3
   Formula: (NH4)2SO4*3NH4NO3
   Elements: 8:N 20:H 1:S 13:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -1454.53
-      Hf: -2278.72
+      Gr: -1454.53
+      Hr: -2278.72
       Cp: 987.19
+      a: 987.19
 - Name: (NH4)2SO4*2NH4NO3
   Formula: (NH4)2SO4*2NH4NO3
   Elements: 6:N 16:H 1:S 10:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -1270.61
-      Hf: -1914.10
+      Gr: -1270.61
+      Hr: -1914.10
       Cp: 764.42
+      a: 764.42
 - Name: Na2SO4*(NH4)2SO4*4H2O
   Formula: Na2SO4*(NH4)2SO4*4H2O
   Elements: 2:Na 2:S 12:O 2:N 16:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -3127.82
-      Hf: -3752.02
+      Gr: -3127.82
+      Hr: -3752.02
       Cp: 874.92
+      a: 874.92
 - Name: 2NaNO3*NH4NO3
   Formula: 2NaNO3*NH4NO3
   Elements: 2:Na 4:N 9:O 4:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -920.19
-      Hf: null
-      Cp: null
+      Gr: -920.19
+      Hr: 0.0
+      Cp: 0.0
+      a: 0.0
 - Name: 3KNO3*NH4NO3
   Formula: 3KNO3*NH4NO3
   Elements: 3:K 5:N 12:O 4:H
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -1366.4
-      Hf: null
-      Cp: null
+      Gr: -1366.4
+      Hr: 0.0
+      Cp: 0.0
+      a: 0.0
 - Name: Na2S2O8
   Formula: Na2S2O8
   Elements: 2:Na 2:S 8:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -1638.13
-      Hf: -1893.64
+      Gr: -1638.13
+      Hr: -1893.64
       Cp: 665.38
+      a: 665.38
 - Name: (NH4)2S2O8
   Formula: (NH4)2S2O8
   Elements: 2:N 8:H 2:S 8:O
   AggregateState: Solid
   StandardThermoModel:
     ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
-      Gf: -1273.6
-      Hf: -1648.1
+      Gr: -1273.6
+      Hr: -1648.1
       Cp: 569.6
+      a: 569.6
 - Name: Na2SO4
   Formula: Na2SO4
   Elements: 2:Na 1:S 4:O
-  Elements: 2:Na 1:S 4:O
   AggregateState: Solid
   StandardThermoModel:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
     ExtendedUNIQUAC:
-      Gf: -1270.16
-      Hf: -1387.08
+      Gr: -1270.16
+      Hr: -1387.08
+      Sr: 149.58
       Cp: 128.20
-      S0: 149.58
+      a: 128.20
 - Name: NaCl
   Formula: NaCl
   Elements: 1:Na 1:Cl
-  Elements: 1:Na 1:Cl
   AggregateState: Solid
   StandardThermoModel:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
     ExtendedUNIQUAC:
-      Gf: -384.138
-      Hf: -411.153
+      Gr: -384.138
+      Hr: -411.153
+      Sr: 72.13
       Cp: 50.50
-      S0: 72.13
+      a: 50.50
