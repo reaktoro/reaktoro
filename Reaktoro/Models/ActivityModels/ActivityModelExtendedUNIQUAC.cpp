@@ -19,6 +19,7 @@
 
 // Reaktoro includes
 #include <Reaktoro/Common/Algorithms.hpp>
+#include <Reaktoro/Common/Constants.hpp>
 #include <Reaktoro/Common/Enumerate.hpp>
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/Matrix.hpp>
@@ -152,6 +153,8 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
         auto const& P = args.P;
         auto const& x = args.x;
 
+        auto const RT = universalGasConstant*T;
+
         // Evaluate the state of the aqueous solution
         auto const& aqstate = solution.state(T, P, x);
 
@@ -204,16 +207,24 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
         // Calculate the Debye-Huckel activity coefficients for water species -- see equation (9) of Thomsen (2005) or equation (4-11) of Thomsen (1997)
         ln_gDH[iw] = 2*Mw*A*(Lambda - 1/Lambda - 2*log(Lambda))/(b*b*b);
 
+        // The Debye-Huckel contribution to the excess Gibbs energy -- see equation (4-7) of Thomsen (1997)
+        auto const GRTxDH = -4*xw*Mw*A*(log(Lambda) - Lambda + 1 + 0.5*b*b*I)/(b*b*b);
+
+        // The UNIQUAC contribution to the excess Gibbs energy -- see equations (4-2) and (4-4) of Thomsen (1997)
+        real GRTxUNIQUAC = 0.0;
+
         // Calculate the UNIQUAC combinatorial activity coefficients for the species -- see equation (10) of Thomsen (2005) and equation (13) of Hingerl et al. (2014)
         for(auto const& [i, ispecies] : enumerate(iR)) {
             ln_gC[ispecies] = log(phi[i]/xr[i]) + 1 - phi[i]/xr[i] - 0.5*Z*q[i]*(log(phi[i]/theta[i]) + 1 - phi[i]/theta[i]);
             ln_gCinf[ispecies] = log(r[i]/r[irw]) + 1 - r[i]/r[irw] - 0.5*Z*q[i]*(log((r[i]*q[iqw])/(r[irw]*q[i])) + 1 - (r[i]*q[iqw])/(r[irw]*q[i]));
+            GRTxUNIQUAC += xr[i] * (log(phi[i]/xr[i]) - 0.5*Z*q[i]*log(phi[i]/theta[i]));
         }
 
         // Calculate the UNIQUAC residual activity coefficients for the species -- see equation (16) of Thomsen (2005) and equation (13) of Hingerl et al. (2014)
         for(auto const& [i, ispecies] : enumerate(iQ)) {
             ln_gR[ispecies] = q[i]*(1 - log(thetapsi[i]) - (theta * ArrayXr(psi.row(i))/thetapsi).sum());
             ln_gRinf[ispecies] = q[i]*(1 - log(psi(iqw, i)) - psi(i, iqw)/psi(iqw, iqw)); // Note: Thomsen (2005) always assume ψ(w,w) = 1, but here we don't necessarily; that's why psi(iqw, iqw) is used here.
+            GRTxUNIQUAC -= xq[i] * q[i] * log(thetapsi[i]);
         }
 
         // Set the activity coefficients of the species in the unsymmetrical convention and molal scale -- see equation (4-14) of Thomsen (1997) -- note extra ln(xw) here to convert to molal scale
@@ -228,8 +239,8 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
         // Set the activitiy of water species (in mole fraction scale)
         props.ln_a[iw] = props.ln_g[iw] + ln_xw;
 
-        // auto const GxDH = -4*xw*Mw*A*(log(Lambda) - Lambda + 1 + 0.5*b*b*I)/(b*b*b);
-        // props.Gx =
+        // Set the excess Gibbs energy of the aqueous solution (in J/mol)
+        props.Gx = (GRTxDH + GRTxUNIQUAC) * RT;
     };
 
     return fn;
