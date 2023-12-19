@@ -329,7 +329,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: NaCl
+- Name: Halite
   Formula: NaCl
   Elements: 1:Na 1:Cl
   Charge: 0.0
@@ -434,7 +434,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: Na2SO4
+- Name: Thenardite
   Formula: Na2SO4
   Elements: 2:Na 1:S 4:O
   Charge: 0.0
@@ -509,7 +509,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: Na2SO4*CaSO4
+- Name: Glauberite
   Formula: Na2SO4*CaSO4
   Elements: 2:Na 2:S 8:O 1:Ca
   Charge: 0.0
@@ -539,7 +539,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: MgCO3
+- Name: Magnesite
   Formula: MgCO3
   Elements: 1:Mg 1:C 3:O
   Charge: 0.0
@@ -554,7 +554,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: MgCO3*3H2O
+- Name: Nesquehonite
   Formula: MgCO3*3H2O
   Elements: 1:Mg 1:C 6:O 6:H
   Charge: 0.0
@@ -674,7 +674,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: Mg(OH)2
+- Name: Brucite
   Formula: Mg(OH)2
   Elements: 1:Mg 2:O 2:H
   Charge: 0.0
@@ -809,7 +809,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: CaCO3
+- Name: Calcite
   Formula: CaCO3
   Elements: 1:Ca 1:C 3:O
   Charge: 0.0
@@ -824,7 +824,7 @@ Species:
       c: 0
       alpha: 2.24E-03
       beta: 0
-- Name: CaCO3*MgCO3
+- Name: Dolomite
   Formula: CaCO3*MgCO3
   Elements: 1:Ca 2:C 6:O 1:Mg
   Charge: 0.0
@@ -839,7 +839,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: CaCl2
+- Name: Hydrophilite
   Formula: CaCl2
   Elements: 1:Ca 2:Cl
   Charge: 0.0
@@ -854,7 +854,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: CaCl2*2H2O
+- Name: Sinjarite
   Formula: CaCl2*2H2O
   Elements: 1:Ca 2:Cl 4:H 2:O
   Charge: 0.0
@@ -884,7 +884,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: CaCl2*6H2O
+- Name: Antarcticite
   Formula: CaCl2*6H2O
   Elements: 1:Ca 2:Cl 12:H 6:O
   Charge: 0.0
@@ -944,7 +944,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: CaSO4
+- Name: Anhydrite
   Formula: CaSO4
   Elements: 1:Ca 1:S 4:O
   Charge: 0.0
@@ -959,7 +959,7 @@ Species:
       c: 0
       alpha: 2.33E-03
       beta: -8.42E-07
-- Name: CaSO4*2H2O
+- Name: Gypsum
   Formula: CaSO4*2H2O
   Elements: 1:Ca 1:S 6:O 4:H
   Charge: 0.0
@@ -989,7 +989,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: BaCO3
+- Name: Witherite
   Formula: BaCO3
   Elements: 1:Ba 1:C 3:O
   Charge: 0.0
@@ -1109,7 +1109,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: BaSO4
+- Name: Barite
   Formula: BaSO4
   Elements: 1:Ba 1:S 4:O
   Charge: 0.0
@@ -1139,7 +1139,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: SrCO3
+- Name: Strontianite
   Formula: SrCO3
   Elements: 1:Sr 1:C 3:O
   Charge: 0.0
@@ -1274,7 +1274,7 @@ Species:
       c: 0
       alpha: 0
       beta: 0
-- Name: SrSO4
+- Name: Celestine
   Formula: SrSO4
   Elements: 1:Sr 1:S 4:O
   Charge: 0.0
