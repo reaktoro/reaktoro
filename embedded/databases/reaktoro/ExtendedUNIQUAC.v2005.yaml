@@ -113,7 +113,7 @@ Species:
   AggregateState: Aqueous
   Charge: 2.0
   StandardThermoModel:
-    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
+    ExtendedUNIQUAC:  # From ExtendedUNIQUAC.v2023.yaml directly provided by Kaj Thomsen (DTU).
       Gr: -553.58
       Hr: -542.83
       a: -403.2824
@@ -125,7 +125,7 @@ Species:
   AggregateState: Aqueous
   Charge: 2.0
   StandardThermoModel:
-    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
+    ExtendedUNIQUAC:  # From ExtendedUNIQUAC.v2023.yaml directly provided by Kaj Thomsen (DTU).
       Gr: -560.77
       Hr: -537.64
       a: 0.6954
@@ -149,7 +149,7 @@ Species:
   AggregateState: Aqueous
   Charge: 2.0
   StandardThermoModel:
-    ExtendedUNIQUAC:  # From ESSS/reaktoro-steps std_properties_euniquac_2005.xml
+    ExtendedUNIQUAC:  # From ExtendedUNIQUAC.v2023.yaml directly provided by Kaj Thomsen (DTU).
       Gr: -454.8
       Hr: -466.85
       a: -646.9708
