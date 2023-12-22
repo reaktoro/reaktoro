@@ -26,6 +26,7 @@ namespace Reaktoro {
 // StandardThermoModelParams Types
 //======================================================================
 struct StandardThermoModelParamsConstant;
+struct StandardThermoModelParamsExtendedUNIQUAC;
 struct StandardThermoModelParamsHKF;
 struct StandardThermoModelParamsHollandPowell;
 struct StandardThermoModelParamsInterpolation;
@@ -36,6 +37,9 @@ struct StandardThermoModelParamsWaterHKF;
 
 REAKTORO_DATA_ENCODE_DECLARE(StandardThermoModelParamsConstant);
 REAKTORO_DATA_DECODE_DECLARE(StandardThermoModelParamsConstant);
+
+REAKTORO_DATA_ENCODE_DECLARE(StandardThermoModelParamsExtendedUNIQUAC);
+REAKTORO_DATA_DECODE_DECLARE(StandardThermoModelParamsExtendedUNIQUAC);
 
 REAKTORO_DATA_ENCODE_DECLARE(StandardThermoModelParamsHKF);
 REAKTORO_DATA_DECODE_DECLARE(StandardThermoModelParamsHKF);

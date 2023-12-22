@@ -25,6 +25,7 @@
 #include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/ParseUtils.hpp>
 #include <Reaktoro/Core/Data.hpp>
+#include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/Support/DatabaseParser.hpp>
 
 namespace Reaktoro {
@@ -251,6 +252,12 @@ auto Database::fromFile(String const& path) -> Database
     return Database(dbparser);
 }
 
+auto Database::fromEmbeddedFile(String const& path) -> Database
+{
+    const String contents = Embedded::get("databases/reaktoro/" + path);
+    return fromContents(contents);
+}
+
 template<typename Source>
 auto createDatabaseFromContents(Source& contents)
 {
@@ -278,6 +285,16 @@ auto Database::fromContents(String const& contents) -> Database
 auto Database::fromStream(std::istream& stream) -> Database
 {
     return createDatabaseFromContents(stream);
+}
+
+auto Database::local(String const& path) -> Database
+{
+    return fromFile(path);
+}
+
+auto Database::embedded(String const& path) -> Database
+{
+    return fromEmbeddedFile(path);
 }
 
 } // namespace Reaktoro

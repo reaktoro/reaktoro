@@ -24,6 +24,7 @@
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelVantHoff.hpp>
 #include <Reaktoro/Models/StandardThermoModels/ReactionStandardThermoModelFromData.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelConstant.hpp>
+#include <Reaktoro/Models/StandardThermoModels/StandardThermoModelExtendedUNIQUAC.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHKF.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelHollandPowell.hpp>
 #include <Reaktoro/Models/StandardThermoModels/StandardThermoModelInterpolation.hpp>

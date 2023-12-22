@@ -1,0 +1,491 @@
+# Thermodynamic database for the extended UNIQUAC model based on data from
+# Thomsen (1997).
+#
+# https://dx.doi.org/10.11581/dtu:00000074
+
+Species:
+- Name: O2(g)
+  Formula: O2
+  Elements: 2:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: 0.0
+      Hr: 0.0
+      Sr: 205.138
+      Cp: 29.355
+      a: 29.355
+- Name: H2(g)
+  Formula: H2
+  Elements: 2:H
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: 0.0
+      Hr: 0.0
+      Sr: 130.684
+      Cp: 28.824
+      a: 28.824
+- Name: H2O(g)
+  Formula: H2O
+  Elements: 2:H 1:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -228.572
+      Hr: -241.818
+      Sr: 188.825
+      Cp: 33.577
+      a: 33.577
+- Name: CO2(g)
+  Formula: CO2
+  Elements: 1:C 2:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -394.359
+      Hr: -393.509
+      Sr: 213.74
+      Cp: 37.11
+      a: 37.11
+- Name: SO2(g)
+  Formula: SO2
+  Elements: 1:S 2:O
+  AggregateState: Gas
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -300.194
+      Hr: -296.830
+      Sr: 248.22
+      Cp: 39.87
+      a: 39.87
+- Name: H2O
+  Formula: H2O
+  Elements: 2:H 1:O
+  AggregateState: Aqueous
+  Charge: 0.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -237.129
+      Hr: -285.830
+      Sr: 69.91
+      Cp: 75.291
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 58.37000
+      b: 0.03896
+      c: 523.88000
+- Name: H+
+  Formula: H+
+  Elements: 1:H
+  AggregateState: Aqueous
+  Charge: 1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: 0.0
+      Hr: 0.0
+      Sr: 0.0
+      Cp: 0.0
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 0.0
+      b: 0.0
+      c: 0.0
+- Name: Na+
+  Formula: Na+
+  Elements: 1:Na
+  AggregateState: Aqueous
+  Charge: 1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -261.905
+      Hr: -240.12
+      Sr: 59.0
+      Cp: 46.4
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 600.62000
+      b: -1.10060
+      c: -23232.0
+- Name: K+
+  Formula: K+
+  Elements: 1:K
+  AggregateState: Aqueous
+  Charge: 1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -283.27
+      Hr: -252.38
+      Sr: 102.5
+      Cp: 21.8
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 415.09000
+      b: -0.81420
+      c: -16316.0
+- Name: NH4+
+  Formula: NH4+
+  Elements: 1:N 4:H
+  AggregateState: Aqueous
+  Charge: 1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -79.31
+      Hr: -132.51
+      Sr: 113.4
+      Cp: 79.9
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 71.00800
+      b: 0.0
+      c: 0.0
+- Name: Cl-
+  Formula: Cl-
+  Elements: 1:Cl
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -131.228
+      Hr: -167.159
+      Sr: 56.5
+      Cp: -136.4
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 400.35000
+      b: -1.13120
+      c: -18574.0
+- Name: SO4-2
+  Formula: SO4-2
+  Elements: 1:S 4:O
+  AggregateState: Aqueous
+  Charge: -2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -744.53
+      Hr: -909.27
+      Sr: 20.1
+      Cp: -293.
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 643.3
+      b: -1.76050
+      c: -37903.0
+- Name: HSO4-
+  Formula: HSO4-
+  Elements: 1:H 1:S 4:O
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -755.91
+      Hr: -887.34
+      Sr: 131.8
+      Cp: -84.
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 647.3
+      b: -1.58570
+      c: -17536.0
+- Name: NO3-
+  Formula: NO3-
+  Elements: 1:N 3:O
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -111.25
+      Hr: -207.36
+      Sr: 146.4
+      Cp: -86.6
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 2.29260
+      b: 0.12110
+      c: -9753.2
+- Name: OH-
+  Formula: OH-
+  Elements: 1:O 1:H
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -157.244
+      Hr: -229.994
+      Sr: -10.75
+      Cp: -148.5
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 1418.2
+      b: -3.44460
+      c: -51473.0
+- Name: CO3-2
+  Formula: CO3-2
+  Elements: 1:C 3:O
+  AggregateState: Aqueous
+  Charge: -2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -527.81
+      Hr: -677.14
+      Sr: -56.9
+      Cp: 0.0
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 850.61000
+      b: -2.80400
+      c: -21308.0
+- Name: HCO3-
+  Formula: HCO3-
+  Elements: 1:H 1:C 3:O
+  AggregateState: Aqueous
+  Charge: -1.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -586.77
+      Hr: -691.99
+      Sr: 91.2
+      Cp: 0.0
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: 585.75000
+      b: -1.36120
+      c: -21374.0
+- Name: S2O8-2
+  Formula: S2O8-2
+  Elements: 2:S 8:O
+  AggregateState: Aqueous
+  Charge: -2.0
+  StandardThermoModel:
+    ExtendedUNIQUAC:
+      # Parameters below from NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+      Gr: -1114.9
+      Hr: -1344.7
+      Sr: 244.3
+      Cp: 0.0
+      # Parameters below from Thomsen PhD Thesis (1997), Table 1 (https://doi.org/10.11581/dtu:00000074)
+      a: -110.0
+      b: 0.0
+      c: 0.0
+- Name: Na2SO4*10H2O
+  Formula: Na2SO4*10H2O
+  Elements: 2:Na 1:S 14:O 20:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -3646.85
+      Hr: -4327.26
+      Cp: 492.2
+      a: 492.2
+- Name: NaK3(SO4)2
+  Formula: NaK3(SO4)2
+  Elements: 1:Na 3:K 2:S 8:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -2622.82
+      Hr: -2854.62
+      Cp: 287.5
+      a: 287.5
+- Name: NaNO3*Na2SO4*H2O
+  Formula: NaNO3*Na2SO4*H2O
+  Elements: 3:Na 1:N 8:O 1:S 2:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -1876.74
+      Hr: -2152.96
+      Cp: 300.0
+      a: 300.0
+- Name: Na2CO3*2Na2SO4
+  Formula: Na2CO3*2Na2SO4
+  Elements: 6:Na 1:C 11:O 2:S
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -3593.19
+      Hr: -3921.49
+      Cp: 840.07
+      a: 840.07
+- Name: Na2CO3*NaHCO3*2H2O
+  Formula: Na2CO3*NaHCO3*2H2O
+  Elements: 3:Na 2:C 8:O 5:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -2380.11
+      Hr: -2684.9
+      Cp: 256.8
+      a: 256.8
+- Name: Na2CO3*3NaHCO3
+  Formula: Na2CO3*3NaHCO3
+  Elements: 5:Na 4:C 12:O 3:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -3602.78
+      Hr: -3982.7
+      Cp: 182.03
+      a: 182.03
+- Name: NaHCO3
+  Formula: NaHCO3
+  Elements: 1:Na 1:H 1:C 3:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.18434/M32124)
+      Gr: -851.0
+      Hr: -950.81
+      Cp: 87.61
+      a: 87.61
+- Name: K2CO3*1.5H2O
+  Formula: K2CO3*1.5H2O
+  Elements: 2:K 1:C 4.5:O 3:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -2865.0
+      Hr: -3218.4
+      Cp: 1199.0
+      a: 1199.0
+- Name: KHCO3
+  Formula: KHCO3
+  Elements: 1:K 1:H 1:C 3:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -868.7
+      Hr: -963.2
+      Cp: 85.51
+      a: 85.51
+- Name: NaKCO3*6H2O
+  Formula: NaKCO3*6H2O
+  Elements: 1:Na 1:K 1:C 9:O 12:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -2495.69
+      Hr: -2920.78
+      Cp: 300.0
+      a: 300.0
+- Name: K2CO3*Na2CO3
+  Formula: K2CO3*Na2CO3
+  Elements: 2:K 2:C 6:O 2:Na
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -2121.47
+      Hr: -2299.1
+      Cp: 420.23
+      a: 420.23
+- Name: K2CO3*NaHCO3*2H2O
+  Formula: K2CO3*NaHCO3*2H2O
+  Elements: 2:K 2:C 8:O 1:Na 5:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -2410.63
+      Hr: -2718.66
+      Cp: 300.0
+      a: 300.0
+- Name: K2CO3*2KHCO3*1.5H2O
+  Formula: K2CO3*2KHCO3*1.5H2O
+  Elements: 4:K 3:C 10.5:O 5:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -6341.55
+      Hr: -7026.36
+      Cp: 193.74
+      a: 193.74
+- Name: (NH4)2SO4*3NH4NO3
+  Formula: (NH4)2SO4*3NH4NO3
+  Elements: 8:N 20:H 1:S 13:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -1454.53
+      Hr: -2278.72
+      Cp: 987.19
+      a: 987.19
+- Name: (NH4)2SO4*2NH4NO3
+  Formula: (NH4)2SO4*2NH4NO3
+  Elements: 6:N 16:H 1:S 10:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -1270.61
+      Hr: -1914.10
+      Cp: 764.42
+      a: 764.42
+- Name: Na2SO4*(NH4)2SO4*4H2O
+  Formula: Na2SO4*(NH4)2SO4*4H2O
+  Elements: 2:Na 2:S 12:O 2:N 16:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -3127.82
+      Hr: -3752.02
+      Cp: 874.92
+      a: 874.92
+- Name: 2NaNO3*NH4NO3
+  Formula: 2NaNO3*NH4NO3
+  Elements: 2:Na 4:N 9:O 4:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -920.19
+      Hr: 0.0
+      Cp: 0.0
+      a: 0.0
+- Name: 3KNO3*NH4NO3
+  Formula: 3KNO3*NH4NO3
+  Elements: 3:K 5:N 12:O 4:H
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -1366.4
+      Hr: 0.0
+      Cp: 0.0
+      a: 0.0
+- Name: Na2S2O8
+  Formula: Na2S2O8
+  Elements: 2:Na 2:S 8:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -1638.13
+      Hr: -1893.64
+      Cp: 665.38
+      a: 665.38
+- Name: (NH4)2S2O8
+  Formula: (NH4)2S2O8
+  Elements: 2:N 8:H 2:S 8:O
+  AggregateState: Solid
+  StandardThermoModel:
+    ExtendedUNIQUAC:  # Thomsen PhD Thesis (1997), Table 4 (https://doi.org/10.11581/dtu:00000074)
+      Gr: -1273.6
+      Hr: -1648.1
+      Cp: 569.6
+      a: 569.6
+- Name: Na2SO4
+  Formula: Na2SO4
+  Elements: 2:Na 1:S 4:O
+  AggregateState: Solid
+  StandardThermoModel:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+    ExtendedUNIQUAC:
+      Gr: -1270.16
+      Hr: -1387.08
+      Sr: 149.58
+      Cp: 128.20
+      a: 128.20
+- Name: NaCl
+  Formula: NaCl
+  Elements: 1:Na 1:Cl
+  AggregateState: Solid
+  StandardThermoModel:  # NIST/NBS Tables of Chemical Thermodynamic Properties (https://doi.org/10.6028/JRES.125.007)
+    ExtendedUNIQUAC:
+      Gr: -384.138
+      Hr: -411.153
+      Sr: 72.13
+      Cp: 50.50
+      a: 50.50

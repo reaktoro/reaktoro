@@ -62,6 +62,15 @@ auto parseNumberStringPairs(const String& str) -> Pairs<String, double>;
 /// auto formula09 = parseChemicalFormula("Fe+3");
 /// auto formula10 = parseChemicalFormula("CO3--");
 /// auto formula11 = parseChemicalFormula("CO3-2");
+/// auto formula12 = parseChemicalFormula("CaCl2*6H2O");
+/// auto formula13 = parseChemicalFormula("SrCl2*2H2O");
+/// auto formula14 = parseChemicalFormula("(NH4)2SO4*3NH4NO3");
+/// auto formula15 = parseChemicalFormula("Na2SO4*(NH4)2SO4*4H2O");
+/// auto formula16 = parseChemicalFormula("CaCl2:6H2O");
+/// auto formula17 = parseChemicalFormula("SrCl2:2H2O");
+/// auto formula18 = parseChemicalFormula("(NH4)2SO4:3NH4NO3");
+/// auto formula19 = parseChemicalFormula("Na2SO4:(NH4)2SO4*4H2O");
+/// auto formula20 = parseChemicalFormula("Na2SO4:(NH4)2SO4:4H2O");
 /// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 auto parseChemicalFormula(const String& formula) -> Pairs<String, double>;
 

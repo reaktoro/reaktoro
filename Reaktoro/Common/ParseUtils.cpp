@@ -74,49 +74,30 @@ auto findMatchedParenthesisReverse(StringIterator begin, StringIterator end) -> 
     return begin;
 }
 
-auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Pairs<String, double>& result, double scalar) -> void
+auto parseChemicalFormulaAux(String const& formula, StringIterator begin, StringIterator end, Pairs<String, double>& result, double scalar) -> void
 {
     if(begin == end) return;
 
-    if(*begin != '(' && *begin != '.' && !isupper(*begin))
+    if(std::isdigit(*begin))  // CaCl2*10H2O, 2NaNO3*NH4NO3
     {
-        parseChemicalFormulaAux(begin + 1, end, result, scalar);
-    }
-    else if(*begin == '(')
-    {
-        StringIterator begin1 = begin + 1;
-        StringIterator end1   = findMatchedParenthesis(begin, end);
-
-        auto res = parseNumAtoms(end1 + 1, end);
-
-        const double number = res.first;
-
-        StringIterator begin2 = res.second;
-        StringIterator end2   = end;
-
-        parseChemicalFormulaAux(begin1, end1, result, scalar * number);
-        parseChemicalFormulaAux(begin2, end2, result, scalar);
-    }
-    else if(*begin == '.')
-    {
-        auto res = parseNumAtoms(begin + 1, end);
+        auto res = parseNumAtoms(begin, end);
 
         const double number = res.first;
 
         StringIterator begin1 = res.second;
         StringIterator end1   = end;
 
-        parseChemicalFormulaAux(begin1, end1, result, scalar * number);
+        parseChemicalFormulaAux(formula, begin1, end1, result, scalar * number);
     }
-    else
+    else if(std::isupper(*begin)) // H2O, HCO3-, CaCO3, Ab2Xyz3
     {
-        auto res1 = parseElementAtom(begin, end);
-        auto res2 = parseNumAtoms(res1.second, end);
+        const auto res1 = parseElementAtom(begin, end);
+        const auto res2 = parseNumAtoms(res1.second, end);
 
-        String element = res1.first;
-        double natoms  = res2.first;
+        const auto element = res1.first;
+        const auto natoms  = res2.first;
 
-        auto i = indexfn(result, RKT_LAMBDA(x, x.first == element));
+        const auto i = indexfn(result, RKT_LAMBDA(x, x.first == element));
 
         if(i < result.size()) // check if element symbol already exists in the result container
             result[i].second += scalar * natoms; // if so, increment coefficient
@@ -125,7 +106,43 @@ auto parseChemicalFormulaAux(StringIterator begin, StringIterator end, Pairs<Str
         StringIterator begin1 = res2.second;
         StringIterator end1   = end;
 
-        parseChemicalFormulaAux(begin1, end1, result, scalar);
+        parseChemicalFormulaAux(formula, begin1, end1, result, scalar);
+    }
+    else if(*begin == '(')  // CaMg(CO3)2, (Ef(AbCd)3)2
+    {
+        StringIterator begin1 = begin + 1;
+        StringIterator end1   = findMatchedParenthesis(begin, end);
+
+        // Check if characters from begin1 to end1 are all lowercase letters,
+        // indicating aggregate state symbols such as (aq), (l), (s), (cr), or
+        // any other possible symbol, e.g., (xyz)
+        bool alllowercase = true;
+        for(auto iter = begin1; iter != end1; ++iter)
+            alllowercase = alllowercase && std::islower(*iter);
+
+        if(alllowercase) // check if the parenthesis contains only lowercase letters
+            return; // ignore the rest of the formula string if aggregate state symbol such as (aq), (s), (cr), etc.
+
+        auto res = parseNumAtoms(end1 + 1, end);
+
+        const double number = res.first;
+
+        StringIterator begin2 = res.second;
+        StringIterator end2   = end;
+
+        parseChemicalFormulaAux(formula, begin1, end1, result, scalar * number);
+        parseChemicalFormulaAux(formula, begin2, end2, result, scalar);
+    }
+    else if(*begin == '*' || *begin == ':') // Symbols that are ignored, e.g., 2NaNO3*NH4NO3, 2NaNO3:NH4NO3
+    {
+        parseChemicalFormulaAux(formula, begin + 1, end, result, 1.0); // scalar is reset to 1.0 so that the formula following * or : does not use the current scalar, otherwise 2CaCl2*20H2O would be parsed with 40 atoms of O instead of 20!
+    }
+    else if(*begin == '+' || *begin == '-' || *begin == '[') // Ignore everything after these symbols
+        return;
+    else
+    {
+        errorif(*begin == ' ', "Error while parsing chemical formula: ", formula, ". Space characters are not allowed.");
+        errorif(true, "Error while parsing chemical formula: ", formula, ". Found the invalid character: ", *begin);
     }
 }
 
@@ -133,7 +150,22 @@ auto parseChemicalFormula(String formula) -> Pairs<String, double>
 {
     // Parse the formula for elements and their coefficients (without charge)
     Pairs<String, double> result;
-    parseChemicalFormulaAux(formula.begin(), formula.end(), result, 1.0);
+
+    // Check if formula represents charge species, which does not need to be parsed (no elements!)
+    if(startswith(formula, "e-") || startswith(formula, "e[-]"))
+        return result;
+
+    // Recursively parse the formula (because of possible inner formulas in parenthesis)
+    parseChemicalFormulaAux(formula, formula.begin(), formula.end(), result, 1.0);
+
+    // Due to possible addition and multiplication operations, the number of
+    // atoms of the elements may have some small round-off errors. For example,
+    // for formula Na2SO4*(NH4)2SO4*4H2O, instead of 16.0 atoms of H, we may
+    // endup with 15.99999998. The operation above cleans these round-off
+    // errors.
+    for(auto& pair : result)
+        pair.second = (pair.second + 1e8) - 1e8;
+
     return result;
 }
 

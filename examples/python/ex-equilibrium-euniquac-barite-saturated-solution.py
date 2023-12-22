@@ -19,44 +19,33 @@
 # 👏 Acknowledgements 👏
 # -----------------------------------------------------------------------------
 # This example was originally authored by:
-#   • Svetlana Kyas (29 September 2021)
-#
-# and since revised by:
-#   • Allan Leal (28 August 2023)
-#     - Using ActivityModelPhreeqc instead of ActivityModelHKF for aqueous phase.
-#     - Using ActivityModelPengRobinsonPhreeqc instead of ActivityModelPengRobinson for gaseous phase.
+#   • Allan Leal (19 October 2023)
 # -----------------------------------------------------------------------------
 
 
+from reaktoro import *
 
-# db = PhreeqcDatabase("phreeqc.dat")
+db = Database.embedded("ExtendedUNIQUAC.v2023.yaml")
+params = Params.embedded("ExtendedUNIQUAC.v2023.yaml")
 
-solution = AqueousPhase(speciate("H O C Na Cl"))
-solution.set(ActivityModelPhreeqc(db))
+solution = AqueousPhase(speciate("H O Na Ba Cl C S"))
+solution.setActivityModel(ActivityModelExtendedUNIQUAC(params))
 
-gases = GaseousPhase("CO2(g)")
-gases.set(ActivityModelPengRobinsonPhreeqc())
+system = ChemicalSystem(db, solution)
 
-# system = ChemicalSystem(db, solution, gases)
+state = ChemicalState(system)
+state.temperature(60.0, "celsius")
+state.pressure(100.0, "bar")
+state.set("H2O"  , 1.0, "kg")
+state.set("Na+"  , 4.0, "mol")
+state.set("Cl-"  , 3.0, "mol")
+state.set("Ba+2" , 0.5, "mol")
+state.set("SO4-2", 1.0, "mol")
+state.set("CO2"  , 0.2, "mol")
 
-# T = 25.0 # temperature in celsius
-# P = 1.0  # pressure in bar
+result = equilibrate(state)
 
-# state = ChemicalState(system)
-# state.temperature(T, "celsius")
-# state.pressure(P, "bar")
-# state.set("H2O"   , 1.0 , "kg")
-# state.set("CO2(g)", 10.0, "mol")
-# state.set("Na+"   , 4.00, "mol")
-# state.set("Cl-"   , 4.00, "mol")
+aprops = AqueousProps(state)
+aprops.output("aprops.txt")
 
-# solver = EquilibriumSolver(system)
-# solver.solve(state)
-
-# props = ChemicalProps(state)
-# props.output("props.txt")
-
-# aprops = AqueousProps(state)
-# aprops.output("aprops.txt")
-
-# print("Success! Check outputted files `props.txt` and `aprops.txt`.")
+print("Check the generated file `aprops.txt` for the properties of the aqueous solution.")
