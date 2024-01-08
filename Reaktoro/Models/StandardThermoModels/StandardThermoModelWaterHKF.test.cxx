@@ -57,18 +57,10 @@ TEST_CASE("Testing StandardThermoModelWaterHKF class", "[StandardThermoModelWate
         // Test method Model::params()
         //======================================================================
 
-        CHECK( model.params().size() == 0 );
-
-        //======================================================================
-        // Test method Model::serialize()
-        //======================================================================
-
-        Data node;
-
-        node = model.serialize();
-        CHECK( double(node.at("WaterHKF").at("Ttr")) == params.Ttr );
-        CHECK( double(node.at("WaterHKF").at("Str")) == params.Str );
-        CHECK( double(node.at("WaterHKF").at("Gtr")) == params.Gtr );
-        CHECK( double(node.at("WaterHKF").at("Htr")) == params.Htr );
+        CHECK( model.params().isDict() );
+        CHECK( model.params().at("WaterHKF").at("Ttr").asFloat() == params.Ttr );
+        CHECK( model.params().at("WaterHKF").at("Str").asFloat() == params.Str );
+        CHECK( model.params().at("WaterHKF").at("Gtr").asFloat() == params.Gtr );
+        CHECK( model.params().at("WaterHKF").at("Htr").asFloat() == params.Htr );
     }
 }
