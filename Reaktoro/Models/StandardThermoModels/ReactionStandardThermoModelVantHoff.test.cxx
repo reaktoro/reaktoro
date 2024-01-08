@@ -61,24 +61,9 @@ TEST_CASE("Testing ReactionStandardThermoModelVantHoff class", "[ReactionStandar
     // Test method Model::params()
     //======================================================================
 
-    CHECK( model.params().size() == 2 );
-    CHECK( model.params()[0] == lgKr );
-    CHECK( model.params()[1] == dHr );
-
-    //======================================================================
-    // Test method Model::serialize()
-    //======================================================================
-
-    Data node;
-
-    node = model.serialize();
-    CHECK( double(node.at("VantHoff").at("lgKr")) == lgKr );
-    CHECK( double(node.at("VantHoff").at("dHr"))  == dHr );
-    CHECK( double(node.at("VantHoff").at("Tr"))   == Tr );
-    CHECK( double(node.at("VantHoff").at("Pr"))   == Pr );
-
-    dHr = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-    node = model.serialize();
-    CHECK( double(node.at("VantHoff").at("dHr")) == 1234.0 );
+    CHECK( model.params().isDict() );
+    CHECK( model.params().at("VantHoff").at("lgKr").asFloat() == lgKr );
+    CHECK( model.params().at("VantHoff").at("dHr").asFloat()  == dHr );
+    CHECK( model.params().at("VantHoff").at("Tr").asFloat()   == Tr );
+    CHECK( model.params().at("VantHoff").at("Pr").asFloat()   == Pr );
 }

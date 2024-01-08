@@ -59,41 +59,16 @@ TEST_CASE("Testing StandardThermoModelExtendedUNIQUAC class", "[StandardThermoMo
     // Test method Model::params()
     //======================================================================
 
-    CHECK( model.params().size() == 11 );
-    CHECK( model.params()[0]  == params.Gr );
-    CHECK( model.params()[1]  == params.Hr );
-    CHECK( model.params()[2]  == params.Sr );
-    CHECK( model.params()[3]  == params.Vr );
-    CHECK( model.params()[4]  == params.Cp );
-    CHECK( model.params()[5]  == params.a );
-    CHECK( model.params()[6]  == params.b );
-    CHECK( model.params()[7]  == params.c );
-    CHECK( model.params()[8]  == params.alpha );
-    CHECK( model.params()[9]  == params.beta );
-    CHECK( model.params()[10] == params.Theta );
-
-    //======================================================================
-    // Test method Model::serialize()
-    //======================================================================
-
-    Data node;
-
-    node = model.serialize();
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Gr"))    == params.Gr );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Hr"))    == params.Hr );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Sr"))    == params.Sr );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Vr"))    == params.Vr );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Cp"))    == params.Cp );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("a"))     == params.a );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("b"))     == params.b );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("c"))     == params.c );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("alpha")) == params.alpha );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("beta"))  == params.beta );
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Theta")) == params.Theta );
-
-    params.Gr = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-    node = model.serialize();
-
-    CHECK( double(node.at("ExtendedUNIQUAC").at("Gr")) == 1234.0 );
+    CHECK( model.params().isDict() );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("Gr").asFloat()    == params.Gr );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("Hr").asFloat()    == params.Hr );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("Sr").asFloat()    == params.Sr );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("Vr").asFloat()    == params.Vr );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("Cp").asFloat()    == params.Cp );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("a").asFloat()     == params.a );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("b").asFloat()     == params.b );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("c").asFloat()     == params.c );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("alpha").asFloat() == params.alpha );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("beta").asFloat()  == params.beta );
+    CHECK( model.params().at("ExtendedUNIQUAC").at("Theta").asFloat() == params.Theta );
 }
