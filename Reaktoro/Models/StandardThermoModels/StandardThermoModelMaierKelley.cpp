@@ -27,24 +27,6 @@ using std::log;
 
 namespace Reaktoro {
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsMaierKelley& params) -> Vec<Param>
-{
-    const auto& [Gf, Hf, Sr, Vr, a, b, c, Tmax] = params;
-    return {Gf, Hf, Sr, Vr, a, b, c};
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const StandardThermoModelParamsMaierKelley& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["MaierKelley"] = params;
-        return node;
-    };
-}
-
 auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& params) -> StandardThermoModel
 {
     const auto isgas = params.Vr.value() == 0.0;
@@ -71,7 +53,10 @@ auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& 
         // S0  = Sr + CpdlnT;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["MaierKelley"] = params;
+
+    return StandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro

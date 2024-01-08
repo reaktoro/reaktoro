@@ -31,24 +31,6 @@ using std::log;
 using std::pow;
 using std::sqrt;
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(StandardThermoModelParamsExtendedUNIQUAC const& params) -> Vec<Param>
-{
-    auto const& [Gr, Hr, Sr, Vr, Cp, a, b, c, alpha, beta, Theta] = params;
-    return {Gr, Hr, Sr, Vr, Cp, a, b, c, alpha, beta, Theta};
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(StandardThermoModelParamsExtendedUNIQUAC const& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["ExtendedUNIQUAC"] = params;
-        return node;
-    };
-}
-
 auto StandardThermoModelExtendedUNIQUAC(StandardThermoModelParamsExtendedUNIQUAC const& params) -> StandardThermoModel
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
@@ -86,7 +68,10 @@ auto StandardThermoModelExtendedUNIQUAC(StandardThermoModelParamsExtendedUNIQUAC
         props.G0 += R*T*(alpha + beta*PmPr)*PmPr; // in J/(mol·K)
     };
 
-    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["ExtendedUNIQUAC"] = params;
+
+    return StandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro

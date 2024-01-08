@@ -22,24 +22,6 @@
 
 namespace Reaktoro {
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(const StandardVolumeModelParamsConstant& params) -> Vec<Param>
-{
-    const auto& [V0] = params;
-    return {V0};
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const StandardVolumeModelParamsConstant& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["Constant"] = params;
-        return node;
-    };
-}
-
 auto StandardVolumeModelConstant(const StandardVolumeModelParamsConstant& params) -> StandardVolumeModel
 {
     auto calcfn = [=](real T, real P)
@@ -47,7 +29,10 @@ auto StandardVolumeModelConstant(const StandardVolumeModelParamsConstant& params
         return params.V0;
     };
 
-    return StandardVolumeModel(calcfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["Constant"] = params;
+
+    return StandardVolumeModel(calcfn, paramsdata);
 }
 
 } // namespace Reaktoro

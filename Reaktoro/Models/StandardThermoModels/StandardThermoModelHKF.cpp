@@ -74,24 +74,6 @@ auto memoizedWaterElectroPropsJohnsonNorton(const real& T, const real& P) -> Wat
 
 } // namespace
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsHKF& params) -> Vec<Param>
-{
-    const auto& [Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref, charge, Tmax] = params;
-    return {Gf, Hf, Sr, a1, a2, a3, a4, c1, c2, wref};
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const StandardThermoModelParamsHKF& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["HKF"] = params;
-        return node;
-    };
-}
-
 auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> StandardThermoModel
 {
     waterThermoPropsWagnerPrussInterpData(StateOfMatter::Liquid); // this call exists to force an initialization operation so that when waterThermoPropsWagnerPrussInterp is called for the first time, this initialization has been performed already.
@@ -151,7 +133,10 @@ auto StandardThermoModelHKF(const StandardThermoModelParamsHKF& params) -> Stand
         //     + w*Y + (Z + 1)*wT - wr*Yr;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["HKF"] = params;
+
+    return StandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro

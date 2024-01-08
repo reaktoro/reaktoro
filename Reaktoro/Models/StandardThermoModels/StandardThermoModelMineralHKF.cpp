@@ -27,32 +27,6 @@ using std::log;
 
 namespace Reaktoro {
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsMineralHKF& params) -> Vec<Param>
-{
-    const auto& [Gf, Hf, Sr, Vr, ntr, a, b, c, Ttr, Htr, Vtr, dPdTtr, Tmax] = params;
-    Vec<Param> collected = {Gf, Hf, Sr, Vr};
-    for(const auto& x : params.a) collected.push_back(x);
-    for(const auto& x : params.b) collected.push_back(x);
-    for(const auto& x : params.c) collected.push_back(x);
-    for(const auto& x : params.Ttr) collected.push_back(x);
-    for(const auto& x : params.Htr) collected.push_back(x);
-    for(const auto& x : params.Vtr) collected.push_back(x);
-    for(const auto& x : params.dPdTtr) collected.push_back(x);
-    return collected; // TODO: Implement constructor Vec<Param>(const Args&... args) so that we can write `return Vec<Param>(Gf, Hf, Sr, Vr, a, b, c, Ttr, Htr, Vtr, dPdTtr);`
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const StandardThermoModelParamsMineralHKF& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["MineralHKF"] = params;
-        return node;
-    };
-}
-
 auto StandardThermoModelMineralHKF(const StandardThermoModelParamsMineralHKF& params) -> StandardThermoModel
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
@@ -132,7 +106,10 @@ auto StandardThermoModelMineralHKF(const StandardThermoModelParamsMineralHKF& pa
         // S0 = Sr + CpdlnT + SdH;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["MineralHKF"] = params;
+
+    return StandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro
