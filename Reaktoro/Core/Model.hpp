@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2022 Allan Leal
+// Copyright © 2014-2024 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@
 #include <Reaktoro/Common/TraitsUtils.hpp>
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Data.hpp>
-#include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
 
@@ -37,9 +36,6 @@ using ModelEvaluator = Fn<void(ResultRef res, Args... args)>;
 /// The functional signature of functions that calculates properties.
 template<typename Result, typename... Args>
 using ModelCalculator = Fn<Result(Args... args)>;
-
-/// The functional signature of functions that serialize a Model object into a Data object.
-using ModelSerializer = Fn<Data()>;
 
 /// The class used to represent a model function and its parameters.
 /// @ingroup Core
@@ -59,18 +55,17 @@ public:
     /// Construct a Model function object with given model evaluator function and its parameters.
     /// @param evalfn The function that evaluates the model.
     /// @param params The parameters of the underlying model function.
-    /// @param serializerfn The function that serializes the underlying model function to a Data object.
-    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Vec<Param>& params = {}, const ModelSerializer& serializerfn = {})
-    : m_params(params), m_serializerfn(serializerfn)
+    Model(const ModelEvaluator<ResultRef, Args...>& evalfn, const Data& params = {})
+    : m_params(params)
     {
         assert(evalfn);
 
-        m_evalfn = [evalfn](ResultRef res, const Vec<Param>& w, const Args&... args)
+        m_evalfn = [evalfn](ResultRef res, const Args&... args)
         {
             evalfn(res, args...);
         };
 
-        m_calcfn = [evalfn](const Vec<Param>& w, const Args&... args) -> Result
+        m_calcfn = [evalfn](const Args&... args) -> Result
         {
             Result res;
             evalfn(res, args...);
@@ -81,57 +76,53 @@ public:
     /// Construct a Model function object with given direct model calculator and its parameters.
     /// @param calcfn The function that calculates the model properties and return them.
     /// @param params The parameters of the underlying model function.
-    /// @param serializerfn The function that serializes the underlying model function to a Data object.
-    Model(const ModelCalculator<Result, Args...>& calcfn, const Vec<Param>& params = {}, const ModelSerializer& serializerfn = {})
-    : m_params(params), m_serializerfn(serializerfn)
+    Model(const ModelCalculator<Result, Args...>& calcfn, const Data& params = {})
+    : m_params(params)
     {
         assert(calcfn);
 
-        m_evalfn = [calcfn](ResultRef res, const Vec<Param>& w, const Args&... args)
+        m_evalfn = [calcfn](ResultRef res, const Args&... args)
         {
             res = calcfn(args...);
         };
 
-        m_calcfn = [calcfn](const Vec<Param>& w, const Args&... args) -> Result
+        m_calcfn = [calcfn](const Args&... args) -> Result
         {
             return calcfn(args...);
         };
     }
 
     /// Construct a Model function object with either a model evaluator or a model calculator function.
-    /// This constructor exists so that functions that are not wrapped
-    /// into an `std::function` object can be used to construct a Model
-    /// function object. Without this constructor, an explicit wrap must
-    /// be performed by the used. For example,
+    /// This constructor exists so that functions that are not wrapped into an `std::function` object can be used to construct a Model
+    /// function object. Without this constructor, an explicit wrap must be performed by the used. For example,
     /// `Model(ModelCalculator<real(real,real)>([](real T, real P) { return A + B*T + C*T*P; }))`
     /// can be replaced with `Model([](real T, real P) { return A + B*T + C*T*P; })`.
     /// @param f A model evaluator or a model calculator function.
     template<typename Fun, Requires<!isFunction<Fun>> = true>
     Model(const Fun& f)
     : Model(std::function(f))
-    // : Model(asFunction(f))
     {}
 
     /// Return a new Model function object with memoization for the model calculator.
     auto withMemoization() const -> Model
     {
         Model copy = *this;
-        copy.m_evalfn = memoizeLastUsingRef<Result>(copy.m_evalfn); // Here, if `m_evalfn` did not consider `const Vec<Param>&` as argument, memoization would not know when the parameters have been changed externally!
-        copy.m_calcfn = memoizeLast(copy.m_calcfn); // Here, if `m_calcfn` did not consider `const Vec<Param>&` as argument, memoization would not know when the parameters have been changed externally!
+        copy.m_evalfn = memoizeLastUsingRef<Result>(copy.m_evalfn); // Here, `m_evalfn` is memoized in case it is called multiple times with the same arguments and parameters.
+        copy.m_calcfn = memoizeLast(copy.m_calcfn); // Here, `m_calcfn` is memoized in case it is called multiple times with the same arguments and parameters.
         return copy;
     }
 
     /// Evaluate the model with given arguments.
     auto apply(ResultRef res, const Args&... args) const -> void
     {
-        assert(m_evalfn);
+        errorifnot(m_evalfn, "Model evaluator function object has not been initialized.");
         m_evalfn(res, m_params, args...);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
     auto operator()(const Args&... args) const -> Result
     {
-        assert(m_calcfn);
+        errorifnot(m_calcfn, "Model calculator function object has not been initialized.");
         return m_calcfn(m_params, args...);
     }
 
@@ -154,78 +145,42 @@ public:
     }
 
     /// Return the model evaluator function of this Model function object.
-    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, const Vec<Param>&, Args...>&
+    auto evaluatorFn() const -> const ModelEvaluator<ResultRef, Args...>&
     {
         return m_evalfn;
     }
 
     /// Return the model calculator function of this Model function object.
-    auto calculatorFn() const -> const ModelCalculator<Result, const Vec<Param>&, Args...>&
+    auto calculatorFn() const -> const ModelCalculator<Result, Args...>&
     {
         return m_calcfn;
     }
 
-    /// Return the function that serializes the underlying model function to a Data object.
-    auto serializerFn() const -> const ModelSerializer
-    {
-        return m_serializerfn;
-    }
-
     /// Return the model parameters of this Model function object.
-    auto params() const -> const Vec<Param>&
+    auto params() const -> const Data&
     {
         return m_params;
     }
 
-    /// Return serialization of the underlying model function to a Data object.
-    auto serialize() const -> Data
-    {
-        return m_serializerfn ? m_serializerfn() : Data{}; // evaluate m_serializerfn because Param objects may have changed
-    }
-
     /// Return a constant Model function object.
     /// @param param The parameter with the constant value always returned by the Model function object.
-    static auto Constant(const Param& param) -> Model
+    static auto Constant(String const& name, real const& value) -> Model
     {
-        auto calcfn = [param](const Args&... args) { return param; }; // no need to have `const Vec<Param>&` in the lambda function here. This is added in the constructor call below!
-        Vec<Param> params = { param };
+        auto calcfn = [value](const Args&... args) -> real { return value; }; // the constant model is a simple function that always return the given constant value
+        Data params;
+        params[name]["Value"] = value; //
         return Model(calcfn, params);
     }
 
 private:
-    /// The parameters used to initialize the underlying model function.
-    /// These parameters can be changed externally and affect the model result.
-    /// This is possible because their data is wrapped in a shared pointer.
-    /// Care must be taken when memoization is applied to the Model object.
-    /// Otherwise, the memoized model cannot realize that embedded Param
-    /// objects have been externally modified. For example, consider a model
-    /// that depends on temperature and pressure only. In this model, one or
-    /// more Param objects may have been captured (e.g., via lambda capture).
-    /// If temperature and pressure in a new calculation are the same as last
-    /// time, but these captured Param objects have been changed externally,
-    /// the memoized version of the Model object will return the cached result
-    /// (from last calculation). To prevent this, #m_calcfn below have its
-    /// functional signature extended with `const Vec<Param>&`. By doing this, and
-    /// passing along #m_params to its call, its memoized version (@see
-    /// withMemoization) will be able to detect if these Param objects have
-    /// been changed externally.
-    Vec<Param> m_params;
-
     /// The underlying model function that performs property evaluations.
-    ModelEvaluator<ResultRef, const Vec<Param>&, Args...> m_evalfn;
+    ModelEvaluator<ResultRef, Args...> m_evalfn;
 
     /// The underlying model function that performs property calculations.
-    /// Note the added dependency on `const Vec<Param>&`.
-    /// This is needed for proper memoization optimization!
-    ModelCalculator<Result, const Vec<Param>&, Args...> m_calcfn;
+    ModelCalculator<Result, Args...> m_calcfn;
 
-    /// The function that serializes the underlying model function to a Data object.
-    /// This has to be a function because if we stored the serialization of the
-    /// model at construction and the Param objects associated to it changed at
-    /// some point later, then the stored serialization would be out of sync
-    /// with the Param objects. By storing a function, the serialization can be
-    /// computed at any point, say, after the changes in the Param objects.
-    ModelSerializer m_serializerfn;
+    /// The parameters of the underlying model function.
+    Data m_params;
 };
 
 /// Return a reaction thermodynamic model resulting from chaining other models.
@@ -235,27 +190,16 @@ auto chain(const Vec<Model<Result(Args...)>>& models) -> Model<Result(Args...)>
     using ResultRef = Ref<Result>;
 
     const auto evalfns = vectorize(models, RKT_LAMBDA(model, model.evaluatorFn()));
-    const auto paramsvec = vectorize(models, RKT_LAMBDA(model, model.params()));
-    const auto serializerfns = vectorize(models, RKT_LAMBDA(model, model.serializerFn()));
 
     auto evalfn = [=](ResultRef res, const Args&... args)
     {
         for(auto i = 0; i < evalfns.size(); ++i)
-            evalfns[i](res, args..., paramsvec[i]);
+            evalfns[i](res, args...);
     };
 
-    auto serializerfn = [serializerfns]() -> Data
-    {
-        Data result;
-        for(auto i = 0; i < serializerfns.size(); ++i)
-            result.add(serializerfns[i]());
-        return result;
-    };
-
-    Vec<Param> params;
-    for(const auto& model : models)
-        for(const auto& param : model.params())
-            params.push_back(param);
+    Data params;
+    for(auto const& model : models)
+        params.add(model.params());
 
     return Model<Result(Args...)>(evalfn, params);
 }
