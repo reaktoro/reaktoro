@@ -163,17 +163,17 @@ Species:
     CHECK( species[3].name() == "C(aq)"      );
     CHECK( species[4].name() == "A3B5C3(aq)" );
 
-    CHECK( species[0].standardThermoModel().params().size() == 6 ); // G0, H0, V0, Cp0, VT0, VP0
-    CHECK( species[1].standardThermoModel().params().size() == 6 ); // G0, H0, V0, Cp0, VT0, VP0
-    CHECK( species[2].standardThermoModel().params().size() == 1 ); // lgKr
-    CHECK( species[3].standardThermoModel().params().size() == 6 ); // G0, H0, V0, Cp0, VT0, VP0
-    CHECK( species[4].standardThermoModel().params().size() == 1 ); // lgKr
+    CHECK( species[0].standardThermoModel().params().at("Constant").asDict().size()    == 6 ); // G0, H0, V0, Cp0, VT0, VP0
+    CHECK( species[1].standardThermoModel().params().at("Constant").asDict().size()    == 6 ); // G0, H0, V0, Cp0, VT0, VP0
+    CHECK( species[2].standardThermoModel().params()[0].at("ConstLgK").asDict().size() == 2 ); // lgKr, Pr
+    CHECK( species[3].standardThermoModel().params().at("Constant").asDict().size()    == 6 ); // G0, H0, V0, Cp0, VT0, VP0
+    CHECK( species[4].standardThermoModel().params()[0].at("ConstLgK").asDict().size() == 2 ); // lgKr, Pr
 
-    CHECK( species[0].standardThermoModel().params()[0].value() == 1.0 );
-    CHECK( species[1].standardThermoModel().params()[0].value() == 2.0 );
-    CHECK( species[2].standardThermoModel().params()[0].value() == 5.0 );
-    CHECK( species[3].standardThermoModel().params()[0].value() == 3.0 );
-    CHECK( species[4].standardThermoModel().params()[0].value() == 7.0 );
+    CHECK( species[0].standardThermoModel().params().at("Constant").at("G0").asFloat()      == 1.0 );
+    CHECK( species[1].standardThermoModel().params().at("Constant").at("G0").asFloat()      == 2.0 );
+    CHECK( species[2].standardThermoModel().params()[0].at("ConstLgK").at("lgKr").asFloat() == 5.0 );
+    CHECK( species[3].standardThermoModel().params().at("Constant").at("G0").asFloat()      == 3.0 );
+    CHECK( species[4].standardThermoModel().params()[0].at("ConstLgK").at("lgKr").asFloat() == 7.0 );
 
     data = db; // convert back Database to Data and check below for consistency
 
@@ -362,7 +362,7 @@ TEST_CASE("Testing Data encoder/decoder for ReactionStandardThermoModel", "[Seri
 
     auto model = ReactionStandardThermoModelFromData(data);
 
-    CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
+    CHECK( model.params().dumpYaml() == expected.dumpYaml() );
 }
 
 TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
@@ -566,5 +566,5 @@ TEST_CASE("Testing Data encoder/decoder for StandardThermoModel", "[Serializatio
 
     auto model = StandardThermoModelFromData(data);
 
-    CHECK( model.serialize().dumpYaml() == expected.dumpYaml() );
+    CHECK( model.params().dumpYaml() == expected.dumpYaml() );
 }
