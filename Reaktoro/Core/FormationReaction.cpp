@@ -57,8 +57,10 @@ struct FormationReaction::Impl
 
         const auto num_reactants = reactants.size();
 
-        // Collect Param objects from both rxn_thermo_model and std_volume_model.
-        Vec<Param> params = concatenate(rxn_thermo_model.params(), std_volume_model.params());
+        // Collect parameters from both rxn_thermo_model and std_volume_model.
+        Data params;
+        params.add(rxn_thermo_model.params());
+        params.add(std_volume_model.params());
 
         Vec<StandardThermoProps> reactants_props(num_reactants);
 
