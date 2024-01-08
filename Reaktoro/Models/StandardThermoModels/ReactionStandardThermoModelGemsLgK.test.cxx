@@ -25,14 +25,14 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionStandardThermoModelGemsLgK class", "[ReactionStandardThermoModelGemsLgK]")
 {
-    Param A0 = 1.0;
-    Param A1 = 2.0;
-    Param A2 = 3.0;
-    Param A3 = 4.0;
-    Param A4 = 5.0;
-    Param A5 = 6.0;
-    Param A6 = 7.0;
-    real  Pr = 7.0;
+    auto A0 = 1.0;
+    auto A1 = 2.0;
+    auto A2 = 3.0;
+    auto A3 = 4.0;
+    auto A4 = 5.0;
+    auto A5 = 6.0;
+    auto A6 = 7.0;
+    auto Pr = 7.0;
 
     const auto model = ReactionStandardThermoModelGemsLgK({A0, A1, A2, A3, A4, A5, A6, Pr});
 
@@ -74,33 +74,13 @@ TEST_CASE("Testing ReactionStandardThermoModelGemsLgK class", "[ReactionStandard
     // Test method Model::params()
     //======================================================================
 
-    CHECK( model.params().size() == 7 );
-    CHECK( model.params()[0] == A0 );
-    CHECK( model.params()[1] == A1 );
-    CHECK( model.params()[2] == A2 );
-    CHECK( model.params()[3] == A3 );
-    CHECK( model.params()[4] == A4 );
-    CHECK( model.params()[5] == A5 );
-    CHECK( model.params()[6] == A6 );
-
-    //======================================================================
-    // Test method Model::serialize()
-    //======================================================================
-
-    Data node;
-
-    node = model.serialize();
-    CHECK( double(node.at("GemsLgK").at("A0")) == A0 );
-    CHECK( double(node.at("GemsLgK").at("A1")) == A1 );
-    CHECK( double(node.at("GemsLgK").at("A2")) == A2 );
-    CHECK( double(node.at("GemsLgK").at("A3")) == A3 );
-    CHECK( double(node.at("GemsLgK").at("A4")) == A4 );
-    CHECK( double(node.at("GemsLgK").at("A5")) == A5 );
-    CHECK( double(node.at("GemsLgK").at("A6")) == A6 );
-    CHECK( double(node.at("GemsLgK").at("Pr")) == Pr );
-
-    A0 = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-    node = model.serialize();
-    CHECK( double(node.at("GemsLgK").at("A0")) == 1234.0 );
+    CHECK( model.params().isDict() );
+    CHECK( model.params().at("GemsLgK").at("A0").asFloat() == A0 );
+    CHECK( model.params().at("GemsLgK").at("A1").asFloat() == A1 );
+    CHECK( model.params().at("GemsLgK").at("A2").asFloat() == A2 );
+    CHECK( model.params().at("GemsLgK").at("A3").asFloat() == A3 );
+    CHECK( model.params().at("GemsLgK").at("A4").asFloat() == A4 );
+    CHECK( model.params().at("GemsLgK").at("A5").asFloat() == A5 );
+    CHECK( model.params().at("GemsLgK").at("A6").asFloat() == A6 );
+    CHECK( model.params().at("GemsLgK").at("Pr").asFloat() == Pr );
 }

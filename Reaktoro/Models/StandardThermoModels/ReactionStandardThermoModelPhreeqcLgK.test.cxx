@@ -69,31 +69,12 @@ TEST_CASE("Testing ReactionStandardThermoModelPhreeqcLgK class", "[ReactionStand
     // Test method Model::params()
     //======================================================================
 
-    CHECK( model.params().size() == 6 );
-    CHECK( model.params()[0] == A1 );
-    CHECK( model.params()[1] == A2 );
-    CHECK( model.params()[2] == A3 );
-    CHECK( model.params()[3] == A4 );
-    CHECK( model.params()[4] == A5 );
-    CHECK( model.params()[5] == A6 );
-
-    //======================================================================
-    // Test method Model::serialize()
-    //======================================================================
-
-    Data node;
-
-    node = model.serialize();
-    CHECK( double(node.at("PhreeqcLgK").at("A1")) == A1 );
-    CHECK( double(node.at("PhreeqcLgK").at("A2")) == A2 );
-    CHECK( double(node.at("PhreeqcLgK").at("A3")) == A3 );
-    CHECK( double(node.at("PhreeqcLgK").at("A4")) == A4 );
-    CHECK( double(node.at("PhreeqcLgK").at("A5")) == A5 );
-    CHECK( double(node.at("PhreeqcLgK").at("A6")) == A6 );
-    CHECK( double(node.at("PhreeqcLgK").at("Pr")) == Pr );
-
-    A1 = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-    node = model.serialize();
-    CHECK( double(node.at("PhreeqcLgK").at("A1")) == 1234.0 );
+    CHECK( model.params().isDict() );
+    CHECK( model.params().at("PhreeqcLgK").at("A1").asFloat() == A1 );
+    CHECK( model.params().at("PhreeqcLgK").at("A2").asFloat() == A2 );
+    CHECK( model.params().at("PhreeqcLgK").at("A3").asFloat() == A3 );
+    CHECK( model.params().at("PhreeqcLgK").at("A4").asFloat() == A4 );
+    CHECK( model.params().at("PhreeqcLgK").at("A5").asFloat() == A5 );
+    CHECK( model.params().at("PhreeqcLgK").at("A6").asFloat() == A6 );
+    CHECK( model.params().at("PhreeqcLgK").at("Pr").asFloat() == Pr );
 }

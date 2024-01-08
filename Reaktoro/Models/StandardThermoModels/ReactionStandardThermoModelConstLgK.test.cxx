@@ -57,21 +57,7 @@ TEST_CASE("Testing ReactionStandardThermoModelConstLgK class", "[ReactionStandar
     // Test method Model::params()
     //======================================================================
 
-    CHECK( model.params().size() == 1 );
-    CHECK( model.params()[0] == lgKr );
-
-    //======================================================================
-    // Test method Model::serialize()
-    //======================================================================
-
-    Data node;
-
-    node = model.serialize();
-    CHECK( double(node.at("ConstLgK").at("lgKr")) == lgKr );
-    CHECK( double(node.at("ConstLgK").at("Pr")) == Pr );
-
-    lgKr = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-    node = model.serialize();
-    CHECK( double(node.at("ConstLgK").at("lgKr")) == 1234.0 );
+    CHECK( model.params().isDict() );
+    CHECK( model.params().at("ConstLgK").at("lgKr").asFloat() == lgKr );
+    CHECK( model.params().at("ConstLgK").at("Pr").asFloat() == Pr );
 }

@@ -116,14 +116,14 @@ public:
     auto apply(ResultRef res, const Args&... args) const -> void
     {
         errorifnot(m_evalfn, "Model evaluator function object has not been initialized.");
-        m_evalfn(res, m_params, args...);
+        m_evalfn(res, args...);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
     auto operator()(const Args&... args) const -> Result
     {
         errorifnot(m_calcfn, "Model calculator function object has not been initialized.");
-        return m_calcfn(m_params, args...);
+        return m_calcfn(args...);
     }
 
     /// Evaluate the model with given arguments and return the result of the evaluation.
