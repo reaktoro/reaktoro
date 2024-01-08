@@ -26,23 +26,6 @@
 
 namespace Reaktoro {
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsWaterHKF& params) -> Vec<Param>
-{
-    return {}; // there are no Param members in StandardThermoModelParamsWaterHKF
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const StandardThermoModelParamsWaterHKF& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["WaterHKF"] = params;
-        return node;
-    };
-}
-
 auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params) -> StandardThermoModel
 {
     waterThermoPropsWagnerPrussInterpData(StateOfMatter::Liquid); // this call exists to force an initialization operation so that when waterThermoPropsWagnerPrussInterp is called for the first time, this initialization has been performed already.
@@ -71,7 +54,10 @@ auto StandardThermoModelWaterHKF(const StandardThermoModelParamsWaterHKF& params
         // A0  = Uw - T * (Sw + Str) + Ttr * Str + Atr;
     };
 
-    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["WaterHKF"] = params;
+
+    return StandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro

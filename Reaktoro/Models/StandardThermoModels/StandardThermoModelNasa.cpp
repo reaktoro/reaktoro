@@ -102,36 +102,6 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa& params, con
 
 } // namemespace detail
 
-/// Return a vector containing all Param objects in @p params.
-auto extractParams(const StandardThermoModelParamsNasa& params) -> Vec<Param>
-{
-    Vec<Param> collected;
-    for(const auto& polynomial : params.polynomials)
-    {
-        collected.push_back(polynomial.a1);
-        collected.push_back(polynomial.a2);
-        collected.push_back(polynomial.a3);
-        collected.push_back(polynomial.a4);
-        collected.push_back(polynomial.a5);
-        collected.push_back(polynomial.a6);
-        collected.push_back(polynomial.a7);
-        collected.push_back(polynomial.b1);
-        collected.push_back(polynomial.b2);
-    }
-    return collected;
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const StandardThermoModelParamsNasa& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["Nasa"] = params;
-        return node;
-    };
-}
-
 auto StandardThermoModelNasa(const StandardThermoModelParamsNasa& params) -> StandardThermoModel
 {
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
@@ -139,7 +109,10 @@ auto StandardThermoModelNasa(const StandardThermoModelParamsNasa& params) -> Sta
         props = detail::computeStandardThermoProps(params, T);
     };
 
-    return StandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["Nasa"] = params;
+
+    return StandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro

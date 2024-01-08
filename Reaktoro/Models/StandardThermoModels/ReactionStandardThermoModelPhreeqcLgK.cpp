@@ -23,24 +23,6 @@
 
 namespace Reaktoro {
 
-/// Return a Vec<Param> object containing all Param objects in @p params.
-auto extractParams(const ReactionStandardThermoModelParamsPhreeqcLgK& params) -> Vec<Param>
-{
-    const auto& [A1, A2, A3, A4, A5, A6, Pr] = params;
-    return {A1, A2, A3, A4, A5, A6};
-}
-
-/// Return a ModelSerializer for given model parameters in @p params.
-auto createModelSerializer(const ReactionStandardThermoModelParamsPhreeqcLgK& params) -> ModelSerializer
-{
-    return [=]()
-    {
-        Data node;
-        node["PhreeqcLgK"] = params;
-        return node;
-    };
-}
-
 auto ReactionStandardThermoModelPhreeqcLgK(const ReactionStandardThermoModelParamsPhreeqcLgK& params) -> ReactionStandardThermoModel
 {
     auto evalfn = [=](ReactionStandardThermoProps& props, ReactionStandardThermoModelArgs args)
@@ -63,7 +45,10 @@ auto ReactionStandardThermoModelPhreeqcLgK(const ReactionStandardThermoModelPara
         props.dCp0 = R * (2*A2*T + A4/ln10 + 2*A5/T2 + 6*A6*T2)*ln10 + dET;
     };
 
-    return ReactionStandardThermoModel(evalfn, extractParams(params), createModelSerializer(params));
+    Data paramsdata;
+    paramsdata["PhreeqcLgK"] = params;
+
+    return ReactionStandardThermoModel(evalfn, paramsdata);
 }
 
 } // namespace Reaktoro
