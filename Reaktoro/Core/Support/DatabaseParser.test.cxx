@@ -204,14 +204,14 @@ TEST_CASE("Testing DatabaseParser class", "[DatabaseParser]")
         CHECK( species[0].elements().coefficient("A") == 2.0 );
         CHECK( species[0].elements().coefficient("B") == 1.0 );
         CHECK( species[0].aggregateState() == AggregateState::Liquid );
-        CHECK( species[0].standardThermoModel().serialize()["MaierKelley"].isDict() );
+        CHECK( species[0].standardThermoModel().params()["MaierKelley"].isDict() );
 
         CHECK( species[1].name() == "A2B3(aq)" );
         CHECK( species[1].formula() == "A2B3" );
         CHECK( species[1].elements().coefficient("A") == 2.0 );
         CHECK( species[1].elements().coefficient("B") == 3.0 );
         CHECK( species[1].aggregateState() == AggregateState::Aqueous );
-        CHECK( species[1].standardThermoModel().serialize()["HKF"].isDict() );
+        CHECK( species[1].standardThermoModel().params()["HKF"].isDict() );
 
         CHECK( species[2].name() == "A2B(g)" );
         CHECK( species[2].formula() == "A2B" );
