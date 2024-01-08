@@ -648,24 +648,16 @@ auto BipModelPhreeqc(Strings const& substances, BipModelParamsPhreeqc const& par
         }
     };
 
-    Vec<Param> paramsvec = {
-        params.kH2O_CO2,
-        params.kH2O_H2S,
-        params.kH2O_CH4,
-        params.kH2O_N2,
-        params.kH2O_C2H6,
-        params.kH2O_C3H8,
-    };
+    Data paramsdata;
+    auto node = paramsdata["BipModel"]["Phreeqc"];
+    node["kH2O_CO2"]  = params.kH2O_CO2;
+    node["kH2O_H2S"]  = params.kH2O_H2S;
+    node["kH2O_CH4"]  = params.kH2O_CH4;
+    node["kH2O_N2"]   = params.kH2O_N2;
+    node["kH2O_C2H6"] = params.kH2O_C2H6;
+    node["kH2O_C3H8"] = params.kH2O_C3H8;
 
-    auto serializer = [=]()
-    {
-        Data node;
-        // node["Phreeqc"] = params; // Implement serialization for BipModelParamsPhreeqc in Serialization/Models.
-        node["Phreeqc"] = "BipModelParamsPhreeqc not yet serialized";
-        return node;
-    };
-
-    return BipModel(evalfn, paramsvec, serializer);
+    return BipModel(evalfn, paramsdata);
 }
 
 auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhitson const& params) -> BipModel
@@ -704,26 +696,18 @@ auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhit
         }
     };
 
-    Vec<Param> paramsvec = {
-        params.kH2O_CO2,
-        params.kH2O_N2,
-        params.kH2O_CH4,
-        params.kH2O_C2H6,
-        params.kH2O_C3H8,
-        params.kH2O_nC4H10,
-        params.kH2O_H2S_a1,
-        params.kH2O_H2S_a2,
-    };
+    Data paramsdata;
+    auto node = paramsdata["BipModel"]["SoreideWhitson"];
+    paramsdata["kH2O_CO2"] = params.kH2O_CO2;
+    paramsdata["kH2O_N2"] = params.kH2O_N2;
+    paramsdata["kH2O_CH4"] = params.kH2O_CH4;
+    paramsdata["kH2O_C2H6"] = params.kH2O_C2H6;
+    paramsdata["kH2O_C3H8"] = params.kH2O_C3H8;
+    paramsdata["kH2O_nC4H10"] = params.kH2O_nC4H10;
+    paramsdata["kH2O_H2S_a1"] = params.kH2O_H2S_a1;
+    paramsdata["kH2O_H2S_a2"] = params.kH2O_H2S_a2;
 
-    auto serializer = [=]()
-    {
-        Data node;
-        // node["SoreideWhitson"] = params; // Implement serialization for BipModelParamsSoreideWhitson in Serialization/Models.
-        node["SoreideWhitson"] = "BipModelParamsSoreideWhitson not yet serialized";
-        return node;
-    };
-
-    return BipModel(evalfn, paramsvec, serializer);
+    return BipModel(evalfn, paramsdata);
 }
 
 // DEPRECATED METHODS TO BE REMOVED IN THE NEAR FUTURE
