@@ -61,34 +61,14 @@ TEST_CASE("Testing StandardThermoModelMaierKelley class", "[StandardThermoModelM
         // Test method Model::params()
         //======================================================================
 
-        CHECK( model.params().size() == 7 );
-        CHECK( model.params()[0]  == params.Gf );
-        CHECK( model.params()[1]  == params.Hf );
-        CHECK( model.params()[2]  == params.Sr );
-        CHECK( model.params()[3]  == params.Vr );
-        CHECK( model.params()[4]  == params.a );
-        CHECK( model.params()[5]  == params.b );
-        CHECK( model.params()[6]  == params.c );
-
-        //======================================================================
-        // Test method Model::serialize()
-        //======================================================================
-
-        Data node;
-
-        node = model.serialize();
-        CHECK( double(node.at("MaierKelley").at("Gf")) == params.Gf );
-        CHECK( double(node.at("MaierKelley").at("Hf")) == params.Hf );
-        CHECK( double(node.at("MaierKelley").at("Sr")) == params.Sr );
-        CHECK( double(node.at("MaierKelley").at("Vr")) == params.Vr );
-        CHECK( double(node.at("MaierKelley").at("a"))  == params.a );
-        CHECK( double(node.at("MaierKelley").at("b"))  == params.b );
-        CHECK( double(node.at("MaierKelley").at("c"))  == params.c );
-
-        params.Gf = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-        node = model.serialize();
-        CHECK( double(node.at("MaierKelley").at("Gf")) == 1234.0 );
+        CHECK( model.params().isDict() );
+        CHECK( model.params().at("MaierKelley").at("Gf").asFloat() == params.Gf );
+        CHECK( model.params().at("MaierKelley").at("Hf").asFloat() == params.Hf );
+        CHECK( model.params().at("MaierKelley").at("Sr").asFloat() == params.Sr );
+        CHECK( model.params().at("MaierKelley").at("Vr").asFloat() == params.Vr );
+        CHECK( model.params().at("MaierKelley").at("a").asFloat()  == params.a );
+        CHECK( model.params().at("MaierKelley").at("b").asFloat()  == params.b );
+        CHECK( model.params().at("MaierKelley").at("c").asFloat()  == params.c );
     }
 
     // Check Oelkers et al. (1995), page 1553, table for NH3(g).

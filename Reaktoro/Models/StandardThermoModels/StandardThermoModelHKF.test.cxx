@@ -76,40 +76,17 @@ TEST_CASE("Testing StandardThermoModelHKF class", "[StandardThermoModelHKF]")
         // Test method Model::params()
         //======================================================================
 
-        CHECK( model.params().size() == 10 );
-        CHECK( model.params()[0] == params.Gf );
-        CHECK( model.params()[1] == params.Hf );
-        CHECK( model.params()[2] == params.Sr );
-        CHECK( model.params()[3] == params.a1 );
-        CHECK( model.params()[4] == params.a2 );
-        CHECK( model.params()[5] == params.a3 );
-        CHECK( model.params()[6] == params.a4 );
-        CHECK( model.params()[7] == params.c1 );
-        CHECK( model.params()[8] == params.c2 );
-        CHECK( model.params()[9] == params.wref );
-
-        //======================================================================
-        // Test method Model::serialize()
-        //======================================================================
-
-        Data node;
-
-        node = model.serialize();
-        CHECK( double(node.at("HKF").at("Gf"))   == params.Gf );
-        CHECK( double(node.at("HKF").at("Hf"))   == params.Hf );
-        CHECK( double(node.at("HKF").at("Sr"))   == params.Sr );
-        CHECK( double(node.at("HKF").at("a1"))   == params.a1 );
-        CHECK( double(node.at("HKF").at("a2"))   == params.a2 );
-        CHECK( double(node.at("HKF").at("a3"))   == params.a3 );
-        CHECK( double(node.at("HKF").at("a4"))   == params.a4 );
-        CHECK( double(node.at("HKF").at("c1"))   == params.c1 );
-        CHECK( double(node.at("HKF").at("c2"))   == params.c2 );
-        CHECK( double(node.at("HKF").at("wref")) == params.wref );
-
-        params.Gf = 1234.0; // change value of Param object and check if new serialize call reflects this change
-
-        node = model.serialize();
-        CHECK( double(node.at("HKF").at("Gf")) == 1234.0 );
+        CHECK( model.params().isDict() );
+        CHECK( model.params().at("HKF").at("Gf").asFloat()   == params.Gf );
+        CHECK( model.params().at("HKF").at("Hf").asFloat()   == params.Hf );
+        CHECK( model.params().at("HKF").at("Sr").asFloat()   == params.Sr );
+        CHECK( model.params().at("HKF").at("a1").asFloat()   == params.a1 );
+        CHECK( model.params().at("HKF").at("a2").asFloat()   == params.a2 );
+        CHECK( model.params().at("HKF").at("a3").asFloat()   == params.a3 );
+        CHECK( model.params().at("HKF").at("a4").asFloat()   == params.a4 );
+        CHECK( model.params().at("HKF").at("c1").asFloat()   == params.c1 );
+        CHECK( model.params().at("HKF").at("c2").asFloat()   == params.c2 );
+        CHECK( model.params().at("HKF").at("wref").asFloat() == params.wref );
     }
 
     // Check Oelkers et al. (1995), page 1438, table for CO3-2.
