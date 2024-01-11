@@ -42,7 +42,7 @@ dependencies:
   - reaktplot >=0.4.1
   - thermofun =0.4.5
   - tsl_ordered_map
-  - valgrind  # [unix]
+  - valgrind  # [linux]
   - vs2019_win-64  # [win]
   - yaml-cpp =0.7.0
   - pip:

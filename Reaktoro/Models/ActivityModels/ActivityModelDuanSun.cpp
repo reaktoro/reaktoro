@@ -88,6 +88,15 @@ auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator
         // The index of the dissolved gas in the aqueous phase.
         const auto igas = species.indexWithFormula(gas);
 
+        // the local indices of some charged species among all charged species
+        const auto aqmix = AqueousMixture(species);
+        const auto iNa  = aqmix.charged().findWithFormula("Na+");
+        const auto iK   = aqmix.charged().findWithFormula("K+");
+        const auto iCa  = aqmix.charged().findWithFormula("Ca++");
+        const auto iMg  = aqmix.charged().findWithFormula("Mg++");
+        const auto iCl  = aqmix.charged().findWithFormula("Cl-");
+        const auto iSO4 = aqmix.charged().findWithFormula("SO4--");
+
         ActivityModel fn = [=](ActivityPropsRef props, ActivityModelArgs args)
         {
             // Check AqueousMixture and AqueousMixtureState are available in props.extra
@@ -100,14 +109,6 @@ auto ActivityModelDuanSun(String gas) -> ActivityModelGenerator
             // The aqueous mixture and its state exported by a base aqueous activity model.
             const auto& mixture = *std::any_cast<SharedPtr<AqueousMixture> const&>(mixtureit->second);
             const auto& state = *std::any_cast<SharedPtr<AqueousMixtureState> const&>(stateit->second);
-
-            // The local indices of some charged species among all charged species
-            static const auto iNa  = mixture.charged().findWithFormula("Na+");
-            static const auto iK   = mixture.charged().findWithFormula("K+");
-            static const auto iCa  = mixture.charged().findWithFormula("Ca++");
-            static const auto iMg  = mixture.charged().findWithFormula("Mg++");
-            static const auto iCl  = mixture.charged().findWithFormula("Cl-");
-            static const auto iSO4 = mixture.charged().findWithFormula("SO4--");
 
             const auto& T  = state.T;
             const auto& P  = state.P;
