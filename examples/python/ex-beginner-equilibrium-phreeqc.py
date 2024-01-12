@@ -1,6 +1,6 @@
 # Reaktoro is a unified framework for modeling chemically reactive systems.
 #
-# Copyright © 2014-2022 Allan Leal
+# Copyright © 2014-2024 Allan Leal
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,8 +28,9 @@
 # -----------------------------------------------------------------------------
 
 
+from reaktoro import *
 
-# db = PhreeqcDatabase("phreeqc.dat")
+db = PhreeqcDatabase("phreeqc.dat")
 
 solution = AqueousPhase(speciate("H O C Na Cl"))
 solution.set(ActivityModelPhreeqc(db))
@@ -37,26 +38,26 @@ solution.set(ActivityModelPhreeqc(db))
 gases = GaseousPhase("CO2(g)")
 gases.set(ActivityModelPengRobinsonPhreeqc())
 
-# system = ChemicalSystem(db, solution, gases)
+system = ChemicalSystem(db, solution, gases)
 
-# T = 25.0 # temperature in celsius
-# P = 1.0  # pressure in bar
+T = 25.0 # temperature in celsius
+P = 1.0  # pressure in bar
 
-# state = ChemicalState(system)
-# state.temperature(T, "celsius")
-# state.pressure(P, "bar")
-# state.set("H2O"   , 1.0 , "kg")
-# state.set("CO2(g)", 10.0, "mol")
-# state.set("Na+"   , 4.00, "mol")
-# state.set("Cl-"   , 4.00, "mol")
+state = ChemicalState(system)
+state.temperature(T, "celsius")
+state.pressure(P, "bar")
+state.set("H2O"   , 1.0 , "kg")
+state.set("CO2(g)", 10.0, "mol")
+state.set("Na+"   , 4.00, "mol")
+state.set("Cl-"   , 4.00, "mol")
 
-# solver = EquilibriumSolver(system)
-# solver.solve(state)
+solver = EquilibriumSolver(system)
+solver.solve(state)
 
-# props = ChemicalProps(state)
-# props.output("props.txt")
+props = ChemicalProps(state)
+props.output("props.txt")
 
-# aprops = AqueousProps(state)
-# aprops.output("aprops.txt")
+aprops = AqueousProps(state)
+aprops.output("aprops.txt")
 
-# print("Success! Check outputted files `props.txt` and `aprops.txt`.")
+print("Success! Check outputted files `props.txt` and `aprops.txt`.")
