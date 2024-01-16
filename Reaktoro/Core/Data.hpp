@@ -18,22 +18,11 @@
 #pragma once
 
 // Reaktoro includes
-#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Common/Exception.hpp>
 #include <Reaktoro/Common/TraitsUtils.hpp>
-#include <Reaktoro/Core/Param.hpp>
+#include <Reaktoro/Common/Types.hpp>
 
 namespace Reaktoro {
-
-// ================================================================================================
-// TODO: Implement Data::with(key_name, key_value) to find entries in lists. Example:
-//
-// params["Species"].with("Name", "H2O(aq)")["StandardThermoModel"]["HKF"]["Gf"]
-//
-// Implement also Data::get(string_path_to_parameter) such as:
-//
-// params.get("Species:Name=H2O(aq):StandardThermoModel:HKF:Gf")
-// params.get("Species:Formula=Ca++:StandardThermoModel:HKF:Gf")
-// ================================================================================================
 
 /// The class used to store and retrieve data for assemblying chemical systems.
 /// @ingroup Core
@@ -92,9 +81,6 @@ public:
     /// Return this Data object as a float number.
     auto asFloat() const -> double;
 
-    /// Return this Data object as a Param object.
-    auto asParam() const -> Param const&;
-
     /// Return this Data object as a dictionary object.
     auto asDict() const -> Dict<String, Data> const&;
 
@@ -115,9 +101,6 @@ public:
 
     /// Return true if this Data object is a float number.
     auto isFloat() const -> bool;
-
-    /// Return true if this Data object is a Param object.
-    auto isParam() const -> bool;
 
     /// Return true if this Data object is a dictionary object.
     auto isDict() const -> bool;
@@ -264,7 +247,7 @@ public:
     template<typename T>
     auto assign(T const& obj) -> void
     {
-        if constexpr(isOneOf<T, bool, int, double, String, Param, Vec<Data>, Dict<String, Data>, Nullptr>)
+        if constexpr(isOneOf<T, bool, int, double, String, Vec<Data>, Dict<String, Data>, Nullptr>)
             tree = obj;
         else if constexpr(Reaktoro::isInteger<T>)
             tree = static_cast<int>(obj);
@@ -292,7 +275,7 @@ public:
     template<typename T>
     auto as() const -> T
     {
-        if constexpr(isOneOf<T, bool, String, Param, Vec<Data>, Dict<String, Data>>) {
+        if constexpr(isOneOf<T, bool, String, Vec<Data>, Dict<String, Data>>) {
             const bool convertable = std::any_cast<T>(&tree);
             errorif(!convertable, "Could not convert from Data object to an object of type ", typeid(T).name(), " because this is not the type of the data stored nor it is convertible to that type.");
             return std::any_cast<T const&>(tree);

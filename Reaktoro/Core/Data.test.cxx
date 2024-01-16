@@ -141,7 +141,6 @@ struct ComplicatedStuff
 {
     bool boolval;               // required
     double doubleval;           // required
-    Param paramval;             // required
     String stringval;           // required
     Strings vecval;             // optional
     Map<String, double> mapval; // optional
@@ -154,7 +153,6 @@ REAKTORO_DATA_ENCODE_DEFINE(ComplicatedStuff)
 {
     data["boolval"] = obj.boolval;
     data["doubleval"] = obj.doubleval;
-    data["paramval"] = obj.paramval;
     data["stringval"] = obj.stringval;
     data["vecval"] = obj.vecval;
     data["mapval"] = obj.mapval;
@@ -164,7 +162,6 @@ REAKTORO_DATA_DECODE_DEFINE(ComplicatedStuff)
 {
     data.required("boolval").to(obj.boolval);
     data.required("doubleval").to(obj.doubleval);
-    data.required("paramval").to(obj.paramval);
     data.required("stringval").to(obj.stringval);
     data.optional("vecval").to(obj.vecval);
     data.optional("mapval").to(obj.mapval);
@@ -187,8 +184,8 @@ TEST_CASE("Testing Data class", "[Data]")
         data.add(std::uint64_t(4));
         data.add(std::float_t(5.0));
         data.add(std::double_t(6.0));
-        data.add(real(7.0));
-        data.add(Param(8.0));
+        data.add(7.0);
+        data.add(8.0);
         data.add(Vec<Data>{data[0], data[1]});
         data.add(Dict<String, Data>{{"U", data[2]}, {"V", data[3]}});
         data.add(nullptr);
@@ -205,7 +202,7 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data[8].isFloat()   );
         CHECK( data[9].isFloat()   );
         CHECK( data[10].isFloat()  );
-        CHECK( data[11].isParam()  );
+        CHECK( data[11].isFloat()  );
         CHECK( data[12].isList()   );
         CHECK( data[13].isDict()   );
         CHECK( data[14].isNull()   );
@@ -222,7 +219,7 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data[8].asFloat()        ==  5.0     );
         CHECK( data[9].asFloat()        ==  6.0     );
         CHECK( data[10].asFloat()       ==  7.0     );
-        CHECK( data[11].asParam()       ==  8.0     );
+        CHECK( data[11].asFloat()       ==  8.0     );
         CHECK( data[12][0].asBoolean()  ==  true    );
         CHECK( data[12][1].asBoolean()  ==  false   );
         CHECK( data[13]["U"].asString() ==  "ABC"   );
@@ -258,8 +255,8 @@ TEST_CASE("Testing Data class", "[Data]")
         data.add("K7", std::uint64_t(4));
         data.add("K8", std::float_t(5.0));
         data.add("K9", std::double_t(6.0));
-        data.add("K10", real(7.0));
-        data.add("K11", Param(8.0));
+        data.add("K10", 7.0);
+        data.add("K11", 8.0);
         data.add("K12", Vec<Data>{data["K0"], data["K1"]});
         data.add("K13", Dict<String, Data>{{"U", data["K2"]}, {"V", data["K3"]}});
         data.add("K14", nullptr);
@@ -276,7 +273,7 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data["K8"].isFloat()   );
         CHECK( data["K9"].isFloat()   );
         CHECK( data["K10"].isFloat()  );
-        CHECK( data["K11"].isParam()  );
+        CHECK( data["K11"].isFloat()  );
         CHECK( data["K12"].isList()   );
         CHECK( data["K13"].isDict()   );
         CHECK( data["K14"].isNull()   );
@@ -293,7 +290,7 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( data["K8"].asFloat()        == 5.0     );
         CHECK( data["K9"].asFloat()        == 6.0     );
         CHECK( data["K10"].asFloat()       == 7.0     );
-        CHECK( data["K11"].asParam()       == 8.0     );
+        CHECK( data["K11"].asFloat()       == 8.0     );
         CHECK( data["K12"][0].asBoolean()  == true    );
         CHECK( data["K12"][1].asBoolean()  == false   );
         CHECK( data["K13"]["U"].asString() == "ABC"   );
@@ -322,19 +319,16 @@ TEST_CASE("Testing Data class", "[Data]")
         data.add("K1", true);
         data.add("K2", 1);
         data.add("K3", 2.0);
-        data.add("K4", Param(3.0));
 
         CHECK_NOTHROW( data.add("K0", "Hello There") );
         CHECK_NOTHROW( data.add("K1", false) );
         CHECK_NOTHROW( data.add("K2", 11) );
         CHECK_NOTHROW( data.add("K3", 22.0) );
-        CHECK_NOTHROW( data.add("K4", Param(33.0)) );
 
         CHECK( data["K0"].asString() == "Hello There" );
         CHECK( data["K1"].asBoolean() == false );
         CHECK( data["K2"].asInteger() == 11 );
         CHECK( data["K3"].asFloat() == 22.0 );
-        CHECK( data["K4"].asParam() == 33.0 );
     }
 
     SECTION("Checking method Data::update(other)")
@@ -385,16 +379,16 @@ TEST_CASE("Testing Data class", "[Data]")
 
         CHECK( data.isDict() );
         CHECK( data.at("A").isDict() );
-        CHECK( data.at("A").at("A1").isParam() );
-        CHECK( data.at("A").at("A1").asParam() == 1.0 );
+        CHECK( data.at("A").at("A1").isFloat() );
+        CHECK( data.at("A").at("A1").asFloat() == 1.0 );
         CHECK( data.at("A").at("A2").isDict() );
-        CHECK( data.at("A").at("A2").at("A21").asParam() == 2.1 );
-        CHECK( data.at("A").at("A2").at("A22").asParam() == 2.2 );
+        CHECK( data.at("A").at("A2").at("A21").asFloat() == 2.1 );
+        CHECK( data.at("A").at("A2").at("A22").asFloat() == 2.2 );
         CHECK( data.at("A").at("A2").at("A23").asBoolean() == false );
         CHECK( data.at("A").at("A2").at("A24").isList() );
         CHECK( data.at("A").at("A2").at("A24").asList().size() == 2 );
-        CHECK( data.at("A").at("A2").at("A24")[0].asParam() == 4.0 );
-        CHECK( data.at("A").at("A2").at("A24")[1].asParam() == 5.0 );
+        CHECK( data.at("A").at("A2").at("A24")[0].asFloat() == 4.0 );
+        CHECK( data.at("A").at("A2").at("A24")[1].asFloat() == 5.0 );
         CHECK( data.at("B").isString() );
         CHECK( data.at("B").asString() == "Hello" );
 
@@ -402,19 +396,19 @@ TEST_CASE("Testing Data class", "[Data]")
 
         CHECK( data.isDict() );
         CHECK( data.at("A").isDict() );
-        CHECK( data.at("A").at("A1").isParam() );
-        CHECK( data.at("A").at("A1").asParam() == 1.0 );
+        CHECK( data.at("A").at("A1").isFloat() );
+        CHECK( data.at("A").at("A1").asFloat() == 1.0 );
         CHECK( data.at("A").at("A2").isDict() );
-        CHECK( data.at("A").at("A2").at("A21").asParam() == 2.1 );
-        CHECK( data.at("A").at("A2").at("A22").asParam() == 2.6 );
+        CHECK( data.at("A").at("A2").at("A21").asFloat() == 2.1 );
+        CHECK( data.at("A").at("A2").at("A22").asFloat() == 2.6 );
         CHECK( data.at("A").at("A2").at("A23").asBoolean() == true );
         CHECK( data.at("A").at("A2").at("A24").isList() );
         CHECK( data.at("A").at("A2").at("A24").asList().size() == 2 );
-        CHECK( data.at("A").at("A2").at("A24")[0].asParam() == 8.0 );
-        CHECK( data.at("A").at("A2").at("A24")[1].asParam() == 1.0 );
+        CHECK( data.at("A").at("A2").at("A24")[0].asFloat() == 8.0 );
+        CHECK( data.at("A").at("A2").at("A24")[1].asFloat() == 1.0 );
         CHECK( data.at("B").isDict() );
         CHECK( data.at("B").at("B1").asString() == "Square" );
-        CHECK( data.at("B").at("B2").asParam() == 2.0 );
+        CHECK( data.at("B").at("B2").asFloat() == 2.0 );
         CHECK( data.at("C").isList() );
         CHECK( data.at("C").asList().size() == 3 );
         CHECK( data.at("C").asList()[0].asString() == "Alpha" );
@@ -434,7 +428,7 @@ TEST_CASE("Testing Data class", "[Data]")
         Data bar;
         bar["C"] = true;
         bar["D"] = "X";
-        bar["E"] = Param(7.0);
+        bar["E"] = 7.0;
 
         Data vec = Vec<Data>{ Data(false), Data("Y"), Data(9.0) };
 
@@ -467,7 +461,7 @@ TEST_CASE("Testing Data class", "[Data]")
 
             CHECK( data["Bar"]["C"].asBoolean() == true );
             CHECK( data["Bar"]["D"].asString()  == "X"  );
-            CHECK( data["Bar"]["E"].asParam()   == 7.0  );
+            CHECK( data["Bar"]["E"].asFloat()   == 7.0  );
 
             CHECK( data["Vec"][0].asBoolean() == false );
             CHECK( data["Vec"][1].asString()  == "Y"   );
@@ -486,7 +480,7 @@ TEST_CASE("Testing Data class", "[Data]")
         }
     }
 
-    SECTION("Check conversion from integer and floating point types to Param objects and vice-versa")
+    SECTION("Check conversion from integer to floating point type and vice-versa")
     {
         const auto num0 = Data(1);
         const auto num1 = Data(-2);
@@ -494,8 +488,8 @@ TEST_CASE("Testing Data class", "[Data]")
         const auto num3 = Data(std::uint64_t(4));
         const auto num4 = Data(std::float_t(5.2));
         const auto num5 = Data(std::double_t(6.4));
-        const auto num6 = Data(real(7.8));
-        const auto num7 = Data(Param(8.3));
+        const auto num6 = Data(7.8);
+        const auto num7 = Data(8.3);
         const auto num8 = Data(true);
         const auto num9 = Data('a');
 
@@ -506,9 +500,9 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( num4.isFloat()   == true  );
         CHECK( num5.isFloat()   == true  );
         CHECK( num6.isFloat()   == true  );
-        CHECK( num7.isParam()   == true  );
-        CHECK( num8.isParam()   == false ); // num8 should be boolean
-        CHECK( num9.isParam()   == false ); // num9 should be string
+        CHECK( num7.isFloat()   == true  );
+        CHECK( num8.isFloat()   == false ); // num8 should be boolean
+        CHECK( num9.isFloat()   == false ); // num9 should be string
 
         CHECK( num0.asInteger() ==  1 );
         CHECK( num1.asInteger() == -2 );
@@ -528,30 +522,21 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK( num6.asFloat() == Approx( 7.8) );
         CHECK( num7.asFloat() == Approx( 8.3) );
 
-        CHECK_THROWS( num0.asParam() );
-        CHECK_THROWS( num1.asParam() );
-        CHECK_THROWS( num2.asParam() );
-        CHECK_THROWS( num3.asParam() );
-        CHECK_THROWS( num4.asParam() );
-        CHECK_THROWS( num5.asParam() );
-        CHECK_THROWS( num6.asParam() );
-        CHECK_THROWS( num8.asParam() );
-        CHECK_THROWS( num9.asParam() );
+        CHECK_THROWS( num8.asFloat() ); // bool
+        CHECK_THROWS( num9.asFloat() ); // char
 
-        CHECK_NOTHROW( num7.asInteger() ); // num7 (a Param object) can be converted to int
-        CHECK_NOTHROW( num7.asFloat()   ); // num7 (a Param object) can be converted to double
-        CHECK_NOTHROW( num7.asParam()   ); // num7 (a Param object) can be converted to Param
+        CHECK_NOTHROW( num7.asInteger() ); // num7 (a number value) can be converted to int
+        CHECK_NOTHROW( num7.asFloat()   ); // num7 (a number value) can be converted to double
 
-        CHECK_THROWS( num7.asString()   ); // num7 (a Param object) cannot be converted to string
-        CHECK_THROWS( num7.asDict()     ); // num7 (a Param object) cannot be converted to dictionary
-        CHECK_THROWS( num7.asList()     ); // num7 (a Param object) cannot be converted to list
-        CHECK_THROWS( num7.asNull()     ); // num7 (a Param object) cannot be converted to nullptr
+        CHECK_THROWS( num7.asString()   ); // num7 (a number value) cannot be converted to string
+        CHECK_THROWS( num7.asDict()     ); // num7 (a number value) cannot be converted to dictionary
+        CHECK_THROWS( num7.asList()     ); // num7 (a number value) cannot be converted to list
+        CHECK_THROWS( num7.asNull()     ); // num7 (a number value) cannot be converted to nullptr
 
         CHECK_NOTHROW( num8.asBoolean() );
         CHECK_THROWS( num8.asString()   );
         CHECK_THROWS( num8.asInteger()  );
         CHECK_THROWS( num8.asFloat()    );
-        CHECK_THROWS( num8.asParam()    );
         CHECK_THROWS( num8.asDict()     );
         CHECK_THROWS( num8.asList()     );
         CHECK_THROWS( num8.asNull()     );
@@ -560,7 +545,6 @@ TEST_CASE("Testing Data class", "[Data]")
         CHECK_THROWS( num9.asBoolean()  );
         CHECK_THROWS( num9.asInteger()  );
         CHECK_THROWS( num9.asFloat()    );
-        CHECK_THROWS( num9.asParam()    );
         CHECK_THROWS( num9.asDict()     );
         CHECK_THROWS( num9.asList()     );
         CHECK_THROWS( num9.asNull()     );
@@ -594,39 +578,37 @@ TEST_CASE("Testing Data class", "[Data]")
         const Data thermo0 = species0["StandardThermoModel"]["HollandPowell"];
         const Data thermo1 = species1["StandardThermoModel"]["HollandPowell"];
 
-        // Check numbers parsed from YAML or JSON text are interpreted as Param
-        // by default. If a number needs to be interpreted as integer or
-        // double, the key must end with |i or |f respectively.
+        // Check numbers parsed from YAML or JSON text are interpreted as numbers by default.
 
-        CHECK( thermo0["Gf"].isParam()       );
-        CHECK( thermo0["Hf"].isParam()       );
-        CHECK( thermo0["Sr"].isParam()       );
-        CHECK( thermo0["Vr"].isParam()       );
-        CHECK( thermo0["a"].isParam()        );
-        CHECK( thermo0["b"].isParam()        );
-        CHECK( thermo0["c"].isParam()        );
-        CHECK( thermo0["d"].isParam()        );
-        CHECK( thermo0["alpha0"].isParam()   );
-        CHECK( thermo0["kappa0"].isParam()   );
-        CHECK( thermo0["kappa0p"].isParam()  );
-        CHECK( thermo0["kappa0pp"].isParam() );
-        CHECK( thermo0["numatoms"].isParam() );
-        CHECK( thermo0["Tmax"].isParam()     );
+        CHECK( thermo0["Gf"].isFloat()       );
+        CHECK( thermo0["Hf"].isFloat()       );
+        CHECK( thermo0["Sr"].isFloat()       );
+        CHECK( thermo0["Vr"].isFloat()       );
+        CHECK( thermo0["a"].isFloat()        );
+        CHECK( thermo0["b"].isFloat()        );
+        CHECK( thermo0["c"].isFloat()        );
+        CHECK( thermo0["d"].isFloat()        );
+        CHECK( thermo0["alpha0"].isFloat()   );
+        CHECK( thermo0["kappa0"].isFloat()   );
+        CHECK( thermo0["kappa0p"].isFloat()  );
+        CHECK( thermo0["kappa0pp"].isFloat() );
+        CHECK( thermo0["numatoms"].isFloat() );
+        CHECK( thermo0["Tmax"].isFloat()     );
 
-        CHECK( thermo1["Gf"].isParam()       );
-        CHECK( thermo1["Hf"].isParam()       );
-        CHECK( thermo1["Sr"].isParam()       );
-        CHECK( thermo1["Vr"].isParam()       );
-        CHECK( thermo1["a"].isParam()        );
-        CHECK( thermo1["b"].isParam()        );
-        CHECK( thermo1["c"].isParam()        );
-        CHECK( thermo1["d"].isParam()        );
-        CHECK( thermo1["alpha0"].isParam()   );
-        CHECK( thermo1["kappa0"].isParam()   );
-        CHECK( thermo1["kappa0p"].isParam()  );
-        CHECK( thermo1["kappa0pp"].isParam() );
-        CHECK( thermo1["numatoms"].isParam() );
-        CHECK( thermo1["Tmax"].isParam()     );
+        CHECK( thermo1["Gf"].isFloat()       );
+        CHECK( thermo1["Hf"].isFloat()       );
+        CHECK( thermo1["Sr"].isFloat()       );
+        CHECK( thermo1["Vr"].isFloat()       );
+        CHECK( thermo1["a"].isFloat()        );
+        CHECK( thermo1["b"].isFloat()        );
+        CHECK( thermo1["c"].isFloat()        );
+        CHECK( thermo1["d"].isFloat()        );
+        CHECK( thermo1["alpha0"].isFloat()   );
+        CHECK( thermo1["kappa0"].isFloat()   );
+        CHECK( thermo1["kappa0p"].isFloat()  );
+        CHECK( thermo1["kappa0pp"].isFloat() );
+        CHECK( thermo1["numatoms"].isFloat() );
+        CHECK( thermo1["Tmax"].isFloat()     );
 
         // Check the values read from the YAML or JSON text.
 
@@ -728,7 +710,6 @@ TEST_CASE("Testing Data class", "[Data]")
         const auto str = R"#(
             boolval: true
             doubleval: 1.2
-            paramval: 3.4
             stringval: Moon
         )#";
 
@@ -736,14 +717,12 @@ TEST_CASE("Testing Data class", "[Data]")
 
         CHECK( stuff.boolval == true);
         CHECK( stuff.doubleval == 1.2);
-        CHECK( stuff.paramval == 3.4);
         CHECK( stuff.stringval == "Moon");
         CHECK( stuff.vecval.empty() );
         CHECK( stuff.mapval.empty() );
 
         stuff.boolval = false;
         stuff.doubleval = 3.2;
-        stuff.paramval = 7.6;
         stuff.stringval = "Sun";
         stuff.vecval = Strings{"A", "B"};
         stuff.mapval = Map<String, double>{{"U", 1.2}, {"V", 5.5}};
@@ -751,18 +730,16 @@ TEST_CASE("Testing Data class", "[Data]")
         Data encoded = stuff;
 
         CHECK( encoded.isDict() );
-        CHECK( encoded.asDict().size() == 6 );
+        CHECK( encoded.asDict().size() == 5 );
 
         CHECK( encoded.exists("boolval") );
         CHECK( encoded.exists("doubleval") );
-        CHECK( encoded.exists("paramval") );
         CHECK( encoded.exists("stringval") );
         CHECK( encoded.exists("vecval") );
         CHECK( encoded.exists("mapval") );
 
         CHECK( encoded["boolval"].asBoolean()   == false );
         CHECK( encoded["doubleval"].asFloat()   == 3.2   );
-        CHECK( encoded["paramval"].asParam()    == 7.6   );
         CHECK( encoded["stringval"].asString()  == "Sun" );
         CHECK( encoded["vecval"][0].asString()  == "A"   );
         CHECK( encoded["vecval"][1].asString()  == "B"   );
