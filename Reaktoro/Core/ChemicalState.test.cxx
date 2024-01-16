@@ -43,19 +43,19 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     // TESTING METHOD: ChemicalState::temperature
     //-------------------------------------------------------------------------
     state.temperature(200.0);
-    CHECK( state.temperature() == 200.0 );
+    CHECK( state.temperature() == Approx(200.0) );
 
     state.temperature(33.0, "celsius");
-    CHECK( state.temperature() == 273.15 + 33.0 );
+    CHECK( state.temperature() == Approx(273.15 + 33.0) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::pressure
     //-------------------------------------------------------------------------
     state.pressure(234.0e5);
-    CHECK( state.pressure() == 234.0e5 );
+    CHECK( state.pressure() == Approx(234.0e5) );
 
     state.pressure(40.0, "bar");
-    CHECK( state.pressure() == 40.0 * 1e5 );
+    CHECK( state.pressure() == Approx(40.0 * 1e5) );
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::add(name, value, unit)
@@ -89,61 +89,61 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     // TESTING METHOD: ChemicalState::setTemperature
     //-------------------------------------------------------------------------
     state.setTemperature(300.0);
-    CHECK( state.temperature() == 300.0 );
+    CHECK( state.temperature() == Approx(300.0));
 
     state.setTemperature(30.0, "celsius");
-    CHECK( state.temperature() == 273.15 + 30.0 );
+    CHECK( state.temperature() == Approx(273.15 + 30.0));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setPressure
     //-------------------------------------------------------------------------
     state.setPressure(123.0e5);
-    CHECK( state.pressure() == 123.0e5 );
+    CHECK( state.pressure() == Approx(123.0e5));
 
     state.setPressure(30.0, "bar");
-    CHECK( state.pressure() == 30.0 * 1e5 );
+    CHECK( state.pressure() == Approx(30.0 * 1e5));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmounts(value)
     //-------------------------------------------------------------------------
     state.setSpeciesAmounts(1.0);
-    CHECK( (state.speciesAmounts() == 1.0).all() );
+    CHECK( (state.speciesAmounts() == 1.0).all());
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmounts(values)
     //-------------------------------------------------------------------------
     state.setSpeciesAmounts( ArrayXr::Ones(system.species().size()) * 11.0 );
-    CHECK( (state.speciesAmounts() == 11.0).all() );
+    CHECK( (state.speciesAmounts() == 11.0).all());
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmount(ispecies, amount)
     //-------------------------------------------------------------------------
     state.setSpeciesAmount(3, 4.0, "mol");
-    CHECK( state.speciesAmount(3) == 4.0 );
+    CHECK( state.speciesAmount(3) == Approx(4.0));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmount(ispecies, amount, unit)
     //-------------------------------------------------------------------------
     state.setSpeciesAmount(3, 4.0, "mmol");
-    CHECK( state.speciesAmount(3) == 0.004 );
+    CHECK( state.speciesAmount(3) == Approx(0.004));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmount(name, amount)
     //-------------------------------------------------------------------------
     state.setSpeciesAmount("CO2(g)", 7.0, "mol");
-    CHECK( state.speciesAmount(idx("CO2(g)")) == 7.0 );
+    CHECK( state.speciesAmount(idx("CO2(g)")) == Approx(7.0));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesAmount(name, amount, unit)
     //-------------------------------------------------------------------------
     state.setSpeciesAmount("CaCO3(s)", 9.0, "kmol");
-    CHECK( state.speciesAmount(idx("CaCO3(s)")) == 9000.0 );
+    CHECK( state.speciesAmount(idx("CaCO3(s)")) == Approx(9000.0));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesMass(ispecies, mass)
     //-------------------------------------------------------------------------
     state.setSpeciesMass(5, 10.0, "kg");
-    CHECK( state.speciesMass(5) == 10.0 );
+    CHECK( state.speciesMass(5) == Approx(10.0));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesMass(ispecies, mass, unit)
@@ -155,13 +155,13 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
     // TESTING METHOD: ChemicalState::setSpeciesMass(name, mass)
     //-------------------------------------------------------------------------
     state.setSpeciesMass("CO2(g)", 7.0, "kg");
-    CHECK( state.speciesMass(idx("CO2(g)")) == 7.0 );
+    CHECK( state.speciesMass(idx("CO2(g)")) == Approx(7.0));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::setSpeciesMass(name, mass, unit)
     //-------------------------------------------------------------------------
     state.setSpeciesMass("CaCO3(s)", 7.0, "g");
-    CHECK( state.speciesMass(idx("CaCO3(s)")) == 0.007 );
+    CHECK( state.speciesMass(idx("CaCO3(s)")) == Approx(0.007));
 
     //-------------------------------------------------------------------------
     // TESTING METHOD: ChemicalState::charge
@@ -312,8 +312,8 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
         state.set("HCO3-(aq)", 1.234, "mol");
         state.props().update(state);
 
-        CHECK(  state.props().temperature() == 288.0 );
-        CHECK(  state.props().pressure() == 1.3e5 );
+        CHECK(  state.props().temperature() == Approx(288.0));
+        CHECK(  state.props().pressure() == Approx(1.3e5));
         CHECK(  state.props().charge() == Approx(-1.234) );
 
         return state.props();
@@ -321,7 +321,7 @@ TEST_CASE("Testing ChemicalState class", "[ChemicalState]")
 
     props = createChemicalProps();
 
-    CHECK(  props.temperature() == 288.0 );
-    CHECK(  props.pressure() == 1.3e5 );
+    CHECK(  props.temperature() == Approx(288.0));
+    CHECK(  props.pressure() == Approx(1.3e5));
     CHECK(  props.charge() == Approx(-1.234) );
 }
