@@ -69,8 +69,6 @@ int main()
 
     // Set options for the equilibrium calculation
     EquilibriumOptions options;
-    options.optima.newtonstep.linearsolver.method = Optima::LinearSolverMethod::Rangespace;
-    options.hessian = GibbsHessian::ApproxDiagonal;
     options.epsilon = 1e-40; // this is needed for species to exist with tinier amounts so that desired pE value below can be attained
     solver.setOptions(options);
 
