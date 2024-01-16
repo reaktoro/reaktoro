@@ -80,7 +80,7 @@ auto convertYamlScalarToData(yaml const& obj) -> Data
     auto const& word = obj.Scalar();
     auto number = 0.0;
     if(isNumber(word, number))
-        return Param(number);
+        return number;
     else {
         if(word == "true" || word == "True")
             return true;
@@ -186,9 +186,9 @@ auto convertJsonToData(json const& obj) -> Data
         case json::value_t::array: return convertJsonArrayToData(obj);
         case json::value_t::string: return obj.get<String>();
         case json::value_t::boolean: return obj.get<bool>();
-        case json::value_t::number_integer: return Param(obj.get<int>());
-        case json::value_t::number_unsigned: return Param(obj.get<int>());
-        case json::value_t::number_float: return Param(obj.get<double>());
+        case json::value_t::number_integer: return obj.get<int>();
+        case json::value_t::number_unsigned: return obj.get<int>();
+        case json::value_t::number_float: return obj.get<double>();
         case json::value_t::binary: break;
         case json::value_t::discarded: break;
     }
@@ -233,7 +233,6 @@ auto convertDataTo(Data const& data) -> Format
     if(data.isString()) return Format(data.asString());
     if(data.isInteger()) return Format(data.asInteger());
     if(data.isFloat()) return Format(data.asFloat());
-    if(data.isParam()) return Format(data.asFloat());
     if(data.isDict()) return convertDataDictTo<Format>(data);
     if(data.isList()) return convertDataListTo<Format>(data);
     errorif(true, "Could not convert this Data object to an YAML or JSON as the Data object is not in a valid state.");
@@ -386,9 +385,7 @@ auto Data::asInteger() const -> int
         return std::any_cast<int const&>(tree);
     if(isFloat())
         return std::any_cast<double const&>(tree);
-    if(isParam())
-        return std::any_cast<Param const&>(tree).value().val();
-    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be either an integer, a float, or a Param object.");
+    else errorif(true, "Cannot convert this Data object to an integer number. This Data object should be either an integer or float.");
 }
 
 auto Data::asFloat() const -> double
@@ -397,15 +394,7 @@ auto Data::asFloat() const -> double
         return std::any_cast<int const&>(tree);
     if(isFloat())
         return std::any_cast<double const&>(tree);
-    if(isParam())
-        return std::any_cast<Param const&>(tree).value().val();
-    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be either an integer, a float, or a Param object.");
-}
-
-auto Data::asParam() const -> Param const&
-{
-    errorif(!isParam(), "Cannot convert this Data object to a Param object. This Data object should be a Param object.");
-    return std::any_cast<Param const&>(tree);
+    else errorif(true, "Cannot convert this Data object to a float number. This Data object should be either an integer or float.");
 }
 
 auto Data::asDict() const -> Dict<String, Data> const&
@@ -444,11 +433,6 @@ auto Data::isInteger() const -> bool
 auto Data::isFloat() const -> bool
 {
     return std::any_cast<double>(&tree);
-}
-
-auto Data::isParam() const -> bool
-{
-    return std::any_cast<Param>(&tree);
 }
 
 auto Data::isDict() const -> bool

@@ -24,10 +24,10 @@ using namespace Reaktoro;
 
 void exportData(py::module& m)
 {
-    // Currently, Python bindings for Data is not working correctly 
-    // with Param, Vec<Data>, Dict<String,Data> on clang v14.0.6 in macOS.
+    // Currently, Python bindings for Data is not working correctly
+    // with Vec<Data>, Dict<String,Data> on clang v14.0.6 in macOS.
     // So, constructors and conversion to Data related to these types are disable
-    // in the reaktoro Python package for now (in macOS only!).  
+    // in the reaktoro Python package for now (in macOS only!).
 
     py::class_<Data>(m, "Data")
         .def(py::init<>(), "Construct a default Data instance with null value.")
@@ -35,9 +35,8 @@ void exportData(py::module& m)
         .def(py::init<String const&>(), "Construct a Data object as a string value.")
         .def(py::init<int const&>(), "Construct a Data object as a integer value.")
         .def(py::init<double const&>(), "Construct a Data object as a number value.")
-        .def(py::init<real const&>(), "Construct a Data object as a Param object.")
+        .def(py::init<real const&>(), "Construct a Data object as a number value.")
 #ifndef __APPLE__
-        .def(py::init<Param const&>(), "Construct a Data object as a Param object.")
         .def(py::init<Map<String, Data> const&>(), "Construct a Data object as a dictionary object.")
         .def(py::init<Vec<Data> const&>(), "Construct a Data object as a list object.")
 #endif
@@ -57,7 +56,6 @@ void exportData(py::module& m)
         .def("asString", &Data::asString, return_internal_ref, "Return this Data object as a string.")
         .def("asInteger", &Data::asInteger, "Return this Data object as an integer number.")
         .def("asFloat", &Data::asFloat, "Return this Data object as a float number.")
-        .def("asParam", &Data::asParam, return_internal_ref, "Return this Data object as a Param object.")
         .def("asDict", &Data::asDict, return_internal_ref, "Return this Data object as a dictionary object.")
         .def("asList", &Data::asList, return_internal_ref, "Return this Data object as a list object.")
         .def("asNull", &Data::asNull, "Return this Data object as a nullptr value.")
@@ -65,7 +63,6 @@ void exportData(py::module& m)
         .def("isString", &Data::isString, "Return true if this Data object is a string.")
         .def("isInteger", &Data::isInteger, "Return true if this Data object is an integer number.")
         .def("isFloat", &Data::isFloat, "Return true if this Data object is a float number.")
-        .def("isParam", &Data::isParam, "Return true if this Data object is a Param object.")
         .def("isDict", &Data::isDict, "Return true if this Data object is a dictionary object.")
         .def("isList", &Data::isList, "Return true if this Data object is a list object.")
         .def("isNull", &Data::isNull, "Return true if this Data object is a null value.")
@@ -100,7 +97,6 @@ void exportData(py::module& m)
     py::implicitly_convertible<int, Data>();
     py::implicitly_convertible<bool, Data>();
 #ifndef __APPLE__
-    py::implicitly_convertible<Param, Data>();
     py::implicitly_convertible<Map<String, Data>, Data>();
     py::implicitly_convertible<Vec<Data>, Data>();
 #endif

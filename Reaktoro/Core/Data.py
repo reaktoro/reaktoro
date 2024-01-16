@@ -32,7 +32,7 @@ def testData():
     bar.add("D", "X")
 
     if sys.platform != "darwin":
-        bar.add("E", Param(7.0))
+        bar.add("E", 7.0)
 
     doo = Data()
     doo.add(3.0)
@@ -75,7 +75,7 @@ def testData():
     assert params.exists("Foo") == True
     assert params.exists("Bar") == True
     assert params.exists("Joe") == False
-    
+
     assert params["Foo"].exists("A") == True
     assert params["Foo"].exists("Z") == False
     assert params["Bar"].exists("C") == True
