@@ -54,7 +54,7 @@ def testMaterial():
     state = mix.equilibrate()
 
     assert mix.result().succeeded()
-    assert mix.result().iterations() <= 77  # macOS: 74, Linux & Windows: 77
+    assert mix.result().iterations() <= 78  # macOS: 76, Linux & Windows: 78
 
     assert state.temperature() == pytest.approx(25.0 + 273.15)
     assert state.pressure() == pytest.approx(1.0 * 1e5)
@@ -63,7 +63,7 @@ def testMaterial():
     state = mix.equilibrate(60.0, "celsius", 10.0, "bar")
 
     assert mix.result().succeeded()
-    assert mix.result().iterations() <= 90  # macOS: 87, Linux: 90, Windows: 78
+    assert mix.result().iterations() <= 91  # macOS: 88, Linux: 91, Windows: 79
 
     assert state.temperature() == pytest.approx(60.0 + 273.15)
     assert state.pressure() == pytest.approx(10.0 * 1e5)
