@@ -21,7 +21,6 @@
 void exportEquilibriumConditions(py::module& m);
 void exportEquilibriumDims(py::module& m);
 void exportEquilibriumOptions(py::module& m);
-void exportEquilibriumProblem(py::module& m);
 void exportEquilibriumRestrictions(py::module& m);
 void exportEquilibriumResult(py::module& m);
 void exportEquilibriumSensitivity(py::module& m);
@@ -38,7 +37,6 @@ void exportEquilibrium(py::module& m)
     exportEquilibriumDims(m);
     exportEquilibriumOptions(m);
     exportEquilibriumRestrictions(m);
-    exportEquilibriumProblem(m); // Ensure exportEquilibriumProblem is executed after exportEquilibriumConditions and exportEquilibriumRestrictions!
     exportEquilibriumResult(m);
     exportEquilibriumSensitivity(m);
     exportEquilibriumSolver(m);
