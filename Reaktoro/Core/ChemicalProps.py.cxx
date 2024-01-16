@@ -1,6 +1,6 @@
 // Reaktoro is a unified framework for modeling chemically reactive systems.
 //
-// Copyright © 2014-2022 Allan Leal
+// Copyright © 2014-2024 Allan Leal
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -87,7 +87,7 @@ void exportChemicalProps(py::module& m)
         .def("speciesActivitiesLn", &ChemicalProps::speciesActivitiesLn, return_internal_ref, "Return the ln activities of the species in the system.")
         .def("speciesChemicalPotentials", &ChemicalProps::speciesChemicalPotentials, return_internal_ref, "Return the chemical potentials of the species in the system (in J/mol).")
         .def("speciesPartialMolarVolumes", &ChemicalProps::speciesPartialMolarVolumes, return_internal_ref, "Return the partial molar volumes of the species in the system (in m³/mol).")
-        .def("speciesStandardVolumes", &ChemicalProps::speciesStandardVolumes, return_internal_ref, "Return the standard partial molar volumes of the species in the system (in m³/mol).")        
+        .def("speciesStandardVolumes", &ChemicalProps::speciesStandardVolumes, return_internal_ref, "Return the standard partial molar volumes of the species in the system (in m³/mol).")
         .def("speciesStandardVolumesT", &ChemicalProps::speciesStandardVolumesT, return_internal_ref, "Return the temperature derivative of the standard molar volumes of the species in the system (in m³/(mol·K)).")
         .def("speciesStandardVolumesP", &ChemicalProps::speciesStandardVolumesP, return_internal_ref, "Return the pressure derivative of the standard molar volumes of the species in the system (in m³/(mol·Pa)).")
         .def("speciesStandardGibbsEnergies", &ChemicalProps::speciesStandardGibbsEnergies, return_internal_ref, "Return the standard partial molar Gibbs energies of formation of the species in the system (in J/mol).")
