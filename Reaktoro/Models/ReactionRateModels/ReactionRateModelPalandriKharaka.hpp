@@ -40,7 +40,7 @@ struct ReactionRateModelParamsPalandriKharaka
         String property = "a";
 
         /// The power of the property that affects the rate of mineral reaction.
-        Param power = 0.0;
+        real power = 0.0;
     };
 
     /// The parameters for a mineral reaction rate mechanism of @cite{Palandri2004}.
@@ -50,16 +50,16 @@ struct ReactionRateModelParamsPalandriKharaka
         String name;
 
         /// The kinetic rate constant of the mineral reaction at 298.15 K (in lg mol/(m2*s)).
-        Param lgk;
+        real lgk;
 
         /// The Arrhenius activation energy of the mineral reaction (in kJ/mol).
-        Param E;
+        real E;
 
         /// The empirical and dimensionless power parameter *p*.
-        Param p = 1.0;
+        real p = 1.0;
 
         /// The empirical and dimensionless power parameter *q*.
-        Param q = 1.0;
+        real q = 1.0;
 
         /// The catalysts of the mineral reaction.
         Vec<Catalyst> catalysts;

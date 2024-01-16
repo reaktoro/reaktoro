@@ -26,7 +26,7 @@ namespace Reaktoro {
 struct StandardVolumeModelParamsConstant
 {
     /// The constant standard molar volume @f$V^{\circ}@f$ of the product species (in m3/mol).
-    Param V0;
+    real V0;
 };
 
 /// Return a function that calculates the standard volume of a product species using a constant model.

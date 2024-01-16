@@ -333,42 +333,42 @@ public:
     /// This method introduces one input variable with name `V`. It also
     /// introduces an equation constraint with name `volume` to enforce a given
     /// volume value for the chemical system at equilibrium.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints.
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints.
     auto volume() -> void;
 
     /// Specify that the **internal energy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `U`. It also
     /// introduces an equation constraint with name `internalEnergy` to enforce a given
     /// internal energy value for the chemical system at equilibrium.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints.
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints.
     auto internalEnergy() -> void;
 
     /// Specify that the **enthalpy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `H`. It also
     /// introduces an equation constraint with name `enthalpy` to enforce a given
     /// enthalpy value for the chemical system at equilibrium.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints.
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints.
     auto enthalpy() -> void;
 
     /// Specify that the **Gibbs energy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `G`. It also
     /// introduces an equation constraint with name `gibbsEnergy` to enforce a given
     /// Gibbs energy value for the chemical system at equilibrium.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints.
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints.
     auto gibbsEnergy() -> void;
 
     /// Specify that the **Helmholtz energy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `A`. It also
     /// introduces an equation constraint with name `helmholtzEnergy` to enforce a given
     /// Helmholtz energy value for the chemical system at equilibrium.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints.
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints.
     auto helmholtzEnergy() -> void;
 
     /// Specify that the **entropy** of the system is given at chemical equilibrium.
     /// This method introduces one input variable with name `S`. It also
     /// introduces an equation constraint with name `entropy` to enforce a given
     /// entropy value for the chemical system at equilibrium.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints.
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints.
     auto entropy() -> void;
 
     /// Specify that the **electric charge** is given at chemical equilibrium.
@@ -436,7 +436,7 @@ public:
     /// This method also indicates that the chemical system is open to @p
     /// substance (e.g., the system is open to mass in/out of H@sub{2}O). Thus
     /// an *implicit titrant* is introduced with name `[substance]` (e.g., `[H2O]`).
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param substance The chemical formula of the substance (e.g., `H2O`, `CO2`, `H+`, `Mg+2`).
     auto chemicalPotential(String substance) -> void;
 
@@ -451,13 +451,13 @@ public:
     /// itself. For example, the system is open to mass in/out of CO@sub{2} if
     /// the Species object @p species is `CO2(aq)`, `CO2(g)` or `CO2(l)`). Thus
     /// an *implicit titrant* is introduced with name `[substance]` (e.g., `[CO2]`).
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The chemical species as an Species object.
     auto lnActivity(Species const& species) -> void;
 
     /// Specify that the **ln activity** of a species is given at chemical equilibrium.
     /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
     /// @note The chemical species does not need to be in the chemical system; only in the database.
     /// @warning An error will be thrown if the database does not contain a species with given name.
@@ -465,7 +465,7 @@ public:
 
     /// Specify that the **lg activity** of a species is given at chemical equilibrium.
     /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
     /// @note The chemical species does not need to be in the chemical system; only in the database.
     /// @warning An error will be thrown if the database does not contain a species with given name.
@@ -473,7 +473,7 @@ public:
 
     /// Specify that the **activity** of a species is given at chemical equilibrium.
     /// For more details, check the documentation of EquilibriumSpecs::lnActivity(Species const&).
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param species The name of the chemical species as found in the database in use.
     /// @note The chemical species does not need to be in the chemical system; only in the database.
     /// @warning An error will be thrown if the database does not contain a species with given name.
@@ -487,7 +487,7 @@ public:
     /// indicates that the chemical system is open to @p gas (e.g., the system is
     /// open to mass in/out of O@sub{2}). Thus an *implicit titrant* is
     /// introduced with name `[substance]` (e.g., `[O2]`).
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @param gas The name of the gaseous species as found in the database in use.
     /// @note The gaseous species does not need to be in the chemical system; only in the database.
     /// @warning An error will be thrown if the database does not contain a gaseous species with given name.
@@ -508,13 +508,13 @@ public:
     /// specs.enthalpy();                     // introduces input variable `H` and constraint `enthalpy`
     /// specs.pressure();                     // introduces input variable `P`
     /// specs.pH();                           // introduces input variable `pH`, constraint `pH`, and titrant `[H+]`
-    /// print(specs.namesInputParams());      // H, P, pH
+    /// print(specs.namesInputs());      // H, P, pH
     /// print(specs.namesTitrants());         // [H+]
     /// print(specs.namesControlVariables()); // T, n[H+]
     /// print(specs.namesContraints());       // enthalpy, pH
     /// ~~~
     ///
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @warning An error will be thrown if the system does not contain an aqueous species with formula `H+`.
     auto pH() -> void;
 
@@ -524,7 +524,7 @@ public:
     /// equivalent to enforcing a given value for pMg at chemical equilibrium.
     /// This method also indicates that the chemical system is open to mass
     /// in/out of Mg@sup{2+}. Thus an *implicit titrant* is introduced with name `[Mg+2]`.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     /// @warning An error will be thrown if the system does not contain an aqueous species with formula `Mg+2`.
     auto pMg() -> void;
 
@@ -535,7 +535,7 @@ public:
     /// This method also indicates that the chemical system is open to mass
     /// in/out of e@sup{-} (the electron substance). Thus an *implicit titrant*
     /// is introduced with name `[e-]`.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     auto pE() -> void;
 
     /// Specify that Eh is given at chemical equilibrium.
@@ -545,7 +545,7 @@ public:
     /// This method also indicates that the chemical system is open to mass
     /// in/out of e@sup{-} (the electron substance). Thus an *implicit titrant*
     /// is introduced with name `[e-]`.
-    /// @see EquilibriumSpecs::namesInputParams, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
+    /// @see EquilibriumSpecs::namesInputs, EquilibriumSpecs::namesConstraints, EquilibriumSpecs::namesTitrants, EquilibriumSpecs::namesControlVariables
     auto Eh() -> void;
 
     //=================================================================================================
@@ -608,9 +608,6 @@ public:
     /// Return the number of introduced input variables.
     auto numInputs() const -> Index;
 
-    /// Return the number of model parameters among the introduced input variables.
-    auto numInputParams() const -> Index;
-
     /// Return the number of all introduced control variables.
     auto numControlVariables() const -> Index;
 
@@ -649,9 +646,6 @@ public:
 
     /// Return the names of the introduced input variables.
     auto namesInputs() const -> Strings;
-
-    /// Return the names of the model parameters among the input variables.
-    auto namesInputParams() const -> Strings;
 
     /// Return the names of all introduced control variables.
     auto namesControlVariables() const -> Strings;
@@ -704,9 +698,6 @@ public:
     /// Add a new input variable for the chemical equilibrium problem with name @p var.
     auto addInput(String const& var) -> Index;
 
-    /// Add model parameter @p param as a new input variable for the chemical equilibrium problem.
-    auto addInput(Param const& param) -> Index;
-
     //=================================================================================================
     //
     // MISCELLANEOUS METHODS
@@ -718,12 +709,6 @@ public:
 
     /// Return the input variables in the chemical equilibrium specifications.
     auto inputs() const -> Strings const&;
-
-    /// Return the model parameters among the input variables.
-    auto params() const -> Vec<Param> const&;
-
-    /// Return the indices of the model parameters among the input variables.
-    auto indicesInputParams() const -> Vec<Index> const&;
 
     /// Return true if temperature is unknown in the chemical equilibrium specifications.
     auto isTemperatureUnknown() const -> bool;
@@ -829,12 +814,6 @@ private:
 
     /// The names of the input variables in the chemical equilibrium calculation.
     Strings m_inputs;
-
-    /// The model parameters among the input variables in the chemical equilibrium calculation.
-    Vec<Param> m_params;
-
-    /// The indices of the model parameters among the input variables in the chemical equilibrium calculation.
-    Vec<Index> m_params_idxs;
 
     /// The *q* control variables in the chemical equilibrium problem.
     Vec<ControlVariableQ> qvars;

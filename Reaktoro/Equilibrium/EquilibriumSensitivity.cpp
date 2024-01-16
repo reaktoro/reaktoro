@@ -57,11 +57,6 @@ auto EquilibriumSensitivity::dndw(String const& wid) const -> VectorXdConstRef
     return mdndw.col(idx);
 }
 
-auto EquilibriumSensitivity::dndw(Param const& param) const -> VectorXdConstRef
-{
-    return dndw(param.id());
-}
-
 auto EquilibriumSensitivity::dndw() const -> MatrixXdConstRef
 {
     return mdndw;
@@ -80,11 +75,6 @@ auto EquilibriumSensitivity::dpdw(String const& wid) const -> VectorXdConstRef
     return mdpdw.col(idx);
 }
 
-auto EquilibriumSensitivity::dpdw(Param const& param) const -> VectorXdConstRef
-{
-    return dpdw(param.id());
-}
-
 auto EquilibriumSensitivity::dpdw() const -> MatrixXdConstRef
 {
     return mdpdw;
@@ -101,11 +91,6 @@ auto EquilibriumSensitivity::dqdw(String const& wid) const -> VectorXdConstRef
 {
     const auto idx = index(minputs, wid);
     return mdqdw.col(idx);
-}
-
-auto EquilibriumSensitivity::dqdw(Param const& param) const -> VectorXdConstRef
-{
-    return dqdw(param.id());
 }
 
 auto EquilibriumSensitivity::dqdw() const -> MatrixXdConstRef

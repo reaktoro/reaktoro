@@ -25,7 +25,7 @@ namespace Reaktoro {
 /// Return a constant surface area model.
 /// @param A0 The value of the constant surface area (in m2).
 /// @ingroup Models
-auto SurfaceAreaModelConstant(Param const& A0) -> SurfaceAreaModel;
+auto SurfaceAreaModelConstant(real const& A0) -> SurfaceAreaModel;
 
 /// Return a constant surface area model.
 /// @param A0 The value of the constant surface area.

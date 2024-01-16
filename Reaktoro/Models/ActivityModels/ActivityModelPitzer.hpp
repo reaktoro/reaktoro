@@ -52,7 +52,7 @@ struct ActivityModelParamsPitzer
         CorrectionModel model = CorrectionModel::Constant;
 
         /// The parameters for the temperature-pressure correction model of this species interaction parameter.
-        Vec<Param> parameters;
+        Vec<real> parameters;
     };
 
     Vec<InteractionParamAttribs> beta0;  ///< The parameters \eq{\beta^{(0)}_{ij}(T, P)} in the Pitzer model for cation-anion interactions.

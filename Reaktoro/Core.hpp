@@ -33,7 +33,6 @@
 #include <Reaktoro/Core/Embedded.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
 #include <Reaktoro/Core/Model.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Params.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/PhaseList.hpp>

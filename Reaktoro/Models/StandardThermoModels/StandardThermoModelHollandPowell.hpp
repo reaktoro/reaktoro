@@ -26,40 +26,40 @@ namespace Reaktoro {
 struct StandardThermoModelParamsHollandPowell
 {
     /// The apparent standard molal Gibbs free energy of formation of the substance from its elements (in J/mol).
-    Param Gf;
+    real Gf;
 
     /// The apparent standard molal enthalpy of formation of the substance from its elements (in J/mol).
-    Param Hf;
+    real Hf;
 
     /// The standard molal entropy of the substance at reference temperature and pressure (in J/(mol·K)).
-    Param Sr;
+    real Sr;
 
     /// The standard molal volume of the substance at reference temperature and pressure (in m³/mol).
-    Param Vr;
+    real Vr;
 
     /// The coefficient `a` of the Holland and Powell (2011) thermodynamic model (in J/(mol·K)).
-    Param a;
+    real a;
 
     /// The coefficient `b` of the Holland and Powell (2011) thermodynamic model (in J/(mol·K²)).
-    Param b;
+    real b;
 
     /// The coefficient `c` of the Holland and Powell (2011) thermodynamic model (in (J·K)/mol).
-    Param c;
+    real c;
 
     /// The coefficient `d` of the Holland and Powell (2011) thermodynamic model (in J/(mol·K½)).
-    Param d;
+    real d;
 
     /// The coefficient `α0` of the Holland and Powell (2011) thermodynamic model (in 1/K).
-    Param alpha0;
+    real alpha0;
 
     /// The coefficient `κ0` of the Holland and Powell (2011) thermodynamic model (in Pa).
-    Param kappa0;
+    real kappa0;
 
     /// The coefficient `κ0'` of the Holland and Powell (2011) thermodynamic model (dimensionless).
-    Param kappa0p;
+    real kappa0p;
 
     /// The coefficient `κ0''` of the Holland and Powell (2011) thermodynamic model (in 1/Pa).
-    Param kappa0pp;
+    real kappa0pp;
 
     /// The number of atoms in the chemical formula of the mineral.
     real numatoms;

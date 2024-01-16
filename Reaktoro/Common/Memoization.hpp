@@ -36,7 +36,6 @@ struct MemoizationTraits
     ///
     /// **Case 1:** `T` is `const real&` and `CacheType` is `real`.
     /// **Case 2:** `T` is `ArrayXrConstRef` and `CacheType` is also `ArrayXrConstRef`.
-    /// **Case 3:** `T` is `const Param&` and `CacheType` is `Param`.
     ///
     /// In Case 1, the default type for `CacheType` is suitable, since `real`
     /// implements a default constructor, which will be used to construct a
@@ -45,14 +44,6 @@ struct MemoizationTraits
     /// In Case 2, `CacheType` is not a suitable type for a cache object,
     /// because `ArrayXrConstRef` does not implement a default constructor.
     /// In this case, `CacheType` should be defined to be `ArrayXr` instead.
-    ///
-    /// In Case 3, `CacheType` is also not a suitable type for a cache object
-    /// because `Param` is a wrapper to a shared pointer to a `real` object. If
-    /// the cached `Param` object was changed somewhere in the application,
-    /// this change would reflect in the cache as well, and equality check of a
-    /// `Param` argument and the previously cached `Param` argument would
-    /// result to true always. In this case, `CacheType` should be defined to
-    /// be `real` instead.
     using CacheType = Type;
 
     /// Check if `a`, of type `CacheType`, is equal to `b`, of type `T`.

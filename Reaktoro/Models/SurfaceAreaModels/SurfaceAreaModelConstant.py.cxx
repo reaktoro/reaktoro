@@ -25,6 +25,6 @@ using namespace Reaktoro;
 
 void exportSurfaceAreaModelConstant(py::module& m)
 {
-    m.def("SurfaceAreaModelConstant", py::overload_cast<Param const&>(SurfaceAreaModelConstant));
+    m.def("SurfaceAreaModelConstant", py::overload_cast<real const&>(SurfaceAreaModelConstant));
     m.def("SurfaceAreaModelConstant", py::overload_cast<real const&, Chars>(SurfaceAreaModelConstant));
 }

@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Types.hpp>
 #include <Reaktoro/Core/Data.hpp>
-#include <Reaktoro/Core/Param.hpp>
 
 namespace Reaktoro {
 

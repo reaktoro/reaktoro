@@ -31,9 +31,9 @@ namespace CubicEOS {
 struct Substance
 {
     String formula;    ///< The chemical formula of the substance in the fluid phase.
-    Param Tcr = NaN;   ///< The critical temperature of the substance in the fluid phase (in K).
-    Param Pcr = NaN;   ///< The critical pressure of the substance in the fluid phase (in Pa).
-    Param omega = NaN; ///< The acentric factor of the substance in the fluid phase.
+    real Tcr = NaN;   ///< The critical temperature of the substance in the fluid phase (in K).
+    real Pcr = NaN;   ///< The critical pressure of the substance in the fluid phase (in Pa).
+    real omega = NaN; ///< The acentric factor of the substance in the fluid phase.
 };
 
 /// The properties calculated by evaluating a cubic equation of state.
@@ -46,7 +46,7 @@ struct Props
     real Hres;         ///< The residual molar enthalpy of the phase (in J/mol).
     real Cpres;        ///< The residual molar heat capacity at constant pressure of the phase (in J/(mol*K)).
     real Cvres;        ///< The residual molar heat capacity at constant volume of the phase (in J/(mol*K)).
-    ArrayXr Vi;        ///< Species partial molar volumes (in m3/mol). 
+    ArrayXr Vi;        ///< Species partial molar volumes (in m3/mol).
     ArrayXr ln_phi;    ///< The ln fugacity coefficients of the species in the phase.
     StateOfMatter som; ///< The state of matter of the fluid phase
 };
@@ -128,10 +128,10 @@ using AlphaModel = Model<Alpha(AlphaModelArgs const&)>;
 /// \f[\begin{align*}m_{\mathrm{SRK}} & =0.480+1.574\omega-0.176\omega^{2}\\m_{\mathrm{PR76}} & =0.37464+1.54226\omega-0.26992\omega^{2}\vphantom{\begin{cases}\omega^2\\\omega^3\end{cases}}\\m_{\mathrm{PR78}} & =\begin{cases}0.37464+1.54226\omega-0.26992\omega^{2} & \omega\leq0.491\\0.379642+1.48503\omega-0.164423\omega^{2}+0.016666\omega^{3} & \omega>0.491\end{cases}\end{align*}\f]
 struct EquationModel
 {
-    Param epsilon;      ///< The constant \eq{\epsilon} in the cubic equation of state.
-    Param sigma;        ///< The constant \eq{\sigma} in the cubic equation of state.
-    Param Omega;        ///< The constant \eq{\Omega} in the cubic equation of state.
-    Param Psi;          ///< The constant \eq{\Psi} in the cubic equation of state.
+    real epsilon;      ///< The constant \eq{\epsilon} in the cubic equation of state.
+    real sigma;        ///< The constant \eq{\sigma} in the cubic equation of state.
+    real Omega;        ///< The constant \eq{\Omega} in the cubic equation of state.
+    real Psi;          ///< The constant \eq{\Psi} in the cubic equation of state.
     AlphaModel alphafn; ///< The function \eq{\alpha(T_r;\omega)} in the cubic equation of state.
 };
 
@@ -197,40 +197,40 @@ private:
 /// The parameters below were collected from method `Phreeqc::calc_PR` in file `gases.cpp` from PHREEQC source code.
 struct BipModelParamsPhreeqc
 {
-    Param kH2O_CO2  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CO\sub{2}.
-    Param kH2O_H2S  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-H\sub{2}S.
-    Param kH2O_CH4  = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CH\sub{4}.
-    Param kH2O_N2   = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-N\sub{2}.
-    Param kH2O_C2H6 = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{2}H\sub{6}.
-    Param kH2O_C3H8 = 0.55; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{3}H\sub{8}.
+    real kH2O_CO2  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CO\sub{2}.
+    real kH2O_H2S  = 0.19; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-H\sub{2}S.
+    real kH2O_CH4  = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-CH\sub{4}.
+    real kH2O_N2   = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-N\sub{2}.
+    real kH2O_C2H6 = 0.49; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{2}H\sub{6}.
+    real kH2O_C3H8 = 0.55; ///< The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O-C\sub{3}H\sub{8}.
 };
 
 /// The parameters in the binary interaction parameter model of Søreide and Whitson (1992) for Peng-Robinson EOS.
 struct BipModelParamsSoreideWhitson
 {
     /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/CO\sub{2}.
-    Param kH2O_CO2 = 0.1896;
+    real kH2O_CO2 = 0.1896;
 
     /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/N\sub{2}.
-    Param kH2O_N2 = 0.4778;
+    real kH2O_N2 = 0.4778;
 
     /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/CH\sub{4}.
-    Param kH2O_CH4 = 0.4850;
+    real kH2O_CH4 = 0.4850;
 
     /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/C\sub{2}H\sub{6}.
-    Param kH2O_C2H6 = 0.4920;
+    real kH2O_C2H6 = 0.4920;
 
     /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/C\sub{3}H\sub{8}.
-    Param kH2O_C3H8 = 0.5525;
+    real kH2O_C3H8 = 0.5525;
 
     /// The binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/n-C\sub{4}H\sub{10}.
-    Param kH2O_nC4H10 = 0.5525;
+    real kH2O_nC4H10 = 0.5525;
 
     /// The coefficient \{a_1} when computing the binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/H\sub{2}S.
-    Param kH2O_H2S_a1 = 0.19031;
+    real kH2O_H2S_a1 = 0.19031;
 
     /// The coefficient \{a_2} when computing the binary interaction parameter \eq{k_ij} for the substance pair H\sub{2}O/H\sub{2}S.
-    Param kH2O_H2S_a2 = -0.05965;
+    real kH2O_H2S_a2 = -0.05965;
 };
 
 /// Return a binary interaction parameter model for Peng-Robinson EOS equivalent to that used in PHREEQC.

@@ -57,12 +57,8 @@ EquilibriumConditions::EquilibriumConditions(EquilibriumSpecs const& specs)
   ipressure_w(specs.indexPressureAmongInputVariables()),
   ipressure_p(specs.indexPressureAmongControlVariablesP())
 {
-    // Initialize the values of the *w* input variables to NaN, so that we can easily verify later which ones have not been specified yet by the user.
+    // Initialize the values of the *w* input variables to NaN to check later if initialized.
     w = constants(specs.numInputs(), NaN);
-
-    // Initialize the values of the *w* input variables that are model parameters to their current values
-    for(auto [i, idx] : enumerate(specs.indicesInputParams()))
-        w[idx] = specs.params()[i].value();
 
     // Initialize the default lower and upper bounds for the *p* control variables (-inf and inf respectively).
     plower.setConstant(pvars.size(), -inf);

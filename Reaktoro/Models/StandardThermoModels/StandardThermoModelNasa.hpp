@@ -35,15 +35,15 @@ struct StandardThermoModelParamsNasa
         String label; ///< The label describing the species name and its physical form or crystal configuration such as Mg(L)L, Li3ALF6(IV), etc. (optional).
         AggregateState state; ///< The aggregate state of the species within this temperature interval.
 
-        Param a1; /// The least-square coefficient \eq{a_1} in the regression model for \eq{C_{p}^{\circ}}.
-        Param a2; /// The least-square coefficient \eq{a_2} in the regression model for \eq{C_{p}^{\circ}}.
-        Param a3; /// The least-square coefficient \eq{a_3} in the regression model for \eq{C_{p}^{\circ}}.
-        Param a4; /// The least-square coefficient \eq{a_4} in the regression model for \eq{C_{p}^{\circ}}.
-        Param a5; /// The least-square coefficient \eq{a_5} in the regression model for \eq{C_{p}^{\circ}}.
-        Param a6; /// The least-square coefficient \eq{a_6} in the regression model for \eq{C_{p}^{\circ}}.
-        Param a7; /// The least-square coefficient \eq{a_7} in the regression model for \eq{C_{p}^{\circ}}.
-        Param b1; /// The integration constant \eq{b_1} used to compute \eq{H^\circ}.
-        Param b2; /// The integration constant \eq{b_2} used to compute \eq{S^\circ}.
+        real a1; /// The least-square coefficient \eq{a_1} in the regression model for \eq{C_{p}^{\circ}}.
+        real a2; /// The least-square coefficient \eq{a_2} in the regression model for \eq{C_{p}^{\circ}}.
+        real a3; /// The least-square coefficient \eq{a_3} in the regression model for \eq{C_{p}^{\circ}}.
+        real a4; /// The least-square coefficient \eq{a_4} in the regression model for \eq{C_{p}^{\circ}}.
+        real a5; /// The least-square coefficient \eq{a_5} in the regression model for \eq{C_{p}^{\circ}}.
+        real a6; /// The least-square coefficient \eq{a_6} in the regression model for \eq{C_{p}^{\circ}}.
+        real a7; /// The least-square coefficient \eq{a_7} in the regression model for \eq{C_{p}^{\circ}}.
+        real b1; /// The integration constant \eq{b_1} used to compute \eq{H^\circ}.
+        real b2; /// The integration constant \eq{b_2} used to compute \eq{S^\circ}.
     };
 
     /// The heat of formation \eq{\Delta H_{f}^{\circ}} at 298.15 K (in J/mol).

@@ -20,7 +20,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 
 namespace Reaktoro {
@@ -54,10 +53,6 @@ public:
     /// @param wid The identifier of the input variable in *w* (e.g., "T", "P", "pH", it depends on what is input).
     auto dndw(String const& wid) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the species amounts *n* with respect to an input variable in *w*.
-    /// @param param The input variable in *w* as a Param object.
-    auto dndw(Param const& param) const -> VectorXdConstRef;
-
     /// Return the derivatives of the species amounts *n* with respect to the input variables *w*.
     auto dndw() const -> MatrixXdConstRef;
 
@@ -72,10 +67,6 @@ public:
     /// @param wid The identifier of the input variable in *w* (e.g., "T", "P", "pH", it depends on what is input).
     auto dpdw(String const& wid) const -> VectorXdConstRef;
 
-    /// Return the derivatives of the *p* control variables with respect to an input variable in *w*.
-    /// @param param The input variable in *w* as a Param object.
-    auto dpdw(Param const& param) const -> VectorXdConstRef;
-
     /// Return the derivatives of the *p* control variables with respect to the input variables *w*.
     auto dpdw() const -> MatrixXdConstRef;
 
@@ -89,10 +80,6 @@ public:
     /// Return the derivatives of the *q* control variables with respect to an input variable in *w*.
     /// @param wid The identifier of the input variable in *w* (e.g., "T", "P", "pH", it depends on what is input).
     auto dqdw(String const& wid) const -> VectorXdConstRef;
-
-    /// Return the derivatives of the *q* control variables with respect to an input variable in *w*.
-    /// @param param The input variable in *w* as a Param object.
-    auto dqdw(Param const& param) const -> VectorXdConstRef;
 
     /// Return the derivatives of the *q* control variables with respect to the input variables *w*.
     auto dqdw() const -> MatrixXdConstRef;

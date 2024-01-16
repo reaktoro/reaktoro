@@ -39,7 +39,7 @@ public:
     auto clone() const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new reactant species in the formation reaction.
-    auto withReactants(Pairs<Species, double> reactants) const -> FormationReaction;
+    auto withReactants(Pairs<Species, double> const& reactants) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new reaction
     /// thermodynamic model function.
@@ -51,7 +51,7 @@ public:
     /// @ref withProductStandardVolumeModel and @ref withReactionStandardThermoModel.
     ///
     /// @param lgK0 The equilibrium constant of the reaction (in log base 10)
-    auto withEquilibriumConstant(Param lgK0) const -> FormationReaction;
+    auto withEquilibriumConstant(real const& lgK0) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new standard
     /// molar volume function for the product species.
@@ -65,7 +65,7 @@ public:
     /// product species, but to zero.
     ///
     /// @param V0p The constant standard molar volume of the product species (in m3/mol).
-    auto withProductStandardVolume(Param V0p) const -> FormationReaction;
+    auto withProductStandardVolume(real const& V0p) const -> FormationReaction;
 
     /// Return a duplicate of this FormationReaction object with new standard
     /// molar volume function for the product species.

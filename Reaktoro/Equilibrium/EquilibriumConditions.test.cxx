@@ -265,59 +265,30 @@ TEST_CASE("Testing EquilibriumConditions", "[EquilibriumConditions]")
         CHECK_THROWS( conditions.Eh(14.0, "mV") );
     }
 
-    WHEN("there are Param objects among the input variables")
+    WHEN("there are custom inputs among the input variables")
     {
-        // This test exists to ensure that an EquilibriumConditions object does
-        // not change the values of the model parameters. These Param objects
-        // are wrapper to shared pointers. Changing these objects should be
-        // restricted to just a few classes to avoid unexpected side effects.
-
-        Param K0("K0", 1.0);
-        Param K1("K1", 2.0);
+        real K0 = 1.0;
+        real K1 = 2.0;
 
         specs.temperature();
         specs.pressure();
-        specs.addInput(K0);
-        specs.addInput(K1);
+        specs.addInput("K0");
+        specs.addInput("K1");
 
         EquilibriumConditions conditions(specs);
         conditions.temperature(300.0);
         conditions.pressure(1e6);
+        conditions.set("K0", K0);
+        conditions.set("K1", K1);
 
         VectorXr w = conditions.inputValues();
 
         CHECK( conditions.inputValues().size() == 4 );
 
-        CHECK( conditions.inputValue("T")  == 300.0 );      // T in K
-        CHECK( conditions.inputValue("P")  == 1e6 );        // P in Pa
-        CHECK( conditions.inputValue("K0") == K0.value() ); // K0
-        CHECK( conditions.inputValue("K1") == K1.value() ); // K1
-
-        // Check that changing K0 and K1 does not change the input values in object conditions!
-        K0 = 7.0;
-        K1 = 8.0;
-
-        w = conditions.inputValues();
-
-        CHECK( conditions.inputValue("K0") == 1.0 ); // K0 at previous value
-        CHECK( conditions.inputValue("K1") == 2.0 ); // K1 at previous value
-
-        // Check that changing input variables "K0" and "K1" in object conditions
-        // does not change Param objects K0 and K1!
-        conditions.set("K0", 11.0);
-        conditions.set("K1", 12.0);
-
-        CHECK( K0.value() == 7.0 ); // recent values of K0 set previously
-        CHECK( K1.value() == 8.0 ); // recent values of K1 set previously
-
-        w = conditions.inputValues();
-
-        CHECK( conditions.inputValues().size() == 4 );
-
-        CHECK( conditions.inputValue("T")  == 300.0 ); // corresponding to T
-        CHECK( conditions.inputValue("P")  == 1e6 );   // corresponding to P
-        CHECK( conditions.inputValue("K0") == 11.0 );  // corresponding to K0
-        CHECK( conditions.inputValue("K1") == 12.0 );  // corresponding to K1
+        CHECK( conditions.inputValue("T")  == 300.0 ); // T in K
+        CHECK( conditions.inputValue("P")  == 1e6 );   // P in Pa
+        CHECK( conditions.inputValue("K0") == K0 );    // K0
+        CHECK( conditions.inputValue("K1") == K1 );    // K1
     }
 
     WHEN("the initial amounts of conservative components are set")

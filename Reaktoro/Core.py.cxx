@@ -36,7 +36,6 @@ void exportFormationReaction(py::module& m);
 void exportPhase(py::module& m);
 void exportPhaseList(py::module& m);
 void exportPhases(py::module& m);
-void exportParam(py::module& m);
 void exportParams(py::module& m);
 void exportReaction(py::module& m);
 void exportReactions(py::module& m);
@@ -66,7 +65,6 @@ void exportCore(py::module& m)
     // NOTE: The order below is important for the Python bindings to work
     // properly and to avoid C++ types in docstrings when producing stubs via pybind11-stubgen.
     // https://pybind11.readthedocs.io/en/latest/advanced/misc.html#avoiding-c-types-in-docstrings
-    exportParam(m);
     exportData(m);
     exportChemicalFormula(m);
     exportElement(m);

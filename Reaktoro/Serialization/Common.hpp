@@ -17,7 +17,13 @@
 
 #pragma once
 
+// Reaktoro includes
+#include <Reaktoro/Common/Types.hpp>
+#include <Reaktoro/Core/Data.hpp>
+
 namespace Reaktoro {
 
+REAKTORO_DATA_ENCODE_DECLARE(real);
+REAKTORO_DATA_DECODE_DECLARE(real);
 
 } // namespace Reaktoro

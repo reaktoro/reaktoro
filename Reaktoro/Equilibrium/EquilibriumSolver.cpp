@@ -235,7 +235,7 @@ struct EquilibriumSolver::Impl
         optproblem.plower = conditions.lowerBoundsControlVariablesP();
         optproblem.pupper = conditions.upperBoundsControlVariablesP();
 
-        // Set the values of the input variables for sensitivity derivatives (due to the use of Param, a wrapper to a shared pointer, the actual values of c here are not important, because the Param objects are embedded in the models)
+        // Set the values of the input variables for sensitivity derivatives
         optproblem.c = zeros(optdims.c);
 
         // Set the Jacobian matrix d(be)/dc = [d(be)/dw d(be)/db]

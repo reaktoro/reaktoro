@@ -25,10 +25,10 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionStandardThermoModelVantHoff class", "[ReactionStandardThermoModelVantHoff]")
 {
-    Param lgKr = 1.0;
-    Param dHr  = 2.0;
-    real  Tr   = 3.0;
-    real  Pr   = 4.0;
+    real lgKr = 1.0;
+    real dHr  = 2.0;
+    real Tr   = 3.0;
+    real Pr   = 4.0;
 
     const auto model = ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr});
 

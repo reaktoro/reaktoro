@@ -20,7 +20,6 @@
 
 // Reaktoro includes
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 #include <Reaktoro/Kinetics/KineticsSensitivity.hpp>

@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-auto SurfaceAreaModelLinearMolar(String const& phase, Param const& Abar) -> SurfaceAreaModel
+auto SurfaceAreaModelLinearMolar(String const& phase, real const& Abar) -> SurfaceAreaModel
 {
     return [=](ChemicalProps const& props) -> real
     {
@@ -33,7 +33,7 @@ auto SurfaceAreaModelLinearMolar(String const& phase, Param const& Abar) -> Surf
     };
 }
 
-auto SurfaceAreaModelLinearSpecific(String const& phase, Param const& Abar) -> SurfaceAreaModel
+auto SurfaceAreaModelLinearSpecific(String const& phase, real const& Abar) -> SurfaceAreaModel
 {
     return [=](ChemicalProps const& props) -> real
     {
@@ -43,7 +43,7 @@ auto SurfaceAreaModelLinearSpecific(String const& phase, Param const& Abar) -> S
     };
 }
 
-auto SurfaceAreaModelLinearVolumetric(String const& phase, Param const& Abar) -> SurfaceAreaModel
+auto SurfaceAreaModelLinearVolumetric(String const& phase, real const& Abar) -> SurfaceAreaModel
 {
     return [=](ChemicalProps const& props) -> real
     {

@@ -25,7 +25,6 @@
 #include <Reaktoro/Core/Element.hpp>
 #include <Reaktoro/Core/ElementalComposition.hpp>
 #include <Reaktoro/Core/FormationReaction.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Serialization/Core.hpp>
@@ -56,9 +55,6 @@ void exportSerializationCore(py::module& m)
 
     py::implicitly_convertible<Data, FormationReaction>();
     py::implicitly_convertible<FormationReaction, Data>();
-
-    py::implicitly_convertible<Data, Param>();
-    py::implicitly_convertible<Param, Data>();
 
     py::implicitly_convertible<Data, Phase>();
     py::implicitly_convertible<Phase, Data>();

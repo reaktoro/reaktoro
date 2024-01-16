@@ -26,40 +26,40 @@ namespace Reaktoro {
 struct StandardThermoModelParamsMineralHKF
 {
     /// The apparent standard Gibbs free energy of formation of the mineral substance from its elements (in J/mol).
-    Param Gf;
+    real Gf;
 
     /// The apparent standard enthalpy of formation of the mineral substance from its elements (in J/mol).
-    Param Hf;
+    real Hf;
 
     /// The standard entropy of the mineral substance at reference temperature and pressure (in J/(mol·K)).
-    Param Sr;
+    real Sr;
 
     /// The standard volume of the mineral substance at reference temperature and pressure (in m³/mol).
-    Param Vr;
+    real Vr;
 
     /// The number of phase transitions considered in the mineral.
     Index ntr;
 
     /// The coefficients `a(i)` of the Maier-Kelley-HKF mineral thermodynamic model for each phase region (in J/(mol·K)).
-    Vec<Param> a;
+    Vec<real> a;
 
     /// The coefficients `b(i)` of the Maier-Kelley-HKF mineral thermodynamic model for each phase region (in J/(mol·K²)).
-    Vec<Param> b;
+    Vec<real> b;
 
     /// The coefficients `c(i)` of the Maier-Kelley-HKF mineral thermodynamic model for each phase region (in (J·K)/mol).
-    Vec<Param> c;
+    Vec<real> c;
 
     /// The temperatures at which the mineral experiences phase transition along the line of reference pressure (in K).
-    Vec<Param> Ttr;
+    Vec<real> Ttr;
 
     /// The change in the standard enthalpy of each mineral phase transition (in J/mol).
-    Vec<Param> Htr;
+    Vec<real> Htr;
 
     /// The change in the standard volume of each mineral phase transition (in m³/mol).
-    Vec<Param> Vtr;
+    Vec<real> Vtr;
 
     /// The Clapeyron slote at each mineral phase transition (in Pa/K).
-    Vec<Param> dPdTtr;
+    Vec<real> dPdTtr;
 
     /// The maximum temperature at which the Maier-Kelley-HKF model can be applied for the substance (optional, in K).
     real Tmax;

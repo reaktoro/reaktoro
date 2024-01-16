@@ -90,117 +90,117 @@ TEST_CASE("Testing serialization of ActivityModelParamsPitzer", "[Serialization]
 
     CHECK( params.beta0[0].formulas == Vec<ChemicalFormula>{"Ba+2", "OH-"} );
     CHECK( params.beta0[0].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta0[0].parameters == Vec<Param>{ 0.17175 } );
+    CHECK( params.beta0[0].parameters == Vec<real>{ 0.17175 } );
 
     CHECK( params.beta0[1].formulas == Vec<ChemicalFormula>{"Ba+2", "Cl-"} );
     CHECK( params.beta0[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta0[1].parameters == Vec<Param>{ 0.5268, 0.0, 0.0, 0.0, 0.0, 4.75e+4 } );
+    CHECK( params.beta0[1].parameters == Vec<real>{ 0.5268, 0.0, 0.0, 0.0, 0.0, 4.75e+4 } );
 
     CHECK( params.beta0[2].formulas == Vec<ChemicalFormula>{"Mg+2", "SO4-2"} );
     CHECK( params.beta0[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta0[2].parameters == Vec<Param>{ 0.2135, -951, 0.0, -2.34e-2, 2.28e-5 } );
+    CHECK( params.beta0[2].parameters == Vec<real>{ 0.2135, -951, 0.0, -2.34e-2, 2.28e-5 } );
 
     CHECK( params.beta0[3].formulas == Vec<ChemicalFormula>{"Cl-", "K+"} );
     CHECK( params.beta0[3].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta0[3].parameters == Vec<Param>{ 0.04808, -758.48, -4.7062, 0.010072, -3.7599e-6 } );
+    CHECK( params.beta0[3].parameters == Vec<real>{ 0.04808, -758.48, -4.7062, 0.010072, -3.7599e-6 } );
 
     CHECK( params.beta0[4].formulas == Vec<ChemicalFormula>{"Cl-", "Na+"} );
     CHECK( params.beta0[4].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta0[4].parameters == Vec<Param>{ 7.534e-2, 9598.4, 35.48, -5.8731e-2, 1.798e-5, -5.0e+5 } );
+    CHECK( params.beta0[4].parameters == Vec<real>{ 7.534e-2, 9598.4, 35.48, -5.8731e-2, 1.798e-5, -5.0e+5 } );
 
     CHECK( params.beta1[0].formulas == Vec<ChemicalFormula>{"Ba+2", "OH-"} );
     CHECK( params.beta1[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.beta1[0].parameters == Vec<Param>{ 1.2 } );
+    CHECK( params.beta1[0].parameters == Vec<real>{ 1.2 } );
 
     CHECK( params.beta1[1].formulas == Vec<ChemicalFormula>{"Br-", "H+"} );
     CHECK( params.beta1[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta1[1].parameters == Vec<Param>{ 0.3564, 0.0, 0.0, 4.467e-4 } );
+    CHECK( params.beta1[1].parameters == Vec<real>{ 0.3564, 0.0, 0.0, 4.467e-4 } );
 
     CHECK( params.beta1[2].formulas == Vec<ChemicalFormula>{"Cl-", "Na+"} );
     CHECK( params.beta1[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta1[2].parameters == Vec<Param>{ 0.2769, 1.377e+4, 46.8, -6.9512e-2, 2.0e-5, -7.4823e+5 } );
+    CHECK( params.beta1[2].parameters == Vec<real>{ 0.2769, 1.377e+4, 46.8, -6.9512e-2, 2.0e-5, -7.4823e+5 } );
 
     CHECK( params.beta2[0].formulas == Vec<ChemicalFormula>{"Ca+2", "OH-"} );
     CHECK( params.beta2[0].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta2[0].parameters == Vec<Param>{ -5.72 } );
+    CHECK( params.beta2[0].parameters == Vec<real>{ -5.72 } );
 
     CHECK( params.beta2[1].formulas == Vec<ChemicalFormula>{"Ca+2", "Cl-"} );
     CHECK( params.beta2[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta2[1].parameters == Vec<Param>{ -1.13, 0.0, 0.0, -0.0476 } );
+    CHECK( params.beta2[1].parameters == Vec<real>{ -1.13, 0.0, 0.0, -0.0476 } );
 
     CHECK( params.beta2[2].formulas == Vec<ChemicalFormula>{"Mg+2", "SO4-2"} );
     CHECK( params.beta2[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.beta2[2].parameters == Vec<Param>{ -32.45, 0.0, -3.236e+3, 21.812, -1.8859e-2 } );
+    CHECK( params.beta2[2].parameters == Vec<real>{ -32.45, 0.0, -3.236e+3, 21.812, -1.8859e-2 } );
 
     CHECK( params.Cphi[0].formulas == Vec<ChemicalFormula>{"B(OH)4-", "Na+"} );
     CHECK( params.Cphi[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.Cphi[0].parameters == Vec<Param>{ 0.0114 } );
+    CHECK( params.Cphi[0].parameters == Vec<real>{ 0.0114 } );
 
     CHECK( params.Cphi[1].formulas == Vec<ChemicalFormula>{"Ba+2", "Cl-"} );
     CHECK( params.Cphi[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.Cphi[1].parameters == Vec<Param>{ -0.143, -114.5 } );
+    CHECK( params.Cphi[1].parameters == Vec<real>{ -0.143, -114.5 } );
 
     CHECK( params.Cphi[2].formulas == Vec<ChemicalFormula>{"Cl-", "Na+"} );
     CHECK( params.Cphi[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.Cphi[2].parameters == Vec<Param>{ 1.48e-3, -120.5, -0.2081, 0.0, 1.166e-7, 11121 } );
+    CHECK( params.Cphi[2].parameters == Vec<real>{ 1.48e-3, -120.5, -0.2081, 0.0, 1.166e-7, 11121 } );
 
     CHECK( params.theta[0].formulas == Vec<ChemicalFormula>{"K+", "Na+"} );
     CHECK( params.theta[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.theta[0].parameters == Vec<Param>{ -0.012 } );
+    CHECK( params.theta[0].parameters == Vec<real>{ -0.012 } );
 
     CHECK( params.theta[1].formulas == Vec<ChemicalFormula>{"Ca+2", "K+"} );
     CHECK( params.theta[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.theta[1].parameters == Vec<Param>{ -5.35e-3, 0.0, 0.0, 3.08e-4 } );
+    CHECK( params.theta[1].parameters == Vec<real>{ -5.35e-3, 0.0, 0.0, 3.08e-4 } );
 
     CHECK( params.theta[2].formulas == Vec<ChemicalFormula>{"Ca+2", "Na+"} );
     CHECK( params.theta[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.theta[2].parameters == Vec<Param>{ 9.22e-2, 0.0, 0.0, -4.29e-4, 1.21e-6 } );
+    CHECK( params.theta[2].parameters == Vec<real>{ 9.22e-2, 0.0, 0.0, -4.29e-4, 1.21e-6 } );
 
     CHECK( params.lambda[0].formulas == Vec<ChemicalFormula>{"Cl-", "CO2"} );
     CHECK( params.lambda[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.lambda[0].parameters == Vec<Param>{ -0.005 } );
+    CHECK( params.lambda[0].parameters == Vec<real>{ -0.005 } );
 
     CHECK( params.lambda[1].formulas == Vec<ChemicalFormula>{"CO2", "CO2"} );
     CHECK( params.lambda[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.lambda[1].parameters == Vec<Param>{ -1.34e-2, 348, 0.803 } );
+    CHECK( params.lambda[1].parameters == Vec<real>{ -1.34e-2, 348, 0.803 } );
 
     CHECK( params.lambda[2].formulas == Vec<ChemicalFormula>{"H4SiO4", "Mg+2"} );
     CHECK( params.lambda[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.lambda[2].parameters == Vec<Param>{ 0.238, -1788, -9.023, 0.0103 } );
+    CHECK( params.lambda[2].parameters == Vec<real>{ 0.238, -1788, -9.023, 0.0103 } );
 
     CHECK( params.zeta[0].formulas == Vec<ChemicalFormula>{"Cl-", "H4SiO4", "K+"} );
     CHECK( params.zeta[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.zeta[0].parameters == Vec<Param>{ -0.0153 } );
+    CHECK( params.zeta[0].parameters == Vec<real>{ -0.0153 } );
 
     CHECK( params.zeta[1].formulas == Vec<ChemicalFormula>{"CO2", "Na+", "SO4-2"} );
     CHECK( params.zeta[1].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.zeta[1].parameters == Vec<Param>{ -0.015 } );
+    CHECK( params.zeta[1].parameters == Vec<real>{ -0.015 } );
 
     CHECK( params.psi[0].formulas == Vec<ChemicalFormula>{"Br-", "K+", "Na+"} );
     CHECK( params.psi[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.psi[0].parameters == Vec<Param>{ -0.0022 } );
+    CHECK( params.psi[0].parameters == Vec<real>{ -0.0022 } );
 
     CHECK( params.psi[1].formulas == Vec<ChemicalFormula>{"Cl-", "Mg+2", "SO4-2"} );
     CHECK( params.psi[1].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.psi[1].parameters == Vec<Param>{ -0.008, 32.63 } );
+    CHECK( params.psi[1].parameters == Vec<real>{ -0.008, 32.63 } );
 
     CHECK( params.psi[2].formulas == Vec<ChemicalFormula>{"Ca+2", "Cl-", "Na+"} );
     CHECK( params.psi[2].model == ActivityModelParamsPitzer::CorrectionModel::Phreeqc );
-    CHECK( params.psi[2].parameters == Vec<Param>{ -1.48e-2, 0.0, 0.0, -5.2e-6 } );
+    CHECK( params.psi[2].parameters == Vec<real>{ -1.48e-2, 0.0, 0.0, -5.2e-6 } );
 
     CHECK( params.mu[0].formulas == Vec<ChemicalFormula>{"NH3", "NH3", "CO3-2"} );
     CHECK( params.mu[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.mu[0].parameters == Vec<Param>{ 0.1234 } );
+    CHECK( params.mu[0].parameters == Vec<real>{ 0.1234 } );
 
     CHECK( params.eta[0].formulas == Vec<ChemicalFormula>{"CO2", "Na+", "K+"} );
     CHECK( params.eta[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.eta[0].parameters == Vec<Param>{ -0.0022 } );
+    CHECK( params.eta[0].parameters == Vec<real>{ -0.0022 } );
 
     CHECK( params.alpha1[0].formulas == Vec<ChemicalFormula>{"Na+", "Cl-"} );
     CHECK( params.alpha1[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.alpha1[0].parameters == Vec<Param>{ 2.0 } );
+    CHECK( params.alpha1[0].parameters == Vec<real>{ 2.0 } );
 
     CHECK( params.alpha2[0].formulas == Vec<ChemicalFormula>{"Na+", "Cl-"} );
     CHECK( params.alpha2[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
-    CHECK( params.alpha2[0].parameters == Vec<Param>{ 12.0 } );
+    CHECK( params.alpha2[0].parameters == Vec<real>{ 12.0 } );
 }

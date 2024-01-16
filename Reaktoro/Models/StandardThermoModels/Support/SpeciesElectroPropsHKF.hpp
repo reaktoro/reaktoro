@@ -31,22 +31,22 @@ struct WaterThermoProps;
 struct gHKF
 {
     /// The function *g* value.
-    real g = {};
+    real g;
 
     /// The first-order partial derivative of function *g* with respect to temperature.
-    real gT = {};
+    real gT;
 
     /// The first-order partial derivative of function *g* with respect to pressure.
-    real gP = {};
+    real gP;
 
     /// The second-order partial derivative of function *g* with respect to temperature.
-    real gTT = {};
+    real gTT;
 
     /// The second-order partial derivative of function *g* with respect to temperature and pressure.
-    real gTP = {};
+    real gTP;
 
     /// The second-order partial derivative of function *g* with respect to pressure.
-    real gPP = {};
+    real gPP;
 
     /// Compute the *g* function state at given temperature, pressure and water thermodynamic properties.
     static auto compute(real T, real P, const WaterThermoProps& wtp) -> gHKF;

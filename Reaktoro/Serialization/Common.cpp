@@ -19,4 +19,14 @@
 
 namespace Reaktoro {
 
+REAKTORO_DATA_ENCODE_DEFINE(real)
+{
+    data = obj.val();
+}
+
+REAKTORO_DATA_DECODE_DEFINE(real)
+{
+    obj = data.asFloat();
+}
+
 } // namespace Reaktoro

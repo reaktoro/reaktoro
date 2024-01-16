@@ -26,22 +26,22 @@ namespace Reaktoro {
 struct ReactionStandardThermoModelParamsPhreeqcLgK
 {
     /// The coefficient @eq{A_1} in the reaction thermodynamic model.
-    Param A1;
+    real A1;
 
     /// The coefficient @eq{A_2} in the reaction thermodynamic model.
-    Param A2;
+    real A2;
 
     /// The coefficient @eq{A_3} in the reaction thermodynamic model.
-    Param A3;
+    real A3;
 
     /// The coefficient @eq{A_4} in the reaction thermodynamic model.
-    Param A4;
+    real A4;
 
     /// The coefficient @eq{A_5} in the reaction thermodynamic model.
-    Param A5;
+    real A5;
 
     /// The coefficient @eq{A_6} in the reaction thermodynamic model.
-    Param A6;
+    real A6;
 
     /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
     real Pr = 100'000;

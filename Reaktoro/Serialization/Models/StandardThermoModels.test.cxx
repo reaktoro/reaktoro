@@ -184,8 +184,8 @@ TEST_CASE("Testing serialization of StandardThermoModelParamsMineralHKF", "[Seri
 
         const auto params = Data::parse(yml).as<StandardThermoModelParamsMineralHKF>();
 
-        CHECK( std::isnan( params.Gf )     );
-        CHECK( std::isnan( params.Hf )     );
+        CHECK( std::isnan( params.Gf.val() )     );
+        CHECK( std::isnan( params.Hf.val() )     );
         CHECK( params.Sr     == 286.604    );
         CHECK( params.Vr     == 0.0001432  );
         CHECK( params.a[0]   == 369.61456  );

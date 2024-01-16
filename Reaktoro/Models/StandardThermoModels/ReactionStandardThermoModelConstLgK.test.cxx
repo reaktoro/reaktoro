@@ -25,8 +25,8 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionStandardThermoModelConstLgK class", "[ReactionStandardThermoModelConstLgK]")
 {
-    Param lgKr = 1.0;
-    real  Pr   = 2.0;
+    real lgKr = 1.0;
+    real Pr = 2.0;
 
     const auto model = ReactionStandardThermoModelConstLgK({lgKr, Pr});
 

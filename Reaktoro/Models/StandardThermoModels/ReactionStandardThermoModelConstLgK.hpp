@@ -26,7 +26,7 @@ namespace Reaktoro {
 struct ReactionStandardThermoModelParamsConstLgK
 {
     /// The equilibrium constant @eq{\lg K_{\mathrm{r}}} (log base 10) of the reaction at @eq{T_{\mathrm{r}}} and @eq{P_{\mathrm{r}}}.
-    Param lgKr;
+    real lgKr;
 
     /// The reference pressure @eq{P_{\mathrm{r}}} (in Pa).
     real Pr = 100'000;

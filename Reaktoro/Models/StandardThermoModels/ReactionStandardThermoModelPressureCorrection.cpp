@@ -22,7 +22,7 @@
 
 namespace Reaktoro {
 
-auto ReactionStandardThermoModelPressureCorrection(Param Pr) -> ReactionStandardThermoModel
+auto ReactionStandardThermoModelPressureCorrection(real const& Pr) -> ReactionStandardThermoModel
 {
     auto evalfn = [=](ReactionStandardThermoProps& props, ReactionStandardThermoModelArgs args)
     {
@@ -35,7 +35,7 @@ auto ReactionStandardThermoModelPressureCorrection(Param Pr) -> ReactionStandard
         props.dCp0 += 0.0; // TODO: Consider adding (P - Pr) * ΔVT0 in the future, taking into account temperature derivative of dV0.
     };
 
-    Vec<Param> params = { Pr };
+    Vec<real> params = { Pr };
 
     return ReactionStandardThermoModel(evalfn, params);
 }
