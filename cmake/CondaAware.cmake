@@ -1,6 +1,6 @@
 # CondaAware: CMake projects consitently configured with activated conda environments
 #
-# Copyright © 2019-2023 Allan Leal
+# Copyright © 2019-2024 Allan Leal
 #
 # This cmake module determines if a conda environment is active. If so, it aims
 # to set the Python_EXECUTABLE variable to the Python executable located within
