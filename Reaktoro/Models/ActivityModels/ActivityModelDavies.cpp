@@ -97,8 +97,8 @@ auto activityModelDavies(const SpeciesList& species, ActivityModelDaviesParams p
         const auto T_epsilon = T * epsilon;
         const auto sqrt_T_epsilon = sqrt(T_epsilon);
         const auto A = 1.824829238e+6 * sqrt_rho/(T_epsilon*sqrt_T_epsilon);
-        const auto bions = params.bions.value();
-        const auto bneutrals = params.bneutrals.value();
+        const auto bions = params.bions;
+        const auto bneutrals = params.bneutrals;
         const auto sigmac = -A*(sqrtI/(1 + sqrtI) - bions*I) * ln10;
         const auto sigman = bneutrals*I * ln10;
         const auto Gammac = 2*A*(I - 2*sqrtI + 2*log(1 + sqrtI) - 0.5*bions*I2) * ln10;

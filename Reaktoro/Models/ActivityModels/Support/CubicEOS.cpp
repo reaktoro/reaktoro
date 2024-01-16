@@ -288,7 +288,7 @@ auto getCriticalTemperatures(Vec<Substance> const& substances) -> ArrayXr
 {
     ArrayXr res(substances.size());
     auto i = 0; for(auto const& subs : substances) {
-        errorif(std::isnan(subs.Tcr), "The critical temperature of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(std::isnan(subs.Tcr.val()), "The critical temperature of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
         errorif(subs.Tcr <= 0.0, "The critical temperature of `", subs.formula, "` should be a positive number but it was set to ", subs.Tcr, " K.");
         res[i++] = subs.Tcr;
     }
@@ -300,7 +300,7 @@ auto getCriticalPressures(Vec<Substance> const& substances) -> ArrayXr
 {
     ArrayXr res(substances.size());
     auto i = 0; for(auto const& subs : substances) {
-        errorif(std::isnan(subs.Tcr), "The critical pressure of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(std::isnan(subs.Tcr.val()), "The critical pressure of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
         errorif(subs.Tcr <= 0.0, "The critical pressure of `", subs.formula, "` should be a positive number but it was set to ", subs.Pcr, " Pa.");
         res[i++] = subs.Pcr;
     }
@@ -312,7 +312,7 @@ auto getAccentricFactors(Vec<Substance> const& substances) -> ArrayXr
 {
     ArrayXr res(substances.size());
     auto i = 0; for(auto const& subs : substances) {
-        errorif(std::isnan(subs.Tcr), "The acentric factor of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
+        errorif(std::isnan(subs.Tcr.val()), "The acentric factor of `", subs.formula, "` was not explicitly initialized in CubicEOS::EquationSpecs::substances.");
         res[i++] = subs.omega;
     }
     return res;
@@ -393,10 +393,10 @@ struct Equation::Impl
             return;
 
         // Auxiliary references
-        auto const& sigma   = eqspecs.eqmodel.sigma.value();
-        auto const& epsilon = eqspecs.eqmodel.epsilon.value();
-        auto const& Omega   = eqspecs.eqmodel.Omega.value();
-        auto const& Psi     = eqspecs.eqmodel.Psi.value();
+        auto const& sigma   = eqspecs.eqmodel.sigma;
+        auto const& epsilon = eqspecs.eqmodel.epsilon;
+        auto const& Omega   = eqspecs.eqmodel.Omega;
+        auto const& Psi     = eqspecs.eqmodel.Psi;
         auto const& alphafn = eqspecs.eqmodel.alphafn;
 
         // Calculate the parameters `a` and `b` of the cubic equation of state for each species
@@ -639,12 +639,12 @@ auto BipModelPhreeqc(Strings const& substances, BipModelParamsPhreeqc const& par
 
         if(iH2O < size)
         {
-            if( iCO2 < size) k(iH2O,  iCO2) = k( iCO2, iH2O) = params.kH2O_CO2.value();
-            if( iH2S < size) k(iH2O,  iH2S) = k( iH2S, iH2O) = params.kH2O_H2S.value();
-            if( iCH4 < size) k(iH2O,  iCH4) = k( iCH4, iH2O) = params.kH2O_CH4.value();
-            if(  iN2 < size) k(iH2O,   iN2) = k(  iN2, iH2O) = params.kH2O_N2.value();
-            if(iC2H6 < size) k(iH2O, iC2H6) = k(iC2H6, iH2O) = params.kH2O_C2H6.value();
-            if(iC3H8 < size) k(iH2O, iC3H8) = k(iC3H8, iH2O) = params.kH2O_C3H8.value();
+            if( iCO2 < size) k(iH2O,  iCO2) = k( iCO2, iH2O) = params.kH2O_CO2;
+            if( iH2S < size) k(iH2O,  iH2S) = k( iH2S, iH2O) = params.kH2O_H2S;
+            if( iCH4 < size) k(iH2O,  iCH4) = k( iCH4, iH2O) = params.kH2O_CH4;
+            if(  iN2 < size) k(iH2O,   iN2) = k(  iN2, iH2O) = params.kH2O_N2;
+            if(iC2H6 < size) k(iH2O, iC2H6) = k(iC2H6, iH2O) = params.kH2O_C2H6;
+            if(iC3H8 < size) k(iH2O, iC3H8) = k(iC3H8, iH2O) = params.kH2O_C3H8;
         }
     };
 
@@ -686,13 +686,13 @@ auto BipModelSoreideWhitson(Strings const& substances, BipModelParamsSoreideWhit
 
         if(iH2O < size)
         {
-            if( iCO2   < size) k(iH2O,    iCO2) = k(   iCO2, iH2O) = params.kH2O_CO2.value();
-            if(  iN2   < size) k(iH2O,     iN2) = k(    iN2, iH2O) = params.kH2O_N2.value();
-            if( iH2S   < size) k(iH2O,    iH2S) = k(   iH2S, iH2O) = params.kH2O_H2S_a1.value() + params.kH2O_H2S_a2.value() * TrH2S;
-            if( iCH4   < size) k(iH2O,    iCH4) = k(   iCH4, iH2O) = params.kH2O_CH4.value();
-            if(iC2H6   < size) k(iH2O,   iC2H6) = k(  iC2H6, iH2O) = params.kH2O_C2H6.value();
-            if(iC3H8   < size) k(iH2O,   iC3H8) = k(  iC3H8, iH2O) = params.kH2O_C3H8.value();
-            if(inC4H10 < size) k(iH2O, inC4H10) = k(inC4H10, iH2O) = params.kH2O_nC4H10.value();
+            if( iCO2   < size) k(iH2O,    iCO2) = k(   iCO2, iH2O) = params.kH2O_CO2;
+            if(  iN2   < size) k(iH2O,     iN2) = k(    iN2, iH2O) = params.kH2O_N2;
+            if( iH2S   < size) k(iH2O,    iH2S) = k(   iH2S, iH2O) = params.kH2O_H2S_a1 + params.kH2O_H2S_a2 * TrH2S;
+            if( iCH4   < size) k(iH2O,    iCH4) = k(   iCH4, iH2O) = params.kH2O_CH4;
+            if(iC2H6   < size) k(iH2O,   iC2H6) = k(  iC2H6, iH2O) = params.kH2O_C2H6;
+            if(iC3H8   < size) k(iH2O,   iC3H8) = k(  iC3H8, iH2O) = params.kH2O_C3H8;
+            if(inC4H10 < size) k(iH2O, inC4H10) = k(inC4H10, iH2O) = params.kH2O_nC4H10;
         }
     };
 

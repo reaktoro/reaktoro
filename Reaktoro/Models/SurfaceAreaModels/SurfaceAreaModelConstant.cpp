@@ -23,9 +23,9 @@
 
 namespace Reaktoro {
 
-auto SurfaceAreaModelConstant(Param const& A0) -> SurfaceAreaModel
+auto SurfaceAreaModelConstant(real const& A0) -> SurfaceAreaModel
 {
-    return [=](ChemicalProps const& props) -> real { return A0.value(); };
+    return [=](ChemicalProps const& props) -> real { return A0; };
 }
 
 auto SurfaceAreaModelConstant(real const& A0, Chars unitA0) -> SurfaceAreaModel

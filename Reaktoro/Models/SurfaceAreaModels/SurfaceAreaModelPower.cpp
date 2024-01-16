@@ -23,7 +23,7 @@
 
 namespace Reaktoro {
 
-auto SurfaceAreaModelPowerMolar(String const& phase, Param const& A0, Param const& q0, Param const& p) -> SurfaceAreaModel
+auto SurfaceAreaModelPowerMolar(String const& phase, real const& A0, real const& q0, real const& p) -> SurfaceAreaModel
 {
     return [=](ChemicalProps const& props) -> real
     {
@@ -33,7 +33,7 @@ auto SurfaceAreaModelPowerMolar(String const& phase, Param const& A0, Param cons
     };
 }
 
-auto SurfaceAreaModelPowerSpecific(String const& phase, Param const& A0, Param const& q0, Param const& p) -> SurfaceAreaModel
+auto SurfaceAreaModelPowerSpecific(String const& phase, real const& A0, real const& q0, real const& p) -> SurfaceAreaModel
 {
     return [=](ChemicalProps const& props) -> real
     {
@@ -43,7 +43,7 @@ auto SurfaceAreaModelPowerSpecific(String const& phase, Param const& A0, Param c
     };
 }
 
-auto SurfaceAreaModelPowerVolumetric(String const& phase, Param const& A0, Param const& q0, Param const& p) -> SurfaceAreaModel
+auto SurfaceAreaModelPowerVolumetric(String const& phase, real const& A0, real const& q0, real const& p) -> SurfaceAreaModel
 {
     return [=](ChemicalProps const& props) -> real
     {
@@ -53,7 +53,7 @@ auto SurfaceAreaModelPowerVolumetric(String const& phase, Param const& A0, Param
     };
 }
 
-auto SurfaceAreaModelPower(String const& phase, real A0, Chars unitA0, real q0, Chars unitq0, Param const& p) -> SurfaceAreaModel
+auto SurfaceAreaModelPower(String const& phase, real A0, Chars unitA0, real q0, Chars unitq0, real const& p) -> SurfaceAreaModel
 {
     A0 = units::convert(A0, unitA0, "m2");
 

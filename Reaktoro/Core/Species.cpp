@@ -217,7 +217,7 @@ auto Species::withFormationReaction(const FormationReaction& reaction) const -> 
     return copy;
 }
 
-auto Species::withStandardGibbsEnergy(const Param& G0) const -> Species
+auto Species::withStandardGibbsEnergy(const real& G0) const -> Species
 {
     return withStandardThermoModel(StandardThermoModelConstant({ G0 }));
 }

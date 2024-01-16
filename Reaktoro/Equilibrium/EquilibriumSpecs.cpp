@@ -595,11 +595,6 @@ auto EquilibriumSpecs::numInputs() const -> Index
     return m_inputs.size();
 }
 
-auto EquilibriumSpecs::numInputParams() const -> Index
-{
-    return m_params.size();
-}
-
 auto EquilibriumSpecs::numControlVariables() const -> Index
 {
     return numControlVariablesQ() + numControlVariablesP();
@@ -661,11 +656,6 @@ auto EquilibriumSpecs::numConservativeComponents() const -> Index
 auto EquilibriumSpecs::namesInputs() const -> Strings
 {
     return m_inputs;
-}
-
-auto EquilibriumSpecs::namesInputParams() const -> Strings
-{
-    return vectorize(m_params, RKT_LAMBDA(x, x.id()));
 }
 
 auto EquilibriumSpecs::namesControlVariables() const -> Strings
@@ -804,14 +794,6 @@ auto EquilibriumSpecs::addInput(String const& var) -> Index
     return m_inputs.size() - 1; // the index of the just added input variable
 }
 
-auto EquilibriumSpecs::addInput(Param const& param) -> Index
-{
-    const auto idx = addInput(param.id());
-    m_params.push_back(param);
-    m_params_idxs.push_back(idx);
-    return idx;
-}
-
 //=================================================================================================
 //
 // MISCELLANEOUS METHODS
@@ -826,16 +808,6 @@ auto EquilibriumSpecs::system() const -> ChemicalSystem const&
 auto EquilibriumSpecs::inputs() const -> Strings const&
 {
     return m_inputs;
-}
-
-auto EquilibriumSpecs::params() const -> Vec<Param> const&
-{
-    return m_params;
-}
-
-auto EquilibriumSpecs::indicesInputParams() const -> Vec<Index> const&
-{
-    return m_params_idxs;
 }
 
 auto EquilibriumSpecs::isTemperatureUnknown() const -> bool

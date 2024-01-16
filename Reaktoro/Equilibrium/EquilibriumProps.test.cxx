@@ -22,7 +22,6 @@
 #include <Reaktoro/Core/ChemicalProps.hpp>
 #include <Reaktoro/Core/ChemicalState.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Phases.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumDims.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumProps.hpp>
@@ -35,41 +34,41 @@ using autodiff::at;
 
 TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
 {
-    // Create the Param objects for the G0 values of the species.
-    // This is needed so that we can reference these parameters
-    // later for derivative calculations using autodiff.
-    Map<String, Param> G0;
-    G0["H2O"]           = Param("G0[H2O]"          ,  -237181.72);
-    G0["H+"]            = Param("G0[H+]"           ,        0.00);
-    G0["OH-"]           = Param("G0[OH-]"          ,  -157297.48);
-    G0["H2"]            = Param("G0[H2]"           ,    17723.42);
-    G0["O2"]            = Param("G0[O2]"           ,    16543.54);
-    G0["Na+"]           = Param("G0[Na+]"          ,  -261880.74);
-    G0["Cl-"]           = Param("G0[Cl-]"          ,  -131289.74);
-    G0["NaCl"]          = Param("G0[NaCl]"         ,  -388735.44);
-    G0["HCl"]           = Param("G0[HCl]"          ,  -127235.44);
-    G0["NaOH"]          = Param("G0[NaOH]"         ,  -417981.60);
-    G0["Ca++"]          = Param("G0[Ca++]"         ,  -552790.08);
-    G0["Mg++"]          = Param("G0[Mg++]"         ,  -453984.92);
-    G0["CH4"]           = Param("G0[CH4]"          ,   -34451.06);
-    G0["CO2"]           = Param("G0[CO2]"          ,  -385974.00);
-    G0["HCO3-"]         = Param("G0[HCO3-]"        ,  -586939.89);
-    G0["CO3--"]         = Param("G0[CO3--]"        ,  -527983.14);
-    G0["CaCl2"]         = Param("G0[CaCl2]"        ,  -811696.00);
-    G0["CaCO3"]         = Param("G0[CaCO3]"        , -1099764.40);
-    G0["MgCO3"]         = Param("G0[MgCO3]"        ,  -998971.84);
-    G0["SiO2"]          = Param("G0[SiO2]"         ,  -833410.96);
-    G0["CO2(g)"]        = Param("G0[CO2(g)]"       ,  -394358.74);
-    G0["O2(g)"]         = Param("G0[O2(g)]"        ,        0.00);
-    G0["H2(g)"]         = Param("G0[H2(g)]"        ,        0.00);
-    G0["H2O(g)"]        = Param("G0[H2O(g)]"       ,  -228131.76);
-    G0["CH4(g)"]        = Param("G0[CH4(g)]"       ,   -50720.12);
-    G0["CO(g)"]         = Param("G0[CO(g)]"        ,  -137168.26);
-    G0["NaCl(s)"]       = Param("G0[NaCl(s)]"      ,  -384120.49);
-    G0["CaCO3(s)"]      = Param("G0[CaCO3(s)]"     , -1129177.92);
-    G0["MgCO3(s)"]      = Param("G0[MgCO3(s)]"     , -1027833.07);
-    G0["CaMg(CO3)2(s)"] = Param("G0[CaMg(CO3)2(s)]", -2166307.84);
-    G0["SiO2(s)"]       = Param("G0[SiO2(s)]"      ,  -856238.86);
+    // The G0 values of the chemical species in the test.
+    Map<String, real> G0 =
+    {
+        { "H2O",            -237181.72 },
+        { "H+",                   0.00 },
+        { "OH-",            -157297.48 },
+        { "H2",               17723.42 },
+        { "O2",               16543.54 },
+        { "Na+",            -261880.74 },
+        { "Cl-",            -131289.74 },
+        { "NaCl",           -388735.44 },
+        { "HCl",            -127235.44 },
+        { "NaOH",           -417981.60 },
+        { "Ca++",           -552790.08 },
+        { "Mg++",           -453984.92 },
+        { "CH4",             -34451.06 },
+        { "CO2",            -385974.00 },
+        { "HCO3-",          -586939.89 },
+        { "CO3--",          -527983.14 },
+        { "CaCl2",          -811696.00 },
+        { "CaCO3",         -1099764.40 },
+        { "MgCO3",          -998971.84 },
+        { "SiO2",           -833410.96 },
+        { "CO2(g)",         -394358.74 },
+        { "O2(g)",                0.00 },
+        { "H2(g)",                0.00 },
+        { "H2O(g)",         -228131.76 },
+        { "CH4(g)",          -50720.12 },
+        { "CO(g)",          -137168.26 },
+        { "NaCl(s)",        -384120.49 },
+        { "CaCO3(s)",      -1129177.92 },
+        { "MgCO3(s)",      -1027833.07 },
+        { "CaMg(CO3)2(s)", -2166307.84 },
+        { "SiO2(s)",        -856238.86 },
+    };
 
     // Create the Database object from the data above.
     Database db;
@@ -87,18 +86,17 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         ChemicalState state(system);
         state.setTemperature(50.0, "celsius");
         state.setPressure(100.0, "bar");
-        state.setSpeciesAmounts(1e-16); // don't let zeros for amounts
-        state.setSpeciesAmount("H2O",    55.0,    "mol");
-        state.setSpeciesAmount("H+",     1.0e-7,  "mol");
-        state.setSpeciesAmount("OH-",    1.0e-7,  "mol");
-        state.setSpeciesAmount("O2",     1.0e-31, "mol");
-        state.setSpeciesAmount("H2",     2.0e-31, "mol");
-        state.setSpeciesAmount("HCO3-",  1.0e-3,  "mol");
-        state.setSpeciesAmount("CO2",    1.0e-1,  "mol");
-        state.setSpeciesAmount("CO3--",  1.0e-5,  "mol");
-        state.setSpeciesAmount("CO2(g)", 1.0,     "mol");
-        state.setSpeciesAmount("H2O(g)", 1.0e-3,  "mol");
-        state.setSpeciesAmount("CH4(g)", 1.0e-6,  "mol");
+        state.set("H2O",    55.0,    "mol");
+        state.set("H+",     1.0e-7,  "mol");
+        state.set("OH-",    1.0e-7,  "mol");
+        state.set("O2",     1.0e-31, "mol");
+        state.set("H2",     2.0e-31, "mol");
+        state.set("HCO3-",  1.0e-3,  "mol");
+        state.set("CO2",    1.0e-1,  "mol");
+        state.set("CO3--",  1.0e-5,  "mol");
+        state.set("CO2(g)", 1.0,     "mol");
+        state.set("H2O(g)", 1.0e-3,  "mol");
+        state.set("CH4(g)", 1.0e-6,  "mol");
 
         EquilibriumSpecs specs(system);
         specs.temperature();
@@ -106,8 +104,8 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         specs.volume();
         specs.pH();
         specs.openTo("O2"); // this introduces a *p* control variable n[O2] with the amount of O2 in/out
-        specs.addInput(G0["H2O"]); // do this to enable sensitivity derivatives with respect to G0 param of H2O
-        specs.addInput(G0["HCO3-"]); // do this to enable sensitivity derivatives with respect to G0 param of HCO3-
+        specs.addInput("G0H2O"); // do this to enable sensitivity derivatives with respect to G0 param of H2O
+        specs.addInput("G0HCO3-"); // do this to enable sensitivity derivatives with respect to G0 param of HCO3-
 
         EquilibriumDims dims(specs);
 
@@ -196,18 +194,17 @@ TEST_CASE("Testing EquilibriumProps", "[EquilibriumProps]")
         ChemicalState state(system);
         state.setTemperature(50.0, "celsius");
         state.setPressure(100.0, "bar");
-        state.setSpeciesAmounts(1e-16); // don't let zeros for amounts
-        state.setSpeciesAmount("H2O",    55.0,    "mol");
-        state.setSpeciesAmount("H+",     1.0e-7,  "mol");
-        state.setSpeciesAmount("OH-",    1.0e-7,  "mol");
-        state.setSpeciesAmount("O2",     1.0e-31, "mol");
-        state.setSpeciesAmount("H2",     2.0e-31, "mol");
-        state.setSpeciesAmount("HCO3-",  1.0e-3,  "mol");
-        state.setSpeciesAmount("CO2",    1.0e-1,  "mol");
-        state.setSpeciesAmount("CO3--",  1.0e-5,  "mol");
-        state.setSpeciesAmount("CO2(g)", 1.0,     "mol");
-        state.setSpeciesAmount("H2O(g)", 1.0e-3,  "mol");
-        state.setSpeciesAmount("CH4(g)", 1.0e-6,  "mol");
+        state.set("H2O",    55.0,    "mol");
+        state.set("H+",     1.0e-7,  "mol");
+        state.set("OH-",    1.0e-7,  "mol");
+        state.set("O2",     1.0e-31, "mol");
+        state.set("H2",     2.0e-31, "mol");
+        state.set("HCO3-",  1.0e-3,  "mol");
+        state.set("CO2",    1.0e-1,  "mol");
+        state.set("CO3--",  1.0e-5,  "mol");
+        state.set("CO2(g)", 1.0,     "mol");
+        state.set("H2O(g)", 1.0e-3,  "mol");
+        state.set("CH4(g)", 1.0e-6,  "mol");
 
         EquilibriumSpecs specs(system);
         specs.volume();

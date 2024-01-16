@@ -66,7 +66,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.pressure();
 
         CHECK( specs.numInputs()                              == 2 ); // T, P
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 0 );
         CHECK( specs.numControlVariablesP()                   == 0 );
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -88,7 +87,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.volume();
 
         CHECK( specs.numInputs()                              == 2 ); // T, V
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 1 ); // P
         CHECK( specs.numControlVariablesP()                   == 1 ); // P
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -112,7 +110,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.internalEnergy();
 
         CHECK( specs.numInputs()                              == 2 ); // V, U
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 2 ); // T, P
         CHECK( specs.numControlVariablesP()                   == 2 ); // T, P
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -137,7 +134,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.pH();
 
         CHECK( specs.numInputs()                              == 3 ); // T, P, pH
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 1 ); // n[H+]
         CHECK( specs.numControlVariablesP()                   == 0 );
         CHECK( specs.numControlVariablesQ()                   == 1 ); // n[H+]
@@ -164,7 +160,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.activity("CO2(g)");
 
         CHECK( specs.numInputs()                              == 3 ); // V, S, ln(a[CO2(g)])
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 3 ); // T, P, n[CO2]
         CHECK( specs.numControlVariablesP()                   == 2 ); // T, P
         CHECK( specs.numControlVariablesQ()                   == 1 ); // n[CO2]
@@ -196,7 +191,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.openTo("CH4");
 
         CHECK( specs.numInputs()                              == 6 ); // T, P, V, U, pH, pE
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
         CHECK( specs.numControlVariablesP()                   == 2 ); // n[CO2], n[CH4]
         CHECK( specs.numControlVariablesQ()                   == 2 ); // n[H+], n[e-]
@@ -233,7 +227,6 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.addReactivityConstraint({ "xi2", VectorXd::Random(Nn), {} });
 
         CHECK( specs.numInputs()                              == 6 ); // T, P, V, U, pH, pE
-        CHECK( specs.numInputParams()                         == 0 );
         CHECK( specs.numControlVariables()                    == 4 ); // n[CO2], n[CH4], n[H+], n[e-]
         CHECK( specs.numControlVariablesP()                   == 2 ); // n[CO2], n[CH4]
         CHECK( specs.numControlVariablesQ()                   == 2 ); // n[H+], n[e-]
@@ -259,10 +252,9 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         specs.temperature();
         specs.pressure();
         specs.addInput("V");
-        specs.addInput(Param("G0[H2O]", 1.0));
+        specs.addInput("G0[H2O]");
 
         CHECK( specs.numInputs()                              == 4 ); // T, P, V, G0[H2O]
-        CHECK( specs.numInputParams()                         == 1 ); // G0[H2O]
         CHECK( specs.numControlVariables()                    == 0 );
         CHECK( specs.numControlVariablesP()                   == 0 );
         CHECK( specs.numControlVariablesQ()                   == 0 );
@@ -272,13 +264,11 @@ TEST_CASE("Testing EquilibriumSpecs", "[EquilibriumSpecs]")
         CHECK( specs.numConstraints()                         == 0 );
         CHECK( specs.numConservativeComponents()              == Nb );
         CHECK( specs.namesInputs()                            == Strings{"T", "P", "V", "G0[H2O]"} );
-        CHECK( specs.namesInputParams()                       == Strings{"G0[H2O]"} );
         CHECK( specs.namesControlVariables()                  == Strings{} );
         CHECK( specs.namesTitrants()                          == Strings{} );
         CHECK( specs.namesTitrantsExplicit()                  == Strings{} );
         CHECK( specs.namesTitrantsImplicit()                  == Strings{} );
         CHECK( specs.namesConstraints()                       == Strings{} );
-        CHECK( specs.indicesInputParams()                     == Indices{3} ); // index of G0[H2O]
         CHECK( specs.isTemperatureUnknown()                   == false );
         CHECK( specs.isPressureUnknown()                      == false );
         CHECK( specs.indexTemperatureAmongControlVariablesP() == Index(-1) );

@@ -25,17 +25,17 @@ namespace Reaktoro {
 /// Return a surface area model based on linear variation from a given molar surface area.
 /// @param phase The name of the phase (as present in the chemical system) that forms the surface.
 /// @param Abar The molar area of the surface (in m2/mol)
-auto SurfaceAreaModelLinearMolar(String const& phase, Param const& Abar) -> SurfaceAreaModel;
+auto SurfaceAreaModelLinearMolar(String const& phase, real const& Abar) -> SurfaceAreaModel;
 
 /// Return a surface area model based on linear variation from a given specific surface area.
 /// @param phase The name of the phase (as present in the chemical system) that forms the surface.
 /// @param Abar The specific area of the surface (in m2/kg)
-auto SurfaceAreaModelLinearSpecific(String const& phase, Param const& Abar) -> SurfaceAreaModel;
+auto SurfaceAreaModelLinearSpecific(String const& phase, real const& Abar) -> SurfaceAreaModel;
 
 /// Return a surface area model based on linear variation from a given volumetric surface area.
 /// @param phase The name of the phase (as present in the chemical system) that forms the surface.
 /// @param Abar The volumetric area of the surface (in m2/m3)
-auto SurfaceAreaModelLinearVolumetric(String const& phase, Param const& Abar) -> SurfaceAreaModel;
+auto SurfaceAreaModelLinearVolumetric(String const& phase, real const& Abar) -> SurfaceAreaModel;
 
 /// Return a surface area model based on linear variation from a given normalized surface area.
 /// This surface area model computes the surface area @eq{A} of a phase using

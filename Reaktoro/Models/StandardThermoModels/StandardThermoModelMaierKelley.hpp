@@ -26,25 +26,25 @@ namespace Reaktoro {
 struct StandardThermoModelParamsMaierKelley
 {
     /// The apparent standard molar Gibbs free energy of formation of the substance from its elements (in J/mol).
-    Param Gf;
+    real Gf;
 
     /// The apparent standard molar enthalpy of formation of the substance from its elements (in J/mol).
-    Param Hf;
+    real Hf;
 
     /// The standard molar entropy of the substance at reference temperature and pressure (in J/(mol·K)).
-    Param Sr;
+    real Sr;
 
     /// The standard molar volume of the mineral substance at reference temperature and pressure (in unit of m³/mol)
-    Param Vr;
+    real Vr;
 
     /// The coefficient `a` of the Maier-Kelley model (in J/(mol·K)).
-    Param a;
+    real a;
 
     /// The coefficient `b` of the Maier-Kelley model (in J/(mol·K²)).
-    Param b;
+    real b;
 
     /// The coefficient `c` of the Maier-Kelley model (in (J·K)/mol).
-    Param c;
+    real c;
 
     /// The maximum temperature at which the Maier-Kelley model can be applied for the substance (optional, in K).
     real Tmax;

@@ -24,7 +24,6 @@ using namespace Catch;
 #include <Reaktoro/Core/ChemicalSystem.hpp>
 #include <Reaktoro/Core/Data.hpp>
 #include <Reaktoro/Core/Element.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Core/Phase.hpp>
 #include <Reaktoro/Core/Species.hpp>
 #include <Reaktoro/Models/StandardThermoModels.hpp>
@@ -294,37 +293,37 @@ StandardVolumeModel:
     CHECK( data.dumpYaml() == expected.dumpYaml() );
 }
 
-TEST_CASE("Testing Data encoder/decoder for Param", "[Serialization][Core]")
+TEST_CASE("Testing Data encoder/decoder for real", "[Serialization][Core]")
 {
-    Param param;
+    real x;
     Data data;
 
-    param = 1.0;
-    data = param;
+    x = 1.0;
+    data = x;
 
     CHECK( data.asFloat() == 1.0 );
 
     data = 10.0;
-    param = data.asFloat();
+    x = data.asFloat();
 
-    CHECK( param.value() == 10.0 );
+    CHECK( x == 10.0 );
 }
 
-TEST_CASE("Testing Data encoder/decoder for Vec<Param>", "[Serialization][Core]")
+TEST_CASE("Testing Data encoder/decoder for Vec<real>", "[Serialization][Core]")
 {
-    Data data = Vec<Param>{1.0, 2.0, 3.0};
+    Data data = Vec<real>{1.0, 2.0, 3.0};
 
-    Vec<Param> params = data.as<Vec<Param>>();
+    Vec<real> values = data.as<Vec<real>>();
 
-    CHECK( params[0].value() == 1.0 );
-    CHECK( params[1].value() == 2.0 );
-    CHECK( params[2].value() == 3.0 );
+    CHECK( values[0] == 1.0 );
+    CHECK( values[1] == 2.0 );
+    CHECK( values[2] == 3.0 );
 
-    params[0] = 10.0;
-    params[1] = 20.0;
-    params[2] = 30.0;
+    values[0] = 10.0;
+    values[1] = 20.0;
+    values[2] = 30.0;
 
-    data = params;
+    data = values;
 
     CHECK( data[0].asFloat() == 10.0 );
     CHECK( data[1].asFloat() == 20.0 );
@@ -343,10 +342,10 @@ TEST_CASE("Testing Data encoder/decoder for ReactionStandardThermoModel", "[Seri
 {
     Data data, expected;
 
-    Param lgKr = 1.0;
-    Param dHr  = 2.0;
-    Param Tr   = 3.0;
-    Param Pr   = 4.0;
+    real lgKr = 1.0;
+    real dHr  = 2.0;
+    real Tr   = 3.0;
+    real Pr   = 4.0;
 
     data = ReactionStandardThermoModelVantHoff({lgKr, dHr, Tr, Pr});
 
@@ -445,11 +444,11 @@ TEST_CASE("Testing Data encoder/decoder for Species", "[Serialization][Core]")
         auto A = Species("Ca++(aq)").withStandardGibbsEnergy(0.0);
         auto B = Species("CO3--(aq)").withStandardGibbsEnergy(0.0);
 
-        Param lgKr = 1.0;
-        Param dHr  = 2.0;
-        Param Tr   = 3.0;
-        Param Pr   = 4.0;
-        Param V0   = 5.0;
+        real lgKr = 1.0;
+        real dHr  = 2.0;
+        real Tr   = 3.0;
+        real Pr   = 4.0;
+        real V0   = 5.0;
 
         auto reaction = FormationReaction()
             .withReactants({{A, 1}, {B, 1}})

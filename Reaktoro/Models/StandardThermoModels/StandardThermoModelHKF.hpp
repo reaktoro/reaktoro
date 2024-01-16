@@ -26,34 +26,34 @@ namespace Reaktoro {
 struct StandardThermoModelParamsHKF
 {
     /// The apparent standard molal Gibbs free energy of formation of the species from its elements (in J/mol).
-    Param Gf;
+    real Gf;
 
     /// The apparent standard molal enthalpy of formation of the species from its elements (in J/mol).
-    Param Hf;
+    real Hf;
 
     /// The standard molal entropy of the species at reference temperature and pressure (in J/(mol·K)).
-    Param Sr;
+    real Sr;
 
     /// The coefficient `a1` of the HKF equation of state of the aqueous solute (in J/(mol·Pa)).
-    Param a1;
+    real a1;
 
     /// The coefficient `a2` of the HKF equation of state of the aqueous solute (in J/mol).
-    Param a2;
+    real a2;
 
     /// The coefficient `a3` of the HKF equation of state of the aqueous solute (in (J·K)/(mol·Pa)).
-    Param a3;
+    real a3;
 
     /// The coefficient `a4` of the HKF equation of state of the aqueous solute (in (J·K)/mol).
-    Param a4;
+    real a4;
 
     /// The coefficient `c1` of the HKF equation of state of the aqueous solute (in J/(mol·K)).
-    Param c1;
+    real c1;
 
     /// The coefficient `c2` of the HKF equation of state of the aqueous solute (in (J·K)/mol).
-    Param c2;
+    real c2;
 
     /// The conventional Born coefficient of the aqueous solute at reference temperature 298.15 K and pressure 1 bar (in J/mol).
-    Param wref;
+    real wref;
 
     /// The electrical charge of the aqueous solute.
     real charge;

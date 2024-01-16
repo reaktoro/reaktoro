@@ -125,5 +125,5 @@ TEST_CASE("Testing ReactionRateModelPalandriKharaka class", "[ReactionRateModelP
 
     const auto rate_actual = system.reaction(0).rate(props);
 
-    CHECK( rate_actual == rate_expected );
+    CHECK( rate_actual == Approx(rate_expected) );
 }

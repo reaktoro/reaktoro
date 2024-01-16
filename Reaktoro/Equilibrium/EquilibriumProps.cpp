@@ -66,40 +66,18 @@ auto createPressureGetterFn(const EquilibriumSpecs& specs) -> PropertyGetterFn
 
 struct EquilibriumProps::Impl
 {
-    /// The chemical state of the system and its properties at given *(n, p, w)*.
-    ChemicalState state;
-
-    /// The specifications of the equilibrium problem
-    const EquilibriumSpecs specs;
-
-    /// The dimension variables in a chemical equilibrium problem specification.
-    const EquilibriumDims dims;
-
-    /// The temperature getter function for the given equilibrium specifications. @see createTemperatureGetterFn
-    const PropertyGetterFn getT;
-
-    /// The pressure getter function for the given equilibrium specifications. @see createPressureGetterFn
-    const PropertyGetterFn getP;
-
-    /// The values of the model parameters before they are altered in the update method.
-    VectorXr params0;
-
-    /// The partial derivatives of the serialized chemical properties *u* with respect to *(n, p, w)*.
-    MatrixXd dudnpw;
-
-    /// The array stream used during serialize and deserialize of chemical properties.
-    ArrayStream<real> stream;
-
-    /// The flag indicating if the full Jacobian matrix is been constructed.
-    bool assemblying_jacobian = false;
+    ChemicalState state;               ///< The chemical state of the system and its properties at given *(n, p, w)*.
+    EquilibriumSpecs const specs;      ///< The specifications of the equilibrium problem.
+    EquilibriumDims const dims;        ///< The dimension variables in a chemical equilibrium problem specification.
+    PropertyGetterFn const getT;       ///< The temperature getter function for the given equilibrium specifications.
+    PropertyGetterFn const getP;       ///< The pressure getter function for the given equilibrium specifications.
+    MatrixXd dudnpw;                   ///< The partial derivatives of the serialized chemical properties *u* with respect to *(n, p, w)*.
+    ArrayStream<real> stream;          ///< The array stream used during serialize and deserialize of chemical properties.
+    bool assemblying_jacobian = false; ///< The flag indicating if the full Jacobian matrix is been constructed.
 
     /// Construct an EquilibriumProps::Impl object.
     Impl(const EquilibriumSpecs& specs)
-    : state(specs.system()),
-      specs(specs),
-      dims(specs),
-      getT(createTemperatureGetterFn(specs)),
-      getP(createPressureGetterFn(specs))
+    : state(specs.system()), specs(specs), dims(specs), getT(createTemperatureGetterFn(specs)), getP(createPressureGetterFn(specs))
     {
         // Initialize Jacobian matrix dudnpw with zeros (to avoid uninitialized values)
         state.props().serialize(stream);
@@ -111,36 +89,12 @@ struct EquilibriumProps::Impl
     /// Update the chemical properties of the chemical system.
     auto update(VectorXrConstRef n, VectorXrConstRef p, VectorXrConstRef w, bool useIdealModel) -> void
     {
-        // Get temperature and pressure of the system, either available in p or w
-        const auto T = getT(p, w);
-        const auto P = getP(p, w);
+        auto const T = getT(p, w);
+        auto const P = getP(p, w);
 
-        // The model parameters considered inputs in the equilibrium calculation.
-        auto params = specs.params();
-
-        // The indices of the model params among the input variables *w*.
-        const auto& iparams = specs.indicesInputParams();
-
-        // Store the current values of the model parameters
-        params0.resize(params.size());
-        for(const auto& [i, param] : enumerate(params))
-            params0[i] = param.value();
-
-        // Before updating the chemical properties, change the model parameters
-        // that are input in the chemical equilibrium calculation.
-        for(auto i = 0; i < params0.size(); ++i)
-            params[i].value() = w[iparams[i]];
-
-        // Perform the update of the chemical properties of the system.
-        // If there were model parameters changed above, the chemical
-        // properties computed below will be affected.
         if(useIdealModel)
             state.updateIdeal(T, P, n);
         else state.update(T, P, n);
-
-        // Recover here the original state of the model parameters changed above.
-        for(auto i = 0; i < params0.size(); ++i)
-            params[i].value() = params0[i];
     }
 
     /// Update the chemical properties of the chemical system.

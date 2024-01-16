@@ -208,7 +208,7 @@ auto J1(real x) -> real
 using PitzerParamCorrectionModel = ActivityModelParamsPitzer::CorrectionModel;
 
 /// Return the Pitzer temperature-pressure correction model based on constant expression.
-auto createParamCorrectionModelConstant(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelConstant(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     auto const& c = coefficients;
 
@@ -220,7 +220,7 @@ auto createParamCorrectionModelConstant(Vec<Param> const& coefficients) -> Fn<re
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by PHREEQC v3.
-auto createParamCorrectionModelPhreeqc(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelPhreeqc(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     auto const& c = coefficients;
     auto const Tr = 298.15;
@@ -238,61 +238,61 @@ auto createParamCorrectionModelPhreeqc(Vec<Param> const& coefficients) -> Fn<rea
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by He and Morse (1993) (doi: 10.1016/0016-7037(93)90137-L).
-auto createParamCorrectionModelHeMorse1993(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelHeMorse1993(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `HeMorse1993` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Dai et al. (2013) (doi: 10.2118/164045-ms).
-auto createParamCorrectionModelDai2013(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelDai2013(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `Dai2013` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Dai et al. (2014) (doi: 10.2118/169786-ms).
-auto createParamCorrectionModelDai2014(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelDai2014(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `Dai2014` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Christov and Møller (2004) (see Table 5 in 10.1016/j.chemgeo.2007.07.023).
-auto createParamCorrectionModelChristovMoller2004(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelChristovMoller2004(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `ChristovMoller2004` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Holmes et al. (1987) (see Table 6 in 10.1016/j.chemgeo.2007.07.023).
-auto createParamCorrectionModelHolmes1987(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelHolmes1987(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `Holmes1987` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Pitzer et al. (1984) (see Table 7 in 10.1016/j.chemgeo.2007.07.023).
-auto createParamCorrectionModelPitzer1984(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelPitzer1984(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `Pitzer1984` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Palaban and Pitzer (1987) (see Table 8 in 10.1016/j.chemgeo.2007.07.023).
-auto createParamCorrectionModelPalabanPitzer1987(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelPalabanPitzer1987(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `PalabanPitzer1987` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Polya et al. (2001) (see Table 10 in 10.1016/j.chemgeo.2007.07.023).
-auto createParamCorrectionModelPolya2001(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelPolya2001(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `Polya2001` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model based on expression provided by Li and Duan (2007) (see Table 12 in 10.1016/j.chemgeo.2007.07.023).
-auto createParamCorrectionModelLiDuan2007(Vec<Param> const& coefficients) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModelLiDuan2007(Vec<real> const& coefficients) -> Fn<real(real const&, real const&)>
 {
     errorif(true, "Currently, the `LiDuan2007` temperature-pressure correction model for Pitzer parameters are not implemented");
 }
 
 /// Return the Pitzer temperature-pressure correction model with given coefficients and model option.
-auto createParamCorrectionModel(Vec<Param> const& coefficients, PitzerParamCorrectionModel const& option) -> Fn<real(real const&, real const&)>
+auto createParamCorrectionModel(Vec<real> const& coefficients, PitzerParamCorrectionModel const& option) -> Fn<real(real const&, real const&)>
 {
     switch(option)
     {
@@ -390,7 +390,7 @@ auto createPitzerParamTernary(SpeciesList const& specieslist, PitzerInteractionP
 }
 
 /// Return the default value for \eq{alpha_1} parameter according to that used in PHREEQC v3 (see file pitzer.cpp under comment "Set alpha values").
-auto determineDefaultAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& formula1) -> Param
+auto determineDefaultAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& formula1) -> real
 {
     auto const z0 = round(abs(formula0.charge()));
     auto const z1 = round(abs(formula1.charge()));
@@ -398,7 +398,7 @@ auto determineDefaultAlpha1(ChemicalFormula const& formula0, ChemicalFormula con
 };
 
 /// Return the default value for \eq{alpha_2} parameter according to that used in PHREEQC v3 (see file pitzer.cpp under comment "Set alpha values").
-auto determineDefaultAlpha2(ChemicalFormula const& formula0, ChemicalFormula const& formula1) -> Param
+auto determineDefaultAlpha2(ChemicalFormula const& formula0, ChemicalFormula const& formula1) -> real
 {
     auto const z0 = round(abs(formula0.charge()));
     auto const z1 = round(abs(formula1.charge()));
@@ -415,7 +415,7 @@ auto findAlphaEntry(ChemicalFormula const& formula0, ChemicalFormula const& form
 }
 
 /// Return the value for \eq{alpha_1} parameter (either user-specified or determined from default value according to that used in PHREEQC v3).
-auto determineAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> Param
+auto determineAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> real
 {
     if(auto const idx = findAlphaEntry(formula0, formula1, alphas); idx < alphas.size())
         return alphas[idx].parameters[0];
@@ -423,7 +423,7 @@ auto determineAlpha1(ChemicalFormula const& formula0, ChemicalFormula const& for
 }
 
 /// Return the value for \eq{alpha_2} parameter (either user-specified or determined from default value according to that used in PHREEQC v3).
-auto determineAlpha2(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> Param
+auto determineAlpha2(ChemicalFormula const& formula0, ChemicalFormula const& formula1, Vec<PitzerInteractionParamAttribs> const& alphas) -> real
 {
     if(auto const idx = findAlphaEntry(formula0, formula1, alphas); idx < alphas.size())
         return alphas[idx].parameters[0];
@@ -651,8 +651,8 @@ struct PitzerModel
     Vec<PitzerParam> mu;     ///< The parameters \eq{\mu_{ijk}(T, P)} in the Pitzer model for neutral-neutral-neutral, neutral-neutral-cation, and neutral-neutral-anion interactions.
     Vec<PitzerParam> eta;    ///< The parameters \eq{\eta_{ijk}(T, P)} in the Pitzer model for neutral-cation-cation and neutral-anion-anion interactions.
 
-    Vec<Param> alpha1; ///< The parameters \eq{alpha_1_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
-    Vec<Param> alpha2; ///< The parameters \eq{alpha_2_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
+    Vec<real> alpha1; ///< The parameters \eq{alpha_1_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
+    Vec<real> alpha2; ///< The parameters \eq{alpha_2_{ij}} associated to the parameters \eq{\beta^{(1)}_{ij}}.
 
     using Tuples2i = Tuples<Index, Index>;                   ///< Auxiliary type for a tuple of 2 index values.
     using Tuples3d = Tuples<double, double, double>;         ///< Auxiliary type for a tuple of 3 double values.
@@ -769,10 +769,6 @@ struct PitzerModel
     /// Update all Pitzer interaction parameters according to current temperature and pressure.
     auto updateParams(real const& T, real const& P)
     {
-        // Note: Do not try to avoid the calculations before in case T and P is
-        // the same as last time because T and P could be the same but the Param
-        // objects in these models could be changing!
-
         auto const Pbar = P * 1e-5; // from Pa to bar
 
         for(auto& param : beta0)

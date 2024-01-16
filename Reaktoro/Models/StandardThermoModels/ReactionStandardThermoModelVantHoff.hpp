@@ -26,10 +26,10 @@ namespace Reaktoro {
 struct ReactionStandardThermoModelParamsVantHoff
 {
     /// The equilibrium constant @eq{\lg K_{\mathrm{r}}} (log base 10) of the reaction at @eq{T_{\mathrm{r}}} and @eq{P_{\mathrm{r}}}.
-    Param lgKr;
+    real lgKr;
 
     /// The change in standard molar enthalpy @eq{\Delta H_{\mathrm{r}}^{\circ}} of the reaction (in J/mol) at @eq{T_{\mathrm{r}}} and @eq{P_{\mathrm{r}}}.
-    Param dHr;
+    real dHr;
 
     /// The reference temperature @eq{T_{\mathrm{r}}} (in K).
     real Tr = 298.15;

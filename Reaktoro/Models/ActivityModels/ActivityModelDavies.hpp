@@ -28,10 +28,10 @@ namespace Reaktoro {
 struct ActivityModelDaviesParams
 {
     /// The value of the *b* parameter in the Davies activity model for charged species (default is 0.3).
-    Param bions = 0.3;
+    real bions = 0.3;
 
     /// The value of the *b* parameter in the Davies activity model for neutral species (default is 0.1).
-    Param bneutrals = 0.1;
+    real bneutrals = 0.1;
 };
 
 /// Return the activity model for aqueous electrolyte phases based on the Davies model.

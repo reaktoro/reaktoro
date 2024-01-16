@@ -291,11 +291,8 @@ struct EquilibriumSetup::Impl
         auto const& T = props.temperature();
         auto const& n = props.speciesAmounts();
 
-        // Update the vector of species chemical potentials in case there are p variables associated to them
+        // Update the vector of species chemical potentials at current iteration
         mu = props.speciesChemicalPotentials();
-        for(auto i = 0; i < Np; ++i)
-            if(pvars[i].ispecies != Index(-1))
-                mu[pvars[i].ispecies] = pvars[i].fn(props, p[i]);
 
         const auto RT  = universalGasConstant * T;
         const auto tau = options.epsilon * options.logarithm_barrier_factor;

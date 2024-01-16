@@ -29,7 +29,7 @@ namespace Reaktoro {
 
 auto StandardThermoModelMaierKelley(const StandardThermoModelParamsMaierKelley& params) -> StandardThermoModel
 {
-    const auto isgas = params.Vr.value() == 0.0;
+    const auto isgas = params.Vr == 0.0;
 
     auto evalfn = [=](StandardThermoProps& props, real T, real P)
     {

@@ -30,9 +30,7 @@ def testData():
     bar = Data()
     bar.add("C", True)
     bar.add("D", "X")
-
-    if sys.platform != "darwin":
-        bar.add("E", 7.0)
+    bar.add("E", 7.0)
 
     doo = Data()
     doo.add(3.0)
@@ -51,9 +49,7 @@ def testData():
 
     assert bar["C"].asBoolean() == True
     assert bar["D"].asString() == "X"
-
-    if sys.platform != "darwin":
-        assert bar["E"].asParam() == 7.0
+    assert bar["E"].asFloat() == 7.0
 
     assert bar.exists("C") == True
     assert bar.exists("D") == True
@@ -70,7 +66,7 @@ def testData():
     assert params["Bar"]["C"].asBoolean() == True
     assert params["Bar"]["D"].asString() == "X"
     if sys.platform != "darwin":
-        assert params["Bar"]["E"].asParam() == 7.0
+        assert params["Bar"]["E"].asFloat() == 7.0
 
     assert params.exists("Foo") == True
     assert params.exists("Bar") == True

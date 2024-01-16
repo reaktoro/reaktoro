@@ -25,13 +25,13 @@ using namespace Reaktoro;
 
 TEST_CASE("Testing ReactionStandardThermoModelPhreeqcLgK class", "[ReactionStandardThermoModelPhreeqcLgK]")
 {
-    Param A1 = 1.0;
-    Param A2 = 2.0;
-    Param A3 = 3.0;
-    Param A4 = 4.0;
-    Param A5 = 5.0;
-    Param A6 = 6.0;
-    real  Pr = 7.0;
+    real A1 = 1.0;
+    real A2 = 2.0;
+    real A3 = 3.0;
+    real A4 = 4.0;
+    real A5 = 5.0;
+    real A6 = 6.0;
+    real Pr = 7.0;
 
     const auto model = ReactionStandardThermoModelPhreeqcLgK({A1, A2, A3, A4, A5, A6, Pr});
 

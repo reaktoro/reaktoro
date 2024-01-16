@@ -45,15 +45,15 @@ auto computeStandardThermoProps(const StandardThermoModelParamsNasa::Polynomial&
 
     assert(Tmin <= T && T <= Tmax);
 
-    const auto& a1 = polynomial.a1.value();
-    const auto& a2 = polynomial.a2.value();
-    const auto& a3 = polynomial.a3.value();
-    const auto& a4 = polynomial.a4.value();
-    const auto& a5 = polynomial.a5.value();
-    const auto& a6 = polynomial.a6.value();
-    const auto& a7 = polynomial.a7.value();
-    const auto& b1 = polynomial.b1.value();
-    const auto& b2 = polynomial.b2.value();
+    const auto& a1 = polynomial.a1;
+    const auto& a2 = polynomial.a2;
+    const auto& a3 = polynomial.a3;
+    const auto& a4 = polynomial.a4;
+    const auto& a5 = polynomial.a5;
+    const auto& a6 = polynomial.a6;
+    const auto& a7 = polynomial.a7;
+    const auto& b1 = polynomial.b1;
+    const auto& b2 = polynomial.b2;
 
     const auto T2 = T*T;
     const auto T3 = T*T2;

@@ -28,7 +28,7 @@ void exportCubicEOS(py::module& m)
     auto ceos = m.def_submodule("CubicEOS");
 
     py::class_<CubicEOS::Substance>(ceos, "Substance")
-        .def(py::init<String, Param, Param, Param>(),
+        .def(py::init<String, real, real, real>(),
             py::arg("formula") = "",
             py::arg("Tcr") = NaN,
             py::arg("Pcr") = NaN,

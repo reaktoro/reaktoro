@@ -34,6 +34,6 @@ namespace Reaktoro {
 /// and @eq{\Delta C_{P,\mathrm{base}}^{\circ}} denote standard properties computed using
 /// a given base thermodynamic model function of the reaction.
 /// @param Pr The reference pressure for the pressure correction (in Pa).
-auto ReactionStandardThermoModelPressureCorrection(Param Pr) -> ReactionStandardThermoModel;
+auto ReactionStandardThermoModelPressureCorrection(real const& Pr) -> ReactionStandardThermoModel;
 
 } // namespace Reaktoro

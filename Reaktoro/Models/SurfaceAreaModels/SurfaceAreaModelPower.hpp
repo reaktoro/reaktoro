@@ -38,7 +38,7 @@ namespace Reaktoro {
 /// @param q0 The initial amount of the phase (in mol).
 /// @param p The power parameter in the model.
 /// @ingroup Models
-auto SurfaceAreaModelPowerMolar(String const& phase, Param const& A0, Param const& q0, Param const& p) -> SurfaceAreaModel;
+auto SurfaceAreaModelPowerMolar(String const& phase, real const& A0, real const& q0, real const& p) -> SurfaceAreaModel;
 
 /// Return a surface area model for a phase based on power law that depends on a given initial surface area and phase mass.
 /// This method is commonly used for solids and minerals (pure or solid
@@ -56,7 +56,7 @@ auto SurfaceAreaModelPowerMolar(String const& phase, Param const& A0, Param cons
 /// @param q0 The initial mass of the phase (in kg).
 /// @param p The power parameter in the model.
 /// @ingroup Models
-auto SurfaceAreaModelPowerSpecific(String const& phase, Param const& A0, Param const& q0, Param const& p) -> SurfaceAreaModel;
+auto SurfaceAreaModelPowerSpecific(String const& phase, real const& A0, real const& q0, real const& p) -> SurfaceAreaModel;
 
 /// Return a surface area model for a phase based on power law that depends on a given initial surface area and phase volume.
 /// This method is commonly used for solids and minerals (pure or solid
@@ -74,7 +74,7 @@ auto SurfaceAreaModelPowerSpecific(String const& phase, Param const& A0, Param c
 /// @param q0 The initial volume of the phase (in m3).
 /// @param p The power parameter in the model.
 /// @ingroup Models
-auto SurfaceAreaModelPowerVolumetric(String const& phase, Param const& A0, Param const& q0, Param const& p) -> SurfaceAreaModel;
+auto SurfaceAreaModelPowerVolumetric(String const& phase, real const& A0, real const& q0, real const& p) -> SurfaceAreaModel;
 
 /// Return a surface area model for a phase based on power law that depends on a given initial surface area and phase amount, mass or volume.
 /// This method is identical to either one of below:
@@ -88,6 +88,6 @@ auto SurfaceAreaModelPowerVolumetric(String const& phase, Param const& A0, Param
 /// @param unitq0 The unit of the initial quantity (must be convertible to `mol`, `kg`, or `m3`).
 /// @param p The power parameter in the model.
 /// @ingroup Models
-auto SurfaceAreaModelPower(String const& mineral, real A0, Chars unitA0, real m0, Chars unitm0, Param const& q) -> SurfaceAreaModel;
+auto SurfaceAreaModelPower(String const& mineral, real A0, Chars unitA0, real m0, Chars unitm0, real const& q) -> SurfaceAreaModel;
 
 } // namespace Reaktoro

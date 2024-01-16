@@ -21,7 +21,6 @@
 // Reaktoro includes
 #include <Reaktoro/Common/Matrix.hpp>
 #include <Reaktoro/Core/ChemicalSystem.hpp>
-#include <Reaktoro/Core/Param.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSensitivity.hpp>
 #include <Reaktoro/Equilibrium/EquilibriumSpecs.hpp>
 using namespace Reaktoro;
@@ -33,15 +32,12 @@ void exportEquilibriumSensitivity(py::module& m)
         .def(py::init<EquilibriumSpecs const&>())
         .def("initialize", &EquilibriumSensitivity::initialize, "Initialize this EquilibriumSensitivity object with given equilibrium problem specifications.")
         .def("dndw", py::overload_cast<String const&>(&EquilibriumSensitivity::dndw, py::const_), return_internal_ref, "Return the derivatives of the species amounts n with respect to an input variable in w.")
-        .def("dndw", py::overload_cast<Param const&>(&EquilibriumSensitivity::dndw, py::const_), return_internal_ref, "Return the derivatives of the species amounts n with respect to an input variable in w.")
         .def("dndw", py::overload_cast<>(&EquilibriumSensitivity::dndw, py::const_), return_internal_ref, "Return the derivatives of the species amounts n with respect to the input variables w.")
         .def("dndw", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dndw), "Set the derivatives of the species amounts n with respect to the input variables w.")
         .def("dpdw", py::overload_cast<String const&>(&EquilibriumSensitivity::dpdw, py::const_), return_internal_ref, "Return the derivatives of the p control variables with respect to an input variable in w.")
-        .def("dpdw", py::overload_cast<Param const&>(&EquilibriumSensitivity::dpdw, py::const_), return_internal_ref, "Return the derivatives of the p control variables with respect to an input variable in w.")
         .def("dpdw", py::overload_cast<>(&EquilibriumSensitivity::dpdw, py::const_), return_internal_ref, "Return the derivatives of the p control variables with respect to the input variables w.")
         .def("dpdw", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dpdw), "Set the derivatives of the p control variables with respect to the input variables w.")
         .def("dqdw", py::overload_cast<String const&>(&EquilibriumSensitivity::dqdw, py::const_), return_internal_ref, "Return the derivatives of the q control variables with respect to an input variable in w.")
-        .def("dqdw", py::overload_cast<Param const&>(&EquilibriumSensitivity::dqdw, py::const_), return_internal_ref, "Return the derivatives of the q control variables with respect to an input variable in w.")
         .def("dqdw", py::overload_cast<>(&EquilibriumSensitivity::dqdw, py::const_), return_internal_ref, "Return the derivatives of the q control variables with respect to the input variables w.")
         .def("dqdw", py::overload_cast<MatrixXdConstRef>(&EquilibriumSensitivity::dqdw), "Set the derivatives of the q control variables with respect to the input variables w.")
         .def("dndc", py::overload_cast<>(&EquilibriumSensitivity::dndc, py::const_), return_internal_ref, "Return the derivatives of the species amounts n with respect to component amounts c.")

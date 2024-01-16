@@ -26,37 +26,37 @@ namespace Reaktoro {
 struct StandardThermoModelParamsExtendedUNIQUAC
 {
     /// The standard molar Gibbs energy of formation of the substance at reference temperature 298.15 K (in kJ/mol).
-    Param Gr;
+    real Gr;
 
     /// The standard molar enthalpy of formation of the substance at reference temperature 298.15 K (in kJ/mol).
-    Param Hr;
+    real Hr;
 
     /// The standard molar entropy of the substance at reference temperature 298.15 K (in J/(mol·K)).
-    Param Sr;
+    real Sr;
 
     /// The standard molar volume of the substance at reference temperature 298.15 K (in m³/mol).
-    Param Vr;
+    real Vr;
 
     /// The standard molar heat capacity (constant pressure) of the substance at reference temperature 298.15 K (in J/(mol·K)).
-    Param Cp;
+    real Cp;
 
     /// The parameter `a` in the standard heat capacity model (in J/(mol·K)).
-    Param a;
+    real a;
 
     /// The parameter `b` in the standard heat capacity model (in J/(mol·K²)).
-    Param b;
+    real b;
 
     /// The parameter `c` in the standard heat capacity model (in J/mol).
-    Param c;
+    real c;
 
     /// The parameter `α` in the standard heat capacity model (in 1/bar).
-    Param alpha;
+    real alpha;
 
     /// The parameter `β` in the standard heat capacity model (in 1/bar²).
-    Param beta;
+    real beta;
 
     /// The parameter `Θ` in the standard heat capacity model (in K).
-    Param Theta = 200.0;
+    real Theta = 200.0;
 };
 
 /// Return a function that calculates the thermodynamic properties of a substance using the extended UNIQUAC model.
