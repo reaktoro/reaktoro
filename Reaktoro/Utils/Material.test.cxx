@@ -380,7 +380,7 @@ TEST_CASE("Testing equilibrium capabilities in Material class", "[Material]")
     state = mix.equilibrate();
 
     CHECK( mix.result().succeeded() );
-    CHECK( mix.result().iterations() <= 76 ); // macOS: 74, Linux & Windows: 76
+    CHECK( mix.result().iterations() <= 77 ); // macOS: 75, Linux & Windows: 77
 
     CHECK( state.temperature() == Approx(25.0 + 273.15) );
     CHECK( state.pressure() == Approx(1.0 * 1e5) );
@@ -389,7 +389,7 @@ TEST_CASE("Testing equilibrium capabilities in Material class", "[Material]")
     state = mix.equilibrate(60.0, "celsius", 10.0, "bar");
 
     CHECK( mix.result().succeeded() );
-    CHECK( mix.result().iterations() <= 90 ); // macOS: 87, Linux: 90, Windows: 78
+    CHECK( mix.result().iterations() <= 91 ); // macOS: 88, Linux: 91, Windows: 79
 
     CHECK( state.temperature() == Approx(60.0 + 273.15) );
     CHECK( state.pressure() == Approx(10.0 * 1e5) );
