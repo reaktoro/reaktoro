@@ -50,8 +50,6 @@ int main(int argc, char const *argv[])
     ChemicalSystem system(db, solution, gases);
 
     EquilibriumOptions options;
-    options.optima.newtonstep.linearsolver.method = Optima::LinearSolverMethod::Rangespace;
-    options.hessian = GibbsHessian::ApproxDiagonal;
 
     EquilibriumSolver solver(system);
     solver.setOptions(options);
