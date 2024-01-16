@@ -360,7 +360,18 @@ struct EquilibriumSolver::Impl
         updateOptProblem(state, conditions, restrictions);
         updateOptState(state);
 
+        auto optstatebkp = optstate;
+
         result.optima = optsolver.solve(optproblem, optstate);
+
+        if(!result.optima.succeeded)
+        {
+            auto optionsbkp = options;
+            options.optima.backtracksearch.apply_min_max_fix_and_accept = !options.optima.backtracksearch.apply_min_max_fix_and_accept;
+            optstate = optstatebkp;
+            result.optima = optsolver.solve(optproblem, optstate);
+            options = optionsbkp;
+        }
 
         warningif(!result.optima.succeeded && Warnings::isEnabled(906), EQUILIBRIUM_FAILURE_MESSAGE);
 
