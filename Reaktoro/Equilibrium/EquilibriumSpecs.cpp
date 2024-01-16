@@ -584,76 +584,6 @@ auto EquilibriumSpecs::addUnknownTitrantAmount(ChemicalFormula const& substance)
     addControlVariableP(pvar);
 }
 
-auto EquilibriumSpecs::addUnknownChemicalPotential(String const& species) -> void
-{
-    errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the chemical potential of ", species, " because this has already been done directly or indirectly.");
-    species_with_unknown_chemical_potentials.push_back(species);
-    const auto ispecies = m_system.species().index(species);
-    ControlVariableP pvar;
-    pvar.name = "u[" + species + "]";
-    pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalProps const& props, real const& pk) -> real
-    {
-        return pk;
-    };
-    addControlVariableP(pvar);
-}
-
-auto EquilibriumSpecs::addUnknownStandardChemicalPotential(String const& species) -> void
-{
-    errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the standard chemical potential of ", species, " because this has already been done directly or indirectly.");
-    species_with_unknown_chemical_potentials.push_back(species);
-    const auto ispecies = m_system.species().index(species);
-    ControlVariableP pvar;
-    pvar.name = "u0[" + species + "]";
-    pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalProps const& props, real const& pk) -> real
-    {
-        auto const& T = props.temperature();
-        auto const& lnai = props.speciesActivityLn(ispecies);
-        auto const& R = universalGasConstant;
-        return pk + R*T*lnai;
-    };
-    addControlVariableP(pvar);
-}
-
-auto EquilibriumSpecs::addUnknownActivity(String const& species) -> void
-{
-    errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the activity of ", species, " because this has already been done directly or indirectly.");
-    species_with_unknown_chemical_potentials.push_back(species);
-    const auto ispecies = m_system.species().index(species);
-    ControlVariableP pvar;
-    pvar.name = "a[" + species + "]";
-    pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalProps const& props, real const& pk) -> real
-    {
-        auto const& T = props.temperature();
-        auto const& G0 = props.speciesStandardGibbsEnergy(ispecies);
-        auto const& R = universalGasConstant;
-        return G0 + R*T*log(pk);
-    };
-    addControlVariableP(pvar);
-}
-
-auto EquilibriumSpecs::addUnknownActivityCoefficient(String const& species) -> void
-{
-    errorif(contains(species_with_unknown_chemical_potentials, species), "Cannot add an unknown for the activity coefficient of ", species, " because this has already been done directly or indirectly.");
-    species_with_unknown_chemical_potentials.push_back(species);
-    const auto ispecies = m_system.species().index(species);
-    ControlVariableP pvar;
-    pvar.name = "g[" + species + "]";
-    pvar.ispecies = ispecies;
-    pvar.fn = [=](ChemicalProps const& props, real const& pk) -> real
-    {
-        auto const& T = props.temperature();
-        auto const& G0 = props.speciesStandardGibbsEnergy(ispecies);
-        auto const& lnci = props.speciesConcentrationLn(ispecies);
-        auto const& R = universalGasConstant;
-        return G0 + R*T*(lnci + log(pk));
-    };
-    addControlVariableP(pvar);
-}
-
 //=================================================================================================
 //
 // METHODS TO GET THE NUMBER OF INTRODUCED CONSTRAINTS, PARAMETERS, AND CONTROL VARIABLES
@@ -805,8 +735,6 @@ auto EquilibriumSpecs::addControlVariableP(ControlVariableP const& pvar) -> void
     const auto Nn = m_system.species().size();
     errorif(pvar.name.empty(), "Could not add *p* control variable because its name is empty.");
     errorif(containsfn(pvars, RKT_LAMBDA(x, x.name == pvar.name)), "Could not add *p* control variable with name `", pvar.name, "` because another *p* control variable has already been added with same name.");
-    errorif(pvar.ispecies < Nn && pvar.fn == nullptr, "Could not add *p* control variable with name `", pvar.name, "` because the chemical potential function is missing.");
-    errorif(pvar.ispecies >= Nn && pvar.fn, "Could not add *p* control variable with name `", pvar.name, "` because the index of the species whose chemical potential is unknown is missing (index value is ", pvar.ispecies, ", but number of species is ", Nn, ").");
     if(pvar.substance.str().size())
     {
         throwErrorIfTitrantHasBeenRegistered(pvar.substance);

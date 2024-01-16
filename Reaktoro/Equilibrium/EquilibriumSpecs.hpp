@@ -30,13 +30,11 @@ class ChemicalProps;
 class ChemicalState;
 
 /// Used to define a *q* control variable in a chemical equilibrium problem.
-/// *q* control variables are used to specify the chemical potential of a
-/// species at equilibrium. Its introduction in a chemical equilibrium problem
-/// implies that the system is open to a titrant with **same** formula of the
-/// species whose chemical potential needs to be prescribed. A *q* control
-/// variable can also be used to specify the activity of a species. It can also
-/// be used to prescribe pH. This can be achieved by converting the given
-/// activity value (or pH value) to a chemical potential value of the species.
+/// The *q* control variables are used to specify the chemical potential of a
+/// species at chemical equilibrium. Its use implies that the system is open to
+/// a titrant with **same** chemical formula of the substance whose chemical
+/// potential needs to be constrained. A *q* control variable can also be used
+/// to specify the activity of a species and thus pH.
 struct ControlVariableQ
 {
     /// The signature of functions that evaluate the prescribed chemical potential of a substance.
@@ -59,12 +57,10 @@ struct ControlVariableQ
 };
 
 /// Used to define a *p* control variable in a chemical equilibrium problem.
-/// *p* control variables are more versatile than *q* control variables. They
-/// can be used to designate temperature and/or pressure as unknowns. They can
-/// be used to represent the amounts of substances (titrants) for which the
-/// chemical system is open to. And they can also be used to specify that the
-/// chemical potential of a species or a model parameter are unknowns to be
-/// resolved along with all others.
+/// The *p* control variables are employed for designating temperature and/or
+/// pressure as unknowns in the chemical equilibrium problem. They can also be
+/// utilized to represent the quantities of substances, namely titrants, for
+/// which the chemical system remains open.
 struct ControlVariableP
 {
     /// The signature of functions that evaluate the chemical potential of a species in terms of a *p* control variable.
@@ -77,12 +73,6 @@ struct ControlVariableP
 
     /// The chemical formula of the substance associated to this *p* control variable (optional).
     ChemicalFormula substance;
-
-    /// The index of the species whose chemical potential is unknown and defined in terms of this *p* control variable (optional).
-    Index ispecies = Index(-1);
-
-    /// The function that introduces association between this *p* control variable and the chemical potential of a species (optional).
-    ChemicalPotentialFn fn;
 };
 
 /// Used to define the function that evaluates the residual of an equation constraint in a chemical equilibrium problem.
@@ -608,18 +598,6 @@ public:
 
     /// Specify that the chemical system is open to a titrant substance and its amount is unknown.
     auto addUnknownTitrantAmount(ChemicalFormula const& substance) -> void;
-
-    /// Specify that the chemical potential of a species is unknown at equilibrium and must be computed.
-    auto addUnknownChemicalPotential(String const& species) -> void;
-
-    /// Specify that the standard chemical potential of a species is unknown at equilibrium and must be computed.
-    auto addUnknownStandardChemicalPotential(String const& species) -> void;
-
-    /// Specify that the activity of a species is unknown at equilibrium and must be computed.
-    auto addUnknownActivity(String const& species) -> void;
-
-    /// Specify that the activity coefficient of a species is unknown at equilibrium and must be computed.
-    auto addUnknownActivityCoefficient(String const& species) -> void;
 
     //=================================================================================================
     //
