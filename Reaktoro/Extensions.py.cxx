@@ -20,7 +20,6 @@
 
 void exportExtensionNasa(py::module& m);
 void exportExtensionPhreeqc(py::module& m);
-void exportExtensionPorousMedia(py::module& m);
 void exportExtensionSupcrt(py::module& m);
 void exportExtensionThermoFun(py::module& m);
 
@@ -28,7 +27,6 @@ void exportExtensions(py::module& m)
 {
     exportExtensionNasa(m);
     exportExtensionPhreeqc(m);
-    exportExtensionPorousMedia(m);
     exportExtensionSupcrt(m);
     exportExtensionThermoFun(m);
 }
