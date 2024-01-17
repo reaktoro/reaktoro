@@ -49,11 +49,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python-version }}
-          miniforge-variant: Mambaforge
           miniforge-version: latest
+
       - shell: bash -el {0}
         run: |
           conda info
@@ -68,7 +68,7 @@ jobs:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
           mamba install conda-devenv
-          mamba devenv -e mamba
+          conda devenv -e mamba
 
       - name: Building, Testing & Installing Reaktoro
         shell: bash -el {0}
