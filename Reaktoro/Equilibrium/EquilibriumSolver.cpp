@@ -368,9 +368,11 @@ struct EquilibriumSolver::Impl
         {
             auto optionsbkp = options;
             options.optima.backtracksearch.apply_min_max_fix_and_accept = !options.optima.backtracksearch.apply_min_max_fix_and_accept;
+            setOptions(options);
             optstate = optstatebkp;
             result.optima = optsolver.solve(optproblem, optstate);
             options = optionsbkp;
+            setOptions(options);
         }
 
         warningif(!result.optima.succeeded && Warnings::isEnabled(906), EQUILIBRIUM_FAILURE_MESSAGE);
