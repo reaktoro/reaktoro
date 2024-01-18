@@ -181,8 +181,11 @@ struct AqueousProps::Impl
     /// The echelon form of the formula matrix `Aaqs` of the aqueous species.
     Optima::Echelonizer echelonizer;
 
-    // The chemical potential models for the non-aqueous species (as if they were pure phases) for the computation of their saturation indices.
+    /// The chemical potential models for the non-aqueous species (as if they were pure phases) for the computation of their saturation indices.
     Vec<Fn<real(ChemicalProps const&)>> chemical_potential_models;
+
+    /// The alkalinity contribution factors of some aqueous species based on the alkalinity model of Wolf-Gladrow et al. (2007)
+    Pairs<double, Index> alkalinity_factors;
 
     Impl(ChemicalSystem const& system)
     : system(system),
@@ -203,6 +206,9 @@ struct AqueousProps::Impl
 
         // The symbols of the elements in the aqueous phase
         const auto symbols = vectorize(phase.elements(), RKT_LAMBDA(x, x.symbol()));
+
+        // The aqueous species in the aqueous phase
+        auto const& aqspecies = phase.species();
 
         // Collect the species from the database that contains the elements in the aqueous phase
         const auto species_same_elements = system.database().species().withElements(symbols);
@@ -234,6 +240,30 @@ struct AqueousProps::Impl
 
         // Compute the initial echelon form of formula matrix `Aaqs`
         echelonizer.compute(Aaqs);
+
+        // Initialize the contribution factors of some aqueous species towards the alkalinity of the solution (Wolf-Gladrow et al., 2007)
+        alkalinity_factors = {
+            { 1.0, aqspecies.findWithFormula("Na+")   },
+            { 2.0, aqspecies.findWithFormula("Mg+2")  },
+            { 2.0, aqspecies.findWithFormula("Ca+2")  },
+            { 1.0, aqspecies.findWithFormula("K+")    },
+            { 2.0, aqspecies.findWithFormula("Sr+2")  },
+            {-1.0, aqspecies.findWithFormula("Cl-")   },
+            {-1.0, aqspecies.findWithFormula("Br-")   },
+            {-1.0, aqspecies.findWithFormula("NO3-")  },
+            {-1.0, aqspecies.findWithFormula("H3PO4") }, // TPO4 in reference.
+            {-1.0, aqspecies.findWithFormula("H2PO4-")}, // TPO4 in reference.
+            {-1.0, aqspecies.findWithFormula("HPO4-2")}, // TPO4 in reference. Note that factor here is -1 as in the paper.
+            {-1.0, aqspecies.findWithFormula("PO4-3") }, // TPO4 in reference. Note that factor here is -1 as in the paper.
+            { 1.0, aqspecies.findWithFormula("NH3")   }, // TNH3 in reference.
+            { 1.0, aqspecies.findWithFormula("NH4+")  }, // TNH3 in reference.
+            {-2.0, aqspecies.findWithFormula("SO4-2") }, // TSO4 in reference.
+            {-2.0, aqspecies.findWithFormula("HSO4-") }, // TSO4 in reference. Note that factor here is -2 as in the paper.
+            {-1.0, aqspecies.findWithFormula("F-")    }, // THF in reference.
+            {-1.0, aqspecies.findWithFormula("HF")    }, // THF in reference.
+            {-1.0, aqspecies.findWithFormula("NO2-")  }, // THNO2 in reference.
+            {-1.0, aqspecies.findWithFormula("HNO2")  }, // THNO2 in reference. Note that factor here is -1 as in the paper.
+        };
     }
 
     Impl(ChemicalState const& state)
@@ -386,58 +416,20 @@ struct AqueousProps::Impl
 
     auto alkalinity() const -> real
     {
-        // The number of species in the system
-        const Index num_species = system.species().size();
+        auto const& aqspecies = phase.species();
+        auto const& aqprops = props.phaseProps(iphase);
+        auto const& naq = aqprops.speciesAmounts();
+        auto const num_aqspecies = aqspecies.size();
 
-        // The factors_and_species that contribute to alkalinity
-        static const auto factors_and_species = Pairs<double, std::string>{
-            {1, "Na+"},
-            {2, "Mg+2"},
-            {2, "Ca+2"},
-            {1, "K+"},
-            {2, "Sr+2"},
-            {-1, "Cl-"},
-            {-1, "Br-"},
-            {-1, "NO3-"},
-            // TPO4 in Wolf-Gladrow et al. (2007)
-            {-1, "H3PO4"},
-            {-1, "H2PO4-"},
-            {-1, "HPO4-2"},  // note that factor here is -1 as in the paper
-            {-1, "PO4-3"},  // note that factor here is -1 as in the paper
-            // TNH3 in Wolf-Gladrow et al. (2007)
-            {1, "NH3"},
-            {1, "NH4+"},
-            // TSO4 in Wolf-Gladrow et al. (2007)
-            {-2, "SO4-2"},
-            {-2, "HSO4-"},  // note that factor here is -2 as in the paper
-            // THF in Wolf-Gladrow et al. (2007)
-            {-1, "F-"},
-            {-1, "HF"},
-            // THNO2 in Wolf-Gladrow et al. (2007)
-            {-1, "NO2-"},
-            {-1, "HNO2"},  // note that factor here is -1 as in the paper
-        };
-
-        // Iterate over all alkalinity factors and ions
-        auto molar_amounts = props.speciesAmounts();
         real alkalinity = 0.0;
-        for(const auto& [alkalinity_factor, alkalinity_species_name] : factors_and_species)
-        {
-            // Get the index of the current ion
-            const auto& aq_species_list = system.species().withAggregateState(AggregateState::Aqueous);
-            const Index i = aq_species_list.findWithFormula(alkalinity_species_name);
-
-            // Calculate contribution to alkalinity if the species is in the system
-            if (i < num_species) {
-                auto alkalinity_species_amount = molar_amounts[i];
-                alkalinity += alkalinity_factor * alkalinity_species_amount;
-            }
-        }
+        for(const auto& [factor, iaqspecies] : alkalinity_factors)
+            if(iaqspecies < num_aqspecies)
+                alkalinity += factor * naq[iaqspecies];
 
         // Convert to eq/L
-        auto m3_to_liter = 1000.0;
-        auto V = props.volume();  // in m3
-        auto V_in_liter = V * m3_to_liter;
+        auto const m3_to_liter = 1000.0;
+        auto const V = aqprops.volume();  // in m3
+        auto const V_in_liter = V * m3_to_liter;
         alkalinity /= V_in_liter;
 
         return alkalinity;
