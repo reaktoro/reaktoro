@@ -20,120 +20,145 @@ from reaktoro import *
 import pytest
 
 
-# TODO Implement tests for the python bindings of component AqueousProps in AqueousProps[test].py
 def testAqueousProps():
-    pass
 
+    db = PhreeqcDatabase("phreeqc.dat")
 
-@pytest.mark.parametrize(
-    "db, composition", (
-        (SupcrtDatabase("supcrt07"), {
-            "H2O(aq)": (1, "kg"),
-            "H+": (6.3e-9, "mol"),
-            "OH-": (10e-6, "mol"),
-            "Na+": (0.6, "mol"),
-            "Cl-": (0.59767, "mol"),
-            "CO2(aq)": (8.3e-6, "mol"),
-            "HCO3-": (1660e-6, "mol"),
-            "CO3-2": (331e-6, "mol"),
-        }),
-        (SupcrtDatabase("supcrtbl"), {
-            "H2O(aq)": (1, "kg"),
-            "H+": (6.3e-9, "mol"),
-            "OH-": (10e-6, "mol"),
-            "Na+": (0.6, "mol"),
-            "Cl-": (0.59767, "mol"),
-            "CO2(aq)": (8.3e-6, "mol"),
-            "HCO3-": (1660e-6, "mol"),
-            "CO3-2": (331e-6, "mol"),
-        }),
-        (PhreeqcDatabase("phreeqc.dat"), {
-            "H2O": (1, "kg"),
-            "H+": (6.3e-9, "mol"),
-            "OH-": (10e-6, "mol"),
-            "Na+": (0.6, "mol"),
-            "Cl-": (0.59767, "mol"),
-            "CO2": (8.3e-6, "mol"),
-            "HCO3-": (1660e-6, "mol"),
-            "CO3-2": (331e-6, "mol"),
-        }),
-        (ThermoFunDatabase("aq17"), {
-            "H2O@": (1, "kg"),
-            "H+": (6.3e-9, "mol"),
-            "OH-": (10e-6, "mol"),
-            "Na+": (0.6, "mol"),
-            "Cl-": (0.59767, "mol"),
-            "CO2@": (8.3e-6, "mol"),
-            "HCO3-": (1660e-6, "mol"),
-            "CO3-2": (331e-6, "mol"),
-        })
-    )
-)
-def testWolfGladrowSystemProps(db, composition):
-    """
-    This test checks if the pH and Alkalinity calculated with Reaktoro matches with the literature.
-
-    The paper [1]_ provides a simple system with expected results for both pH and Alkalinity. In
-    the paper, a titration with HCl is performed for the system. Here, we are omitting the
-    titration and using the results for HCl = 0.0 mmol (see fig 1 of [1]_).
-
-    .. [1] Wolf-Gladrow et al. (2007). See: https://doi.org/10.1016/j.marchem.2007.01.006
-    """
-    aq_species = " ".join(list(composition.keys()))
-    aq_solution = AqueousPhase(aq_species)
-    system = ChemicalSystem(db, aq_solution)
+    solution = AqueousPhase(speciate("H O Na Cl Ca C"))
+    system = ChemicalSystem(db, solution)
 
     state = ChemicalState(system)
-    state.temperature(25, "celsius")
-    state.pressure(1, "atm")
-    for species_name, amount_and_units in composition.items():
-        species_amount, species_unit = amount_and_units
-        state.set(species_name, species_amount, species_unit)
+    state.temperature(25.0, "celsius")
+    state.pressure(1.0, "bar")
+    state.set("H2O" , 0.5000, "kg")
+    state.set("Na+" , 0.1234, "mol")
+    state.set("Cl-" , 0.2345, "mol")
+    state.set("Ca+2", 0.3456, "mol")
+    state.set("CO2" , 0.1234, "mol")
 
-    aq_props = AqueousProps(state)
-    # Within 0.1% of relative deviation compared with the paper
-    assert aq_props.pH().val() == pytest.approx(8.2, rel=1e-3)
-    # Within 2% of relative deviation compared with the paper
-    assert aq_props.alkalinity().val() == pytest.approx(2.33e-3, rel=2e-2)
+    aprops = AqueousProps(state)
+
+    assert aprops.speciesMolality("Na+").val()  == pytest.approx(2.0*0.1234)
+    assert aprops.speciesMolality("Cl-").val()  == pytest.approx(2.0*0.2345)
+    assert aprops.speciesMolality("Ca+2").val() == pytest.approx(2.0*0.3456)
+    assert aprops.speciesMolality("CO2").val()  == pytest.approx(2.0*0.1234)
+
+    # TODO: Implement more tests here for AqueousProps -- see its C++ tests.
 
 
-def testAlkalinity():
-    """
-    This test uses the exact species that are considered in the Alkalinity calculation
-    and checks if the expected result of the Total Alkalinity expression in [1]_ is
-    obtained.
-    
-    .. [1] Wolf-Gladrow et al. (2007). See: https://doi.org/10.1016/j.marchem.2007.01.006
-    """
-    db = SupcrtDatabase("supcrt07")
-    water = "H2O(aq) H+ OH-"
-    ions = "Na+ Mg+2 Ca+2 K+ Sr+2 Cl- Br- NO3-"
-    tpo4_cluster = "H3PO4(aq) H2PO4- HPO4-2 PO4-3"
-    tnh3_cluster = "NH3(aq) NH4+"
-    tso4_cluster = "SO4-2 HSO4-"
-    thf_cluster = "F- HF(aq)"
-    thno2_cluster = "NO2- HNO2(aq)"
-    species_names = " ".join(
-        [water, ions, tpo4_cluster, tnh3_cluster, tso4_cluster, thf_cluster, thno2_cluster]
-    )
-    aq_solution = AqueousPhase(species_names)
-    system = ChemicalSystem(db, aq_solution)
-    
-    # Setting a fictional chemical state with known Alkalinity given Wolf-Gladrow formula
+# The databases used for testing alkalinity calculations
+tested_databases = [
+    SupcrtDatabase("supcrt07"),
+    SupcrtDatabase("supcrtbl"),
+    PhreeqcDatabase("phreeqc.dat"),
+    ThermoFunDatabase("aq17")
+]
+
+# The alkalinity factors in Wolf-Gladrow et al. (2007) used in method AqueousProps.alkalinity
+alkfactors = {
+    "Na+"   :  1.0,
+    "Mg+2"  :  2.0,
+    "Ca+2"  :  2.0,
+    "K+"    :  1.0,
+    "Sr+2"  :  2.0,
+    "Cl-"   : -1.0,
+    "Br-"   : -1.0,
+    "NO3-"  : -1.0,
+    "H3PO4" : -1.0,
+    "H2PO4-": -1.0,
+    "HPO4-2": -1.0,
+    "PO4-3" : -1.0,
+    "NH3"   :  1.0,
+    "NH4+"  :  1.0,
+    "SO4-2" : -2.0,
+    "HSO4-" : -2.0,
+    "F-"    : -1.0,
+    "HF"    : -1.0,
+    "NO2-"  : -1.0,
+    "HNO2"  : -1.0,
+}
+
+# The aqueous compositions used for testing alkalinity calculations (species amounts may not be realistical on purpose; for testing purposes only)
+tested_compositions = [
+    [
+        ("H2O"  , 1.0    , "kg") ,
+        ("H+"   , 6.3e-9 , "mol"),
+        ("OH-"  , 10e-6  , "mol"),
+        ("Na+"  , 0.6    , "mol"),
+        ("Cl-"  , 0.59767, "mol"),
+        ("CO2"  , 8.3e-6 , "mol"),
+        ("HCO3-", 1660e-6, "mol"),
+        ("CO3-2", 331e-6 , "mol"),
+    ],
+    [
+        ("H2O"  , 1.000, "kg") ,
+        ("Na+"  , 1.234, "mol"),
+        ("Cl-"  , 2.345, "mol"),
+        ("CO2"  , 0.123, "mol"),
+        ("HCO3-", 0.234, "mol"),
+        ("CO3-2", 0.456, "mol"),
+        ("Ca+2" , 0.578, "mol"),
+        ("Mg+2" , 0.987, "mol"),
+        ("NH3"  , 0.012, "mol"),
+        ("NH4+" , 0.987, "mol"),
+    ],
+    [
+        ("H2O"   , 0.5000, "kg") ,
+        ("Na+"   , 0.0100, "mol"),
+        ("Mg+2"  , 0.1200, "mol"),
+        ("Ca+2"  , 0.2300, "mol"),
+        ("K+"    , 0.3400, "mol"),
+        ("Sr+2"  , 0.4500, "mol"),
+        ("Cl-"   , 0.5600, "mol"),
+        ("Br-"   , 0.6700, "mol"),
+        ("NO3-"  , 0.7800, "mol"),
+        ("H3PO4" , 0.8900, "mol"),
+        ("H2PO4-", 0.9100, "mol"),
+        ("HPO4-2", 0.1011, "mol"),
+        ("PO4-3" , 0.1112, "mol"),
+        ("NH3"   , 0.1213, "mol"),
+        ("NH4+"  , 0.1314, "mol"),
+        ("SO4-2" , 0.1415, "mol"),
+        ("HSO4-" , 0.1516, "mol"),
+        ("F-"    , 0.1617, "mol"),
+        ("HF"    , 0.1718, "mol"),
+        ("NO2-"  , 0.1819, "mol"),
+        ("HNO2"  , 0.1920, "mol"),
+    ],
+]
+
+@pytest.mark.parametrize("db", tested_databases)
+@pytest.mark.parametrize("composition", tested_compositions)
+def testAqueousPropsAlkalinity(db, composition):
+
+    formulas = [entry[0] for entry in composition]
+
+    solution = AqueousPhase(speciate(formulas))
+    system = ChemicalSystem(db, solution)
+
+    specieslist = system.species()
+
     state = ChemicalState(system)
-    state.temperature(25, "celsius")
-    state.pressure(1, "atm")
-    state.set("H2O(aq)", 1, "kg")
-    all_solute_species = species_names.split()
-    all_solute_species.remove("H2O(aq)")
-    for solute in all_solute_species:
-        state.set(solute, 1, "mol")
+    state.temperature(25.0, "celsius")
+    state.pressure(1.0, "atm")
 
-    aq_props = AqueousProps(state)
+    for formula, quantity, unit in composition:
+        idx = system.species().findWithFormula(formula)
+        if idx < specieslist.size():
+            state.set(idx, quantity, unit)
+
     props = ChemicalProps(state)
-    volume_in_liter = props.volume().val() * 1e3
-    total_amounts_of_solutes_for_alkalinity = 1 + 2 + 2 + 1 + 2  # Na+ Mg+2 Ca+2 K+ Sr+2 
-    total_amounts_of_solutes_for_alkalinity += -1 - 1 - 1 - 4  # Cl- Br- NO3- TPO4
-    total_amounts_of_solutes_for_alkalinity += 2 - 4 - 2 - 2  # TNH3 TSO4 THF THNO2
-    expected_alkalinity = total_amounts_of_solutes_for_alkalinity / volume_in_liter
-    assert aq_props.alkalinity().val() == pytest.approx(expected_alkalinity)
+    aqprops = AqueousProps(state)
+
+    expected_alk = 0.0
+    for formula in formulas:
+        idx = specieslist.findWithFormula(formula)
+        if idx < specieslist.size():
+            amount = state.speciesAmount(idx)
+            alkfactor = alkfactors.get(formula, 0.0)
+            expected_alk += alkfactor * amount
+
+    liters = props.phaseProps(0).volume() * 1e3  # convert volume from m3 to L
+    expected_alk /= liters
+
+    assert aqprops.alkalinity().val() == pytest.approx(expected_alk)
