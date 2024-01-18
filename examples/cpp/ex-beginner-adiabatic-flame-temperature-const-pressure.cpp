@@ -77,10 +77,6 @@ int main()
     cout << "PERFORMING THE CHEMICAL EQUILIBRIUM CALCULATION..." << endl;
     EquilibriumSolver solver(specs);
 
-    EquilibriumOptions options;
-    options.optima.backtracksearch.apply_min_max_fix_and_accept = true;
-    solver.setOptions(options);
-
     auto result = solver.solve(state, conditions);
 
     errorif(result.failed(), "The equilibrium calculation did not converge.");

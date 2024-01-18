@@ -72,10 +72,6 @@ state = ChemicalState(state0)
 print("PERFORMING THE CHEMICAL EQUILIBRIUM CALCULATION...")
 solver = EquilibriumSolver(specs)
 
-options = EquilibriumOptions()
-options.optima.backtracksearch.apply_min_max_fix_and_accept = True
-solver.setOptions(options)
-
 result = solver.solve(state, conditions)
 
 assert result.succeeded(), "The calculation did not succeed!"
