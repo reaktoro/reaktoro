@@ -126,6 +126,11 @@ struct EquilibriumSolver::Impl
             auto& ynames = options.optima.output.ynames;
             auto& pnames = options.optima.output.pnames;
 
+            // Clear the names of the variables
+            xnames.clear();
+            ynames.clear();
+            pnames.clear();
+
             // Initialize the names of the x variables corresponding to species amounts
             for(auto species : system.species())
                 xnames.push_back(species.name());
