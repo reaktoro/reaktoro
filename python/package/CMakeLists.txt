@@ -1,5 +1,6 @@
-# Configure the setup.py file
+# Configure the setup.py.in and version.py.in files
 configure_file(setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
+configure_file(version.py.in ${CMAKE_CURRENT_BINARY_DIR}/reaktoro/version.py)
 
 # Create pybind11-stubgen command string depending if this program has been found or not
 if(PYBIND11_STUBGEN)
