@@ -1,4 +1,4 @@
-name: reaktoro2
+name: reaktoro
 
 {% set python_version = os.environ.get("PYTHON_VERSION", "3.11") %}
 
