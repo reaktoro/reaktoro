@@ -1,4 +1,4 @@
-name: reaktoro
+name: reaktoro2
 
 {% set python_version = os.environ.get("PYTHON_VERSION", "3.11") %}
 
@@ -10,7 +10,8 @@ dependencies:
   - catch2 =2
   - ccache
   - clangxx  # [linux]
-  - clangxx_osx-64  # [osx]
+  - clangxx_osx-64  # [osx and not arm64]
+  - clangxx_osx-arm64  # [osx and arm64]
   - cmake
   - cpp-tabulate
   - doxygen =1.9.1  # [linux]
