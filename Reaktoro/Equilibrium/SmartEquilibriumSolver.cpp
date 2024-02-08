@@ -92,6 +92,9 @@ struct SmartEquilibriumSolver::Impl
     auto solve(ChemicalState& state, EquilibriumConditions const& conditions) -> SmartEquilibriumResult
     {
         tic(SOLVE_STEP)
+                 
+        // Save a backup state in case the smart prediction fails.
+        const auto statebkp = state;
 
         // Reset the result of the last smart equilibrium calculation
         result = {};
@@ -100,8 +103,10 @@ struct SmartEquilibriumSolver::Impl
         timeit( predict(state, conditions), result.timing.prediction= )
 
         // Perform a learning step if the smart prediction is not satisfactory
-        if(!result.prediction.accepted)
-            timeit( learn(state, conditions), result.timing.learning= )
+        if (!result.prediction.accepted) {
+            state = statebkp;
+            timeit(learn(state, conditions), result.timing.learning = )
+        }
 
         result.timing.solve = toc(SOLVE_STEP);
 
@@ -163,6 +168,11 @@ struct SmartEquilibriumSolver::Impl
 
         result.timing.learning_solve = toc(EQUILIBRIUM_STEP);
 
+        // Store a predictor only if chemical equilibrium succeded
+        if (!result.learning.solve.succeeded()) {
+            return;
+        }
+
         //---------------------------------------------------------------------
         // STORAGE STEP DURING THE LEARNING PROCESS
         //---------------------------------------------------------------------
@@ -186,7 +196,7 @@ struct SmartEquilibriumSolver::Impl
         auto icluster = indexfn(cell.clusters, RKT_LAMBDA(cluster, cluster.label == label));
 
         // If cluster is found, store the new record in it, otherwise, create a new cluster
-        if(icluster < cell.clusters.size())
+        if (icluster < cell.clusters.size())
         {
             auto& cluster = cell.clusters[icluster];
             cluster.records.push_back({ state, conditions, sensitivity, predictor });
@@ -208,6 +218,7 @@ struct SmartEquilibriumSolver::Impl
         }
 
         result.timing.learning_storage = toc(STORAGE_STEP);
+        
     }
 
     /// Perform a prediction operation in which a chemical equilibrium state is predicted using a first-order Taylor approximation.
@@ -265,7 +276,7 @@ struct SmartEquilibriumSolver::Impl
             {
                 const auto mu0 = predictor0.speciesChemicalPotentialReference(ispecies);
                 const auto mu1 = predictor0.speciesChemicalPotentialPredicted(ispecies, dw, dc);
-                if(abs(mu1 - mu0) >= options.reltol*abs(mu0) + options.abstol)
+                if(abs(mu1 - mu0) >= options.reltol * abs(mu0) + options.abstol || isnan(mu0) || isnan(mu1))
                     return false;
             }
 
