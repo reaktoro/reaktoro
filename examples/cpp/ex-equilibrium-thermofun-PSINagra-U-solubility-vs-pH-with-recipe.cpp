@@ -74,8 +74,20 @@ int main()
     std::vector<double> UO23OH5(pHs);       // (UO2)3(OH)5+
     std::vector<double> UO24OH7(pHs);       // (UO2)4(OH)7+
 
-    auto species_list = SpeciesList("UO2+2 UO2OH+ UO2(OH)2@ UO2CO3@ (UO2)3CO3(OH)3+ (UO2)2(OH)+3 "
-                                    "UO2(CO3)3-4 UO2(CO3)2-2 (UO2)2(OH)2+2 (UO2)3(OH)5+ (UO2)4(OH)7+");
+    auto species_list = Strings{
+        "UO2+2",
+        "UO2OH+",
+        "UO2(OH)2@",
+        "UO2CO3@",
+        "(UO2)3CO3(OH)3+",
+        "(UO2)2(OH)+3",
+        "UO2(CO3)3-4",
+        "UO2(CO3)2-2",
+        "(UO2)2(OH)2+2",
+        "(UO2)3(OH)5+",
+        "(UO2)4(OH)7+"
+    };
+
     auto bU = 0.0;
 
     // ---------------------------------------------------------------------------------------------------------------//
@@ -85,7 +97,7 @@ int main()
     // Result file for the portland cement problem
     std::ofstream result_file;
     result_file.precision(6);
-    result_file.open ("results-portlandcement.txt");
+    result_file.open("results-portlandcement.txt");
 
     // Define initial equilibrium state with the following recipe:
     // 1000 g H2O
@@ -122,7 +134,7 @@ int main()
         bU = props_pc.elementAmount("U");
         for(auto species : species_list)
         {
-            result_file << state.speciesAmount(species.name()) / bU * 100 << " ";
+            result_file << state.speciesAmount(species) / bU * 100 << " ";
         }
         nUO2[i]       = state.speciesAmount("UO2+2");
         nUO2OH[i]     = state.speciesAmount("UO2OH+");
