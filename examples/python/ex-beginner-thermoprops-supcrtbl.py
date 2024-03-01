@@ -53,8 +53,6 @@ for T in npy.arange(25.0, 105.0, 5.0):
 
 data = npy.array(data)
 
-print(data)
-
 plt.plot(data[:, 0], data[:, 1], label=f"G0 (kJ/mol) of H2O(g) SUPCRTBL")
 plt.plot(data[:, 0], data[:, 2], label=f"G0 (kJ/mol) of H2O(g) SUPCRT98")
 plt.legend()

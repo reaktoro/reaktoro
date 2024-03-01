@@ -23,6 +23,7 @@
 #
 # and since revised by:
 #   • G.D. Miron (1 April 2022)
+#   • Allan Leal (31 January 2024)
 # -----------------------------------------------------------------------------
 
 from reaktoro import *
@@ -42,31 +43,27 @@ params.bneutraldefault = 0.123
 
 solution.setActivityModel(ActivityModelDebyeHuckel(params))
 
-# Define gas phase
-gaseous = GaseousPhase(speciate("H O C"))
-
 # Define minerals phases
 minerals = MineralPhases("Cal hydrotalcite Portlandite hemicarbonate monocarbonate Amor-Sl FeOOHmic Gbs Mag ")
 
 # Define AlFeSi-hydrogarnet solid phase
 ss_C3AFS084H  = SolidPhase("C3FS0.84H4.32 C3AFS0.84H4.32")
 ss_C3AFS084H.setName("ss_C3AFS084H")
+
 # Define Ettrignite solid phase
 ss_ettringite = SolidPhase("ettringite ettringite30")
 ss_ettringite.setName("ss_Ettrignite")
+
 # Define Monosulfate solid phase
 ss_OH_SO4_AFm = SolidPhase("C4AH13 monosulphate12")
 ss_OH_SO4_AFm.setName("ss_Monosulfate")
+
 # Define CSH solid phase
 ss_CSHQ = SolidPhase("CSHQ-TobD CSHQ-TobH CSHQ-JenH CSHQ-JenD KSiOH NaSiOH")
 ss_CSHQ.setName("ss_CSHQ")
 
 # Define chemical system by providing database, aqueous phase, minerals, and solid solutions
-system = ChemicalSystem(db, solution, minerals, gaseous,
-                        ss_C3AFS084H,
-                        ss_ettringite,
-                        ss_OH_SO4_AFm,
-                        ss_CSHQ)
+system = ChemicalSystem(db, solution, minerals, ss_C3AFS084H, ss_ettringite, ss_OH_SO4_AFm, ss_CSHQ)
 
 # Specify conditions to be satisfied at chemical equilibrium
 specs = EquilibriumSpecs(system)
@@ -83,7 +80,7 @@ aprops = AqueousProps(system)
 
 opts = EquilibriumOptions()
 opts.optima.output.active = False
-opts.epsilon = 1e-13
+opts.epsilon = 1e-15
 
 # We define the materials for our equilibrium recipe
 # Cement clinker composition from XRF as given in Lothenbach et al., (2008) recalculated for 100g
@@ -115,15 +112,11 @@ volume = np.zeros(len(phases_list_str))
 
 # Define dataframe to collect amount of the selected species
 import pandas as pd
-columns = ["CaCO3"] \
-          + ["volume_perc_" + name for name in phases_list_str]
+columns = ["CaCO3"] + ["volume_perc_" + name for name in phases_list_str]
 df = pd.DataFrame(columns=columns)
 
 # Volume in cm3
 total_volume = float(props.volume()) *1e5
-
-# Number of steps
-steps_num = 19
 
 import numpy as np
 # Create list of species and phases names, list of Species objects, and auxiliary amounts array
@@ -133,33 +126,23 @@ volume = np.zeros(len(phases_list_str))
 
 # Define dataframe to collect amount of the selected species
 import pandas as pd
-columns = ["CaCO3"] \
-          + ["volume_perc_" + name for name in phases_list_str]
+columns = ["CaCO3"] + ["volume_perc_" + name for name in phases_list_str]
 df = pd.DataFrame(columns=columns)
 
 # Number of steps
 steps_num = 19
+
+Warnings.disable(906)
 
 # We simulate the addition of calcite at the expense of clinker in the cement mix
 for i in range(1, steps_num):
 
     # Define a cement mix of 0.5 water/binder at each step calcite is added at the expense of clinker
     cement_mix = Material(system)
-    cement_mix = cement_clinker(100.0-i, "g") + calcite(i, "g") + water(50.0, "g")
+    cement_mix = cement_clinker(100.0 - i, "g") + calcite(i + 1e-16, "g") + water(50.0, "g")
 
     # Equilibrate cement mix
     state = cement_mix.equilibrate(25.0, "celsius", 1.0, "bar", opts)
-    res = cement_mix.result()
-
-    if res.failed():
-        # Define equilibrium solver
-        solver = EquilibriumSolver(specs)
-
-        # Equilibrate the resulting chemical state with equilibrium solver
-        solver.setOptions(opts)
-        res = solver.solve(state, conditions)
-
-        if res.failed(): continue
 
     # Update chemical and aqueous properties to a file
     props.update(state)

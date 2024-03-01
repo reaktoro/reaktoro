@@ -30,7 +30,7 @@ import numpy as np
 import pandas as pd
 
 # Define the Thermofun database
-db = ThermoFunDatabase ("psinagra-12-07")
+db = ThermoFunDatabase("psinagra-12-07")
 
 # Define the aqueous phase
 solution = AqueousPhase(speciate("C Cl H O P S U"))
@@ -72,14 +72,25 @@ bU = prop.elementAmount("U")[0]
 pHs = np.linspace(5, 10, num=61)
 
 # Create list of species names, list of Species objects, and auxiliary amounts array
-species_list_str = "UO2+2 UO2OH+ UO2(OH)2@ UO2CO3@ (UO2)3CO3(OH)3+ (UO2)2(OH)+3 " \
-                   "UO2(CO3)3-4 UO2(CO3)2-2 (UO2)2(OH)2+2 (UO2)3(OH)5+ (UO2)4(OH)7+"
-species_list = SpeciesList(species_list_str)
-percentages = np.zeros(species_list.size())
-amounts = np.zeros(species_list.size())
+species_list = [
+    "UO2+2",
+    "UO2OH+",
+    "UO2(OH)2@",
+    "UO2CO3@",
+    "(UO2)3CO3(OH)3+",
+    "(UO2)2(OH)+3",
+    "UO2(CO3)3-4",
+    "UO2(CO3)2-2",
+    "(UO2)2(OH)2+2",
+    "(UO2)3(OH)5+",
+    "(UO2)4(OH)7+"
+]
+
+percentages = np.zeros(len(species_list))
+amounts = np.zeros(len(species_list))
 
 # Define dataframe to collect amount of the selected species
-columns = ["pH"] + ["amount_" + name for name in species_list_str.split()] + ["perc_" + name for name in species_list_str.split()]
+columns = ["pH"] + ["amount_" + name for name in species_list] + ["perc_" + name for name in species_list]
 df = pd.DataFrame(columns=columns)
 
 for pH in pHs:
@@ -94,9 +105,10 @@ for pH in pHs:
     if res.failed(): continue
 
     # Otherwise, calculate U(VI) Speciation, %
-    for j in range(0, species_list.size()):#species in species_list:
-        amounts[j] = float(state.speciesAmount(species_list[j].name()))
-        percentages[j] = float(state.speciesAmount(species_list[j].name())) / bU * 100
+    for j in range(0, len(species_list)):#species in species_list:
+        amounts[j] = float(state.speciesAmount(species_list[j]))
+        percentages[j] = float(state.speciesAmount(species_list[j])) / bU * 100
+
     # Update dataframe with obtained values
     df.loc[len(df)] = np.concatenate([[pH], amounts, percentages])
 
@@ -108,7 +120,6 @@ plt.figure()
 plt.xlabel("pH")
 plt.ylabel("U(VI) Speciation, %")
 
-species_list = species_list_str.split()
 ax = df.plot(x="pH", y="perc_UO2+2", color=colors[0], label=species_list[0])
 
 for species, color in zip(species_list[1:-1], colors[1:-1]):
