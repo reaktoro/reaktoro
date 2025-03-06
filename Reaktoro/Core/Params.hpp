@@ -34,10 +34,28 @@ public:
     /// Construct a Params object with given parameters as Data object.
     Params(Data const& params);
 
-    /// Return parameters with the given file path within the virtual directory of embedded resources.
+    /// Return a Params object constructed with a given local file.
+    /// @warning An exception is thrown if `path` does not point to a valid local parameters file.
+    /// @param path The path, including file name, to the local parameters file.
+    static auto fromFile(String const& path) -> Params;
+
+    /// Return a Params object constructed with a given embedded file.
+    /// @warning An exception is thrown if `path` does not point to a valid embedded parameters file.
+    /// @param path The path, including file name, to the embedded parameters file.
+    static auto fromEmbeddedFile(String const& path) -> Params;
+
+    /// Return a Params object constructed with given parameters text contents in YAML format.
+    /// @param text The text contents of the parameters as a string.
+    static auto fromStringYAML(String const& text) -> Params;
+
+    /// Return a Params object constructed with given parameters text contents in JSON format.
+    /// @param text The text contents of the parameters as a string.
+    static auto fromStringJSON(String const& text) -> Params;
+
+    /// Return parameters with the given file path within the virtual directory of embedded resources (equivalent to `fromEmbeddedFile`).
     static auto embedded(String const& path) -> Params;
 
-    /// Return parameters with the given local file path.
+    /// Return parameters with the given local file path (equivalent to `fromFile`).
     static auto local(String const& path) -> Params;
 
     /// Return the underlying Data object of this Params object.

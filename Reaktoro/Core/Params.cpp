@@ -51,18 +51,39 @@ Params::Params(Data const& params)
     append(params);
 }
 
-auto Params::embedded(String const& path) -> Params
+auto Params::fromFile(String const& path) -> Params
+{
+    std::ifstream file(path);
+    errorif(!file, "Could not load local parameter file with given path: ", path);
+    return Params(createDataFromYamlOrJson(path, file));
+}
+
+auto Params::fromEmbeddedFile(String const& path) -> Params
 {
     const String text = Embedded::get("params/" + path);
     return Params(createDataFromYamlOrJson(path, text));
 }
 
+auto Params::fromStringYAML(String const& text) -> Params
+{
+    auto data = Data::parseYaml(text);
+    return Params(data);
+}
+
+auto Params::fromStringJSON(String const& text) -> Params
+{
+    auto data = Data::parseJson(text);
+    return Params(data);
+}
+
+auto Params::embedded(String const& path) -> Params
+{
+    return fromEmbeddedFile(path);
+}
+
 auto Params::local(String const& path) -> Params
 {
-    std::ifstream file;
-    file.open(path);
-    errorif(!file, "Could not load local parameter file with given path ", path);
-    return Params(createDataFromYamlOrJson(path, file));
+    return fromFile(path);
 }
 
 auto Params::data() const -> Data const&
