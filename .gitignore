@@ -21,6 +21,7 @@ compile_commands.json
 .history
 .vscode
 .cache
+.vs
 
 # JetBrains related files
 .idea
