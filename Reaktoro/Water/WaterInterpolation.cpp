@@ -32,7 +32,7 @@ namespace Reaktoro {
 /// Pressures are the same used in Table 13.2 of *Wagner, W., Pruss, A. (2002). The IAPWS
 /// Formulation 1995 for the Thermodynamic Properties of Ordinary Water Substance for General and
 /// Scientific Use. Journal of Physical and Chemical Reference Data, 31(2), 387.
-/// https://doi.org/10.1063/1.1461829*.
+/// https://doi.org/10.1063/1.1461829.
 const Vec<double> pressures = { 0.05, 0.1, 0.101325, 0.25, 0.5, 0.75, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 30.0, 40.0, 50.0, 75.0, 100, 200, 400, 600, 800, 1000 };
 
 /// The temperatures for interpolation of water properties (in K).
