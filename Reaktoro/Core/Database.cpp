@@ -41,10 +41,26 @@ auto createDatabaseFromContents(Source& contents)
         try { doc = Data::parseJson(contents); }
         catch(...)
         {
-            errorif(true, "Could not parse given text in Database::fromContents as it does not seem to be either YAML or JSON formats.");
+            errorif(true, "Could not parse given database text as it does not seem to be in either YAML or JSON formats.");
         }
     }
 
+    DatabaseParser dbparser(doc);
+    return Database(dbparser);
+}
+
+template<typename Source>
+auto createDatabaseFromStringYAML(Source& text)
+{
+    Data doc = Data::parseYaml(text);
+    DatabaseParser dbparser(doc);
+    return Database(dbparser);
+}
+
+template<typename Source>
+auto createDatabaseFromStringJSON(Source& text)
+{
+    Data doc = Data::parseJson(text);
     DatabaseParser dbparser(doc);
     return Database(dbparser);
 }
@@ -295,12 +311,23 @@ auto Database::fromFile(String const& path) -> Database
 auto Database::fromEmbeddedFile(String const& path) -> Database
 {
     const String contents = Embedded::get("databases/reaktoro/" + path);
-    return fromContents(contents);
+    return createDatabaseFromContents(contents);
 }
 
-auto Database::fromContents(String const& contents) -> Database
+auto Database::fromContents(String const& text) -> Database
 {
-    return createDatabaseFromContents(contents);
+    errorif(true, "Database::fromContents has been deprecated. Use Database::fromStringYAML or Database::fromStringJSON instead.");
+    return {};
+}
+
+auto Database::fromStringYAML(String const& text) -> Database
+{
+    return createDatabaseFromStringYAML(text);
+}
+
+auto Database::fromStringJSON(String const& text) -> Database
+{
+    return createDatabaseFromStringJSON(text);
 }
 
 auto Database::fromStream(std::istream& stream) -> Database

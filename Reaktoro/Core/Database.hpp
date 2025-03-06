@@ -42,8 +42,16 @@ public:
     static auto fromEmbeddedFile(String const& path) -> Database;
 
     /// Return a Database object constructed with given database text contents.
-    /// @param contents The contents of the database as a string.
-    static auto fromContents(String const& contents) -> Database;
+    /// @param text The text content of the database as a string.
+    static auto fromContents(String const& text) -> Database;
+
+    /// Return a Database object constructed with given database text in YAML format.
+    /// @param text The text content of the database as a string.
+    static auto fromStringYAML(String const& text) -> Database;
+
+    /// Return a Database object constructed with given database text in JSON format.
+    /// @param text The text content of the database as a string.
+    static auto fromStringJSON(String const& text) -> Database;
 
     /// Return a Database object constructed with given input stream containing the database text contents.
     /// @param stream The input stream containing the database file contents.

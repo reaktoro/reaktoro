@@ -328,7 +328,7 @@ TEST_CASE("Testing Database object creation using Database::fromContents using Y
                 Tmax: 1700.0
         )#";
 
-    Database db = Database::fromContents(contents);
+    Database db = Database::fromStringYAML(contents);
 
     CHECK(db.species().size() == 1);
     CHECK(db.species()[0].name() == "Akermanite");
@@ -362,7 +362,7 @@ TEST_CASE("Testing Database object creation using Database::fromContents using J
         }
         )#";
 
-    Database db = Database::fromContents(contents);
+    Database db = Database::fromStringJSON(contents);
 
     CHECK(db.species().size() == 1);
     CHECK(db.species()[0].name() == "Akermanite");
