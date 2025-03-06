@@ -38,7 +38,7 @@ auto NasaDatabase::withName(String name) -> NasaDatabase
         "    - nasa-cea \n",
         "");
     const String contents = Embedded::get("databases/reaktoro/" + name + ".json");
-    return fromContents(contents);
+    return fromStringJSON(contents);
 }
 
 } // namespace Reaktoro

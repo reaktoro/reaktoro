@@ -106,5 +106,5 @@ TEST_CASE("Testing NasaDatabase with EquilibriumSolver", "[NasaDatabase][Equilib
     };
 
     checkEquilibriumSolver("Mg(cd)", 43);
-    checkEquilibriumSolver("CH4", 32);
+    checkEquilibriumSolver("CH4", 34);
 }
