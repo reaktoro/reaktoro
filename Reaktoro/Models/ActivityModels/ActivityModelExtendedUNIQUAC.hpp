@@ -27,10 +27,10 @@ namespace Reaktoro {
 struct ActivityModelParamsExtendedUNIQUAC
 {
     /// The volume parameters \eq{r_i} for the aqueous species.
-    Tuples<String, real> r;
+    Tuples<String, Vec<real>> r;
 
     /// The surface parameters \eq{r_i} for the aqueous species.
-    Tuples<String, real> q;
+    Tuples<String, Vec<real>> q;
 
     /// The binary interaction parameters \eq{u_{ij}} among the aqueous species.
     Tuples<String, String, Vec<real>> u;

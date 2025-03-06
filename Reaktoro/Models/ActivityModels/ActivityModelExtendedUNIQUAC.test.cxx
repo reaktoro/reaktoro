@@ -25,6 +25,8 @@
 #include <Reaktoro/Models/ActivityModels/ActivityModelExtendedUNIQUAC.hpp>
 using namespace Reaktoro;
 
+namespace {
+
 // Input values for (T, P, n) obtained by equilibrating T = [25.0, 100.0], P = [1.0, 100.0], mNaCl = [0.0, 2.0, 6.0], mCaSO4 = [0.0, 0.25], mBaCO3 = [0.0, 0.25] in 1 kg H2O
 Vec<ArrayXd> inputs =
 {
@@ -131,6 +133,8 @@ Vec<ArrayXd> outputs =
     ArrayXd{{ -7.3742831338771442e+00, -6.1157895171281531e+00, -6.0512611476848711e+01,  9.8529402342160580e+01, -1.4754763211917298e+01, -7.5443953331033356e+01, -7.5795209760168414e-01,  4.1784698121876814e+06,  1.4088895868826380e+03,  4.2669617672579503e+05,  2.0634639592385417e+05, -2.0498639689183365e+04 }},
 };
 
+} // namespace
+
 TEST_CASE("Testing ActivityModelExtendedUNIQUAC", "[ActivityModelExtendedUNIQUAC]")
 {
     auto const db = Database::embedded("ExtendedUNIQUAC.v2024.yaml");
@@ -138,7 +142,7 @@ TEST_CASE("Testing ActivityModelExtendedUNIQUAC", "[ActivityModelExtendedUNIQUAC
 
     auto const species = SpeciesList("H2O CO2 HCO3- CO3-2 Na+ Ba+2 H+ Cl- HSO4- SO4-2 OH-");
 
-    ActivityModel fn = ActivityModelExtendedUNIQUAC()(species);
+    ActivityModel fn = ActivityModelExtendedUNIQUAC(params)(species);
 
     ActivityProps props = ActivityProps::create(species.size());
 

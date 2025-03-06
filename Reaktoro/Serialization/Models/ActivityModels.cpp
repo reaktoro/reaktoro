@@ -133,29 +133,75 @@ REAKTORO_DATA_DECODE_DEFINE(ActivityModelParamsPitzer)
 
 REAKTORO_DATA_ENCODE_DEFINE(ActivityModelParamsExtendedUNIQUAC)
 {
-    for(auto const& [formula, param] : obj.r)
-        data["r"].add(Vec<Data>{formula, param});
+    for(auto const& [formula, params] : obj.r)
+        data["r"][formula] = params;
 
-    for(auto const& [formula, param] : obj.q)
-        data["q"].add(Vec<Data>{formula, param});
+    for(auto const& [formula, params] : obj.q)
+        data["q"][formula] = params;
 
     for(auto const& [formula1, formula2, params] : obj.u)
-        data["u"].add(Vec<Data>{formula1, formula2, params});
+        data["u"][formula1][formula2] = params;
 }
 
 REAKTORO_DATA_DECODE_DEFINE(ActivityModelParamsExtendedUNIQUAC)
 {
     if(data.exists("r"))
-        for(auto const& entry : data["r"].asList())
-            obj.r.push_back(Tuple<String, real>{ entry[0], entry[1] });
+    {
+        if(data.at("r").isList())
+            for(auto const& entry : data["r"].asList())
+            {
+                errorifnot(entry.isList(), "Expecting a list of two elements for each entry in the 'r' list but got this instead:\n", entry.dump());
+                errorifnot(entry.asList().size(), "Expecting a list of two elements for each entry in the 'r' list but got this instead:\n", entry.dump());
+                auto const formula = entry[0].asString();
+                auto const r0 = entry[1].asFloat();
+                auto const rT = 0.0;
+                auto const rP = 0.0;
+                obj.r.push_back(Tuple<String, Vec<real>>{ formula, { r0, rT, rP } });
+            }
+        else
+            for(auto const& [formula, values] : data["r"].asDict())
+                obj.r.push_back(Tuple<String, Vec<real>>{ formula, values.isList() ? values : Vec<real>{ values }});
+    }
 
     if(data.exists("q"))
-        for(auto const& entry : data["q"].asList())
-            obj.q.push_back(Tuple<String, real>{ entry[0], entry[1] });
+    {
+        if(data.at("q").isList())
+            for(auto const& entry : data["q"].asList())
+            {
+                errorifnot(entry.isList(), "Expecting a list of two elements for each entry in the 'q' list but got this instead:\n", entry.dump());
+                errorifnot(entry.asList().size(), "Expecting a list of two elements for each entry in the 'q' list but got this instead:\n", entry.dump());
+                auto formula = entry[0].asString();
+                auto q0 = entry[1].asFloat();
+                auto qT = 0.0;
+                auto qP = 0.0;
+                obj.q.push_back(Tuple<String, Vec<real>>{ formula, { q0, qT, qP } });
+            }
+        else
+            for(auto const& [formula, values] : data["q"].asDict())
+                obj.q.push_back(Tuple<String, Vec<real>>{ formula, values.isList() ? values : Vec<real>{ values }});
+    }
 
     if(data.exists("u"))
-        for(auto const& entry : data["u"].asList())
-            obj.u.push_back(Tuple<String, String, Vec<real>>{ entry[0], entry[1], entry[2] });
+    {
+        if(data.at("u").isList())
+            for(auto const& entry : data["u"].asList())
+            {
+                errorifnot(entry.isList(), "Expecting a list of three elements for each entry in the 'u' list but got this instead:\n", entry.dump());
+                errorifnot(entry.asList().size() == 3, "Expecting a list of three elements for each entry in the 'u' list but got this instead:\n", entry.dump());
+                auto formula1 = entry[0].asString();
+                auto formula2 = entry[1].asString();
+                errorifnot(entry[2].isList(), "Expecting a list of two elements for the third element in each entry in the 'u' list but got this instead:\n", entry.dump());
+                errorifnot(entry[2].asList().size() == 2, "Expecting a list of two elements for the third element in each entry in the 'u' list but got this instead:\n", entry.dump());
+                auto u0 = entry[2][0].asFloat();
+                auto uT = entry[2][1].asFloat();
+                auto uP = 0.0;
+                obj.u.push_back(Tuple<String, String, Vec<real>>{ formula1, formula2, { u0, uT, uP } });
+            }
+        else
+            for(auto const& [formula1, child] : data["u"].asDict())
+                for(auto const& [formula2, vals] : child.asDict())
+                    obj.u.push_back(Tuple<String, String, Vec<real>>{ formula1, formula2, vals });
+    }
 }
 
 } // namespace Reaktoro

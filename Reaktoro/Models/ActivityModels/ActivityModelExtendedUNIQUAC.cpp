@@ -47,11 +47,14 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
     // The molar mass of water (in kg/mol)
     auto const Mw = species[iw].molarMass();
 
-    // The reference temperature used for the computation of the Debye-Huckel variable A
+    // The reference temperature used for the computation of the Debye-Huckel variable A (in K)
     auto const T0 = 273.15;
 
-    // The reference temperature used for the temperature-correction of the energetic UNIQUAC parameters uᵢⱼ
+    // The reference temperature used for the temperature-pressure-correction equations for rᵢ, qᵢ, uᵢⱼ (in K)
     auto const Tr = 298.15;
+
+    // The reference pressure used for the temperature-pressure-correction equations for rᵢ, qᵢ, uᵢⱼ (in Pa)
+    auto const Pr = 1.0e+5;
 
     // The term b ≡ aB in the Debye-Huckel equation (assumed constant in the e-UNIQUAC model)
     auto const b = 1.5;
@@ -71,71 +74,110 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
     // The indices of the species containing energetic binary interaction parameters uᵢⱼ
     Indices iU;
 
-    ArrayXr r = ArrayXr::Zero(species.size()); // TODO: Initialize properly with values from parameters
-    ArrayXr q = ArrayXr::Zero(species.size()); // TODO: Initialize properly with values from parameters
+    auto const Nn = species.size();
 
-    MatrixXr u0 = MatrixXr::Constant(species.size(), species.size(), 1.0e+16); // The matrix u with the energy interaction parameters in the e-UNIQUAC model
-    MatrixXr uT = MatrixXr::Constant(species.size(), species.size(), 1.0e+16); // The matrix u with the energy interaction parameters in the e-UNIQUAC model
+    auto const onesNn = ArrayXr::Ones(Nn);
+    auto const zerosNn = ArrayXr::Zero(Nn);
+    auto const zerosNnNn = ArrayXXr::Zero(Nn, Nn);
 
+    // The surface area parameters rᵢ and their temperature and pressure correction coefficients
+    ArrayXr r = zerosNn;
+    ArrayXr r0 = zerosNn;
+    ArrayXr rT = zerosNn;
+    ArrayXr rP = zerosNn;
+
+    // The volume parameters qᵢ and their temperature and pressure correction coefficients
+    ArrayXr q = zerosNn;
+    ArrayXr q0 = zerosNn;
+    ArrayXr qT = zerosNn;
+    ArrayXr qP = zerosNn;
+
+    // The energy interaction parameters uᵢⱼ and their temperature and pressure correction coefficients
+    MatrixXr u0 = MatrixXr::Constant(Nn, Nn, 1.0e+16);
+    MatrixXr uT = zerosNnNn;
+    MatrixXr uP = zerosNnNn;
+
+    // Set the diagonal of the matrix u0 to zero
     u0.diagonal().fill(0.0);
-    uT.diagonal().fill(0.0);
 
-    ArrayXr ln_gDH(species.size());
-    ArrayXr ln_gC(species.size());
-    ArrayXr ln_gR(species.size());
+    // Auxiliary arrays for the calculation of the activity coefficients
+    ArrayXr ln_gDH(Nn);
+    ArrayXr ln_gC(Nn);
+    ArrayXr ln_gR(Nn);
+    ArrayXr ln_gCinf(Nn);
+    ArrayXr ln_gRinf(Nn);
 
-    ArrayXr ln_gCinf(species.size());
-    ArrayXr ln_gRinf(species.size());
+    // The auxiliary array to store the matrix-vector product σ = tr(ψ)·θ, where σ[i] = sum{k}( ψ[k, i]·θ[k] )
+    ArrayXr sigma;
 
-    ArrayXr thetapsi;  // The matrix-vector product tr(ψ)θ
-
-    for(auto const& [formula, param] : params.r)
+    // Initialize the parameters rᵢ and their temperature and pressure correction coefficients
+    for(auto const& [formula, coeffs] : params.r)
     {
-        errorif(param <= 0.0, "The surface area parameter rᵢ in the Extended UNIQUAC model cannot be zero or negative: r[", formula, "] = ", param);
-        auto const ispecies = species.findWithName(formula);
-        if(ispecies >= species.size())
+        for(auto i = 0; i < coeffs.size(); ++i)
+            errorif(coeffs[i] < 0.0, "The surface area parameter rᵢ in the Extended UNIQUAC model cannot be negative: r[", formula, "][", i, "] = ", coeffs[i]);
+        auto const ispecies = species.findWithFormula(formula);
+        if(ispecies >= Nn)
             continue;
         iR.push_back(ispecies);
-        r[ispecies] = param;
+        r0[ispecies] = coeffs[0];
+        rT[ispecies] = coeffs[1];
+        rP[ispecies] = coeffs[2];
     }
 
-    for(auto const& [formula, param] : params.q)
+    // Initialize the parameters qᵢ and their temperature and pressure correction coefficients
+    for(auto const& [formula, coeffs] : params.q)
     {
-        errorif(param <= 0.0, "The volume parameter qᵢ in the Extended UNIQUAC model cannot be zero or negative: q[", formula, "] = ", param);
-        auto const ispecies = species.findWithName(formula);
-        if(ispecies >= species.size())
+        for(auto i = 0; i < coeffs.size(); ++i)
+            errorif(coeffs[i] < 0.0, "The volume parameter qᵢ in the Extended UNIQUAC model cannot be negative: q[", formula, "][", i, "] = ", coeffs[i]);
+        auto const ispecies = species.findWithFormula(formula);
+        if(ispecies >= Nn)
             continue;
         iQ.push_back(ispecies);
-        q[ispecies] = param;
+        q0[ispecies] = coeffs[0];
+        qT[ispecies] = coeffs[1];
+        qP[ispecies] = coeffs[2];
     }
 
-    for(auto const& [formula1, formula2, params] : params.u)
+    // Initialize the parameters uᵢⱼ and their temperature and pressure correction coefficients
+    for(auto const& [formula1, formula2, coeffs] : params.u)
     {
-        auto const ispecies1 = species.findWithName(formula1);
-        auto const ispecies2 = species.findWithName(formula2);
-        if(ispecies1 >= species.size() || ispecies2 >= species.size())
+        auto const ispecies1 = species.findWithFormula(formula1);
+        auto const ispecies2 = species.findWithFormula(formula2);
+        if(ispecies1 >= Nn || ispecies2 >= Nn)
             continue;
         iU.push_back(ispecies1);
         iU.push_back(ispecies2);
-        u0(ispecies1, ispecies2) = u0(ispecies2, ispecies1) = params[0];
-        uT(ispecies1, ispecies2) = uT(ispecies2, ispecies1) = params[1];
+        u0(ispecies1, ispecies2) = u0(ispecies2, ispecies1) = coeffs[0];
+        uT(ispecies1, ispecies2) = uT(ispecies2, ispecies1) = coeffs[1];
+        uP(ispecies1, ispecies2) = uP(ispecies2, ispecies1) = coeffs[2];
     }
 
+    // Remove duplicate indices in iR, iQ, and iU
     iR = unique(iR);
     iQ = unique(iQ);
     iU = unique(iU);
 
+    // The index of water species in iR and iQ
     auto const irw = index(iR, iw);
     auto const iqw = index(iQ, iw);
 
     errorifnot(irw < iR.size(), "The surface area parameter rᵢ in the Extended UNIQUAC model is expected for H2O.");
     errorifnot(iqw < iQ.size(), "The volume parameter qᵢ in the Extended UNIQUAC model is expected for H2O.");
 
-    r = ArrayXr(r(iR));
-    q = ArrayXr(q(iQ));
+    // Consider only binary interaction parameters involving species with positive rᵢ values
+    r0 = ArrayXr(r0(iR));
+    rT = ArrayXr(rT(iR));
+    rP = ArrayXr(rP(iR));
 
-    u0 = MatrixXr(u0(iQ, iQ)); // Only binary interaction parameters involving species with positive qᵢ values
-    uT = MatrixXr(uT(iQ, iQ)); // Only binary interaction parameters involving species with positive qᵢ values
+    // Consider only binary interaction parameters involving species with positive qᵢ values
+    q0 = ArrayXr(q0(iQ));
+    qT = ArrayXr(qT(iQ));
+    qP = ArrayXr(qP(iQ));
+
+    // Consider only binary interaction parameters involving species with positive qᵢ values
+    u0 = MatrixXr(u0(iQ, iQ));
+    uT = MatrixXr(uT(iQ, iQ));
+    uP = MatrixXr(uP(iQ, iQ));
 
     ArrayXr phi; // The ϕ array in the e-UNIQUAC model
     ArrayXr theta; // The θ array in the e-UNIQUAC model
@@ -189,18 +231,26 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
         xr = x(iR);
         xq = x(iQ);
 
+        auto const t = T / Tr;
+        auto const p = P / Pr;
+
+        r = r0 + rT * t + rP * p;
+        q = q0 + qT * t + qP * p;
+        u = u0 + uT*(T - Tr) + uP * p;
+
+        errorif((r < 0.0).any(), "The surface area parameter rᵢ in the Extended UNIQUAC model cannot be negative.");
+        errorif((q < 0.0).any(), "The volume parameter qᵢ in the Extended UNIQUAC model cannot be negative.");
+
         phi = (xr * r) / sum(xr * r);
         theta = (xq * q) / sum(xq * q);
 
         for(auto j = 0; j < iQ.size(); ++j)
-            for(auto i = j; i < iQ.size(); ++i)
-                u(j, i) = u(i, j) = u0(j, i) + uT(j, i)*(T - Tr);
-
-        for(auto j = 0; j < iQ.size(); ++j)
-            for(auto i = 0; i < iQ.size(); ++i)
+            for(auto i = 0; i < iQ.size(); ++i) {
                 psi(j, i) = exp(-(u(j, i) - u(i, i))/T);
+                errorifnot(std::isfinite(psi(j, i).val()), "The ψⱼᵢ matrix in the Extended UNIQUAC model contains non-finite values.");
+            }
 
-        thetapsi = tr(psi) * theta.matrix();
+        sigma = tr(psi) * theta.matrix();
 
         // Reset the values of all activity coefficient contributions
         ln_gDH = 0.0;
@@ -230,9 +280,9 @@ auto createActivityModelExtendedUNIQUAC(SpeciesList const& species, ActivityMode
 
         // Calculate the UNIQUAC residual activity coefficients for the species -- see equation (16) of Thomsen (2005) and equation (13) of Hingerl et al. (2014)
         for(auto const& [i, ispecies] : enumerate(iQ)) {
-            ln_gR[ispecies] = q[i]*(1 - log(thetapsi[i]) - (theta * ArrayXr(psi.row(i))/thetapsi).sum());
+            ln_gR[ispecies] = q[i]*(1 - log(sigma[i]) - (theta * psi.row(i).transpose().array()/sigma).sum());
             ln_gRinf[ispecies] = q[i]*(1 - log(psi(iqw, i)) - psi(i, iqw)/psi(iqw, iqw)); // Note: Thomsen (2005) always assume ψ(w,w) = 1, but here we don't necessarily; that's why psi(iqw, iqw) is used here.
-            GRTxUNIQUAC -= xq[i] * q[i] * log(thetapsi[i]);
+            GRTxUNIQUAC -= xq[i] * q[i] * log(sigma[i]);
         }
 
         // Set the activity coefficients of the species in the unsymmetrical convention and molal scale -- see equation (4-14) of Thomsen (1997) -- note extra ln(xw) here to convert to molal scale

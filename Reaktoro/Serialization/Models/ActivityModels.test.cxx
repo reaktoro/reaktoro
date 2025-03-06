@@ -20,12 +20,13 @@
 using namespace Catch;
 
 // Reaktoro includes
+#include <Reaktoro/Models/ActivityModels/ActivityModelExtendedUNIQUAC.hpp>
 #include <Reaktoro/Models/ActivityModels/ActivityModelPitzer.hpp>
 #include <Reaktoro/Serialization/Core.hpp>
 #include <Reaktoro/Serialization/Models/ActivityModels.hpp>
 using namespace Reaktoro;
 
-TEST_CASE("Testing serialization of ActivityModelParamsPitzer", "[Serialization][Models][ActivityModels]")
+TEST_CASE("Testing serialization of ActivityModelParamsPitzer", "[Serialization][Models][ActivityModels][ActivityModelParamsPitzer]")
 {
     ActivityModelParamsPitzer params;
 
@@ -203,4 +204,68 @@ TEST_CASE("Testing serialization of ActivityModelParamsPitzer", "[Serialization]
     CHECK( params.alpha2[0].formulas == Vec<ChemicalFormula>{"Na+", "Cl-"} );
     CHECK( params.alpha2[0].model == ActivityModelParamsPitzer::CorrectionModel::Constant );
     CHECK( params.alpha2[0].parameters == Vec<real>{ 12.0 } );
+}
+
+const String yml_euniquac_old_format = R"#(
+q:
+  - [ H2O, 1.4 ]
+  - [ CO2, 2.4496 ]
+r:
+  - [ H2O, 0.92 ]
+  - [ CO2, 0.74721 ]
+u:
+  - [ H2O, CO2, [ 8.838254, 0.86293 ] ]
+  - [ H2O, HCO3-, [ 577.0502, -0.38795 ] ]
+  - [ H2O, CO3-2, [ 361.3877, 3.3516 ] ]
+  - [ CO2, CO2, [ 302.2475, 0.35871 ] ]
+  - [ CO2, HCO3-, [ 526.305, -3.7342 ] ]
+  - [ CO2, CO3-2, [ 2500, 0 ] ]
+)#";
+
+const String yml_euniquac_new_format = R"#(
+q:
+  H2O: [ 1.4, 0.0, 0.0 ]
+  CO2: [ 2.4496, 0.0, 0.0 ]
+r:
+  H2O: [ 0.92, 0.0, 0.0 ]
+  CO2: [ 0.74721, 0.0, 0.0 ]
+u:
+  H2O:
+    CO2: [ 8.838254, 0.86293, 0.0 ]
+    HCO3-: [ 577.0502, -0.38795, 0.0 ]
+    CO3-2: [ 361.3877, 3.3516, 0.0 ]
+  CO2:
+    CO2: [ 302.2475, 0.35871, 0.0 ]
+    HCO3-: [ 526.305, -3.7342, 0.0 ]
+    CO3-2: [ 2500, 0.0, 0.0 ]
+)#";
+
+TEST_CASE("Testing serialization of ActivityModelParamsExtendedUNIQUAC", "[Serialization][Models][ActivityModels][ActivityModelParamsExtendedUNIQUAC]")
+{
+    ActivityModelParamsExtendedUNIQUAC params;
+
+    auto yml = GENERATE(yml_euniquac_old_format, yml_euniquac_new_format);
+
+    params = Data::parse(yml).as<ActivityModelParamsExtendedUNIQUAC>();
+
+    CHECK( params.q.size() == 2 );
+    CHECK( params.r.size() == 2 );
+    CHECK( params.u.size() == 6 );
+
+    using Q = Tuple<String, Vec<real>>;
+    using R = Tuple<String, Vec<real>>;
+    using U = Tuple<String, String, Vec<real>>;
+
+    CHECK( params.q[0] == Q{"H2O", { 1.4, 0.0, 0.0 }} );
+    CHECK( params.q[1] == Q{"CO2", { 2.4496, 0.0, 0.0 }} );
+
+    CHECK( params.r[0] == R{"H2O", { 0.92, 0.0, 0.0 }} );
+    CHECK( params.r[1] == R{"CO2", { 0.74721, 0.0, 0.0 }} );
+
+    CHECK( params.u[0] == U{"H2O", "CO2", { 8.838254, 0.86293, 0.0 }} );
+    CHECK( params.u[1] == U{"H2O", "HCO3-", { 577.0502, -0.38795, 0.0 }} );
+    CHECK( params.u[2] == U{"H2O", "CO3-2", { 361.3877, 3.3516, 0.0 }} );
+    CHECK( params.u[3] == U{"CO2", "CO2", { 302.2475, 0.35871, 0.0 }} );
+    CHECK( params.u[4] == U{"CO2", "HCO3-", { 526.305, -3.7342, 0.0 }} );
+    CHECK( params.u[5] == U{"CO2", "CO3-2", { 2500, 0.0, 0.0 }} );
 }
