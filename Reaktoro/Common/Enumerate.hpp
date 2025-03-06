@@ -22,7 +22,10 @@
 //===================================================================
 
 #pragma once
+
+// C++ includes
 #include <tuple>
+#include <iterator>
 
 template <typename T,
           typename TIter = decltype(std::begin(std::declval<T>())),
