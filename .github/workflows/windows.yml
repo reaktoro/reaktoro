@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - master
 
   pull_request:
 
@@ -28,7 +27,7 @@ jobs:
         config: ["Release"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
         id: timestamp
@@ -39,7 +38,7 @@ jobs:
 
       - name: Configuring Cache
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             C:\Users\runneradmin\.cache
@@ -49,13 +48,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.config }}-${{ runner.python-version }}-${{ github.ref }}-ccache-
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-activate-base: false
-          allow-softlinks: true
+          auto-update-conda: true
+          miniforge-version: latest
+          auto-activate-base: true
           activate-environment: ''
-          channels: conda-forge
-          channel-priority: true
 
       - name: Configuring Conda Environment
         env:

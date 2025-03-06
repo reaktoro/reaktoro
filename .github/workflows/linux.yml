@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - master
 
   pull_request:
 
@@ -28,7 +27,7 @@ jobs:
         config: ["Release"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Timestamp  # Idea from https://tinyurl.com/47wz7vpv
         id: timestamp
@@ -39,7 +38,7 @@ jobs:
 
       - name: Configuring Cache
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             /home/runner/.cache
@@ -51,8 +50,9 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
           miniforge-version: latest
+          python-version: ${{ matrix.python-version }}
 
       - shell: bash -el {0}
         run: |
