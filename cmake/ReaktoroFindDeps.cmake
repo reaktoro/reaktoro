@@ -43,6 +43,10 @@ ReaktoroFindPackage(ThermoFun 0.4.5 REQUIRED)
 ReaktoroFindPackage(tsl-ordered-map 1.0.0 REQUIRED)
 ReaktoroFindPackage(yaml-cpp 0.6.3 REQUIRED)
 
+# Enable RUNPATH for executables and shared libraries on Linux for flexible library search paths
+SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags")
+SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--enable-new-dtags")
+
 # Optional dependencies
 ReaktoroFindPackage(Catch2 2.6.2)
 ReaktoroFindPackage(Python 3.7 COMPONENTS Interpreter Development REQUIRED)
