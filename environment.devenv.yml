@@ -47,6 +47,6 @@ dependencies:
   - tsl_ordered_map
   - valgrind  # [linux]
   - vs2019_win-64  # [win]
-  - yaml-cpp =0.7.0
+  - yaml-cpp =0.8.0
   - pip:
     - oyaml
