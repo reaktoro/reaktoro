@@ -14,8 +14,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-
-  jobs:
+jobs:
   build:
     name: ${{ matrix.config }} build on ${{ matrix.os }} (Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
@@ -24,7 +23,7 @@ concurrency:
       max-parallel: 4
       matrix:
         os: ["macos-latest"]
-        python-version: [3.9]
+        python-version: [3.12]
         config: ["Release"]
 
     steps:
